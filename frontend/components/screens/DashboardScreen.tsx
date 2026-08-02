@@ -52,19 +52,20 @@ export default function DashboardScreen() {
       {/* Category Switching Pills Bar */}
       <div className="flex items-center gap-2 overflow-x-auto pb-2">
         <span className="text-xs font-semibold text-on-surface-variant/70 whitespace-nowrap">Switch View:</span>
-        {(Object.keys(CATEGORIES) as UserCategory[]).map((catKey) => {
+        {Object.keys(CATEGORIES).map((catKey) => {
           const active = category === catKey;
+          const catInfo = CATEGORIES[catKey];
           return (
             <button
               key={catKey}
-              onClick={() => setCategory(catKey)}
+              onClick={() => setCategory(catKey as UserCategory)}
               className={`px-4 py-2 rounded-full text-xs font-semibold transition-all whitespace-nowrap ${
                 active
                   ? "bg-primary text-white shadow-md scale-105"
                   : "bg-surface-container-lowest border border-surface-variant/30 text-on-surface-variant hover:bg-surface-container-low"
               }`}
             >
-              {CATEGORIES[catKey].name}
+              {catInfo.name}
             </button>
           );
         })}
@@ -113,45 +114,6 @@ export default function DashboardScreen() {
                 className="inline-block w-full py-2.5 rounded-full bg-secondary text-white text-center font-semibold text-xs shadow-md hover:bg-secondary/90 transition-all"
               >
                 Start Meditation
-              </Link>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {category === "working_professional" && (
-        <div className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="p-6 rounded-3xl bg-surface-container-lowest border border-surface-variant/30 shadow-soft space-y-4">
-              <div className="w-12 h-12 rounded-2xl bg-primary-container/20 text-primary flex items-center justify-center">
-                <span className="material-symbols-outlined text-2xl">work_history</span>
-              </div>
-              <h3 className="font-heading font-bold text-lg text-on-surface">Burnout Tracker</h3>
-              <p className="text-xs text-on-surface-variant">Monitor workplace fatigue and schedule micro-breaks.</p>
-              <Link href="/journey" className="inline-block w-full py-2.5 rounded-full bg-primary text-white text-center font-semibold text-xs shadow-md">
-                View Work-Life Index
-              </Link>
-            </div>
-
-            <div className="p-6 rounded-3xl bg-surface-container-lowest border border-surface-variant/30 shadow-soft space-y-4">
-              <div className="w-12 h-12 rounded-2xl bg-peach/30 text-tertiary flex items-center justify-center">
-                <span className="material-symbols-outlined text-2xl">medical_services</span>
-              </div>
-              <h3 className="font-heading font-bold text-lg text-on-surface">Executive Therapy</h3>
-              <p className="text-xs text-on-surface-variant">Book 1-on-1 confidential sessions with certified therapists.</p>
-              <Link href="/professional-care" className="inline-block w-full py-2.5 rounded-full bg-surface-container text-primary text-center font-semibold text-xs">
-                Find Therapist
-              </Link>
-            </div>
-
-            <div className="p-6 rounded-3xl bg-surface-container-lowest border border-surface-variant/30 shadow-soft space-y-4">
-              <div className="w-12 h-12 rounded-2xl bg-pale-yellow/40 text-on-surface flex items-center justify-center">
-                <span className="material-symbols-outlined text-2xl">bedtime</span>
-              </div>
-              <h3 className="font-heading font-bold text-lg text-on-surface">Night Sleep Support</h3>
-              <p className="text-xs text-on-surface-variant">Binaural rain & ocean soundscapes for restful sleep.</p>
-              <Link href="/sleep" className="inline-block w-full py-2.5 rounded-full bg-surface-container text-on-surface text-center font-semibold text-xs">
-                Play Sleep Audio
               </Link>
             </div>
           </div>
@@ -230,6 +192,46 @@ export default function DashboardScreen() {
               <p className="text-sm text-on-surface-variant">Share stories and connect with warm peer listeners.</p>
               <Link href="/community" className="inline-block w-full py-3 rounded-full bg-surface-container text-primary text-center font-bold text-sm">
                 Open Senior Circle
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Default Dashboard Layout for Professional / Young Pro / Couple / Family / Women / Men */}
+      {category !== "student" && category !== "parent" && category !== "senior_citizen" && (
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="p-6 rounded-3xl bg-surface-container-lowest border border-surface-variant/30 shadow-soft space-y-4">
+              <div className="w-12 h-12 rounded-2xl bg-primary-container/20 text-primary flex items-center justify-center">
+                <span className="material-symbols-outlined text-2xl">work_history</span>
+              </div>
+              <h3 className="font-heading font-bold text-lg text-on-surface">{categoryDetails.name} Wellness Sanctuary</h3>
+              <p className="text-xs text-on-surface-variant">Tailored AI companion conversations and daily mindfulness routines.</p>
+              <Link href="/ai-chat" className="inline-block w-full py-2.5 rounded-full bg-primary text-white text-center font-semibold text-xs shadow-md">
+                Chat with AI Companion →
+              </Link>
+            </div>
+
+            <div className="p-6 rounded-3xl bg-surface-container-lowest border border-surface-variant/30 shadow-soft space-y-4">
+              <div className="w-12 h-12 rounded-2xl bg-peach/30 text-tertiary flex items-center justify-center">
+                <span className="material-symbols-outlined text-2xl">medical_services</span>
+              </div>
+              <h3 className="font-heading font-bold text-lg text-on-surface">Professional Support</h3>
+              <p className="text-xs text-on-surface-variant">Book 1-on-1 confidential sessions with certified specialists.</p>
+              <Link href="/professional-care" className="inline-block w-full py-2.5 rounded-full bg-surface-container text-primary text-center font-semibold text-xs">
+                Find Therapist
+              </Link>
+            </div>
+
+            <div className="p-6 rounded-3xl bg-surface-container-lowest border border-surface-variant/30 shadow-soft space-y-4">
+              <div className="w-12 h-12 rounded-2xl bg-pale-yellow/40 text-on-surface flex items-center justify-center">
+                <span className="material-symbols-outlined text-2xl">bedtime</span>
+              </div>
+              <h3 className="font-heading font-bold text-lg text-on-surface">Sleep & Rest Audio</h3>
+              <p className="text-xs text-on-surface-variant">Binaural rain & ocean soundscapes for deep recovery.</p>
+              <Link href="/sleep" className="inline-block w-full py-2.5 rounded-full bg-surface-container text-on-surface text-center font-semibold text-xs">
+                Play Sleep Audio
               </Link>
             </div>
           </div>

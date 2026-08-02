@@ -4,7 +4,17 @@
  * Central data types used across frontend components, mock data stores, and future database queries.
  */
 
-export type UserCategory = "student" | "working_professional" | "parent" | "senior_citizen";
+export type UserCategory =
+  | "student"
+  | "young_pro"
+  | "working_professional"
+  | "parent"
+  | "couple"
+  | "family"
+  | "women"
+  | "men"
+  | "senior_citizen"
+  | string;
 
 export interface UserProfile {
   id: string;
@@ -14,7 +24,7 @@ export interface UserProfile {
   streakDays: number;
   mindfulnessMinutes: number;
   currentMood: string;
-  selectedCategory: UserCategory | string;
+  selectedCategory: UserCategory;
 }
 
 export interface AssessmentAnswers {
@@ -25,7 +35,7 @@ export interface AssessmentAnswers {
 
 export interface AssessmentResult {
   userId?: string;
-  category: UserCategory | string;
+  category: UserCategory;
   answers: AssessmentAnswers;
   computedScore: number; // 1-100
   createdAt: string;

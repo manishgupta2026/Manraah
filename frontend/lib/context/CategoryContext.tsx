@@ -11,13 +11,20 @@ export interface CategoryInfo {
   accentColor: string;
 }
 
-export const CATEGORIES: Record<UserCategory, CategoryInfo> = {
+export const CATEGORIES: Record<string, CategoryInfo> = {
   student: {
     id: "student",
     name: "Student",
     description: "Academic balance, exam stress reduction & peer focus",
     badgeColor: "bg-mint/20 text-secondary font-medium",
     accentColor: "#5FCFB0",
+  },
+  young_pro: {
+    id: "young_pro",
+    name: "Young Pro",
+    description: "Starting out and building a career path",
+    badgeColor: "bg-primary-container/20 text-primary font-medium",
+    accentColor: "#7C6BC4",
   },
   working_professional: {
     id: "working_professional",
@@ -33,6 +40,34 @@ export const CATEGORIES: Record<UserCategory, CategoryInfo> = {
     badgeColor: "bg-peach/30 text-tertiary font-medium",
     accentColor: "#F5C99B",
   },
+  couple: {
+    id: "couple",
+    name: "Couple",
+    description: "Nurturing a shared life and relationship",
+    badgeColor: "bg-pink/30 text-tertiary font-medium",
+    accentColor: "#F4A6B8",
+  },
+  family: {
+    id: "family",
+    name: "Family",
+    description: "Fostering harmony and household well-being",
+    badgeColor: "bg-peach/30 text-tertiary font-medium",
+    accentColor: "#F5C99B",
+  },
+  women: {
+    id: "women",
+    name: "Women",
+    description: "Focused on women's unique wellness needs",
+    badgeColor: "bg-pink/30 text-tertiary font-medium",
+    accentColor: "#F4A6B8",
+  },
+  men: {
+    id: "men",
+    name: "Men",
+    description: "Tailored support for men's mental health",
+    badgeColor: "bg-mint/20 text-secondary font-medium",
+    accentColor: "#5FCFB0",
+  },
   senior_citizen: {
     id: "senior_citizen",
     name: "Senior Citizen",
@@ -41,6 +76,8 @@ export const CATEGORIES: Record<UserCategory, CategoryInfo> = {
     accentColor: "#F5E6A8",
   },
 };
+
+const DEFAULT_CATEGORY: CategoryInfo = CATEGORIES.student;
 
 interface CategoryContextType {
   category: UserCategory;
@@ -53,10 +90,12 @@ const CategoryContext = createContext<CategoryContextType | undefined>(undefined
 export function CategoryProvider({ children }: { children: ReactNode }) {
   const [category, setCategory] = useState<UserCategory>("student");
 
+  const categoryDetails = CATEGORIES[category] || DEFAULT_CATEGORY;
+
   const value = {
     category,
     setCategory,
-    categoryDetails: CATEGORIES[category],
+    categoryDetails,
   };
 
   return (
