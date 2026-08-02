@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "clean": "node -e \"require('fs').rmSync('.next', {recursive:true, force:true})\"",
-    "db:init": "node scripts/init_db.js"
+    "db:init": "node scripts/init_db.js",
+    "graphify": "node scripts/graphify.js"
   },
   "dependencies": {
     "@neondatabase/serverless": "^0.9.4",
