@@ -1,0 +1,308 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Professional Care - Manraah</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@600;700&amp;family=Work+Sans:wght@400;600&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "error": "#ba1a1a",
+                      "on-tertiary-fixed-variant": "#6e3444",
+                      "outline-variant": "#cac4d3",
+                      "on-error-container": "#93000a",
+                      "tertiary": "#874959",
+                      "on-primary": "#ffffff",
+                      "primary-fixed-dim": "#cbbeff",
+                      "surface-variant": "#e6dff8",
+                      "secondary-fixed": "#88f7d6",
+                      "background": "#fdf7ff",
+                      "surface": "#fdf7ff",
+                      "on-primary-fixed-variant": "#4a388e",
+                      "inverse-primary": "#cbbeff",
+                      "surface-dim": "#ded6f0",
+                      "on-tertiary-fixed": "#38091a",
+                      "on-surface-variant": "#484551",
+                      "tertiary-fixed-dim": "#ffb1c3",
+                      "surface-tint": "#6251a8",
+                      "surface-container-low": "#f7f1ff",
+                      "primary-container": "#7867c0",
+                      "surface-container-lowest": "#ffffff",
+                      "primary-fixed": "#e6deff",
+                      "tertiary-container": "#a46172",
+                      "on-tertiary-container": "#fffbff",
+                      "on-secondary-container": "#00725c",
+                      "secondary-container": "#88f7d6",
+                      "inverse-on-surface": "#f5eeff",
+                      "outline": "#797582",
+                      "on-tertiary": "#ffffff",
+                      "on-primary-container": "#fffbff",
+                      "on-secondary": "#ffffff",
+                      "error-container": "#ffdad6",
+                      "on-secondary-fixed-variant": "#005140",
+                      "on-error": "#ffffff",
+                      "tertiary-fixed": "#ffd9e0",
+                      "surface-container": "#f2ebff",
+                      "inverse-surface": "#322e41",
+                      "surface-bright": "#fdf7ff",
+                      "primary": "#5f4ea5",
+                      "on-secondary-fixed": "#002018",
+                      "secondary": "#006b56",
+                      "on-surface": "#1d192b",
+                      "surface-container-high": "#ece4fe",
+                      "on-primary-fixed": "#1d0061",
+                      "surface-container-highest": "#e6dff8",
+                      "on-background": "#1d192b",
+                      "secondary-fixed-dim": "#6adaba"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "xl": "80px",
+                      "sm": "12px",
+                      "lg": "48px",
+                      "base": "8px",
+                      "xs": "4px",
+                      "container-padding-mobile": "20px",
+                      "md": "24px",
+                      "container-padding-desktop": "64px"
+              },
+              "fontFamily": {
+                      "headline-lg-mobile": [
+                              "Quicksand"
+                      ],
+                      "headline-lg": [
+                              "Quicksand"
+                      ],
+                      "label-md": [
+                              "Work Sans"
+                      ],
+                      "headline-md": [
+                              "Quicksand"
+                      ],
+                      "body-md": [
+                              "Work Sans"
+                      ],
+                      "display-lg": [
+                              "Quicksand"
+                      ],
+                      "caption": [
+                              "Work Sans"
+                      ],
+                      "body-lg": [
+                              "Work Sans"
+                      ]
+              },
+              "fontSize": {
+                      "headline-lg-mobile": [
+                              "28px",
+                              {
+                                      "lineHeight": "36px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "label-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "letterSpacing": "0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "display-lg": [
+                              "48px",
+                              {
+                                      "lineHeight": "56px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "caption": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "400"
+                              }
+                      ]
+              }
+            }
+          }
+        }
+    </script>
+<style>
+        body {
+            background-color: #fdf7ff;
+        }
+        /* Hide scrollbar for clean horizontal scrolling */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .soft-shadow {
+            box-shadow: 0 10px 30px -10px rgba(124, 107, 196, 0.08);
+        }
+    </style>
+</head>
+<body class="text-on-background font-body-md antialiased min-h-screen pb-xl flex flex-col md:hidden relative">
+<!-- Top App Bar Content -->
+<header class="pt-12 pb-4 px-container-padding-mobile bg-surface/80 backdrop-blur-md sticky top-0 z-40">
+<div class="flex items-center justify-between">
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-primary tracking-tight">Professional Care</h1>
+<button class="p-2 rounded-full bg-surface-container-highest text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">search</span>
+</button>
+</div>
+<!-- Filter Chips -->
+<div class="flex gap-3 overflow-x-auto no-scrollbar pt-6 pb-2">
+<button class="whitespace-nowrap px-4 py-2 rounded-full bg-primary-container text-on-primary-container font-label-md text-label-md">All Experts</button>
+<button class="whitespace-nowrap px-4 py-2 rounded-full bg-tertiary-container/15 text-on-surface font-label-md text-label-md border border-outline-variant/30">Psychologists</button>
+<button class="whitespace-nowrap px-4 py-2 rounded-full bg-tertiary-container/15 text-on-surface font-label-md text-label-md border border-outline-variant/30">Stress Coaches</button>
+<button class="whitespace-nowrap px-4 py-2 rounded-full bg-tertiary-container/15 text-on-surface font-label-md text-label-md border border-outline-variant/30">Therapists</button>
+</div>
+</header>
+<!-- Main Content: Expert Cards -->
+<main class="flex-1 px-container-padding-mobile pt-sm flex flex-col gap-6">
+<!-- Expert Card 1 -->
+<div class="bg-surface-container-lowest rounded-[24px] p-4 soft-shadow flex flex-col gap-4 relative">
+<div class="absolute top-4 right-4 bg-secondary-container text-on-secondary-container px-2 py-1 rounded-md font-caption text-caption flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-secondary"></span> Available Now
+            </div>
+<div class="flex gap-4 items-center">
+<div class="w-20 h-20 rounded-full overflow-hidden shrink-0 border-2 border-primary-fixed">
+<img class="w-full h-full object-cover" data-alt="A warm, approachable portrait of a middle-aged female psychologist with soft curly hair. She is smiling gently in a bright, modern office with soft natural lighting and light purple accent walls. The overall mood is welcoming and professional." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDkUgd1DCSo6m_CyRExoptgSGC75kPv5L9Xb2rA9A2QIYQzqHvIX5rhnWIZ981pXO0aVlEV0FfwCu623oyGiLmGaH7izK0xoMJ1p5JllsArtsf-6H6vbd3zc9xKZ2WgEJ3fmPiAkJ-9vcj4SIQ5cyCF1jgNopIsYM-5T3SaZmS_dFa5K88X3j9ZHDi0QKPUf3rRpilArCS9Pn7ht7Oa7YYeNWt0EiUg09X3VgRPCEK-3uXC6WwXa-RmTQ">
+</div>
+<div class="flex flex-col">
+<h2 class="font-headline-md text-headline-md-mobile text-on-surface leading-tight">Dr. Sarah Jenkins</h2>
+<p class="font-body-md text-body-md text-tertiary">Clinical Psychologist</p>
+<div class="flex items-center gap-1 mt-1 text-primary">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-label-md text-label-md">4.9</span>
+<span class="font-caption text-caption text-outline ml-1">(124 sessions)</span>
+</div>
+</div>
+</div>
+<div class="flex justify-between items-center pt-2 border-t border-outline-variant/30 border-dashed mt-2">
+<div class="flex flex-col">
+<span class="font-caption text-caption text-outline">Session Rate</span>
+<span class="font-label-md text-label-md text-on-surface">$120 / hr</span>
+</div>
+<button class="bg-primary text-on-primary font-label-md text-label-md px-6 py-2 rounded-full shadow-[0_4px_12px_rgba(95,78,165,0.25)] hover:shadow-[0_6px_16px_rgba(95,78,165,0.3)] transition-all">Book Now</button>
+</div>
+</div>
+<!-- Expert Card 2 -->
+<div class="bg-surface-container-lowest rounded-[24px] p-4 soft-shadow flex flex-col gap-4 relative">
+<div class="absolute top-4 right-4 bg-surface-variant text-on-surface-variant px-2 py-1 rounded-md font-caption text-caption flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">calendar_month</span> Next Avail: Tomorrow
+            </div>
+<div class="flex gap-4 items-center">
+<div class="w-20 h-20 rounded-full overflow-hidden shrink-0 border-2 border-tertiary-fixed">
+<img class="w-full h-full object-cover" data-alt="A calm, friendly portrait of a young male stress coach with a neat beard. He is wearing a casual blue shirt, standing in a serene park setting with soft, blurry greenery in the background. The lighting is soft and natural." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD0zLZ8uDDM9J8OObHV7tcrkxZHYndVnz6BsaGK5L6N0NW_RMyAlQ4TXunBfSsQ_sxg98MplOZbXOEHeAd_Y7I-urNO_jzynfnqkN7HvgZ9JT5-B38_R4mGcdGc6_G8hj9Ao-rs4dK12GsnVm1T0ryQgO_eCrXnEkkxRYiObQyrRVB1UEHqI-5vYN5KqxD-Mcmn8PZAft5hUZqDbF-oqC_Fttdr0OrbIghdBrX6phZciCTszB76wrq9pA">
+</div>
+<div class="flex flex-col">
+<h2 class="font-headline-md text-headline-md-mobile text-on-surface leading-tight">Marcus Thorne</h2>
+<p class="font-body-md text-body-md text-tertiary">Certified Stress Coach</p>
+<div class="flex items-center gap-1 mt-1 text-primary">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-label-md text-label-md">4.7</span>
+<span class="font-caption text-caption text-outline ml-1">(89 sessions)</span>
+</div>
+</div>
+</div>
+<div class="flex justify-between items-center pt-2 border-t border-outline-variant/30 border-dashed mt-2">
+<div class="flex flex-col">
+<span class="font-caption text-caption text-outline">Session Rate</span>
+<span class="font-label-md text-label-md text-on-surface">$85 / hr</span>
+</div>
+<button class="bg-primary text-on-primary font-label-md text-label-md px-6 py-2 rounded-full shadow-[0_4px_12px_rgba(95,78,165,0.25)] hover:shadow-[0_6px_16px_rgba(95,78,165,0.3)] transition-all">View Profile</button>
+</div>
+</div>
+<!-- Expert Card 3 -->
+<div class="bg-surface-container-lowest rounded-[24px] p-4 soft-shadow flex flex-col gap-4 relative">
+<div class="flex gap-4 items-center">
+<div class="w-20 h-20 rounded-full overflow-hidden shrink-0 border-2 border-primary-fixed">
+<img class="w-full h-full object-cover" data-alt="A serene portrait of an older female holistic therapist. She has grey hair and is wearing a soft beige cardigan. The background is a tranquil, dimly lit room with subtle warm lamps. The mood is deeply comforting and empathetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCt7gaUlbXZdAVd-_k17h643nfAPRrk1yhPAZjwVZVEnmw-AQVZhr56bgO5pXJyZna0WlQIYI-KO6ZSpGmqBfOoNTIrn1HCnZtIcnioG1z75GklFuW4R4nT7OL1HFIoPSFPgfgLPDX5F25eef-ZHe0IwNkWDDU7018aKz6P0RHrECoHNIylcqZ3xZ1_VbH7y0X0o7gB8tQAMGz7isP7hEba-BKE624YoYILK2Tn81YXoTs5dX64JgdtCA">
+</div>
+<div class="flex flex-col">
+<h2 class="font-headline-md text-headline-md-mobile text-on-surface leading-tight">Elena Rostova</h2>
+<p class="font-body-md text-body-md text-tertiary">Holistic Therapist</p>
+<div class="flex items-center gap-1 mt-1 text-primary">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-label-md text-label-md">5.0</span>
+<span class="font-caption text-caption text-outline ml-1">(210 sessions)</span>
+</div>
+</div>
+</div>
+<div class="flex justify-between items-center pt-2 border-t border-outline-variant/30 border-dashed mt-2">
+<div class="flex flex-col">
+<span class="font-caption text-caption text-outline">Session Rate</span>
+<span class="font-label-md text-label-md text-on-surface">$150 / hr</span>
+</div>
+<button class="bg-primary text-on-primary font-label-md text-label-md px-6 py-2 rounded-full shadow-[0_4px_12px_rgba(95,78,165,0.25)] hover:shadow-[0_6px_16px_rgba(95,78,165,0.3)] transition-all">Book Now</button>
+</div>
+</div>
+</main>
+<!-- Bottom Nav Bar Mobile-->
+<nav class="fixed bottom-0 w-full rounded-t-xl z-50 bg-surface/80 backdrop-blur-lg border-t border-outline-variant/30 shadow-[0_-4px_20px_rgba(124,107,196,0.08)] flex justify-around items-center h-20 px-4 pb-safe md:hidden">
+<div class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary active:scale-90 transition-all cursor-pointer">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-md text-label-md">Home</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary active:scale-90 transition-all cursor-pointer">
+<span class="material-symbols-outlined">auto_stories</span>
+<span class="font-label-md text-label-md">Journey</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary active:scale-90 transition-all cursor-pointer">
+<span class="material-symbols-outlined">chat_bubble</span>
+<span class="font-label-md text-label-md">AI Chat</span>
+</div>
+<!-- Active State for Professional Care (maps closest to Resources in this limited mobile nav context, or perhaps leave none explicitly highlighted if it's a deep dive) -->
+<div class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full px-4 py-1 active:scale-90 transition-all cursor-pointer">
+<span class="material-symbols-outlined">local_library</span>
+<span class="font-label-md text-label-md">Resources</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary active:scale-90 transition-all cursor-pointer">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label-md text-label-md">Profile</span>
+</div>
+</nav>
+</body></html>

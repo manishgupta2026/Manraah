@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Immediate Support - Manraah</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&amp;family=Work+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-error-container": "#93000a",
+                        "inverse-surface": "#322e41",
+                        "surface-tint": "#6251a8",
+                        "secondary-fixed-dim": "#6adaba",
+                        "primary": "#5f4ea5",
+                        "on-surface": "#1d192b",
+                        "surface-container-low": "#f7f1ff",
+                        "on-error": "#ffffff",
+                        "primary-fixed-dim": "#cbbeff",
+                        "on-secondary": "#ffffff",
+                        "background": "#fdf7ff",
+                        "secondary-fixed": "#88f7d6",
+                        "on-primary-container": "#fffbff",
+                        "on-secondary-fixed": "#002018",
+                        "surface": "#fdf7ff",
+                        "outline-variant": "#cac4d3",
+                        "error": "#ba1a1a",
+                        "tertiary-fixed": "#ffd9e0",
+                        "primary-fixed": "#e6deff",
+                        "on-secondary-fixed-variant": "#005140",
+                        "tertiary-fixed-dim": "#ffb1c3",
+                        "inverse-on-surface": "#f5eeff",
+                        "surface-container": "#f2ebff",
+                        "surface-container-highest": "#e6dff8",
+                        "on-primary-fixed": "#1d0061",
+                        "surface-container-high": "#ece4fe",
+                        "primary-container": "#7867c0",
+                        "on-tertiary": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "outline": "#797582",
+                        "on-primary-fixed-variant": "#4a388e",
+                        "tertiary-container": "#a46172",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-fixed": "#38091a",
+                        "on-tertiary-container": "#fffbff",
+                        "on-secondary-container": "#00725c",
+                        "tertiary": "#874959",
+                        "surface-variant": "#e6dff8",
+                        "on-primary": "#ffffff",
+                        "surface-dim": "#ded6f0",
+                        "secondary-container": "#88f7d6",
+                        "inverse-primary": "#cbbeff",
+                        "secondary": "#006b56",
+                        "on-surface-variant": "#484551",
+                        "surface-bright": "#fdf7ff",
+                        "on-background": "#1d192b",
+                        "on-tertiary-fixed-variant": "#6e3444"
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.25rem",
+                        lg: "0.5rem",
+                        xl: "0.75rem",
+                        full: "9999px"
+                    },
+                    spacing: {
+                        "container-padding-desktop": "64px",
+                        base: "8px",
+                        xl: "80px",
+                        sm: "12px",
+                        md: "24px",
+                        xs: "4px",
+                        lg: "48px",
+                        "container-padding-mobile": "20px"
+                    },
+                    fontFamily: {
+                        "headline-md": ["Quicksand"],
+                        "label-md": ["Work Sans"],
+                        "body-md": ["Work Sans"],
+                        "display-lg": ["Quicksand"],
+                        "headline-lg": ["Quicksand"],
+                        "body-lg": ["Work Sans"],
+                        caption: ["Work Sans"],
+                        "headline-lg-mobile": ["Quicksand"]
+                    },
+                    fontSize: {
+                        "headline-md": ["24px", { lineHeight: "32px", fontWeight: "600" }],
+                        "label-md": ["14px", { lineHeight: "20px", letterSpacing: "0.01em", fontWeight: "600" }],
+                        "body-md": ["16px", { lineHeight: "24px", fontWeight: "400" }],
+                        "display-lg": ["48px", { lineHeight: "56px", letterSpacing: "-0.02em", fontWeight: "700" }],
+                        "headline-lg": ["32px", { lineHeight: "40px", fontWeight: "600" }],
+                        "body-lg": ["18px", { lineHeight: "28px", fontWeight: "400" }],
+                        caption: ["12px", { lineHeight: "16px", fontWeight: "400" }],
+                        "headline-lg-mobile": ["28px", { lineHeight: "36px", fontWeight: "600" }]
+                    },
+                    boxShadow: {
+                        'ambient': '0 10px 30px -10px rgba(124, 107, 196, 0.08), 0 4px 10px -5px rgba(124, 107, 196, 0.05)'
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .pulse-bg {
+            animation: pulse-soft 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse-soft {
+            0%, 100% { background-color: #fdf7ff; }
+            50% { background-color: #f7f1ff; }
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface font-body-md min-h-screen flex flex-col pulse-bg">
+<!-- Top Bar -->
+<header class="flex justify-between items-center p-container-padding-mobile pt-safe pt-8 z-10">
+<button class="text-on-surface-variant hover:text-primary transition-colors active:scale-95">
+<span class="material-symbols-outlined text-3xl">arrow_back</span>
+</button>
+<span class="font-headline-md text-headline-md text-primary">Immediate Support</span>
+<div class="w-8"></div> <!-- Spacer for alignment -->
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-1 flex flex-col px-container-padding-mobile pb-xl">
+<!-- Reassuring Header -->
+<div class="flex flex-col items-center text-center mt-md mb-lg">
+<div class="w-20 h-20 rounded-full bg-primary-container/20 flex items-center justify-center mb-sm shadow-ambient">
+<span class="material-symbols-outlined text-4xl text-primary" style="font-variation-settings: 'FILL' 1;">favorite</span>
+</div>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mb-sm px-4">
+                You're not alone.
+            </h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-[300px]">
+                Let's get you the support you need right now.
+            </p>
+</div>
+<!-- Action Cards -->
+<div class="flex flex-col gap-sm flex-1">
+<!-- Primary Action: Chat -->
+<button class="bg-primary text-on-primary rounded-[24px] p-md flex items-center shadow-ambient hover:shadow-md active:scale-95 transition-all duration-300 group relative overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="w-12 h-12 rounded-full bg-on-primary/20 flex items-center justify-center mr-md shrink-0">
+<span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">chat_bubble</span>
+</div>
+<div class="text-left flex-1">
+<h3 class="font-label-md text-label-md text-lg mb-xs">Talk to someone now</h3>
+<p class="font-body-md text-sm text-primary-fixed-dim">Connect with a trained companion</p>
+</div>
+<span class="material-symbols-outlined text-primary-fixed-dim group-hover:translate-x-1 transition-transform">chevron_right</span>
+</button>
+<!-- Secondary Action: Helpline -->
+<button class="bg-surface-container-lowest text-on-surface rounded-[24px] p-md flex items-center shadow-ambient hover:shadow-md active:scale-95 transition-all duration-300 group border border-outline-variant/10">
+<div class="w-12 h-12 rounded-full bg-secondary-container/30 flex items-center justify-center mr-md shrink-0 text-secondary">
+<span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">call</span>
+</div>
+<div class="text-left flex-1">
+<h3 class="font-label-md text-label-md text-lg mb-xs">Call a Helpline</h3>
+<p class="font-body-md text-sm text-on-surface-variant">Speak with a professional directly</p>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant group-hover:translate-x-1 transition-transform">chevron_right</span>
+</button>
+<!-- Tertiary Action: Friend -->
+<button class="bg-surface-container-lowest text-on-surface rounded-[24px] p-md flex items-center shadow-ambient hover:shadow-md active:scale-95 transition-all duration-300 group border border-outline-variant/10">
+<div class="w-12 h-12 rounded-full bg-tertiary-container/20 flex items-center justify-center mr-md shrink-0 text-tertiary">
+<span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">people</span>
+</div>
+<div class="text-left flex-1">
+<h3 class="font-label-md text-label-md text-lg mb-xs">Message a Trusted Friend</h3>
+<p class="font-body-md text-sm text-on-surface-variant">Reach out to your pre-selected contacts</p>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant group-hover:translate-x-1 transition-transform">chevron_right</span>
+</button>
+</div>
+<!-- Dismiss Button -->
+<div class="mt-lg mb-xl flex justify-center pb-20">
+<button class="font-label-md text-label-md text-on-surface-variant hover:text-primary py-sm px-lg rounded-full hover:bg-surface-variant/50 transition-colors active:scale-95">
+                I'm okay now
+            </button>
+</div>
+</main>
+<!-- Bottom Navigation Bar (from JSON) -->
+<!-- Suppressed due to task-focused/transactional nature of an SOS screen. 
+         The guidelines strictly say: "Automatic Suppression: You MUST exclude the navigation shell if the page intent is: Linear/Transactional... Task-Focused: Any sub-page featuring a 'Close' or 'Back' action that implies a temporary departure from the main navigation flow."
+         An Immediate Support (SOS) screen perfectly fits this suppression criteria. 
+         Therefore, rendering the bottom nav here would violate the semantic shell mandate.
+    -->
+</body></html>

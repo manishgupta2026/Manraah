@@ -1,0 +1,321 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Therapist Profile - Manraah</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400..700&amp;family=Work+Sans:wght@400..700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-container": "#f2ebff",
+                      "on-surface": "#1d192b",
+                      "on-primary-fixed-variant": "#4a388e",
+                      "on-error": "#ffffff",
+                      "on-secondary-fixed-variant": "#005140",
+                      "surface-dim": "#ded6f0",
+                      "primary-container": "#7867c0",
+                      "on-tertiary": "#ffffff",
+                      "primary-fixed": "#e6deff",
+                      "error": "#ba1a1a",
+                      "surface-bright": "#fdf7ff",
+                      "inverse-on-surface": "#f5eeff",
+                      "tertiary-fixed": "#ffd9e0",
+                      "background": "#fdf7ff",
+                      "outline": "#797582",
+                      "surface-tint": "#6251a8",
+                      "on-secondary": "#ffffff",
+                      "surface-container-low": "#f7f1ff",
+                      "tertiary": "#874959",
+                      "on-tertiary-container": "#fffbff",
+                      "outline-variant": "#cac4d3",
+                      "on-primary-fixed": "#1d0061",
+                      "on-primary": "#ffffff",
+                      "primary": "#5f4ea5",
+                      "tertiary-container": "#a46172",
+                      "on-background": "#1d192b",
+                      "tertiary-fixed-dim": "#ffb1c3",
+                      "on-surface-variant": "#484551",
+                      "surface-container-highest": "#e6dff8",
+                      "primary-fixed-dim": "#cbbeff",
+                      "secondary-fixed": "#88f7d6",
+                      "surface-container-lowest": "#ffffff",
+                      "secondary": "#006b56",
+                      "inverse-primary": "#cbbeff",
+                      "surface-variant": "#e6dff8",
+                      "on-secondary-container": "#00725c",
+                      "on-primary-container": "#fffbff",
+                      "secondary-fixed-dim": "#6adaba",
+                      "secondary-container": "#88f7d6",
+                      "on-tertiary-fixed-variant": "#6e3444",
+                      "on-tertiary-fixed": "#38091a",
+                      "inverse-surface": "#322e41",
+                      "error-container": "#ffdad6",
+                      "on-secondary-fixed": "#002018",
+                      "surface": "#fdf7ff",
+                      "surface-container-high": "#ece4fe",
+                      "on-error-container": "#93000a"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px",
+                      "2xl": "1.5rem"
+              },
+              "spacing": {
+                      "xs": "4px",
+                      "md": "24px",
+                      "container-padding-mobile": "20px",
+                      "container-padding-desktop": "64px",
+                      "base": "8px",
+                      "sm": "12px",
+                      "lg": "48px",
+                      "xl": "80px"
+              },
+              "fontFamily": {
+                      "label-md": [
+                              "Work Sans"
+                      ],
+                      "headline-lg-mobile": [
+                              "Quicksand"
+                      ],
+                      "caption": [
+                              "Work Sans"
+                      ],
+                      "headline-md": [
+                              "Quicksand"
+                      ],
+                      "display-lg": [
+                              "Quicksand"
+                      ],
+                      "headline-lg": [
+                              "Quicksand"
+                      ],
+                      "body-md": [
+                              "Work Sans"
+                      ],
+                      "body-lg": [
+                              "Work Sans"
+                      ]
+              },
+              "fontSize": {
+                      "label-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "letterSpacing": "0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-lg-mobile": [
+                              "28px",
+                              {
+                                      "lineHeight": "36px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "caption": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "display-lg": [
+                              "48px",
+                              {
+                                      "lineHeight": "56px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "400"
+                              }
+                      ]
+              }
+            },
+          }
+        }
+      </script>
+</head>
+<body class="bg-background text-on-background font-body-md text-body-md antialiased pb-24 md:pb-0">
+<!-- Top App Bar for Mobile (Transactional/Sub-page) -->
+<header class="fixed top-0 w-full bg-surface/80 backdrop-blur-md z-40 px-container-padding-mobile h-16 flex items-center justify-between shadow-sm shadow-primary/5 md:hidden">
+<button aria-label="Go back" class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined text-on-surface">arrow_back</span>
+</button>
+<span class="font-headline-md text-headline-md text-on-surface">Profile</span>
+<button aria-label="Share profile" class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined text-on-surface">share</span>
+</button>
+</header>
+<main class="pt-20 px-container-padding-mobile md:px-container-padding-desktop max-w-3xl mx-auto md:pt-10">
+<!-- Header Profile -->
+<section class="flex flex-col items-center mb-lg">
+<div class="relative mb-sm">
+<img class="w-32 h-32 rounded-full object-cover shadow-[0_8px_30px_rgba(124,107,196,0.15)] border-4 border-surface-container-lowest" data-alt="A warm, professional portrait of a female clinical psychologist, Dr. Sarah Jenkins, in her late 30s. She has a welcoming smile and is dressed in soft, approachable neutral tones. The background is a gently blurred, bright modern clinic setting with subtle natural light and soft peach tones, reflecting a compassionate and modern wellness sanctuary aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBl7jLFKi2rZyLTit057Uwg_sfeA5HMwzcHnbQM-WPc-d_YlmQbAjQPXy6dBdnDi74eXHvJbr2m3Egc0aCJRwS5Ok6-0tYdf4hj4WD6TgGneKVlI0rd3u-aBBk4t09k9HizKRFqJRhBBnNJkj4RqW0R52RDs_gYfkekNiwV-XBOzyX9jCJdEJBYrQJOI40NOQiAICmiv0_50ABxZH12Gr919hWMIf-NrmzcwBddw3t8CFt4_UGQjQj1pQ">
+<div aria-label="Online status" class="absolute bottom-1 right-1 w-6 h-6 bg-secondary rounded-full border-2 border-surface-container-lowest flex items-center justify-center">
+<span class="block w-2.5 h-2.5 bg-surface-container-lowest rounded-full"></span>
+</div>
+</div>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface text-center mb-1">Dr. Sarah Jenkins</h1>
+<p class="font-body-md text-body-md text-on-surface-variant text-center mb-md">Clinical Psychologist</p>
+<!-- Summary Stats -->
+<div class="flex justify-center gap-6 w-full max-w-xs mx-auto">
+<div class="flex flex-col items-center">
+<div class="flex items-center gap-1 mb-1">
+<span class="material-symbols-outlined text-tertiary-container" style="font-variation-settings: 'FILL' 1; font-size: 18px;">star</span>
+<span class="font-label-md text-label-md text-on-surface">4.9</span>
+</div>
+<span class="font-caption text-caption text-on-surface-variant">Rating</span>
+</div>
+<div class="w-px h-8 bg-outline-variant/30"></div>
+<div class="flex flex-col items-center">
+<span class="font-label-md text-label-md text-on-surface mb-1">124</span>
+<span class="font-caption text-caption text-on-surface-variant">Sessions</span>
+</div>
+<div class="w-px h-8 bg-outline-variant/30"></div>
+<div class="flex flex-col items-center">
+<span class="font-label-md text-label-md text-on-surface mb-1">$120</span>
+<span class="font-caption text-caption text-on-surface-variant">Hourly</span>
+</div>
+</div>
+</section>
+<!-- Bio & Credentials Grid -->
+<section class="grid grid-cols-1 md:grid-cols-2 gap-md mb-lg">
+<!-- Bio Card -->
+<div class="bg-surface-container-lowest rounded-[24px] p-6 shadow-[0_4px_40px_rgba(124,107,196,0.06)]">
+<h2 class="font-headline-md text-headline-md text-on-surface mb-3 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">person</span> About
+                </h2>
+<p class="font-body-md text-body-md text-on-surface-variant mb-4">
+                    Dr. Jenkins specializes in evidence-based treatments for anxiety, depression, and stress management. She brings a warm, empathetic approach to cognitive behavioral therapy, helping clients build resilience.
+                </p>
+<div class="flex flex-wrap gap-2">
+<span class="bg-tertiary-container/15 text-tertiary-container px-3 py-1 rounded-full font-label-md text-label-md">Anxiety</span>
+<span class="bg-tertiary-container/15 text-tertiary-container px-3 py-1 rounded-full font-label-md text-label-md">Stress</span>
+<span class="bg-tertiary-container/15 text-tertiary-container px-3 py-1 rounded-full font-label-md text-label-md">CBT</span>
+</div>
+</div>
+<!-- Credentials Card -->
+<div class="bg-surface-container-lowest rounded-[24px] p-6 shadow-[0_4px_40px_rgba(124,107,196,0.06)]">
+<h2 class="font-headline-md text-headline-md text-on-surface mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">verified</span> Credentials
+                </h2>
+<ul class="space-y-4">
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-outline-variant mt-0.5">school</span>
+<div>
+<p class="font-label-md text-label-md text-on-surface">Ph.D. in Clinical Psychology</p>
+<p class="font-caption text-caption text-on-surface-variant">Stanford University</p>
+</div>
+</li>
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-outline-variant mt-0.5">card_membership</span>
+<div>
+<p class="font-label-md text-label-md text-on-surface">Licensed Psychologist</p>
+<p class="font-caption text-caption text-on-surface-variant">State Board of Psychology</p>
+</div>
+</li>
+</ul>
+</div>
+</section>
+<!-- Booking Section -->
+<section class="bg-surface-container-lowest rounded-[24px] p-6 shadow-[0_4px_40px_rgba(124,107,196,0.08)] mb-lg relative overflow-hidden">
+<!-- Soft decorative glow -->
+<div class="absolute top-0 right-0 w-32 h-32 bg-tertiary-container/5 rounded-full blur-3xl -mr-10 -mt-10"></div>
+<h2 class="font-headline-md text-headline-md text-on-surface mb-6">Pick a Time</h2>
+<!-- Session Type Toggle -->
+<div class="flex bg-surface-container p-1 rounded-full mb-6 relative w-full max-w-xs mx-auto">
+<!-- Active Indicator (Requires JS for sliding in real app, hardcoded here) -->
+<div class="absolute inset-y-1 left-1 w-[calc(50%-4px)] bg-surface-container-lowest shadow-sm rounded-full transition-transform"></div>
+<button class="flex-1 relative z-10 py-2 flex items-center justify-center gap-2 font-label-md text-label-md text-on-surface">
+<span class="material-symbols-outlined" style="font-size: 20px;">videocam</span> Video
+                </button>
+<button class="flex-1 relative z-10 py-2 flex items-center justify-center gap-2 font-label-md text-label-md text-on-surface-variant">
+<span class="material-symbols-outlined" style="font-size: 20px;">call</span> Voice
+                </button>
+</div>
+<!-- Date Scroller -->
+<div class="flex overflow-x-auto gap-3 pb-2 mb-4 -mx-2 px-2 scrollbar-hide snap-x">
+<!-- Selected Day -->
+<button class="snap-start flex-none flex flex-col items-center justify-center w-16 h-20 bg-primary text-on-primary rounded-[16px] shadow-sm shadow-primary/20">
+<span class="font-caption text-caption opacity-80 mb-1">Mon</span>
+<span class="font-headline-md text-headline-md">12</span>
+</button>
+<!-- Inactive Days -->
+<button class="snap-start flex-none flex flex-col items-center justify-center w-16 h-20 bg-surface-container-low text-on-surface-variant rounded-[16px] border border-transparent hover:border-outline-variant/30 transition-colors">
+<span class="font-caption text-caption mb-1">Tue</span>
+<span class="font-label-md text-label-md">13</span>
+</button>
+<button class="snap-start flex-none flex flex-col items-center justify-center w-16 h-20 bg-surface-container-low text-on-surface-variant rounded-[16px] border border-transparent hover:border-outline-variant/30 transition-colors">
+<span class="font-caption text-caption mb-1">Wed</span>
+<span class="font-label-md text-label-md">14</span>
+</button>
+<button class="snap-start flex-none flex flex-col items-center justify-center w-16 h-20 bg-surface-container-low text-on-surface-variant rounded-[16px] border border-transparent hover:border-outline-variant/30 transition-colors">
+<span class="font-caption text-caption mb-1">Thu</span>
+<span class="font-label-md text-label-md">15</span>
+</button>
+<button class="snap-start flex-none flex flex-col items-center justify-center w-16 h-20 bg-surface-container-low text-on-surface-variant rounded-[16px] border border-transparent hover:border-outline-variant/30 transition-colors">
+<span class="font-caption text-caption mb-1">Fri</span>
+<span class="font-label-md text-label-md">16</span>
+</button>
+</div>
+<!-- Time Slots Grid -->
+<div class="grid grid-cols-3 gap-3">
+<button class="py-2.5 rounded-[12px] bg-surface-container-low text-on-surface-variant font-label-md text-label-md border border-transparent hover:bg-surface-variant transition-colors">09:00 AM</button>
+<button class="py-2.5 rounded-[12px] bg-primary-container text-on-primary-container font-label-md text-label-md shadow-sm">10:30 AM</button>
+<button class="py-2.5 rounded-[12px] bg-surface-container-low text-on-surface-variant font-label-md text-label-md border border-transparent hover:bg-surface-variant transition-colors">11:00 AM</button>
+<button class="py-2.5 rounded-[12px] bg-surface-container-low text-on-surface-variant font-label-md text-label-md border border-transparent hover:bg-surface-variant transition-colors">01:00 PM</button>
+<button class="py-2.5 rounded-[12px] bg-surface-container-low text-on-surface-variant font-label-md text-label-md border border-transparent hover:bg-surface-variant transition-colors opacity-50 cursor-not-allowed">02:30 PM</button>
+<button class="py-2.5 rounded-[12px] bg-surface-container-low text-on-surface-variant font-label-md text-label-md border border-transparent hover:bg-surface-variant transition-colors">04:00 PM</button>
+</div>
+</section>
+<!-- Bottom Action Area (Sticky on Mobile) -->
+<div class="fixed bottom-0 left-0 w-full p-4 bg-surface/90 backdrop-blur-lg border-t border-outline-variant/20 md:static md:bg-transparent md:border-0 md:p-0 md:mt-lg z-30">
+<button class="w-full bg-gradient-to-br from-primary to-primary-container text-on-primary py-4 rounded-full font-label-md text-label-md shadow-lg shadow-primary/20 active:scale-[0.98] transition-transform flex items-center justify-center gap-2">
+                Confirm Booking <span class="material-symbols-outlined" style="font-size: 20px;">arrow_forward</span>
+</button>
+</div>
+</main>
+<style>
+        /* Utility for hiding scrollbar in scroller */
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</body></html>

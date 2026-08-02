@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+<title>Manraah - Personalize Your Sanctuary</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@600;700&amp;family=Work+Sans:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "error": "#ba1a1a",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary-fixed": "#38091a",
+                        "on-secondary-fixed-variant": "#005140",
+                        "error-container": "#ffdad6",
+                        "surface-bright": "#fdf7ff",
+                        "surface-container": "#f2ebff",
+                        "outline": "#797582",
+                        "surface-container-highest": "#e6dff8",
+                        "tertiary-fixed-dim": "#ffb1c3",
+                        "on-secondary-fixed": "#002018",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-container": "#00725c",
+                        "secondary-fixed": "#88f7d6",
+                        "surface-dim": "#ded6f0",
+                        "surface-container-high": "#ece4fe",
+                        "surface-variant": "#e6dff8",
+                        "on-error-container": "#93000a",
+                        "secondary-container": "#88f7d6",
+                        "on-surface-variant": "#484551",
+                        "on-primary-fixed-variant": "#4a388e",
+                        "surface-container-low": "#f7f1ff",
+                        "on-tertiary-container": "#fffbff",
+                        "surface-tint": "#6251a8",
+                        "on-primary-fixed": "#1d0061",
+                        "inverse-primary": "#cbbeff",
+                        "on-tertiary-fixed-variant": "#6e3444",
+                        "primary-fixed": "#e6deff",
+                        "surface": "#fdf7ff",
+                        "on-primary": "#ffffff",
+                        "tertiary-container": "#a46172",
+                        "secondary": "#006b56",
+                        "on-background": "#1d192b",
+                        "on-surface": "#1d192b",
+                        "primary-container": "#7867c0",
+                        "on-primary-container": "#fffbff",
+                        "primary-fixed-dim": "#cbbeff",
+                        "primary": "#5f4ea5",
+                        "tertiary": "#874959",
+                        "inverse-on-surface": "#f5eeff",
+                        "tertiary-fixed": "#ffd9e0",
+                        "secondary-fixed-dim": "#6adaba",
+                        "background": "#fdf7ff",
+                        "on-error": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "outline-variant": "#cac4d3",
+                        "inverse-surface": "#322e41"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xs": "4px",
+                        "container-padding-desktop": "64px",
+                        "xl": "80px",
+                        "sm": "12px",
+                        "lg": "48px",
+                        "base": "8px",
+                        "md": "24px",
+                        "container-padding-mobile": "20px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Quicksand"],
+                        "body-md": ["Work Sans"],
+                        "label-md": ["Work Sans"],
+                        "headline-md": ["Quicksand"],
+                        "headline-lg-mobile": ["Quicksand"],
+                        "display-lg": ["Quicksand"],
+                        "body-lg": ["Work Sans"],
+                        "caption": ["Work Sans"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "caption": ["12px", { "lineHeight": "16px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        
+        .ambient-shadow {
+            box-shadow: 0 8px 32px -8px rgba(124, 107, 196, 0.08), 0 4px 16px -4px rgba(124, 107, 196, 0.04);
+        }
+
+        .ambient-shadow-active {
+            box-shadow: 0 12px 48px -12px rgba(124, 107, 196, 0.15), 0 8px 24px -8px rgba(124, 107, 196, 0.08);
+            border: 1px solid rgba(120, 103, 192, 0.2);
+        }
+        
+        .glass-blur {
+            backdrop-filter: blur(20px);
+            background-color: rgba(253, 247, 255, 0.6);
+        }
+
+        /* Hide scrollbar for clean mobile view */
+        ::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface font-body-md min-h-screen flex flex-col relative pb-safe">
+<!-- Top App Bar / Progress -->
+<header class="glass-blur sticky top-0 z-40 px-container-padding-mobile pt-safe pb-4 flex flex-col gap-4">
+<div class="flex items-center justify-between pt-4">
+<button aria-label="Go back" class="p-2 -ml-2 rounded-full hover:bg-surface-variant transition-colors text-on-surface-variant">
+<span class="material-symbols-outlined text-[24px]">arrow_back</span>
+</button>
+<span class="font-label-md text-label-md text-primary">Step 2 of 4</span>
+<div class="w-[40px]"></div> <!-- Spacer for centering -->
+</div>
+<!-- Progress Bar -->
+<div class="w-full h-3 bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-secondary rounded-full transition-all duration-500 ease-out w-1/2"></div>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="flex-grow flex flex-col px-container-padding-mobile pt-lg pb-[120px]">
+<!-- Header Section -->
+<div class="mb-lg">
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mb-sm">Help us personalize your sanctuary</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant">What are your main intentions for joining Manraah? Select all that apply to guide your journey.</p>
+</div>
+<!-- Goal Selection Grid -->
+<div class="grid grid-cols-1 gap-md">
+<!-- Card 1 -->
+<label class="cursor-pointer group">
+<input class="peer sr-only" type="checkbox"/>
+<div class="bg-surface-container-lowest rounded-[24px] p-4 flex items-start gap-4 ambient-shadow transition-all duration-300 peer-checked:ambient-shadow-active peer-checked:bg-primary-fixed">
+<div class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center text-primary group-hover:scale-105 transition-transform shrink-0 peer-checked:bg-primary peer-checked:text-on-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">self_improvement</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface mb-1">Manage Stress &amp; Anxiety</span>
+<span class="font-body-md text-body-md text-on-surface-variant text-sm">Find calm through guided breathing and soothing soundscapes.</span>
+</div>
+<div class="ml-auto mt-2 w-6 h-6 rounded-full border-2 border-outline-variant flex items-center justify-center peer-checked:border-primary peer-checked:bg-primary">
+<span class="material-symbols-outlined text-[16px] text-on-primary opacity-0 peer-checked:opacity-100 transition-opacity">check</span>
+</div>
+</div>
+</label>
+<!-- Card 2 -->
+<label class="cursor-pointer group">
+<input class="peer sr-only" type="checkbox"/>
+<div class="bg-surface-container-lowest rounded-[24px] p-4 flex items-start gap-4 ambient-shadow transition-all duration-300 peer-checked:ambient-shadow-active peer-checked:bg-primary-fixed">
+<div class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center text-primary group-hover:scale-105 transition-transform shrink-0 peer-checked:bg-primary peer-checked:text-on-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">bedtime</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface mb-1">Improve Sleep Quality</span>
+<span class="font-body-md text-body-md text-on-surface-variant text-sm">Establish routines for deeper, more restorative rest.</span>
+</div>
+<div class="ml-auto mt-2 w-6 h-6 rounded-full border-2 border-outline-variant flex items-center justify-center peer-checked:border-primary peer-checked:bg-primary">
+<span class="material-symbols-outlined text-[16px] text-on-primary opacity-0 peer-checked:opacity-100 transition-opacity">check</span>
+</div>
+</div>
+</label>
+<!-- Card 3 -->
+<label class="cursor-pointer group">
+<input class="peer sr-only" type="checkbox"/>
+<div class="bg-surface-container-lowest rounded-[24px] p-4 flex items-start gap-4 ambient-shadow transition-all duration-300 peer-checked:ambient-shadow-active peer-checked:bg-primary-fixed">
+<div class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center text-primary group-hover:scale-105 transition-transform shrink-0 peer-checked:bg-primary peer-checked:text-on-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">groups</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface mb-1">Find Community</span>
+<span class="font-body-md text-body-md text-on-surface-variant text-sm">Connect with others sharing similar wellness journeys.</span>
+</div>
+<div class="ml-auto mt-2 w-6 h-6 rounded-full border-2 border-outline-variant flex items-center justify-center peer-checked:border-primary peer-checked:bg-primary">
+<span class="material-symbols-outlined text-[16px] text-on-primary opacity-0 peer-checked:opacity-100 transition-opacity">check</span>
+</div>
+</div>
+</label>
+<!-- Card 4 -->
+<label class="cursor-pointer group">
+<input class="peer sr-only" type="checkbox"/>
+<div class="bg-surface-container-lowest rounded-[24px] p-4 flex items-start gap-4 ambient-shadow transition-all duration-300 peer-checked:ambient-shadow-active peer-checked:bg-primary-fixed">
+<div class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center text-primary group-hover:scale-105 transition-transform shrink-0 peer-checked:bg-primary peer-checked:text-on-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">medical_services</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface mb-1">Professional Support</span>
+<span class="font-body-md text-body-md text-on-surface-variant text-sm">Access clinical guidance and expert care when needed.</span>
+</div>
+<div class="ml-auto mt-2 w-6 h-6 rounded-full border-2 border-outline-variant flex items-center justify-center peer-checked:border-primary peer-checked:bg-primary">
+<span class="material-symbols-outlined text-[16px] text-on-primary opacity-0 peer-checked:opacity-100 transition-opacity">check</span>
+</div>
+</div>
+</label>
+</div>
+</main>
+<!-- Bottom Action Area -->
+<footer class="fixed bottom-0 w-full glass-blur px-container-padding-mobile py-md pb-safe border-t border-outline-variant/20 z-50 flex flex-col gap-sm">
+<button class="w-full bg-primary hover:bg-surface-tint text-on-primary font-label-md text-label-md py-4 rounded-full flex items-center justify-center gap-2 ambient-shadow transition-all active:scale-95 duration-200">
+            Continue
+            <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+</button>
+<button class="w-full text-on-surface-variant font-label-md text-label-md py-3 rounded-full hover:bg-surface-variant/50 transition-colors">
+            Skip for now
+        </button>
+</footer>
+<!-- Note: Suppressed navigation shell (BottomNavBar/SideNavBar) as per mandatory instructions for transactional/onboarding flow -->
+</body></html>

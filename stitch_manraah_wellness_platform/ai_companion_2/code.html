@@ -1,0 +1,332 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Manraah - AI Companion Chat</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@600;700&amp;family=Work+Sans:wght@400;600&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-container-highest": "#e6dff8",
+                      "on-primary-fixed-variant": "#4a388e",
+                      "on-error-container": "#93000a",
+                      "surface-dim": "#ded6f0",
+                      "secondary-container": "#88f7d6",
+                      "primary-container": "#7867c0",
+                      "tertiary-container": "#a46172",
+                      "on-secondary-fixed-variant": "#005140",
+                      "primary": "#5f4ea5",
+                      "surface-bright": "#fdf7ff",
+                      "on-tertiary-fixed": "#38091a",
+                      "tertiary-fixed": "#ffd9e0",
+                      "inverse-surface": "#322e41",
+                      "on-surface": "#1d192b",
+                      "inverse-primary": "#cbbeff",
+                      "outline-variant": "#cac4d3",
+                      "on-secondary-container": "#00725c",
+                      "background": "#fdf7ff",
+                      "on-secondary-fixed": "#002018",
+                      "surface": "#fdf7ff",
+                      "surface-variant": "#e6dff8",
+                      "surface-container": "#f2ebff",
+                      "on-primary-container": "#fffbff",
+                      "on-tertiary-fixed-variant": "#6e3444",
+                      "secondary": "#006b56",
+                      "primary-fixed-dim": "#cbbeff",
+                      "inverse-on-surface": "#f5eeff",
+                      "surface-container-lowest": "#ffffff",
+                      "surface-container-high": "#ece4fe",
+                      "on-primary-fixed": "#1d0061",
+                      "error": "#ba1a1a",
+                      "outline": "#797582",
+                      "on-secondary": "#ffffff",
+                      "on-error": "#ffffff",
+                      "error-container": "#ffdad6",
+                      "on-surface-variant": "#484551",
+                      "on-tertiary-container": "#fffbff",
+                      "tertiary-fixed-dim": "#ffb1c3",
+                      "surface-container-low": "#f7f1ff",
+                      "secondary-fixed": "#88f7d6",
+                      "tertiary": "#874959",
+                      "on-primary": "#ffffff",
+                      "primary-fixed": "#e6deff",
+                      "secondary-fixed-dim": "#6adaba",
+                      "on-background": "#1d192b",
+                      "surface-tint": "#6251a8",
+                      "on-tertiary": "#ffffff"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "lg": "48px",
+                      "container-padding-desktop": "64px",
+                      "xl": "80px",
+                      "xs": "4px",
+                      "md": "24px",
+                      "base": "8px",
+                      "sm": "12px",
+                      "container-padding-mobile": "20px"
+              },
+              "fontFamily": {
+                      "body-lg": ["Work Sans"],
+                      "caption": ["Work Sans"],
+                      "headline-md": ["Quicksand"],
+                      "display-lg": ["Quicksand"],
+                      "headline-lg-mobile": ["Quicksand"],
+                      "label-md": ["Work Sans"],
+                      "body-md": ["Work Sans"],
+                      "headline-lg": ["Quicksand"]
+              },
+              "fontSize": {
+                      "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                      "caption": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                      "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                      "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "600"}],
+                      "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}]
+              }
+            }
+          }
+        }
+    </script>
+<style>
+        /* Custom scrollbar for chat area to keep it clean */
+        .chat-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+        .chat-scroll::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .chat-scroll::-webkit-scrollbar-thumb {
+            background-color: rgba(202, 196, 211, 0.5); /* outline-variant */
+            border-radius: 9999px;
+        }
+        
+        /* Subtle breathing animation for avatar */
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        .animate-breathe {
+            animation: breathe 4s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body-md h-screen overflow-hidden flex">
+<!-- Shared Component: SideNavBar -->
+<nav class="bg-surface h-screen w-64 fixed left-0 top-0 shadow-md shadow-primary/5 flex flex-col py-md overflow-y-auto hidden md:flex border-r border-surface-container-low z-20">
+<!-- Brand Header -->
+<div class="px-md mb-lg flex items-center gap-sm">
+<div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">spa</span>
+</div>
+<div>
+<h1 class="font-display-lg text-[24px] leading-tight text-primary">Manraah</h1>
+<p class="font-caption text-caption text-on-surface-variant">Wellness Sanctuary</p>
+</div>
+</div>
+<!-- Navigation Links -->
+<ul class="flex flex-col gap-xs px-sm flex-1">
+<li>
+<a class="flex items-center gap-sm px-4 py-3 rounded-xl text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-md text-label-md">Home</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-sm px-4 py-3 rounded-xl text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95" href="#">
+<span class="material-symbols-outlined">insights</span>
+<span class="font-label-md text-label-md">My Journey</span>
+</a>
+</li>
+<!-- Active Tab: AI Companion -->
+<li>
+<a class="flex items-center gap-sm px-4 py-3 rounded-xl text-primary font-bold border-r-4 border-primary bg-primary-container/10 active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">smart_toy</span>
+<span class="font-label-md text-label-md">AI Companion</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-sm px-4 py-3 rounded-xl text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95" href="#">
+<span class="material-symbols-outlined">diversity_1</span>
+<span class="font-label-md text-label-md">Human Companion</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-sm px-4 py-3 rounded-xl text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95" href="#">
+<span class="material-symbols-outlined">medical_services</span>
+<span class="font-label-md text-label-md">Professional Care</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-sm px-4 py-3 rounded-xl text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95" href="#">
+<span class="material-symbols-outlined">mood</span>
+<span class="font-label-md text-label-md">Mood &amp; Check-in</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-sm px-4 py-3 rounded-xl text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95" href="#">
+<span class="material-symbols-outlined">edit_note</span>
+<span class="font-label-md text-label-md">Journal</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-sm px-4 py-3 rounded-xl text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95" href="#">
+<span class="material-symbols-outlined">self_improvement</span>
+<span class="font-label-md text-label-md">Meditation &amp; Sleep</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-sm px-4 py-3 rounded-xl text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95" href="#">
+<span class="material-symbols-outlined">groups</span>
+<span class="font-label-md text-label-md">Community</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-sm px-4 py-3 rounded-xl text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95" href="#">
+<span class="material-symbols-outlined">library_books</span>
+<span class="font-label-md text-label-md">Resources</span>
+</a>
+</li>
+</ul>
+<!-- Bottom Actions -->
+<div class="mt-auto px-sm flex flex-col gap-xs pt-4 border-t border-surface-container-low">
+<a class="flex items-center gap-sm px-4 py-3 rounded-xl text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95" href="#">
+<span class="material-symbols-outlined">assessment</span>
+<span class="font-label-md text-label-md">Reports</span>
+</a>
+<a class="flex items-center gap-sm px-4 py-3 rounded-xl text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+</div>
+</nav>
+<!-- Main Chat Canvas -->
+<main class="flex-1 flex flex-col md:ml-64 relative bg-surface-bright h-full">
+<!-- Chat Header -->
+<header class="flex items-center justify-between px-container-padding-mobile md:px-md py-4 bg-surface/80 backdrop-blur-xl border-b border-surface-container-lowest z-10 shadow-sm shadow-primary/5">
+<div class="flex items-center gap-4">
+<!-- Mobile Menu Toggle (Visible only on small screens) -->
+<button class="md:hidden text-on-surface-variant p-2 -ml-2">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<!-- Avatar & Status -->
+<div class="relative">
+<div class="w-12 h-12 rounded-full overflow-hidden border-2 border-surface-container-high bg-primary-fixed-dim flex items-center justify-center animate-breathe shadow-md shadow-primary/10">
+<img class="w-full h-full object-cover" data-alt="A soft, friendly, abstract 3D blob character serving as an AI avatar. It has a glowing, gentle lavender and teal gradient body, with a warm, minimalist digital aesthetic, set against a pristine white background. High-key lighting, modern wellness app style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB69CKxz_GjJeAJXjTjdb7QctkShuV_oDSHgrwCjpXzBjgoKoQSoZbsrrcMFwfzuEYb3ikZy8Dxsd7oq_ZvUauOh3SLbWVaZXOMsCckcmJ2MHuTOf5jY1pDGOb7eQFD3bbXOl8vJA45Ftu407ZaEV17IqBhplzs3THkiOpfImjEUfCikOwp2fys7v1eic8By_Fa4Ut1YxZ-UQZLtK4ap8ihjBIC28mI9QuhN4U1k2ZAT_NQym_C97z-bA">
+</div>
+<!-- Online indicator -->
+<div class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-secondary rounded-full border-2 border-surface"></div>
+</div>
+<div>
+<h2 class="font-headline-md text-[20px] text-on-surface m-0">Mana</h2>
+<p class="font-caption text-caption text-secondary flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">psychiatry</span>
+                        Here to listen
+                    </p>
+</div>
+</div>
+<!-- Header Actions -->
+<div class="flex items-center gap-2">
+<button class="p-2 rounded-full text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors">
+<span class="material-symbols-outlined">volume_up</span>
+</button>
+<button class="p-2 rounded-full text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</header>
+<!-- Chat History Scroll Area -->
+<div class="flex-1 overflow-y-auto px-container-padding-mobile md:px-container-padding-desktop py-lg chat-scroll flex flex-col gap-6 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-surface-container-low/50 via-surface-bright to-surface-bright">
+<!-- Date Divider -->
+<div class="flex justify-center my-2">
+<span class="font-caption text-caption text-on-surface-variant bg-surface-container px-3 py-1 rounded-full shadow-sm shadow-primary/5">Today, 10:42 AM</span>
+</div>
+<!-- AI Message -->
+<div class="flex items-end gap-sm max-w-[85%] md:max-w-[70%]">
+<div class="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 bg-primary-fixed-dim">
+<img class="w-full h-full object-cover" data-alt="A small icon version of the soft, friendly, abstract 3D blob AI avatar, glowing gently in lavender." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDAMKaI4ohtP5nZm3pGPRM-0IJ0PMR3F-v9uSFio0V44lm1iXkA7QY-VjmEkSb99Qs2TrgLehw265FFa1WcPbGS44dhGhAgA3DUz-ZIVtg-6PYQqF3AVzjyHNsXyPc6_5QqZ8qFmWxOQ7AsgqF9zRWDmJasZF1r-zrd-sApIlI-4ekz1LjPQClt523PQrgGoMr-YwooC8712RwhnbcMw5pmrmvAkoL24ThWfSb03Db87CijXskTNF7hxg">
+</div>
+<div class="bg-surface-container-high text-on-surface rounded-2xl rounded-bl-none p-4 shadow-sm shadow-primary/5">
+<p class="font-body-md text-body-md m-0">Hi there! I'm Mana. I noticed you checked in feeling a bit anxious earlier today. How are you holding up right now?</p>
+</div>
+</div>
+<!-- User Message -->
+<div class="flex items-end justify-end gap-sm max-w-[85%] md:max-w-[70%] self-end">
+<div class="bg-primary text-on-primary rounded-2xl rounded-br-none p-4 shadow-sm shadow-primary/10">
+<p class="font-body-md text-body-md m-0">I'm just feeling overwhelmed with work and everything else. It's hard to focus.</p>
+</div>
+</div>
+<!-- AI Message -->
+<div class="flex items-end gap-sm max-w-[85%] md:max-w-[70%]">
+<div class="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 bg-primary-fixed-dim">
+<img class="w-full h-full object-cover" data-alt="A small icon version of the soft, friendly, abstract 3D blob AI avatar, glowing gently in lavender." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAvoqGbgeQl2vuh25fJLZhLqAqFdE4StLEH-7rSBweM8NHsm_m0Us-7WKae6V9Vy-_PIW8amcpe7q2v8r8QO2PNvgJhBHb3z9CzbHAChKdmmjZCO-e3OteVdo5sqwwBXwPbSLbXBlrw4X2WfMikzL_IGYM4KWNk-WZCcz81kw1uAdOLSSmzV45q6LShRcX4wTmxuf7_bDtAkXuUKol1wwTKCccVEcJOTnpSx0Jvr8w51vpF-rTANWl2EQ">
+</div>
+<div class="bg-surface-container-high text-on-surface rounded-2xl rounded-bl-none p-4 shadow-sm shadow-primary/5">
+<p class="font-body-md text-body-md m-0 mb-2">I hear you. When things pile up, it's completely natural for focus to slip away. It sounds like you're carrying a lot right now.</p>
+<p class="font-body-md text-body-md m-0">Would you like to try a quick grounding exercise together, or would you prefer to just vent for a bit? I'm here for whatever you need.</p>
+</div>
+</div>
+<!-- Typing Indicator (Simulated) -->
+<div class="flex items-end gap-sm max-w-[85%] md:max-w-[70%] opacity-50">
+<div class="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 bg-primary-fixed-dim">
+<img class="w-full h-full object-cover" data-alt="A small icon version of the soft, friendly, abstract 3D blob AI avatar, glowing gently in lavender." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDCx3crCeT8XCGbcL00N8YwqsIA4Pn8jUbXh5m1NszCkGVyHS7jxdS6WMpE1Sqg7XkYxCc6JDfFBihaAdo9atCId8WDVVgDFaYzyCOlJSP10ZVqZUvKx2-SNr8M_Jomo3iy2v1toMvGYjovccKftnhuI4ESWwWsIKwOF-I_X_fPSEwiy7_X1FErTa2m0P5ucr2aNvvBJ7hVvQUqwiXEtd22_HHXQc_S29I8SfX7kvWjn2sDq1SJkSPwOQ">
+</div>
+<div class="bg-surface-container-high rounded-2xl rounded-bl-none px-4 py-3 shadow-sm flex items-center gap-1">
+<div class="w-1.5 h-1.5 bg-primary-container rounded-full animate-bounce" style="animation-delay: 0ms;"></div>
+<div class="w-1.5 h-1.5 bg-primary-container rounded-full animate-bounce" style="animation-delay: 150ms;"></div>
+<div class="w-1.5 h-1.5 bg-primary-container rounded-full animate-bounce" style="animation-delay: 300ms;"></div>
+</div>
+</div>
+</div>
+<!-- Bottom Interaction Area -->
+<div class="px-container-padding-mobile md:px-container-padding-desktop pb-lg pt-4 bg-surface/90 backdrop-blur-md border-t border-surface-container-lowest z-10 flex flex-col gap-4">
+<!-- Quick Replies (Horizontal Scroll) -->
+<div class="flex gap-sm overflow-x-auto chat-scroll pb-2 -mx-container-padding-mobile px-container-padding-mobile md:mx-0 md:px-0">
+<button class="whitespace-nowrap font-label-md text-label-md text-on-primary-fixed-variant bg-primary-fixed/50 hover:bg-primary-fixed border border-primary-fixed-dim/50 rounded-full px-5 py-2 transition-all shadow-sm">
+                    I need to talk
+                </button>
+<button class="whitespace-nowrap font-label-md text-label-md text-on-primary-fixed-variant bg-primary-fixed/50 hover:bg-primary-fixed border border-primary-fixed-dim/50 rounded-full px-5 py-2 transition-all shadow-sm">
+                    Tell me a story
+                </button>
+<button class="whitespace-nowrap font-label-md text-label-md text-on-primary-fixed-variant bg-primary-fixed/50 hover:bg-primary-fixed border border-primary-fixed-dim/50 rounded-full px-5 py-2 transition-all shadow-sm">
+                    Give me advice
+                </button>
+<button class="whitespace-nowrap font-label-md text-label-md text-on-primary-fixed-variant bg-primary-fixed/50 hover:bg-primary-fixed border border-primary-fixed-dim/50 rounded-full px-5 py-2 transition-all shadow-sm">
+                    Just listen
+                </button>
+</div>
+<!-- Input Bar -->
+<div class="flex items-center gap-2 bg-surface-container rounded-full p-2 border border-surface-container-high focus-within:border-primary-fixed-dim focus-within:shadow-[0_0_0_4px_rgba(203,190,255,0.3)] transition-all">
+<!-- Privacy Indicator -->
+<div class="pl-4 text-outline flex items-center justify-center cursor-help" title="Your conversation is private and secure">
+<span class="material-symbols-outlined text-[18px]">lock</span>
+</div>
+<!-- Text Input -->
+<input class="flex-1 bg-transparent border-none focus:ring-0 text-on-surface placeholder:text-outline-variant font-body-md py-3 px-2 outline-none" placeholder="Share what's on your mind..." type="text">
+<!-- Attachment Button -->
+<button class="p-2 text-outline-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">add_circle</span>
+</button>
+<!-- Send Button -->
+<button class="w-10 h-10 rounded-full bg-primary text-on-primary flex items-center justify-center hover:bg-on-primary-fixed-variant transition-colors shadow-sm shadow-primary/20 mr-1 active:scale-95">
+<span class="material-symbols-outlined text-[18px]">send</span>
+</button>
+</div>
+<p class="text-center font-caption text-caption text-outline-variant mt-1">
+                Mana is an AI companion. For medical emergencies, please seek professional help.
+            </p>
+</div>
+</main>
+</body></html>

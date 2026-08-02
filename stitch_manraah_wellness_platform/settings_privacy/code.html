@@ -1,0 +1,328 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+<title>Settings &amp; Privacy - Manraah</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600&amp;family=Quicksand:wght@500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container": "#f2ebff",
+                        "on-surface": "#1d192b",
+                        "on-primary-fixed-variant": "#4a388e",
+                        "on-error": "#ffffff",
+                        "on-secondary-fixed-variant": "#005140",
+                        "surface-dim": "#ded6f0",
+                        "primary-container": "#7867c0",
+                        "on-tertiary": "#ffffff",
+                        "primary-fixed": "#e6deff",
+                        "error": "#ba1a1a",
+                        "surface-bright": "#fdf7ff",
+                        "inverse-on-surface": "#f5eeff",
+                        "tertiary-fixed": "#ffd9e0",
+                        "background": "#fdf7ff",
+                        "outline": "#797582",
+                        "surface-tint": "#6251a8",
+                        "on-secondary": "#ffffff",
+                        "surface-container-low": "#f7f1ff",
+                        "tertiary": "#874959",
+                        "on-tertiary-container": "#fffbff",
+                        "outline-variant": "#cac4d3",
+                        "on-primary-fixed": "#1d0061",
+                        "on-primary": "#ffffff",
+                        "primary": "#5f4ea5",
+                        "tertiary-container": "#a46172",
+                        "on-background": "#1d192b",
+                        "tertiary-fixed-dim": "#ffb1c3",
+                        "on-surface-variant": "#484551",
+                        "surface-container-highest": "#e6dff8",
+                        "primary-fixed-dim": "#cbbeff",
+                        "secondary-fixed": "#88f7d6",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary": "#006b56",
+                        "inverse-primary": "#cbbeff",
+                        "surface-variant": "#e6dff8",
+                        "on-secondary-container": "#00725c",
+                        "on-primary-container": "#fffbff",
+                        "secondary-fixed-dim": "#6adaba",
+                        "secondary-container": "#88f7d6",
+                        "on-tertiary-fixed-variant": "#6e3444",
+                        "on-tertiary-fixed": "#38091a",
+                        "inverse-surface": "#322e41",
+                        "error-container": "#ffdad6",
+                        "on-secondary-fixed": "#002018",
+                        "surface": "#fdf7ff",
+                        "surface-container-high": "#ece4fe",
+                        "on-error-container": "#93000a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xs": "4px",
+                        "md": "24px",
+                        "container-padding-mobile": "20px",
+                        "container-padding-desktop": "64px",
+                        "base": "8px",
+                        "sm": "12px",
+                        "lg": "48px",
+                        "xl": "80px",
+                        "safe": "env(safe-area-inset-bottom, 20px)"
+                    },
+                    "fontFamily": {
+                        "label-md": ["Work Sans"],
+                        "headline-lg-mobile": ["Quicksand"],
+                        "caption": ["Work Sans"],
+                        "headline-md": ["Quicksand"],
+                        "display-lg": ["Quicksand"],
+                        "headline-lg": ["Quicksand"],
+                        "body-md": ["Work Sans"],
+                        "body-lg": ["Work Sans"]
+                    },
+                    "fontSize": {
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "600" }],
+                        "caption": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }]
+                    },
+                    "boxShadow": {
+                        "ambient": "0 10px 40px -10px rgba(124, 107, 196, 0.08)",
+                        "ambient-hover": "0 20px 50px -15px rgba(124, 107, 196, 0.12)",
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: #FAF9FC; /* Off-white background */
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Custom Toggle Switch Styles */
+        .toggle-checkbox:checked {
+            right: 0;
+            border-color: #5f4ea5; /* primary */
+        }
+        .toggle-checkbox:checked + .toggle-label {
+            background-color: #5f4ea5; /* primary */
+        }
+        .toggle-checkbox {
+            right: 0;
+            z-index: 1;
+            border-color: #e2e8f0;
+            transition: all 0.3s;
+        }
+        .toggle-label {
+            width: 3rem;
+            height: 1.5rem;
+            background-color: #cac4d3; /* outline-variant */
+            border-radius: 9999px;
+            transition: all 0.3s;
+        }
+        .toggle-dot {
+            top: 0.125rem;
+            left: 0.125rem;
+            width: 1.25rem;
+            height: 1.25rem;
+            background-color: white;
+            border-radius: 50%;
+            transition: all 0.3s;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .toggle-checkbox:checked ~ .toggle-dot {
+            transform: translateX(1.5rem);
+        }
+        
+        /* Hide scrollbar for clean look */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+    </style>
+</head>
+<body class="text-on-background font-body-md min-h-screen flex flex-col pb-24 selection:bg-primary-container/30">
+<!-- Top Navigation Area -->
+<header class="sticky top-0 z-40 bg-[#FAF9FC]/80 backdrop-blur-md px-container-padding-mobile py-sm flex items-center justify-between">
+<button class="w-10 h-10 flex items-center justify-center rounded-full bg-surface-container-lowest shadow-ambient text-primary active:scale-95 transition-transform">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">arrow_back</span>
+</button>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-primary tracking-tight">Settings</h1>
+<div class="w-10 h-10"></div> <!-- Placeholder for balance -->
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-1 px-container-padding-mobile pt-sm pb-xl flex flex-col gap-lg w-full max-w-[680px] mx-auto">
+<!-- Account Section -->
+<section class="flex flex-col gap-base">
+<h2 class="font-label-md text-label-md text-on-surface-variant px-sm">Account</h2>
+<div class="bg-surface-container-lowest rounded-2xl shadow-ambient p-1 flex flex-col">
+<!-- Avatar & Name -->
+<div class="flex items-center gap-sm p-sm cursor-pointer hover:bg-surface-variant/20 rounded-xl transition-colors group">
+<div class="relative">
+<img class="w-14 h-14 rounded-full object-cover shadow-sm shadow-primary/10" data-alt="A close-up portrait of a serene young woman with soft natural lighting, looking gently towards the camera. The background is a soft, out-of-focus lavender gradient, fitting the modern-organic wellness app aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAMLcVcWchVrcD1EBaIcF9D3YdF-Wk8rnQ5j-frbUb_Si3N18TzzOp5SvWBtU5VnVBirl5UxzAX65_CsE95MGs15mZF3lP_0S4ONog_8EKjRyrlj5JpljAWLZr-jzM7Fr5N1oeg19GUn-kk3ZfAzz2GQtCEJvx8nbX8HgLsVAB5l5jZak2XKbFOpH_QQkBrncDcBNTpTmHk--XoxpFLt1aQT4genE4FxeEJsWUg6HFV4-ZuO4I9eDchyA">
+<div class="absolute bottom-0 right-0 w-4 h-4 bg-primary text-white rounded-full flex items-center justify-center border-2 border-white">
+<span class="material-symbols-outlined text-[10px]" style="font-variation-settings: 'FILL' 1;">edit</span>
+</div>
+</div>
+<div class="flex-1">
+<p class="font-label-md text-label-md text-on-surface">Alex Mercer</p>
+<p class="font-caption text-caption text-on-surface-variant mt-0.5">alex.mercer@example.com</p>
+</div>
+<span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors">chevron_right</span>
+</div>
+</div>
+</section>
+<!-- Preferences Section -->
+<section class="flex flex-col gap-base">
+<h2 class="font-label-md text-label-md text-on-surface-variant px-sm">Preferences</h2>
+<div class="bg-surface-container-lowest rounded-2xl shadow-ambient p-1 flex flex-col">
+<!-- User Category -->
+<div class="flex items-center gap-md p-sm cursor-pointer hover:bg-surface-variant/20 rounded-xl transition-colors group">
+<div class="w-10 h-10 rounded-full bg-secondary-container/20 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">school</span>
+</div>
+<div class="flex-1">
+<p class="font-label-md text-label-md text-on-surface">User Category</p>
+</div>
+<div class="flex items-center gap-xs">
+<span class="px-3 py-1 rounded-full bg-secondary-container/30 text-secondary font-caption text-caption">Student</span>
+<span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors">chevron_right</span>
+</div>
+</div>
+<!-- Divider -->
+<div class="mx-sm border-t border-dashed border-outline-variant/30"></div>
+<!-- Notifications -->
+<div class="flex items-center gap-md p-sm cursor-pointer hover:bg-surface-variant/20 rounded-xl transition-colors group">
+<div class="w-10 h-10 rounded-full bg-tertiary-container/10 flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">notifications</span>
+</div>
+<div class="flex-1">
+<p class="font-label-md text-label-md text-on-surface">Notifications</p>
+</div>
+<span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors">chevron_right</span>
+</div>
+</div>
+</section>
+<!-- Security & Privacy Section -->
+<section class="flex flex-col gap-base">
+<h2 class="font-label-md text-label-md text-on-surface-variant px-sm">Security &amp; Privacy</h2>
+<div class="bg-surface-container-lowest rounded-2xl shadow-ambient p-1 flex flex-col">
+<!-- E2E Encryption Toggle -->
+<div class="flex items-center gap-md p-sm rounded-xl">
+<div class="w-10 h-10 rounded-full bg-primary-container/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">lock</span>
+</div>
+<div class="flex-1">
+<p class="font-label-md text-label-md text-on-surface">End-to-end Encryption</p>
+<p class="font-caption text-caption text-on-surface-variant mt-0.5">Secure your chat data</p>
+</div>
+<div class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in">
+<input checked="" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer" id="toggle_e2e" name="toggle_e2e" type="checkbox">
+<label class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer" for="toggle_e2e"></label>
+<div class="toggle-dot absolute"></div>
+</div>
+</div>
+<!-- Divider -->
+<div class="mx-sm border-t border-dashed border-outline-variant/30"></div>
+<!-- Anonymous Mode Toggle -->
+<div class="flex items-center gap-md p-sm rounded-xl">
+<div class="w-10 h-10 rounded-full bg-primary-container/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">visibility_off</span>
+</div>
+<div class="flex-1">
+<p class="font-label-md text-label-md text-on-surface">Anonymous Mode</p>
+<p class="font-caption text-caption text-on-surface-variant mt-0.5">Hide identity in community</p>
+</div>
+<div class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in">
+<input class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer" id="toggle_anon" name="toggle_anon" type="checkbox">
+<label class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer" for="toggle_anon"></label>
+<div class="toggle-dot absolute"></div>
+</div>
+</div>
+<!-- Divider -->
+<div class="mx-sm border-t border-dashed border-outline-variant/30"></div>
+<!-- Data Download -->
+<div class="flex items-center gap-md p-sm cursor-pointer hover:bg-surface-variant/20 rounded-xl transition-colors group">
+<div class="w-10 h-10 rounded-full bg-primary-container/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">download</span>
+</div>
+<div class="flex-1">
+<p class="font-label-md text-label-md text-on-surface">Download My Data</p>
+</div>
+<span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors">chevron_right</span>
+</div>
+</div>
+</section>
+<!-- Spacer -->
+<div class="flex-1 min-h-[48px]"></div>
+<!-- Logout Button -->
+<button class="w-full py-4 rounded-full bg-surface-container-lowest shadow-ambient hover:shadow-ambient-hover text-error font-label-md text-label-md active:scale-[0.98] transition-all flex items-center justify-center gap-sm">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">logout</span>
+            Logout
+        </button>
+</main>
+<!-- Bottom Navigation Bar (Mandatory implementation from JSON) -->
+<!-- Applying ACTIVE STATE LOGIC: "Profile" tab is closest match for Settings/Privacy screen -->
+<nav class="md:hidden bg-surface/80 backdrop-blur-lg dark:bg-surface-dim/80 text-primary dark:text-primary-fixed-dim font-label-md text-label-md font-headline-lg-mobile text-headline-lg-mobile text-primary fixed bottom-0 w-full rounded-t-xl z-50 bg-surface/90 border-t border-outline-variant/30 shadow-[0_-4px_20px_rgba(124,107,196,0.08)] flex justify-around items-center h-20 px-4 pb-[env(safe-area-inset-bottom,20px)] w-full">
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary active:scale-90 transition-all" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">home</span>
+<span class="font-label-md text-[10px] mt-1">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary active:scale-90 transition-all" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">auto_stories</span>
+<span class="font-label-md text-[10px] mt-1">Journey</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary active:scale-90 transition-all" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">chat_bubble</span>
+<span class="font-label-md text-[10px] mt-1">AI Chat</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary active:scale-90 transition-all" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">local_library</span>
+<span class="font-label-md text-[10px] mt-1">Resources</span>
+</a>
+<!-- Active Tab: Profile (closest semantic match for Settings) -->
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full px-4 py-1 active:scale-90 transition-all" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">person</span>
+<span class="font-label-md text-[10px] mt-1">Profile</span>
+</a>
+</nav>
+<!-- Side Navigation Shell (Hidden on Mobile, Visible on Desktop for layout parity, though this is a mobile-first design) -->
+<!-- Added as per instructions to include navigation shell contextually -->
+<aside class="hidden md:flex bg-surface dark:bg-surface-dim text-primary dark:text-primary-fixed-dim font-body-md text-body-md font-display-lg text-display-lg text-primary dark:text-primary-fixed-dim h-screen w-64 fixed left-0 top-0 bg-surface-container-low dark:bg-surface-container-lowest shadow-md shadow-primary/5 flex flex-col h-full py-md overflow-y-auto">
+<div class="px-6 mb-8">
+<h1 class="font-headline-md text-headline-md text-primary font-bold tracking-tight">Manraah</h1>
+<p class="font-caption text-caption text-on-surface-variant">Wellness Sanctuary</p>
+</div>
+<nav class="flex flex-col gap-1 px-4">
+<a class="flex items-center gap-4 px-4 py-3 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-md text-label-md">Home</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">insights</span>
+<span class="font-label-md text-label-md">My Journey</span>
+</a>
+<!-- Active Tab: Settings -->
+<a class="flex items-center gap-4 px-4 py-3 rounded-lg text-primary font-bold border-r-4 border-primary bg-primary-container/10 active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+</nav>
+</aside>
+</body></html>

@@ -1,0 +1,268 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport">
+<title>Manraah - My Journey</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "error": "#ba1a1a",
+                        "on-tertiary-fixed-variant": "#6e3444",
+                        "outline-variant": "#cac4d3",
+                        "on-error-container": "#93000a",
+                        "tertiary": "#874959",
+                        "on-primary": "#ffffff",
+                        "primary-fixed-dim": "#cbbeff",
+                        "surface-variant": "#e6dff8",
+                        "secondary-fixed": "#88f7d6",
+                        "background": "#fdf7ff",
+                        "surface": "#fdf7ff",
+                        "on-primary-fixed-variant": "#4a388e",
+                        "inverse-primary": "#cbbeff",
+                        "surface-dim": "#ded6f0",
+                        "on-tertiary-fixed": "#38091a",
+                        "on-surface-variant": "#484551",
+                        "tertiary-fixed-dim": "#ffb1c3",
+                        "surface-tint": "#6251a8",
+                        "surface-container-low": "#f7f1ff",
+                        "primary-container": "#7867c0",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-fixed": "#e6deff",
+                        "tertiary-container": "#a46172",
+                        "on-tertiary-container": "#fffbff",
+                        "on-secondary-container": "#00725c",
+                        "secondary-container": "#88f7d6",
+                        "inverse-on-surface": "#f5eeff",
+                        "outline": "#797582",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-container": "#fffbff",
+                        "on-secondary": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "on-secondary-fixed-variant": "#005140",
+                        "on-error": "#ffffff",
+                        "tertiary-fixed": "#ffd9e0",
+                        "surface-container": "#f2ebff",
+                        "inverse-surface": "#322e41",
+                        "surface-bright": "#fdf7ff",
+                        "primary": "#5f4ea5",
+                        "on-secondary-fixed": "#002018",
+                        "secondary": "#006b56",
+                        "on-surface": "#1d192b",
+                        "surface-container-high": "#ece4fe",
+                        "on-primary-fixed": "#1d0061",
+                        "surface-container-highest": "#e6dff8",
+                        "on-background": "#1d192b",
+                        "secondary-fixed-dim": "#6adaba"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xl": "80px",
+                        "sm": "12px",
+                        "lg": "48px",
+                        "base": "8px",
+                        "xs": "4px",
+                        "container-padding-mobile": "20px",
+                        "md": "24px",
+                        "container-padding-desktop": "64px"
+                    },
+                    "fontFamily": {
+                        "headline-lg-mobile": ["Quicksand"],
+                        "headline-lg": ["Quicksand"],
+                        "label-md": ["Work Sans"],
+                        "headline-md": ["Quicksand"],
+                        "body-md": ["Work Sans"],
+                        "display-lg": ["Quicksand"],
+                        "caption": ["Work Sans"],
+                        "body-lg": ["Work Sans"]
+                    },
+                    "fontSize": {
+                        "headline-lg-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "caption": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@600;700&amp;family=Work+Sans:wght@400;600&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<style>
+        .ambient-shadow { box-shadow: 0 10px 40px -10px rgba(124, 107, 196, 0.08); }
+        .glass-panel { background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+        .progress-ring__circle { transition: stroke-dashoffset 0.8s ease-in-out; }
+    </style>
+</head>
+<body class="bg-background text-on-background antialiased selection:bg-primary-container selection:text-on-primary-container min-h-screen flex flex-col md:flex-row">
+<!-- Desktop SideNav (Hidden on Mobile) -->
+<nav class="hidden md:flex flex-col h-screen w-64 fixed left-0 top-0 bg-surface dark:bg-surface-dim bg-surface-container-low dark:bg-surface-container-lowest shadow-md shadow-primary/5 py-md overflow-y-auto z-40">
+<div class="px-md mb-lg">
+<h1 class="font-display-lg text-display-lg text-primary dark:text-primary-fixed-dim">Manraah</h1>
+<p class="font-caption text-caption text-on-surface-variant mt-1">Wellness Sanctuary</p>
+</div>
+<ul class="flex flex-col flex-grow gap-2 px-sm">
+<li>
+<a class="flex items-center gap-sm px-4 py-3 rounded-full text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-md text-label-md">Home</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-sm px-4 py-3 rounded-full text-primary font-bold border-r-4 border-primary bg-primary-container/10 hover:bg-surface-variant/50 transition-colors active:scale-95" href="#">
+<span class="material-symbols-outlined">insights</span>
+<span class="font-label-md text-label-md">My Journey</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-sm px-4 py-3 rounded-full text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95" href="#">
+<span class="material-symbols-outlined">smart_toy</span>
+<span class="font-label-md text-label-md">AI Companion</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-sm px-4 py-3 rounded-full text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95" href="#">
+<span class="material-symbols-outlined">diversity_1</span>
+<span class="font-label-md text-label-md">Human Companion</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-sm px-4 py-3 rounded-full text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+</li>
+</ul>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-grow w-full md:pl-64 pb-24 md:pb-0">
+<!-- Desktop TopAppBar (Hidden on Mobile) -->
+<header class="hidden md:flex justify-between items-center h-16 px-container-padding-desktop ml-auto fixed top-0 right-0 w-[calc(100%-16rem)] z-40 bg-surface/60 backdrop-blur-md dark:bg-surface-dim/60 bg-surface/80 backdrop-blur-xl shadow-sm shadow-primary/5">
+<div class="font-headline-md text-headline-md text-primary">Manraah</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-on-surface-variant hover:bg-primary-container/20 rounded-full transition-all active:scale-95 duration-200">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-primary-container/20 rounded-full transition-all active:scale-95 duration-200">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<img alt="User profile avatar" class="w-10 h-10 rounded-full object-cover shadow-sm" data-alt="A small, circular profile picture placeholder showing a stylized, soft-edged illustration of a serene person's face in a modern organic style, using soft pastel purples and teals." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC4Z49PUk0L0MEmeLSihI0cuCYmc8QLBUFNUFqV2tcwsndvTew6r4FMCSy5Z7wYynA4oAG4hMQOGDbFqmdv51xwVUlHGk_Y8_1k7wh--a9VMJ2bmhrB1xD6MZYLnHb-S-oD2a_cHk-BD7a9ezm1AASd1hzb2ffp2Unob5DEIwtRpj-rl6-J1I9jhwFv3XPJutp7umSEBPbI_qzBuRNYmePalV39jis70MqzVTRBURhjywZIEjkbljauvg">
+</div>
+</header>
+<!-- Page Content Canvas -->
+<div class="px-container-padding-mobile md:px-container-padding-desktop pt-6 md:pt-24 max-w-[800px] mx-auto">
+<!-- Header Section -->
+<header class="mb-lg">
+<h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface mb-2">My Journey</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Track your growth and celebrate your daily wins.</p>
+<div class="mt-sm rounded-[24px] overflow-hidden relative h-48 md:h-64 ambient-shadow bg-surface-container-lowest">
+<img alt="Growth metaphor illustration" class="w-full h-full object-cover opacity-90" data-alt="A wide, soft, hand-drawn illustration depicting a serene landscape metaphor for personal growth. A gentle winding path leads up a soft, rolling hill bathed in a warm, comforting light. Small, stylized sprouts and blooming flowers in soft pastel colors (lavender, mint, blush) dot the landscape. The style is modern-organic, optimistic, and deeply calming." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC0EXFt-hzoyrkPgEtRPyqxm4nEPBQFG21BxmeXy-nxHCDAT_xYE2CBlOd7yDoh6rTRzb3e9NIYY8OrkJqyXmQ-qgfvmxwwlzrRSYr0NVhwzcFXY2qGzRNQ3w5JTpr1LWODk87QL7Xuj-Jq3HSTkmq23-NyasWBgYLMNMxhkJa8qLrYm3mWMKNYmx-QsaaRlv8pNs-c-LHdVPZPI4E-ze5sJk1P072SGrBRYvgdF4TtPbi0ra6QDfe8Eg">
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest/80 to-transparent flex items-end p-md">
+<div class="glass-panel px-4 py-2 rounded-full border border-white/20">
+<p class="font-label-md text-label-md text-primary flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">local_florist</span>
+<span>Growing steadily</span>
+</p>
+</div>
+</div>
+</div>
+</header>
+<!-- Stats Row (Bento Style) -->
+<section class="grid grid-cols-3 gap-sm mb-lg">
+<div class="bg-surface-container-lowest rounded-[24px] p-4 flex flex-col items-center justify-center ambient-shadow relative overflow-hidden">
+<div class="absolute top-0 right-0 w-16 h-16 bg-primary-container/10 rounded-bl-[100%]"></div>
+<span class="material-symbols-outlined text-primary mb-2">mood</span>
+<h3 class="font-headline-md text-headline-md text-on-surface">5</h3>
+<p class="font-caption text-caption text-on-surface-variant text-center">Check-ins</p>
+</div>
+<div class="bg-surface-container-lowest rounded-[24px] p-4 flex flex-col items-center justify-center ambient-shadow relative overflow-hidden">
+<div class="absolute top-0 right-0 w-16 h-16 bg-secondary-container/20 rounded-bl-[100%]"></div>
+<span class="material-symbols-outlined text-secondary mb-2">self_improvement</span>
+<h3 class="font-headline-md text-headline-md text-on-surface">3</h3>
+<p class="font-caption text-caption text-on-surface-variant text-center">Sessions</p>
+</div>
+<div class="bg-surface-container-lowest rounded-[24px] p-4 flex flex-col items-center justify-center ambient-shadow relative overflow-hidden">
+<div class="absolute top-0 right-0 w-16 h-16 bg-tertiary-container/10 rounded-bl-[100%]"></div>
+<span class="material-symbols-outlined text-tertiary mb-2">schedule</span>
+<h3 class="font-headline-md text-headline-md text-on-surface">120</h3>
+<p class="font-caption text-caption text-on-surface-variant text-center">Minutes</p>
+</div>
+</section>
+<!-- Progress Ring Section -->
+<section class="bg-surface-container-lowest rounded-[24px] p-md mb-lg ambient-shadow flex flex-col md:flex-row items-center gap-md">
+<div class="relative w-32 h-32 flex-shrink-0">
+<svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+<circle class="text-surface-variant" cx="50" cy="50" fill="none" r="40" stroke="currentColor" stroke-width="8"></circle>
+<circle class="text-secondary progress-ring__circle" cx="50" cy="50" fill="none" r="40" stroke="currentColor" stroke-dasharray="251.2" stroke-dashoffset="62.8" stroke-linecap="round" stroke-width="8"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="font-headline-md text-headline-md text-on-surface">75%</span>
+<span class="font-caption text-caption text-on-surface-variant">Weekly Goal</span>
+</div>
+</div>
+<div class="flex-grow text-center md:text-left">
+<h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface mb-2">Mindful Week</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mb-4">You're doing great! Just 30 more minutes of mindfulness to reach your goal for this week.</p>
+<button class="bg-gradient-to-br from-primary to-primary-container text-on-primary font-label-md text-label-md px-6 py-3 rounded-full hover:shadow-lg hover:shadow-primary/20 transition-all active:scale-95">Continue Practice</button>
+</div>
+</section>
+<!-- Active Program Card -->
+<section>
+<h2 class="font-headline-md text-headline-md text-on-surface mb-sm px-2">Active Program</h2>
+<div class="bg-surface-container-lowest rounded-[24px] p-md ambient-shadow flex flex-col md:flex-row items-start md:items-center gap-md cursor-pointer hover:bg-surface-container-low transition-colors group">
+<div class="w-16 h-16 rounded-[16px] bg-secondary-container/30 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-secondary text-[32px]">menu_book</span>
+</div>
+<div class="flex-grow">
+<h3 class="font-label-md text-label-md text-on-surface mb-1">Managing Exam Anxiety</h3>
+<p class="font-caption text-caption text-on-surface-variant mb-3">Module 3: Reframing Thoughts</p>
+<!-- Mini Progress Bar -->
+<div class="w-full bg-surface-variant h-3 rounded-full overflow-hidden">
+<div class="bg-primary h-full rounded-full w-3/5"></div>
+</div>
+</div>
+<div class="text-right w-full md:w-auto mt-2 md:mt-0">
+<span class="inline-block bg-primary-container/10 text-primary font-caption text-caption px-3 py-1 rounded-full">
+                             5 days remaining
+                         </span>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- Mobile BottomNavBar (Hidden on Desktop) -->
+<nav class="md:hidden flex justify-around items-center h-20 px-4 pb-safe w-full fixed bottom-0 rounded-t-xl z-50 bg-surface/80 backdrop-blur-lg dark:bg-surface-dim/80 bg-surface/90 border-t border-outline-variant/30 shadow-[0_-4px_20px_rgba(124,107,196,0.08)]">
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary active:scale-90 transition-all" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-md text-label-md mt-1 text-[10px]">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full px-4 py-1 hover:text-primary active:scale-90 transition-all" href="#">
+<span class="material-symbols-outlined" data-weight="fill">auto_stories</span>
+<span class="font-label-md text-label-md mt-1 text-[10px]">Journey</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary active:scale-90 transition-all" href="#">
+<span class="material-symbols-outlined">chat_bubble</span>
+<span class="font-label-md text-label-md mt-1 text-[10px]">AI Chat</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary active:scale-90 transition-all" href="#">
+<span class="material-symbols-outlined">local_library</span>
+<span class="font-label-md text-label-md mt-1 text-[10px]">Resources</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary active:scale-90 transition-all" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label-md text-label-md mt-1 text-[10px]">Profile</span>
+</a>
+</nav>
+</body></html>

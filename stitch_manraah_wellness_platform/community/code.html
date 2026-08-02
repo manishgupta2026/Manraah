@@ -1,0 +1,395 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport">
+<title>Manraah - Community</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@600;700&amp;family=Work+Sans:wght@400;600&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+                "outline-variant": "#cac4d3",
+                "on-secondary-fixed-variant": "#005140",
+                "on-secondary": "#ffffff",
+                "on-primary": "#ffffff",
+                "inverse-on-surface": "#f5eeff",
+                "inverse-primary": "#cbbeff",
+                "surface-container": "#f2ebff",
+                "surface": "#fdf7ff",
+                "on-background": "#1d192b",
+                "surface-container-low": "#f7f1ff",
+                "on-secondary-fixed": "#002018",
+                "tertiary-fixed-dim": "#ffb1c3",
+                "surface-tint": "#6251a8",
+                "tertiary": "#874959",
+                "primary": "#5f4ea5",
+                "error": "#ba1a1a",
+                "secondary-fixed-dim": "#6adaba",
+                "on-tertiary-fixed": "#38091a",
+                "background": "#fdf7ff",
+                "on-surface-variant": "#484551",
+                "secondary": "#006b56",
+                "surface-bright": "#fdf7ff",
+                "on-tertiary-fixed-variant": "#6e3444",
+                "on-secondary-container": "#00725c",
+                "outline": "#797582",
+                "error-container": "#ffdad6",
+                "primary-container": "#7867c0",
+                "on-error-container": "#93000a",
+                "on-primary-fixed": "#1d0061",
+                "secondary-fixed": "#88f7d6",
+                "surface-container-high": "#ece4fe",
+                "surface-dim": "#ded6f0",
+                "surface-container-highest": "#e6dff8",
+                "on-surface": "#1d192b",
+                "on-error": "#ffffff",
+                "on-tertiary-container": "#fffbff",
+                "surface-container-lowest": "#ffffff",
+                "tertiary-container": "#a46172",
+                "inverse-surface": "#322e41",
+                "on-tertiary": "#ffffff",
+                "on-primary-fixed-variant": "#4a388e",
+                "surface-variant": "#e6dff8",
+                "secondary-container": "#88f7d6",
+                "tertiary-fixed": "#ffd9e0",
+                "primary-fixed-dim": "#cbbeff",
+                "primary-fixed": "#e6deff",
+                "on-primary-container": "#fffbff"
+        },
+        "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+        },
+        "spacing": {
+                "container-padding-desktop": "64px",
+                "lg": "48px",
+                "container-padding-mobile": "20px",
+                "xl": "80px",
+                "md": "24px",
+                "base": "8px",
+                "xs": "4px",
+                "sm": "12px"
+        },
+        "fontFamily": {
+                "label-md": [
+                        "Work Sans"
+                ],
+                "headline-md": [
+                        "Quicksand"
+                ],
+                "headline-lg-mobile": [
+                        "Quicksand"
+                ],
+                "caption": [
+                        "Work Sans"
+                ],
+                "display-lg": [
+                        "Quicksand"
+                ],
+                "body-lg": [
+                        "Work Sans"
+                ],
+                "headline-lg": [
+                        "Quicksand"
+                ],
+                "body-md": [
+                        "Work Sans"
+                ]
+        },
+        "fontSize": {
+                "label-md": [
+                        "14px",
+                        {
+                                "lineHeight": "20px",
+                                "letterSpacing": "0.01em",
+                                "fontWeight": "600"
+                        }
+                ],
+                "headline-md": [
+                        "24px",
+                        {
+                                "lineHeight": "32px",
+                                "fontWeight": "600"
+                        }
+                ],
+                "headline-lg-mobile": [
+                        "28px",
+                        {
+                                "lineHeight": "36px",
+                                "fontWeight": "600"
+                        }
+                ],
+                "caption": [
+                        "12px",
+                        {
+                                "lineHeight": "16px",
+                                "fontWeight": "400"
+                        }
+                ],
+                "display-lg": [
+                        "48px",
+                        {
+                                "lineHeight": "56px",
+                                "letterSpacing": "-0.02em",
+                                "fontWeight": "700"
+                        }
+                ],
+                "body-lg": [
+                        "18px",
+                        {
+                                "lineHeight": "28px",
+                                "fontWeight": "400"
+                        }
+                ],
+                "headline-lg": [
+                        "32px",
+                        {
+                                "lineHeight": "40px",
+                                "fontWeight": "600"
+                        }
+                ],
+                "body-md": [
+                        "16px",
+                        {
+                                "lineHeight": "24px",
+                                "fontWeight": "400"
+                        }
+                ]
+        }
+},
+    },
+  }
+</script>
+<style>
+  body {
+    -webkit-tap-highlight-color: transparent;
+  }
+  /* Hide scrollbar for clean look */
+  ::-webkit-scrollbar {
+    width: 0px;
+    height: 0px;
+  }
+  .glass-header {
+    background: linear-gradient(180deg, rgba(253, 247, 255, 0.95) 0%, rgba(253, 247, 255, 0.8) 100%);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+</style>
+</head>
+<body class="bg-background text-on-background antialiased selection:bg-primary-container selection:text-on-primary-container font-body-md text-body-md h-screen overflow-hidden flex">
+<!-- Desktop SideNav (Hidden on Mobile) -->
+<nav class="hidden md:flex flex-col py-md overflow-y-auto bg-surface h-screen w-64 fixed left-0 top-0 bg-surface-container-low shadow-md shadow-primary/5 z-50">
+<div class="px-md mb-lg">
+<h1 class="font-display-lg text-display-lg text-primary">Manraah</h1>
+<p class="font-label-md text-label-md text-on-surface-variant opacity-70">Wellness Sanctuary</p>
+</div>
+<div class="flex-1 flex flex-col gap-2 px-sm">
+<a class="flex items-center gap-sm px-sm py-sm rounded-xl text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-md text-label-md">Home</span>
+</a>
+<a class="flex items-center gap-sm px-sm py-sm rounded-xl text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors" href="#">
+<span class="material-symbols-outlined">insights</span>
+<span class="font-label-md text-label-md">My Journey</span>
+</a>
+<a class="flex items-center gap-sm px-sm py-sm rounded-xl text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors" href="#">
+<span class="material-symbols-outlined">smart_toy</span>
+<span class="font-label-md text-label-md">AI Companion</span>
+</a>
+<a class="flex items-center gap-sm px-sm py-sm rounded-xl text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors" href="#">
+<span class="material-symbols-outlined">diversity_1</span>
+<span class="font-label-md text-label-md">Human Companion</span>
+</a>
+<a class="flex items-center gap-sm px-sm py-sm rounded-xl text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors" href="#">
+<span class="material-symbols-outlined">medical_services</span>
+<span class="font-label-md text-label-md">Professional Care</span>
+</a>
+<a class="flex items-center gap-sm px-sm py-sm rounded-xl text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors" href="#">
+<span class="material-symbols-outlined">mood</span>
+<span class="font-label-md text-label-md">Mood &amp; Check-in</span>
+</a>
+<a class="flex items-center gap-sm px-sm py-sm rounded-xl text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors" href="#">
+<span class="material-symbols-outlined">edit_note</span>
+<span class="font-label-md text-label-md">Journal</span>
+</a>
+<a class="flex items-center gap-sm px-sm py-sm rounded-xl text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors" href="#">
+<span class="material-symbols-outlined">self_improvement</span>
+<span class="font-label-md text-label-md">Meditation &amp; Sleep</span>
+</a>
+<a class="flex items-center gap-sm px-sm py-sm rounded-xl text-primary font-bold border-r-4 border-primary bg-primary-container/10 active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">groups</span>
+<span class="font-label-md text-label-md">Community</span>
+</a>
+<a class="flex items-center gap-sm px-sm py-sm rounded-xl text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors" href="#">
+<span class="material-symbols-outlined">library_books</span>
+<span class="font-label-md text-label-md">Resources</span>
+</a>
+<a class="flex items-center gap-sm px-sm py-sm rounded-xl text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors" href="#">
+<span class="material-symbols-outlined">assessment</span>
+<span class="font-label-md text-label-md">Reports</span>
+</a>
+<a class="flex items-center gap-sm px-sm py-sm rounded-xl text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors mt-auto" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+</div>
+</nav>
+<!-- Desktop TopNav (Hidden on Mobile) -->
+<nav class="hidden md:flex justify-between items-center h-16 px-container-padding-desktop ml-auto bg-surface/60 backdrop-blur-md fixed top-0 right-0 w-[calc(100%-16rem)] z-40 bg-surface/80 shadow-sm shadow-primary/5">
+<div class="font-headline-md text-headline-md text-primary">Community</div>
+<div class="flex items-center gap-md">
+<div class="relative">
+<input class="w-64 pl-10 pr-4 py-2 rounded-full border-outline-variant/50 bg-surface-container-low focus:ring-primary focus:border-primary text-body-md font-body-md placeholder:text-outline outline-none transition-all focus:shadow-[0_0_15px_rgba(124,107,196,0.15)]" placeholder="Search community..." type="text">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+</div>
+<button class="p-2 text-on-surface-variant hover:bg-primary-container/20 rounded-full transition-all active:scale-95 duration-200">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<img alt="User profile avatar" class="w-8 h-8 rounded-full object-cover shadow-sm" data-alt="A small circular user profile picture showing a calm, friendly person in soft natural lighting, modern wellness aesthetic, shallow depth of field." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDsWiyNoUC1qq9X8ZMgnQI_ZAif6f9h755d2C7Y-gPrEJekJa0hzjime_HmkumoBRO0wIBq3nb3xXdaB5vaaGQPA-dt4zZcWdkojfKgLrgwGdmit6l5SeQdmaQ7b51PT668Z89F53G33ON8h-AcCU7IiJ74y_XsJRX4DYNwSFgZlro5akeN5oJoEbnc5VJiFEmbHcY5yACE8ana5AunrrPv3ryaoUi1wPwWdz3W9p1oCB04V83_QW2hVA">
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="w-full h-full md:pl-64 pt-0 md:pt-16 pb-24 md:pb-0 overflow-y-auto relative bg-background">
+<!-- Mobile Header (Sticky) -->
+<header class="md:hidden sticky top-0 z-30 glass-header px-container-padding-mobile pt-lg pb-sm shadow-[0_4px_30px_rgba(124,107,196,0.03)]">
+<div class="flex justify-between items-center mb-md">
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-primary tracking-tight">Community</h1>
+<img alt="User Profile" class="w-10 h-10 rounded-full object-cover shadow-[0_2px_10px_rgba(124,107,196,0.15)]" data-alt="A small circular user profile picture showing a calm, friendly person in soft natural lighting, modern wellness aesthetic, shallow depth of field." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC0vtghd6V-buGDKopJ6w8FJI0uXTs7gTfV7wgEWC9lC08RJryL3nKzmfS2vqEh1qIWJ9Zq0JRse8mrB2PryMl-qmOedOHHdJ0L3yRbKAiqhtvVeB9GihI7T094TsnS4Ns3uFvhvY9PRlTpwxhfAgZwYySdpVrD9HBNXr3bh5i48uwWJWeixXBMprtZjhViq1Lq80e9Mm_YrmINSV1xc9F-2-YgkfVOdyCNGdrPziEd0CqJtnUkJQbuZQ">
+</div>
+<!-- Horizontal Scrollable Tabs -->
+<div class="flex gap-3 overflow-x-auto pb-2 -mx-container-padding-mobile px-container-padding-mobile snap-x scroll-smooth">
+<button class="snap-start whitespace-nowrap px-4 py-2 rounded-full bg-primary-container text-on-primary-container font-label-md text-label-md shadow-[0_2px_10px_rgba(120,103,192,0.2)] transition-transform active:scale-95">General Discussion</button>
+<button class="snap-start whitespace-nowrap px-4 py-2 rounded-full bg-surface-container-highest text-on-surface-variant font-label-md text-label-md hover:bg-surface-variant transition-colors">Motivation</button>
+<button class="snap-start whitespace-nowrap px-4 py-2 rounded-full bg-surface-container-highest text-on-surface-variant font-label-md text-label-md hover:bg-surface-variant transition-colors">Success Stories</button>
+<button class="snap-start whitespace-nowrap px-4 py-2 rounded-full bg-surface-container-highest text-on-surface-variant font-label-md text-label-md hover:bg-surface-variant transition-colors">Q&amp;A</button>
+</div>
+</header>
+<!-- Desktop Tabs (Hidden on Mobile) -->
+<div class="hidden md:flex gap-4 px-xl pt-lg pb-md border-b border-outline-variant/20 sticky top-16 z-30 bg-background/90 backdrop-blur-md">
+<button class="px-5 py-2.5 rounded-full bg-primary-container text-on-primary-container font-label-md text-label-md shadow-[0_2px_15px_rgba(120,103,192,0.15)] transition-transform active:scale-95">General Discussion</button>
+<button class="px-5 py-2.5 rounded-full bg-surface-container-highest text-on-surface-variant font-label-md text-label-md hover:bg-surface-variant transition-colors">Motivation</button>
+<button class="px-5 py-2.5 rounded-full bg-surface-container-highest text-on-surface-variant font-label-md text-label-md hover:bg-surface-variant transition-colors">Success Stories</button>
+<button class="px-5 py-2.5 rounded-full bg-surface-container-highest text-on-surface-variant font-label-md text-label-md hover:bg-surface-variant transition-colors">Q&amp;A</button>
+</div>
+<!-- Feed Container -->
+<div class="px-container-padding-mobile md:px-xl py-md max-w-[800px] mx-auto flex flex-col gap-md">
+<!-- Guidelines Banner -->
+<div class="bg-surface-container-low rounded-[24px] p-5 flex items-start gap-4 shadow-[0_8px_30px_rgba(124,107,196,0.04)]">
+<div class="w-10 h-10 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">favorite</span>
+</div>
+<div>
+<h3 class="font-label-md text-label-md text-on-surface mb-1">Compassionate Space</h3>
+<p class="font-body-md text-body-md text-on-surface-variant opacity-80 text-sm">This is a safe, supportive environment. Please be kind, respectful, and mindful of others' journeys.</p>
+</div>
+</div>
+<!-- Post 1 (Anonymous) -->
+<article class="bg-surface-container-lowest rounded-[24px] p-5 shadow-[0_10px_40px_rgba(124,107,196,0.06)] relative group">
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-tertiary-container/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-tertiary">masks</span>
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface">Anonymous User</p>
+<p class="font-caption text-caption text-outline">2 hours ago • General</p>
+</div>
+</div>
+<button class="text-outline hover:text-on-surface-variant transition-colors">
+<span class="material-symbols-outlined">more_horiz</span>
+</button>
+</div>
+<p class="font-body-md text-body-md text-on-surface mb-4 leading-relaxed">
+          Struggling a bit with consistency this week. Does anyone have gentle ways they get back on track without feeling guilty? I don't want to break my streak but I'm just so tired.
+        </p>
+<div class="flex items-center justify-between pt-4 border-t border-outline-variant/20">
+<div class="flex gap-6">
+<button class="flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors group/btn">
+<span class="material-symbols-outlined group-hover/btn:-translate-y-1 transition-transform">favorite</span>
+<span class="font-label-md text-label-md">24</span>
+</button>
+<button class="flex items-center gap-2 text-on-surface-variant hover:text-secondary transition-colors">
+<span class="material-symbols-outlined">chat_bubble</span>
+<span class="font-label-md text-label-md">12 Comments</span>
+</button>
+</div>
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">bookmark_border</span>
+</button>
+</div>
+</article>
+<!-- Post 2 (Public with Image) -->
+<article class="bg-surface-container-lowest rounded-[24px] p-5 shadow-[0_10px_40px_rgba(124,107,196,0.06)] relative group">
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center gap-3">
+<img class="w-10 h-10 rounded-full object-cover shadow-sm" data-alt="A profile picture of a young professional smiling warmly, softly lit outdoor setting, conveying trust and positivity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDayXkfFLX3fp9JuiShfZ-sdeaC5UZXaC0ZazCAMD-5g4p8hW1K8b-QdgV8n-CxFug7nfQibMCJUIXabT9zhCTL2grZKmVIKoOANWutyC1faaOvZ4NX3GdrLJ480H7e62A9LIF42X4idSIhoSWQZUvHJ4m1fod2wGwhIkQBgLXojurRnuA7tKhVeEFwIIvljhrnFHGcCjIzwvZVq0Mk2m6kSTZt188uV89Xls2p7ue8n5fH00VfbjTmRQ">
+<div>
+<p class="font-label-md text-label-md text-on-surface">Sarah J.</p>
+<p class="font-caption text-caption text-outline">5 hours ago • Success Stories</p>
+</div>
+</div>
+<button class="text-outline hover:text-on-surface-variant transition-colors">
+<span class="material-symbols-outlined">more_horiz</span>
+</button>
+</div>
+<h2 class="font-headline-md text-headline-md text-on-surface mb-2">Finally reached a milestone! 🌿</h2>
+<p class="font-body-md text-body-md text-on-surface mb-4 leading-relaxed">
+          Today marks 30 days of continuous morning meditation. I never thought I could stick to it, but taking it one small breath at a time really helped. Sending peace to everyone here.
+        </p>
+<div class="rounded-xl overflow-hidden mb-4 shadow-sm h-48 w-full relative">
+<div class="absolute inset-0 bg-cover bg-center w-full h-full" data-alt="A serene morning view from a window showing soft sunrise light casting gentle shadows across a minimalist, tidy room with a small potted plant on the sill. Calming, optimistic mood." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDswFTXyp9LmJdFbXsiSRgDL5RLffcBdYGmJHBP1XzGw4zsVYMVWwCoCZePgS7ijZQik1zxJjFtS8K8mhYTw9YyeCLLsEKKVmPzDyrPAmANxx7KyuKm1lcv0atjTe0NGk4RMc4N2NNI9pycVpfaeOeHIPw9C2h-i7aAoHTpYFqf0qcXFT2acJ7ZNlfk_ecJFloM2Ek6uEI9rWHiO-G_WvYy7Bxr9a-j3bTOZo7XBqs5vX9VoqmJSPojhQ')"></div>
+</div>
+<div class="flex items-center justify-between pt-4 border-t border-outline-variant/20">
+<div class="flex gap-6">
+<button class="flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors group/btn">
+<span class="material-symbols-outlined group-hover/btn:-translate-y-1 transition-transform" style="font-variation-settings: 'FILL' 1; color: var(--color-primary)">favorite</span>
+<span class="font-label-md text-label-md text-primary">156</span>
+</button>
+<button class="flex items-center gap-2 text-on-surface-variant hover:text-secondary transition-colors">
+<span class="material-symbols-outlined">chat_bubble</span>
+<span class="font-label-md text-label-md">34 Comments</span>
+</button>
+</div>
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">bookmark_border</span>
+</button>
+</div>
+</article>
+<!-- Space for FAB to not overlap last post -->
+<div class="h-24 md:h-12 w-full"></div>
+</div>
+<!-- Floating Action Button (FAB) -->
+<button class="fixed bottom-24 md:bottom-10 right-6 w-14 h-14 bg-gradient-to-br from-primary to-primary-container text-on-primary rounded-2xl shadow-[0_8px_30px_rgba(95,78,165,0.4)] flex items-center justify-center hover:scale-105 active:scale-95 transition-all z-40 group">
+<span class="material-symbols-outlined text-3xl group-hover:rotate-90 transition-transform duration-300">add</span>
+</button>
+</main>
+<!-- Mobile BottomNav -->
+<nav class="md:hidden flex justify-around items-center h-20 px-4 pb-safe w-full bg-surface/80 backdrop-blur-lg fixed bottom-0 rounded-t-xl z-50 bg-surface/90 border-t border-outline-variant/30 shadow-[0_-4px_20px_rgba(124,107,196,0.08)]">
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary active:scale-90 transition-all w-16" href="#">
+<span class="material-symbols-outlined mb-1">home</span>
+<span class="font-label-md text-label-md text-[10px]">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary active:scale-90 transition-all w-16" href="#">
+<span class="material-symbols-outlined mb-1">auto_stories</span>
+<span class="font-label-md text-label-md text-[10px]">Journey</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary active:scale-90 transition-all w-16" href="#">
+<span class="material-symbols-outlined mb-1">chat_bubble</span>
+<span class="font-label-md text-label-md text-[10px]">AI Chat</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full px-4 py-1 active:scale-90 transition-all w-20 shadow-[0_4px_15px_rgba(120,103,192,0.2)]" href="#">
+<span class="material-symbols-outlined mb-0.5" style="font-variation-settings: 'FILL' 1;">groups</span>
+<span class="font-label-md text-label-md text-[10px] leading-tight text-center">Community</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary active:scale-90 transition-all w-16" href="#">
+<span class="material-symbols-outlined mb-1">person</span>
+<span class="font-label-md text-label-md text-[10px]">Profile</span>
+</a>
+</nav>
+</body></html>

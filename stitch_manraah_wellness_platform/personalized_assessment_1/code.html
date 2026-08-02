@@ -1,0 +1,215 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Manraah - Assessment</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@600;700&amp;family=Work+Sans:wght@400;600&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-highest": "#e6dff8",
+                        "on-primary-fixed-variant": "#4a388e",
+                        "on-error-container": "#93000a",
+                        "surface-dim": "#ded6f0",
+                        "secondary-container": "#88f7d6",
+                        "primary-container": "#7867c0",
+                        "tertiary-container": "#a46172",
+                        "on-secondary-fixed-variant": "#005140",
+                        "primary": "#5f4ea5",
+                        "surface-bright": "#fdf7ff",
+                        "on-tertiary-fixed": "#38091a",
+                        "tertiary-fixed": "#ffd9e0",
+                        "inverse-surface": "#322e41",
+                        "on-surface": "#1d192b",
+                        "inverse-primary": "#cbbeff",
+                        "outline-variant": "#cac4d3",
+                        "on-secondary-container": "#00725c",
+                        "background": "#fdf7ff",
+                        "on-secondary-fixed": "#002018",
+                        "surface": "#fdf7ff",
+                        "surface-variant": "#e6dff8",
+                        "surface-container": "#f2ebff",
+                        "on-primary-container": "#fffbff",
+                        "on-tertiary-fixed-variant": "#6e3444",
+                        "secondary": "#006b56",
+                        "primary-fixed-dim": "#cbbeff",
+                        "inverse-on-surface": "#f5eeff",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-high": "#ece4fe",
+                        "on-primary-fixed": "#1d0061",
+                        "error": "#ba1a1a",
+                        "outline": "#797582",
+                        "on-secondary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "on-surface-variant": "#484551",
+                        "on-tertiary-container": "#fffbff",
+                        "tertiary-fixed-dim": "#ffb1c3",
+                        "surface-container-low": "#f7f1ff",
+                        "secondary-fixed": "#88f7d6",
+                        "tertiary": "#874959",
+                        "on-primary": "#ffffff",
+                        "primary-fixed": "#e6deff",
+                        "secondary-fixed-dim": "#6adaba",
+                        "on-background": "#1d192b",
+                        "surface-tint": "#6251a8",
+                        "on-tertiary": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "lg": "48px",
+                        "container-padding-desktop": "64px",
+                        "xl": "80px",
+                        "xs": "4px",
+                        "md": "24px",
+                        "base": "8px",
+                        "sm": "12px",
+                        "container-padding-mobile": "20px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Work Sans"],
+                        "caption": ["Work Sans"],
+                        "headline-md": ["Quicksand"],
+                        "display-lg": ["Quicksand"],
+                        "headline-lg-mobile": ["Quicksand"],
+                        "label-md": ["Work Sans"],
+                        "body-md": ["Work Sans"],
+                        "headline-lg": ["Quicksand"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "caption": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "600" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        .ambient-shadow {
+            box-shadow: 0 10px 40px -10px rgba(124, 107, 196, 0.08);
+        }
+        
+        .fade-in-up {
+            animation: fadeInUp 0.6s ease-out forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .delay-100 { animation-delay: 100ms; }
+        .delay-200 { animation-delay: 200ms; }
+        .delay-300 { animation-delay: 300ms; }
+        .delay-400 { animation-delay: 400ms; }
+        .delay-500 { animation-delay: 500ms; }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen overflow-x-hidden">
+<!-- Background Illustration -->
+<div class="fixed inset-0 z-0 pointer-events-none opacity-40">
+<div class="bg-cover bg-center w-full h-full" data-alt="A serene, soft illustration of a distant mountain landscape bathed in gentle morning light. The color palette features pale lavender, soft blues, and muted greens, creating a calm, meditative atmosphere. The artwork style is modern organic, with smooth, flowing lines and a subtle, airy depth, perfectly suited for a wellness app background. The scene exudes tranquility and warmth." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDYlzT6BzuSS1-6tXNCuueO-HYlOAc0YfnncWRXfmHT6fKQVe0YUqdcvTvqDrAC2cD_pA0DqGW5XeiJFO8RQ_r0joGMc8MWYxJ9LhgJTYESP7_mjvUAtEycPr4CAMq-bmnRBlbTUWsJdvTDyBTPnLoFMVWoe4x3zyVO39seCoITAFAchhYBlmtDUGfOsN28ZrBGvRQqbRBOvRIjvd54HHLhBJM5F3wFP3BuwY26HTpeTi2N4DkLafbFrg')"></div>
+</div>
+<div class="relative z-10 flex min-h-screen w-full">
+<!-- Main Content Area - Taking full width as requested for the focused assessment flow -->
+<main class="flex-1 flex flex-col items-center justify-center p-container-padding-mobile md:p-container-padding-desktop min-h-screen">
+<div class="w-full max-w-[680px] mx-auto flex flex-col items-center gap-lg">
+<!-- Progress Header -->
+<header class="w-full text-center space-y-md fade-in-up">
+<div class="flex justify-between items-center text-on-surface-variant font-label-md text-label-md mb-base">
+<span>Assessment</span>
+<span>Step 1 of 10</span>
+</div>
+<!-- Progress Bar -->
+<div class="w-full h-3 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-secondary w-[10%] rounded-full transition-all duration-700 ease-out"></div>
+</div>
+</header>
+<!-- Question Area -->
+<div class="w-full text-center fade-in-up delay-100">
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile md:font-headline-lg md:text-headline-lg text-primary mb-md">
+                        How have you been feeling over the last few days?
+                    </h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant">
+                        Select the option that best describes your recent emotional state.
+                    </p>
+</div>
+<!-- Answer Options (Bento-style grid of soft buttons) -->
+<div class="w-full grid grid-cols-1 md:grid-cols-2 gap-sm md:gap-md mt-md">
+<button class="fade-in-up delay-200 glass-panel rounded-[24px] p-md text-left flex items-center justify-between border-2 border-transparent hover:border-primary-fixed hover:bg-surface-container-low transition-all duration-300 ambient-shadow group active:scale-[0.98]">
+<div class="flex items-center gap-sm">
+<div class="w-12 h-12 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center group-hover:bg-secondary group-hover:text-on-secondary transition-colors">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">sentiment_very_satisfied</span>
+</div>
+<span class="font-headline-md text-headline-md text-on-surface group-hover:text-primary transition-colors">Very Good</span>
+</div>
+</button>
+<button class="fade-in-up delay-300 glass-panel rounded-[24px] p-md text-left flex items-center justify-between border-2 border-transparent hover:border-primary-fixed hover:bg-surface-container-low transition-all duration-300 ambient-shadow group active:scale-[0.98]">
+<div class="flex items-center gap-sm">
+<div class="w-12 h-12 rounded-full bg-primary-fixed text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-on-primary transition-colors">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">sentiment_satisfied</span>
+</div>
+<span class="font-headline-md text-headline-md text-on-surface group-hover:text-primary transition-colors">Good</span>
+</div>
+</button>
+<button class="fade-in-up delay-400 glass-panel rounded-[24px] p-md text-left flex items-center justify-between border-2 border-transparent hover:border-primary-fixed hover:bg-surface-container-low transition-all duration-300 ambient-shadow group md:col-span-2 md:w-1/2 md:mx-auto active:scale-[0.98]">
+<div class="flex items-center gap-sm">
+<div class="w-12 h-12 rounded-full bg-surface-container-highest text-on-surface-variant flex items-center justify-center group-hover:bg-outline-variant transition-colors">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">sentiment_neutral</span>
+</div>
+<span class="font-headline-md text-headline-md text-on-surface group-hover:text-primary transition-colors">Neutral</span>
+</div>
+</button>
+<button class="fade-in-up delay-500 glass-panel rounded-[24px] p-md text-left flex items-center justify-between border-2 border-transparent hover:border-tertiary-fixed hover:bg-surface-container-low transition-all duration-300 ambient-shadow group active:scale-[0.98]">
+<div class="flex items-center gap-sm">
+<div class="w-12 h-12 rounded-full bg-tertiary-fixed text-on-tertiary-fixed-variant flex items-center justify-center group-hover:bg-tertiary group-hover:text-on-tertiary transition-colors">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">sentiment_dissatisfied</span>
+</div>
+<span class="font-headline-md text-headline-md text-on-surface group-hover:text-primary transition-colors">A bit low</span>
+</div>
+</button>
+<button class="fade-in-up delay-500 glass-panel rounded-[24px] p-md text-left flex items-center justify-between border-2 border-transparent hover:border-error-container hover:bg-surface-container-low transition-all duration-300 ambient-shadow group active:scale-[0.98]">
+<div class="flex items-center gap-sm">
+<div class="w-12 h-12 rounded-full bg-error-container text-on-error-container flex items-center justify-center group-hover:bg-error group-hover:text-on-error transition-colors">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">sentiment_very_dissatisfied</span>
+</div>
+<span class="font-headline-md text-headline-md text-on-surface group-hover:text-primary transition-colors">Very low</span>
+</div>
+</button>
+</div>
+<!-- Bottom Action (Optional Skip/Back) -->
+<div class="w-full mt-xl flex justify-center fade-in-up delay-500">
+<button class="text-on-surface-variant hover:text-primary transition-colors font-label-md text-label-md flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">arrow_back</span>
+                        Back to Dashboard
+                    </button>
+</div>
+</div>
+</main>
+</div>
+</body></html>

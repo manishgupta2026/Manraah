@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Wellness Reports - Manraah</title>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400..700&amp;family=Work+Sans:ital,wght@0,300..700;1,300..700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind Configuration -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary-container": "#a46172",
+                    "on-background": "#1d192b",
+                    "on-tertiary-fixed": "#38091a",
+                    "on-surface-variant": "#484551",
+                    "on-primary-fixed": "#1d0061",
+                    "inverse-primary": "#cbbeff",
+                    "on-secondary-container": "#00725c",
+                    "on-secondary-fixed": "#002018",
+                    "tertiary-fixed-dim": "#ffb1c3",
+                    "surface-container-highest": "#e6dff8",
+                    "secondary": "#006b56",
+                    "outline-variant": "#cac4d3",
+                    "surface": "#fdf7ff",
+                    "primary-fixed-dim": "#cbbeff",
+                    "primary-container": "#7867c0",
+                    "on-primary": "#ffffff",
+                    "on-primary-container": "#fffbff",
+                    "on-tertiary-container": "#fffbff",
+                    "on-tertiary-fixed-variant": "#6e3444",
+                    "secondary-container": "#88f7d6",
+                    "surface-container-high": "#ece4fe",
+                    "tertiary": "#874959",
+                    "secondary-fixed": "#88f7d6",
+                    "on-surface": "#1d192b",
+                    "surface-bright": "#fdf7ff",
+                    "on-tertiary": "#ffffff",
+                    "on-secondary": "#ffffff",
+                    "secondary-fixed-dim": "#6adaba",
+                    "background": "#fdf7ff",
+                    "on-primary-fixed-variant": "#4a388e",
+                    "tertiary-fixed": "#ffd9e0",
+                    "on-error-container": "#93000a",
+                    "on-secondary-fixed-variant": "#005140",
+                    "error": "#ba1a1a",
+                    "inverse-surface": "#322e41",
+                    "surface-variant": "#e6dff8",
+                    "inverse-on-surface": "#f5eeff",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container-low": "#f7f1ff",
+                    "outline": "#797582",
+                    "primary-fixed": "#e6deff",
+                    "on-error": "#ffffff",
+                    "surface-tint": "#6251a8",
+                    "surface-dim": "#ded6f0",
+                    "primary": "#5f4ea5",
+                    "surface-container": "#f2ebff",
+                    "error-container": "#ffdad6"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "2xl": "1.5rem",
+                    "3xl": "1.5rem",
+                    "4xl": "2rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "md": "24px",
+                    "sm": "12px",
+                    "lg": "48px",
+                    "container-padding-desktop": "64px",
+                    "xs": "4px",
+                    "xl": "80px",
+                    "container-padding-mobile": "20px",
+                    "base": "8px"
+            },
+            "fontFamily": {
+                    "headline-lg": ["Quicksand"],
+                    "label-md": ["Work Sans"],
+                    "headline-lg-mobile": ["Quicksand"],
+                    "body-md": ["Work Sans"],
+                    "display-lg": ["Quicksand"],
+                    "caption": ["Work Sans"],
+                    "body-lg": ["Work Sans"],
+                    "headline-md": ["Quicksand"]
+            },
+            "fontSize": {
+                    "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                    "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "caption": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        /* Ambient Soft Shadows & Utilities */
+        .ambient-shadow {
+            box-shadow: 0 12px 40px -10px rgba(95, 78, 165, 0.08); /* Primary color tinted shadow */
+        }
+        .ambient-shadow-lg {
+            box-shadow: 0 24px 60px -15px rgba(95, 78, 165, 0.12);
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .chart-bar-hover:hover {
+            transform: scaleY(1.05);
+            filter: brightness(1.1);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md text-body-md flex h-screen overflow-hidden antialiased">
+<!-- JSON Component: SideNavBar -->
+<!-- Applying structural shell layout, component shape, separation logic, and bg color -->
+<aside class="h-full w-72 fixed left-0 top-0 rounded-r-3xl flex flex-col p-sm overflow-y-auto hide-scrollbar bg-surface-container-low dark:bg-surface-container-lowest shadow-xl shadow-primary/10 z-50">
+<!-- Header -->
+<div class="px-4 py-8 mb-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center">
+<img alt="Manraah Logo" class="w-6 h-6 object-contain" data-alt="A minimalist, soft-edged logo representing wellness and sanctuary, using modern-organic shapes in soothing primary purple tones against a clean background, conveying compassion and clarity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAiXqIqD5BPcUaO2teeIB4CdZaXw7b9ceHGpxFSQnp2GUVC0DTs4r76akgiIdwqr_6CzmKoQpmr93HsosH36d_43Qmt8YjwjemW9zoubzvJNDtO5BKjP-K9UXV0Mu8ft-c_vhWT-OvficqsDbH-XokM9d0rsjBiNgnVKt4oxhzfXZ5WDV6NH3MYRJVH9PVqQ4JJs4tXx4XbOGSPnPF8KBgLu3UVcaK6l7RsHvID8XSqODg_DVsW8vFEtQ"/>
+</div>
+<div>
+<h2 class="font-headline-lg text-headline-lg font-bold text-primary">Manraah</h2>
+<p class="font-caption text-caption text-on-surface-variant">Your Wellness Sanctuary</p>
+</div>
+</div>
+</div>
+<!-- Navigation Links -->
+<nav class="flex-1 space-y-1">
+<!-- Inactive -->
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high rounded-xl hover:bg-primary-container/30 transition-all duration-200 hover:translate-x-1 font-label-md text-label-md font-work-sans" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">home</span>
+                Home
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high rounded-xl hover:bg-primary-container/30 transition-all duration-200 hover:translate-x-1 font-label-md text-label-md font-work-sans" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">insights</span>
+                My Journey
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high rounded-xl hover:bg-primary-container/30 transition-all duration-200 hover:translate-x-1 font-label-md text-label-md font-work-sans" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">smart_toy</span>
+                AI Companion
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high rounded-xl hover:bg-primary-container/30 transition-all duration-200 hover:translate-x-1 font-label-md text-label-md font-work-sans" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">diversity_3</span>
+                Human Companion
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high rounded-xl hover:bg-primary-container/30 transition-all duration-200 hover:translate-x-1 font-label-md text-label-md font-work-sans" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">medical_services</span>
+                Professional Care
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high rounded-xl hover:bg-primary-container/30 transition-all duration-200 hover:translate-x-1 font-label-md text-label-md font-work-sans" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">mood</span>
+                Mood &amp; Check-in
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high rounded-xl hover:bg-primary-container/30 transition-all duration-200 hover:translate-x-1 font-label-md text-label-md font-work-sans" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">edit_note</span>
+                Journal
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high rounded-xl hover:bg-primary-container/30 transition-all duration-200 hover:translate-x-1 font-label-md text-label-md font-work-sans" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">self_improvement</span>
+                Meditation &amp; Sleep
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high rounded-xl hover:bg-primary-container/30 transition-all duration-200 hover:translate-x-1 font-label-md text-label-md font-work-sans" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">groups</span>
+                Community
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high rounded-xl hover:bg-primary-container/30 transition-all duration-200 hover:translate-x-1 font-label-md text-label-md font-work-sans" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">library_books</span>
+                Resources
+            </a>
+<!-- Active State: Reports -->
+<a class="flex items-center gap-3 px-4 py-3 bg-primary-container text-on-primary-container font-bold rounded-xl active:scale-95 transition-transform font-label-md text-label-md font-work-sans" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">assessment</span>
+                Reports
+            </a>
+<!-- Inactive -->
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high rounded-xl hover:bg-primary-container/30 transition-all duration-200 hover:translate-x-1 font-label-md text-label-md font-work-sans" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">settings</span>
+                Settings
+            </a>
+</nav>
+<!-- Bottom padding for nav -->
+<div class="h-8"></div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="flex-1 flex flex-col ml-72 h-screen relative">
+<!-- JSON Component: TopNavBar -->
+<header class="flex items-center justify-between px-md w-full max-w-full w-full h-16 sticky top-0 z-40 bg-surface/60 backdrop-blur-md shadow-sm shadow-primary/5">
+<!-- Search Bar (on_left) -->
+<div class="flex-1 flex items-center">
+<div class="relative w-96">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-surface-container-lowest border border-outline-variant rounded-xl text-body-md font-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary-container/50 focus:border-primary transition-all placeholder:text-on-surface-variant/70" placeholder="Search insights..." type="text"/>
+</div>
+</div>
+<!-- Brand Logo (Hidden on desktop, handled by SideNav, but kept per style definition if needed. Decided to hide for cleaner canvas as SideNav has it) -->
+<!-- Trailing Actions -->
+<div class="flex items-center gap-md">
+<button class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-primary-container/20 transition-colors duration-300 active:scale-95">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-surface-container-highest cursor-pointer hover:border-primary transition-colors duration-300">
+<img alt="User Profile Avatar" class="w-full h-full object-cover" data-alt="A soft, beautifully lit portrait of a diverse user, serene expression, warm atmospheric lighting, representing the companionable and human-centric wellness brand identity. Modern organic aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBxQlmWP0Jy8JZxunbBa2f_4ZycOzS1VBUDgDaV9HBMsH47on-9QA1gR-kXJLo6ILb4JuqU7BzFCgwO0QIUOFkxCcvFKR8RekEnDcj0xSTQUZiVjvkgFIH7RuY_m8zcomKc9kvIJPzOdV-kAmOR7JA8mjUA7hKl0qzXoxvln81VdDwxEE9EqoJCtvhHGFxORgV462POmBVOlCnxzRjBVBE58-zN7ma1LtCRD5UQU9qT-Grkdqd2QoIbWQ"/>
+</div>
+</div>
+</header>
+<!-- Scrollable Dashboard Content -->
+<div class="flex-1 overflow-y-auto hide-scrollbar p-lg px-container-padding-desktop">
+<!-- Page Header & Controls -->
+<div class="flex items-end justify-between mb-lg max-w-[1200px] mx-auto">
+<div>
+<h1 class="font-display-lg text-display-lg text-on-surface mb-2">Wellness Reports</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">A clear, compassionate view of your journey. Tracking your balance helps us tailor your sanctuary.</p>
+</div>
+<!-- Time Toggle -->
+<div class="flex items-center bg-surface-container-low p-1 rounded-full shadow-inner border border-surface-variant">
+<button class="px-6 py-2.5 rounded-full bg-surface-container-lowest text-primary font-label-md text-label-md ambient-shadow transition-all">Weekly</button>
+<button class="px-6 py-2.5 rounded-full text-on-surface-variant font-label-md text-label-md hover:text-primary hover:bg-surface-container-highest/50 transition-all">Monthly</button>
+</div>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-12 gap-md max-w-[1200px] mx-auto pb-xl">
+<!-- TOP ROW -->
+<!-- Overall Wellness Metric (Col 4) -->
+<div class="col-span-12 lg:col-span-4 bg-primary rounded-3xl p-md flex flex-col justify-between ambient-shadow-lg relative overflow-hidden group">
+<!-- Soft gradient overlay for tactile feel -->
+<div class="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent pointer-events-none"></div>
+<div class="relative z-10">
+<div class="flex justify-between items-start mb-6">
+<h3 class="font-headline-md text-headline-md text-on-primary">Overall Wellness</h3>
+<div class="bg-white/20 backdrop-blur-md rounded-full px-3 py-1 flex items-center gap-1 text-on-primary">
+<span class="material-symbols-outlined text-sm" style="font-size: 16px;">trending_up</span>
+<span class="font-label-md text-[12px]">+4%</span>
+</div>
+</div>
+<div class="flex items-end gap-3 mt-4">
+<span class="font-display-lg text-[72px] leading-none tracking-tighter text-on-primary font-bold">84</span>
+<span class="font-headline-md text-headline-md text-on-primary/80 mb-2">Good</span>
+</div>
+</div>
+<div class="relative z-10 mt-8">
+<p class="font-body-md text-body-md text-on-primary/90 leading-relaxed">
+                            You're maintaining a lovely balance this week. Your meditation consistency is driving this positive trend.
+                        </p>
+</div>
+<!-- Decorative abstract shape -->
+<svg class="absolute -bottom-10 -right-10 w-48 h-48 text-white opacity-10 transform group-hover:scale-110 transition-transform duration-700 ease-out" fill="currentColor" viewbox="0 0 100 100">
+<path d="M50,0 C77.614,0 100,22.386 100,50 C100,77.614 77.614,100 50,100 C22.386,100 0,77.614 0,50 C0,22.386 22.386,0 50,0 Z"></path>
+</svg>
+</div>
+<!-- Mood Flow Graph (Col 8) -->
+<div class="col-span-12 lg:col-span-8 bg-surface-container-lowest rounded-3xl p-md ambient-shadow flex flex-col">
+<div class="flex justify-between items-center mb-6">
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Mood Flow</h3>
+<p class="font-caption text-caption text-on-surface-variant mt-1">Emotional rhythm over the last 7 days</p>
+</div>
+<button class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-surface-container-low transition-colors text-on-surface-variant">
+<span class="material-symbols-outlined">more_horiz</span>
+</button>
+</div>
+<!-- Chart Area Placeholder (Using SVG for a smooth, organic area chart) -->
+<div class="flex-1 relative w-full h-48 mt-4 flex items-end">
+<!-- Y-Axis Labels -->
+<div class="absolute left-0 top-0 bottom-8 flex flex-col justify-between text-on-surface-variant font-caption text-caption">
+<span>Joyful</span>
+<span>Calm</span>
+<span>Anxious</span>
+</div>
+<!-- Grid Lines -->
+<div class="absolute left-12 right-0 top-0 bottom-8 flex flex-col justify-between pointer-events-none">
+<div class="w-full h-px border-t border-dashed border-outline-variant/30"></div>
+<div class="w-full h-px border-t border-dashed border-outline-variant/30"></div>
+<div class="w-full h-px border-t border-dashed border-outline-variant/30"></div>
+</div>
+<!-- SVG Curve -->
+<div class="absolute left-12 right-0 top-0 bottom-8">
+<svg height="100%" preserveaspectratio="none" viewbox="0 0 1000 200" width="100%">
+<defs>
+<lineargradient id="moodGradient" x1="0%" x2="0%" y1="0%" y2="100%">
+<stop offset="0%" stop-color="#88f7d6" stop-opacity="0.4"></stop> <!-- secondary-container -->
+<stop offset="100%" stop-color="#fdf7ff" stop-opacity="0"></stop> <!-- background -->
+</lineargradient>
+</defs>
+<!-- Smooth organic path -->
+<path d="M0,150 C150,120 250,40 400,60 C550,80 650,180 800,100 C900,50 1000,80 1000,80 L1000,200 L0,200 Z" fill="url(#moodGradient)"></path>
+<path d="M0,150 C150,120 250,40 400,60 C550,80 650,180 800,100 C900,50 1000,80 1000,80" fill="none" stroke="#006b56" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"></path> <!-- secondary -->
+<!-- Data points -->
+<circle cx="400" cy="60" fill="#ffffff" r="6" stroke="#006b56" stroke-width="3"></circle>
+<circle cx="800" cy="100" fill="#ffffff" r="6" stroke="#006b56" stroke-width="3"></circle>
+</svg>
+</div>
+<!-- X-Axis Labels -->
+<div class="absolute left-12 right-0 bottom-0 flex justify-between text-on-surface-variant font-caption text-caption pt-2">
+<span>Mon</span>
+<span>Tue</span>
+<span>Wed</span>
+<span>Thu</span>
+<span>Fri</span>
+<span>Sat</span>
+<span>Sun</span>
+</div>
+</div>
+</div>
+<!-- BOTTOM ROW -->
+<!-- Meditation Minutes (Col 6) -->
+<div class="col-span-12 lg:col-span-6 bg-surface-container-lowest rounded-3xl p-md ambient-shadow flex flex-col h-[320px]">
+<div class="flex justify-between items-start mb-6">
+<div>
+<div class="flex items-center gap-2 mb-1">
+<span class="material-symbols-outlined text-secondary" style="font-size: 20px;">self_improvement</span>
+<h3 class="font-headline-md text-headline-md text-on-surface">Meditation</h3>
+</div>
+<p class="font-display-lg text-[32px] text-on-surface font-bold leading-none mt-2">120 <span class="font-body-md text-body-md text-on-surface-variant font-normal">min</span></p>
+</div>
+<span class="bg-secondary-container/30 text-on-secondary-container px-3 py-1 rounded-full font-label-md text-label-md">Goal: 150m</span>
+</div>
+<!-- Custom Bar Chart using Flexbox -->
+<div class="flex-1 flex items-end justify-between gap-2 mt-4 px-2 relative">
+<!-- Horizontal Grid Lines -->
+<div class="absolute inset-0 flex flex-col justify-between pointer-events-none pb-8 z-0">
+<div class="w-full h-px border-t border-dashed border-outline-variant/30"></div>
+<div class="w-full h-px border-t border-dashed border-outline-variant/30"></div>
+</div>
+<!-- Bars -->
+<div class="relative z-10 w-full flex flex-col items-center group">
+<div class="w-full bg-secondary rounded-t-lg h-[40%] chart-bar-hover transition-all duration-300 origin-bottom cursor-pointer"></div>
+<span class="font-caption text-caption text-on-surface-variant mt-3 group-hover:text-secondary transition-colors">M</span>
+</div>
+<div class="relative z-10 w-full flex flex-col items-center group">
+<div class="w-full bg-secondary rounded-t-lg h-[60%] chart-bar-hover transition-all duration-300 origin-bottom cursor-pointer"></div>
+<span class="font-caption text-caption text-on-surface-variant mt-3 group-hover:text-secondary transition-colors">T</span>
+</div>
+<div class="relative z-10 w-full flex flex-col items-center group">
+<div class="w-full bg-secondary rounded-t-lg h-[30%] chart-bar-hover transition-all duration-300 origin-bottom cursor-pointer"></div>
+<span class="font-caption text-caption text-on-surface-variant mt-3 group-hover:text-secondary transition-colors">W</span>
+</div>
+<div class="relative z-10 w-full flex flex-col items-center group">
+<div class="w-full bg-secondary rounded-t-lg h-[80%] chart-bar-hover transition-all duration-300 origin-bottom cursor-pointer relative">
+<!-- Tooltip simulation for highest day -->
+<div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-inverse-surface text-inverse-on-surface text-xs px-2 py-1 rounded shadow-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">30 min</div>
+</div>
+<span class="font-caption text-caption text-on-surface-variant mt-3 group-hover:text-secondary transition-colors font-bold text-secondary">T</span>
+</div>
+<div class="relative z-10 w-full flex flex-col items-center group">
+<div class="w-full bg-secondary rounded-t-lg h-[50%] chart-bar-hover transition-all duration-300 origin-bottom cursor-pointer"></div>
+<span class="font-caption text-caption text-on-surface-variant mt-3 group-hover:text-secondary transition-colors">F</span>
+</div>
+<div class="relative z-10 w-full flex flex-col items-center group">
+<div class="w-full bg-surface-variant rounded-t-lg h-[20%] chart-bar-hover transition-all duration-300 origin-bottom cursor-pointer"></div>
+<span class="font-caption text-caption text-outline-variant mt-3">S</span>
+</div>
+<div class="relative z-10 w-full flex flex-col items-center group">
+<div class="w-full bg-surface-variant rounded-t-lg h-[10%] chart-bar-hover transition-all duration-300 origin-bottom cursor-pointer"></div>
+<span class="font-caption text-caption text-outline-variant mt-3">S</span>
+</div>
+</div>
+</div>
+<!-- Sleep Quality (Col 6) -->
+<div class="col-span-12 lg:col-span-6 bg-surface-container-lowest rounded-3xl p-md ambient-shadow flex flex-col h-[320px]">
+<div class="flex justify-between items-start mb-6">
+<div>
+<div class="flex items-center gap-2 mb-1">
+<span class="material-symbols-outlined text-primary" style="font-size: 20px;">bedtime</span>
+<h3 class="font-headline-md text-headline-md text-on-surface">Sleep Quality</h3>
+</div>
+<p class="font-display-lg text-[32px] text-on-surface font-bold leading-none mt-2">7.2 <span class="font-body-md text-body-md text-on-surface-variant font-normal">hrs avg</span></p>
+</div>
+<div class="flex gap-2">
+<span class="w-2 h-2 rounded-full bg-primary mt-2"></span>
+<span class="font-caption text-caption text-on-surface-variant mt-1">Deep</span>
+<span class="w-2 h-2 rounded-full bg-primary-fixed mt-2 ml-2"></span>
+<span class="font-caption text-caption text-on-surface-variant mt-1">Light</span>
+</div>
+</div>
+<!-- Stacked area chart visualization (abstracted) -->
+<div class="flex-1 relative w-full h-full mt-4 flex items-end">
+<svg class="overflow-visible" height="100%" preserveaspectratio="none" viewbox="0 0 500 150" width="100%">
+<!-- Light Sleep Area (Background) -->
+<path class="transition-all duration-500 ease-in-out hover:fill-[#cbbeff]" d="M0,100 C70,110 140,50 210,80 C280,110 350,60 420,90 C460,105 500,80 500,80 L500,150 L0,150 Z" fill="#e6deff"></path> <!-- primary-fixed -> hover:primary-fixed-dim -->
+<!-- Deep Sleep Area (Foreground) -->
+<path class="transition-all duration-500 ease-in-out hover:fill-[#5f4ea5]" d="M0,130 C70,120 140,90 210,120 C280,150 350,100 420,130 C460,140 500,110 500,110 L500,150 L0,150 Z" fill="#7867c0"></path> <!-- primary-container -> hover:primary -->
+<!-- Line separating deep and light -->
+<path d="M0,130 C70,120 140,90 210,120 C280,150 350,100 420,130 C460,140 500,110 500,110" fill="none" stroke="#fdf7ff" stroke-width="2"></path> <!-- surface border -->
+</svg>
+<!-- Days Labels overlayed on bottom -->
+<div class="absolute left-0 right-0 bottom-0 flex justify-between px-4 pb-2 text-on-surface-variant font-caption text-caption pointer-events-none">
+<span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

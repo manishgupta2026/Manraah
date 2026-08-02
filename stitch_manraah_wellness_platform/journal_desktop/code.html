@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Journal - Manraah</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&amp;family=Work+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "outline-variant": "#cac4d3",
+                      "tertiary": "#874959",
+                      "on-primary-fixed-variant": "#4a388e",
+                      "on-primary-fixed": "#1d0061",
+                      "primary-fixed-dim": "#cbbeff",
+                      "primary": "#5f4ea5",
+                      "on-error": "#ffffff",
+                      "on-tertiary-fixed-variant": "#6e3444",
+                      "tertiary-fixed-dim": "#ffb1c3",
+                      "surface-variant": "#e6dff8",
+                      "primary-container": "#7867c0",
+                      "surface-container-low": "#f7f1ff",
+                      "secondary": "#006b56",
+                      "secondary-fixed-dim": "#6adaba",
+                      "surface-container": "#f2ebff",
+                      "on-secondary-container": "#00725c",
+                      "inverse-surface": "#322e41",
+                      "on-secondary": "#ffffff",
+                      "surface-dim": "#ded6f0",
+                      "on-secondary-fixed": "#002018",
+                      "background": "#fdf7ff",
+                      "secondary-container": "#88f7d6",
+                      "surface-bright": "#fdf7ff",
+                      "surface-container-highest": "#e6dff8",
+                      "tertiary-container": "#a46172",
+                      "surface-container-high": "#ece4fe",
+                      "on-secondary-fixed-variant": "#005140",
+                      "inverse-on-surface": "#f5eeff",
+                      "surface": "#fdf7ff",
+                      "on-primary": "#ffffff",
+                      "on-surface-variant": "#484551",
+                      "on-error-container": "#93000a",
+                      "on-background": "#1d192b",
+                      "outline": "#797582",
+                      "surface-container-lowest": "#ffffff",
+                      "primary-fixed": "#e6deff",
+                      "on-tertiary": "#ffffff",
+                      "surface-tint": "#6251a8",
+                      "error": "#ba1a1a",
+                      "secondary-fixed": "#88f7d6",
+                      "on-surface": "#1d192b",
+                      "on-tertiary-fixed": "#38091a",
+                      "tertiary-fixed": "#ffd9e0",
+                      "inverse-primary": "#cbbeff",
+                      "on-primary-container": "#fffbff",
+                      "error-container": "#ffdad6",
+                      "on-tertiary-container": "#fffbff"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "sm": "12px",
+                      "md": "24px",
+                      "xl": "80px",
+                      "base": "8px",
+                      "xs": "4px",
+                      "container-padding-mobile": "20px",
+                      "container-padding-desktop": "64px",
+                      "lg": "48px"
+              },
+              "fontFamily": {
+                      "headline-lg-mobile": [
+                              "Quicksand"
+                      ],
+                      "display-lg": [
+                              "Quicksand"
+                      ],
+                      "headline-lg": [
+                              "Quicksand"
+                      ],
+                      "caption": [
+                              "Work Sans"
+                      ],
+                      "body-md": [
+                              "Work Sans"
+                      ],
+                      "label-md": [
+                              "Work Sans"
+                      ],
+                      "headline-md": [
+                              "Quicksand"
+                      ],
+                      "body-lg": [
+                              "Work Sans"
+                      ]
+              },
+              "fontSize": {
+                      "headline-lg-mobile": [
+                              "28px",
+                              {
+                                      "lineHeight": "36px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "display-lg": [
+                              "48px",
+                              {
+                                      "lineHeight": "56px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "caption": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "label-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "letterSpacing": "0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "400"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+<style>
+        body {
+            background-color: #fdf7ff; /* surface */
+        }
+        .soft-shadow {
+            box-shadow: 0 10px 30px rgba(124, 107, 196, 0.05), 0 4px 10px rgba(124, 107, 196, 0.03);
+        }
+        .glass-panel {
+            background: rgba(253, 247, 255, 0.6);
+            backdrop-filter: blur(20px);
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #e6dff8; /* surface-variant */
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #cbbeff; /* primary-fixed-dim */
+        }
+      </style>
+</head>
+<body class="font-body-md text-body-md text-on-surface antialiased bg-surface min-h-screen flex">
+<!-- SideNavBar -->
+<nav class="bg-surface dark:bg-surface-dim font-body-md text-body-md h-screen w-64 fixed left-0 top-0 bg-surface-container-low dark:bg-surface-container-lowest shadow-md shadow-primary/5 flex flex-col py-md overflow-y-auto z-40 hidden md:flex border-r border-surface-container-high">
+<div class="px-md mb-xl flex items-center gap-sm">
+<img class="w-10 h-10 rounded-full object-cover shadow-sm" data-alt="A small, elegant circular logo for a wellness app called Manraah. The logo features a stylized lotus flower intertwining with gentle digital waveforms, rendered in soft lavender and deep purple tones on a clean white background. Modern, organic, and serene aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCautl3cAXavAA3QWi5j4FPkkn4MJ5zzf8OII1nUG9nVNF2JBiDTGy5gBUl47Yl5tiXd3KA0SWxZNjn3o1H7e7ZV5s18lKb_8JULnorIkK_CBakfP_v9lPmismebtgAfd25OkeumqULCck5Tg6J6Cpikzwl_ZmsEvrhEIJJZL6WWFQbrI0CdSinbaQK4KteB2ubL4KAzE6_2MRuyH_96cZdUZMhUSyVhvt_isG4-oyv5XQG1VcSHAJVkg"/>
+<div>
+<h1 class="font-display-lg text-display-lg text-primary dark:text-primary-fixed-dim !text-[24px] !leading-[32px]">Manraah</h1>
+<p class="font-caption text-caption text-on-surface-variant">Wellness Sanctuary</p>
+</div>
+</div>
+<div class="flex-1 px-sm space-y-xs">
+<a class="flex items-center gap-sm px-4 py-3 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform group" href="#">
+<span class="material-symbols-outlined text-[20px] group-hover:text-primary transition-colors" data-icon="home">home</span>
+<span class="font-label-md text-label-md">Home</span>
+</a>
+<a class="flex items-center gap-sm px-4 py-3 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform group" href="#">
+<span class="material-symbols-outlined text-[20px] group-hover:text-primary transition-colors" data-icon="insights">insights</span>
+<span class="font-label-md text-label-md">My Journey</span>
+</a>
+<a class="flex items-center gap-sm px-4 py-3 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform group" href="#">
+<span class="material-symbols-outlined text-[20px] group-hover:text-primary transition-colors" data-icon="smart_toy">smart_toy</span>
+<span class="font-label-md text-label-md">AI Companion</span>
+</a>
+<a class="flex items-center gap-sm px-4 py-3 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform group" href="#">
+<span class="material-symbols-outlined text-[20px] group-hover:text-primary transition-colors" data-icon="diversity_1">diversity_1</span>
+<span class="font-label-md text-label-md">Human Companion</span>
+</a>
+<a class="flex items-center gap-sm px-4 py-3 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform group" href="#">
+<span class="material-symbols-outlined text-[20px] group-hover:text-primary transition-colors" data-icon="medical_services">medical_services</span>
+<span class="font-label-md text-label-md">Professional Care</span>
+</a>
+<a class="flex items-center gap-sm px-4 py-3 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform group" href="#">
+<span class="material-symbols-outlined text-[20px] group-hover:text-primary transition-colors" data-icon="mood">mood</span>
+<span class="font-label-md text-label-md">Mood &amp; Check-in</span>
+</a>
+<!-- Active Tab -->
+<a class="flex items-center gap-sm px-4 py-3 rounded-lg text-primary font-bold border-r-4 border-primary bg-primary-container/10 active:scale-95 transition-transform relative overflow-hidden group" href="#">
+<div class="absolute inset-0 bg-gradient-to-r from-primary-container/0 to-primary-container/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<span class="material-symbols-outlined text-[20px] relative z-10" data-icon="edit_note" data-weight="fill" style="font-variation-settings: 'FILL' 1;">edit_note</span>
+<span class="font-label-md text-label-md relative z-10">Journal</span>
+</a>
+<a class="flex items-center gap-sm px-4 py-3 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform group" href="#">
+<span class="material-symbols-outlined text-[20px] group-hover:text-primary transition-colors" data-icon="self_improvement">self_improvement</span>
+<span class="font-label-md text-label-md">Meditation &amp; Sleep</span>
+</a>
+<a class="flex items-center gap-sm px-4 py-3 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform group" href="#">
+<span class="material-symbols-outlined text-[20px] group-hover:text-primary transition-colors" data-icon="groups">groups</span>
+<span class="font-label-md text-label-md">Community</span>
+</a>
+<a class="flex items-center gap-sm px-4 py-3 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform group" href="#">
+<span class="material-symbols-outlined text-[20px] group-hover:text-primary transition-colors" data-icon="library_books">library_books</span>
+<span class="font-label-md text-label-md">Resources</span>
+</a>
+<a class="flex items-center gap-sm px-4 py-3 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform group" href="#">
+<span class="material-symbols-outlined text-[20px] group-hover:text-primary transition-colors" data-icon="assessment">assessment</span>
+<span class="font-label-md text-label-md">Reports</span>
+</a>
+</div>
+<div class="mt-auto px-sm pt-4">
+<a class="flex items-center gap-sm px-4 py-3 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform group" href="#">
+<span class="material-symbols-outlined text-[20px] group-hover:text-primary transition-colors" data-icon="settings">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Wrapper -->
+<div class="flex-1 ml-0 md:ml-64 relative min-h-screen">
+<!-- TopNavBar -->
+<header class="bg-surface/60 backdrop-blur-md dark:bg-surface-dim/60 font-label-md text-label-md fixed top-0 right-0 w-full md:w-[calc(100%-16rem)] z-40 bg-surface/80 backdrop-blur-xl shadow-sm shadow-primary/5 flex justify-between items-center h-16 px-container-padding-mobile md:px-container-padding-desktop ml-auto hidden md:flex">
+<!-- Left Side - Page Title -->
+<div class="flex items-center gap-3">
+<span class="font-headline-md text-headline-md text-primary">Journal</span>
+</div>
+<!-- Right Side - Search & Actions -->
+<div class="flex items-center gap-lg">
+<!-- Search -->
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline-variant text-[20px]">search</span>
+<input class="bg-surface-container-low border border-outline-variant/30 rounded-[16px] pl-10 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/50 transition-all w-64 text-on-surface placeholder-on-surface-variant/60 font-body-md text-body-md" placeholder="Search entries..." type="text"/>
+</div>
+<!-- Actions -->
+<div class="flex items-center gap-sm">
+<button class="w-10 h-10 flex items-center justify-center text-on-surface-variant hover:bg-primary-container/20 rounded-full transition-all active:scale-95 duration-200">
+<span class="material-symbols-outlined text-[24px]" data-icon="notifications">notifications</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center text-on-surface-variant hover:bg-primary-container/20 rounded-full transition-all active:scale-95 duration-200">
+<span class="material-symbols-outlined text-[24px]" data-icon="settings">settings</span>
+</button>
+<button class="ml-2 hover:opacity-80 transition-opacity active:scale-95">
+<img alt="User profile avatar" class="w-10 h-10 rounded-full object-cover border-2 border-surface-container-highest shadow-sm" data-alt="A portrait photo of a relaxed, smiling person in their 30s in a brightly lit room with indoor plants. The photo serves as a user profile avatar for a wellness app. Soft, natural lighting, warm and approachable." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD-WbOXgAxMQo5gSEdNhRdHdMVZYbmLR5fgNElkLFXKCooHv3b_8bgsgnu4RRxqccFDrVwxL3qPmFZeZWw2pl2H3RoqUjthsNjmaiAc5-z3AYS-A_ZIhLLqe5dvR2S76UKSKJmtRwO_XA0X7fbVgTnO5Q3uhLAtA0HYWsQuhj5-uFW9SsL68-iXno3RvI8pTpehDE0nbAujFJxIV2bdlu7hR0VH3AqcSg8F_NofcHGb2jG-jzmmeEDRyw"/>
+</button>
+</div>
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="pt-24 md:pt-32 pb-32 md:pb-24 px-container-padding-mobile md:px-container-padding-desktop max-w-[1400px] mx-auto">
+<!-- Header Section -->
+<div class="mb-lg">
+<h2 class="font-display-lg text-display-lg text-on-surface mb-2">Good morning.</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">Take a moment to center yourself. Your sanctuary awaits your thoughts.</p>
+</div>
+<!-- Bento Layout Content -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-md">
+<!-- Left Column (Main Editor & Prompts) -->
+<div class="lg:col-span-8 flex flex-col gap-md">
+<!-- Prompts Horizontal Scroll -->
+<div class="w-full">
+<div class="flex items-center justify-between mb-4">
+<h3 class="font-label-md text-label-md text-on-surface uppercase tracking-wider opacity-70">Prompts for Reflection</h3>
+<button class="text-primary font-label-md text-label-md hover:underline flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">refresh</span>
+                                Refresh
+                            </button>
+</div>
+<div class="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory hide-scrollbar" style="-webkit-overflow-scrolling: touch; scrollbar-width: none;">
+<button class="flex-none w-[280px] snap-center bg-surface-container-high hover:bg-primary-container/10 transition-colors p-5 rounded-[24px] text-left group soft-shadow border border-transparent hover:border-primary/20">
+<div class="w-8 h-8 rounded-full bg-primary-fixed flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-primary text-[18px]">favorite</span>
+</div>
+<h4 class="font-headline-md text-headline-md !text-[18px] !leading-[24px] text-on-surface mb-2 group-hover:text-primary transition-colors">How are you feeling today?</h4>
+<p class="font-caption text-caption text-on-surface-variant">Check in with your emotions.</p>
+</button>
+<button class="flex-none w-[280px] snap-center bg-secondary-container/30 hover:bg-secondary-container/50 transition-colors p-5 rounded-[24px] text-left group soft-shadow border border-transparent hover:border-secondary/20">
+<div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-on-secondary-container text-[18px]">nature</span>
+</div>
+<h4 class="font-headline-md text-headline-md !text-[18px] !leading-[24px] text-on-surface mb-2 group-hover:text-on-secondary-container transition-colors">What are you grateful for?</h4>
+<p class="font-caption text-caption text-on-surface-variant">Acknowledge the good around you.</p>
+</button>
+<button class="flex-none w-[280px] snap-center bg-tertiary-container/10 hover:bg-tertiary-container/20 transition-colors p-5 rounded-[24px] text-left group soft-shadow border border-transparent hover:border-tertiary/20">
+<div class="w-8 h-8 rounded-full bg-tertiary-fixed flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-tertiary text-[18px]">tips_and_updates</span>
+</div>
+<h4 class="font-headline-md text-headline-md !text-[18px] !leading-[24px] text-on-surface mb-2 group-hover:text-tertiary transition-colors">What did you learn recently?</h4>
+<p class="font-caption text-caption text-on-surface-variant">Reflect on personal growth.</p>
+</button>
+</div>
+</div>
+<!-- Editor Area -->
+<div class="bg-surface-container-lowest rounded-[24px] soft-shadow flex flex-col min-h-[500px] border border-surface-container-high relative overflow-hidden">
+<!-- Toolbar -->
+<div class="px-6 py-4 border-b border-surface-variant flex items-center justify-between bg-surface-container-low/50 backdrop-blur-sm z-10">
+<div class="flex items-center gap-2">
+<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-surface-variant text-on-surface-variant transition-colors" title="Bold">
+<span class="material-symbols-outlined text-[20px]">format_bold</span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-surface-variant text-on-surface-variant transition-colors" title="Italic">
+<span class="material-symbols-outlined text-[20px]">format_italic</span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-surface-variant text-on-surface-variant transition-colors" title="List">
+<span class="material-symbols-outlined text-[20px]">format_list_bulleted</span>
+</button>
+<div class="w-px h-6 bg-outline-variant mx-2"></div>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-primary-container/20 text-primary transition-colors relative group" title="Add Image">
+<span class="material-symbols-outlined text-[20px]">image</span>
+<span class="absolute -top-8 left-1/2 -translate-x-1/2 bg-inverse-surface text-inverse-on-surface font-caption text-caption px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">Add Media</span>
+</button>
+</div>
+<div class="flex items-center gap-3">
+<div class="flex items-center gap-2 bg-surface-variant/50 px-3 py-1.5 rounded-full cursor-pointer hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined text-[18px] text-tertiary">mood</span>
+<span class="font-label-md text-label-md text-on-surface">Tag Mood</span>
+</div>
+<button class="bg-primary text-on-primary font-label-md text-label-md px-6 py-2 rounded-full hover:bg-primary/90 hover:shadow-md hover:shadow-primary/20 transition-all active:scale-95 bg-gradient-to-br from-primary to-[#725fc7]">
+                                    Save Entry
+                                </button>
+</div>
+</div>
+<!-- Text Area -->
+<div class="flex-1 p-6 lg:p-10 relative">
+<input class="w-full bg-transparent border-none focus:ring-0 font-headline-lg text-headline-lg text-on-surface placeholder-on-surface-variant/40 p-0 mb-6 font-semibold" placeholder="Title your thoughts..." type="text"/>
+<textarea class="w-full h-full min-h-[300px] resize-none bg-transparent border-none focus:ring-0 font-body-lg text-body-lg text-on-surface placeholder-on-surface-variant/40 p-0 leading-relaxed" placeholder="Start reflecting here..."></textarea>
+</div>
+</div>
+</div>
+<!-- Right Column (Past Entries & Stats) -->
+<div class="lg:col-span-4 flex flex-col gap-md">
+<!-- Stats / Mini Summary (Glassmorphism) -->
+<div class="bg-gradient-to-br from-primary-container/20 to-surface-container-high p-6 rounded-[24px] soft-shadow relative overflow-hidden">
+<!-- Abstract Decorative Element -->
+<div class="absolute -right-8 -top-8 w-32 h-32 bg-primary/10 rounded-full blur-2xl pointer-events-none"></div>
+<h3 class="font-label-md text-label-md text-on-surface mb-4 opacity-80 uppercase tracking-wider">Weekly Insights</h3>
+<div class="flex items-end gap-4 mb-2">
+<span class="font-display-lg text-display-lg text-primary leading-none">4</span>
+<span class="font-body-md text-body-md text-on-surface-variant pb-1">Entries this week</span>
+</div>
+<div class="mt-6 flex items-center justify-between text-sm">
+<div class="flex flex-col gap-1 items-center">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center text-on-surface-variant font-label-md text-label-md">M</div>
+<div class="w-2 h-2 rounded-full bg-primary"></div>
+</div>
+<div class="flex flex-col gap-1 items-center">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center text-on-surface-variant font-label-md text-label-md">T</div>
+<div class="w-2 h-2 rounded-full bg-tertiary"></div>
+</div>
+<div class="flex flex-col gap-1 items-center">
+<div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container font-label-md text-label-md shadow-md shadow-primary/20">W</div>
+<div class="w-2 h-2 rounded-full bg-primary"></div>
+</div>
+<div class="flex flex-col gap-1 items-center opacity-40">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center text-on-surface-variant font-label-md text-label-md">T</div>
+<div class="w-2 h-2 rounded-full bg-transparent border border-outline-variant"></div>
+</div>
+<div class="flex flex-col gap-1 items-center opacity-40">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center text-on-surface-variant font-label-md text-label-md">F</div>
+<div class="w-2 h-2 rounded-full bg-transparent border border-outline-variant"></div>
+</div>
+</div>
+</div>
+<!-- Past Entries List -->
+<div class="bg-surface-container-lowest rounded-[24px] soft-shadow p-6 flex-1 flex flex-col border border-surface-container-high">
+<div class="flex items-center justify-between mb-6">
+<h3 class="font-headline-md text-headline-md !text-[20px] text-on-surface">Past Entries</h3>
+<button class="text-primary hover:bg-primary/5 p-2 rounded-full transition-colors">
+<span class="material-symbols-outlined text-[20px]">more_horiz</span>
+</button>
+</div>
+<div class="flex flex-col gap-4 overflow-y-auto pr-2 flex-1 max-h-[400px]">
+<!-- Entry Item -->
+<a class="group p-4 rounded-xl hover:bg-surface-container-high transition-colors border border-transparent hover:border-surface-variant flex gap-4 cursor-pointer" href="#">
+<div class="flex flex-col items-center min-w-[48px]">
+<span class="font-label-md text-label-md text-on-surface">Oct</span>
+<span class="font-headline-md text-headline-md text-primary leading-none">24</span>
+</div>
+<div class="flex-1">
+<div class="flex items-center gap-2 mb-1">
+<h4 class="font-label-md text-label-md text-on-surface group-hover:text-primary transition-colors truncate max-w-[180px]">Finding calm in the storm</h4>
+<span class="bg-primary/10 text-primary text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider ml-auto">Peaceful</span>
+</div>
+<p class="font-caption text-caption text-on-surface-variant line-clamp-2">Today was overwhelming at first, but taking a moment to breathe really shifted my perspective on...</p>
+</div>
+</a>
+<div class="h-px w-full bg-outline-variant/30 border-dashed border-t"></div>
+<!-- Entry Item -->
+<a class="group p-4 rounded-xl hover:bg-surface-container-high transition-colors border border-transparent hover:border-surface-variant flex gap-4 cursor-pointer" href="#">
+<div class="flex flex-col items-center min-w-[48px]">
+<span class="font-label-md text-label-md text-on-surface">Oct</span>
+<span class="font-headline-md text-headline-md text-on-surface leading-none opacity-80">22</span>
+</div>
+<div class="flex-1">
+<div class="flex items-center gap-2 mb-1">
+<h4 class="font-label-md text-label-md text-on-surface group-hover:text-primary transition-colors truncate max-w-[180px]">Morning routine thoughts</h4>
+<span class="bg-tertiary/10 text-tertiary text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider ml-auto">Anxious</span>
+</div>
+<p class="font-caption text-caption text-on-surface-variant line-clamp-2">Woke up feeling a bit restless. Tried the new meditation technique and it helped ground me before the meeting.</p>
+</div>
+</a>
+<div class="h-px w-full bg-outline-variant/30 border-dashed border-t"></div>
+<!-- Entry Item -->
+<a class="group p-4 rounded-xl hover:bg-surface-container-high transition-colors border border-transparent hover:border-surface-variant flex gap-4 cursor-pointer" href="#">
+<div class="flex flex-col items-center min-w-[48px]">
+<span class="font-label-md text-label-md text-on-surface">Oct</span>
+<span class="font-headline-md text-headline-md text-on-surface leading-none opacity-80">20</span>
+</div>
+<div class="flex-1">
+<div class="flex items-center gap-2 mb-1">
+<h4 class="font-label-md text-label-md text-on-surface group-hover:text-primary transition-colors truncate max-w-[180px]">Grateful for small things</h4>
+<span class="bg-secondary/10 text-secondary text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider ml-auto">Joyful</span>
+</div>
+<p class="font-caption text-caption text-on-surface-variant line-clamp-2">The sunlight hitting the plants in the living room looked incredibly beautiful today. It's the little details.</p>
+</div>
+</a>
+</div>
+<button class="w-full py-3 mt-4 text-center font-label-md text-label-md text-primary hover:bg-primary-container/10 rounded-xl transition-colors border border-transparent hover:border-primary/20">
+                            View All Entries
+                        </button>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

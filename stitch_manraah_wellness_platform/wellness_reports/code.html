@@ -1,0 +1,299 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+<title>Wellness Reports - Manraah</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "outline-variant": "#cac4d3",
+                        "on-secondary-fixed-variant": "#005140",
+                        "on-secondary": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "inverse-on-surface": "#f5eeff",
+                        "inverse-primary": "#cbbeff",
+                        "surface-container": "#f2ebff",
+                        "surface": "#fdf7ff",
+                        "on-background": "#1d192b",
+                        "surface-container-low": "#f7f1ff",
+                        "on-secondary-fixed": "#002018",
+                        "tertiary-fixed-dim": "#ffb1c3",
+                        "surface-tint": "#6251a8",
+                        "tertiary": "#874959",
+                        "primary": "#5f4ea5",
+                        "error": "#ba1a1a",
+                        "secondary-fixed-dim": "#6adaba",
+                        "on-tertiary-fixed": "#38091a",
+                        "background": "#fdf7ff",
+                        "on-surface-variant": "#484551",
+                        "secondary": "#006b56",
+                        "surface-bright": "#fdf7ff",
+                        "on-tertiary-fixed-variant": "#6e3444",
+                        "on-secondary-container": "#00725c",
+                        "outline": "#797582",
+                        "error-container": "#ffdad6",
+                        "primary-container": "#7867c0",
+                        "on-error-container": "#93000a",
+                        "on-primary-fixed": "#1d0061",
+                        "secondary-fixed": "#88f7d6",
+                        "surface-container-high": "#ece4fe",
+                        "surface-dim": "#ded6f0",
+                        "surface-container-highest": "#e6dff8",
+                        "on-surface": "#1d192b",
+                        "on-error": "#ffffff",
+                        "on-tertiary-container": "#fffbff",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-container": "#a46172",
+                        "inverse-surface": "#322e41",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-fixed-variant": "#4a388e",
+                        "surface-variant": "#e6dff8",
+                        "secondary-container": "#88f7d6",
+                        "tertiary-fixed": "#ffd9e0",
+                        "primary-fixed-dim": "#cbbeff",
+                        "primary-fixed": "#e6deff",
+                        "on-primary-container": "#fffbff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "container-padding-desktop": "64px",
+                        "lg": "48px",
+                        "container-padding-mobile": "20px",
+                        "xl": "80px",
+                        "md": "24px",
+                        "base": "8px",
+                        "xs": "4px",
+                        "sm": "12px"
+                    },
+                    "fontFamily": {
+                        "label-md": ["Work Sans", "sans-serif"],
+                        "headline-md": ["Quicksand", "sans-serif"],
+                        "headline-lg-mobile": ["Quicksand", "sans-serif"],
+                        "caption": ["Work Sans", "sans-serif"],
+                        "display-lg": ["Quicksand", "sans-serif"],
+                        "body-lg": ["Work Sans", "sans-serif"],
+                        "headline-lg": ["Quicksand", "sans-serif"],
+                        "body-md": ["Work Sans", "sans-serif"]
+                    },
+                    "fontSize": {
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "600" }],
+                        "caption": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@600;700&amp;family=Work+Sans:wght@400;600&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .fill-icon {
+            font-variation-settings: 'FILL' 1;
+        }
+        body {
+            -webkit-tap-highlight-color: transparent;
+        }
+        /* Custom scrollbar for horizontal scrolling areas */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .ambient-shadow {
+            box-shadow: 0 10px 40px -10px rgba(124, 107, 196, 0.08);
+        }
+        .soft-gradient-bg {
+            background: linear-gradient(135deg, #fdf7ff 0%, #f2ebff 100%);
+        }
+        .btn-gradient {
+            background: linear-gradient(135deg, #7867c0 0%, #5f4ea5 100%);
+        }
+        .pb-safe { padding-bottom: env(safe-area-inset-bottom, 20px); }
+    </style>
+</head>
+<body class="bg-background text-on-background antialiased md:hidden h-screen overflow-hidden flex flex-col soft-gradient-bg">
+<!-- Top Navigation Area for Mobile -->
+<header class="px-container-padding-mobile pt-lg pb-md flex justify-between items-center z-10">
+<div>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-primary tracking-tight">Your Progress</h1>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">October 1st - 7th</p>
+</div>
+<button class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center text-primary hover:bg-primary-container/20 transition-colors shadow-sm shadow-primary/5">
+<span class="material-symbols-outlined" data-icon="file_download">file_download</span>
+</button>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-1 overflow-y-auto px-container-padding-mobile pb-32 no-scrollbar">
+<!-- Period Selector -->
+<div class="flex gap-4 mb-8">
+<button class="flex-1 py-3 px-4 rounded-xl bg-primary text-on-primary font-label-md text-label-md text-center shadow-md shadow-primary/20 transition-transform active:scale-95">Weekly</button>
+<button class="flex-1 py-3 px-4 rounded-xl bg-surface-container text-primary font-label-md text-label-md text-center hover:bg-surface-container-high transition-colors active:scale-95">Monthly</button>
+</div>
+<!-- Highlight Metric Bento -->
+<div class="grid grid-cols-2 gap-4 mb-8">
+<!-- Wellness Score -->
+<div class="col-span-2 bg-surface rounded-[24px] p-6 ambient-shadow flex items-center justify-between">
+<div>
+<h3 class="font-label-md text-label-md text-on-surface-variant mb-1 flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-primary" data-icon="health_metrics">health_metrics</span>
+                        Overall Wellness
+                    </h3>
+<div class="flex items-end gap-2">
+<span class="font-display-lg text-display-lg text-primary">84</span>
+<span class="font-body-md text-body-md text-secondary-container font-semibold pb-2">Good</span>
+</div>
+<p class="font-caption text-caption text-outline mt-2">+5 points since last week. Great job maintaining balance.</p>
+</div>
+<div class="relative w-24 h-24">
+<!-- Fake radial progress -->
+<svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+<path class="text-surface-container-highest" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="100, 100" stroke-width="3"></path>
+<path class="text-primary" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="84, 100" stroke-width="3"></path>
+</svg>
+</div>
+</div>
+<!-- Meditation Minutes -->
+<div class="bg-surface rounded-[24px] p-5 ambient-shadow">
+<div class="w-10 h-10 rounded-full bg-inverse-on-surface flex items-center justify-center mb-4">
+<span class="material-symbols-outlined text-primary fill-icon" data-icon="self_improvement" data-weight="fill">self_improvement</span>
+</div>
+<h4 class="font-label-md text-label-md text-on-surface-variant">Meditation</h4>
+<div class="font-headline-md text-headline-md text-on-surface mt-1">120 <span class="font-caption text-caption text-outline">min</span></div>
+<!-- Mini Progress -->
+<div class="w-full h-2 bg-surface-container-high rounded-full mt-4 overflow-hidden">
+<div class="h-full bg-secondary rounded-full w-3/4"></div>
+</div>
+</div>
+<!-- Sleep Average -->
+<div class="bg-surface rounded-[24px] p-5 ambient-shadow">
+<div class="w-10 h-10 rounded-full bg-tertiary-fixed flex items-center justify-center mb-4">
+<span class="material-symbols-outlined text-tertiary fill-icon" data-icon="bedtime" data-weight="fill">bedtime</span>
+</div>
+<h4 class="font-label-md text-label-md text-on-surface-variant">Avg Sleep</h4>
+<div class="font-headline-md text-headline-md text-on-surface mt-1">7h 15m</div>
+<!-- Mini Progress -->
+<div class="w-full h-2 bg-surface-container-high rounded-full mt-4 overflow-hidden">
+<div class="h-full bg-tertiary rounded-full w-[85%]"></div>
+</div>
+</div>
+</div>
+<!-- Mood Flow -->
+<div class="bg-surface rounded-[24px] p-6 mb-8 ambient-shadow">
+<h3 class="font-label-md text-label-md text-on-surface-variant mb-6 flex justify-between items-center">
+                Mood Flow
+                <span class="material-symbols-outlined text-outline text-[20px]" data-icon="insights">insights</span>
+</h3>
+<!-- Simple Mood Chart Representation -->
+<div class="flex justify-between items-end h-32 mb-4 px-2 relative">
+<!-- Grid Lines -->
+<div class="absolute inset-0 flex flex-col justify-between pointer-events-none">
+<div class="border-b border-dashed border-outline-variant/30 w-full h-0"></div>
+<div class="border-b border-dashed border-outline-variant/30 w-full h-0"></div>
+<div class="border-b border-dashed border-outline-variant/30 w-full h-0"></div>
+</div>
+<!-- Bars -->
+<div class="flex flex-col items-center gap-2 z-10 w-8">
+<div class="w-full h-[60%] bg-tertiary-fixed rounded-t-full"></div>
+<span class="font-caption text-caption text-outline">M</span>
+</div>
+<div class="flex flex-col items-center gap-2 z-10 w-8">
+<div class="w-full h-[80%] bg-primary-fixed rounded-t-full"></div>
+<span class="font-caption text-caption text-outline">T</span>
+</div>
+<div class="flex flex-col items-center gap-2 z-10 w-8">
+<div class="w-full h-[40%] bg-secondary-fixed rounded-t-full"></div>
+<span class="font-caption text-caption text-outline">W</span>
+</div>
+<div class="flex flex-col items-center gap-2 z-10 w-8">
+<div class="w-full h-[90%] bg-primary-fixed rounded-t-full"></div>
+<span class="font-caption text-caption text-outline">T</span>
+</div>
+<div class="flex flex-col items-center gap-2 z-10 w-8">
+<div class="w-full h-[70%] bg-primary-fixed rounded-t-full"></div>
+<span class="font-caption text-caption text-outline">F</span>
+</div>
+<div class="flex flex-col items-center gap-2 z-10 w-8">
+<div class="w-full h-[100%] bg-secondary-fixed rounded-t-full"></div>
+<span class="font-caption text-caption text-outline">S</span>
+</div>
+<div class="flex flex-col items-center gap-2 z-10 w-8">
+<div class="w-full h-[85%] bg-primary-fixed rounded-t-full"></div>
+<span class="font-caption text-caption text-outline">S</span>
+</div>
+</div>
+<div class="bg-surface-container-low rounded-xl p-4 flex items-start gap-3 mt-4">
+<span class="material-symbols-outlined text-primary mt-1" data-icon="psychology">psychology</span>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">Your mood was generally stable, peaking towards the weekend. Keep up the evening meditation routine!</p>
+</div>
+</div>
+<!-- Recent Achievements -->
+<h3 class="font-headline-md text-headline-md text-on-surface mb-4 px-2">Milestones</h3>
+<div class="flex gap-4 overflow-x-auto no-scrollbar pb-6 px-2 -mx-2">
+<div class="min-w-[140px] bg-surface rounded-2xl p-4 ambient-shadow flex flex-col items-center text-center">
+<div class="w-16 h-16 rounded-full bg-gradient-to-br from-tertiary-fixed to-tertiary-fixed-dim flex items-center justify-center mb-3">
+<span class="material-symbols-outlined text-tertiary text-[32px]" data-icon="local_fire_department">local_fire_department</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface">7 Day Streak</span>
+<span class="font-caption text-caption text-outline mt-1">Meditation</span>
+</div>
+<div class="min-w-[140px] bg-surface rounded-2xl p-4 ambient-shadow flex flex-col items-center text-center">
+<div class="w-16 h-16 rounded-full bg-gradient-to-br from-secondary-fixed to-secondary-fixed-dim flex items-center justify-center mb-3">
+<span class="material-symbols-outlined text-secondary text-[32px]" data-icon="bedtime">bedtime</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface">Deep Sleeper</span>
+<span class="font-caption text-caption text-outline mt-1">Avg 8hrs</span>
+</div>
+<div class="min-w-[140px] bg-surface rounded-2xl p-4 ambient-shadow flex flex-col items-center text-center opacity-60">
+<div class="w-16 h-16 rounded-full bg-surface-container-highest flex items-center justify-center mb-3">
+<span class="material-symbols-outlined text-outline text-[32px]" data-icon="lock">lock</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface">Zen Master</span>
+<span class="font-caption text-caption text-outline mt-1">20h total</span>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Generated from JSON) -->
+<nav class="fixed bottom-0 w-full rounded-t-xl z-50 bg-surface/80 backdrop-blur-lg dark:bg-surface-dim/80 bg-surface/90 border-t border-outline-variant/30 shadow-[0_-4px_20px_rgba(124,107,196,0.08)] flex justify-around items-center h-20 px-4 pb-safe w-full">
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary active:scale-90 transition-all">
+<span class="material-symbols-outlined mb-1 text-[24px]" data-icon="home">home</span>
+<span class="font-label-md text-label-md text-[10px]">Home</span>
+</button>
+<!-- Active Tab: Reports logically falls under Resources or Profile, but there's no direct "Reports". We'll highlight Profile as it's personal data -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary active:scale-90 transition-all">
+<span class="material-symbols-outlined mb-1 text-[24px]" data-icon="auto_stories">auto_stories</span>
+<span class="font-label-md text-label-md text-[10px]">Journey</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary active:scale-90 transition-all">
+<span class="material-symbols-outlined mb-1 text-[24px]" data-icon="chat_bubble">chat_bubble</span>
+<span class="font-label-md text-label-md text-[10px]">AI Chat</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary active:scale-90 transition-all">
+<span class="material-symbols-outlined mb-1 text-[24px]" data-icon="local_library">local_library</span>
+<span class="font-label-md text-label-md text-[10px]">Resources</span>
+</button>
+<!-- Highlighting Profile for personal reports -->
+<button class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full px-4 py-1 active:scale-90 transition-all">
+<span class="material-symbols-outlined mb-1 text-[24px] fill-icon" data-icon="person" data-weight="fill">person</span>
+<span class="font-label-md text-label-md text-[10px]">Profile</span>
+</button>
+</nav>
+</body></html>

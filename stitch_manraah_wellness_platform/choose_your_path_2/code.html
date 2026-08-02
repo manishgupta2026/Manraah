@@ -1,0 +1,372 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Manraah - Category Selection</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@600;700&amp;family=Work+Sans:wght@400;600&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-container-highest": "#e6dff8",
+                      "on-primary-fixed-variant": "#4a388e",
+                      "on-error-container": "#93000a",
+                      "surface-dim": "#ded6f0",
+                      "secondary-container": "#88f7d6",
+                      "primary-container": "#7867c0",
+                      "tertiary-container": "#a46172",
+                      "on-secondary-fixed-variant": "#005140",
+                      "primary": "#5f4ea5",
+                      "surface-bright": "#fdf7ff",
+                      "on-tertiary-fixed": "#38091a",
+                      "tertiary-fixed": "#ffd9e0",
+                      "inverse-surface": "#322e41",
+                      "on-surface": "#1d192b",
+                      "inverse-primary": "#cbbeff",
+                      "outline-variant": "#cac4d3",
+                      "on-secondary-container": "#00725c",
+                      "background": "#fdf7ff",
+                      "on-secondary-fixed": "#002018",
+                      "surface": "#fdf7ff",
+                      "surface-variant": "#e6dff8",
+                      "surface-container": "#f2ebff",
+                      "on-primary-container": "#fffbff",
+                      "on-tertiary-fixed-variant": "#6e3444",
+                      "secondary": "#006b56",
+                      "primary-fixed-dim": "#cbbeff",
+                      "inverse-on-surface": "#f5eeff",
+                      "surface-container-lowest": "#ffffff",
+                      "surface-container-high": "#ece4fe",
+                      "on-primary-fixed": "#1d0061",
+                      "error": "#ba1a1a",
+                      "outline": "#797582",
+                      "on-secondary": "#ffffff",
+                      "on-error": "#ffffff",
+                      "error-container": "#ffdad6",
+                      "on-surface-variant": "#484551",
+                      "on-tertiary-container": "#fffbff",
+                      "tertiary-fixed-dim": "#ffb1c3",
+                      "surface-container-low": "#f7f1ff",
+                      "secondary-fixed": "#88f7d6",
+                      "tertiary": "#874959",
+                      "on-primary": "#ffffff",
+                      "primary-fixed": "#e6deff",
+                      "secondary-fixed-dim": "#6adaba",
+                      "on-background": "#1d192b",
+                      "surface-tint": "#6251a8",
+                      "on-tertiary": "#ffffff"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "lg": "48px",
+                      "container-padding-desktop": "64px",
+                      "xl": "80px",
+                      "xs": "4px",
+                      "md": "24px",
+                      "base": "8px",
+                      "sm": "12px",
+                      "container-padding-mobile": "20px"
+              },
+              "fontFamily": {
+                      "body-lg": [
+                              "Work Sans"
+                      ],
+                      "caption": [
+                              "Work Sans"
+                      ],
+                      "headline-md": [
+                              "Quicksand"
+                      ],
+                      "display-lg": [
+                              "Quicksand"
+                      ],
+                      "headline-lg-mobile": [
+                              "Quicksand"
+                      ],
+                      "label-md": [
+                              "Work Sans"
+                      ],
+                      "body-md": [
+                              "Work Sans"
+                      ],
+                      "headline-lg": [
+                              "Quicksand"
+                      ]
+              },
+              "fontSize": {
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "caption": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "display-lg": [
+                              "48px",
+                              {
+                                      "lineHeight": "56px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-lg-mobile": [
+                              "28px",
+                              {
+                                      "lineHeight": "36px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "label-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "letterSpacing": "0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "fontWeight": "600"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+</head>
+<body class="bg-surface text-on-surface font-body-md text-body-md min-h-screen selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopNavBar -->
+<nav class="fixed top-0 right-0 w-full md:w-[calc(100%-16rem)] z-40 bg-surface/60 backdrop-blur-md dark:bg-surface-dim/60 shadow-sm shadow-primary/5 flex justify-between items-center h-16 px-container-padding-desktop md:ml-auto">
+<div class="flex items-center gap-sm md:hidden">
+<span class="material-symbols-outlined text-primary text-[32px]">spa</span>
+<span class="font-headline-md text-headline-md text-primary">Manraah</span>
+</div>
+<div class="hidden md:flex flex-1 justify-end items-center gap-md">
+<div class="relative w-64">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline-variant">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-surface-container-low border border-outline-variant/30 rounded-[16px] text-body-md font-body-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/50 transition-all placeholder:text-outline-variant" placeholder="Search resources..." type="text">
+</div>
+<button class="w-10 h-10 flex items-center justify-center text-on-surface-variant hover:bg-primary-container/20 rounded-full transition-all active:scale-95 duration-200">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">notifications</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center text-on-surface-variant hover:bg-primary-container/20 rounded-full transition-all active:scale-95 duration-200">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">settings</span>
+</button>
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-surface-container-high cursor-pointer ml-2">
+<img alt="User profile avatar" class="w-full h-full object-cover" data-alt="A close-up, softly lit portrait of a calm individual in a serene wellness environment. The lighting is bright and warm, fitting a light-mode modern UI. The background is a gentle blur of green plants and natural light. Professional, high-quality photograph, warm tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBxtdB8iUYW2kvDrlVBhgbiqJ0reh11JxVaHHaWiyEpXLimT4-FhbKqrMD1g3QMHTCzmhB8vpazuV1itKn-eG8wh44hexrxqLgRmES3PQV4t9pBDvqI_J6wdROXPKY-_WDSQHekSY3dQwQ5UBgyEerHrj9GHKUCCRwCvNjCA177Was5Xt5yDWBG-uO8DVkGxxMB1NOIrDNwMv-8el56XjzF_HXcVZ5RVNxGJYeN8Zyl27znXwoTqzsxOw">
+</div>
+</div>
+</nav>
+<!-- SideNavBar (Desktop Only) -->
+<aside class="hidden md:flex flex-col h-screen w-64 fixed left-0 top-0 bg-surface dark:bg-surface-dim border-r border-surface-container-low shadow-md shadow-primary/5 py-md overflow-y-auto z-50">
+<div class="px-md pb-lg flex flex-col items-center">
+<div class="w-20 h-20 rounded-full overflow-hidden mb-sm border-4 border-surface-container-low shadow-sm">
+<img alt="User profile photo" class="w-full h-full object-cover" data-alt="A stylized, soft illustration of a generic user profile avatar in a minimalist, modern wellness app context. Light pastel background, clean lines, gentle colors matching a modern light-mode UI." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDOtoFSoNMt4pnKtxV2mN_wAU5xUbA6X831PULiBX4sKrWEQ8gOhL5-C_51LsCN0WqeM0a0Db8aP83BJyX6tbRfQhV4Pqpwrvv0UOawg3PBifJx1I7O30FtoetpBZ2lwfzlsdc8LRcvx-mz6feX2jMUov6tBlSLPQMW_7u3rCrYHGDYwc-h5GXpjQbcUUb6IPeMfZLuUrH5Y5EuNYn7atOgvMnIDkDjom2anHObxcRWUPRGKCaK_B-r2w">
+</div>
+<h2 class="font-headline-md text-headline-md text-primary font-bold">Manraah</h2>
+<p class="font-caption text-caption text-outline">Wellness Sanctuary</p>
+</div>
+<nav class="flex-1 px-sm space-y-1">
+<!-- Active State on Settings as we are configuring user profile/category -->
+<a class="flex items-center gap-sm px-4 py-3 rounded-full text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-md text-label-md">Home</span>
+</a>
+<a class="flex items-center gap-sm px-4 py-3 rounded-full text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">insights</span>
+<span class="font-label-md text-label-md">My Journey</span>
+</a>
+<a class="flex items-center gap-sm px-4 py-3 rounded-full text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">smart_toy</span>
+<span class="font-label-md text-label-md">AI Companion</span>
+</a>
+<a class="flex items-center gap-sm px-4 py-3 rounded-full text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">diversity_1</span>
+<span class="font-label-md text-label-md">Human Companion</span>
+</a>
+<a class="flex items-center gap-sm px-4 py-3 rounded-full text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">medical_services</span>
+<span class="font-label-md text-label-md">Professional Care</span>
+</a>
+<a class="flex items-center gap-sm px-4 py-3 rounded-full text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">mood</span>
+<span class="font-label-md text-label-md">Mood &amp; Check-in</span>
+</a>
+<a class="flex items-center gap-sm px-4 py-3 rounded-full text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">edit_note</span>
+<span class="font-label-md text-label-md">Journal</span>
+</a>
+<a class="flex items-center gap-sm px-4 py-3 rounded-full text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">self_improvement</span>
+<span class="font-label-md text-label-md">Meditation &amp; Sleep</span>
+</a>
+<a class="flex items-center gap-sm px-4 py-3 rounded-full text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">groups</span>
+<span class="font-label-md text-label-md">Community</span>
+</a>
+<a class="flex items-center gap-sm px-4 py-3 rounded-full text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">library_books</span>
+<span class="font-label-md text-label-md">Resources</span>
+</a>
+<a class="flex items-center gap-sm px-4 py-3 rounded-full text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">assessment</span>
+<span class="font-label-md text-label-md">Reports</span>
+</a>
+<!-- Active State -->
+<a class="flex items-center gap-sm px-4 py-3 text-primary font-bold border-r-4 border-primary bg-primary-container/10 active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+</nav>
+</aside>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 w-full rounded-t-xl z-50 bg-surface/80 backdrop-blur-lg dark:bg-surface-dim/80 bg-surface/90 border-t border-outline-variant/30 shadow-[0_-4px_20px_rgba(124,107,196,0.08)] flex justify-around items-center h-20 px-4 pb-safe w-full">
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary active:scale-90 transition-all" href="#">
+<span class="material-symbols-outlined mb-1">home</span>
+<span class="font-label-md text-label-md text-[10px]">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary active:scale-90 transition-all" href="#">
+<span class="material-symbols-outlined mb-1">auto_stories</span>
+<span class="font-label-md text-label-md text-[10px]">Journey</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary active:scale-90 transition-all" href="#">
+<span class="material-symbols-outlined mb-1">chat_bubble</span>
+<span class="font-label-md text-label-md text-[10px]">AI Chat</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary active:scale-90 transition-all" href="#">
+<span class="material-symbols-outlined mb-1">local_library</span>
+<span class="font-label-md text-label-md text-[10px]">Resources</span>
+</a>
+<!-- Active State for Settings/Profile context -->
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full px-4 py-1 active:scale-90 transition-all" href="#">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">person</span>
+<span class="font-label-md text-label-md text-[10px]">Profile</span>
+</a>
+</nav>
+<!-- Main Content Canvas -->
+<main class="pt-24 md:pt-24 pb-28 md:pb-12 md:pl-64 min-h-screen flex flex-col items-center px-container-padding-mobile md:px-container-padding-desktop">
+<div class="max-w-[1024px] w-full flex flex-col items-center text-center mb-12">
+<h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface mb-xs mt-4">Welcome to your Sanctuary</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-[680px]">Tell us a little about yourself so we can personalize your wellness journey.</p>
+</div>
+<!-- Bento Grid for Categories -->
+<div class="max-w-[1024px] w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+<!-- Student (Active/Selected State) -->
+<button class="relative group flex flex-col items-center text-center p-6 bg-surface-container-lowest rounded-[24px] border-2 border-primary shadow-[0_8px_30px_rgba(124,107,196,0.15)] transition-all hover:-translate-y-1">
+<div class="absolute top-4 right-4 w-6 h-6 rounded-full bg-primary flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-on-primary text-[16px] font-bold">check</span>
+</div>
+<div class="w-32 h-32 mb-4 rounded-full bg-primary-container/10 flex items-center justify-center overflow-hidden">
+<img alt="Student illustration" class="w-full h-full object-cover" data-alt="A soft, hand-drawn, modern organic illustration of a young student surrounded by floating books and a gentle glowing aura. The style is serene, warm, and uses soft purple and pastel tones on a light background. High quality digital illustration." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBxAVOJ8w22P4fow5RsHfkukmZYI3r80TNFi29fwFlc2bsHP2gTa-Ikv7MigZhJy5Al1gOzE113UKWI3_VT_EP3MzsIc7_9FuomN50I03cMlkyXp-Z9dE32qAplYQLvcLhUZXraswleuby4WIeqmoZ3YJv4Ejag9Enb5hYu4K8RhpeO8h9FT1CvoMzu7wUNDtjc_gcbV36Jslbfij9HDoprc7gB9pqnQ-ZdOLB_XyrOyapGMbjcyhwm6Q">
+</div>
+<h3 class="font-headline-md text-headline-md text-primary mb-2">Student</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Navigating academics and personal growth.</p>
+<div class="absolute inset-0 rounded-[24px] bg-primary/5 pointer-events-none"></div>
+</button>
+<!-- Young Professional -->
+<button class="group flex flex-col items-center text-center p-6 bg-surface-container-lowest rounded-[24px] shadow-[0_8px_30px_rgba(124,107,196,0.05)] transition-all hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(124,107,196,0.1)] focus:outline-none focus:ring-2 focus:ring-primary/30">
+<div class="w-32 h-32 mb-4 rounded-full bg-surface-container flex items-center justify-center overflow-hidden transition-transform group-hover:scale-105">
+<img alt="Young Professional illustration" class="w-full h-full object-cover" data-alt="A soft, hand-drawn, modern organic illustration of a young professional with a laptop and a coffee cup, looking relaxed. The style is serene, warm, and uses soft pastel tones on a light background. High quality digital illustration." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAQou1XSz-B6tmBgRTfGA993F9CdxeVPmcQpshzAuxiJiMukOJEf_S0iGtuUrLcsxMvM6Vc11swKY45DW6veevmsbx92vAJ1Ur-U8v4ZOiMZUpqDScOgZKOtMRdlUgl75G60JhuuSCsUGwPJSMzXFji4fIyzdqX71XOZSaC8HOqIdE60cJ-qdrqYRFbHnyNJyvIQJ1GgtFxjFNgHMG0wE3W0bKDSPnSFiFKz2iSxawq-r5NUdaygGD5qw">
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-2">Young Pro</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Starting out and building a career path.</p>
+</button>
+<!-- Working Professional -->
+<button class="group flex flex-col items-center text-center p-6 bg-surface-container-lowest rounded-[24px] shadow-[0_8px_30px_rgba(124,107,196,0.05)] transition-all hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(124,107,196,0.1)] focus:outline-none focus:ring-2 focus:ring-primary/30">
+<div class="w-32 h-32 mb-4 rounded-full bg-surface-container flex items-center justify-center overflow-hidden transition-transform group-hover:scale-105">
+<img alt="Working Professional illustration" class="w-full h-full object-cover" data-alt="A soft, hand-drawn, modern organic illustration of a working professional balancing tasks with a calm expression. The style is serene, warm, and uses soft pastel tones on a light background. High quality digital illustration." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAMsqxhOuZJIkeFWV3-LPdDj72EFuxr6K01B8M48HGkxoqvG6W-oOZpeP2j0kruUnYDc95zvZEGqg39b4Ii5UzxKY4HZUIOZbIfwxeSmHletmhSowK_m2q0zhO65HmnBb3P3ovNaakfNxoIjGJ-NiIt2rfftlqGYV6D7VLmoXOf0d4xk4B8nx9yV3Uhb03nU2koVyArcR35ZzCMYGjMZvCVbJ-5JXFdCiQdsC75Obn1hq9m5ijOxQ2upQ">
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-2">Professional</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Managing career growth and life balance.</p>
+</button>
+<!-- Parent -->
+<button class="group flex flex-col items-center text-center p-6 bg-surface-container-lowest rounded-[24px] shadow-[0_8px_30px_rgba(124,107,196,0.05)] transition-all hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(124,107,196,0.1)] focus:outline-none focus:ring-2 focus:ring-primary/30">
+<div class="w-32 h-32 mb-4 rounded-full bg-surface-container flex items-center justify-center overflow-hidden transition-transform group-hover:scale-105">
+<img alt="Parent illustration" class="w-full h-full object-cover" data-alt="A soft, hand-drawn, modern organic illustration of a parent gently holding a child's hand or toys. The style is serene, warm, and uses soft pastel tones on a light background. High quality digital illustration." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDV-0QZHl6xdLh_b6T31WYRVhsH-0y5CMxlzNB4ZnVzo13UuWTBQnbdQ0LyG5StW13yzpnnxI4yOXsVawJcXxH8YDYPeVk8qLFxYTgxxRjhU0sSsufBe_wi_ndbmaY1K1lyukqWa0uUXKh6Y7VuV7GxSRy6iQ7l66yepM-J1mGs6y3gXv1n19RcSoMs8IyWUa6HdLgBouGlYzX_ueRUJypqwx61jtGOERs_hakizdmM70xmBBChlba2-g">
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-2">Parent</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Raising a family with care and patience.</p>
+</button>
+<!-- Couple -->
+<button class="group flex flex-col items-center text-center p-6 bg-surface-container-lowest rounded-[24px] shadow-[0_8px_30px_rgba(124,107,196,0.05)] transition-all hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(124,107,196,0.1)] focus:outline-none focus:ring-2 focus:ring-primary/30">
+<div class="w-32 h-32 mb-4 rounded-full bg-surface-container flex items-center justify-center overflow-hidden transition-transform group-hover:scale-105">
+<img alt="Couple illustration" class="w-full h-full object-cover" data-alt="A soft, hand-drawn, modern organic illustration of a couple sitting together comfortably. The style is serene, warm, and uses soft pastel tones on a light background. High quality digital illustration." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDkwPNKOikUXrU3UkuvAqb9XCK8lPw5wi-sPl0q-oPHCOTFokZoA9-PpvIzKeuOxFM7703JS1bcPOfKvACCXOVZCqaVQplanmq8VDuSArFmRchkcnSyGhHRsBCmIgKUdnK0xADjq9B4EXhV-yVJCjbBumbW8sAFIw9t3EM-iI7v_OAVl4di_bpusAjnVEIFi2C_Ao5bO4Ed-8B0fHrZVmqOep_szew29y_UPDbg9GvNm3XVUlnpWlcUvg">
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-2">Couple</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Nurturing a shared life and relationship.</p>
+</button>
+<!-- Family -->
+<button class="group flex flex-col items-center text-center p-6 bg-surface-container-lowest rounded-[24px] shadow-[0_8px_30px_rgba(124,107,196,0.05)] transition-all hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(124,107,196,0.1)] focus:outline-none focus:ring-2 focus:ring-primary/30">
+<div class="w-32 h-32 mb-4 rounded-full bg-surface-container flex items-center justify-center overflow-hidden transition-transform group-hover:scale-105">
+<img alt="Family illustration" class="w-full h-full object-cover" data-alt="A soft, hand-drawn, modern organic illustration of a family group in a cozy setting. The style is serene, warm, and uses soft pastel tones on a light background. High quality digital illustration." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCglJ_RXZIO3UJj37e1QqNOenrghPwIcCjQcOxSS97iOPVqrFmUu5Ks-LHnOdVeKo8KfMO_9CQMPTzl2KcdTRt6xO6uFG7vhHeYDdcgfDOrRzhaWg0tOQlTf0G4EoN5f_VE4PFAD50keOIQ0CR3cz8oqPhbQvKVzErzLZ2s3toQTY8TzmnU04AxGJScVtVE8Y1vTaXXxEL6bmgshqxrad0Z0TluXiVF9_Y6FsWTxczegHR74GjWRG4EEQ">
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-2">Family</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Fostering harmony and household well-being.</p>
+</button>
+<!-- Women -->
+<button class="group flex flex-col items-center text-center p-6 bg-surface-container-lowest rounded-[24px] shadow-[0_8px_30px_rgba(124,107,196,0.05)] transition-all hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(124,107,196,0.1)] focus:outline-none focus:ring-2 focus:ring-primary/30">
+<div class="w-32 h-32 mb-4 rounded-full bg-surface-container flex items-center justify-center overflow-hidden transition-transform group-hover:scale-105">
+<img alt="Women illustration" class="w-full h-full object-cover" data-alt="A soft, hand-drawn, modern organic illustration of a woman engaged in self-care or reflection. The style is serene, warm, and uses soft pastel tones on a light background. High quality digital illustration." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBDEtZSlk7A5OjNf6zUVZpwPf8I4mUxDs18kzegh5mceCSJHdax4u_DoLdwvhxnaxY7BHwkrrzTSzy17tWNNQ1ko2A-H0UIOch_R8zcWiaRg1LUlVmrOEt_KqgJx75XxcJz1Q_wsqQqIAiJzyAzZoGBJBMn1y-8_LL-LiuCqFl5b9iZB5gGxcMGzydM6g8QJMf3MFwR85ow7hJrkabobTHB2T3RNWHRDZgPkwtkakxVLH8WWMwVyPQiig">
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-2">Women</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Focused on women's unique wellness needs.</p>
+</button>
+<!-- Men -->
+<button class="group flex flex-col items-center text-center p-6 bg-surface-container-lowest rounded-[24px] shadow-[0_8px_30px_rgba(124,107,196,0.05)] transition-all hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(124,107,196,0.1)] focus:outline-none focus:ring-2 focus:ring-primary/30">
+<div class="w-32 h-32 mb-4 rounded-full bg-surface-container flex items-center justify-center overflow-hidden transition-transform group-hover:scale-105">
+<img alt="Men illustration" class="w-full h-full object-cover" data-alt="A soft, hand-drawn, modern organic illustration of a man engaged in a mindful activity or relaxing. The style is serene, warm, and uses soft pastel tones on a light background. High quality digital illustration." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD7-TGoPvZ9s3VSZQL9yzP5VyNilaeKbbc9VGgBF-How5IWBSLTqPcXdB5tzI3FLpnKPwzYVf_VW5C7iRLWkyU0Ogxa5_wtmWMSV42fMcWNBXNundiqbNBVUhf4nzhv3EN7Hwve4XYpvSjNbKKjBzJdYJfA43WrUuBPDK6zp_ZRKFTi6eqLjtZ96lWNdxtxv4mpYUEAAXDaskfk3WdfPdEqjx8h2gX1wSHV6du3lK2p70ECMKvftjFsDQ">
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-2">Men</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Tailored support for men's mental health.</p>
+</button>
+<!-- Senior Citizen -->
+<button class="group flex flex-col items-center text-center p-6 bg-surface-container-lowest rounded-[24px] shadow-[0_8px_30px_rgba(124,107,196,0.05)] transition-all hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(124,107,196,0.1)] focus:outline-none focus:ring-2 focus:ring-primary/30">
+<div class="w-32 h-32 mb-4 rounded-full bg-surface-container flex items-center justify-center overflow-hidden transition-transform group-hover:scale-105">
+<img alt="Senior Citizen illustration" class="w-full h-full object-cover" data-alt="A soft, hand-drawn, modern organic illustration of a serene older adult reading or enjoying nature. The style is warm, comforting, and uses soft pastel tones on a light background. High quality digital illustration." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA3U0YtGDLeQ5srvPoQ1zTq2a74nO2ASI6ctUpJPuXd5Eh7RoBR4KfmbX1Av53nX73b7U1Ee6NpmscxCkxF19erMz05jYAyHHvwxK_N8kZja0TIMzsyiau1BsNza4H2JPK6iBWZRaXuEDHwM7IEdE9qvughXw9-TlLfoFvn8L_ZLNtEyyRYZsvha51qP7MaVe6fpPbcICBopJRvJlr6NPIjPOdS4KUAY8tKhA7F77TIijcCfdCjvMEJQQ">
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-2">Senior</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Embracing the later chapters of life.</p>
+</button>
+</div>
+<!-- Sticky Bottom Action (Desktop) -->
+<div class="mt-12 mb-8 hidden md:flex w-full max-w-[1024px] justify-end">
+<button class="bg-primary hover:bg-surface-tint text-on-primary font-label-md text-label-md px-8 py-4 rounded-full shadow-[0_8px_20px_rgba(95,78,165,0.2)] transition-all hover:-translate-y-0.5 active:scale-95 flex items-center gap-2">
+                Continue Journey
+                <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+</button>
+</div>
+</main>
+</body></html>

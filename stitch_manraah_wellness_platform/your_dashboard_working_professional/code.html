@@ -1,0 +1,469 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Working Professional Dashboard - Manraah</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400..700&amp;family=Work+Sans:wght@300..700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-primary-fixed": "#1d0061",
+                      "surface-bright": "#fdf7ff",
+                      "on-primary": "#ffffff",
+                      "background": "#fdf7ff",
+                      "surface-variant": "#e6dff8",
+                      "tertiary-container": "#a46172",
+                      "primary-container": "#7867c0",
+                      "error-container": "#ffdad6",
+                      "on-tertiary-fixed-variant": "#6e3444",
+                      "on-tertiary": "#ffffff",
+                      "secondary-fixed": "#88f7d6",
+                      "surface-container-lowest": "#ffffff",
+                      "inverse-on-surface": "#f5eeff",
+                      "on-secondary": "#ffffff",
+                      "secondary": "#006b56",
+                      "error": "#ba1a1a",
+                      "outline-variant": "#cac4d3",
+                      "primary-fixed-dim": "#cbbeff",
+                      "secondary-fixed-dim": "#6adaba",
+                      "on-surface-variant": "#484551",
+                      "outline": "#797582",
+                      "on-primary-container": "#fffbff",
+                      "surface-container-low": "#f7f1ff",
+                      "surface-container": "#f2ebff",
+                      "on-secondary-fixed-variant": "#005140",
+                      "tertiary": "#874959",
+                      "on-background": "#1d192b",
+                      "surface-container-highest": "#e6dff8",
+                      "inverse-surface": "#322e41",
+                      "tertiary-fixed-dim": "#ffb1c3",
+                      "primary-fixed": "#e6deff",
+                      "primary": "#5f4ea5",
+                      "on-error": "#ffffff",
+                      "on-tertiary-fixed": "#38091a",
+                      "secondary-container": "#88f7d6",
+                      "on-tertiary-container": "#fffbff",
+                      "on-primary-fixed-variant": "#4a388e",
+                      "on-error-container": "#93000a",
+                      "surface-dim": "#ded6f0",
+                      "inverse-primary": "#cbbeff",
+                      "surface-tint": "#6251a8",
+                      "surface": "#fdf7ff",
+                      "on-secondary-container": "#00725c",
+                      "tertiary-fixed": "#ffd9e0",
+                      "surface-container-high": "#ece4fe",
+                      "on-surface": "#1d192b",
+                      "on-secondary-fixed": "#002018"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px",
+                      "2xl": "1.5rem"
+              },
+              "spacing": {
+                      "md": "24px",
+                      "sm": "12px",
+                      "container-padding-mobile": "20px",
+                      "xl": "80px",
+                      "lg": "48px",
+                      "container-padding-desktop": "64px",
+                      "xs": "4px",
+                      "base": "8px"
+              },
+              "fontFamily": {
+                      "headline-lg": [
+                              "Quicksand"
+                      ],
+                      "body-lg": [
+                              "Work Sans"
+                      ],
+                      "headline-lg-mobile": [
+                              "Quicksand"
+                      ],
+                      "display-lg": [
+                              "Quicksand"
+                      ],
+                      "caption": [
+                              "Work Sans"
+                      ],
+                      "label-md": [
+                              "Work Sans"
+                      ],
+                      "headline-md": [
+                              "Quicksand"
+                      ],
+                      "body-md": [
+                              "Work Sans"
+                      ]
+              },
+              "fontSize": {
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-lg-mobile": [
+                              "28px",
+                              {
+                                      "lineHeight": "36px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "display-lg": [
+                              "48px",
+                              {
+                                      "lineHeight": "56px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "caption": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "label-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "letterSpacing": "0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+<style>
+        body {
+            background-color: theme('colors.background');
+            color: theme('colors.on-background');
+        }
+        .ambient-shadow {
+            box-shadow: 0 10px 40px -10px rgba(124, 107, 196, 0.08);
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex selection:bg-primary-container selection:text-on-primary-container">
+<!-- Side Navigation Bar -->
+<nav class="hidden md:flex flex-col h-screen w-64 fixed left-0 top-0 bg-surface dark:bg-surface-dim shadow-md shadow-primary/5 z-50">
+<div class="px-md py-lg flex items-center justify-center border-b border-surface-container-low dark:border-surface-container-lowest">
+<span class="font-display-lg text-display-lg text-primary dark:text-primary-fixed-dim">Manraah</span>
+</div>
+<div class="flex-1 overflow-y-auto py-md flex flex-col gap-xs px-base">
+<!-- Home (Active) -->
+<a class="flex items-center gap-sm px-sm py-3 rounded-r-2xl font-label-md text-label-md text-primary font-bold border-r-4 border-primary bg-primary-container/10 active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">home</span>
+<span>Home</span>
+</a>
+<!-- My Journey -->
+<a class="flex items-center gap-sm px-sm py-3 rounded-r-2xl font-label-md text-label-md text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95" href="#">
+<span class="material-symbols-outlined">insights</span>
+<span>My Journey</span>
+</a>
+<!-- AI Companion -->
+<a class="flex items-center gap-sm px-sm py-3 rounded-r-2xl font-label-md text-label-md text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95" href="#">
+<span class="material-symbols-outlined">smart_toy</span>
+<span>AI Companion</span>
+</a>
+<!-- Human Companion -->
+<a class="flex items-center gap-sm px-sm py-3 rounded-r-2xl font-label-md text-label-md text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95" href="#">
+<span class="material-symbols-outlined">diversity_1</span>
+<span>Human Companion</span>
+</a>
+<!-- Professional Care -->
+<a class="flex items-center gap-sm px-sm py-3 rounded-r-2xl font-label-md text-label-md text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95" href="#">
+<span class="material-symbols-outlined">medical_services</span>
+<span>Professional Care</span>
+</a>
+<!-- Mood & Check-in -->
+<a class="flex items-center gap-sm px-sm py-3 rounded-r-2xl font-label-md text-label-md text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95" href="#">
+<span class="material-symbols-outlined">mood</span>
+<span>Mood &amp; Check-in</span>
+</a>
+<!-- Journal -->
+<a class="flex items-center gap-sm px-sm py-3 rounded-r-2xl font-label-md text-label-md text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95" href="#">
+<span class="material-symbols-outlined">edit_note</span>
+<span>Journal</span>
+</a>
+<!-- Meditation & Sleep -->
+<a class="flex items-center gap-sm px-sm py-3 rounded-r-2xl font-label-md text-label-md text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95" href="#">
+<span class="material-symbols-outlined">self_improvement</span>
+<span>Meditation &amp; Sleep</span>
+</a>
+<!-- Community -->
+<a class="flex items-center gap-sm px-sm py-3 rounded-r-2xl font-label-md text-label-md text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95" href="#">
+<span class="material-symbols-outlined">groups</span>
+<span>Community</span>
+</a>
+<!-- Resources -->
+<a class="flex items-center gap-sm px-sm py-3 rounded-r-2xl font-label-md text-label-md text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95" href="#">
+<span class="material-symbols-outlined">library_books</span>
+<span>Resources</span>
+</a>
+<!-- Reports -->
+<a class="flex items-center gap-sm px-sm py-3 rounded-r-2xl font-label-md text-label-md text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95" href="#">
+<span class="material-symbols-outlined">assessment</span>
+<span>Reports</span>
+</a>
+<!-- Settings -->
+<a class="flex items-center gap-sm px-sm py-3 rounded-r-2xl font-label-md text-label-md text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span>Settings</span>
+</a>
+</div>
+<div class="p-md border-t border-surface-container-low dark:border-surface-container-lowest">
+<div class="flex items-center gap-sm">
+<img class="w-10 h-10 rounded-full object-cover" data-alt="A professional, warm portrait of a user in a well-lit office setting. High key lighting, modern corporate wellness aesthetic, soft pastel background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDjSFKMPCb2M70STEBM6MTzyGhDhsD8Y4d4jDkuQH8ZFRqWqzgRVJeNUW6gF0Vbf39Ehoy1wslkagg5WOdrIJXOkb_i327jG-zGIwemreXiHbgixKFSQKVcei7NwNA2GTz1pH_zkiuUuuJwPq3cl5cI3_-BeRBL52zg80akUaY5zL4fNQuhSmjCxRgLPvMt_VUEQXOTkHNZySprCIpOE-8qazd3bCYwdSMBxl-5u2x_CyjKXdFj72Wlfw">
+<div>
+<p class="font-label-md text-label-md text-on-surface">Alex Mercer</p>
+<p class="font-caption text-caption text-on-surface-variant">Wellness Sanctuary</p>
+</div>
+</div>
+</div>
+</nav>
+<!-- Main Content Wrapper -->
+<main class="flex-1 md:ml-64 relative min-h-screen">
+<!-- Top Nav Bar -->
+<header class="fixed top-0 right-0 w-full md:w-[calc(100%-16rem)] z-40 bg-surface/80 backdrop-blur-xl shadow-sm shadow-primary/5 flex justify-between items-center h-16 px-container-padding-mobile md:px-container-padding-desktop ml-auto transition-all duration-300 border-b border-surface-variant/30">
+<h1 class="font-headline-md text-headline-md text-primary hidden md:block">Working Professional Dashboard</h1>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-primary md:hidden">Manraah</h1>
+<div class="flex items-center gap-md">
+<div class="relative hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="pl-10 pr-4 py-2 bg-surface-container-lowest border border-outline-variant/50 rounded-full font-body-md text-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/50 transition-all w-64" placeholder="Search resources..." type="text">
+</div>
+<button class="p-2 text-on-surface-variant hover:bg-primary-container/20 rounded-full transition-all active:scale-95 duration-200">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-primary-container/20 rounded-full transition-all active:scale-95 duration-200">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<img class="w-8 h-8 rounded-full object-cover md:hidden" data-alt="User profile avatar close up, warm lighting, professional attire, soft background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBea7xCGANE0b0zR1fOgUNCf9gzeZvelkh1P593xT3kUVEo9ap1ng4zb7CYdhq2d14rB0INW-sYrzR3PWyjdL9h_RrbyUPIpOmvFGP8poPRr3pp7MIVGsz5rCc67231_YuXaha8tDnhFGh9ezOx9m9X4xM5H0daGS64_4QgF5jkypf4Twso5OtN-UVvOEOuJK1jgn7zf4oGiMzxvUlhB-IdvvhUBhNSvEO3v-F03MdZznIPfUBcioF7CQ">
+</div>
+</header>
+<!-- Dashboard Canvas -->
+<div class="pt-24 pb-32 md:pb-lg px-container-padding-mobile md:px-container-padding-desktop max-w-7xl mx-auto space-y-lg">
+<!-- Hero Section -->
+<section class="relative bg-white rounded-2xl p-lg ambient-shadow overflow-hidden flex flex-col md:flex-row items-center gap-lg">
+<div class="absolute right-0 top-0 w-64 h-64 bg-gradient-to-br from-primary/5 to-secondary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 pointer-events-none"></div>
+<div class="flex-1 z-10 space-y-md">
+<div>
+<h2 class="font-display-lg text-display-lg text-on-background mb-2">Good morning, Alex.</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Ready for a balanced day? Your focus is sharp and your schedule looks clear for some deep work.</p>
+</div>
+<button class="inline-flex items-center gap-sm bg-gradient-to-br from-primary to-primary-fixed-dim text-on-primary font-label-md text-label-md px-8 py-3 rounded-full hover:shadow-lg hover:shadow-primary/20 transition-all active:scale-95">
+<span class="material-symbols-outlined">timer</span>
+                        Start 5-min Focus Session
+                    </button>
+</div>
+<div class="w-full md:w-1/3 h-48 md:h-64 rounded-2xl overflow-hidden relative z-10">
+<div class="bg-cover bg-center w-full h-full rounded-2xl" data-alt="A serene, professional home office setup with lush green potted plants, warm morning sunlight streaming across a clean wooden desk, minimalist modern aesthetic, soft focus background." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBoGKJ4Jqe-cz3Wi1udYpVKY7QNQOOc1gDuLyGrQHrk8B58HTGYwF5M1HYZ7BqOuBuJf5eiDNGlC4AFt9uMSfjaxcu3q0ddYqo8ejHhPj9P2q0cAAAvNrboQZIvNB-Gm-CmNC4LUSUQKOGfFKWknLQtBI1-eyhasBPHvIc2lMUJ3CJOPXavWUr-_6EFYRraTZx1Pzp_3Lwsr3r6esx5tsWzyqvX5Bq7A0YRx1TyGExGcsftvcV5Z5D94Q')"></div>
+</div>
+</section>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-md">
+<!-- Focus & Stress Tracker (Col span 8) -->
+<div class="md:col-span-8 bg-white rounded-2xl p-md ambient-shadow flex flex-col justify-between h-full space-y-md">
+<div class="flex justify-between items-center mb-sm">
+<h3 class="font-headline-md text-headline-md text-on-background flex items-center gap-xs">
+<span class="material-symbols-outlined text-primary">psychology</span>
+                            Mental State
+                        </h3>
+<span class="font-caption text-caption text-on-surface-variant bg-surface-container-high px-3 py-1 rounded-full">Updated just now</span>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-md h-full">
+<!-- Focus Score -->
+<div class="bg-surface-container-lowest border border-outline-variant/30 rounded-xl p-md flex flex-col items-center justify-center text-center relative overflow-hidden group hover:border-primary/30 transition-colors">
+<div class="absolute inset-0 bg-gradient-to-b from-transparent to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<span class="font-label-md text-label-md text-on-surface-variant mb-2">Daily Focus Score</span>
+<div class="relative w-32 h-32 flex items-center justify-center mb-2">
+<svg class="w-full h-full -rotate-90 transform" viewBox="0 0 100 100">
+<circle class="text-surface-variant" cx="50" cy="50" fill="none" r="45" stroke="currentColor" stroke-width="8"></circle>
+<circle class="text-secondary" cx="50" cy="50" fill="none" r="45" stroke="currentColor" stroke-dasharray="283" stroke-dashoffset="51" stroke-linecap="round" stroke-width="8"></circle>
+</svg>
+<div class="absolute flex flex-col items-center">
+<span class="font-headline-lg text-headline-lg text-on-background">82</span>
+<span class="font-caption text-caption text-on-surface-variant">/ 100</span>
+</div>
+</div>
+<p class="font-caption text-caption text-secondary flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">trending_up</span>
+                                +5 from yesterday
+                            </p>
+</div>
+<!-- Stress Level -->
+<div class="bg-surface-container-lowest border border-outline-variant/30 rounded-xl p-md flex flex-col justify-center space-y-4 relative overflow-hidden group hover:border-tertiary-container/30 transition-colors">
+<div class="absolute inset-0 bg-gradient-to-b from-transparent to-tertiary-container/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="flex justify-between items-end">
+<span class="font-label-md text-label-md text-on-surface-variant">Stress Level</span>
+<span class="font-body-md text-body-md text-tertiary-container font-semibold">Low-Medium</span>
+</div>
+<div class="w-full bg-surface-variant rounded-full h-3 overflow-hidden">
+<div class="bg-gradient-to-r from-secondary via-primary-container to-tertiary-container h-3 rounded-full" style="width: 35%;"></div>
+</div>
+<p class="font-caption text-caption text-on-surface-variant">You've maintained a healthy baseline for 4 hours. Keep it up!</p>
+</div>
+</div>
+</div>
+<!-- Work-Life Balance Widgets (Col span 4) -->
+<div class="md:col-span-4 flex flex-col gap-md h-full">
+<!-- Micro-break Reminder -->
+<div class="bg-secondary/10 border border-secondary/20 rounded-2xl p-md flex-1 flex flex-col justify-center relative overflow-hidden">
+<div class="absolute -right-4 -bottom-4 opacity-10">
+<span class="material-symbols-outlined text-[120px]">self_improvement</span>
+</div>
+<div class="z-10 relative">
+<div class="flex items-center gap-2 mb-sm text-secondary">
+<span class="material-symbols-outlined">notifications_active</span>
+<span class="font-label-md text-label-md font-bold uppercase tracking-wider">Upcoming Break</span>
+</div>
+<h4 class="font-headline-md text-headline-md text-on-secondary-container mb-1">2:00 PM</h4>
+<p class="font-body-md text-body-md text-on-surface-variant mb-4">5 min Guided Stretching</p>
+<button class="w-full py-2 bg-white text-secondary font-label-md text-label-md rounded-full shadow-sm hover:shadow-md transition-all active:scale-95 border border-secondary/10">Opt-in</button>
+</div>
+</div>
+<!-- Deep Work Mode Toggle -->
+<div class="bg-surface-container-high rounded-2xl p-md flex-1 flex items-center justify-between ambient-shadow">
+<div>
+<h4 class="font-label-md text-label-md text-on-background flex items-center gap-xs mb-1">
+<span class="material-symbols-outlined text-primary">do_not_disturb_on</span>
+                                Deep Work Mode
+                            </h4>
+<p class="font-caption text-caption text-on-surface-variant">Silence notifications</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox" value="">
+<div class="w-11 h-6 bg-surface-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-12 gap-md">
+<!-- Professional's Circle (Col span 5) -->
+<div class="md:col-span-5 bg-white rounded-2xl p-md ambient-shadow">
+<div class="flex justify-between items-center mb-md">
+<h3 class="font-headline-md text-headline-md text-on-background flex items-center gap-xs">
+<span class="material-symbols-outlined text-primary">diversity_3</span>
+                            Professional's Circle
+                        </h3>
+<button class="text-primary font-label-md text-label-md hover:underline">View All</button>
+</div>
+<div class="space-y-4">
+<div class="bg-surface-container-lowest border border-outline-variant/20 rounded-xl p-4 flex gap-4 hover:bg-surface-container-low transition-colors cursor-pointer">
+<div class="w-10 h-10 rounded-full bg-tertiary-container/20 flex items-center justify-center flex-shrink-0 text-tertiary">
+<span class="material-symbols-outlined">forum</span>
+</div>
+<div>
+<h4 class="font-label-md text-label-md text-on-background mb-1">Workplace Wellness</h4>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-2 mb-2">How is everyone managing screen fatigue? I've been trying the 20-20-20 rule but looking for other tips.</p>
+<div class="flex items-center gap-4 text-on-surface-variant font-caption text-caption">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">thumb_up</span> 24</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">chat_bubble</span> 8 replies</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Quick Actions (Col span 7) -->
+<div class="md:col-span-7 bg-white rounded-2xl p-md ambient-shadow">
+<h3 class="font-headline-md text-headline-md text-on-background mb-md flex items-center gap-xs">
+<span class="material-symbols-outlined text-primary">bolt</span>
+                        Quick Support
+                    </h3>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+<!-- AI Companion -->
+<button class="flex flex-col items-center justify-center p-4 bg-surface-container-lowest border border-outline-variant/30 rounded-xl hover:border-primary/50 hover:bg-primary/5 transition-all group active:scale-95 text-center gap-2 h-full">
+<div class="w-12 h-12 rounded-full bg-primary-container/20 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-[24px]">smart_toy</span>
+</div>
+<span class="font-label-md text-label-md text-on-background">Talk to AI Companion</span>
+</button>
+<!-- Schedule Therapist -->
+<button class="flex flex-col items-center justify-center p-4 bg-surface-container-lowest border border-outline-variant/30 rounded-xl hover:border-tertiary-container/50 hover:bg-tertiary-container/5 transition-all group active:scale-95 text-center gap-2 h-full">
+<div class="w-12 h-12 rounded-full bg-tertiary-container/20 flex items-center justify-center text-tertiary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-[24px]">calendar_month</span>
+</div>
+<span class="font-label-md text-label-md text-on-background">Schedule Therapist</span>
+</button>
+<!-- Log Work Mood -->
+<button class="flex flex-col items-center justify-center p-4 bg-surface-container-lowest border border-outline-variant/30 rounded-xl hover:border-secondary/50 hover:bg-secondary/5 transition-all group active:scale-95 text-center gap-2 h-full">
+<div class="w-12 h-12 rounded-full bg-secondary/20 flex items-center justify-center text-secondary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-[24px]">add_reaction</span>
+</div>
+<span class="font-label-md text-label-md text-on-background">Log Work Mood</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Nav Bar (Mobile Only) -->
+<nav class="md:hidden flex justify-around items-center h-20 px-4 pb-safe w-full bg-surface/80 backdrop-blur-lg dark:bg-surface-dim/80 fixed bottom-0 rounded-t-xl z-50 border-t border-outline-variant/30 shadow-[0_-4px_20px_rgba(124,107,196,0.08)]">
+<!-- Home (Active) -->
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full px-4 py-1 active:scale-90 transition-all font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="text-[10px] mt-1">Home</span>
+</a>
+<!-- Journey -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary active:scale-90 transition-all font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">auto_stories</span>
+<span class="text-[10px] mt-1">Journey</span>
+</a>
+<!-- AI Chat -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary active:scale-90 transition-all font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">chat_bubble</span>
+<span class="text-[10px] mt-1">AI Chat</span>
+</a>
+<!-- Resources -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary active:scale-90 transition-all font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">local_library</span>
+<span class="text-[10px] mt-1">Resources</span>
+</a>
+<!-- Profile -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary active:scale-90 transition-all font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="text-[10px] mt-1">Profile</span>
+</a>
+</nav>
+</body></html>

@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Professional Care - Manraah</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&amp;family=Work+Sans:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-fixed": "#38091a",
+                        "surface-container-highest": "#e6dff8",
+                        "surface-container-high": "#ece4fe",
+                        "primary-fixed": "#e6deff",
+                        "on-error-container": "#93000a",
+                        "tertiary-fixed-dim": "#ffb1c3",
+                        "inverse-primary": "#cbbeff",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-container": "#00725c",
+                        "on-surface": "#1d192b",
+                        "on-secondary": "#ffffff",
+                        "on-background": "#1d192b",
+                        "surface-dim": "#ded6f0",
+                        "surface-bright": "#fdf7ff",
+                        "error-container": "#ffdad6",
+                        "secondary-container": "#88f7d6",
+                        "surface-container": "#f2ebff",
+                        "primary-container": "#7867c0",
+                        "outline-variant": "#cac4d3",
+                        "error": "#ba1a1a",
+                        "outline": "#797582",
+                        "secondary": "#006b56",
+                        "tertiary-fixed": "#ffd9e0",
+                        "on-primary-container": "#fffbff",
+                        "surface-tint": "#6251a8",
+                        "inverse-on-surface": "#f5eeff",
+                        "on-tertiary-container": "#fffbff",
+                        "on-surface-variant": "#484551",
+                        "on-primary": "#ffffff",
+                        "on-primary-fixed": "#1d0061",
+                        "secondary-fixed-dim": "#6adaba",
+                        "inverse-surface": "#322e41",
+                        "background": "#fdf7ff",
+                        "on-tertiary-fixed-variant": "#6e3444",
+                        "on-error": "#ffffff",
+                        "surface-variant": "#e6dff8",
+                        "primary-fixed-dim": "#cbbeff",
+                        "surface-container-low": "#f7f1ff",
+                        "surface": "#fdf7ff",
+                        "secondary-fixed": "#88f7d6",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-fixed": "#002018",
+                        "tertiary": "#874959",
+                        "on-primary-fixed-variant": "#4a388e",
+                        "tertiary-container": "#a46172",
+                        "primary": "#5f4ea5",
+                        "on-secondary-fixed-variant": "#005140"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px",
+                        "2xl": "1.5rem"
+                    },
+                    "spacing": {
+                        "md": "24px",
+                        "container-padding-desktop": "64px",
+                        "xl": "80px",
+                        "container-padding-mobile": "20px",
+                        "xs": "4px",
+                        "sm": "12px",
+                        "lg": "48px",
+                        "base": "8px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Quicksand"],
+                        "caption": ["Work Sans"],
+                        "headline-lg-mobile": ["Quicksand"],
+                        "body-md": ["Work Sans"],
+                        "headline-md": ["Quicksand"],
+                        "display-lg": ["Quicksand"],
+                        "body-lg": ["Work Sans"],
+                        "label-md": ["Work Sans"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+                        "caption": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .ambient-shadow {
+            box-shadow: 0 10px 40px -10px rgba(124, 107, 196, 0.08);
+        }
+        .soft-gradient-btn {
+            background: linear-gradient(135deg, var(--tw-colors-primary-container), var(--tw-colors-primary));
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md text-body-md overflow-x-hidden">
+<!-- TopNavBar -->
+<nav class="bg-surface/60 backdrop-blur-md dark:bg-surface-dim/60 font-label-md text-label-md fixed top-0 right-0 w-[calc(100%-16rem)] z-40 bg-surface/80 shadow-sm shadow-primary/5 flex justify-between items-center h-16 px-container-padding-desktop ml-auto hidden md:flex">
+<div class="font-headline-md text-headline-md text-primary">Manraah</div>
+<div class="flex items-center gap-md">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline-variant">search</span>
+<input class="pl-10 pr-4 py-2 rounded-full border border-outline-variant/30 bg-surface focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-shadow text-on-surface" placeholder="Search professionals..." type="text"/>
+</div>
+<button aria-label="notifications" class="hover:bg-primary-container/20 rounded-full transition-all active:scale-95 duration-200 p-2 text-primary dark:text-primary-fixed-dim">
+<span class="material-symbols-outlined" data-weight="fill">notifications</span>
+</button>
+<button aria-label="settings" class="hover:bg-primary-container/20 rounded-full transition-all active:scale-95 duration-200 p-2 text-primary dark:text-primary-fixed-dim">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary-container/30 ml-2">
+<img alt="User profile avatar" class="w-full h-full object-cover" data-alt="A portrait of a smiling user with natural lighting. The mood is calm and inviting, aligning with a wellness aesthetic. Soft, bright colors with a focus on human-centric connection." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBmnBfuwWLWdUiCgxN6WaS4XkGohfQDxEHdrtX-Ob0VsGjfwvBsnVEMVri-Cjit9s2aOhUZNSFmFEZJBAnkuarF7V3IO65kiwEwpaH7K9O6uNVReyE-q1yDsF_Q-15gOiKpu8OF9fAsyBijllH-OgND374slPsC9Gtp4sOE16X71JtrtNeWPmNYxiteIN82RUuj1LZd-zsm61WcqXvaAZSl4rZCdtW4PjrxZ9HIzMy2SzRg7pHD39a9gA"/>
+</div>
+</div>
+</nav>
+<!-- SideNavBar -->
+<aside class="bg-surface dark:bg-surface-dim font-body-md text-body-md h-screen w-64 fixed left-0 top-0 bg-surface-container-low dark:bg-surface-container-lowest shadow-md shadow-primary/5 flex flex-col h-full py-md overflow-y-auto hidden md:flex z-50">
+<div class="px-md mb-xl flex items-center gap-sm">
+<div class="w-12 h-12 rounded-full overflow-hidden border border-primary/20 shrink-0">
+<img alt="User profile photo" class="w-full h-full object-cover" data-alt="A small abstract avatar representing wellness and peace. Soft pastel colors, organic shapes, light-mode friendly. Focus on tranquility." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD-gM1pImTbM_1qPflZWllvikN96h_Td5Vg7hluPIRijltDszcaAaHn1T6iTUR8IvIj-f8muXsmtiN5MoK6BXLp-yg5y_tLHfnBOmK4HjqiwDuOKqtjYrK3P5KVKe_nHqely78n0n07U9ZlvTaeviqceAUReImmoKXTnWnfchrT-okwGYyAt_IqLZZvdySr5RNzU_dszOz-Wn_oQxRqsBRNfoJu0zMlOCAQLIZVsZPtzTgxIoWuIZpS2Q"/>
+</div>
+<div>
+<h1 class="font-display-lg text-display-lg text-primary dark:text-primary-fixed-dim text-2xl font-bold tracking-tight">Manraah</h1>
+<p class="font-caption text-caption text-on-surface-variant">Wellness Sanctuary</p>
+</div>
+</div>
+<nav class="flex-1 flex flex-col gap-1 px-sm">
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">home</span>
+<span>Home</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">insights</span>
+<span>My Journey</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">smart_toy</span>
+<span>AI Companion</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">diversity_1</span>
+<span>Human Companion</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-primary font-bold border-r-4 border-primary bg-primary-container/10 hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined" data-weight="fill" style="font-variation-settings: 'FILL' 1;">medical_services</span>
+<span>Professional Care</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">mood</span>
+<span>Mood &amp; Check-in</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">edit_note</span>
+<span>Journal</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">self_improvement</span>
+<span>Meditation &amp; Sleep</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">groups</span>
+<span>Community</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">library_books</span>
+<span>Resources</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">assessment</span>
+<span>Reports</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span>Settings</span>
+</a>
+</nav>
+</aside>
+<!-- Main Content Canvas -->
+<main class="md:ml-64 pt-24 pb-lg px-container-padding-mobile md:px-container-padding-desktop min-h-screen">
+<header class="mb-lg">
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-2">Professional Care</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-[680px]">Connect with certified experts to guide you through your wellness journey. Find the right support for your unique needs.</p>
+</header>
+<!-- Filters -->
+<section class="mb-lg flex gap-3 overflow-x-auto pb-4 hide-scrollbar">
+<button class="px-6 py-2 rounded-full bg-primary-container/20 text-primary font-label-md text-label-md shrink-0 border border-primary/20">All Specialists</button>
+<button class="px-6 py-2 rounded-full bg-surface-container-highest text-on-surface-variant hover:bg-primary-container/10 transition-colors font-label-md text-label-md shrink-0">Psychologists</button>
+<button class="px-6 py-2 rounded-full bg-surface-container-highest text-on-surface-variant hover:bg-primary-container/10 transition-colors font-label-md text-label-md shrink-0">Stress Coaches</button>
+<button class="px-6 py-2 rounded-full bg-surface-container-highest text-on-surface-variant hover:bg-primary-container/10 transition-colors font-label-md text-label-md shrink-0">Holistic Therapists</button>
+<button class="px-6 py-2 rounded-full bg-surface-container-highest text-on-surface-variant hover:bg-primary-container/10 transition-colors font-label-md text-label-md shrink-0">Counselors</button>
+</section>
+<!-- Bento Grid for Professionals -->
+<section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-md">
+<!-- Card 1 -->
+<article class="bg-surface-container-lowest rounded-[24px] p-6 ambient-shadow flex flex-col items-center text-center group hover:-translate-y-1 transition-transform duration-300">
+<div class="w-24 h-24 rounded-full overflow-hidden mb-4 border-4 border-surface-container-high relative">
+<img alt="Dr. Sarah Jenkins" class="w-full h-full object-cover" data-alt="Professional headshot of a female psychologist, warm smile, soft natural lighting, light grey background. Wellness aesthetic, modern organic style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDDCRmlQQzr79nEPkPpTWeiQvlUsHlK5eSiR2k3rihdgqPyMVuCJRw3EtXGY4-bcRsSFB4it3k2rvcpyCgo-pm-j2PXcvrTsJwBpUpPq8yU0dCcClIZfJXQDOgKa1Zp6p_4JpPzudZf-vW7iME-IbavImg3vYUTBshUrVEA-_nI9tRgR9Cr922v2_88S47Dth-6QzWEOAaZmzupH6mUeWiIzADSE9MnOnyVrSK7vD1dZk-4NlTInabRA"/>
+<div class="absolute bottom-0 right-0 w-4 h-4 bg-secondary rounded-full border-2 border-white"></div>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-1 text-xl">Dr. Sarah Jenkins</h3>
+<p class="font-body-md text-body-md text-primary mb-3">Clinical Psychologist</p>
+<div class="flex items-center gap-1 mb-4 text-secondary">
+<span class="material-symbols-outlined text-lg" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-label-md text-label-md">4.9</span>
+<span class="text-on-surface-variant text-sm ml-1">(124 sessions)</span>
+</div>
+<div class="w-full border-t border-outline-variant/30 pt-4 mt-auto">
+<div class="flex justify-between items-center mb-4">
+<span class="text-on-surface-variant text-sm">Hourly Rate</span>
+<span class="font-label-md text-label-md text-on-surface">$150</span>
+</div>
+<button class="w-full soft-gradient-btn text-on-primary rounded-full py-3 font-label-md text-label-md hover:shadow-lg transition-shadow">Book Now</button>
+</div>
+</article>
+<!-- Card 2 -->
+<article class="bg-surface-container-lowest rounded-[24px] p-6 ambient-shadow flex flex-col items-center text-center group hover:-translate-y-1 transition-transform duration-300">
+<div class="w-24 h-24 rounded-full overflow-hidden mb-4 border-4 border-surface-container-high relative">
+<img alt="Marcus Chen" class="w-full h-full object-cover" data-alt="Professional headshot of a male holistic therapist, calm demeanor, soft natural lighting, warm beige background. Wellness aesthetic, modern organic style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBTXofkY3vmmuAoGJ6qUzn7YyXzDJ9NwH-0kwSVg0B6IBYOl3h8TtF3hcPJbQ95H7EzRphIV-S9xgG0wFp-vITsJBKhmATvQPjvMTJJ_GWRuxOp_UbRCsZk3lv7cqMBW7mN0FH8e0e_4-LYSmU0WHYp-_PqU4bQkCrFrQQqusT_ngKu3P7M1dhEOtNjLr_ve-OZ7WsNQ3FLdRwUzM-GqM4f4K5QF3BqAOiXyTcdStoCEgbWu8KcDo8Pxg"/>
+<div class="absolute bottom-0 right-0 w-4 h-4 bg-outline rounded-full border-2 border-white"></div>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-1 text-xl">Marcus Chen</h3>
+<p class="font-body-md text-body-md text-primary mb-3">Holistic Therapist</p>
+<div class="flex items-center gap-1 mb-4 text-secondary">
+<span class="material-symbols-outlined text-lg" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-label-md text-label-md">4.8</span>
+<span class="text-on-surface-variant text-sm ml-1">(89 sessions)</span>
+</div>
+<div class="w-full border-t border-outline-variant/30 pt-4 mt-auto">
+<div class="flex justify-between items-center mb-4">
+<span class="text-on-surface-variant text-sm">Hourly Rate</span>
+<span class="font-label-md text-label-md text-on-surface">$120</span>
+</div>
+<button class="w-full bg-surface-container-high text-primary rounded-full py-3 font-label-md text-label-md hover:bg-primary-container/20 transition-colors">View Profile</button>
+</div>
+</article>
+<!-- Card 3 -->
+<article class="bg-surface-container-lowest rounded-[24px] p-6 ambient-shadow flex flex-col items-center text-center group hover:-translate-y-1 transition-transform duration-300">
+<div class="w-24 h-24 rounded-full overflow-hidden mb-4 border-4 border-surface-container-high relative">
+<img alt="Elena Rodriguez" class="w-full h-full object-cover" data-alt="Professional headshot of a female stress coach, energetic yet calm smile, soft natural lighting, light blue background. Wellness aesthetic, modern organic style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8xZkucZvPtJErnb5QaFVbnccwVzDC7rAeRXr3Z9HPxFlOViegEejHGcM9E1ardlbdBUrmw2NM0oiaNaW3PtYocP8PQ0bws_bT5nHfkAgyJCXb_YatJ-q56MUxF7bZ1F2lU9GtgZU-O5r4EhrG5q4VVdQgo0G-Vd4MhvZwTreLz_qgy2WMYvdBLo--AkQO_FKkRctBAlg1wfqWaunjtmKFsGhU_iGgfW0vaweEtX3klCRxEqYPZVqO2w"/>
+<div class="absolute bottom-0 right-0 w-4 h-4 bg-secondary rounded-full border-2 border-white"></div>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-1 text-xl">Elena Rodriguez</h3>
+<p class="font-body-md text-body-md text-primary mb-3">Stress Management Coach</p>
+<div class="flex items-center gap-1 mb-4 text-secondary">
+<span class="material-symbols-outlined text-lg" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-label-md text-label-md">5.0</span>
+<span class="text-on-surface-variant text-sm ml-1">(210 sessions)</span>
+</div>
+<div class="w-full border-t border-outline-variant/30 pt-4 mt-auto">
+<div class="flex justify-between items-center mb-4">
+<span class="text-on-surface-variant text-sm">Hourly Rate</span>
+<span class="font-label-md text-label-md text-on-surface">$100</span>
+</div>
+<button class="w-full soft-gradient-btn text-on-primary rounded-full py-3 font-label-md text-label-md hover:shadow-lg transition-shadow">Book Now</button>
+</div>
+</article>
+<!-- Card 4 -->
+<article class="bg-surface-container-lowest rounded-[24px] p-6 ambient-shadow flex flex-col items-center text-center group hover:-translate-y-1 transition-transform duration-300">
+<div class="w-24 h-24 rounded-full overflow-hidden mb-4 border-4 border-surface-container-high relative">
+<img alt="Dr. Alex Thorne" class="w-full h-full object-cover" data-alt="Professional headshot of a non-binary counselor, warm and approachable, soft natural lighting, warm grey background. Wellness aesthetic, modern organic style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBxIoQ2vDXMP4vkvOVAeoenvG10penYZeWbp7hOUTmtTSRqz7yXIwZQ6WiTpkyi7lI22iCSzq8_DpEEcn-1RFzFAC73Z20lge91KVdxT2GoA6aRubjjyKQqqlJwfTbJhWNwoBEQtySKrCT8NnBhQC9Ad3Fgy41b7NKBPy3yOjbL5v2lCx5Xvb1AzluoCAoCmOrX3QxnwEMpb6geL8Pf7nZ99-sqgmpOYJJsLfmXFafedaOC84I_k3huUQ"/>
+<div class="absolute bottom-0 right-0 w-4 h-4 bg-secondary rounded-full border-2 border-white"></div>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-1 text-xl">Dr. Alex Thorne</h3>
+<p class="font-body-md text-body-md text-primary mb-3">Behavioral Therapist</p>
+<div class="flex items-center gap-1 mb-4 text-secondary">
+<span class="material-symbols-outlined text-lg" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-label-md text-label-md">4.7</span>
+<span class="text-on-surface-variant text-sm ml-1">(56 sessions)</span>
+</div>
+<div class="w-full border-t border-outline-variant/30 pt-4 mt-auto">
+<div class="flex justify-between items-center mb-4">
+<span class="text-on-surface-variant text-sm">Hourly Rate</span>
+<span class="font-label-md text-label-md text-on-surface">$135</span>
+</div>
+<button class="w-full bg-surface-container-high text-primary rounded-full py-3 font-label-md text-label-md hover:bg-primary-container/20 transition-colors">View Profile</button>
+</div>
+</article>
+</section>
+</main>
+</body></html>

@@ -1,0 +1,243 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+<title>Manraah - AI Companion Chat</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&amp;family=Work+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<style>
+        .material-symbols-outlined {
+            font-family: 'Material Symbols Outlined';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 24px;
+            line-height: 1;
+            letter-spacing: normal;
+            text-transform: none;
+            display: inline-block;
+            white-space: nowrap;
+            word-wrap: normal;
+            direction: ltr;
+            -webkit-font-feature-settings: 'liga';
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        /* Hide scrollbar for clean horizontal scrolling */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        /* Safe area padding for mobile */
+        .pb-safe {
+            padding-bottom: env(safe-area-inset-bottom, 16px);
+        }
+        .pt-safe {
+            padding-top: env(safe-area-inset-top, 16px);
+        }
+    </style>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "background": "#fdf7ff",
+                        "outline-variant": "#cac4d3",
+                        "on-primary-fixed-variant": "#4a388e",
+                        "surface": "#fdf7ff",
+                        "inverse-primary": "#cbbeff",
+                        "tertiary-container": "#a46172",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "on-tertiary-fixed-variant": "#6e3444",
+                        "on-tertiary-fixed": "#38091a",
+                        "error": "#ba1a1a",
+                        "primary": "#5f4ea5",
+                        "on-error": "#ffffff",
+                        "on-tertiary-container": "#fffbff",
+                        "on-error-container": "#93000a",
+                        "secondary-fixed-dim": "#6adaba",
+                        "primary-fixed": "#e6deff",
+                        "on-secondary-container": "#00725c",
+                        "surface-container": "#f2ebff",
+                        "surface-bright": "#fdf7ff",
+                        "surface-dim": "#ded6f0",
+                        "on-primary": "#ffffff",
+                        "tertiary-fixed-dim": "#ffb1c3",
+                        "error-container": "#ffdad6",
+                        "surface-container-high": "#ece4fe",
+                        "on-secondary-fixed": "#002018",
+                        "on-primary-fixed": "#1d0061",
+                        "outline": "#797582",
+                        "on-background": "#1d192b",
+                        "primary-fixed-dim": "#cbbeff",
+                        "on-surface": "#1d192b",
+                        "secondary-fixed": "#88f7d6",
+                        "on-surface-variant": "#484551",
+                        "surface-tint": "#6251a8",
+                        "surface-container-low": "#f7f1ff",
+                        "secondary": "#006b56",
+                        "primary-container": "#7867c0",
+                        "secondary-container": "#88f7d6",
+                        "tertiary": "#874959",
+                        "on-secondary-fixed-variant": "#005140",
+                        "inverse-on-surface": "#f5eeff",
+                        "surface-variant": "#e6dff8",
+                        "surface-container-highest": "#e6dff8",
+                        "on-primary-container": "#fffbff",
+                        "inverse-surface": "#322e41",
+                        "tertiary-fixed": "#ffd9e0",
+                        "on-secondary": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "md": "24px",
+                        "container-padding-mobile": "20px",
+                        "sm": "12px",
+                        "xs": "4px",
+                        "container-padding-desktop": "64px",
+                        "base": "8px",
+                        "xl": "80px",
+                        "lg": "48px"
+                    },
+                    "fontFamily": {
+                        "caption": ["Work Sans"],
+                        "headline-md": ["Quicksand"],
+                        "display-lg": ["Quicksand"],
+                        "headline-lg": ["Quicksand"],
+                        "body-md": ["Work Sans"],
+                        "label-md": ["Work Sans"],
+                        "headline-lg-mobile": ["Quicksand"],
+                        "body-lg": ["Work Sans"]
+                    },
+                    "fontSize": {
+                        "caption": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background font-body-md antialiased overflow-hidden selection:bg-primary-container selection:text-on-primary-container">
+<!-- Full Screen Chat App Container -->
+<main class="flex flex-col h-[100dvh] w-full max-w-md mx-auto relative bg-surface-container-lowest shadow-lg shadow-primary/5">
+<!-- Header (Task-Focused: features back button, suppresses global nav) -->
+<header class="flex items-center justify-between px-container-padding-mobile py-sm pt-safe bg-surface/80 backdrop-blur-lg z-20 border-b border-surface-variant/50">
+<button aria-label="Go back" class="w-10 h-10 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
+</button>
+<div class="flex flex-col items-center justify-center">
+<div class="relative">
+<img class="w-10 h-10 rounded-full object-cover shadow-sm shadow-primary/10" data-alt="A soft, watercolor-style portrait illustration of a serene AI companion character named Mana. The character has a calm, welcoming expression, styled in light lavender and soft mint tones, reflecting a peaceful wellness sanctuary aesthetic. High quality, organic vector art." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCb0zaARfAmt4zKKIgp5CmRAkWMe0jD2ZSTzRS7khUzACMydrcPqgL4KI41WhPwOY6u4YuMAddfkvSdN1tECatwqNEK53xo70i0Cq0is6aPW1Fx6BUTQyUDkw8mfd-laDqH8gcSC0JVxLRqrsBRK8HlcqdDqED8rksGLZ9L8TqBmky1zFZt58RpFasAdHAeXhmvpUjvQTd2WiG0EC_ah25g3fr76LIyLSbO9d9vN0TuX3cDFnXtAbs7Qw">
+<div class="absolute bottom-0 right-0 w-3 h-3 bg-secondary rounded-full border-2 border-surface"></div>
+</div>
+<h1 class="font-label-md text-label-md text-on-surface mt-1">Mana</h1>
+<span class="font-caption text-caption text-secondary">Active now</span>
+</div>
+<button aria-label="More options" class="w-10 h-10 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</header>
+<!-- Chat Canvas -->
+<div class="flex-1 overflow-y-auto px-container-padding-mobile py-md flex flex-col gap-6 hide-scrollbar relative">
+<!-- Atmospheric Background Element -->
+<div class="absolute top-0 left-0 w-full h-full pointer-events-none opacity-[0.03] bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary via-background to-background z-0"></div>
+<!-- Date Separator -->
+<div class="flex justify-center z-10">
+<span class="bg-surface-variant/50 text-on-surface-variant font-caption text-caption px-3 py-1 rounded-full backdrop-blur-sm">Today, 10:42 AM</span>
+</div>
+<!-- AI Message (Lavender / Surface Container) -->
+<div class="flex items-end gap-2 w-[85%] z-10">
+<img class="w-8 h-8 rounded-full object-cover shrink-0 mb-1 shadow-sm" data-alt="A small circular avatar of the AI companion Mana, styled in soft lavender and mint tones, looking friendly." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA2sTZsf5xC_PwOjVNZF3VGRGbUfRrJLdlKK9MSuaPunYCl9X-aW0k3dh9xNzHG3_IrntQJH7Cc0kLYjLjkQT1W2jcohefGcZjlPcDiM4rGSXtqDqtE830_c2p4pxTwEZAhyJ3H2eY3CBD0MCZnrNYshrH3VZ_V6u5ieLe9HeK6cSZaH3PSec7Im1YZavR3HRY7jUNOwgoDtP5b_V9kqyBChlGIvV-z_RDvkr7VLTSmjIbHxdXWRGoEfQ">
+<div class="bg-surface-container text-on-surface font-body-md text-body-md px-4 py-3 rounded-xl rounded-bl-[4px] shadow-sm shadow-primary/5">
+<p>Good morning! How are you feeling today? I noticed you logged some poor sleep last night.</p>
+</div>
+</div>
+<!-- User Message (Purple / Primary) -->
+<div class="flex items-end gap-2 w-[85%] self-end justify-end z-10">
+<div class="bg-primary text-on-primary font-body-md text-body-md px-4 py-3 rounded-xl rounded-br-[4px] shadow-md shadow-primary/20">
+<p>Yeah, I couldn't stop thinking about work. I feel pretty drained.</p>
+</div>
+</div>
+<!-- AI Message -->
+<div class="flex items-end gap-2 w-[85%] z-10">
+<img class="w-8 h-8 rounded-full object-cover shrink-0 mb-1 shadow-sm" data-alt="A small circular avatar of the AI companion Mana, styled in soft lavender and mint tones, looking friendly." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCLuE7KFGxIwzHVo2FN1CsLbiWD7chSZPzlDr3UKh1-DE2Rnrs64ZWBCkQ8p55dxo0uwQhggxeYJ6tmjvXcKi_xXYndlb-aT06zTfseZ227pC-FQpfRYvWUH-zNuQnj4kP_ra766yeLTfb2i_PTv7X29RjjdpnB-4mEBZJSEKmTJvPEbgU9oszzCadrv4p3YXuYHKq-0kQcGhJ0N46j8CgtxjRZbJX3Tfdq1Qpp13Rw_rJOw1hcLbOBOA">
+<div class="bg-surface-container text-on-surface font-body-md text-body-md px-4 py-3 rounded-xl rounded-bl-[4px] shadow-sm shadow-primary/5">
+<p>I'm sorry to hear that. Racing thoughts can make it so hard to rest. Would you like to try a short, 3-minute grounding breathing exercise to help reset your focus for the day?</p>
+</div>
+</div>
+<!-- Typing Indicator (AI) -->
+<div class="flex items-end gap-2 w-[85%] z-10 opacity-70">
+<img class="w-8 h-8 rounded-full object-cover shrink-0 mb-1" data-alt="A small circular avatar of the AI companion Mana, styled in soft lavender and mint tones, looking friendly." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCG0HvmBpd34ymM1vKlSawhkGhU6QSb-n4HENTXnff3RM3BTrFgI3nY22v1cRUZLTXKAmPWWYcXfHJw8OM-J0Ei8uxQu0zquN2L-0O9AxtvlmUG9K4gddB2ugc7Y5xTfpBHP2q6HAM98YLXxSRae72Q6-XEVgFqMEzm4xnEWaN3p4kOts_V1omCEidCniRZvNgGeeS4AIWSz2HHIWGWRPSqWerXKXCi9nKyOMAaT5eizAYVWvQjD-_EvQ">
+<div class="bg-surface-container px-4 py-3 rounded-xl rounded-bl-[4px] flex gap-1 items-center h-[48px]">
+<span class="w-2 h-2 bg-primary/40 rounded-full animate-bounce" style="animation-delay: 0ms"></span>
+<span class="w-2 h-2 bg-primary/60 rounded-full animate-bounce" style="animation-delay: 150ms"></span>
+<span class="w-2 h-2 bg-primary/80 rounded-full animate-bounce" style="animation-delay: 300ms"></span>
+</div>
+</div>
+<!-- Anchor for scrolling to bottom -->
+<div class="h-1 w-full" id="chat-anchor"></div>
+</div>
+<!-- Input Area (Fixed Bottom) -->
+<div class="bg-surface/90 backdrop-blur-xl border-t border-surface-variant/50 pt-sm pb-safe px-container-padding-mobile flex flex-col gap-sm z-20 shadow-[0_-10px_40px_rgba(124,107,196,0.05)]">
+<!-- Quick Reply Chips (Horizontal Scroll) -->
+<div class="flex overflow-x-auto hide-scrollbar gap-2 pb-1">
+<button class="whitespace-nowrap bg-surface-container-low hover:bg-surface-variant text-primary font-label-md text-label-md px-4 py-2 rounded-full border border-primary/10 transition-colors shadow-sm shadow-primary/5">
+                    Yes, let's breathe
+                </button>
+<button class="whitespace-nowrap bg-surface-container-low hover:bg-surface-variant text-primary font-label-md text-label-md px-4 py-2 rounded-full border border-primary/10 transition-colors shadow-sm shadow-primary/5">
+                    Not right now
+                </button>
+<button class="whitespace-nowrap bg-surface-container-low hover:bg-surface-variant text-primary font-label-md text-label-md px-4 py-2 rounded-full border border-primary/10 transition-colors shadow-sm shadow-primary/5">
+                    I need to vent
+                </button>
+</div>
+<!-- Text Input Bar -->
+<div class="flex items-center gap-2 mb-2">
+<button aria-label="Add attachment" class="w-10 h-10 flex items-center justify-center rounded-full text-primary hover:bg-primary-container/20 transition-colors shrink-0">
+<span class="material-symbols-outlined" data-icon="add_circle">add_circle</span>
+</button>
+<div class="flex-1 relative flex items-center">
+<input class="w-full bg-surface-container-lowest border border-outline-variant/50 text-on-surface font-body-md text-body-md rounded-full py-3 pl-4 pr-12 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 shadow-inner shadow-surface-variant/20 transition-all placeholder:text-outline" placeholder="Type a message..." type="text">
+<button aria-label="Voice input" class="absolute right-1 w-10 h-10 flex items-center justify-center rounded-full text-primary hover:bg-primary-container/20 transition-colors">
+<span class="material-symbols-outlined" data-icon="mic" data-weight="fill" style="font-variation-settings: 'FILL' 1;">mic</span>
+</button>
+</div>
+<button aria-label="Send message" class="w-12 h-12 flex items-center justify-center rounded-full bg-primary text-on-primary hover:bg-surface-tint shadow-md shadow-primary/30 transition-transform active:scale-95 shrink-0">
+<span class="material-symbols-outlined" data-icon="send" data-weight="fill" style="font-variation-settings: 'FILL' 1;">send</span>
+</button>
+</div>
+</div>
+</main>
+<script>
+        // Simple script to ensure chat stays scrolled to bottom on load
+        document.addEventListener('DOMContentLoaded', () => {
+            const anchor = document.getElementById('chat-anchor');
+            if(anchor) {
+                anchor.scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+    </script>
+</body></html>

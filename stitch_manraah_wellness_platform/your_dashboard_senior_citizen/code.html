@@ -1,0 +1,369 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Manraah - Senior Citizen Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&amp;family=Work+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container": "#f2ebff",
+                        "on-surface": "#1d192b",
+                        "on-primary-fixed-variant": "#4a388e",
+                        "on-error": "#ffffff",
+                        "on-secondary-fixed-variant": "#005140",
+                        "surface-dim": "#ded6f0",
+                        "primary-container": "#7867c0",
+                        "on-tertiary": "#ffffff",
+                        "primary-fixed": "#e6deff",
+                        "error": "#ba1a1a",
+                        "surface-bright": "#fdf7ff",
+                        "inverse-on-surface": "#f5eeff",
+                        "tertiary-fixed": "#ffd9e0",
+                        "background": "#fdf7ff",
+                        "outline": "#797582",
+                        "surface-tint": "#6251a8",
+                        "on-secondary": "#ffffff",
+                        "surface-container-low": "#f7f1ff",
+                        "tertiary": "#874959",
+                        "on-tertiary-container": "#fffbff",
+                        "outline-variant": "#cac4d3",
+                        "on-primary-fixed": "#1d0061",
+                        "on-primary": "#ffffff",
+                        "primary": "#5f4ea5",
+                        "tertiary-container": "#a46172",
+                        "on-background": "#1d192b",
+                        "tertiary-fixed-dim": "#ffb1c3",
+                        "on-surface-variant": "#484551",
+                        "surface-container-highest": "#e6dff8",
+                        "primary-fixed-dim": "#cbbeff",
+                        "secondary-fixed": "#88f7d6",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary": "#006b56",
+                        "inverse-primary": "#cbbeff",
+                        "surface-variant": "#e6dff8",
+                        "on-secondary-container": "#00725c",
+                        "on-primary-container": "#fffbff",
+                        "secondary-fixed-dim": "#6adaba",
+                        "secondary-container": "#88f7d6",
+                        "on-tertiary-fixed-variant": "#6e3444",
+                        "on-tertiary-fixed": "#38091a",
+                        "inverse-surface": "#322e41",
+                        "error-container": "#ffdad6",
+                        "on-secondary-fixed": "#002018",
+                        "surface": "#fdf7ff",
+                        "surface-container-high": "#ece4fe",
+                        "on-error-container": "#93000a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xs": "4px",
+                        "md": "24px",
+                        "container-padding-mobile": "20px",
+                        "container-padding-desktop": "64px",
+                        "base": "8px",
+                        "sm": "12px",
+                        "lg": "48px",
+                        "xl": "80px"
+                    },
+                    "fontFamily": {
+                        "label-md": ["Work Sans"],
+                        "headline-lg-mobile": ["Quicksand"],
+                        "caption": ["Work Sans"],
+                        "headline-md": ["Quicksand"],
+                        "display-lg": ["Quicksand"],
+                        "headline-lg": ["Quicksand"],
+                        "body-md": ["Work Sans"],
+                        "body-lg": ["Work Sans"]
+                    },
+                    "fontSize": {
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "600" }],
+                        "caption": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { background-color: #FAF9FC; }
+        .ambient-shadow { box-shadow: 0 10px 40px rgba(124, 107, 196, 0.08); }
+        .glass-panel { background: rgba(253, 247, 255, 0.85); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.4); }
+        
+        .nav-item-active { background-color: rgba(120, 103, 192, 0.1); border-right: 4px solid #5f4ea5; font-weight: bold; color: #5f4ea5; }
+        .nav-item { color: #484551; transition: all 0.3s ease; }
+        .nav-item:hover { background-color: rgba(230, 223, 248, 0.5); color: #5f4ea5; }
+        
+        .pill-button { background: linear-gradient(135deg, #7867c0, #5f4ea5); color: white; box-shadow: 0 4px 15px rgba(95, 78, 165, 0.2); transition: all 0.3s ease; }
+        .pill-button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(95, 78, 165, 0.3); }
+        
+        .card-base { background: #FFFFFF; border-radius: 24px; }
+        
+        .mood-emoji { transition: transform 0.2s; cursor: pointer; }
+        .mood-emoji:hover { transform: scale(1.1); }
+        
+        /* Checkbox styling */
+        .custom-checkbox { width: 24px; height: 24px; border-radius: 8px; border: 2px solid #cac4d3; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
+        .custom-checkbox.checked { background-color: #006b56; border-color: #006b56; }
+        .custom-checkbox.checked::after { content: '\e5ca'; font-family: 'Material Symbols Outlined'; color: white; font-size: 16px; }
+
+        /* Hide scrollbar for gallery */
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="font-body-md text-body-md text-on-surface min-h-screen overflow-x-hidden">
+<!-- SideNavBar -->
+<nav class="hidden md:flex flex-col h-screen w-64 fixed left-0 top-0 bg-surface shadow-md shadow-primary/5 z-50">
+<div class="p-md flex flex-col items-center pb-8 border-b border-surface-variant/30">
+<div class="w-16 h-16 rounded-full bg-primary-container/20 mb-4 flex items-center justify-center overflow-hidden">
+<img alt="User profile photo" class="w-full h-full object-cover" data-alt="A beautifully illustrated profile picture of a serene, older woman with silver hair, smiling gently. The style is soft, watercolor-inspired, warm, and inviting, set against a light pastel purple background. The mood is peaceful and supportive." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDNHvC968orze8wgaBp5wa7Vx9_Uo6E5f1Ika_2oq7qWtPspjXlUdCjnJL9Pbxz20yFWxOK6f7wRsYpgbh2L_7qIFAfkmFmLbxONrwWFYr72-CnRllYUOcSTXNq2JlvOlRQ347_z4UjMmkh_B197eee37UxAzFintUnXVTmviD4xVMgY_blxa9FkIU9JH1TxiMOF7jq5Ds8ha1LUPmVUSD0nSTmRQEOCkijvXiPNmXP64xZoQJyKxGluQ">
+</div>
+<h1 class="font-display-lg text-display-lg text-primary text-center">Manraah</h1>
+<p class="font-caption text-caption text-on-surface-variant mt-1 text-center">Wellness Sanctuary</p>
+</div>
+<div class="flex-1 overflow-y-auto py-md space-y-2">
+<!-- Active: Home -->
+<a class="flex items-center px-6 py-3 nav-item-active active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined mr-4" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="font-label-md text-label-md">Home</span>
+</a>
+<a class="flex items-center px-6 py-3 nav-item hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined mr-4">insights</span>
+<span class="font-label-md text-label-md">My Journey</span>
+</a>
+<a class="flex items-center px-6 py-3 nav-item hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined mr-4">smart_toy</span>
+<span class="font-label-md text-label-md">AI Companion</span>
+</a>
+<a class="flex items-center px-6 py-3 nav-item hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined mr-4">diversity_1</span>
+<span class="font-label-md text-label-md">Human Companion</span>
+</a>
+<a class="flex items-center px-6 py-3 nav-item hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined mr-4">medical_services</span>
+<span class="font-label-md text-label-md">Professional Care</span>
+</a>
+<a class="flex items-center px-6 py-3 nav-item hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined mr-4">mood</span>
+<span class="font-label-md text-label-md">Mood &amp; Check-in</span>
+</a>
+<a class="flex items-center px-6 py-3 nav-item hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined mr-4">edit_note</span>
+<span class="font-label-md text-label-md">Journal</span>
+</a>
+<a class="flex items-center px-6 py-3 nav-item hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined mr-4">self_improvement</span>
+<span class="font-label-md text-label-md">Meditation &amp; Sleep</span>
+</a>
+<a class="flex items-center px-6 py-3 nav-item hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined mr-4">groups</span>
+<span class="font-label-md text-label-md">Community</span>
+</a>
+<a class="flex items-center px-6 py-3 nav-item hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined mr-4">library_books</span>
+<span class="font-label-md text-label-md">Resources</span>
+</a>
+<a class="flex items-center px-6 py-3 nav-item hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined mr-4">assessment</span>
+<span class="font-label-md text-label-md">Reports</span>
+</a>
+<a class="flex items-center px-6 py-3 nav-item hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined mr-4">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<div class="md:ml-64 min-h-screen pb-24 md:pb-0 relative">
+<!-- TopNavBar -->
+<header class="hidden md:flex justify-between items-center h-16 px-container-padding-desktop fixed top-0 right-0 w-[calc(100%-16rem)] z-40 bg-surface/60 backdrop-blur-md border-b border-surface/80">
+<div class="flex items-center">
+<h2 class="font-headline-md text-headline-md text-primary">Manraah</h2>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline-variant">search</span>
+<input class="pl-10 pr-4 py-2 bg-white rounded-2xl border border-surface-variant focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all font-body-md text-body-md w-64 shadow-sm" placeholder="Search..." type="text">
+</div>
+<button class="p-2 text-on-surface-variant hover:bg-primary-container/20 rounded-full transition-all active:scale-95 duration-200">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-primary-container/20 rounded-full transition-all active:scale-95 duration-200">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-surface-variant ml-2">
+<img alt="User profile avatar" class="w-full h-full object-cover" data-alt="A beautifully illustrated profile picture of a serene, older woman with silver hair, smiling gently. The style is soft, watercolor-inspired, warm, and inviting, set against a light pastel purple background. The mood is peaceful and supportive." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAae59rcGehrFXoRLtjowNxSxsTeRKXQog6hpL92imLF7SpN_UZshfVJFrw2EZOOk_GuuQrGy4AR6ie0A65am3k7k9Qiib35QtNKo5l92vPbU_8et85Wnt_8lnAALNU9njSIqV8Zpx-fSpaSlK6pxPLGjmXyBxDPCL1OoAGC6FW7MY2Un10PKyjbG_H_a8-M1h5jXK89GBDT_Y-aYgm2lu9itQg6DTisZedoKTh-JMiLVQrxJiuS-F_Bg">
+</div>
+</div>
+</header>
+<main class="p-container-padding-mobile md:p-container-padding-desktop pt-8 md:pt-24 max-w-[1400px] mx-auto">
+<!-- Hero / Greeting Section -->
+<div class="card-base ambient-shadow p-6 md:p-8 mb-8 relative overflow-hidden flex flex-col md:flex-row items-center gap-8 bg-gradient-to-br from-white to-surface-container-low">
+<div class="flex-1 z-10">
+<h2 class="font-headline-lg text-headline-lg md:text-display-lg font-display-lg text-on-surface mb-2">Good morning, Eleanor.</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-6 max-w-lg">It's a beautiful day. How are you feeling this morning?</p>
+<!-- Mood Check-in -->
+<div class="flex gap-4 sm:gap-6 bg-white/50 p-4 rounded-2xl inline-flex backdrop-blur-sm border border-white">
+<div class="flex flex-col items-center gap-2">
+<button class="text-4xl md:text-5xl mood-emoji hover:bg-tertiary-container/10 p-2 rounded-full transition-colors">😊</button>
+<span class="font-caption text-caption text-on-surface-variant">Great</span>
+</div>
+<div class="flex flex-col items-center gap-2">
+<button class="text-4xl md:text-5xl mood-emoji hover:bg-primary-container/10 p-2 rounded-full transition-colors">😌</button>
+<span class="font-caption text-caption text-on-surface-variant">Good</span>
+</div>
+<div class="flex flex-col items-center gap-2">
+<button class="text-4xl md:text-5xl mood-emoji hover:bg-surface-variant/50 p-2 rounded-full transition-colors">😐</button>
+<span class="font-caption text-caption text-on-surface-variant">Okay</span>
+</div>
+<div class="flex flex-col items-center gap-2">
+<button class="text-4xl md:text-5xl mood-emoji hover:bg-error-container/20 p-2 rounded-full transition-colors">😔</button>
+<span class="font-caption text-caption text-on-surface-variant">Down</span>
+</div>
+</div>
+</div>
+<!-- Hero Illustration -->
+<div class="w-full md:w-1/3 h-48 md:h-64 relative z-0 mt-6 md:mt-0 rounded-2xl overflow-hidden shadow-inner">
+<img alt="Peaceful garden walk" class="w-full h-full object-cover" data-alt="A soft, modern-organic illustration of an older woman walking peacefully in a vibrant, lush garden filled with blooming pastel flowers and gentle sunlight. The art style is warm, comforting, and hand-drawn, utilizing a palette of soft greens, warm yellows, and gentle lavenders. The mood is calm and uplifting, perfect for a wellness sanctuary aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDV0kyK7GFNzmyeXOyxixtg4X66fexottxB1nEVJSfWu6pTsuyxsfH7axc7J__Wq2DRaCfJfiWcCW5cMDxmhl1Ihv8KAu898GTQxhk1nfS8FgH3WHbEEr377JUHtuU3Vv88hOxtNreMmf6uXPxcxXBTzfm8SrBxWT8xEmi3dwAsw437me8Sgw9lJor4GO9--8KFFEUdx4dNomYGWLeMn6CR4BQtRc5OSoRt4Llxd_g1gQQriu_UFIxfJw">
+</div>
+</div>
+<!-- Bento Grid Main Content -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+<!-- Quick Access Cards (Spans 8 cols on desktop) -->
+<div class="col-span-1 md:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
+<a class="card-base ambient-shadow p-6 flex flex-col items-start gap-4 hover:-translate-y-1 transition-transform group border border-transparent hover:border-primary/20" href="#">
+<div class="w-12 h-12 rounded-full bg-primary-container/20 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-3xl">smart_toy</span>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-1">Talk to AI</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Have a friendly chat anytime.</p>
+</div>
+</a>
+<a class="card-base ambient-shadow p-6 flex flex-col items-start gap-4 hover:-translate-y-1 transition-transform group border border-transparent hover:border-secondary-container/30" href="#">
+<div class="w-12 h-12 rounded-full bg-secondary-container/20 flex items-center justify-center text-secondary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-3xl">diversity_1</span>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-1">Human Guide</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Connect with a real person.</p>
+</div>
+</a>
+<a class="card-base ambient-shadow p-6 flex flex-col items-start gap-4 hover:-translate-y-1 transition-transform group border border-transparent hover:border-tertiary-container/20" href="#">
+<div class="w-12 h-12 rounded-full bg-tertiary-container/10 flex items-center justify-center text-tertiary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-3xl">forum</span>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-1">Family Messages</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">3 new messages from Sarah.</p>
+</div>
+</a>
+<a class="card-base ambient-shadow p-6 flex flex-col items-start gap-4 hover:-translate-y-1 transition-transform group border border-transparent hover:border-primary/20" href="#">
+<div class="w-12 h-12 rounded-full bg-surface-container-high flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-3xl">self_improvement</span>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-1">Meditation</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">10-minute morning calm.</p>
+</div>
+</a>
+</div>
+<!-- Right Sidebar Widgets (Spans 4 cols on desktop) -->
+<div class="col-span-1 md:col-span-4 flex flex-col gap-6">
+<!-- Medication Reminder -->
+<div class="card-base ambient-shadow p-6 flex flex-col">
+<div class="flex items-center justify-between mb-6">
+<h3 class="font-headline-md text-headline-md text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary">medical_services</span>
+                                Reminders
+                            </h3>
+<span class="font-caption text-caption text-secondary bg-secondary-container/30 px-3 py-1 rounded-full">Morning</span>
+</div>
+<div class="space-y-4">
+<label class="flex items-center gap-4 p-3 rounded-xl hover:bg-surface-variant/30 transition-colors cursor-pointer group">
+<div class="custom-checkbox" onclick="this.classList.toggle('checked')"></div>
+<div class="flex-1">
+<p class="font-label-md text-label-md text-on-surface">Vitamin D</p>
+<p class="font-caption text-caption text-on-surface-variant">8:00 AM - 1 Pill</p>
+</div>
+</label>
+<label class="flex items-center gap-4 p-3 rounded-xl hover:bg-surface-variant/30 transition-colors cursor-pointer group">
+<div class="custom-checkbox" onclick="this.classList.toggle('checked')"></div>
+<div class="flex-1">
+<p class="font-label-md text-label-md text-on-surface">Blood Pressure</p>
+<p class="font-caption text-caption text-on-surface-variant">8:00 AM - 1 Pill</p>
+</div>
+</label>
+</div>
+</div>
+<!-- Progress Chart Placeholder (Peace of Mind) -->
+<div class="card-base ambient-shadow p-6 relative overflow-hidden">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-4">Peace of Mind</h3>
+<div class="h-32 w-full rounded-xl bg-surface-container-low relative flex items-end px-2 pb-2 gap-2 justify-between">
+<!-- Mock chart bars -->
+<div class="w-full bg-secondary/20 rounded-t-lg" style="height: 40%"></div>
+<div class="w-full bg-secondary/40 rounded-t-lg" style="height: 60%"></div>
+<div class="w-full bg-secondary/60 rounded-t-lg" style="height: 50%"></div>
+<div class="w-full bg-secondary/30 rounded-t-lg" style="height: 70%"></div>
+<div class="w-full bg-secondary/80 rounded-t-lg" style="height: 85%"></div>
+<div class="w-full bg-secondary rounded-t-lg" style="height: 90%"></div>
+</div>
+<p class="font-caption text-caption text-on-surface-variant text-center mt-3">You've had a very calm week.</p>
+</div>
+</div>
+<!-- Bottom Full Width Area -->
+<div class="col-span-1 md:col-span-12 mt-4">
+<!-- Family Photo Gallery -->
+<div class="card-base ambient-shadow p-6">
+<h3 class="font-headline-md text-headline-md text-on-surface flex items-center gap-2 mb-6">
+<span class="material-symbols-outlined text-primary">photo_library</span>
+                            Family Memories
+                        </h3>
+<div class="flex gap-4 overflow-x-auto pb-4 hide-scrollbar snap-x">
+<div class="min-w-[200px] h-[150px] rounded-2xl overflow-hidden snap-start relative group shadow-sm">
+<img alt="Family picnic" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A warm, candid photo of a family gathering in a sunlit backyard. Grandparents, parents, and children are smiling and laughing together. The aesthetic is bright, high-key lighting, capturing a joyful and soft moment. The style is professional photography suitable for a modern wellness app." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDjmoWtWwqPxK0dtOVvj54IVyGmTipVU6nadBygHPylE-aO3pLIY28tZ6ayXxGf0zysaUShE4bhDL5UXfpha25fLPEJ9H4nBDeBnIkWWybA3Eyma0PzzjC7hajbfj_J8OL6sosL63VLy_4nuBP4W8QMyuuOI-WVBehbppyuiOx-EXn-tz2mMUCYcy66GrE-oQuH0qzqguDMdwXeiI8beXRs2w33NgD85exupnYnpstqY1ZSunuz5kfDMg">
+<div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-3 pt-8">
+<p class="text-white font-label-md text-label-md">Picnic last Sunday</p>
+</div>
+</div>
+<div class="min-w-[200px] h-[150px] rounded-2xl overflow-hidden snap-start relative group shadow-sm">
+<img alt="Grandchild" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A close-up, heartwarming photo of a young child handing a freshly picked daisy to their grandmother. The lighting is soft and golden, emphasizing the tender connection. The background is a gently blurred green garden. Professional photography, soft modern aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCsG_nZYBfxeAvJfIq9dhu_VSbeJ4SUHmSqZ3Q8RecRaYRQekXURgrO2ZS8OZnIVLyrnmyoxELk31j7D-CA5TnRNp4YWhuwq9QR41pY4FBmfwYvNvSo3l06a3SvkAhABglcPiP3kh6ZahFt1lX7ioxUi5H25tdywkcgDAiNcnc6BTV6kwO3By9VqQmPDW2G9wXP9LvqowndYL4qJnNRL2iHt6nkPRHr4Fj3qWj34MxSKXztIDEXLpJA8A">
+<div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-3 pt-8">
+<p class="text-white font-label-md text-label-md">Little Tommy</p>
+</div>
+</div>
+<div class="min-w-[200px] h-[150px] rounded-2xl overflow-hidden snap-start relative group shadow-sm">
+<img alt="Anniversary" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A cozy indoor photo of an older couple sitting on a comfortable couch, looking at a photo album together. Warm, ambient lighting from a nearby lamp casts a gentle glow. The setting is a clean, modern-organic living room. High-quality lifestyle photography." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAeVkx9lgToCYtLlySg_h2oxTLwACk6_kUfgs3mzc9caH6C2r3CrJdMRv_IjZI95y2sYFIEBnJwHR25tcA8RZJ814dIUP8mC7lbWi3lTDg_h9IAouk8Qdv4DirdjThry1oErTE9ZpMiYs7Frub4Ntnai7bN7cu25yDFwWbBDTKVpEIwkmymZ8XQHqbIYFdOTOZXfgwVdwYQe6hHtCzmLGKBbfkAQbhoFeTSueuYroyciTjmhJQPkpr5jA">
+<div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-3 pt-8">
+<p class="text-white font-label-md text-label-md">Our Anniversary</p>
+</div>
+</div>
+<div class="min-w-[200px] h-[150px] rounded-2xl overflow-hidden snap-start relative flex items-center justify-center bg-surface-container-low border-2 border-dashed border-outline-variant/50 cursor-pointer hover:bg-surface-variant/30 transition-colors">
+<div class="text-center">
+<span class="material-symbols-outlined text-3xl text-primary mb-1">add_circle</span>
+<p class="font-label-md text-label-md text-on-surface-variant">Add Photo</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

@@ -1,0 +1,70 @@
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-quicksand: 'Quicksand', sans-serif;
+  --font-work-sans: 'Work Sans', sans-serif;
+}
+
+body {
+  font-family: var(--font-work-sans);
+  background-color: #fdf7ff;
+  color: #1d192b;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-quicksand);
+}
+
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Glassmorphism overlays */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(230, 223, 248, 0.5);
+}
+
+/* Ambient Purple & Mint Gradients */
+.gradient-primary {
+  background: linear-gradient(135deg, #7C6BC4 0%, #5F4EA5 100%);
+}
+
+.gradient-mint {
+  background: linear-gradient(135deg, #5FCFB0 0%, #006B56 100%);
+}
+
+.gradient-peach {
+  background: linear-gradient(135deg, #F5C99B 0%, #F4A6B8 100%);
+}
+
+.gradient-soft {
+  background: linear-gradient(180deg, #FDF7FF 0%, #F2EBFF 100%);
+}
+
+/* Soft ambient card shadow */
+.shadow-soft {
+  box-shadow: 0 10px 30px rgba(124, 107, 196, 0.08);
+}

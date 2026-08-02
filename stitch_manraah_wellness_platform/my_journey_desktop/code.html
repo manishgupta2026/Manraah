@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>My Journey - Manraah</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&amp;family=Work+Sans:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-tertiary-fixed": "#38091a",
+                    "surface-container-highest": "#e6dff8",
+                    "surface-container-high": "#ece4fe",
+                    "primary-fixed": "#e6deff",
+                    "on-error-container": "#93000a",
+                    "tertiary-fixed-dim": "#ffb1c3",
+                    "inverse-primary": "#cbbeff",
+                    "surface-container-lowest": "#ffffff",
+                    "on-secondary-container": "#00725c",
+                    "on-surface": "#1d192b",
+                    "on-secondary": "#ffffff",
+                    "on-background": "#1d192b",
+                    "surface-dim": "#ded6f0",
+                    "surface-bright": "#fdf7ff",
+                    "error-container": "#ffdad6",
+                    "secondary-container": "#88f7d6",
+                    "surface-container": "#f2ebff",
+                    "primary-container": "#7867c0",
+                    "outline-variant": "#cac4d3",
+                    "error": "#ba1a1a",
+                    "outline": "#797582",
+                    "secondary": "#006b56",
+                    "tertiary-fixed": "#ffd9e0",
+                    "on-primary-container": "#fffbff",
+                    "surface-tint": "#6251a8",
+                    "inverse-on-surface": "#f5eeff",
+                    "on-tertiary-container": "#fffbff",
+                    "on-surface-variant": "#484551",
+                    "on-primary": "#ffffff",
+                    "on-primary-fixed": "#1d0061",
+                    "secondary-fixed-dim": "#6adaba",
+                    "inverse-surface": "#322e41",
+                    "background": "#fdf7ff",
+                    "on-tertiary-fixed-variant": "#6e3444",
+                    "on-error": "#ffffff",
+                    "surface-variant": "#e6dff8",
+                    "primary-fixed-dim": "#cbbeff",
+                    "surface-container-low": "#f7f1ff",
+                    "surface": "#fdf7ff",
+                    "secondary-fixed": "#88f7d6",
+                    "on-tertiary": "#ffffff",
+                    "on-secondary-fixed": "#002018",
+                    "tertiary": "#874959",
+                    "on-primary-fixed-variant": "#4a388e",
+                    "tertiary-container": "#a46172",
+                    "primary": "#5f4ea5",
+                    "on-secondary-fixed-variant": "#005140"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "md": "24px",
+                    "container-padding-desktop": "64px",
+                    "xl": "80px",
+                    "container-padding-mobile": "20px",
+                    "xs": "4px",
+                    "sm": "12px",
+                    "lg": "48px",
+                    "base": "8px"
+            },
+            "fontFamily": {
+                    "headline-lg": [
+                            "Quicksand"
+                    ],
+                    "caption": [
+                            "Work Sans"
+                    ],
+                    "headline-lg-mobile": [
+                            "Quicksand"
+                    ],
+                    "body-md": [
+                            "Work Sans"
+                    ],
+                    "headline-md": [
+                            "Quicksand"
+                    ],
+                    "display-lg": [
+                            "Quicksand"
+                    ],
+                    "body-lg": [
+                            "Work Sans"
+                    ],
+                    "label-md": [
+                            "Work Sans"
+                    ]
+            },
+            "fontSize": {
+                    "headline-lg": [
+                            "32px",
+                            {
+                                    "lineHeight": "40px",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "caption": [
+                            "12px",
+                            {
+                                    "lineHeight": "16px",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "headline-lg-mobile": [
+                            "28px",
+                            {
+                                    "lineHeight": "36px",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "body-md": [
+                            "16px",
+                            {
+                                    "lineHeight": "24px",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "headline-md": [
+                            "24px",
+                            {
+                                    "lineHeight": "32px",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "display-lg": [
+                            "48px",
+                            {
+                                    "lineHeight": "56px",
+                                    "letterSpacing": "-0.02em",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "body-lg": [
+                            "18px",
+                            {
+                                    "lineHeight": "28px",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "label-md": [
+                            "14px",
+                            {
+                                    "lineHeight": "20px",
+                                    "letterSpacing": "0.01em",
+                                    "fontWeight": "600"
+                            }
+                    ]
+            }
+          },
+        }
+      }
+    </script>
+<style>
+        body { background-color: #FAF9FC; }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        .ambient-shadow {
+            box-shadow: 0 10px 40px -10px rgba(124, 107, 196, 0.08);
+        }
+    </style>
+</head>
+<body class="h-full font-body-md text-on-surface antialiased bg-surface">
+<!-- TopNavBar -->
+<header class="fixed top-0 right-0 w-[calc(100%-16rem)] z-40 bg-surface/60 backdrop-blur-md dark:bg-surface-dim/60 shadow-sm shadow-primary/5 bg-surface/80 backdrop-blur-xl">
+<div class="flex justify-between items-center h-16 px-container-padding-desktop ml-auto">
+<h1 class="font-headline-md text-headline-md text-primary font-bold tracking-tight">Manraah</h1>
+<div class="flex items-center gap-md">
+<div class="relative">
+<input class="bg-surface-container-lowest border border-primary/20 rounded-[16px] py-2 px-4 pl-10 focus:outline-none focus:ring-2 focus:ring-primary/30 w-64 text-label-md transition-shadow" placeholder="Search..." type="text"/>
+<span class="material-symbols-outlined absolute left-3 top-1/2 transform -translate-y-1/2 text-outline">search</span>
+</div>
+<div class="flex gap-sm">
+<button class="w-10 h-10 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-primary-container/20 transition-all active:scale-95 duration-200">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-primary-container/20 transition-all active:scale-95 duration-200">
+<span class="material-symbols-outlined">settings</span>
+</button>
+</div>
+<img alt="User profile avatar" class="w-10 h-10 rounded-full object-cover border-2 border-surface-container-highest" data-alt="A small circular user profile photo showing a smiling young adult in soft lighting, perfectly suited for an avatar in a wellness application." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAQkj_Z3mWsKyCmm9QFcHIQa4P0nxZUR7dlGfLDUBGhoFyNtGUxYS_a8MJBcGf8Qn9vIZAigEvDpTKBb5QIOzL68HSYjoLPUAwh7_Zb8f0Eplc1YNIZOBMpsHse29-VCPrxEQub0y4kqrcTrl7sydudfmRpmhM20pcXjbdi8t-TBUmM_L6vu-D8enYzixro9DJNfjeF_PS8BG2TTYg8OESUUHuzQv_-S03-QMZQx2KjTOCROFwGXD1PLQ"/>
+</div>
+</div>
+</header>
+<!-- SideNavBar -->
+<nav class="h-screen w-64 fixed left-0 top-0 bg-surface dark:bg-surface-dim shadow-md shadow-primary/5 bg-surface-container-low dark:bg-surface-container-lowest z-50">
+<div class="flex flex-col h-full py-md overflow-y-auto">
+<div class="px-md mb-lg text-center">
+<img class="w-16 h-16 rounded-full mx-auto mb-4 object-cover" data-alt="A serene, minimalist logo mark for a wellness sanctuary, using soft organic shapes in gentle primary purple and mint greens." src="https://lh3.googleusercontent.com/aida-public/AB6AXuATFK88WosDLT07fj8Xe-RLW9up6QSCO6lG3bGrOfRqbcRyqjIsm6QuwiOlyQxR1ngF3mNMKX7_jQjtVdRt-1QfkoY86Yl9GXDhkfdl-OW_O5d-qJX-qpjLlKE50ygX-kLVO0GyboBCsJEGJYfSeWf27TR_1BnH6cJim3k7tGmChCcODzrfW35zWztOxY3TUSyq16Hbb4ZMdr67ykvrFHnG7dyc24w5-_HzKj5pyxQ2O7X6s8kSmk6xlA"/>
+<h2 class="font-display-lg text-display-lg text-primary dark:text-primary-fixed-dim font-bold tracking-tight">Manraah</h2>
+<p class="font-caption text-caption text-on-surface-variant">Wellness Sanctuary</p>
+</div>
+<ul class="flex-1 space-y-2 px-sm font-label-md text-label-md">
+<li>
+<a class="flex items-center gap-sm px-4 py-3 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">home</span>
+                        Home
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-sm px-4 py-3 rounded-lg text-primary font-bold border-r-4 border-primary bg-primary-container/10 active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">insights</span>
+                        My Journey
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-sm px-4 py-3 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">smart_toy</span>
+                        AI Companion
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-sm px-4 py-3 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">diversity_1</span>
+                        Human Companion
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-sm px-4 py-3 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">medical_services</span>
+                        Professional Care
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-sm px-4 py-3 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">mood</span>
+                        Mood &amp; Check-in
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-sm px-4 py-3 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">edit_note</span>
+                        Journal
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-sm px-4 py-3 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">self_improvement</span>
+                        Meditation &amp; Sleep
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-sm px-4 py-3 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">groups</span>
+                        Community
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-sm px-4 py-3 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">library_books</span>
+                        Resources
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-sm px-4 py-3 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">assessment</span>
+                        Reports
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-sm px-4 py-3 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform mt-auto" href="#">
+<span class="material-symbols-outlined">settings</span>
+                        Settings
+                    </a>
+</li>
+</ul>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="ml-64 pt-20 px-container-padding-desktop pb-24 min-h-screen">
+<!-- Hero Graphic -->
+<section class="mb-12 rounded-[24px] overflow-hidden relative h-64 flex items-center ambient-shadow bg-surface-container-lowest">
+<div class="absolute inset-0 bg-gradient-to-r from-primary-container/20 to-secondary-container/20 z-0"></div>
+<div class="relative z-10 px-12 max-w-2xl">
+<h2 class="font-headline-lg text-headline-lg text-primary mb-2">Growing steadily</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">You've maintained your mindfulness streak for 5 consecutive days. Keep nurturing your inner peace.</p>
+</div>
+<img class="absolute right-0 top-0 h-full w-1/3 object-cover mix-blend-multiply opacity-80 z-0" data-alt="A wide hero image illustrating a calming, abstract botanical scene. Hand-drawn style leaves and soft glowing orbs floating gently. The color palette is light mode, using gentle primary purple, soft mint green, and soft whites. A sense of gentle growth and steady progress." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCcMgCHbVK94OdkNQPuTPfonUWtGbtlyEdhMt0VEGEVwanJ-DoOR7uCYecKP_UH1QTKgN1Yn_6SNgMV3iHB8ugzHKfTQZ9WWCBgKk1sqYOfsYiMmv7oxHcmnVDDyFglHMMsHRbOYws6lrhkYdW3aS2yjuVolLjGjmFa6_mnAbT09_QGuQXGfOKXBfEZ3UY7fCLIzUNtJ0_t4znmKdypeC8AduPjeWGJqS168vTCm26s3VxoY8B7jyUJIA"/>
+</section>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-12 gap-6">
+<!-- Left Column: Metrics & Program -->
+<div class="col-span-8 flex flex-col gap-6">
+<!-- Metrics Row -->
+<div class="grid grid-cols-3 gap-6">
+<div class="bg-surface-container-lowest rounded-[24px] p-6 ambient-shadow">
+<div class="flex items-center gap-2 mb-4 text-on-surface-variant">
+<span class="material-symbols-outlined text-primary">mood</span>
+<span class="font-label-md text-label-md">Check-ins</span>
+</div>
+<div class="font-headline-lg text-headline-lg text-on-surface mb-1">14</div>
+<div class="font-caption text-caption text-secondary flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">trending_up</span> +2 this week
+                        </div>
+</div>
+<div class="bg-surface-container-lowest rounded-[24px] p-6 ambient-shadow">
+<div class="flex items-center gap-2 mb-4 text-on-surface-variant">
+<span class="material-symbols-outlined text-primary">self_improvement</span>
+<span class="font-label-md text-label-md">Sessions</span>
+</div>
+<div class="font-headline-lg text-headline-lg text-on-surface mb-1">8</div>
+<div class="font-caption text-caption text-secondary flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">trending_up</span> +1 this week
+                        </div>
+</div>
+<div class="bg-surface-container-lowest rounded-[24px] p-6 ambient-shadow">
+<div class="flex items-center gap-2 mb-4 text-on-surface-variant">
+<span class="material-symbols-outlined text-primary">schedule</span>
+<span class="font-label-md text-label-md">Minutes</span>
+</div>
+<div class="font-headline-lg text-headline-lg text-on-surface mb-1">120</div>
+<div class="font-caption text-caption text-secondary flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">trending_up</span> +30 this week
+                        </div>
+</div>
+</div>
+<!-- Active Program -->
+<div class="bg-surface-container-lowest rounded-[24px] p-8 ambient-shadow relative overflow-hidden">
+<div class="absolute top-0 right-0 w-32 h-32 bg-secondary-container/30 rounded-bl-[100px] -z-10"></div>
+<div class="flex justify-between items-end mb-6">
+<div>
+<span class="inline-block px-3 py-1 rounded-full bg-surface-container-high text-primary font-caption text-caption mb-2">Active Program</span>
+<h3 class="font-headline-md text-headline-md text-on-surface">Managing Exam Anxiety</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Module 2: Cognitive Restructuring</p>
+</div>
+<button class="bg-primary text-on-primary px-6 py-2 rounded-full font-label-md text-label-md shadow-sm hover:shadow-md transition-shadow">Resume</button>
+</div>
+<div class="w-full bg-surface-container-highest rounded-full h-3 mb-2">
+<div class="bg-primary h-3 rounded-full" style="width: 45%"></div>
+</div>
+<div class="flex justify-between font-caption text-caption text-on-surface-variant">
+<span>45% Complete</span>
+<span>3 modules left</span>
+</div>
+</div>
+</div>
+<!-- Right Column: Mindful Week Chart -->
+<div class="col-span-4">
+<div class="bg-surface-container-lowest rounded-[24px] p-8 ambient-shadow h-full flex flex-col items-center justify-center text-center">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-2">Mindful Week</h3>
+<p class="font-caption text-caption text-on-surface-variant mb-8">Your progress towards weekly goals</p>
+<!-- Circular Progress (Faked with CSS) -->
+<div class="relative w-48 h-48 mb-8 flex items-center justify-center">
+<svg class="w-full h-full transform -rotate-90" viewbox="0 0 100 100">
+<!-- Background track -->
+<circle cx="50" cy="50" fill="transparent" r="40" stroke="#f2ebff" stroke-width="8"></circle>
+<!-- Progress track -->
+<circle class="transition-all duration-1000" cx="50" cy="50" fill="transparent" r="40" stroke="#006b56" stroke-dasharray="251.2" stroke-dashoffset="62.8" stroke-linecap="round" stroke-width="8"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="font-display-lg text-display-lg text-secondary">75%</span>
+<span class="font-caption text-caption text-on-surface-variant">Weekly Goal</span>
+</div>
+</div>
+<button class="w-full py-3 px-6 bg-gradient-to-br from-primary to-primary-container text-on-primary rounded-full font-label-md text-label-md shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30 transition-all active:scale-95">
+                        Continue Practice
+                    </button>
+</div>
+</div>
+</div>
+</main>
+</body></html>

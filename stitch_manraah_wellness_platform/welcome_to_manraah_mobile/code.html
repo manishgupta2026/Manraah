@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>Welcome to Manraah</title>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400..700&amp;family=Work+Sans:wght@400..700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary-fixed-variant": "#005140",
+                        "tertiary-fixed-dim": "#ffb1c3",
+                        "surface-dim": "#ded6f0",
+                        "inverse-on-surface": "#f5eeff",
+                        "on-tertiary-fixed-variant": "#6e3444",
+                        "tertiary": "#874959",
+                        "outline": "#797582",
+                        "tertiary-container": "#a46172",
+                        "surface-bright": "#fdf7ff",
+                        "on-primary": "#ffffff",
+                        "outline-variant": "#cac4d3",
+                        "surface": "#fdf7ff",
+                        "inverse-primary": "#cbbeff",
+                        "surface-tint": "#6251a8",
+                        "background": "#fdf7ff",
+                        "tertiary-fixed": "#ffd9e0",
+                        "surface-container-low": "#f7f1ff",
+                        "on-error": "#ffffff",
+                        "secondary-container": "#88f7d6",
+                        "on-secondary-container": "#00725c",
+                        "primary-container": "#7867c0",
+                        "inverse-surface": "#322e41",
+                        "surface-container": "#f2ebff",
+                        "on-secondary-fixed": "#002018",
+                        "on-tertiary": "#ffffff",
+                        "secondary-fixed": "#88f7d6",
+                        "primary-fixed-dim": "#cbbeff",
+                        "on-primary-container": "#fffbff",
+                        "primary": "#5f4ea5",
+                        "error": "#ba1a1a",
+                        "primary-fixed": "#e6deff",
+                        "on-primary-fixed-variant": "#4a388e",
+                        "on-error-container": "#93000a",
+                        "on-tertiary-container": "#fffbff",
+                        "on-surface": "#1d192b",
+                        "on-primary-fixed": "#1d0061",
+                        "surface-container-highest": "#e6dff8",
+                        "secondary": "#006b56",
+                        "error-container": "#ffdad6",
+                        "surface-variant": "#e6dff8",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-fixed": "#38091a",
+                        "on-background": "#1d192b",
+                        "on-surface-variant": "#484551",
+                        "surface-container-high": "#ece4fe",
+                        "secondary-fixed-dim": "#6adaba",
+                        "on-secondary": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px",
+                        "2xl": "1.5rem"
+                    },
+                    "spacing": {
+                        "md": "24px",
+                        "container-padding-mobile": "20px",
+                        "lg": "48px",
+                        "container-padding-desktop": "64px",
+                        "xs": "4px",
+                        "xl": "80px",
+                        "sm": "12px",
+                        "base": "8px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Work Sans"],
+                        "headline-md": ["Quicksand"],
+                        "headline-lg-mobile": ["Quicksand"],
+                        "label-md": ["Work Sans"],
+                        "headline-lg": ["Quicksand"],
+                        "display-lg": ["Quicksand"],
+                        "body-lg": ["Work Sans"],
+                        "caption": ["Work Sans"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "600" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "caption": ["12px", { "lineHeight": "16px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>.glass-panel {
+    background: rgba(253, 247, 255, 0.75);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.4)
+    }
+.soft-shadow {
+    box-shadow: 0 10px 40px -10px rgba(124, 107, 196, 0.15)
+    }
+.bg-hero {
+    background-image: url(https://lh3.googleusercontent.com/aida-public/AB6AXuDy27og3BlhNO1Ld15MNpTHbPlyvSEVEk6Q3L5im3xIc9DsMvdpeiN0mJgke7xrBsZHreRPr8XLEL_H3xFFyYFo8xQbzmE6nSPaxNwzRQAYuhVvOowyw5g4kyGhFBjmfliUKmPq7qnXHbxctQ-C4e6V6MGPyVYgjEQKTogV8N38JdWQB8MbmSK4CocBCn_7ZGU_GKNEpu-m18YKJAhdxjmVotRjxx4ZVTMVezShhBKT1Ch17DZhiUnJoQ);
+    background-size: cover;
+    background-position: center
+    }</style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen overflow-hidden selection:bg-primary-container selection:text-on-primary-container">
+<!-- Full-bleed background hero -->
+<div class="fixed inset-0 bg-hero z-0" data-alt="A tranquil, sunlit modern interior blending seamlessly with nature. Large floor-to-ceiling windows reveal a serene, misty forest in soft morning light. The interior features natural wood elements, rounded organic furniture, and soft, comforting textures. The overall color palette is composed of gentle lavender greys, warm off-whites, and soft natural greens. The mood is exceptionally calm, welcoming, and restorative, perfectly embodying a sanctuary for wellness and mental peace. High-quality, bright, and airy modern aesthetic.">
+<div class="absolute inset-0 bg-gradient-to-b from-surface-tint/20 via-transparent to-surface/90"></div>
+</div>
+<!-- Main Content Canvas -->
+<main class="relative z-10 flex flex-col h-screen px-container-padding-mobile pt-[132px] pb-[70px] justify-between">
+<!-- Top Section: Logo -->
+<div class="flex justify-center items-center">
+<h1 class="font-display-lg text-display-lg text-surface drop-shadow-md tracking-tight">Manraah</h1>
+</div>
+<!-- Bottom Section: Content & Actions -->
+<div class="glass-panel rounded-2xl p-container-padding-mobile soft-shadow flex flex-col gap-md animate-fade-in-up transition-all duration-700 ease-out translate-y-0 opacity-100">
+<div class="flex flex-col gap-base text-center">
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">Your Sanctuary for Mind and Soul</h2>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-[280px] mx-auto">
+                    A dedicated companion for your emotional well-being. Find calm, clarity, and compassionate support every step of your journey.
+                </p>
+</div>
+<div class="flex flex-col gap-sm mt-sm">
+<button class="w-full bg-gradient-to-br from-primary to-surface-tint text-on-primary font-label-md text-label-md py-4 rounded-full shadow-[0_8px_20px_-6px_rgba(95,78,165,0.4)] hover:shadow-[0_12px_24px_-6px_rgba(95,78,165,0.5)] active:scale-[0.98] transition-all duration-300">
+                    Get Started
+                </button>
+<button class="w-full bg-transparent text-primary font-label-md text-label-md py-4 rounded-full hover:bg-primary-container/10 active:scale-[0.98] transition-all duration-200">
+                    I already have an account
+                </button>
+</div>
+</div>
+</main>
+<style>
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .animate-fade-in-up {
+            animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+    </style>
+</body></html>

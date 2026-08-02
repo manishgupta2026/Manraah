@@ -1,0 +1,251 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+<title>Manraah - Welcome</title>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&amp;family=Work+Sans:wght@300;400;500;600&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "background": "#fdf7ff",
+                    "outline-variant": "#cac4d3",
+                    "on-primary-fixed-variant": "#4a388e",
+                    "surface": "#fdf7ff",
+                    "inverse-primary": "#cbbeff",
+                    "tertiary-container": "#a46172",
+                    "surface-container-lowest": "#ffffff",
+                    "on-tertiary": "#ffffff",
+                    "on-tertiary-fixed-variant": "#6e3444",
+                    "on-tertiary-fixed": "#38091a",
+                    "error": "#ba1a1a",
+                    "primary": "#5f4ea5",
+                    "on-error": "#ffffff",
+                    "on-tertiary-container": "#fffbff",
+                    "on-error-container": "#93000a",
+                    "secondary-fixed-dim": "#6adaba",
+                    "primary-fixed": "#e6deff",
+                    "on-secondary-container": "#00725c",
+                    "surface-container": "#f2ebff",
+                    "surface-bright": "#fdf7ff",
+                    "surface-dim": "#ded6f0",
+                    "on-primary": "#ffffff",
+                    "tertiary-fixed-dim": "#ffb1c3",
+                    "error-container": "#ffdad6",
+                    "surface-container-high": "#ece4fe",
+                    "on-secondary-fixed": "#002018",
+                    "on-primary-fixed": "#1d0061",
+                    "outline": "#797582",
+                    "on-background": "#1d192b",
+                    "primary-fixed-dim": "#cbbeff",
+                    "on-surface": "#1d192b",
+                    "secondary-fixed": "#88f7d6",
+                    "on-surface-variant": "#484551",
+                    "surface-tint": "#6251a8",
+                    "surface-container-low": "#f7f1ff",
+                    "secondary": "#006b56",
+                    "primary-container": "#7867c0",
+                    "secondary-container": "#88f7d6",
+                    "tertiary": "#874959",
+                    "on-secondary-fixed-variant": "#005140",
+                    "inverse-on-surface": "#f5eeff",
+                    "surface-variant": "#e6dff8",
+                    "surface-container-highest": "#e6dff8",
+                    "on-primary-container": "#fffbff",
+                    "inverse-surface": "#322e41",
+                    "tertiary-fixed": "#ffd9e0",
+                    "on-secondary": "#ffffff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "md": "24px",
+                    "container-padding-mobile": "20px",
+                    "sm": "12px",
+                    "xs": "4px",
+                    "container-padding-desktop": "64px",
+                    "base": "8px",
+                    "xl": "80px",
+                    "lg": "48px"
+            },
+            "fontFamily": {
+                    "caption": [
+                            "Work Sans"
+                    ],
+                    "headline-md": [
+                            "Quicksand"
+                    ],
+                    "display-lg": [
+                            "Quicksand"
+                    ],
+                    "headline-lg": [
+                            "Quicksand"
+                    ],
+                    "body-md": [
+                            "Work Sans"
+                    ],
+                    "label-md": [
+                            "Work Sans"
+                    ],
+                    "headline-lg-mobile": [
+                            "Quicksand"
+                    ],
+                    "body-lg": [
+                            "Work Sans"
+                    ]
+            },
+            "fontSize": {
+                    "caption": [
+                            "12px",
+                            {
+                                    "lineHeight": "16px",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "headline-md": [
+                            "24px",
+                            {
+                                    "lineHeight": "32px",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "display-lg": [
+                            "48px",
+                            {
+                                    "lineHeight": "56px",
+                                    "letterSpacing": "-0.02em",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "headline-lg": [
+                            "32px",
+                            {
+                                    "lineHeight": "40px",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "body-md": [
+                            "16px",
+                            {
+                                    "lineHeight": "24px",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "label-md": [
+                            "14px",
+                            {
+                                    "lineHeight": "20px",
+                                    "letterSpacing": "0.01em",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "headline-lg-mobile": [
+                            "28px",
+                            {
+                                    "lineHeight": "36px",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "body-lg": [
+                            "18px",
+                            {
+                                    "lineHeight": "28px",
+                                    "fontWeight": "400"
+                            }
+                    ]
+            }
+    },
+        },
+      }
+    </script>
+<style>
+        body {
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Floating animation for hero image */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        .animate-float {
+            animation: float 4s ease-in-out infinite;
+        }
+
+        /* Ambient glow for the heart */
+        @keyframes pulse-glow {
+            0% { opacity: 0.6; transform: scale(0.95); }
+            50% { opacity: 1; transform: scale(1.05); }
+            100% { opacity: 0.6; transform: scale(0.95); }
+        }
+        .ambient-glow {
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(circle, rgba(120, 103, 192, 0.4) 0%, rgba(253, 247, 255, 0) 70%);
+            border-radius: 50%;
+            z-index: -1;
+            animation: pulse-glow 3s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="bg-background min-h-screen flex flex-col justify-between overflow-x-hidden text-on-surface">
+<!-- Ambient background layer -->
+<div class="fixed inset-0 z-[-2] opacity-30 pointer-events-none">
+<div class="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-primary-container blur-[80px]"></div>
+<div class="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-secondary-container blur-[100px] opacity-40"></div>
+</div>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col items-center justify-center px-container-padding-mobile pt-lg pb-md w-full max-w-[480px] mx-auto z-10">
+<!-- Brand / Logo Area -->
+<header class="w-full text-center mb-lg">
+<h1 class="font-display-lg text-display-lg text-primary tracking-tight">Manraah</h1>
+</header>
+<!-- Hero Illustration -->
+<div class="relative w-full aspect-square max-w-[320px] mb-lg flex items-center justify-center animate-float">
+<!-- Glow effect behind the illustration focus -->
+<div class="ambient-glow top-1/4 right-1/4"></div>
+<img alt="Person holding glowing heart illustration" class="w-full h-full object-contain drop-shadow-xl" data-alt="A modern, serene illustration of a diverse person gently holding a glowing, stylized heart. The style is warm, organic, and hand-drawn with soft edges and a pastel color palette featuring lavender, mint green, and off-white. The character exudes calmness and compassion in a minimalist, light-mode wellness setting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAyYxYhdtWIHOjhq_FNKpI77_7eKKPBFKNao9RLm6XcK2YeCyQWl3qe5GhuKbq7z_gdsefoXvVbuvU1HSvBEIkrCVPQZdNmoAl1Mg56hrQYlfCrgoCy2WT0pJU4bhfB-cf0uUMBg5zwrD3Fj16bbissLTkZ_vbnnbuPIok0L7Y25OvH8z0cUOcerwdFRLP4iJbXnz_CkcaWan2rRexoG-V5CWFks5Z_5Dmd_3CwP7FpGaP9LxblR0ZyEg">
+</div>
+<!-- Tagline & Description -->
+<div class="text-center mb-xl w-full">
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mb-base">Your Sanctuary for<br>Mind and Soul.</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-[280px] mx-auto">
+                Begin a compassionate journey towards mental clarity and inner peace.
+            </p>
+</div>
+<!-- Action Area -->
+<div class="w-full flex flex-col gap-sm mt-auto mb-lg">
+<button class="w-full bg-primary text-on-primary font-label-md text-label-md py-4 rounded-full shadow-[0_8px_30px_rgba(95,78,165,0.2)] hover:shadow-[0_12px_40px_rgba(95,78,165,0.3)] transition-all active:scale-[0.98] relative overflow-hidden group">
+<div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-in-out"></div>
+                Get Started
+            </button>
+<button class="w-full bg-transparent text-primary font-label-md text-label-md py-4 rounded-full transition-colors hover:bg-primary/5 active:bg-primary/10">
+                I already have an account
+            </button>
+</div>
+</main>
+<!-- Trust Badges Footer -->
+<footer class="w-full px-container-padding-mobile pb-lg text-center opacity-80 mt-auto z-10">
+<div class="flex items-center justify-center gap-md">
+<div class="flex items-center gap-xs text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">lock</span>
+<span class="font-caption text-caption">End-to-end Encrypted</span>
+</div>
+<div class="w-[3px] h-[3px] rounded-full bg-outline-variant"></div>
+<div class="flex items-center gap-xs text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">visibility_off</span>
+<span class="font-caption text-caption">Anonymous &amp; Private</span>
+</div>
+</div>
+</footer>
+</body></html>

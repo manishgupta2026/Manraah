@@ -1,0 +1,292 @@
+<!DOCTYPE html><html class="light" lang="en" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+<title>Category Selection - Manraah</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@600;700&amp;family=Work+Sans:wght@400;600&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "background": "#fdf7ff",
+                    "outline-variant": "#cac4d3",
+                    "on-primary-fixed-variant": "#4a388e",
+                    "surface": "#fdf7ff",
+                    "inverse-primary": "#cbbeff",
+                    "tertiary-container": "#a46172",
+                    "surface-container-lowest": "#ffffff",
+                    "on-tertiary": "#ffffff",
+                    "on-tertiary-fixed-variant": "#6e3444",
+                    "on-tertiary-fixed": "#38091a",
+                    "error": "#ba1a1a",
+                    "primary": "#5f4ea5",
+                    "on-error": "#ffffff",
+                    "on-tertiary-container": "#fffbff",
+                    "on-error-container": "#93000a",
+                    "secondary-fixed-dim": "#6adaba",
+                    "primary-fixed": "#e6deff",
+                    "on-secondary-container": "#00725c",
+                    "surface-container": "#f2ebff",
+                    "surface-bright": "#fdf7ff",
+                    "surface-dim": "#ded6f0",
+                    "on-primary": "#ffffff",
+                    "tertiary-fixed-dim": "#ffb1c3",
+                    "error-container": "#ffdad6",
+                    "surface-container-high": "#ece4fe",
+                    "on-secondary-fixed": "#002018",
+                    "on-primary-fixed": "#1d0061",
+                    "outline": "#797582",
+                    "on-background": "#1d192b",
+                    "primary-fixed-dim": "#cbbeff",
+                    "on-surface": "#1d192b",
+                    "secondary-fixed": "#88f7d6",
+                    "on-surface-variant": "#484551",
+                    "surface-tint": "#6251a8",
+                    "surface-container-low": "#f7f1ff",
+                    "secondary": "#006b56",
+                    "primary-container": "#7867c0",
+                    "secondary-container": "#88f7d6",
+                    "tertiary": "#874959",
+                    "on-secondary-fixed-variant": "#005140",
+                    "inverse-on-surface": "#f5eeff",
+                    "surface-variant": "#e6dff8",
+                    "surface-container-highest": "#e6dff8",
+                    "on-primary-container": "#fffbff",
+                    "inverse-surface": "#322e41",
+                    "tertiary-fixed": "#ffd9e0",
+                    "on-secondary": "#ffffff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "md": "24px",
+                    "container-padding-mobile": "20px",
+                    "sm": "12px",
+                    "xs": "4px",
+                    "container-padding-desktop": "64px",
+                    "base": "8px",
+                    "xl": "80px",
+                    "lg": "48px"
+            },
+            "fontFamily": {
+                    "caption": [
+                            "Work Sans"
+                    ],
+                    "headline-md": [
+                            "Quicksand"
+                    ],
+                    "display-lg": [
+                            "Quicksand"
+                    ],
+                    "headline-lg": [
+                            "Quicksand"
+                    ],
+                    "body-md": [
+                            "Work Sans"
+                    ],
+                    "label-md": [
+                            "Work Sans"
+                    ],
+                    "headline-lg-mobile": [
+                            "Quicksand"
+                    ],
+                    "body-lg": [
+                            "Work Sans"
+                    ]
+            },
+            "fontSize": {
+                    "caption": [
+                            "12px",
+                            {
+                                    "lineHeight": "16px",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "headline-md": [
+                            "24px",
+                            {
+                                    "lineHeight": "32px",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "display-lg": [
+                            "48px",
+                            {
+                                    "lineHeight": "56px",
+                                    "letterSpacing": "-0.02em",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "headline-lg": [
+                            "32px",
+                            {
+                                    "lineHeight": "40px",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "body-md": [
+                            "16px",
+                            {
+                                    "lineHeight": "24px",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "label-md": [
+                            "14px",
+                            {
+                                    "lineHeight": "20px",
+                                    "letterSpacing": "0.01em",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "headline-lg-mobile": [
+                            "28px",
+                            {
+                                    "lineHeight": "36px",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "body-lg": [
+                            "18px",
+                            {
+                                    "lineHeight": "28px",
+                                    "fontWeight": "400"
+                            }
+                    ]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        .ambient-shadow {
+            box-shadow: 0 10px 40px -10px rgba(124, 107, 196, 0.08);
+        }
+        /* Soft pulse animation for interactive elements */
+        @keyframes softPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+        .hover-pulse:hover {
+            animation: softPulse 2s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface antialiased min-h-screen flex flex-col relative overflow-x-hidden">
+<!-- Ambient Background Blur Elements -->
+<div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+<div class="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-primary-container opacity-[0.05] rounded-full blur-[100px]"></div>
+<div class="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] bg-secondary-container opacity-[0.05] rounded-full blur-[120px]"></div>
+</div>
+<!-- Header Area (No global nav since this is an onboarding flow) -->
+<header class="w-full px-container-padding-mobile pt-lg pb-md z-10 relative">
+<!-- Back Button (implied temporary departure/linear flow) -->
+<button aria-label="Go back" class="w-10 h-10 rounded-full bg-surface-container-lowest ambient-shadow flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors active:scale-95 mb-md">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">arrow_back</span>
+</button>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-primary mb-xs"><h1 class="font-headline-lg-mobile text-headline-lg-mobile text-primary tracking-tight" style="--tw-border-spacing-y: 0; --tw-translate-x: 0; --tw-translate-y: 0; --tw-rotate: 0; --tw-skew-x: 0; --tw-skew-y: 0; --tw-scale-x: 1; --tw-scale-y: 1; --tw-pan-x: ; --tw-pan-y: ; --tw-pinch-zoom: ; --tw-scroll-snap-strictness: proximity; --tw-gradient-from-position: ; --tw-gradient-via-position: ; --tw-gradient-to-position: ; --tw-ordinal: ; --tw-slashed-zero: ; --tw-numeric-figure: ; --tw-numeric-spacing: ; --tw-numeric-fraction: ; --tw-ring-inset: ; --tw-ring-offset-width: 0px; --tw-ring-offset-color: #fff; --tw-ring-color: rgb(59 130 246 / 0.5); --tw-ring-offset-shadow: 0 0 #0000; --tw-ring-shadow: 0 0 #0000; --tw-shadow: 0 0 #0000; --tw-shadow-colored: 0 0 #0000; --tw-blur: ; --tw-brightness: ; --tw-contrast: ; --tw-grayscale: ; --tw-hue-rotate: ; --tw-invert: ; --tw-saturate: ; --tw-sepia: ; --tw-drop-shadow: ; --tw-backdrop-blur: ; --tw-backdrop-brightness: ; --tw-backdrop-contrast: ; --tw-backdrop-grayscale: ; --tw-backdrop-hue-rotate: ; --tw-backdrop-invert: ; --tw-backdrop-opacity: ; --tw-backdrop-saturate: ; --tw-backdrop-sepia: ; --tw-contain-size: ; --tw-contain-layout: ; --tw-contain-paint: ; --tw-contain-style: ; letter-spacing: -0.025em; --tw-text-opacity: 1; color: rgb(95, 78, 165); outline: none !important; box-shadow: none !important;">Welcome to your Sanctuary</h1></h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Tell us a little about yourself so we can personalize your wellness journey.</p>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-1 px-container-padding-mobile pb-xl z-10 relative flex flex-col gap-sm">
+<!-- Category Card: Student -->
+<button class="group relative w-full rounded-[24px] bg-surface-container-lowest ambient-shadow overflow-hidden text-left transition-transform active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-primary-fixed">
+<div class="absolute inset-0 bg-gradient-to-br from-secondary-container/20 to-transparent opacity-50 group-hover:opacity-100 transition-opacity"></div>
+<div class="p-md flex items-center gap-md relative z-10">
+<div class="w-[80px] h-[80px] rounded-[16px] overflow-hidden bg-secondary-container/30 flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="A serene, soft-focus illustration of a young student sitting comfortably with an open book and a warm cup of tea. The setting is a cozy, brightly lit room with soft morning light streaming in, establishing a light-mode modern-organic aesthetic. Pastel mints and warm creams dominate the color palette, reinforcing a calm, academic mood without stress." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC4WEifZ51hPLICMIVW53Ok8-FTf7wsmrSl7HHMND9j5NTxjlGH6gY5a_6D7usCiFCF16L4wZxt234LoPbAWg6nhRXdUGn11xC5lr3RBANFgvggECZB1KSkSBE6z9nIztcVqLkC4HnZhFGvJjAWQYRDPY6rXdsu5tc2gr6QXTUuipx4I3XS_POMABh2T72Cev-yqzssH67OoDn6_X7DBayG6ULqK4hkGdh6yt1iGrtyDleSbZXwEavUWQ">
+</div>
+<div class="flex-1">
+<h2 class="font-headline-md text-headline-md text-on-surface mb-xs">Student</h2>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-2">Navigating academics, personal growth, and finding balance.</p>
+</div>
+</div>
+</button>
+<!-- Category Card: Young Professional -->
+<button class="group relative w-full rounded-[24px] bg-surface-container-lowest ambient-shadow overflow-hidden text-left transition-transform active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-primary-fixed">
+<div class="absolute inset-0 bg-gradient-to-br from-primary-container/10 to-transparent opacity-50 group-hover:opacity-100 transition-opacity"></div>
+<div class="p-md flex items-center gap-md relative z-10">
+<div class="w-[80px] h-[80px] rounded-[16px] overflow-hidden bg-primary-container/20 flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="A calming, minimalist digital illustration of a young professional working comfortably at a clean, well-organized desk with a laptop and a small potted plant. The lighting is bright and diffuse, creating a soft, welcoming atmosphere typical of a modern wellness app. The color palette features gentle lavender and soft greys, projecting focus and calm energy." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBF67-F8bXULJd8IQ-ymh9dNZLSq_AI7nklchvMRURsUOum6Kod4ahKqC2uS1RtPFF_y0TmKj_jdrdPtJ5jE_WP9wQ2yaHIU8yaEpKr5o2kkBeQQQOa5I8xq50j8bUa0susS29XNSKXvsKabtMFzHl8H3a_-lYZHqPyB49_RClFlw44MvbS8Ra6le2cpfL_qhmemIRb18M1UL3Fk-QyfsJkm3XjMtMLAwRbUoCIH0GWyhKR9wemM0zlpg">
+</div>
+<div class="flex-1">
+<h2 class="font-headline-md text-headline-md text-on-surface mb-xs">Young Professional</h2>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-2">Building a career while managing stress and maintaining well-being.</p>
+</div>
+</div>
+</button>
+<!-- Category Card: Parent -->
+<button class="group relative w-full rounded-[24px] bg-surface-container-lowest ambient-shadow overflow-hidden text-left transition-transform active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-primary-fixed">
+<div class="absolute inset-0 bg-gradient-to-br from-tertiary-container/10 to-transparent opacity-50 group-hover:opacity-100 transition-opacity"></div>
+<div class="p-md flex items-center gap-md relative z-10">
+<div class="w-[80px] h-[80px] rounded-[16px] overflow-hidden bg-tertiary-container/20 flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="A warm, reassuring illustration of a parent gently holding a child's hand while walking through a serene, sunlit park. The art style is modern-organic with soft edges and a high-key light mode aesthetic. Colors are nurturing, utilizing warm blush tones and soft earthy greens to evoke a sense of care, patience, and familial love." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAsIrqzOtGZKUiN5a1FOjxy0jgsnKSzk69IPL0c4MB4tkGt2bv5E4c6cQmPPcdlncfYMvGWlNq_8748TCdHeqoFpmCZTup8l5R0-G4A6S-E_9ztLUcx6yOd01tpQjOPtqUWtZ07ksnJIy7XyCJD2_e-78dPF1e6SaTRHtX4P6iuEZopze_jLpmU1s_A6NsNmUiWDKebQaS5IQbRTt9hvT_r60Ll6nMeazlfP0z30_x5Hkd8SwqFUaV8sw">
+</div>
+<div class="flex-1">
+<h2 class="font-headline-md text-headline-md text-on-surface mb-xs">Parent</h2>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-2">Juggling family responsibilities, caregiving, and personal time.</p>
+</div>
+</div>
+</button>
+<!-- Category Card: Senior -->
+<button class="group relative w-full rounded-[24px] bg-surface-container-lowest ambient-shadow overflow-hidden text-left transition-transform active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-primary-fixed">
+<div class="absolute inset-0 bg-gradient-to-br from-surface-variant/50 to-transparent opacity-50 group-hover:opacity-100 transition-opacity"></div>
+<div class="p-md flex items-center gap-md relative z-10">
+<div class="w-[80px] h-[80px] rounded-[16px] overflow-hidden bg-surface-variant flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="A tranquil and respectful illustration of an older adult enjoying a quiet moment in a vibrant, blooming garden, holding a watering can. The visual style is soft, airy, and inviting, perfectly suited for a wellness sanctuary theme. The lighting is soft and golden, while the palette relies on muted lavenders and soft sages to convey peace and wisdom." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAH7gwtIF_h8B3tWD1CqJWB2hEOKUnanGBAItMXyQnKLwMlbYGE1IsPLIHycfjaWA97O7cGmzJQHEh5GmjVDxfysyKlTcPBaJYyhZ93hwjVOiMlhyzchyphgPxySkGDVO1-ylJx4Lk0bisS_y2gAqOg9SY_r7zh8rohHAVpRKyHhqiWk4LWlhrP3BLpIkGckbr6_-pGnWBOf8tVes7UZWF2tVUBBmfMeLS4smJVs-cgNnmr18dVmP4x1A">
+</div>
+<div class="flex-1">
+<h2 class="font-headline-md text-headline-md text-on-surface mb-xs">Senior</h2>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-2">Embracing the golden years with a focus on health and vitality.</p>
+</div>
+</div>
+</button>
+</main>
+<!-- Fixed Bottom Action Area (Gradient mask for smooth scrolling feel) -->
+<div class="fixed bottom-0 left-0 w-full p-container-padding-mobile pb-lg bg-gradient-to-t from-background via-background/90 to-transparent z-20 flex justify-center">
+<!-- Disabled state initially until a category is selected -->
+<button class="w-full max-w-[400px] h-[56px] rounded-full bg-surface-variant text-on-surface-variant font-label-md text-label-md transition-all flex items-center justify-center opacity-70 cursor-not-allowed">
+            Continue
+        </button>
+</div>
+<!-- Script for simple interaction demonstration -->
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const cards = document.querySelectorAll('main > button');
+            const continueBtn = document.querySelector('.fixed.bottom-0 button');
+
+            cards.forEach(card => {
+                card.addEventListener('click', () => {
+                    // Reset all
+                    cards.forEach(c => {
+                        c.classList.remove('ring-2', 'ring-primary');
+                        c.style.transform = 'scale(1)';
+                    });
+                    
+                    // Select current
+                    card.classList.add('ring-2', 'ring-primary');
+                    
+                    // Enable button
+                    continueBtn.classList.remove('bg-surface-variant', 'text-on-surface-variant', 'opacity-70', 'cursor-not-allowed');
+                    continueBtn.classList.add('bg-gradient-to-br', 'from-primary', 'to-primary-container', 'text-on-primary', 'ambient-shadow', 'hover:scale-[1.02]', 'active:scale-95', 'cursor-pointer');
+                });
+            });
+        });
+    </script>
+
+
+</body></html>
