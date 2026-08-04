@@ -3,98 +3,98 @@
 import React from "react";
 import { useRouter } from "next/navigation";
 import { useCategory } from "@/frontend/lib/context/CategoryContext";
+import { useAssessment } from "@/frontend/lib/context/AssessmentContext";
 import { UserCategory } from "@/backend/types";
 
 interface CategoryOption {
-  id: UserCategory | string;
+  id: UserCategory;
   name: string;
   desc: string;
-  icon: string;
-  img: string;
+  emoji: string;
 }
 
 const CATEGORY_OPTIONS: CategoryOption[] = [
   {
     id: "student",
     name: "Student",
-    desc: "Navigating academics and personal growth.",
-    icon: "school",
-    img: "/images/your_dashboard_student_1_screen.png",
+    desc: "Manage academic stress, focus, exams and emotional wellbeing.",
+    emoji: "🎓",
   },
   {
     id: "young_pro",
-    name: "Young Pro",
-    desc: "Starting out and building a career path.",
-    icon: "work_history",
-    img: "/images/your_dashboard_working_professional_screen.png",
+    name: "Young Professional",
+    desc: "Navigate early career stress, work-life balance, and professional growth.",
+    emoji: "💼",
   },
   {
     id: "working_professional",
-    name: "Professional",
-    desc: "Managing career growth and life balance.",
-    icon: "business_center",
-    img: "/images/your_dashboard_working_professional_screen.png",
+    name: "Working Professional",
+    desc: "Manage workplace pressure, burnout prevention, and daily mindfulness.",
+    emoji: "👔",
   },
   {
     id: "parent",
-    name: "Parent",
-    desc: "Raising a family with care and patience.",
-    icon: "family_restroom",
-    img: "/images/your_dashboard_parent_screen.png",
+    name: "Parents",
+    desc: "Balance family responsibilities, parenting stress, and personal wellbeing.",
+    emoji: "🍼",
   },
   {
     id: "couple",
-    name: "Couple",
-    desc: "Nurturing a shared life and relationship.",
-    icon: "favorite",
-    img: "/images/community_screen.png",
+    name: "Couples",
+    desc: "Nurturing relationship harmony, communication, and emotional connection.",
+    emoji: "💖",
   },
   {
     id: "family",
     name: "Family",
-    desc: "Fostering harmony and household well-being.",
-    icon: "home_health",
-    img: "/images/your_dashboard_parent_screen.png",
+    desc: "Fostering collective peace, understanding, and household wellness.",
+    emoji: "🏡",
   },
   {
     id: "women",
     name: "Women",
-    desc: "Focused on women's unique wellness needs.",
-    icon: "female",
-    img: "/images/journal_screen.png",
+    desc: "Dedicated space for women's wellness, life transitions, and balance.",
+    emoji: "🌸",
   },
   {
     id: "men",
     name: "Men",
-    desc: "Tailored support for men's mental health.",
-    icon: "male",
-    img: "/images/my_journey_screen.png",
+    desc: "Supporting men's emotional health, stress management, and resilience.",
+    emoji: "🌿",
   },
   {
     id: "senior_citizen",
-    name: "Senior",
-    desc: "Embracing the later chapters of life.",
-    icon: "elderly",
-    img: "/images/your_dashboard_senior_citizen_screen.png",
+    name: "Senior Citizen",
+    desc: "Embracing active aging, gentle reflection, and mindful longevity.",
+    emoji: "👵",
   },
 ];
 
 export default function CategorySelection() {
   const router = useRouter();
-  const { category, setCategory } = useCategory();
+  const { setCategory } = useCategory();
+  const { selectedCategory, setSelectedCategory } = useAssessment();
 
-  const handleSelect = (id: string) => {
-    setCategory(id as UserCategory);
+  const handleSelect = (id: UserCategory) => {
+    setSelectedCategory(id);
+    setCategory(id);
   };
 
   const handleContinue = () => {
+    if (!selectedCategory) return;
     router.push("/assessment");
   };
 
   return (
     <div className="bg-surface text-on-surface font-sans min-h-screen py-12 px-4 md:px-12 flex flex-col items-center">
+      {/* Ambient Background Layer */}
+      <div className="fixed inset-0 z-[-2] opacity-35 pointer-events-none">
+        <div className="absolute top-[-10%] left-[-10%] w-[60vw] md:w-[500px] h-[60vw] md:h-[500px] rounded-full bg-primary-container blur-[100px]" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[60vw] md:w-[500px] h-[60vw] md:h-[500px] rounded-full bg-secondary-container blur-[120px] opacity-30" />
+      </div>
+
       {/* Header */}
-      <div className="max-w-[1024px] w-full text-center mb-10 space-y-2">
+      <div className="max-w-[1024px] w-full text-center mb-10 space-y-2 z-10">
         <h1 className="text-3xl md:text-4xl font-heading font-bold text-on-surface">
           Welcome to your Sanctuary
         </h1>
@@ -104,9 +104,9 @@ export default function CategorySelection() {
       </div>
 
       {/* 9-Card Bento Grid */}
-      <div className="max-w-[1024px] w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="max-w-[1024px] w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 z-10">
         {CATEGORY_OPTIONS.map((opt) => {
-          const isSelected = category === opt.id;
+          const isSelected = selectedCategory === opt.id;
           return (
             <button
               key={opt.id}
@@ -126,25 +126,21 @@ export default function CategorySelection() {
                 </div>
               )}
 
-              {/* Avatar / Icon Container */}
+              {/* Avatar / Emoji Container */}
               <div
-                className={`w-28 h-28 mb-4 rounded-full flex items-center justify-center overflow-hidden transition-transform ${
-                  isSelected ? "bg-primary-container/20 scale-105" : "bg-surface-container"
+                className={`w-24 h-24 mb-4 rounded-full flex items-center justify-center overflow-hidden transition-transform ${
+                  isSelected ? "bg-primary-container/20 scale-105 animate-pulse" : "bg-surface-container/40"
                 }`}
               >
-                <span
-                  className={`material-symbols-outlined text-5xl ${
-                    isSelected ? "text-primary" : "text-on-surface-variant/70"
-                  }`}
-                >
-                  {opt.icon}
+                <span className="text-5xl leading-none select-none">
+                  {opt.emoji}
                 </span>
               </div>
 
-              <h3 className={`font-heading font-bold text-xl mb-1 ${isSelected ? "text-primary" : "text-on-surface"}`}>
+              <h3 className={`font-heading font-bold text-lg mb-2 ${isSelected ? "text-primary" : "text-on-surface"}`}>
                 {opt.name}
               </h3>
-              <p className="text-xs text-on-surface-variant leading-relaxed">
+              <p className="text-sm text-on-surface-variant leading-relaxed px-2">
                 {opt.desc}
               </p>
             </button>
@@ -152,11 +148,12 @@ export default function CategorySelection() {
         })}
       </div>
 
-      {/* Floating Action Button / Sticky Continue Bar */}
-      <div className="mt-12 w-full max-w-[1024px] flex justify-end">
+      {/* Action Button */}
+      <div className="mt-12 w-full max-w-[1024px] flex justify-end z-10">
         <button
           onClick={handleContinue}
-          className="bg-primary hover:bg-primary-purple text-white font-bold text-sm px-10 py-4 rounded-full shadow-[0_8px_20px_rgba(95,78,165,0.25)] transition-all hover:-translate-y-0.5 active:scale-95 flex items-center gap-2"
+          disabled={!selectedCategory}
+          className="bg-primary hover:bg-primary-purple text-white font-bold text-sm px-10 py-4 rounded-full shadow-[0_8px_20px_rgba(95,78,165,0.25)] transition-all hover:-translate-y-0.5 active:scale-95 flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:shadow-none"
         >
           Continue Journey
           <span className="material-symbols-outlined text-base">arrow_forward</span>
@@ -165,3 +162,4 @@ export default function CategorySelection() {
     </div>
   );
 }
+

@@ -5,13 +5,11 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signUp } from "@/backend/auth/client";
 import { saveUserAssessment } from "@/backend/queries/assessment";
-import { useCategory } from "@/frontend/lib/context/CategoryContext";
 import { useAssessment } from "@/frontend/lib/context/AssessmentContext";
 
 export default function SignupScreen() {
   const router = useRouter();
-  const { category } = useCategory();
-  const { answers, computedScore } = useAssessment();
+  const { selectedCategory, answers, computedScore } = useAssessment();
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -29,7 +27,7 @@ export default function SignupScreen() {
 
       // 2. Persist onboarding category, answers, and score to Neon DB stub
       if (session.user) {
-        await saveUserAssessment(session.user.id, category, answers, computedScore);
+        await saveUserAssessment(session.user.id, selectedCategory || "student", answers, computedScore);
       }
 
       // 3. Navigate to personalized dashboard

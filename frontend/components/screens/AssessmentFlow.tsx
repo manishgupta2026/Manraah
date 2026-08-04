@@ -7,37 +7,50 @@ import { useAssessment } from "@/frontend/lib/context/AssessmentContext";
 import { useCategory } from "@/frontend/lib/context/CategoryContext";
 import { COMMON_QUESTIONS } from "@/frontend/lib/assessment/commonQuestions";
 import { assessmentEngine } from "@/frontend/lib/assessment/assessmentEngine";
-import { evaluateWellness } from "@/frontend/lib/assessment/wellness";
 
 export default function AssessmentFlow() {
   const router = useRouter();
   const { categoryDetails } = useCategory();
-  const { detailedAnswers, setDetailedAnswers, setAssessmentResult } = useAssessment();
+  const {
+    currentQuestionIndex,
+    setCurrentQuestionIndex,
+    detailedAnswers,
+    setDetailedAnswers,
+  } = useAssessment();
 
-  const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(1); // 1 = forward, -1 = backward
 
-  const question = COMMON_QUESTIONS[currentIndex];
-  const totalQuestions = COMMON_QUESTIONS.length;
+  // Total questions is 10 (5 common + 5 category specific planned)
+  const totalQuestions = 10;
+  const isPlaceholderScreen = currentQuestionIndex === 5;
+
+  const question = !isPlaceholderScreen ? COMMON_QUESTIONS[currentQuestionIndex] : null;
 
   // Find if there is an existing answer for this question to pre-fill selection
-  const existingAnswer = detailedAnswers.find((ans) => ans.questionId === question.id);
-  const [selectedOptionId, setSelectedOptionId] = useState<string | null>(
-    existingAnswer ? existingAnswer.selectedOptionId : null
-  );
+  const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
 
   // Sync selectedOptionId when current index or answers change
   useEffect(() => {
-    const ans = detailedAnswers.find((a) => a.questionId === question.id);
-    setSelectedOptionId(ans ? ans.selectedOptionId : null);
-  }, [currentIndex, detailedAnswers, question.id]);
+    if (question) {
+      const ans = detailedAnswers.find((a) => a.questionId === question.id);
+      setSelectedOptionId(ans ? ans.selectedOptionId : null);
+    } else {
+      setSelectedOptionId(null);
+    }
+  }, [currentQuestionIndex, detailedAnswers, question]);
 
   const handleSelectOption = (optionId: string) => {
     setSelectedOptionId(optionId);
   };
 
   const handleNext = () => {
-    if (!selectedOptionId) return;
+    if (isPlaceholderScreen) {
+      // Navigate to login
+      router.push("/login");
+      return;
+    }
+
+    if (!question || !selectedOptionId) return;
 
     // Create the structured answer
     const newAnswer = assessmentEngine.createAnswer(question.id, selectedOptionId);
@@ -53,28 +66,26 @@ export default function AssessmentFlow() {
     }
     setDetailedAnswers(updatedAnswers);
 
-    if (currentIndex < totalQuestions - 1) {
-      setDirection(1);
-      setCurrentIndex((prev) => prev + 1);
-    } else {
-      // Finished all 5 questions
-      const results = evaluateWellness(updatedAnswers);
-      setAssessmentResult(results);
-      router.push("/wellness-score");
-    }
+    setDirection(1);
+    setCurrentQuestionIndex(currentQuestionIndex + 1);
   };
 
   const handleBack = () => {
-    if (currentIndex > 0) {
+    if (currentQuestionIndex > 0) {
       setDirection(-1);
-      setCurrentIndex((prev) => prev - 1);
+      setCurrentQuestionIndex(currentQuestionIndex - 1);
     }
   };
 
-  // Slide left animations for forward, slide right for backward
+  // Custom premium bezier transition
+  const transitionSettings = {
+    duration: 0.6,
+    ease: [0.25, 1, 0.5, 1],
+  };
+
   const slideVariants = {
     enter: (dir: number) => ({
-      x: dir > 0 ? 80 : -80,
+      x: dir > 0 ? 100 : -100,
       opacity: 0,
     }),
     center: {
@@ -82,12 +93,13 @@ export default function AssessmentFlow() {
       opacity: 1,
     },
     exit: (dir: number) => ({
-      x: dir > 0 ? -80 : 80,
+      x: dir > 0 ? -100 : 100,
       opacity: 0,
     }),
   };
 
-  const progressPercentage = ((currentIndex + 1) / totalQuestions) * 100;
+  // Progress percentage (out of 10 questions)
+  const progressPercentage = ((currentQuestionIndex) / totalQuestions) * 100;
 
   return (
     <div className="bg-background text-on-background min-h-screen relative flex flex-col justify-between py-12 px-4 md:px-8 overflow-hidden">
@@ -103,90 +115,123 @@ export default function AssessmentFlow() {
         {/* Progress Area */}
         <div className="space-y-4">
           <div className="flex justify-between items-center text-xs md:text-sm text-on-surface-variant/80 font-medium">
-            <span className="px-3.5 py-1.5 rounded-full bg-surface-container-high border border-surface-variant/50">
-              Onboarding: {categoryDetails.name}
+            <span className="px-3.5 py-1.5 rounded-full bg-surface-container-high border border-surface-variant/50 flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+              Focus: {categoryDetails.name}
             </span>
-            <span className="font-semibold text-primary">
-              Question {currentIndex + 1} of {totalQuestions}
+            <span className="font-bold text-primary tracking-wide">
+              {isPlaceholderScreen ? "Milestone Reached" : `Question ${currentQuestionIndex + 1} of ${totalQuestions}`}
             </span>
           </div>
 
           {/* Progress Bar Container */}
-          <div className="w-full bg-surface-container-high h-2 rounded-full overflow-hidden shadow-inner">
+          <div className="w-full bg-surface-container-high h-2.5 rounded-full overflow-hidden shadow-inner border border-surface-variant/20">
             <motion.div
-              className="h-full bg-primary rounded-full"
-              initial={{ width: `${(currentIndex) * 20}%` }}
+              className="h-full bg-gradient-to-r from-primary to-primary-purple rounded-full"
+              initial={{ width: `${(currentQuestionIndex) * 10}%` }}
               animate={{ width: `${progressPercentage}%` }}
-              transition={{ duration: 0.4, ease: "easeOut" }}
+              transition={{ duration: 0.5, ease: "easeOut" }}
             />
           </div>
         </div>
 
-        {/* Animated Question Content */}
-        <div className="flex-1 flex flex-col justify-center min-h-[350px]">
+        {/* Animated Content */}
+        <div className="flex-1 flex flex-col justify-center min-h-[420px] py-4">
           <AnimatePresence mode="wait" custom={direction}>
-            <motion.div
-              key={currentIndex}
-              custom={direction}
-              variants={slideVariants}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              transition={{ duration: 0.35, ease: "easeInOut" }}
-              className="space-y-8"
-            >
-              {/* Question text block */}
-              <div className="space-y-3 text-center md:text-left">
-                <h2 className="text-2xl md:text-3xl font-heading font-bold text-on-surface leading-snug tracking-tight">
-                  {question.text}
-                </h2>
-                <p className="text-sm md:text-base text-on-surface-variant/90 leading-relaxed font-light">
-                  {question.description}
-                </p>
-              </div>
+            {!isPlaceholderScreen ? (
+              question && (
+                <motion.div
+                  key={`q-${currentQuestionIndex}`}
+                  custom={direction}
+                  variants={slideVariants}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
+                  transition={transitionSettings}
+                  className="space-y-8"
+                >
+                  {/* Question block */}
+                  <div className="space-y-3 text-center md:text-left">
+                    <h2 className="text-2xl md:text-3xl font-heading font-bold text-on-surface leading-snug tracking-tight">
+                      {question.text}
+                    </h2>
+                    <p className="text-sm md:text-base text-on-surface-variant/80 font-medium italic opacity-90">
+                      "There are no right or wrong answers. Your responses help us personalise your experience."
+                    </p>
+                  </div>
 
-              {/* Option Radio Group */}
-              <div className="space-y-4" role="radiogroup" aria-label={question.text}>
-                {question.options.map((opt) => {
-                  const isSelected = selectedOptionId === opt.id;
-                  return (
-                    <button
-                      key={opt.id}
-                      type="button"
-                      role="radio"
-                      aria-checked={isSelected}
-                      onClick={() => handleSelectOption(opt.id)}
-                      className={`w-full flex items-center justify-between p-5 rounded-[24px] transition-all border text-left cursor-pointer group focus:outline-none focus:ring-2 focus:ring-primary/20 ${
-                        isSelected
-                          ? "bg-surface-container-lowest border-primary shadow-card-lift ring-2 ring-primary/20 text-primary font-semibold"
-                          : "bg-surface-container-lowest border-surface-variant/30 shadow-soft hover:shadow-md hover:border-primary/30 text-on-surface-variant"
-                      }`}
-                    >
-                      <span className="text-sm md:text-base font-medium">{opt.text}</span>
-                      <div
-                        className={`w-5.5 h-5.5 rounded-full border flex items-center justify-center transition-all ${
-                          isSelected
-                            ? "border-primary bg-primary"
-                            : "border-outline-variant group-hover:border-primary/50"
-                        }`}
-                      >
-                        {isSelected && <div className="w-2 h-2 rounded-full bg-white" />}
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-            </motion.div>
+                  {/* Option cards */}
+                  <div className="space-y-3.5" role="radiogroup" aria-label={question.text}>
+                    {question.options.map((opt) => {
+                      const isSelected = selectedOptionId === opt.id;
+                      return (
+                        <button
+                          key={opt.id}
+                          type="button"
+                          role="radio"
+                          aria-checked={isSelected}
+                          onClick={() => handleSelectOption(opt.id)}
+                          className={`w-full flex items-center justify-between p-5 rounded-[24px] transition-all border text-left cursor-pointer group focus:outline-none focus:ring-2 focus:ring-primary/20 ${
+                            isSelected
+                              ? "bg-surface-container-lowest border-primary shadow-card-lift ring-2 ring-primary/20 text-primary font-bold"
+                              : "bg-surface-container-lowest border-surface-variant/30 shadow-soft hover:shadow-md hover:border-primary/30 text-on-surface-variant"
+                          }`}
+                        >
+                          <span className="text-sm md:text-base font-medium">{opt.text}</span>
+                          <div
+                            className={`w-6 h-6 rounded-full border flex items-center justify-center transition-all ${
+                              isSelected
+                                ? "border-primary bg-primary"
+                                : "border-outline-variant group-hover:border-primary/50"
+                            }`}
+                          >
+                            {isSelected && <div className="w-2.5 h-2.5 rounded-full bg-white" />}
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </motion.div>
+              )
+            ) : (
+              <motion.div
+                key="placeholder-screen"
+                custom={direction}
+                variants={slideVariants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={transitionSettings}
+                className="text-center space-y-8 max-w-md mx-auto py-6"
+              >
+                <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mx-auto text-primary border border-primary/20 shadow-inner">
+                  <span className="text-5xl select-none">✨</span>
+                </div>
+
+                <div className="space-y-4">
+                  <h2 className="text-3xl font-heading font-bold text-on-surface">
+                    Great!
+                  </h2>
+                  <p className="text-base text-on-surface-variant leading-relaxed">
+                    You've completed the first part of your assessment.
+                  </p>
+                  <p className="text-sm text-on-surface-variant/70 italic bg-surface-container/30 py-3 px-6 rounded-2xl border border-surface-variant/20 inline-block font-semibold">
+                    Category-specific questions will continue here.<br />
+                    (Currently under development.)
+                  </p>
+                </div>
+              </motion.div>
+            )}
           </AnimatePresence>
         </div>
 
         {/* Action Controls */}
         <div className="flex justify-between items-center border-t border-surface-variant/20 pt-6">
-          {currentIndex > 0 ? (
+          {currentQuestionIndex > 0 ? (
             <button
               onClick={handleBack}
               type="button"
-              className="px-6 py-3.5 rounded-full bg-surface-container-low text-on-surface-variant font-semibold text-sm hover:bg-surface-container transition-all flex items-center gap-2"
+              className="px-6 py-3.5 rounded-full bg-surface-container-low text-on-surface-variant font-bold text-sm hover:bg-surface-container hover:scale-102 active:scale-98 transition-all flex items-center gap-2 border border-surface-variant/20 shadow-sm"
             >
               <span className="material-symbols-outlined text-base">arrow_back</span>
               Previous
@@ -198,10 +243,10 @@ export default function AssessmentFlow() {
           <button
             onClick={handleNext}
             type="button"
-            disabled={!selectedOptionId}
-            className="ml-auto px-10 py-3.5 rounded-full bg-primary text-white font-semibold text-sm shadow-md hover:bg-primary-purple transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2"
+            disabled={!isPlaceholderScreen && !selectedOptionId}
+            className="ml-auto px-10 py-3.5 rounded-full bg-primary text-white font-bold text-sm shadow-md hover:bg-primary-purple hover:scale-102 active:scale-98 transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center gap-2"
           >
-            {currentIndex === totalQuestions - 1 ? "Complete Assessment" : "Continue"}
+            {isPlaceholderScreen ? "Continue to Sign In" : "Continue"}
             <span className="material-symbols-outlined text-base">arrow_forward</span>
           </button>
         </div>
@@ -210,3 +255,4 @@ export default function AssessmentFlow() {
     </div>
   );
 }
+
