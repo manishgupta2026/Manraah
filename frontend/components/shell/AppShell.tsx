@@ -31,12 +31,12 @@ export default function AppShell({ children }: { children: ReactNode }) {
           </div>
         ) : (
           /* Main Application Shell with Sidebar & Header */
-          <div className="flex min-h-screen bg-background text-on-background font-sans antialiased">
+          <div className="flex min-h-screen bg-background text-on-background font-sans antialiased overflow-hidden">
             {/* Desktop Left Sidebar */}
             <DesktopSidebar />
 
             {/* Main Content Area */}
-            <div className="flex-1 flex flex-col min-w-0 pb-20 md:pb-8">
+            <div className="flex-1 flex flex-col min-w-0 md:ml-[80px] lg:ml-[280px] h-screen overflow-y-auto pb-20 md:pb-8">
               <Header />
               <main className="flex-1 px-4 md:px-8 py-6 max-w-7xl mx-auto w-full">
                 {children}

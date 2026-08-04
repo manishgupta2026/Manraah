@@ -2,12 +2,8 @@
 
 import React from "react";
 import Link from "next/link";
-import { useCategory, CATEGORIES } from "@/frontend/lib/context/CategoryContext";
-import { UserCategory } from "@/backend/types";
 
 export default function Header() {
-  const { category, setCategory } = useCategory();
-
   return (
     <header className="sticky top-0 z-20 bg-surface-container-lowest/80 backdrop-blur-md border-b border-surface-variant/30 px-4 md:px-8 py-3 flex items-center justify-between shadow-sm">
       {/* Mobile Brand Title */}
@@ -18,29 +14,7 @@ export default function Header() {
         <span className="font-heading font-bold text-lg text-primary">Manraah</span>
       </div>
 
-      {/* Demographic Category Selector */}
-      <div className="flex items-center gap-2">
-        <span className="hidden sm:inline text-xs font-semibold text-on-surface-variant/80">Category:</span>
-        <div className="flex items-center gap-1.5 overflow-x-auto py-1 max-w-[280px] sm:max-w-none">
-          {(Object.keys(CATEGORIES) as UserCategory[]).map((catKey) => {
-            const isSelected = category === catKey;
-            const cat = CATEGORIES[catKey];
-            return (
-              <button
-                key={catKey}
-                onClick={() => setCategory(catKey)}
-                className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all whitespace-nowrap ${
-                  isSelected
-                    ? "bg-primary text-white shadow-sm font-semibold scale-105"
-                    : "bg-surface-container-low text-on-surface-variant hover:bg-surface-container"
-                }`}
-              >
-                {cat.name}
-              </button>
-            );
-          })}
-        </div>
-      </div>
+      <div />
 
       {/* Right Quick Actions */}
       <div className="flex items-center gap-3">
