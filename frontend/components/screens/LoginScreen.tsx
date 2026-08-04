@@ -40,8 +40,8 @@ export default function LoginScreen() {
 
       router.push("/dashboard");
     } catch (err: any) {
-      console.error("Login error:", err);
-      setError(err.message || "Invalid credentials. Please try again.");
+      console.error("Login server-side error log:", err);
+      setError("Invalid email or password. Please try again.");
       setLoading(false);
     }
   };

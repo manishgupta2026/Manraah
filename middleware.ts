@@ -33,7 +33,10 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const hasSession = request.cookies.has("manraah_session");
+  const hasSession = 
+    request.cookies.has("better-auth.session_token") ||
+    request.cookies.has("__Secure-better-auth.session_token") ||
+    request.cookies.has("manraah_session");
 
   // 1. Unauthenticated users trying to access protected features -> redirect to /login
   const isProtected = PROTECTED_ROUTES.some(

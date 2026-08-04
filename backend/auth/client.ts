@@ -1,40 +1,88 @@
+import { createAuthClient } from "better-auth/react";
 import { AuthSession } from "@/backend/types";
-import { signUpAction, signInAction, signOutAction } from "./actions";
 
-/**
- * Neon Auth Helper Client
- * 
- * Manages authentication sessions directly stored in Neon Database (Better Auth integration).
- */
+// Standard Better Auth client
+export const authClient = createAuthClient();
 
 const SESSION_KEY = "manraah_auth_session";
 
 export async function signUp(name: string, email: string, pass: string): Promise<AuthSession> {
-  const res = await signUpAction(name, email, pass);
-  if (!res.success || !res.session) {
-    throw new Error(res.error || "Failed to create account.");
+  const { data, error } = await authClient.signUp.email({
+    email,
+    password: pass,
+    name,
+  });
+
+  if (error) {
+    throw new Error(error.message || "We couldn't create your account. Please try again.");
   }
-  
+
+  if (!data) {
+    throw new Error("We couldn't create your account. Please try again.");
+  }
+
+  const authData = data as any;
+  const session: AuthSession = {
+    user: {
+      id: authData.user.id,
+      name: authData.user.name,
+      email: authData.user.email,
+      avatar: authData.user.image || "/images/user_avatar.jpg",
+      streakDays: 1,
+      mindfulnessMinutes: 0,
+      currentMood: "Sanctuary Member",
+      selectedCategory: "student",
+    },
+    token: authData.session?.token || "session_token",
+    isAuthenticated: true,
+  };
+
   if (typeof window !== "undefined") {
-    localStorage.setItem(SESSION_KEY, JSON.stringify(res.session));
+    localStorage.setItem(SESSION_KEY, JSON.stringify(session));
   }
-  return res.session;
+
+  return session;
 }
 
 export async function signIn(email: string, pass: string): Promise<AuthSession> {
-  const res = await signInAction(email, pass);
-  if (!res.success || !res.session) {
-    throw new Error(res.error || "Failed to sign in.");
+  const { data, error } = await authClient.signIn.email({
+    email,
+    password: pass,
+  });
+
+  if (error) {
+    throw new Error(error.message || "Invalid credentials. Please try again.");
   }
 
-  if (typeof window !== "undefined") {
-    localStorage.setItem(SESSION_KEY, JSON.stringify(res.session));
+  if (!data) {
+    throw new Error("Invalid credentials. Please try again.");
   }
-  return res.session;
+
+  const authData = data as any;
+  const session: AuthSession = {
+    user: {
+      id: authData.user.id,
+      name: authData.user.name,
+      email: authData.user.email,
+      avatar: authData.user.image || "/images/user_avatar.jpg",
+      streakDays: 14,
+      mindfulnessMinutes: 180,
+      currentMood: "Serene & Focused",
+      selectedCategory: "student",
+    },
+    token: authData.session?.token || "session_token",
+    isAuthenticated: true,
+  };
+
+  if (typeof window !== "undefined") {
+    localStorage.setItem(SESSION_KEY, JSON.stringify(session));
+  }
+
+  return session;
 }
 
 export async function signOut(): Promise<void> {
-  await signOutAction();
+  await authClient.signOut();
   if (typeof window !== "undefined") {
     localStorage.removeItem(SESSION_KEY);
   }
@@ -53,4 +101,3 @@ export function getClientSession(): AuthSession {
     return { user: null, token: null, isAuthenticated: false };
   }
 }
-

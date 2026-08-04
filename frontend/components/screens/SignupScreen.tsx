@@ -42,8 +42,8 @@ export default function SignupScreen() {
       // 3. Navigate to personalized dashboard
       router.push("/dashboard");
     } catch (err: any) {
-      console.error("Signup error:", err);
-      setError(err.message || "Failed to create account. Please try again.");
+      console.error("Signup server-side error log:", err);
+      setError("We couldn't create your account. Please try again.");
       setLoading(false);
     }
   };
@@ -52,12 +52,34 @@ export default function SignupScreen() {
   return (
     <div className="max-w-md mx-auto py-12 px-4 space-y-8 animate-fadeIn">
       {/* Header */}
-      <div className="text-center space-y-3">
+      <div className="text-center space-y-4">
         <div className="w-12 h-12 rounded-2xl gradient-primary mx-auto flex items-center justify-center text-white shadow-md">
           <span className="material-symbols-outlined text-2xl">spa</span>
         </div>
-        <h1 className="text-3xl font-heading font-bold text-on-surface">Create Your Sanctuary Account</h1>
-        <p className="text-xs text-on-surface-variant">Your wellness data will remain 100% confidential and encrypted.</p>
+        <div className="space-y-2">
+          <h1 className="text-2xl font-heading font-bold text-on-surface leading-tight">
+            Your Personalized Wellness Journey is Ready
+          </h1>
+          <p className="text-xs text-on-surface-variant max-w-sm mx-auto">
+            Create your account to unlock your personalized dashboard.
+          </p>
+        </div>
+
+        {/* Dynamic Status checklist */}
+        <div className="flex flex-col items-start gap-2.5 py-4 px-6 rounded-2xl bg-primary-container/10 border border-primary/10 max-w-xs mx-auto text-left">
+          <div className="flex items-center gap-3 text-on-surface-variant">
+            <span className="material-symbols-outlined text-emerald-500 font-bold text-lg">check_circle</span>
+            <span className="text-xs font-semibold">✓ Assessment Completed</span>
+          </div>
+          <div className="flex items-center gap-3 text-on-surface-variant">
+            <span className="material-symbols-outlined text-emerald-500 font-bold text-lg">check_circle</span>
+            <span className="text-xs font-semibold">✓ Wellness Profile Ready</span>
+          </div>
+          <div className="flex items-center gap-3 text-on-surface-variant">
+            <span className="material-symbols-outlined text-emerald-500 font-bold text-lg">check_circle</span>
+            <span className="text-xs font-semibold">✓ AI Companion Ready</span>
+          </div>
+        </div>
       </div>
 
       {/* Form Card */}
@@ -108,7 +130,7 @@ export default function SignupScreen() {
           disabled={loading}
           className="w-full py-4 rounded-full bg-primary text-white font-bold text-sm shadow-md hover:bg-primary-purple transition-all scale-105"
         >
-          {loading ? "Creating Account..." : "Complete Registration →"}
+          {loading ? "Unlocking Sanctuary..." : "Unlock My Dashboard →"}
         </button>
 
         <div className="text-center pt-2">
