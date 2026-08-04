@@ -11,6 +11,7 @@ interface TimeTheme {
   bgGradient: string;
   glowColor: string;
   icon: string;
+  particles: string[];
 }
 
 const THEMES: Record<string, TimeTheme> = {
@@ -20,6 +21,7 @@ const THEMES: Record<string, TimeTheme> = {
     bgGradient: "from-[#FFF5E6] via-[#F4E3E5] to-[#E3ECF5]",
     glowColor: "bg-amber-300/10",
     icon: "🌅",
+    particles: ["✨", "☀️", "🌸"],
   },
   afternoon: {
     greeting: "Good Afternoon",
@@ -27,6 +29,7 @@ const THEMES: Record<string, TimeTheme> = {
     bgGradient: "from-[#E6F4EA] via-[#EDF3FD] to-[#F1F3FB]",
     glowColor: "bg-emerald-300/10",
     icon: "🍃",
+    particles: ["🍃", "✨", "🌸"],
   },
   evening: {
     greeting: "Good Evening",
@@ -34,6 +37,7 @@ const THEMES: Record<string, TimeTheme> = {
     bgGradient: "from-[#FCE4EC] via-[#F3E5F5] to-[#EDE7F6]",
     glowColor: "bg-indigo-300/15",
     icon: "🌿",
+    particles: ["🍂", "✨", "🌸"],
   },
   night: {
     greeting: "Good Night",
@@ -41,7 +45,24 @@ const THEMES: Record<string, TimeTheme> = {
     bgGradient: "from-[#0F172A] via-[#1E1B4B] to-[#312E81]",
     glowColor: "bg-[#7C6BC4]/20",
     icon: "🌌",
+    particles: ["⭐", "✨", "🌙"],
   },
+};
+
+// Container variants for staggered entrance animations
+const containerVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.08,
+    },
+  },
+};
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 15 },
+  show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 80, damping: 12 } },
 };
 
 export default function DashboardScreen() {
@@ -54,6 +75,8 @@ export default function DashboardScreen() {
   const [moodTrend, setMoodTrend] = useState("Gathering calm logs...");
   const [oneInsight, setOneInsight] = useState("Consistency leads to inner space and clarity.");
   const [oneRecommendation, setOneRecommendation] = useState("Breathe slowly and allocate five minutes for reflection today.");
+  const [gardenStats, setGardenStats] = useState({ totalCheckIns: 0, currentStreak: 0 });
+  const [category, setCategory] = useState("student");
 
   const [themeKey, setThemeKey] = useState<"morning" | "afternoon" | "evening" | "night">("evening");
 
@@ -71,16 +94,25 @@ export default function DashboardScreen() {
 
     async function loadSanctuaryData() {
       try {
-        const [histRes, insRes, weekRes] = await Promise.all([
+        const [histRes, insRes, weekRes, profileRes] = await Promise.all([
           fetch("/api/mood"),
           fetch("/api/mood/insights"),
           fetch("/api/mood/weekly"),
+          session.user ? fetch(`/api/profile?userId=${session.user.id}`).then((r) => r.ok ? r.json() : null) : null,
         ]);
+
+        if (profileRes?.category) {
+          setCategory(profileRes.category);
+        }
 
         if (histRes.ok) {
           const history = await histRes.json();
           if (history.length > 0) {
             setTodayMood(history[0]);
+            setGardenStats({
+              totalCheckIns: history.length,
+              currentStreak: 1, // calculated dynamically or set via streak api
+            });
             
             // Derive trend
             const amazingHappyCount = history.slice(0, 5).filter((h: any) =>
@@ -129,110 +161,312 @@ export default function DashboardScreen() {
   const currentTheme = THEMES[themeKey];
   const isNight = themeKey === "night";
 
+  const getCategoryName = (cat: string) => {
+    const map: Record<string, string> = {
+      student: "Student",
+      young_pro: "Young Professional",
+      working_professional: "Working Professional",
+      parent: "Mindful Parenting",
+      couple: "Couples Harmony",
+      family: "Family Unity",
+      women: "Women's Wellness",
+      men: "Men's Sanctum",
+      senior_citizen: "Golden Serenity",
+    };
+    return map[cat] || cat;
+  };
+
+  const getGardenStage = (count: number) => {
+    if (count <= 1) return { stage: "Seed 🌱", desc: "A tiny seed taking root.", color: "#10B981" };
+    if (count <= 3) return { stage: "Sprout 🌿", desc: "A small sprout growing gently.", color: "#059669" };
+    if (count <= 6) return { stage: "Leaf 🍃", desc: "Multiple leaves absorbing calm energy.", color: "#34D399" };
+    if (count <= 10) return { stage: "Flower 🌸", desc: "A lovely blossom beginning to unfold.", color: "#EC4899" };
+    if (count <= 15) return { stage: "Tree 🌳", desc: "A strong, deep-rooted sanctuary tree.", color: "#047857" };
+    if (count <= 21) return { stage: "Sanctuary Garden 🏡", desc: "A serene clearing with beautiful plants.", color: "#4F46E5" };
+    return { stage: "Forest 🌲", desc: "A lush, thriving forest of mindfulness.", color: "#065F46" };
+  };
+
+  const gardenStage = getGardenStage(gardenStats.totalCheckIns);
+
   return (
-    <div className="max-w-xl mx-auto space-y-10 py-10 px-4 animate-fadeIn relative select-none">
+    <div className="max-w-7xl mx-auto py-10 px-6 space-y-10 relative select-none animate-fadeIn">
       
-      {/* Background ambient glowing layout */}
+      {/* Ambient background glow */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
         <motion.div
-          animate={{ scale: [1, 1.25, 1], x: [0, 15, 0], y: [0, -15, 0] }}
-          transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-          className={`absolute top-0 right-1/4 w-80 h-80 rounded-full blur-[80px] opacity-40 ${currentTheme.glowColor}`}
+          animate={{ scale: [1, 1.25, 1], x: [0, 20, 0], y: [0, -20, 0] }}
+          transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+          className={`absolute top-0 right-1/4 w-96 h-96 rounded-full blur-[100px] opacity-35 ${currentTheme.glowColor}`}
         />
       </div>
 
-      {/* 1. Calm Ambient Hero Greeting */}
-      <section className={`relative min-h-[200px] rounded-[36px] bg-gradient-to-tr ${currentTheme.bgGradient} p-8 flex flex-col justify-between overflow-hidden shadow-soft border border-white/20 z-10`}>
-        <div className="space-y-3 z-10">
-          <span className="px-3.5 py-1 rounded-full text-[9px] font-black uppercase tracking-widest bg-white/70 text-primary shadow-sm">
-            🌿 Day 12 of Calm
-          </span>
-          <h1 className={`text-3xl font-heading font-black tracking-tight ${isNight ? "text-white" : "text-on-surface"}`}>
-            {currentTheme.greeting}, {name} {currentTheme.icon}
-          </h1>
-          <p className={`text-xs font-semibold leading-relaxed max-w-sm ${isNight ? "text-indigo-200/80" : "text-on-surface-variant/85"}`}>
-            {currentTheme.subtitle}
-          </p>
-        </div>
-
-        <div className="pt-6 z-10">
-          <button
-            onClick={() => router.push("/mood-checkin")}
-            className={`px-8 py-3.5 rounded-full font-bold text-xs shadow-md transition-all scale-102 hover:scale-105 active:scale-98 ${
-              isNight ? "bg-white text-indigo-900" : "bg-primary text-white"
-            }`}
-          >
-            Reflect on Today
-          </button>
-        </div>
-      </section>
-
-      {/* 2. Today's Mood Widgets Checklist */}
-      <section className="space-y-6 z-10 relative">
-        <div className="grid grid-cols-1 gap-5">
-          
-          {/* Widget 1: Today's Logged Mood */}
-          <div className="p-6 rounded-[28px] bg-white border border-surface-variant/10 shadow-soft flex items-center justify-between">
-            <div className="space-y-1">
-              <p className="text-[10px] text-on-surface-variant/70 font-bold uppercase tracking-widest">Today's Mood</p>
-              <h3 className="text-lg font-heading font-black text-on-surface">
-                {todayMood ? `${todayMood.mood} Check-in` : "Reflection Pending"}
-              </h3>
-              <p className="text-[10px] text-on-surface-variant font-medium">
-                {todayMood 
-                  ? `Logged with ${todayMood.energy}/10 energy levels and ${todayMood.stress} stress.`
-                  : "Allocate a brief 2-minute pause to check in with your emotions."}
-              </p>
-            </div>
-            <span className="text-4xl block">
-              {todayMood ? (todayMood.mood === "Amazing" ? "😊" : todayMood.mood === "Happy" ? "😁" : todayMood.mood === "Calm" ? "😌" : todayMood.mood === "Good" ? "🙂" : todayMood.mood === "Neutral" ? "😐" : todayMood.mood === "Low" ? "😔" : todayMood.mood === "Sad" ? "😢" : todayMood.mood === "Anxious" ? "😣" : todayMood.mood === "Frustrated" ? "😡" : todayMood.mood === "Overwhelmed" ? "😩" : "😴") : "🌸"}
-            </span>
-          </div>
-
-          {/* Widget 2: Mood Trend */}
-          <div className="p-6 rounded-[28px] bg-white border border-surface-variant/10 shadow-soft flex items-center gap-4">
-            <span className="material-symbols-outlined text-primary text-3xl">trending_up</span>
-            <div>
-              <p className="text-[10px] text-on-surface-variant/70 font-bold uppercase tracking-widest">Mood Trend</p>
-              <p className="text-xs font-bold text-on-surface mt-0.5">{moodTrend}</p>
-            </div>
-          </div>
-
-          {/* Widget 3: One Insight */}
-          <div className="p-6 rounded-[28px] bg-white border border-surface-variant/10 shadow-soft flex items-start gap-4">
-            <span className="material-symbols-outlined text-emerald-600 text-3xl">insights</span>
-            <div>
-              <p className="text-[10px] text-on-surface-variant/70 font-bold uppercase tracking-widest">Weekly Insight</p>
-              <p className="text-xs font-semibold text-on-surface leading-relaxed mt-1">
-                "{oneInsight}"
-              </p>
-            </div>
-          </div>
-
-          {/* Widget 4: One Recommendation */}
-          <div className="p-6 rounded-[28px] bg-[#FAFBFD] border border-surface-variant/10 shadow-soft flex items-start gap-4">
-            <span className="material-symbols-outlined text-secondary text-3xl">self_improvement</span>
-            <div>
-              <p className="text-[10px] text-on-surface-variant/70 font-bold uppercase tracking-widest">AI Sanctuary Recommendation</p>
-              <p className="text-xs font-semibold text-on-surface leading-relaxed mt-1">
-                🌿 "{oneRecommendation}"
-              </p>
-            </div>
-          </div>
-
-        </div>
-      </section>
-
-      {/* Primary Redirect links to Insights */}
-      <div className="text-center z-10 relative">
-        <button
-          onClick={() => router.push("/mood-tracking")}
-          className="text-xs font-extrabold text-primary hover:underline uppercase tracking-wider"
+      {/* Responsive Grid layout */}
+      <motion.div
+        variants={containerVariants}
+        initial="hidden"
+        animate="show"
+        className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-12 gap-8 z-10 relative"
+      >
+        
+        {/* ROW 1: Hero Card (col-span-8) & AI Companion (col-span-4) */}
+        
+        {/* 1. Hero Card */}
+        <motion.section
+          variants={cardVariants}
+          className={`col-span-1 sm:col-span-2 md:col-span-8 relative min-h-[260px] rounded-[42px] bg-gradient-to-tr ${currentTheme.bgGradient} p-8 md:p-12 flex flex-col justify-between overflow-hidden shadow-soft-xl border border-white/20`}
         >
-          View Full Interactive History & Graphs →
-        </button>
-      </div>
+          {/* Ambient particle loops */}
+          <div className="absolute inset-0 pointer-events-none z-0 opacity-40">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <motion.div
+                key={i}
+                animate={{
+                  y: [100, -100],
+                  x: [Math.random() * 30, Math.random() * -30, Math.random() * 30],
+                  opacity: [0, 0.8, 0],
+                }}
+                transition={{ duration: 12 + Math.random() * 8, repeat: Infinity, delay: i * 2 }}
+                className="absolute text-lg"
+                style={{ left: `${20 + i * 20}%`, bottom: 0 }}
+              >
+                {currentTheme.particles[i % currentTheme.particles.length]}
+              </motion.div>
+            ))}
+          </div>
 
+          <div className="space-y-4 z-10">
+            <span className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest shadow-sm ${
+              isNight ? "bg-white/10 text-white" : "bg-white/80 text-primary border border-primary/10"
+            }`}>
+              🌿 {getCategoryName(category)} Journey
+            </span>
+            <h1 className={`text-4xl font-heading font-black leading-tight tracking-tight ${isNight ? "text-white" : "text-on-surface"}`}>
+              {currentTheme.greeting}, {name} {currentTheme.icon}
+            </h1>
+            <p className={`text-sm font-semibold max-w-lg leading-relaxed ${isNight ? "text-indigo-200/80" : "text-on-surface-variant/85"}`}>
+              {currentTheme.subtitle}
+            </p>
+          </div>
+
+          <div className="pt-6 z-10">
+            <button
+              onClick={() => router.push(todayMood ? "/mood-tracking" : "/mood-checkin")}
+              className={`px-8 py-4 rounded-full font-bold text-xs shadow-md transition-all scale-102 hover:scale-105 active:scale-98 ${
+                isNight ? "bg-white text-indigo-900" : "bg-primary text-white"
+              }`}
+            >
+              {todayMood ? "View Analytics →" : "Continue Today's Journey"}
+            </button>
+          </div>
+        </motion.section>
+
+        {/* 2. AI Companion Widget */}
+        <motion.div
+          variants={cardVariants}
+          whileHover={{ y: -4 }}
+          onClick={() => router.push("/ai-chat")}
+          className="col-span-1 sm:col-span-2 md:col-span-4 p-8 rounded-[36px] bg-white border border-surface-variant/10 shadow-soft hover:shadow-soft-lg cursor-pointer flex flex-col justify-between min-h-[260px]"
+        >
+          <div>
+            <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-5">
+              <span className="text-2xl">💙</span>
+            </div>
+            <h4 className="font-heading font-extrabold text-sm text-on-surface">AI Companion</h4>
+            <p className="text-xs text-on-surface-variant leading-relaxed font-semibold mt-2">
+              "I noticed you've been feeling steady this week. Would you like to slow down together?"
+            </p>
+          </div>
+          <span className="text-[10px] font-bold text-primary uppercase tracking-widest pt-2">
+            Start Confidential Venting →
+          </span>
+        </motion.div>
+
+        {/* ROW 2: Today's Check-in (col-4) & Mood Trend (col-4) & Today's Insight (col-4) */}
+        
+        {/* 3. Today's Check-in */}
+        <motion.div
+          variants={cardVariants}
+          whileHover={{ y: -4 }}
+          onClick={() => router.push(todayMood ? "/mood-tracking" : "/mood-checkin")}
+          className="col-span-1 sm:col-span-1 md:col-span-4 p-8 rounded-[36px] bg-white border border-surface-variant/10 shadow-soft hover:shadow-soft-lg cursor-pointer flex flex-col justify-between min-h-[220px]"
+        >
+          <div>
+            <span className="text-3xl block mb-4">🌸</span>
+            <h4 className="font-heading font-extrabold text-sm text-on-surface">Today's Check-in</h4>
+            <p className="text-xs text-on-surface-variant leading-relaxed font-medium mt-1">
+              {todayMood 
+                ? `Reflection complete. Logged feeling ${todayMood.mood} with ${todayMood.energy}/10 energy.`
+                : "Allocate two minutes to check in with your mind and map daily variables."}
+            </p>
+          </div>
+          {todayMood ? (
+            <span className="inline-block px-3 py-1 rounded-full text-[9px] font-bold bg-emerald-50 text-emerald-800 self-start">
+              Completed
+            </span>
+          ) : (
+            <span className="text-[10px] font-bold text-primary uppercase tracking-widest">
+              Log reflection →
+            </span>
+          )}
+        </motion.div>
+
+        {/* 4. Mood Trend */}
+        <motion.div
+          variants={cardVariants}
+          whileHover={{ y: -4 }}
+          onClick={() => router.push("/mood-tracking")}
+          className="col-span-1 sm:col-span-1 md:col-span-4 p-8 rounded-[36px] bg-white border border-surface-variant/10 shadow-soft hover:shadow-soft-lg cursor-pointer flex flex-col justify-between min-h-[220px]"
+        >
+          <div>
+            <div className="w-10 h-10 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-4">
+              <span className="material-symbols-outlined text-2xl">trending_up</span>
+            </div>
+            <h4 className="font-heading font-extrabold text-sm text-on-surface">Mood Trend</h4>
+            <p className="text-xs text-on-surface-variant leading-relaxed font-medium mt-1.5">
+              {moodTrend}
+            </p>
+          </div>
+          <span className="text-[10px] font-bold text-primary uppercase tracking-widest">
+            View timeline →
+          </span>
+        </motion.div>
+
+        {/* 5. Today's Insight */}
+        <motion.div
+          variants={cardVariants}
+          whileHover={{ y: -4 }}
+          onClick={() => router.push("/mood-tracking")}
+          className="col-span-1 sm:col-span-2 md:col-span-4 p-8 rounded-[36px] bg-white border border-surface-variant/10 shadow-soft hover:shadow-soft-lg cursor-pointer flex flex-col justify-between min-h-[220px]"
+        >
+          <div>
+            <div className="w-10 h-10 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center mb-4">
+              <span className="material-symbols-outlined text-2xl">insights</span>
+            </div>
+            <h4 className="font-heading font-extrabold text-sm text-on-surface">Today's Insight</h4>
+            <p className="text-xs text-on-surface-variant leading-relaxed font-semibold mt-1.5">
+              "{oneInsight}"
+            </p>
+          </div>
+          <span className="text-[10px] font-bold text-primary uppercase tracking-widest">
+            View correlations →
+          </span>
+        </motion.div>
+
+        {/* ROW 3: Sanctuary Garden (col-8) & Weekly Reflection (col-4) */}
+        
+        {/* 6. Sanctuary Garden */}
+        <motion.div
+          variants={cardVariants}
+          whileHover={{ y: -4 }}
+          onClick={() => router.push("/mood-tracking")}
+          className="col-span-1 sm:col-span-2 md:col-span-8 p-8 rounded-[36px] bg-white border border-surface-variant/10 shadow-soft hover:shadow-soft-lg cursor-pointer grid grid-cols-1 sm:grid-cols-2 gap-6 min-h-[240px] items-center"
+        >
+          <div className="space-y-3">
+            <span className="px-3 py-1 rounded-full bg-emerald-50 text-[9px] font-black uppercase tracking-wider text-emerald-800">
+              Sanctuary Garden
+            </span>
+            <h3 className="text-2xl font-heading font-black text-on-surface">
+              {gardenStage.stage}
+            </h3>
+            <p className="text-xs text-on-surface-variant leading-relaxed font-medium">
+              {gardenStage.desc} You have logged **{gardenStats.totalCheckIns} reflections** total. Water your garden by checking in daily.
+            </p>
+          </div>
+
+          {/* Styled growth SVG */}
+          <div className="relative w-36 h-36 bg-surface-container-low rounded-full mx-auto flex items-end justify-center pb-3 overflow-hidden border border-surface-variant/20">
+            <svg width="50" height="80" viewBox="0 0 60 90" fill="none">
+              <ellipse cx="30" cy="85" rx="20" ry="5" fill="#78350F" opacity="0.6" />
+              <path d="M30 85C30 50 30 25 30 15" stroke={gardenStage.color} strokeWidth="4" strokeLinecap="round" />
+              {gardenStats.totalCheckIns >= 2 && (
+                <>
+                  <path d="M30 70C20 65 15 55 20 50C25 45 28 55 30 70Z" fill={gardenStage.color} />
+                  <path d="M30 65C40 60 45 50 40 45C35 40 32 50 30 65Z" fill={gardenStage.color} />
+                </>
+              )}
+              {gardenStats.totalCheckIns >= 5 && (
+                <circle cx="30" cy="15" r="9" fill="#EC4899" />
+              )}
+              <path d="M30 15C25 10 28 2 30 0C32 2 35 10 30 15Z" fill="#34D399" />
+            </svg>
+          </div>
+        </motion.div>
+
+        {/* 7. Weekly Reflection (AI Recommendation) */}
+        <motion.div
+          variants={cardVariants}
+          whileHover={{ y: -4 }}
+          onClick={() => router.push("/mood-tracking")}
+          className="col-span-1 sm:col-span-2 md:col-span-4 p-8 rounded-[36px] bg-[#FAFBFD] border border-surface-variant/10 shadow-soft hover:shadow-soft-lg cursor-pointer flex flex-col justify-between min-h-[240px]"
+        >
+          <div>
+            <div className="w-10 h-10 rounded-2xl bg-sky-50 text-sky-600 flex items-center justify-center mb-5">
+              <span className="material-symbols-outlined text-2xl">spa</span>
+            </div>
+            <h4 className="font-heading font-extrabold text-sm text-on-surface">Weekly Reflection</h4>
+            <p className="text-xs text-on-surface leading-relaxed font-semibold mt-2.5">
+              🌿 "{oneRecommendation}"
+            </p>
+          </div>
+          <span className="text-[10px] font-bold text-primary uppercase tracking-widest pt-2">
+            See all suggestions →
+          </span>
+        </motion.div>
+
+        {/* ROW 4: Journal (col-4) & Meditation (col-4) & Sleep (col-4) */}
+        
+        {/* 8. Journal Card */}
+        <motion.div
+          variants={cardVariants}
+          whileHover={{ y: -4, scale: 1.01 }}
+          whileTap={{ scale: 0.99 }}
+          onClick={() => router.push("/journal")}
+          className="col-span-1 sm:col-span-1 md:col-span-4 p-6 rounded-[28px] bg-white border border-surface-variant/10 shadow-soft cursor-pointer flex flex-col justify-between min-h-[160px]"
+        >
+          <div>
+            <span className="text-2xl block mb-2">📖</span>
+            <h4 className="font-heading font-bold text-xs text-on-surface">Sanctuary Journal</h4>
+            <p className="text-[10px] text-on-surface-variant font-medium mt-1 leading-relaxed">
+              Log reflections, record memories, and secure emotional thoughts.
+            </p>
+          </div>
+        </motion.div>
+
+        {/* 9. Meditation Card */}
+        <motion.div
+          variants={cardVariants}
+          whileHover={{ y: -4, scale: 1.01 }}
+          whileTap={{ scale: 0.99 }}
+          onClick={() => router.push("/meditation")}
+          className="col-span-1 sm:col-span-1 md:col-span-4 p-6 rounded-[28px] bg-white border border-surface-variant/10 shadow-soft cursor-pointer flex flex-col justify-between min-h-[160px]"
+        >
+          <div>
+            <span className="text-2xl block mb-2">🧘</span>
+            <h4 className="font-heading font-bold text-xs text-on-surface">Mindfulness Player</h4>
+            <p className="text-[10px] text-on-surface-variant font-medium mt-1 leading-relaxed">
+              Guided meditation tracks for focus, breathing releases, and recovery.
+            </p>
+          </div>
+        </motion.div>
+
+        {/* 10. Sleep Card */}
+        <motion.div
+          variants={cardVariants}
+          whileHover={{ y: -4, scale: 1.01 }}
+          whileTap={{ scale: 0.99 }}
+          onClick={() => router.push("/sleep")}
+          className="col-span-1 sm:col-span-2 md:col-span-4 p-6 rounded-[28px] bg-white border border-surface-variant/10 shadow-soft cursor-pointer flex flex-col justify-between min-h-[160px]"
+        >
+          <div>
+            <span className="text-2xl block mb-2">🌙</span>
+            <h4 className="font-heading font-bold text-xs text-on-surface">Sleep Soundscapes</h4>
+            <p className="text-[10px] text-on-surface-variant font-medium mt-1 leading-relaxed">
+              Rain, ocean waves, and binaural beats built for deep night relaxation.
+            </p>
+          </div>
+        </motion.div>
+
+      </motion.div>
     </div>
   );
 }
