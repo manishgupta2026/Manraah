@@ -24,11 +24,19 @@ export default function AICompanionChat() {
       const session = getClientSession();
       if (!session.user) return;
       try {
-        const res = await getDailyCheckInSummaryAction(session.user.id);
+        const [dailyRes, weeklyRes] = await Promise.all([
+          getDailyCheckInSummaryAction(session.user.id),
+          fetch("/api/mood/weekly").then((r) => r.ok ? r.json() : null),
+        ]);
+
         let greeting = `Hello! I'm your Manraah Companion, calibrated for ${categoryDetails.name} wellness. How are you feeling right now?`;
         
-        if (res.success && res.summary) {
-          const sum = res.summary;
+        if (weeklyRes && (weeklyRes.frequentMood === "Overwhelmed" || weeklyRes.frequentMood === "Low" || weeklyRes.frequentMood === "Anxious" || weeklyRes.frequentMood === "Exhausted")) {
+          greeting = `Hello ${session.user.name || "friend"} 🌿. I noticed you've been feeling a bit ${weeklyRes.frequentMood.toLowerCase()} this week. 
+          
+Would you like to slow down together and try a gentle five-minute breathing exercise? I'm here to listen.`;
+        } else if (dailyRes.success && dailyRes.summary) {
+          const sum = dailyRes.summary;
           
           if (sum.energy_level <= 2) {
             greeting = `Hello ${session.user.name} 🌿. I noticed your energy is a little low today (${sum.energy_level}/5) and you are feeling a bit ${sum.mood}. 

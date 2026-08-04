@@ -1,4 +1,4 @@
-import { pgTable, text, integer, timestamp, boolean, jsonb, serial, numeric } from "drizzle-orm/pg-core";
+import { pgTable, text, integer, timestamp, boolean, jsonb, serial, numeric, doublePrecision } from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
   id: text("id").primaryKey(),
@@ -62,14 +62,7 @@ export const userAssessments = pgTable("user_assessments", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
-export const moodEntries = pgTable("mood_entries", {
-  id: text("id").primaryKey(),
-  userId: text("user_id").references(() => users.id, { onDelete: "cascade" }),
-  mood: text("mood").notNull(),
-  score: integer("score").notNull(),
-  note: text("note"),
-  createdAt: timestamp("created_at").defaultNow(),
-});
+// Deprecated: old moodEntries replaced with detailed moodEntries at the bottom
 
 export const journalEntries = pgTable("journal_entries", {
   id: text("id").primaryKey(),
@@ -138,4 +131,46 @@ export const userStreaks = pgTable("user_streaks", {
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
+
+export const moodEntries = pgTable("mood_entries", {
+  id: serial("id").primaryKey(),
+  userId: text("user_id").references(() => users.id, { onDelete: "cascade" }),
+  mood: text("mood").notNull(),
+  energy: integer("energy").notNull(),
+  stress: text("stress").notNull(),
+  reflection: text("reflection"),
+  factors: text("factors"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const moodInsights = pgTable("mood_insights", {
+  id: serial("id").primaryKey(),
+  userId: text("user_id").references(() => users.id, { onDelete: "cascade" }),
+  insightText: text("insight_text").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const weeklyMoodSummaries = pgTable("weekly_mood_summaries", {
+  id: serial("id").primaryKey(),
+  userId: text("user_id").references(() => users.id, { onDelete: "cascade" }),
+  avgMood: text("avg_mood").notNull(),
+  frequentMood: text("frequent_mood").notNull(),
+  bestDay: text("best_day"),
+  hardestDay: text("hardest_day"),
+  topTrigger: text("top_trigger"),
+  avgEnergy: doublePrecision("avg_energy"),
+  avgStress: text("avg_stress"),
+  reflectionSummary: text("reflection_summary"),
+  aiRecommendation: text("ai_recommendation"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const monthlyMoodSummaries = pgTable("monthly_mood_summaries", {
+  id: serial("id").primaryKey(),
+  userId: text("user_id").references(() => users.id, { onDelete: "cascade" }),
+  summaryData: text("summary_data").notNull(), // JSON string representing monthly trends
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 
