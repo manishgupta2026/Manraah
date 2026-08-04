@@ -1,4 +1,5 @@
-import { AuthSession, UserProfile } from "@/backend/types";
+import { AuthSession } from "@/backend/types";
+import { signUpAction, signInAction, signOutAction } from "./actions";
 
 /**
  * Neon Auth Helper Client
@@ -9,61 +10,33 @@ import { AuthSession, UserProfile } from "@/backend/types";
 const SESSION_KEY = "manraah_auth_session";
 
 export async function signUp(name: string, email: string, pass: string): Promise<AuthSession> {
-  const user: UserProfile = {
-    id: `user-${Date.now()}`,
-    name,
-    email,
-    avatar: "/images/user_avatar.jpg",
-    streakDays: 1,
-    mindfulnessMinutes: 0,
-    currentMood: "Sanctuary Member",
-    selectedCategory: "student",
-  };
-
-  const session: AuthSession = {
-    user,
-    token: `token-${Date.now()}`,
-    isAuthenticated: true,
-  };
-
-  if (typeof window !== "undefined") {
-    localStorage.setItem(SESSION_KEY, JSON.stringify(session));
-    document.cookie = `manraah_session=true; path=/; max-age=86400`;
+  const res = await signUpAction(name, email, pass);
+  if (!res.success || !res.session) {
+    throw new Error(res.error || "Failed to create account.");
   }
-
-  return session;
+  
+  if (typeof window !== "undefined") {
+    localStorage.setItem(SESSION_KEY, JSON.stringify(res.session));
+  }
+  return res.session;
 }
 
 export async function signIn(email: string, pass: string): Promise<AuthSession> {
-  const user: UserProfile = {
-    id: "user-101",
-    name: "Aanya Sharma",
-    email,
-    avatar: "/images/user_avatar.jpg",
-    streakDays: 14,
-    mindfulnessMinutes: 180,
-    currentMood: "Serene & Focused",
-    selectedCategory: "student",
-  };
-
-  const session: AuthSession = {
-    user,
-    token: `token-${Date.now()}`,
-    isAuthenticated: true,
-  };
-
-  if (typeof window !== "undefined") {
-    localStorage.setItem(SESSION_KEY, JSON.stringify(session));
-    document.cookie = `manraah_session=true; path=/; max-age=86400`;
+  const res = await signInAction(email, pass);
+  if (!res.success || !res.session) {
+    throw new Error(res.error || "Failed to sign in.");
   }
 
-  return session;
+  if (typeof window !== "undefined") {
+    localStorage.setItem(SESSION_KEY, JSON.stringify(res.session));
+  }
+  return res.session;
 }
 
 export async function signOut(): Promise<void> {
+  await signOutAction();
   if (typeof window !== "undefined") {
     localStorage.removeItem(SESSION_KEY);
-    document.cookie = `manraah_session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
   }
 }
 
@@ -80,3 +53,4 @@ export function getClientSession(): AuthSession {
     return { user: null, token: null, isAuthenticated: false };
   }
 }
+

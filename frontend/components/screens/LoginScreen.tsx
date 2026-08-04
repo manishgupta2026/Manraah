@@ -5,26 +5,47 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signIn } from "@/backend/auth/client";
 
+import { useAssessment } from "@/frontend/lib/context/AssessmentContext";
+import { saveUserAssessment } from "@/backend/queries/assessment";
+
 export default function LoginScreen() {
   const router = useRouter();
+  const { selectedCategory, detailedAnswers, totalScore, percentage, wellnessLevel } = useAssessment();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim() || !password.trim()) return;
 
     setLoading(true);
+    setError(null);
     try {
-      await signIn(email, password);
+      const session = await signIn(email, password);
+
+      // Save assessment details if they completed the onboarding assessment
+      if (session.user && detailedAnswers.length > 0) {
+        await saveUserAssessment(
+          session.user.id,
+          selectedCategory || "student",
+          detailedAnswers,
+          totalScore,
+          percentage,
+          wellnessLevel
+        );
+      }
+
       router.push("/dashboard");
-    } catch (err) {
+    } catch (err: any) {
       console.error("Login error:", err);
+      setError(err.message || "Invalid credentials. Please try again.");
       setLoading(false);
     }
   };
+
 
   return (
     <div className="max-w-md mx-auto py-12 px-4 space-y-8 animate-fadeIn">
@@ -39,6 +60,11 @@ export default function LoginScreen() {
 
       {/* Form Card */}
       <form onSubmit={handleSubmit} className="p-8 rounded-3xl bg-surface-container-lowest border border-surface-variant/30 shadow-soft space-y-5">
+        {error && (
+          <div className="p-4 text-xs font-semibold text-red-500 bg-red-500/10 border border-red-500/20 rounded-2xl animate-shake">
+            {error}
+          </div>
+        )}
         <div className="space-y-1.5">
           <label className="block text-xs font-heading font-bold text-on-surface">Email Address</label>
           <input

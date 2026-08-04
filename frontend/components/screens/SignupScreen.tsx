@@ -9,34 +9,45 @@ import { useAssessment } from "@/frontend/lib/context/AssessmentContext";
 
 export default function SignupScreen() {
   const router = useRouter();
-  const { selectedCategory, answers, computedScore } = useAssessment();
+  const { selectedCategory, detailedAnswers, totalScore, percentage, wellnessLevel } = useAssessment();
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim() || !email.trim() || !password.trim()) return;
 
     setLoading(true);
+    setError(null);
     try {
       // 1. Create account via Neon Auth helper
       const session = await signUp(name, email, password);
 
-      // 2. Persist onboarding category, answers, and score to Neon DB stub
+      // 2. Persist onboarding category, detailed answers, and score details to Neon DB
       if (session.user) {
-        await saveUserAssessment(session.user.id, selectedCategory || "student", answers, computedScore);
+        await saveUserAssessment(
+          session.user.id,
+          selectedCategory || "student",
+          detailedAnswers,
+          totalScore,
+          percentage,
+          wellnessLevel
+        );
       }
 
       // 3. Navigate to personalized dashboard
       router.push("/dashboard");
-    } catch (err) {
+    } catch (err: any) {
       console.error("Signup error:", err);
+      setError(err.message || "Failed to create account. Please try again.");
       setLoading(false);
     }
   };
+
 
   return (
     <div className="max-w-md mx-auto py-12 px-4 space-y-8 animate-fadeIn">
@@ -51,6 +62,11 @@ export default function SignupScreen() {
 
       {/* Form Card */}
       <form onSubmit={handleSubmit} className="p-8 rounded-3xl bg-surface-container-lowest border border-surface-variant/30 shadow-soft space-y-5">
+        {error && (
+          <div className="p-4 text-xs font-semibold text-red-500 bg-red-500/10 border border-red-500/20 rounded-2xl">
+            {error}
+          </div>
+        )}
         <div className="space-y-1.5">
           <label className="block text-xs font-heading font-bold text-on-surface">Full Name</label>
           <input

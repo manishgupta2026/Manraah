@@ -1,242 +1,159 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { useCategory, CATEGORIES } from "@/frontend/lib/context/CategoryContext";
-import { MOCK_USER } from "@/frontend/lib/mock-data";
-import { UserCategory } from "@/backend/types";
+import { getClientSession } from "@/backend/auth/client";
+import { getDashboardSummaryAction } from "@/backend/auth/actions";
+import { getWellnessMessage } from "@/frontend/lib/assessment/wellness";
 
 export default function DashboardScreen() {
-  const { category, setCategory, categoryDetails } = useCategory();
-  const [studentLayout, setStudentLayout] = useState<"layout1" | "layout2">("layout1");
+  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState<any>(null);
+
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const session = getClientSession();
+        if (session.user) {
+          const summary = await getDashboardSummaryAction(session.user.id);
+          setData(summary);
+        }
+      } catch (err) {
+        console.error("Error loading dashboard data:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadData();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[50vh] space-y-4">
+        <span className="material-symbols-outlined text-4xl text-primary animate-spin">spa</span>
+        <p className="text-sm text-on-surface-variant font-medium">Entering your sanctuary dashboard...</p>
+      </div>
+    );
+  }
+
+  const name = data?.name || "Member";
+  const category = data?.category || "student";
+  const score = data?.totalScore || 30;
+  const percentage = data?.percentage || 60;
+  const level = data?.wellnessLevel || "Stable";
+  const welcomeMessage = getWellnessMessage(level);
+
+  // Map category code to human readable name
+  const getCategoryName = (cat: string) => {
+    const map: Record<string, string> = {
+      student: "Student",
+      young_pro: "Young Professional",
+      working_professional: "Working Professional",
+      parent: "Parent",
+      couple: "Couple",
+      family: "Family",
+      women: "Women",
+      men: "Men",
+      senior_citizen: "Senior Citizen",
+    };
+    return map[cat] || cat;
+  };
 
   return (
-    <div className="space-y-8 animate-fadeIn">
+    <div className="space-y-8 animate-fadeIn max-w-4xl mx-auto">
       {/* Category Welcome Banner */}
-      <div className="p-6 md:p-8 rounded-3xl bg-surface-container-lowest border border-surface-variant/30 shadow-soft flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-        <div className="space-y-2">
+      <div className="p-6 md:p-8 rounded-3xl bg-surface-container-lowest border border-surface-variant/30 shadow-soft flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative overflow-hidden">
+        {/* Glow */}
+        <div className="absolute top-[-50%] right-[-10%] w-[200px] h-[200px] rounded-full bg-primary-container blur-[60px] opacity-20 pointer-events-none" />
+
+        <div className="space-y-2 z-10">
           <div className="flex items-center gap-2">
-            <span className={`px-3 py-1 rounded-full text-xs font-semibold ${categoryDetails.badgeColor}`}>
-              {categoryDetails.name} Dashboard
+            <span className="px-3 py-1 rounded-full text-xs font-semibold bg-primary-container/20 text-primary border border-primary/10">
+              {getCategoryName(category)} Focus
             </span>
-            {category === "student" && (
-              <button
-                onClick={() => setStudentLayout(studentLayout === "layout1" ? "layout2" : "layout1")}
-                className="text-xs text-primary underline hover:text-primary-purple font-medium"
-              >
-                Switch to {studentLayout === "layout1" ? "Layout 2" : "Layout 1"}
-              </button>
-            )}
           </div>
           <h1 className="text-2xl md:text-3xl font-heading font-bold text-on-surface">
-            Welcome Back, <span className="text-primary">{MOCK_USER.name}</span> 🌿
+            Welcome back, <span className="text-primary">{name}</span> 👋
           </h1>
-          <p className="text-sm text-on-surface-variant max-w-xl">
-            {categoryDetails.description}
+          <p className="text-sm text-on-surface-variant leading-relaxed">
+            Your personal sanctuary is ready. Take a deep breath and explore your dashboard metrics.
           </p>
         </div>
+      </div>
 
-        {/* Quick Stats Pills */}
-        <div className="flex items-center gap-3">
-          <div className="px-4 py-3 rounded-2xl bg-primary-container/20 border border-primary/20 text-center">
-            <p className="text-xs text-on-surface-variant font-medium">Streak</p>
-            <p className="text-lg font-bold text-primary">{MOCK_USER.streakDays} Days 🔥</p>
+      {/* Wellness Score Card */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="p-6 rounded-3xl bg-surface-container-lowest border border-surface-variant/30 shadow-soft space-y-4 flex flex-col justify-between relative overflow-hidden">
+          <div className="space-y-2">
+            <h3 className="font-heading font-bold text-lg text-on-surface flex items-center gap-2">
+              <span className="material-symbols-outlined text-primary">analytics</span>
+              Wellness Assessment Score
+            </h3>
+            <p className="text-xs text-on-surface-variant leading-relaxed">
+              Based on your initial 10-question assessment, your stability metrics are visualized here.
+            </p>
           </div>
-          <div className="px-4 py-3 rounded-2xl bg-mint/20 border border-secondary/20 text-center">
-            <p className="text-xs text-on-surface-variant font-medium">Mindfulness</p>
-            <p className="text-lg font-bold text-secondary">{MOCK_USER.mindfulnessMinutes} mins</p>
+
+          <div className="py-4 flex items-center gap-6">
+            <div className="relative w-24 h-24 flex items-center justify-center">
+              {/* Circular score ring using SVG */}
+              <svg className="w-full h-full transform -rotate-90">
+                <circle
+                  cx="48"
+                  cy="48"
+                  r="40"
+                  stroke="rgba(0,0,0,0.05)"
+                  strokeWidth="8"
+                  fill="transparent"
+                />
+                <circle
+                  cx="48"
+                  cy="48"
+                  r="40"
+                  stroke="#7C6BC4"
+                  strokeWidth="8"
+                  fill="transparent"
+                  strokeDasharray={`${2 * Math.PI * 40}`}
+                  strokeDashoffset={`${2 * Math.PI * 40 * (1 - percentage / 100)}`}
+                  strokeLinecap="round"
+                  className="transition-all duration-1000 ease-out"
+                />
+              </svg>
+              <div className="absolute flex flex-col items-center">
+                <span className="text-xl font-bold text-primary">{score}</span>
+                <span className="text-[10px] text-on-surface-variant font-medium">/ 50</span>
+              </div>
+            </div>
+
+            <div className="space-y-1">
+              <p className="text-xs text-on-surface-variant font-medium">Wellness Level</p>
+              <span className="inline-block px-4 py-1.5 rounded-full text-sm font-bold bg-primary text-white shadow-sm">
+                {level}
+              </span>
+              <p className="text-[11px] text-on-surface-variant/70 font-semibold">{percentage}% Serenity Index</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Welcome / Encouragement Message Card */}
+        <div className="p-6 rounded-3xl bg-surface-container-lowest border border-surface-variant/30 shadow-soft space-y-4 flex flex-col justify-between">
+          <div className="space-y-2">
+            <h3 className="font-heading font-bold text-lg text-on-surface flex items-center gap-2">
+              <span className="material-symbols-outlined text-secondary">spa</span>
+              Daily Sanctuary Advice
+            </h3>
+            <p className="text-xs text-on-surface-variant leading-relaxed">
+              Your personalized wellness recommendation based on your current state.
+            </p>
+          </div>
+
+          <div className="p-4 rounded-2xl bg-surface-container-low border border-surface-variant/20">
+            <p className="text-sm text-on-surface leading-relaxed font-medium">
+              {welcomeMessage}
+            </p>
           </div>
         </div>
       </div>
-
-      {/* Category Switching Pills Bar */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-2">
-        <span className="text-xs font-semibold text-on-surface-variant/70 whitespace-nowrap">Switch View:</span>
-        {Object.keys(CATEGORIES).map((catKey) => {
-          const active = category === catKey;
-          const catInfo = CATEGORIES[catKey];
-          return (
-            <button
-              key={catKey}
-              onClick={() => setCategory(catKey as UserCategory)}
-              className={`px-4 py-2 rounded-full text-xs font-semibold transition-all whitespace-nowrap ${
-                active
-                  ? "bg-primary text-white shadow-md scale-105"
-                  : "bg-surface-container-lowest border border-surface-variant/30 text-on-surface-variant hover:bg-surface-container-low"
-              }`}
-            >
-              {catInfo.name}
-            </button>
-          );
-        })}
-      </div>
-
-      {/* CONDITIONAL DASHBOARD RENDERING */}
-      {category === "student" && (
-        <div className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="p-6 rounded-3xl bg-surface-container-lowest border border-surface-variant/30 shadow-soft space-y-4">
-              <div className="w-12 h-12 rounded-2xl bg-primary-container/20 text-primary flex items-center justify-center">
-                <span className="material-symbols-outlined text-2xl">smart_toy</span>
-              </div>
-              <h3 className="font-heading font-bold text-lg text-on-surface">AI Academic Companion</h3>
-              <p className="text-xs text-on-surface-variant">Discuss study anxiety, exam pressure, or quick grounding exercises.</p>
-              <Link
-                href="/ai-chat"
-                className="inline-block w-full py-2.5 rounded-full bg-primary text-white text-center font-semibold text-xs shadow-md hover:bg-primary-purple transition-all"
-              >
-                Chat with AI Companion →
-              </Link>
-            </div>
-
-            <div className="p-6 rounded-3xl bg-surface-container-lowest border border-surface-variant/30 shadow-soft space-y-4">
-              <div className="w-12 h-12 rounded-2xl bg-pink/30 text-tertiary flex items-center justify-center">
-                <span className="material-symbols-outlined text-2xl">mood</span>
-              </div>
-              <h3 className="font-heading font-bold text-lg text-on-surface">Daily Mind Check-in</h3>
-              <p className="text-xs text-on-surface-variant">Log your energy levels and emotional state before study sessions.</p>
-              <Link
-                href="/checkin"
-                className="inline-block w-full py-2.5 rounded-full bg-surface-container text-primary text-center font-semibold text-xs hover:bg-surface-container-high transition-all"
-              >
-                Log Today's Mood
-              </Link>
-            </div>
-
-            <div className="p-6 rounded-3xl bg-surface-container-lowest border border-surface-variant/30 shadow-soft space-y-4">
-              <div className="w-12 h-12 rounded-2xl bg-mint/20 text-secondary flex items-center justify-center">
-                <span className="material-symbols-outlined text-2xl">self_improvement</span>
-              </div>
-              <h3 className="font-heading font-bold text-lg text-on-surface">Exam Stress Relief</h3>
-              <p className="text-xs text-on-surface-variant">10-minute guided audio sessions for focus and clarity.</p>
-              <Link
-                href="/meditation"
-                className="inline-block w-full py-2.5 rounded-full bg-secondary text-white text-center font-semibold text-xs shadow-md hover:bg-secondary/90 transition-all"
-              >
-                Start Meditation
-              </Link>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {category === "parent" && (
-        <div className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="p-6 rounded-3xl bg-surface-container-lowest border border-surface-variant/30 shadow-soft space-y-4">
-              <div className="w-12 h-12 rounded-2xl bg-peach/30 text-tertiary flex items-center justify-center">
-                <span className="material-symbols-outlined text-2xl">family_restroom</span>
-              </div>
-              <h3 className="font-heading font-bold text-lg text-on-surface">Mindful Parenting Circle</h3>
-              <p className="text-xs text-on-surface-variant">Connect with fellow parents sharing mindful patience tips.</p>
-              <Link href="/community" className="inline-block w-full py-2.5 rounded-full bg-primary text-white text-center font-semibold text-xs shadow-md">
-                Join Parent Community
-              </Link>
-            </div>
-
-            <div className="p-6 rounded-3xl bg-surface-container-lowest border border-surface-variant/30 shadow-soft space-y-4">
-              <div className="w-12 h-12 rounded-2xl bg-pink/30 text-tertiary flex items-center justify-center">
-                <span className="material-symbols-outlined text-2xl">auto_stories</span>
-              </div>
-              <h3 className="font-heading font-bold text-lg text-on-surface">Parenting Journal</h3>
-              <p className="text-xs text-on-surface-variant">Log daily reflections, family wins, and gratitude moments.</p>
-              <Link href="/journal" className="inline-block w-full py-2.5 rounded-full bg-surface-container text-primary text-center font-semibold text-xs">
-                Open Journal
-              </Link>
-            </div>
-
-            <div className="p-6 rounded-3xl bg-surface-container-lowest border border-surface-variant/30 shadow-soft space-y-4">
-              <div className="w-12 h-12 rounded-2xl bg-mint/20 text-secondary flex items-center justify-center">
-                <span className="material-symbols-outlined text-2xl">spa</span>
-              </div>
-              <h3 className="font-heading font-bold text-lg text-on-surface">5-Min Patience Breathing</h3>
-              <p className="text-xs text-on-surface-variant">Quick grounding audio when parenting stress feels high.</p>
-              <Link href="/meditation" className="inline-block w-full py-2.5 rounded-full bg-secondary text-white text-center font-semibold text-xs shadow-md">
-                Start Quick Reset
-              </Link>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {category === "senior_citizen" && (
-        <div className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="p-6 rounded-3xl bg-surface-container-lowest border border-surface-variant/30 shadow-soft space-y-4">
-              <div className="w-12 h-12 rounded-2xl bg-pale-yellow/40 text-on-surface flex items-center justify-center">
-                <span className="material-symbols-outlined text-2xl">record_voice_over</span>
-              </div>
-              <h3 className="font-heading font-bold text-xl text-on-surface">Voice AI Listener</h3>
-              <p className="text-sm text-on-surface-variant">Speak directly to your gentle AI companion anytime.</p>
-              <Link href="/ai-chat" className="inline-block w-full py-3 rounded-full bg-primary text-white text-center font-bold text-sm shadow-md">
-                Start Voice Companion
-              </Link>
-            </div>
-
-            <div className="p-6 rounded-3xl bg-surface-container-lowest border border-surface-variant/30 shadow-soft space-y-4">
-              <div className="w-12 h-12 rounded-2xl bg-mint/20 text-secondary flex items-center justify-center">
-                <span className="material-symbols-outlined text-2xl">nature_people</span>
-              </div>
-              <h3 className="font-heading font-bold text-xl text-on-surface">Gentle Daily Calm</h3>
-              <p className="text-sm text-on-surface-variant">Calm audio tracks designed for restful mornings & peaceful evenings.</p>
-              <Link href="/meditation" className="inline-block w-full py-3 rounded-full bg-secondary text-white text-center font-bold text-sm shadow-md">
-                Listen to Daily Calm
-              </Link>
-            </div>
-
-            <div className="p-6 rounded-3xl bg-surface-container-lowest border border-surface-variant/30 shadow-soft space-y-4">
-              <div className="w-12 h-12 rounded-2xl bg-peach/30 text-tertiary flex items-center justify-center">
-                <span className="material-symbols-outlined text-2xl">diversity_1</span>
-              </div>
-              <h3 className="font-heading font-bold text-xl text-on-surface">Senior Peer Group</h3>
-              <p className="text-sm text-on-surface-variant">Share stories and connect with warm peer listeners.</p>
-              <Link href="/community" className="inline-block w-full py-3 rounded-full bg-surface-container text-primary text-center font-bold text-sm">
-                Open Senior Circle
-              </Link>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Default Dashboard Layout for Professional / Young Pro / Couple / Family / Women / Men */}
-      {category !== "student" && category !== "parent" && category !== "senior_citizen" && (
-        <div className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="p-6 rounded-3xl bg-surface-container-lowest border border-surface-variant/30 shadow-soft space-y-4">
-              <div className="w-12 h-12 rounded-2xl bg-primary-container/20 text-primary flex items-center justify-center">
-                <span className="material-symbols-outlined text-2xl">work_history</span>
-              </div>
-              <h3 className="font-heading font-bold text-lg text-on-surface">{categoryDetails.name} Wellness Sanctuary</h3>
-              <p className="text-xs text-on-surface-variant">Tailored AI companion conversations and daily mindfulness routines.</p>
-              <Link href="/ai-chat" className="inline-block w-full py-2.5 rounded-full bg-primary text-white text-center font-semibold text-xs shadow-md">
-                Chat with AI Companion →
-              </Link>
-            </div>
-
-            <div className="p-6 rounded-3xl bg-surface-container-lowest border border-surface-variant/30 shadow-soft space-y-4">
-              <div className="w-12 h-12 rounded-2xl bg-peach/30 text-tertiary flex items-center justify-center">
-                <span className="material-symbols-outlined text-2xl">medical_services</span>
-              </div>
-              <h3 className="font-heading font-bold text-lg text-on-surface">Professional Support</h3>
-              <p className="text-xs text-on-surface-variant">Book 1-on-1 confidential sessions with certified specialists.</p>
-              <Link href="/professional-care" className="inline-block w-full py-2.5 rounded-full bg-surface-container text-primary text-center font-semibold text-xs">
-                Find Therapist
-              </Link>
-            </div>
-
-            <div className="p-6 rounded-3xl bg-surface-container-lowest border border-surface-variant/30 shadow-soft space-y-4">
-              <div className="w-12 h-12 rounded-2xl bg-pale-yellow/40 text-on-surface flex items-center justify-center">
-                <span className="material-symbols-outlined text-2xl">bedtime</span>
-              </div>
-              <h3 className="font-heading font-bold text-lg text-on-surface">Sleep & Rest Audio</h3>
-              <p className="text-xs text-on-surface-variant">Binaural rain & ocean soundscapes for deep recovery.</p>
-              <Link href="/sleep" className="inline-block w-full py-2.5 rounded-full bg-surface-container text-on-surface text-center font-semibold text-xs">
-                Play Sleep Audio
-              </Link>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

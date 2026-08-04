@@ -5,26 +5,30 @@ import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAssessment } from "@/frontend/lib/context/AssessmentContext";
 import { useCategory } from "@/frontend/lib/context/CategoryContext";
-import { COMMON_QUESTIONS } from "@/frontend/lib/assessment/commonQuestions";
 import { assessmentEngine } from "@/frontend/lib/assessment/assessmentEngine";
+import { evaluateWellness } from "@/frontend/lib/assessment/wellness";
 
 export default function AssessmentFlow() {
   const router = useRouter();
   const { categoryDetails } = useCategory();
   const {
+    selectedCategory,
     currentQuestionIndex,
     setCurrentQuestionIndex,
     detailedAnswers,
     setDetailedAnswers,
+    setAssessmentResult,
+    setAssessmentCompleted,
   } = useAssessment();
 
   const [direction, setDirection] = useState(1); // 1 = forward, -1 = backward
 
-  // Total questions is 10 (5 common + 5 category specific planned)
-  const totalQuestions = 10;
-  const isPlaceholderScreen = currentQuestionIndex === 5;
+  // Load the 10 questions dynamically based on selected category
+  const questions = assessmentEngine.getQuestionsForCategory(selectedCategory);
+  const totalQuestions = questions.length;
+  const isCompleted = currentQuestionIndex >= totalQuestions;
 
-  const question = !isPlaceholderScreen ? COMMON_QUESTIONS[currentQuestionIndex] : null;
+  const question = !isCompleted ? questions[currentQuestionIndex] : null;
 
   // Find if there is an existing answer for this question to pre-fill selection
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
@@ -44,16 +48,10 @@ export default function AssessmentFlow() {
   };
 
   const handleNext = () => {
-    if (isPlaceholderScreen) {
-      // Navigate to login
-      router.push("/login");
-      return;
-    }
-
     if (!question || !selectedOptionId) return;
 
     // Create the structured answer
-    const newAnswer = assessmentEngine.createAnswer(question.id, selectedOptionId);
+    const newAnswer = assessmentEngine.createAnswer(selectedCategory, question.id, selectedOptionId);
     if (!newAnswer) return;
 
     // Update detailedAnswers array in Context
@@ -66,8 +64,16 @@ export default function AssessmentFlow() {
     }
     setDetailedAnswers(updatedAnswers);
 
-    setDirection(1);
-    setCurrentQuestionIndex(currentQuestionIndex + 1);
+    if (currentQuestionIndex < totalQuestions - 1) {
+      setDirection(1);
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
+    } else {
+      // Completed all 10 questions
+      const results = evaluateWellness(updatedAnswers);
+      setAssessmentResult(results);
+      setAssessmentCompleted(true);
+      router.push("/login");
+    }
   };
 
   const handleBack = () => {
@@ -120,7 +126,7 @@ export default function AssessmentFlow() {
               Focus: {categoryDetails.name}
             </span>
             <span className="font-bold text-primary tracking-wide">
-              {isPlaceholderScreen ? "Milestone Reached" : `Question ${currentQuestionIndex + 1} of ${totalQuestions}`}
+              Question {currentQuestionIndex + 1} of {totalQuestions}
             </span>
           </div>
 
@@ -138,87 +144,57 @@ export default function AssessmentFlow() {
         {/* Animated Content */}
         <div className="flex-1 flex flex-col justify-center min-h-[420px] py-4">
           <AnimatePresence mode="wait" custom={direction}>
-            {!isPlaceholderScreen ? (
-              question && (
-                <motion.div
-                  key={`q-${currentQuestionIndex}`}
-                  custom={direction}
-                  variants={slideVariants}
-                  initial="enter"
-                  animate="center"
-                  exit="exit"
-                  transition={transitionSettings}
-                  className="space-y-8"
-                >
-                  {/* Question block */}
-                  <div className="space-y-3 text-center md:text-left">
-                    <h2 className="text-2xl md:text-3xl font-heading font-bold text-on-surface leading-snug tracking-tight">
-                      {question.text}
-                    </h2>
-                    <p className="text-sm md:text-base text-on-surface-variant/80 font-medium italic opacity-90">
-                      "There are no right or wrong answers. Your responses help us personalise your experience."
-                    </p>
-                  </div>
-
-                  {/* Option cards */}
-                  <div className="space-y-3.5" role="radiogroup" aria-label={question.text}>
-                    {question.options.map((opt) => {
-                      const isSelected = selectedOptionId === opt.id;
-                      return (
-                        <button
-                          key={opt.id}
-                          type="button"
-                          role="radio"
-                          aria-checked={isSelected}
-                          onClick={() => handleSelectOption(opt.id)}
-                          className={`w-full flex items-center justify-between p-5 rounded-[24px] transition-all border text-left cursor-pointer group focus:outline-none focus:ring-2 focus:ring-primary/20 ${
-                            isSelected
-                              ? "bg-surface-container-lowest border-primary shadow-card-lift ring-2 ring-primary/20 text-primary font-bold"
-                              : "bg-surface-container-lowest border-surface-variant/30 shadow-soft hover:shadow-md hover:border-primary/30 text-on-surface-variant"
-                          }`}
-                        >
-                          <span className="text-sm md:text-base font-medium">{opt.text}</span>
-                          <div
-                            className={`w-6 h-6 rounded-full border flex items-center justify-center transition-all ${
-                              isSelected
-                                ? "border-primary bg-primary"
-                                : "border-outline-variant group-hover:border-primary/50"
-                            }`}
-                          >
-                            {isSelected && <div className="w-2.5 h-2.5 rounded-full bg-white" />}
-                          </div>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </motion.div>
-              )
-            ) : (
+            {question && (
               <motion.div
-                key="placeholder-screen"
+                key={`q-${currentQuestionIndex}`}
                 custom={direction}
                 variants={slideVariants}
                 initial="enter"
                 animate="center"
                 exit="exit"
                 transition={transitionSettings}
-                className="text-center space-y-8 max-w-md mx-auto py-6"
+                className="space-y-8"
               >
-                <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mx-auto text-primary border border-primary/20 shadow-inner">
-                  <span className="text-5xl select-none">✨</span>
+                {/* Question block */}
+                <div className="space-y-3 text-center md:text-left">
+                  <h2 className="text-2xl md:text-3xl font-heading font-bold text-on-surface leading-snug tracking-tight">
+                    {question.text}
+                  </h2>
+                  <p className="text-sm md:text-base text-on-surface-variant/80 font-medium italic opacity-90">
+                    "There are no right or wrong answers. Your responses help us personalise your experience."
+                  </p>
                 </div>
 
-                <div className="space-y-4">
-                  <h2 className="text-3xl font-heading font-bold text-on-surface">
-                    Great!
-                  </h2>
-                  <p className="text-base text-on-surface-variant leading-relaxed">
-                    You've completed the first part of your assessment.
-                  </p>
-                  <p className="text-sm text-on-surface-variant/70 italic bg-surface-container/30 py-3 px-6 rounded-2xl border border-surface-variant/20 inline-block font-semibold">
-                    Category-specific questions will continue here.<br />
-                    (Currently under development.)
-                  </p>
+                {/* Option cards */}
+                <div className="space-y-3.5" role="radiogroup" aria-label={question.text}>
+                  {question.options.map((opt) => {
+                    const isSelected = selectedOptionId === opt.id;
+                    return (
+                      <button
+                        key={opt.id}
+                        type="button"
+                        role="radio"
+                        aria-checked={isSelected}
+                        onClick={() => handleSelectOption(opt.id)}
+                        className={`w-full flex items-center justify-between p-5 rounded-[24px] transition-all border text-left cursor-pointer group focus:outline-none focus:ring-2 focus:ring-primary/20 ${
+                          isSelected
+                            ? "bg-surface-container-lowest border-primary shadow-card-lift ring-2 ring-primary/20 text-primary font-bold"
+                            : "bg-surface-container-lowest border-surface-variant/30 shadow-soft hover:shadow-md hover:border-primary/30 text-on-surface-variant"
+                        }`}
+                      >
+                        <span className="text-sm md:text-base font-medium">{opt.text}</span>
+                        <div
+                          className={`w-6 h-6 rounded-full border flex items-center justify-center transition-all ${
+                            isSelected
+                              ? "border-primary bg-primary"
+                              : "border-outline-variant group-hover:border-primary/50"
+                          }`}
+                        >
+                          {isSelected && <div className="w-2.5 h-2.5 rounded-full bg-white" />}
+                        </div>
+                      </button>
+                    );
+                  })}
                 </div>
               </motion.div>
             )}
@@ -243,10 +219,10 @@ export default function AssessmentFlow() {
           <button
             onClick={handleNext}
             type="button"
-            disabled={!isPlaceholderScreen && !selectedOptionId}
+            disabled={!selectedOptionId}
             className="ml-auto px-10 py-3.5 rounded-full bg-primary text-white font-bold text-sm shadow-md hover:bg-primary-purple hover:scale-102 active:scale-98 transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center gap-2"
           >
-            {isPlaceholderScreen ? "Continue to Sign In" : "Continue"}
+            {currentQuestionIndex === totalQuestions - 1 ? "Complete Assessment" : "Continue"}
             <span className="material-symbols-outlined text-base">arrow_forward</span>
           </button>
         </div>

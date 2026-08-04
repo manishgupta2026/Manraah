@@ -3,7 +3,8 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { AssessmentAnswers, UserCategory } from "@/backend/types";
 import { AssessmentAnswer, WellnessResult, AssessmentQuestion } from "@/frontend/lib/assessment/types";
-import { COMMON_QUESTIONS } from "@/frontend/lib/assessment/commonQuestions";
+import { assessmentEngine } from "@/frontend/lib/assessment/assessmentEngine";
+import { getWellnessLevel } from "@/frontend/lib/assessment/wellness";
 
 interface AssessmentContextType {
   // Compatibility properties
@@ -21,6 +22,8 @@ interface AssessmentContextType {
   setDetailedAnswers: React.Dispatch<React.SetStateAction<AssessmentAnswer[]>>;
   assessmentResult: WellnessResult | null;
   setAssessmentResult: React.Dispatch<React.SetStateAction<WellnessResult | null>>;
+  assessmentCompleted: boolean;
+  setAssessmentCompleted: (completed: boolean) => void;
 
   // Derived properties for current question
   currentQuestion: AssessmentQuestion | null;
@@ -33,6 +36,8 @@ interface AssessmentContextType {
   // Derived scoring and progress properties
   totalScore: number;
   maxScore: number;
+  percentage: number;
+  wellnessLevel: "Flourishing" | "Stable" | "Needs Attention" | "High Risk" | "Critical";
   progress: number; // Progress percentage (0 to 100)
 }
 
@@ -70,8 +75,9 @@ export function AssessmentProvider({ children }: { children: ReactNode }) {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
   const [detailedAnswers, setDetailedAnswers] = useState<AssessmentAnswer[]>([]);
   const [assessmentResult, setAssessmentResult] = useState<WellnessResult | null>(null);
+  const [assessmentCompleted, setAssessmentCompleted] = useState<boolean>(false);
 
-  // Allow setting category, and sync it to sessionStorage/state without using localStorage
+  // Allow setting category without using localStorage
   const setSelectedCategory = (cat: UserCategory | null) => {
     setSelectedCategoryState(cat);
   };
@@ -86,7 +92,7 @@ export function AssessmentProvider({ children }: { children: ReactNode }) {
   const computedScore = calculateSerenityScore(answers);
 
   // Derived properties for current question
-  const currentQuestion = COMMON_QUESTIONS[currentQuestionIndex] || null;
+  const currentQuestion = assessmentEngine.getQuestionByIndex(selectedCategory, currentQuestionIndex) || null;
   const questionId = currentQuestion ? currentQuestion.id : null;
   const questionKey = currentQuestion ? currentQuestion.key : null;
 
@@ -97,7 +103,9 @@ export function AssessmentProvider({ children }: { children: ReactNode }) {
 
   // Derived scoring and progress properties
   const totalScore = detailedAnswers.reduce((sum, ans) => sum + ans.score, 0);
-  const maxScore = 25; // 5 questions * 5 max points each
+  const maxScore = 50; // 10 questions * 5 max points each
+  const percentage = Math.round((totalScore / maxScore) * 100);
+  const wellnessLevel = getWellnessLevel(totalScore); // Dynamic level mapped using percentage or score
   const progress = Math.round((currentQuestionIndex / 10) * 100);
 
   const value = {
@@ -113,6 +121,8 @@ export function AssessmentProvider({ children }: { children: ReactNode }) {
     setDetailedAnswers,
     assessmentResult,
     setAssessmentResult,
+    assessmentCompleted,
+    setAssessmentCompleted,
     currentQuestion,
     questionId,
     questionKey,
@@ -121,6 +131,8 @@ export function AssessmentProvider({ children }: { children: ReactNode }) {
     score,
     totalScore,
     maxScore,
+    percentage,
+    wellnessLevel,
     progress,
   };
 
@@ -138,4 +150,5 @@ export function useAssessment() {
   }
   return context;
 }
+
 

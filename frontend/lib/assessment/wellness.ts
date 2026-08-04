@@ -3,11 +3,12 @@ import { calculateTotalScore, calculatePercentage } from "./scoring";
 
 export type WellnessLevel = "Flourishing" | "Stable" | "Needs Attention" | "High Risk" | "Critical";
 
-export function getWellnessLevel(score: number): WellnessLevel {
-  if (score >= 21) return "Flourishing";
-  if (score >= 16) return "Stable";
-  if (score >= 11) return "Needs Attention";
-  if (score >= 6) return "High Risk";
+export function getWellnessLevel(score: number, maxScore: number = 50): WellnessLevel {
+  const percentage = maxScore > 0 ? (score / maxScore) * 100 : 0;
+  if (percentage >= 84) return "Flourishing";
+  if (percentage >= 64) return "Stable";
+  if (percentage >= 44) return "Needs Attention";
+  if (percentage >= 24) return "High Risk";
   return "Critical";
 }
 
@@ -30,9 +31,9 @@ export function getWellnessMessage(level: WellnessLevel): string {
 
 export function evaluateWellness(answers: AssessmentAnswer[]): WellnessResult {
   const totalScore = calculateTotalScore(answers);
-  const maxScore = 25;
+  const maxScore = answers.length * 5 || 50;
   const percentage = calculatePercentage(totalScore, maxScore);
-  const wellnessLevel = getWellnessLevel(totalScore);
+  const wellnessLevel = getWellnessLevel(totalScore, maxScore);
   const message = getWellnessMessage(wellnessLevel);
 
   return {
@@ -43,3 +44,4 @@ export function evaluateWellness(answers: AssessmentAnswer[]): WellnessResult {
     message,
   };
 }
+
