@@ -117,3 +117,25 @@ export const resources = pgTable("resources", {
   summary: text("summary").notNull(),
   author: text("author").notNull(),
 });
+
+export const dailyCheckins = pgTable("daily_checkins", {
+  id: serial("id").primaryKey(),
+  userId: text("user_id").references(() => users.id, { onDelete: "cascade" }),
+  mood: text("mood").notNull(),
+  energyLevel: integer("energy_level").notNull(),
+  sleepQuality: integer("sleep_quality").notNull(),
+  gratitudeReflection: text("gratitude_reflection"),
+  dailyIntention: text("daily_intention"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const userStreaks = pgTable("user_streaks", {
+  id: text("id").primaryKey(),
+  userId: text("user_id").unique().references(() => users.id, { onDelete: "cascade" }),
+  currentStreak: integer("current_streak").default(1),
+  longestStreak: integer("longest_streak").default(1),
+  lastCheckInDate: timestamp("last_checkin_date"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+

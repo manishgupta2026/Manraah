@@ -1,7 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useCategory } from "@/frontend/lib/context/CategoryContext";
+import { getClientSession } from "@/backend/auth/client";
+import { getDailyCheckInSummaryAction } from "@/backend/auth/actions";
 
 interface ChatMessage {
   id: string;
@@ -14,15 +16,39 @@ export default function AICompanionChat() {
   const { categoryDetails } = useCategory();
   const [activeTab, setActiveTab] = useState<"chat" | "modes" | "voice">("chat");
   const [selectedEmotion, setSelectedEmotion] = useState<string>("Seeking Calm");
-  const [inputMessage, setInputMessage] = useState<string>("");
-  const [messages, setMessages] = useState<ChatMessage[]>([
-    {
-      id: "1",
-      sender: "ai",
-      text: `Hello! I'm your Manraah Companion, calibrated for ${categoryDetails.name} wellness. How are you feeling right now?`,
-      time: "10:30 AM",
-    },
-  ]);
+  const [inputMessage, setInputMessage] = useState<string>(" ");
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+
+  useEffect(() => {
+    async function loadGreeting() {
+      const session = getClientSession();
+      if (!session.user) return;
+      try {
+        const res = await getDailyCheckInSummaryAction(session.user.id);
+        let greeting = `Hello! I'm your Manraah Companion, calibrated for ${categoryDetails.name} wellness. How are you feeling right now?`;
+        
+        if (res.success && res.summary) {
+          const sum = res.summary;
+          greeting = `Welcome back! I see that in today's sanctuary check-in you logged a feeling of ${sum.mood} with an energy battery of ${sum.energy_level}/5. 
+          
+I want to reassure you that whatever you are holding today is welcome here. Would you like to share what is contributing to this, or shall we explore a gentle breathing exercise?`;
+        }
+
+        setMessages([
+          {
+            id: "1",
+            sender: "ai",
+            text: greeting,
+            time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+          }
+        ]);
+      } catch (err) {
+        console.error("Failed to load initial greeting:", err);
+      }
+    }
+    loadGreeting();
+  }, [categoryDetails]);
+
 
   const handleSendMessage = () => {
     if (!inputMessage.trim()) return;
