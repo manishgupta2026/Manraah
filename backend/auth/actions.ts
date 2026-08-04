@@ -39,11 +39,16 @@ export async function saveDailyCheckInAction(
     sleepQuality: number;
     gratitudeReflection: string;
     dailyIntention: string;
+    reflection?: string;
   }
 ) {
   try {
     const result = await saveDailyCheckIn(userId, data);
-    return { success: true, currentStreak: result.currentStreak };
+    const countResult = await sql`
+      SELECT COUNT(*)::integer FROM daily_checkins WHERE user_id = ${userId}
+    `;
+    const totalCheckIns = countResult[0]?.count || 1;
+    return { success: true, currentStreak: result.currentStreak, totalCheckIns };
   } catch (err: any) {
     console.error("Error in saveDailyCheckInAction:", err);
     return { success: false, error: err.message || "Failed to save check-in." };
@@ -53,10 +58,14 @@ export async function saveDailyCheckInAction(
 export async function getUserStreakAction(userId: string) {
   try {
     const streak = await getUserStreak(userId);
-    return { success: true, currentStreak: streak.currentStreak, longestStreak: streak.longestStreak };
+    const countResult = await sql`
+      SELECT COUNT(*)::integer FROM daily_checkins WHERE user_id = ${userId}
+    `;
+    const totalCheckIns = countResult[0]?.count || 0;
+    return { success: true, currentStreak: streak.currentStreak, longestStreak: streak.longestStreak, totalCheckIns };
   } catch (err) {
     console.error("Error in getUserStreakAction:", err);
-    return { success: false, currentStreak: 0, longestStreak: 0 };
+    return { success: false, currentStreak: 0, longestStreak: 0, totalCheckIns: 0 };
   }
 }
 

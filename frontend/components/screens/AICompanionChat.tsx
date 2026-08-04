@@ -29,9 +29,20 @@ export default function AICompanionChat() {
         
         if (res.success && res.summary) {
           const sum = res.summary;
-          greeting = `Welcome back! I see that in today's sanctuary check-in you logged a feeling of ${sum.mood} with an energy battery of ${sum.energy_level}/5. 
           
-I want to reassure you that whatever you are holding today is welcome here. Would you like to share what is contributing to this, or shall we explore a gentle breathing exercise?`;
+          if (sum.energy_level <= 2) {
+            greeting = `Hello ${session.user.name} 🌿. I noticed your energy is a little low today (${sum.energy_level}/5) and you are feeling a bit ${sum.mood}. 
+            
+Would you like to meditate together for five minutes, or perhaps share what is on your mind? I'm here to listen.`;
+          } else if (sum.sleep_quality <= 2) {
+            greeting = `Hello ${session.user.name} 🌸. I see you logged feeling ${sum.mood} today, and your sleep last night was a bit light. 
+            
+It's completely okay to take things slow. Would you like to try a calming breathing reset or explore some restful soundscapes?`;
+          } else {
+            greeting = `Welcome back, ${session.user.name} ✨. I see that you logged a feeling of **${sum.mood}** in today's check-in, focusing on your intention to **${sum.daily_intention}**.
+            
+How has this focus been serving you so far? Let's take a slow breath and talk about whatever you need today.`;
+          }
         }
 
         setMessages([

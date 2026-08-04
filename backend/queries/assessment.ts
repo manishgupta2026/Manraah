@@ -78,9 +78,17 @@ export async function initDatabase() {
         sleep_quality INTEGER NOT NULL,
         gratitude_reflection TEXT,
         daily_intention TEXT,
+        reflection TEXT,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `;
+
+    // Ensure reflection column exists in existing deployments
+    try {
+      await sql`ALTER TABLE daily_checkins ADD COLUMN IF NOT EXISTS reflection TEXT`;
+    } catch (err) {
+      console.warn("Could not alter table daily_checkins:", err);
+    }
 
     // 6. Create user_streaks table
     await sql`
@@ -198,14 +206,15 @@ export async function saveDailyCheckIn(
     sleepQuality: number;
     gratitudeReflection: string;
     dailyIntention: string;
+    reflection?: string;
   }
 ): Promise<{ success: boolean; currentStreak: number }> {
   await initDatabase();
   try {
     // 1. Save check-in
     await sql`
-      INSERT INTO daily_checkins (user_id, mood, energy_level, sleep_quality, gratitude_reflection, daily_intention)
-      VALUES (${userId}, ${data.mood}, ${data.energyLevel}, ${data.sleepQuality}, ${data.gratitudeReflection}, ${data.dailyIntention})
+      INSERT INTO daily_checkins (user_id, mood, energy_level, sleep_quality, gratitude_reflection, daily_intention, reflection)
+      VALUES (${userId}, ${data.mood}, ${data.energyLevel}, ${data.sleepQuality}, ${data.gratitudeReflection}, ${data.dailyIntention}, ${data.reflection || null})
     `;
 
     // 2. Manage user streak
