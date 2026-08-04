@@ -1,109 +1,211 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useCategory } from "@/frontend/lib/context/CategoryContext";
+import { motion, AnimatePresence } from "framer-motion";
 import { useAssessment } from "@/frontend/lib/context/AssessmentContext";
+import { useCategory } from "@/frontend/lib/context/CategoryContext";
+import { COMMON_QUESTIONS } from "@/frontend/lib/assessment/commonQuestions";
+import { assessmentEngine } from "@/frontend/lib/assessment/assessmentEngine";
+import { evaluateWellness } from "@/frontend/lib/assessment/wellness";
 
 export default function AssessmentFlow() {
   const router = useRouter();
   const { categoryDetails } = useCategory();
-  const { answers, setAnswers } = useAssessment();
-  const [step, setStep] = useState<number>(1);
+  const { detailedAnswers, setDetailedAnswers, setAssessmentResult } = useAssessment();
 
-  const questions = [
-    { id: 1, key: "stressFrequency" as const, text: "How often have you felt overwhelmed or anxious over the past 2 weeks?" },
-    { id: 2, key: "sleepQuality" as const, text: "How would you rate your average sleep quality recently?" },
-    { id: 3, key: "supportLevel" as const, text: "How supported do you feel by your daily routine and environment?" },
-  ];
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [direction, setDirection] = useState(1); // 1 = forward, -1 = backward
 
-  const handleSelectScore = (key: keyof typeof answers, val: number) => {
-    setAnswers((prev) => ({ ...prev, [key]: val }));
+  const question = COMMON_QUESTIONS[currentIndex];
+  const totalQuestions = COMMON_QUESTIONS.length;
+
+  // Find if there is an existing answer for this question to pre-fill selection
+  const existingAnswer = detailedAnswers.find((ans) => ans.questionId === question.id);
+  const [selectedOptionId, setSelectedOptionId] = useState<string | null>(
+    existingAnswer ? existingAnswer.selectedOptionId : null
+  );
+
+  // Sync selectedOptionId when current index or answers change
+  useEffect(() => {
+    const ans = detailedAnswers.find((a) => a.questionId === question.id);
+    setSelectedOptionId(ans ? ans.selectedOptionId : null);
+  }, [currentIndex, detailedAnswers, question.id]);
+
+  const handleSelectOption = (optionId: string) => {
+    setSelectedOptionId(optionId);
   };
 
-  const handleComplete = () => {
-    if (step === 1) {
-      setStep(2);
+  const handleNext = () => {
+    if (!selectedOptionId) return;
+
+    // Create the structured answer
+    const newAnswer = assessmentEngine.createAnswer(question.id, selectedOptionId);
+    if (!newAnswer) return;
+
+    // Update detailedAnswers array in Context
+    const updatedAnswers = [...detailedAnswers];
+    const existingIndex = updatedAnswers.findIndex((ans) => ans.questionId === question.id);
+    if (existingIndex > -1) {
+      updatedAnswers[existingIndex] = newAnswer;
     } else {
+      updatedAnswers.push(newAnswer);
+    }
+    setDetailedAnswers(updatedAnswers);
+
+    if (currentIndex < totalQuestions - 1) {
+      setDirection(1);
+      setCurrentIndex((prev) => prev + 1);
+    } else {
+      // Finished all 5 questions
+      const results = evaluateWellness(updatedAnswers);
+      setAssessmentResult(results);
       router.push("/wellness-score");
     }
   };
 
+  const handleBack = () => {
+    if (currentIndex > 0) {
+      setDirection(-1);
+      setCurrentIndex((prev) => prev - 1);
+    }
+  };
+
+  // Slide left animations for forward, slide right for backward
+  const slideVariants = {
+    enter: (dir: number) => ({
+      x: dir > 0 ? 80 : -80,
+      opacity: 0,
+    }),
+    center: {
+      x: 0,
+      opacity: 1,
+    },
+    exit: (dir: number) => ({
+      x: dir > 0 ? -80 : 80,
+      opacity: 0,
+    }),
+  };
+
+  const progressPercentage = ((currentIndex + 1) / totalQuestions) * 100;
+
   return (
-    <div className="max-w-3xl mx-auto py-8 px-4 space-y-8">
-      {/* Header */}
-      <div className="text-center space-y-3">
-        <span className="px-4 py-1 rounded-full bg-mint/20 text-secondary text-xs font-semibold uppercase tracking-wider">
-          Tailored for {categoryDetails.name}
-        </span>
-        <h1 className="text-3xl font-heading font-bold text-on-surface">
-          {step === 1 ? "Personalized Assessment" : "Confirming Assessment Intention"}
-        </h1>
-        <p className="text-sm text-on-surface-variant max-w-lg mx-auto">
-          {step === 1
-            ? "Help us calibrate your baseline stress score and AI companion tone."
-            : "Synthesizing your responses into your custom Serenity Index Score."}
-        </p>
+    <div className="bg-background text-on-background min-h-screen relative flex flex-col justify-between py-12 px-4 md:px-8 overflow-hidden">
+      {/* Calming Backdrop Glows */}
+      <div className="fixed inset-0 z-[-2] opacity-35 pointer-events-none">
+        <div className="absolute top-[-10%] left-[-10%] w-[60vw] md:w-[500px] h-[60vw] md:h-[500px] rounded-full bg-primary-container blur-[100px]" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[60vw] md:w-[500px] h-[60vw] md:h-[500px] rounded-full bg-secondary-container blur-[120px] opacity-30" />
       </div>
 
-      {step === 1 ? (
-        <div className="space-y-6">
-          {questions.map((q) => (
-            <div key={q.id} className="p-6 rounded-3xl bg-surface-container-lowest border border-surface-variant/30 shadow-soft space-y-4">
-              <h3 className="font-heading font-semibold text-lg text-on-surface">{q.text}</h3>
-              <div className="flex justify-between gap-2">
-                {[1, 2, 3, 4, 5].map((val) => (
-                  <button
-                    key={val}
-                    onClick={() => handleSelectScore(q.key, val)}
-                    className={`flex-1 py-3 rounded-2xl font-bold text-sm transition-all ${
-                      answers[q.key] === val
-                        ? "bg-primary text-white shadow-md scale-105"
-                        : "bg-surface-container-low text-on-surface-variant hover:bg-surface-container"
-                    }`}
-                  >
-                    {val}
-                  </button>
-                ))}
-              </div>
-              <div className="flex justify-between text-xs text-on-surface-variant/60 px-1">
-                <span>Low / Rarely</span>
-                <span>High / Frequently</span>
-              </div>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <div className="p-8 rounded-3xl bg-surface-container-lowest border border-surface-variant/30 text-center space-y-6 shadow-soft">
-          <div className="w-20 h-20 mx-auto rounded-full bg-primary-container/20 text-primary flex items-center justify-center animate-pulse">
-            <span className="material-symbols-outlined text-4xl">auto_awesome</span>
+      {/* Main Container */}
+      <div className="max-w-2xl mx-auto w-full flex-1 flex flex-col justify-between gap-8 z-10">
+        
+        {/* Progress Area */}
+        <div className="space-y-4">
+          <div className="flex justify-between items-center text-xs md:text-sm text-on-surface-variant/80 font-medium">
+            <span className="px-3.5 py-1.5 rounded-full bg-surface-container-high border border-surface-variant/50">
+              Onboarding: {categoryDetails.name}
+            </span>
+            <span className="font-semibold text-primary">
+              Question {currentIndex + 1} of {totalQuestions}
+            </span>
           </div>
 
-          <div className="space-y-2">
-            <h2 className="text-2xl font-heading font-bold text-on-surface">Ready to Calculate Your Serenity Score!</h2>
-            <p className="text-sm text-on-surface-variant max-w-md mx-auto">
-              Click below to view your personalized baseline wellness score and recommendations.
-            </p>
+          {/* Progress Bar Container */}
+          <div className="w-full bg-surface-container-high h-2 rounded-full overflow-hidden shadow-inner">
+            <motion.div
+              className="h-full bg-primary rounded-full"
+              initial={{ width: `${(currentIndex) * 20}%` }}
+              animate={{ width: `${progressPercentage}%` }}
+              transition={{ duration: 0.4, ease: "easeOut" }}
+            />
           </div>
         </div>
-      )}
 
-      {/* Navigation */}
-      <div className="flex justify-between items-center pt-4">
-        {step === 2 && (
+        {/* Animated Question Content */}
+        <div className="flex-1 flex flex-col justify-center min-h-[350px]">
+          <AnimatePresence mode="wait" custom={direction}>
+            <motion.div
+              key={currentIndex}
+              custom={direction}
+              variants={slideVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{ duration: 0.35, ease: "easeInOut" }}
+              className="space-y-8"
+            >
+              {/* Question text block */}
+              <div className="space-y-3 text-center md:text-left">
+                <h2 className="text-2xl md:text-3xl font-heading font-bold text-on-surface leading-snug tracking-tight">
+                  {question.text}
+                </h2>
+                <p className="text-sm md:text-base text-on-surface-variant/90 leading-relaxed font-light">
+                  {question.description}
+                </p>
+              </div>
+
+              {/* Option Radio Group */}
+              <div className="space-y-4" role="radiogroup" aria-label={question.text}>
+                {question.options.map((opt) => {
+                  const isSelected = selectedOptionId === opt.id;
+                  return (
+                    <button
+                      key={opt.id}
+                      type="button"
+                      role="radio"
+                      aria-checked={isSelected}
+                      onClick={() => handleSelectOption(opt.id)}
+                      className={`w-full flex items-center justify-between p-5 rounded-[24px] transition-all border text-left cursor-pointer group focus:outline-none focus:ring-2 focus:ring-primary/20 ${
+                        isSelected
+                          ? "bg-surface-container-lowest border-primary shadow-card-lift ring-2 ring-primary/20 text-primary font-semibold"
+                          : "bg-surface-container-lowest border-surface-variant/30 shadow-soft hover:shadow-md hover:border-primary/30 text-on-surface-variant"
+                      }`}
+                    >
+                      <span className="text-sm md:text-base font-medium">{opt.text}</span>
+                      <div
+                        className={`w-5.5 h-5.5 rounded-full border flex items-center justify-center transition-all ${
+                          isSelected
+                            ? "border-primary bg-primary"
+                            : "border-outline-variant group-hover:border-primary/50"
+                        }`}
+                      >
+                        {isSelected && <div className="w-2 h-2 rounded-full bg-white" />}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+
+        {/* Action Controls */}
+        <div className="flex justify-between items-center border-t border-surface-variant/20 pt-6">
+          {currentIndex > 0 ? (
+            <button
+              onClick={handleBack}
+              type="button"
+              className="px-6 py-3.5 rounded-full bg-surface-container-low text-on-surface-variant font-semibold text-sm hover:bg-surface-container transition-all flex items-center gap-2"
+            >
+              <span className="material-symbols-outlined text-base">arrow_back</span>
+              Previous
+            </button>
+          ) : (
+            <div className="w-10" />
+          )}
+
           <button
-            onClick={() => setStep(1)}
-            className="px-6 py-2.5 rounded-full bg-surface-container text-on-surface-variant font-medium hover:bg-surface-container-high"
+            onClick={handleNext}
+            type="button"
+            disabled={!selectedOptionId}
+            className="ml-auto px-10 py-3.5 rounded-full bg-primary text-white font-semibold text-sm shadow-md hover:bg-primary-purple transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2"
           >
-            Review Answers
+            {currentIndex === totalQuestions - 1 ? "Complete Assessment" : "Continue"}
+            <span className="material-symbols-outlined text-base">arrow_forward</span>
           </button>
-        )}
-        <button
-          onClick={handleComplete}
-          className="ml-auto px-8 py-3.5 rounded-full bg-primary text-white font-semibold shadow-md hover:bg-primary-purple transition-all"
-        >
-          {step === 1 ? "Review Summary →" : "View Serenity Score →"}
-        </button>
+        </div>
+
       </div>
     </div>
   );
