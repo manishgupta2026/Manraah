@@ -3,11 +3,23 @@
 import React from "react";
 import Link from "next/link";
 
-export default function Header() {
+interface HeaderProps {
+  onOpenMenu?: () => void;
+}
+
+export default function Header({ onOpenMenu }: HeaderProps) {
   return (
     <header className="sticky top-0 z-20 bg-surface-container-lowest/80 backdrop-blur-md border-b border-surface-variant/30 px-4 md:px-8 py-3 flex items-center justify-between shadow-sm">
-      {/* Mobile Brand Title */}
+      {/* Mobile Brand Title with Menu Trigger */}
       <div className="flex items-center gap-2 md:hidden">
+        <button
+          type="button"
+          onClick={onOpenMenu}
+          className="material-symbols-outlined text-primary text-2xl mr-1 cursor-pointer focus:outline-none hover:opacity-80"
+          aria-label="Open navigation menu"
+        >
+          menu
+        </button>
         <div className="w-8 h-8 rounded-lg gradient-primary flex items-center justify-center text-white">
           <span className="material-symbols-outlined text-xl">spa</span>
         </div>

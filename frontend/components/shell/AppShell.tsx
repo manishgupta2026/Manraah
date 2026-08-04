@@ -1,11 +1,13 @@
 "use client";
 
-import React, { ReactNode } from "react";
+import React, { ReactNode, useState } from "react";
 import { usePathname } from "next/navigation";
+import { AnimatePresence } from "framer-motion";
 import { CategoryProvider } from "@/frontend/lib/context/CategoryContext";
 import { AssessmentProvider } from "@/frontend/lib/context/AssessmentContext";
 import DesktopSidebar from "./DesktopSidebar";
 import MobileTabBar from "./MobileTabBar";
+import MobileDrawer from "./MobileDrawer";
 import Header from "./Header";
 
 const STANDALONE_ROUTES = [
@@ -20,6 +22,7 @@ const STANDALONE_ROUTES = [
 export default function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const isStandalone = STANDALONE_ROUTES.includes(pathname);
+  const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
 
   return (
     <CategoryProvider>
@@ -37,13 +40,23 @@ export default function AppShell({ children }: { children: ReactNode }) {
 
             {/* Main Content Area */}
             <div className="flex-1 flex flex-col min-w-0 md:ml-[80px] lg:ml-[280px] h-screen overflow-y-auto pb-20 md:pb-8">
-              <Header />
+              <Header onOpenMenu={() => setIsMobileDrawerOpen(true)} />
               <main className="flex-1 px-4 md:px-8 py-6 max-w-7xl mx-auto w-full">
                 {children}
               </main>
             </div>
 
-            {/* Mobile Bottom Navigation */}
+            {/* Mobile Animated Drawer navigation overlay */}
+            <AnimatePresence>
+              {isMobileDrawerOpen && (
+                <MobileDrawer
+                  isOpen={isMobileDrawerOpen}
+                  onClose={() => setIsMobileDrawerOpen(false)}
+                />
+              )}
+            </AnimatePresence>
+
+            {/* Mobile Bottom Navigation Bar */}
             <MobileTabBar />
           </div>
         )}
