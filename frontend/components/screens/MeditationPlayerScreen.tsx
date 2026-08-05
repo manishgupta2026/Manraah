@@ -10,6 +10,7 @@ export default function MeditationPlayerScreen() {
   const [selectedDuration, setSelectedDuration] = useState<number>(5); // 1, 3, 5, 10 mins
   const [selectedMode, setSelectedMode] = useState<"432Hz Calm" | "Theta Waves" | "Zen Resonance">("432Hz Calm");
   const [natureSound, setNatureSound] = useState<"None" | "Gentle Rain" | "Ocean Waves" | "Forest Wind">("None");
+  const [language, setLanguage] = useState<"EN" | "HI" | "HING">("EN");
 
   // Timer & Playback state
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
@@ -17,6 +18,10 @@ export default function MeditationPlayerScreen() {
   const [breathPhase, setBreathPhase] = useState<"Inhale" | "Hold" | "Exhale">("Inhale");
   const [breathSeconds, setBreathSeconds] = useState<number>(4);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  // Emergency 30-Second Panic Modal
+  const [isPanicMode, setIsPanicMode] = useState<boolean>(false);
+  const [panicSeconds, setPanicSeconds] = useState<number>(30);
 
   // Post-Session Reflection Modal State
   const [showReflectionModal, setShowReflectionModal] = useState<boolean>(false);
@@ -79,10 +84,26 @@ export default function MeditationPlayerScreen() {
     return () => clearInterval(timer);
   }, [isPlaying, secondsLeft]);
 
+  // Emergency Panic 30-Sec Countdown Effect
+  useEffect(() => {
+    let panicTimer: NodeJS.Timeout;
+    if (isPanicMode && panicSeconds > 0) {
+      panicTimer = setInterval(() => {
+        setPanicSeconds((prev) => prev - 1);
+      }, 1000);
+    } else if (isPanicMode && panicSeconds === 0) {
+      setIsPanicMode(false);
+      stopAudio();
+      setToastMessage("🌸 Emergency Panic Reset Complete. Take a slow, deep breath.");
+      setTimeout(() => setToastMessage(null), 6000);
+    }
+    return () => clearInterval(panicTimer);
+  }, [isPanicMode, panicSeconds]);
+
   // 4-7-8 Visual Breathing Sync Effect
   useEffect(() => {
     let breathTimer: NodeJS.Timeout;
-    if (isPlaying) {
+    if (isPlaying || isPanicMode) {
       breathTimer = setInterval(() => {
         setBreathSeconds((prevSec) => {
           if (prevSec > 1) {
@@ -106,7 +127,7 @@ export default function MeditationPlayerScreen() {
       setBreathSeconds(4);
     }
     return () => clearInterval(breathTimer);
-  }, [isPlaying, breathPhase]);
+  }, [isPlaying, isPanicMode, breathPhase]);
 
   // Web Audio API: Soundscape & Nature Noise Synthesizer
   const startAudio = () => {
@@ -159,7 +180,6 @@ export default function MeditationPlayerScreen() {
       osc2Ref.current = osc2;
       gainNodeRef.current = gainNode;
 
-      // Generate Nature Sound Layer (Pink/White Noise Filtering)
       if (natureSound !== "None") {
         const bufferSize = ctx.sampleRate * 2;
         const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
@@ -239,6 +259,14 @@ export default function MeditationPlayerScreen() {
     }
   };
 
+  const triggerEmergencyPanic = () => {
+    setIsPlaying(false);
+    stopAudio();
+    setIsPanicMode(true);
+    setPanicSeconds(30);
+    startAudio();
+  };
+
   const togglePlayback = () => {
     if (isPlaying) {
       setIsPlaying(false);
@@ -308,11 +336,31 @@ export default function MeditationPlayerScreen() {
     }
   };
 
+  // Format MM:SS
   const formatTime = (totalSec: number) => {
     const mins = Math.floor(totalSec / 60);
     const secs = totalSec % 60;
     return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
   };
+
+  // Vernacular Breathing Prompts
+  const getBreathPrompt = () => {
+    if (language === "HI") {
+      return breathPhase === "Inhale" ? "गहरी सांस लें" : breathPhase === "Hold" ? "सांस रोकें" : "धीरे छोड़ें";
+    }
+    if (language === "HING") {
+      return breathPhase === "Inhale" ? "Gehri Saans Lein" : breathPhase === "Hold" ? "Hold Karein" : "Dhire Chhoddein";
+    }
+    return breathPhase;
+  };
+
+  // Presets tailored to user category
+  const lifeStagePresets = [
+    { title: "🎓 JEE/NEET Exam Panic Reset", duration: "3 Mins", mins: 3, cat: "student", mode: "Theta Waves" as const },
+    { title: "💻 12-Hour Workday Burnout", duration: "5 Mins", mins: 5, cat: "working-professional", mode: "432Hz Calm" as const },
+    { title: "🏡 Parent Patience & Family Grounding", duration: "5 Mins", mins: 5, cat: "parents", mode: "Zen Resonance" as const },
+    { title: "👵 Senior Gentle Relaxation", duration: "10 Mins", mins: 10, cat: "senior-citizens", mode: "Zen Resonance" as const },
+  ];
 
   const totalSeconds = selectedDuration * 60;
   const progressPercent = Math.min(100, Math.max(0, ((totalSeconds - secondsLeft) / totalSeconds) * 100));
@@ -326,15 +374,46 @@ export default function MeditationPlayerScreen() {
         </div>
       )}
 
-      {/* Feature 4: Live Mindfulness Stats Banner */}
+      {/* Top Action Bar: Emergency Panic Reset & Language Toggle */}
+      <div className="flex items-center justify-between gap-3 bg-surface-container-lowest p-3 rounded-2xl border border-surface-variant/30 shadow-soft">
+        <button
+          onClick={triggerEmergencyPanic}
+          className="px-4 py-2 rounded-full bg-rose-500 hover:bg-rose-600 text-white font-bold text-xs shadow-md transition-all flex items-center gap-2 animate-pulse"
+        >
+          <span className="material-symbols-outlined text-base">emergency</span>
+          🚨 30-Sec Panic Reset
+        </button>
+
+        {/* Vernacular Language Selector */}
+        <div className="flex items-center gap-1.5 bg-surface-container-low p-1 rounded-full border border-surface-variant/20">
+          {[
+            { label: "English", id: "EN" as const },
+            { label: "हिन्दी", id: "HI" as const },
+            { label: "Hinglish", id: "HING" as const },
+          ].map((lang) => (
+            <button
+              key={lang.id}
+              onClick={() => setLanguage(lang.id)}
+              className={`px-3 py-1 rounded-full text-[11px] font-bold transition-all ${
+                language === lang.id ? "bg-primary text-white shadow-xs" : "text-on-surface-variant hover:text-on-surface"
+              }`}
+            >
+              {lang.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Feature 4: Live Mindfulness Stats Banner (Cumulative Practice Days - No Shame Reset) */}
       <div className="grid grid-cols-3 gap-3">
         <div className="p-4 rounded-2xl bg-primary-container/15 border border-primary/20 text-center">
           <p className="text-[11px] font-semibold text-on-surface-variant/70 uppercase">Mindfulness Minutes</p>
           <p className="text-xl font-heading font-black text-primary">{stats.totalMinutes} mins</p>
         </div>
         <div className="p-4 rounded-2xl bg-mint/20 border border-secondary/20 text-center">
-          <p className="text-[11px] font-semibold text-on-surface-variant/70 uppercase">Current Streak</p>
-          <p className="text-xl font-heading font-black text-secondary">{stats.streakDays} Days 🔥</p>
+          <p className="text-[11px] font-semibold text-on-surface-variant/70 uppercase">Resilience Practice</p>
+          <p className="text-xl font-heading font-black text-secondary">{stats.streakDays} Days Total 🌱</p>
+          <p className="text-[9px] text-on-surface-variant/80 mt-0.5">Every practice counts • No zero resets</p>
         </div>
         <div className="p-4 rounded-2xl bg-peach/30 border border-tertiary/20 text-center">
           <p className="text-[11px] font-semibold text-on-surface-variant/70 uppercase">Total Sessions</p>
@@ -389,7 +468,7 @@ export default function MeditationPlayerScreen() {
         <div className="relative w-52 h-52 mx-auto flex items-center justify-center">
           <div
             className={`absolute inset-0 rounded-full bg-primary-container/20 border-4 border-primary/40 transition-all duration-1000 shadow-inner flex items-center justify-center ${
-              isPlaying
+              isPlaying || isPanicMode
                 ? breathPhase === "Inhale"
                   ? "scale-110 border-secondary bg-secondary-container/30 shadow-secondary/30"
                   : breathPhase === "Hold"
@@ -400,12 +479,12 @@ export default function MeditationPlayerScreen() {
           >
             <div className="text-center space-y-1">
               <span className="material-symbols-outlined text-4xl text-primary block">
-                {isPlaying ? "spa" : "self_improvement"}
+                {isPlaying || isPanicMode ? "spa" : "self_improvement"}
               </span>
-              {isPlaying ? (
+              {isPlaying || isPanicMode ? (
                 <div className="space-y-0.5">
                   <span className="font-heading font-bold text-sm text-primary uppercase block tracking-wider">
-                    {breathPhase}
+                    {getBreathPrompt()}
                   </span>
                   <span className="font-mono font-bold text-xs text-on-surface-variant/80 block">
                     {breathSeconds}s
@@ -471,6 +550,30 @@ export default function MeditationPlayerScreen() {
         </div>
       </div>
 
+      {/* Feature 3: Indian Life-Stage Specific Presets */}
+      <div className="space-y-3">
+        <h3 className="font-heading font-bold text-lg text-on-surface">Indian Life-Stage Meditation Presets</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {lifeStagePresets.map((preset) => (
+            <div
+              key={preset.title}
+              onClick={() => {
+                setSelectedDuration(preset.mins);
+                setSelectedMode(preset.mode);
+                setIsPlaying(true);
+              }}
+              className="p-4 rounded-2xl bg-surface-container-lowest border border-surface-variant/30 hover:border-primary/40 transition-all cursor-pointer flex items-center justify-between hover:shadow-soft"
+            >
+              <div className="space-y-1">
+                <h4 className="font-heading font-bold text-xs text-on-surface">{preset.title}</h4>
+                <p className="text-[11px] text-on-surface-variant">{preset.duration} • {preset.mode}</p>
+              </div>
+              <span className="material-symbols-outlined text-primary text-xl">play_circle</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* Feature 2: Ambient Nature Sound Layer */}
       <div className="space-y-3">
         <h3 className="font-heading font-bold text-lg text-on-surface">Ambient Nature Layer</h3>
@@ -521,7 +624,38 @@ export default function MeditationPlayerScreen() {
         </div>
       </div>
 
-      {/* Feature 3: Post-Session Quick Reflection Modal */}
+      {/* Emergency 30-Second Panic Modal */}
+      {isPanicMode && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-rose-950/80 backdrop-blur-md animate-fadeIn">
+          <div className="bg-surface-container-lowest rounded-3xl p-8 max-w-md w-full border border-rose-500/50 shadow-soft-xl space-y-6 text-center">
+            <span className="material-symbols-outlined text-5xl text-rose-500 animate-pulse block mx-auto">
+              emergency
+            </span>
+            <div className="space-y-2">
+              <h3 className="text-2xl font-heading font-bold text-on-surface">30-Second Grounding Reset</h3>
+              <p className="text-xs text-on-surface-variant">
+                You are safe. Follow the breathing circle below to bring calm to your nervous system.
+              </p>
+            </div>
+
+            <div className="text-4xl font-mono font-black text-rose-500 animate-bounce">
+              00:{panicSeconds.toString().padStart(2, "0")}
+            </div>
+
+            <button
+              onClick={() => {
+                setIsPanicMode(false);
+                stopAudio();
+              }}
+              className="w-full py-3 rounded-full bg-surface-container text-on-surface-variant font-bold text-xs hover:bg-surface-container-high"
+            >
+              Close Grounding Reset
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Post-Session Quick Reflection Modal */}
       {showReflectionModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fadeIn">
           <div className="bg-surface-container-lowest rounded-3xl p-8 max-w-md w-full border border-surface-variant/40 shadow-soft-xl space-y-5 text-center">
