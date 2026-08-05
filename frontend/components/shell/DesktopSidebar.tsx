@@ -1,12 +1,27 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { MAIN_NAV_ITEMS } from "@/frontend/lib/constants";
+import { getClientSession } from "@/backend/auth/client";
 
 export default function DesktopSidebar() {
   const pathname = usePathname();
+  const [userName, setUserName] = useState("Aanya Sharma");
+
+  useEffect(() => {
+    const session = getClientSession();
+    if (session.user?.name) {
+      setUserName(session.user.name);
+    }
+  }, []);
+
+  const getInitials = (name: string) => {
+    const parts = name.trim().split(" ");
+    if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  };
 
   return (
     <aside className="hidden md:flex flex-col fixed top-0 left-0 h-screen w-[80px] lg:w-[260px] bg-surface-container-lowest border-r border-surface-variant/40 z-30 shadow-soft transition-all duration-300">
@@ -59,13 +74,13 @@ export default function DesktopSidebar() {
         <Link
           href="/profile"
           className="flex items-center justify-center lg:justify-start gap-2.5 p-2 rounded-xl hover:bg-surface-container transition-colors"
-          title="Aanya Sharma"
+          title={userName}
         >
           <div className="w-8 h-8 rounded-full bg-primary-container/20 flex items-center justify-center text-primary font-bold text-xs border border-primary/20 shrink-0">
-            AS
+            {getInitials(userName)}
           </div>
           <div className="hidden lg:block flex-1 min-w-0">
-            <p className="text-xs font-semibold text-on-surface truncate">Aanya Sharma</p>
+            <p className="text-xs font-semibold text-on-surface truncate">{userName}</p>
             <p className="text-[10px] text-on-surface-variant/70 truncate">Settings & Profile</p>
           </div>
           <span className="hidden lg:block material-symbols-outlined text-base text-outline">settings</span>
