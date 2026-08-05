@@ -8,7 +8,7 @@ export default function MeditationPlayerScreen() {
 
   // Selected session settings
   const [selectedDuration, setSelectedDuration] = useState<number>(5); // 1, 3, 5, 10 mins
-  const [selectedMode, setSelectedMode] = useState<string>("432Hz Calm");
+  const [selectedMode, setSelectedMode] = useState<"432Hz Calm" | "Theta Waves" | "Zen Resonance">("432Hz Calm");
 
   // Timer & Playback state
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
@@ -29,6 +29,16 @@ export default function MeditationPlayerScreen() {
     stopAudio();
     setSecondsLeft(selectedDuration * 60);
   }, [selectedDuration]);
+
+  // Restart audio synth seamlessly if user changes soundscape mode while playing
+  useEffect(() => {
+    if (isPlaying) {
+      stopAudio();
+      setTimeout(() => {
+        startAudio();
+      }, 200);
+    }
+  }, [selectedMode]);
 
   // Master Timer Tick Effect
   useEffect(() => {
@@ -73,7 +83,7 @@ export default function MeditationPlayerScreen() {
     return () => clearInterval(breathTimer);
   }, [isPlaying, breathPhase]);
 
-  // Web Audio API: 432 Hz Solfeggio & Tibetan Bowl Chime Synthesizer
+  // Web Audio API: Soundscape Synthesizer tailored per mode
   const startAudio = () => {
     try {
       const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
@@ -86,22 +96,43 @@ export default function MeditationPlayerScreen() {
       }
 
       // Play start Tibetan singing bowl chime
-      playTibetanBowlChime(ctx, 216);
+      playTibetanBowlChime(ctx, selectedMode === "Zen Resonance" ? 180 : 216);
 
-      // Create dual harmonic oscillators (432 Hz base + 436 Hz binaural theta beat)
       const osc1 = ctx.createOscillator();
       const osc2 = ctx.createOscillator();
       const gainNode = ctx.createGain();
 
-      osc1.type = "sine";
-      osc1.frequency.setValueAtTime(432, ctx.currentTime); // 432 Hz Healing Frequency
+      if (selectedMode === "432Hz Calm") {
+        // Mode 1: 432 Hz Solfeggio Deep Calm (Smooth Sine Waves)
+        osc1.type = "sine";
+        osc1.frequency.setValueAtTime(432, ctx.currentTime);
 
-      osc2.type = "sine";
-      osc2.frequency.setValueAtTime(436, ctx.currentTime); // +4 Hz Theta relaxation wave
+        osc2.type = "sine";
+        osc2.frequency.setValueAtTime(438, ctx.currentTime); // +6 Hz Theta binaural beat
 
-      // Soft ambient gain
-      gainNode.gain.setValueAtTime(0.001, ctx.currentTime);
-      gainNode.gain.exponentialRampToValueAtTime(0.06, ctx.currentTime + 3);
+        gainNode.gain.setValueAtTime(0.001, ctx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.06, ctx.currentTime + 2);
+      } else if (selectedMode === "Theta Waves") {
+        // Mode 2: 528 Hz Transformation & Alpha Focus (Warm Triangle Wave)
+        osc1.type = "triangle";
+        osc1.frequency.setValueAtTime(528, ctx.currentTime);
+
+        osc2.type = "sine";
+        osc2.frequency.setValueAtTime(536, ctx.currentTime); // +8 Hz Alpha focus beat
+
+        gainNode.gain.setValueAtTime(0.001, ctx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.04, ctx.currentTime + 2);
+      } else {
+        // Mode 3: Zen Resonance (Deep Grounding Octave 216 Hz + 432 Hz)
+        osc1.type = "sine";
+        osc1.frequency.setValueAtTime(216, ctx.currentTime);
+
+        osc2.type = "sine";
+        osc2.frequency.setValueAtTime(432, ctx.currentTime);
+
+        gainNode.gain.setValueAtTime(0.001, ctx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.07, ctx.currentTime + 2);
+      }
 
       osc1.connect(gainNode);
       osc2.connect(gainNode);
@@ -121,7 +152,7 @@ export default function MeditationPlayerScreen() {
   const stopAudio = () => {
     try {
       if (gainNodeRef.current && audioCtxRef.current) {
-        gainNodeRef.current.gain.exponentialRampToValueAtTime(0.0001, audioCtxRef.current.currentTime + 1);
+        gainNodeRef.current.gain.exponentialRampToValueAtTime(0.0001, audioCtxRef.current.currentTime + 0.5);
         setTimeout(() => {
           osc1Ref.current?.stop();
           osc2Ref.current?.stop();
@@ -129,7 +160,7 @@ export default function MeditationPlayerScreen() {
           osc2Ref.current?.disconnect();
           osc1Ref.current = null;
           osc2Ref.current = null;
-        }, 1000);
+        }, 500);
       }
     } catch (err) {
       console.warn("Error stopping audio:", err);
@@ -291,7 +322,7 @@ export default function MeditationPlayerScreen() {
             {selectedDuration}-Minute {categoryDetails.name} Session
           </h2>
           <p className="text-xs text-primary font-semibold uppercase tracking-widest">
-            🎵 432 Hz Solfeggio Harmonic Resonance & Binaural Beats
+            🎵 Mode: <span className="underline">{selectedMode}</span> — Real Web Audio Frequency Synthesis
           </p>
         </div>
 
@@ -343,21 +374,23 @@ export default function MeditationPlayerScreen() {
         <h3 className="font-heading font-bold text-lg text-on-surface">Select Audio Soundscape Mode</h3>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {[
-            { mode: "432Hz Calm", desc: "Solfeggio frequency for deep nervous system relaxation", icon: "graphic_eq" },
-            { mode: "Theta Waves", desc: "+4 Hz binaural beat for mental focus and clarity", icon: "waves" },
-            { mode: "Zen Resonance", desc: "Soft Tibetan singing bowl harmonic undertones", icon: "ring_volume" },
+            { mode: "432Hz Calm" as const, desc: "432 Hz Solfeggio sine wave + 6 Hz Theta binaural beat for deep nervous system relaxation", icon: "graphic_eq" },
+            { mode: "Theta Waves" as const, desc: "528 Hz Transformation frequency + 8 Hz Alpha focus beat for mental clarity", icon: "waves" },
+            { mode: "Zen Resonance" as const, desc: "216 Hz Deep grounding bass overtone with Tibetan singing bowl harmonic undertones", icon: "ring_volume" },
           ].map((m) => (
             <div
               key={m.mode}
               onClick={() => setSelectedMode(m.mode)}
-              className={`p-4 rounded-2xl border transition-all cursor-pointer space-y-1 ${
+              className={`p-4 rounded-2xl border transition-all cursor-pointer space-y-1.5 ${
                 selectedMode === m.mode
-                  ? "bg-primary-container/20 border-primary shadow-sm"
+                  ? "bg-primary-container/20 border-primary shadow-md scale-[1.02]"
                   : "bg-surface-container-lowest border-surface-variant/30 hover:bg-surface-container-low"
               }`}
             >
               <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-primary text-xl">{m.icon}</span>
+                <span className={`material-symbols-outlined text-xl ${selectedMode === m.mode ? "text-primary font-bold" : "text-primary/70"}`}>
+                  {m.icon}
+                </span>
                 <h4 className="font-heading font-bold text-xs text-on-surface">{m.mode}</h4>
               </div>
               <p className="text-[11px] text-on-surface-variant leading-relaxed">{m.desc}</p>
