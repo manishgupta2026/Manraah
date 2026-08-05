@@ -189,7 +189,7 @@ export default function DashboardScreen() {
   const gardenStage = getGardenStage(gardenStats.totalCheckIns);
 
   return (
-    <div className="max-w-7xl mx-auto py-10 px-6 space-y-10 relative select-none animate-fadeIn">
+    <div className="max-w-7xl mx-auto py-2 md:py-4 px-2 md:px-4 space-y-6 relative select-none animate-fadeIn">
       
       {/* Ambient background glow */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
@@ -205,7 +205,7 @@ export default function DashboardScreen() {
         variants={containerVariants}
         initial="hidden"
         animate="show"
-        className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-12 gap-8 z-10 relative"
+        className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-12 gap-5 md:gap-6 z-10 relative"
       >
         
         {/* ROW 1: Hero Card (col-span-8) & AI Companion (col-span-4) */}
@@ -213,7 +213,7 @@ export default function DashboardScreen() {
         {/* 1. Hero Card */}
         <motion.section
           variants={cardVariants}
-          className={`col-span-1 sm:col-span-2 md:col-span-8 relative min-h-[260px] rounded-[42px] bg-gradient-to-tr ${currentTheme.bgGradient} p-8 md:p-12 flex flex-col justify-between overflow-hidden shadow-soft-xl border border-white/20`}
+          className={`col-span-1 sm:col-span-2 md:col-span-8 relative rounded-[32px] bg-gradient-to-tr ${currentTheme.bgGradient} p-6 md:p-8 flex flex-col justify-between overflow-hidden shadow-soft-xl border border-white/20`}
         >
           {/* Ambient particle loops */}
           <div className="absolute inset-0 pointer-events-none z-0 opacity-40">
