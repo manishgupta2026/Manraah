@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { getClientSession } from "@/backend/auth/client";
-import { saveDailyCheckInAction, getUserStreakAction } from "@/backend/auth/actions";
+import { useWellness } from "@/frontend/lib/context/WellnessContext";
 
 const MOODS = [
   { label: "Amazing", emoji: "😊", color: "hover:bg-emerald-50 hover:border-emerald-200" },
@@ -67,6 +67,7 @@ const REFLECTIONS = [
 
 export default function DailyCheckInScreen() {
   const router = useRouter();
+  const { dashboardData, submitCheckIn } = useWellness();
   const [userId, setUserId] = useState<string | null>(null);
 
   // Time based greeting
@@ -82,7 +83,11 @@ export default function DailyCheckInScreen() {
   const [customGratitude, setCustomGratitude] = useState("");
   const [intention, setIntention] = useState("");
   const [aiReflectionText, setAiReflectionText] = useState("");
-  const [gardenStats, setGardenStats] = useState({ count: 1, currentStreak: 1 });
+
+  const gardenStats = {
+    count: (dashboardData?.history?.length || 0) + 1, // predict count on completion
+    currentStreak: dashboardData?.streak?.currentStreak || 1,
+  };
 
   // Floating petals animation configuration
   const [petals, setPetals] = useState<{ id: number; left: number; delay: number; duration: number }[]>([]);
@@ -150,22 +155,16 @@ export default function DailyCheckInScreen() {
         ...(customGratitude.trim() ? [customGratitude.trim()] : []),
       ].join(", ");
 
-      const res = await saveDailyCheckInAction(userId, {
+      await submitCheckIn({
         mood,
-        energyLevel: energy,
-        sleepQuality: sleep,
-        gratitudeReflection: gratitudeJoined || "Being alive",
-        dailyIntention: intention || "Be present",
+        energy,
+        stress: "Medium", // default stress
+        sleep,
         reflection: aiReflectionText,
+        factors: gratitudeJoined || "Being alive",
       });
 
-      if (res.success) {
-        setGardenStats({
-          count: res.totalCheckIns || 1,
-          currentStreak: res.currentStreak || 1,
-        });
-        setStep(7); // Proceed to Completion screen
-      }
+      setStep(7); // Proceed to Completion screen
     } catch (err) {
       console.error("Failed to save checkin:", err);
     } finally {

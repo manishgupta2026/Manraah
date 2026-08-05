@@ -1,61 +1,24 @@
-import { COMMON_QUESTIONS } from "./commonQuestions";
 import { AssessmentQuestion, AssessmentAnswer } from "./types";
-import { StudentQuestions } from "./StudentQuestions";
-import { YoungProfessionalQuestions } from "./YoungProfessionalQuestions";
-import { WorkingProfessionalQuestions } from "./WorkingProfessionalQuestions";
-import { ParentsQuestions } from "./ParentsQuestions";
-import { CouplesQuestions } from "./CouplesQuestions";
-import { FamilyQuestions } from "./FamilyQuestions";
-import { WomenQuestions } from "./WomenQuestions";
-import { MenQuestions } from "./MenQuestions";
-import { SeniorCitizenQuestions } from "./SeniorCitizenQuestions";
+import { COMMON_QUESTIONS, getCategoryQuestions } from "./questions";
 
 export class AssessmentEngine {
+  /**
+   * Loads the 5 common questions and 10 category-specific questions,
+   * merging them into a total of 15 questions.
+   */
   getQuestionsForCategory(category: string | null): AssessmentQuestion[] {
-    if (!category) {
-      return [...COMMON_QUESTIONS, ...StudentQuestions]; // fallback
-    }
+    const common = COMMON_QUESTIONS.map(q => ({
+      ...q,
+      type: "common" as const
+    }));
 
-    const cat = category.toLowerCase();
-    let categoryQuestions: AssessmentQuestion[] = [];
+    const categoryQuestions = getCategoryQuestions(category).map(q => ({
+      ...q,
+      type: "category" as const,
+      category: category || "student"
+    }));
 
-    switch (cat) {
-      case "student":
-        categoryQuestions = StudentQuestions;
-        break;
-      case "young_pro":
-      case "young_professional":
-        categoryQuestions = YoungProfessionalQuestions;
-        break;
-      case "working_professional":
-        categoryQuestions = WorkingProfessionalQuestions;
-        break;
-      case "parent":
-      case "parents":
-        categoryQuestions = ParentsQuestions;
-        break;
-      case "couple":
-      case "couples":
-        categoryQuestions = CouplesQuestions;
-        break;
-      case "family":
-        categoryQuestions = FamilyQuestions;
-        break;
-      case "women":
-        categoryQuestions = WomenQuestions;
-        break;
-      case "men":
-        categoryQuestions = MenQuestions;
-        break;
-      case "senior_citizen":
-      case "senior":
-        categoryQuestions = SeniorCitizenQuestions;
-        break;
-      default:
-        categoryQuestions = StudentQuestions; // fallback
-    }
-
-    return [...COMMON_QUESTIONS, ...categoryQuestions];
+    return [...common, ...categoryQuestions];
   }
 
   getQuestionCount(category: string | null): number {
@@ -83,12 +46,14 @@ export class AssessmentEngine {
     return {
       questionId: question.id,
       questionKey: question.key,
+      questionType: question.type,
+      category: question.category || category || "student",
       selectedOptionId: option.id,
       selectedText: option.text,
       score: option.score,
+      answeredAt: new Date().toISOString(),
     };
   }
 }
 
 export const assessmentEngine = new AssessmentEngine();
-

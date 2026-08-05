@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signUp } from "@/backend/auth/client";
-import { saveUserAssessment } from "@/backend/queries/assessment";
 import { useAssessment } from "@/frontend/lib/context/AssessmentContext";
 
 export default function SignupScreen() {

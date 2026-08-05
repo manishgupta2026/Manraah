@@ -32,11 +32,27 @@ export async function signUp(
   return session;
 }
 
-export async function signIn(email: string, pass: string): Promise<AuthSession> {
+export async function signIn(
+  email: string,
+  pass: string,
+  category?: string,
+  answers?: any,
+  computedScore?: number,
+  percentage?: number,
+  wellnessLevel?: string
+): Promise<AuthSession> {
   const res = await fetch("/api/auth/login", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password: pass }),
+    body: JSON.stringify({
+      email,
+      password: pass,
+      category,
+      answers,
+      computedScore,
+      percentage,
+      wellnessLevel,
+    }),
   });
 
   const data = await res.json();

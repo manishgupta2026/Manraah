@@ -173,4 +173,47 @@ export const monthlyMoodSummaries = pgTable("monthly_mood_summaries", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+export const categories = pgTable("categories", {
+  id: text("id").primaryKey(),
+  name: text("name").notNull(),
+  description: text("description"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const questions = pgTable("questions", {
+  id: integer("id").primaryKey(),
+  key: text("key").notNull(),
+  text: text("text").notNull(),
+  description: text("description"),
+  category: text("category").references(() => categories.id, { onDelete: "cascade" }),
+  type: text("type").notNull(),
+  options: jsonb("options").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const assessments = pgTable("assessments", {
+  id: serial("id").primaryKey(),
+  userId: text("user_id").references(() => users.id, { onDelete: "cascade" }),
+  category: text("category").references(() => categories.id, { onDelete: "cascade" }),
+  totalScore: integer("total_score").notNull(),
+  maxScore: integer("max_score").notNull(),
+  percentage: integer("percentage").notNull(),
+  wellnessLevel: text("wellness_level").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const assessmentAnswers = pgTable("assessment_answers", {
+  id: serial("id").primaryKey(),
+  assessmentId: integer("assessment_id").references(() => assessments.id, { onDelete: "cascade" }),
+  questionId: integer("question_id").notNull(),
+  questionKey: text("question_key").notNull(),
+  questionType: text("question_type").notNull(),
+  category: text("category").notNull(),
+  selectedOptionId: text("selected_option_id").notNull(),
+  selectedText: text("selected_text").notNull(),
+  score: integer("score").notNull(),
+  answeredAt: timestamp("answered_at").defaultNow().notNull(),
+});
+
+
 
