@@ -9,6 +9,7 @@ export default function MeditationPlayerScreen() {
   // Selected session settings
   const [selectedDuration, setSelectedDuration] = useState<number>(5); // 1, 3, 5, 10 mins
   const [selectedMode, setSelectedMode] = useState<"432Hz Calm" | "Theta Waves" | "Zen Resonance">("432Hz Calm");
+  const [natureSound, setNatureSound] = useState<"None" | "Gentle Rain" | "Ocean Waves" | "Forest Wind">("None");
 
   // Timer & Playback state
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
@@ -17,11 +18,36 @@ export default function MeditationPlayerScreen() {
   const [breathSeconds, setBreathSeconds] = useState<number>(4);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  // Audio Context Ref for Web Audio API Sound Generator
+  // Post-Session Reflection Modal State
+  const [showReflectionModal, setShowReflectionModal] = useState<boolean>(false);
+  const [reflectionInput, setReflectionInput] = useState<string>("");
+  const [savingReflection, setSavingReflection] = useState<boolean>(false);
+
+  // Live Stats
+  const [stats, setStats] = useState({ totalMinutes: 0, streakDays: 1, totalSessions: 0 });
+
+  // Web Audio Context Refs
   const audioCtxRef = useRef<AudioContext | null>(null);
   const osc1Ref = useRef<OscillatorNode | null>(null);
   const osc2Ref = useRef<OscillatorNode | null>(null);
   const gainNodeRef = useRef<GainNode | null>(null);
+  const noiseNodeRef = useRef<AudioNode | null>(null);
+
+  // Fetch live stats from Neon DB on load
+  useEffect(() => {
+    async function loadStats() {
+      try {
+        const res = await fetch("/api/meditation/stats");
+        if (res.ok) {
+          const data = await res.json();
+          setStats(data);
+        }
+      } catch (err) {
+        console.error("Failed to load meditation stats:", err);
+      }
+    }
+    loadStats();
+  }, []);
 
   // Initialize or reset timer when duration changes
   useEffect(() => {
@@ -30,7 +56,7 @@ export default function MeditationPlayerScreen() {
     setSecondsLeft(selectedDuration * 60);
   }, [selectedDuration]);
 
-  // Restart audio synth seamlessly if user changes soundscape mode while playing
+  // Restart audio synth seamlessly if user changes soundscape or nature mode while playing
   useEffect(() => {
     if (isPlaying) {
       stopAudio();
@@ -38,7 +64,7 @@ export default function MeditationPlayerScreen() {
         startAudio();
       }, 200);
     }
-  }, [selectedMode]);
+  }, [selectedMode, natureSound]);
 
   // Master Timer Tick Effect
   useEffect(() => {
@@ -62,7 +88,6 @@ export default function MeditationPlayerScreen() {
           if (prevSec > 1) {
             return prevSec - 1;
           } else {
-            // Transition phase: Inhale (4s) -> Hold (7s) -> Exhale (8s)
             if (breathPhase === "Inhale") {
               setBreathPhase("Hold");
               return 7;
@@ -83,7 +108,7 @@ export default function MeditationPlayerScreen() {
     return () => clearInterval(breathTimer);
   }, [isPlaying, breathPhase]);
 
-  // Web Audio API: Soundscape Synthesizer tailored per mode
+  // Web Audio API: Soundscape & Nature Noise Synthesizer
   const startAudio = () => {
     try {
       const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
@@ -95,7 +120,6 @@ export default function MeditationPlayerScreen() {
         ctx.resume();
       }
 
-      // Play start Tibetan singing bowl chime
       playTibetanBowlChime(ctx, selectedMode === "Zen Resonance" ? 180 : 216);
 
       const osc1 = ctx.createOscillator();
@@ -103,33 +127,24 @@ export default function MeditationPlayerScreen() {
       const gainNode = ctx.createGain();
 
       if (selectedMode === "432Hz Calm") {
-        // Mode 1: 432 Hz Solfeggio Deep Calm (Smooth Sine Waves)
         osc1.type = "sine";
         osc1.frequency.setValueAtTime(432, ctx.currentTime);
-
         osc2.type = "sine";
-        osc2.frequency.setValueAtTime(438, ctx.currentTime); // +6 Hz Theta binaural beat
-
+        osc2.frequency.setValueAtTime(438, ctx.currentTime);
         gainNode.gain.setValueAtTime(0.001, ctx.currentTime);
         gainNode.gain.exponentialRampToValueAtTime(0.06, ctx.currentTime + 2);
       } else if (selectedMode === "Theta Waves") {
-        // Mode 2: 528 Hz Transformation & Alpha Focus (Warm Triangle Wave)
         osc1.type = "triangle";
         osc1.frequency.setValueAtTime(528, ctx.currentTime);
-
         osc2.type = "sine";
-        osc2.frequency.setValueAtTime(536, ctx.currentTime); // +8 Hz Alpha focus beat
-
+        osc2.frequency.setValueAtTime(536, ctx.currentTime);
         gainNode.gain.setValueAtTime(0.001, ctx.currentTime);
         gainNode.gain.exponentialRampToValueAtTime(0.04, ctx.currentTime + 2);
       } else {
-        // Mode 3: Zen Resonance (Deep Grounding Octave 216 Hz + 432 Hz)
         osc1.type = "sine";
         osc1.frequency.setValueAtTime(216, ctx.currentTime);
-
         osc2.type = "sine";
         osc2.frequency.setValueAtTime(432, ctx.currentTime);
-
         gainNode.gain.setValueAtTime(0.001, ctx.currentTime);
         gainNode.gain.exponentialRampToValueAtTime(0.07, ctx.currentTime + 2);
       }
@@ -137,15 +152,51 @@ export default function MeditationPlayerScreen() {
       osc1.connect(gainNode);
       osc2.connect(gainNode);
       gainNode.connect(ctx.destination);
-
       osc1.start();
       osc2.start();
 
       osc1Ref.current = osc1;
       osc2Ref.current = osc2;
       gainNodeRef.current = gainNode;
+
+      // Generate Nature Sound Layer (Pink/White Noise Filtering)
+      if (natureSound !== "None") {
+        const bufferSize = ctx.sampleRate * 2;
+        const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+        const output = noiseBuffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+          output[i] = Math.random() * 2 - 1;
+        }
+
+        const whiteNoise = ctx.createBufferSource();
+        whiteNoise.buffer = noiseBuffer;
+        whiteNoise.loop = true;
+
+        const filter = ctx.createBiquadFilter();
+        const noiseGain = ctx.createGain();
+
+        if (natureSound === "Gentle Rain") {
+          filter.type = "lowpass";
+          filter.frequency.setValueAtTime(1000, ctx.currentTime);
+          noiseGain.gain.setValueAtTime(0.015, ctx.currentTime);
+        } else if (natureSound === "Ocean Waves") {
+          filter.type = "bandpass";
+          filter.frequency.setValueAtTime(400, ctx.currentTime);
+          noiseGain.gain.setValueAtTime(0.025, ctx.currentTime);
+        } else {
+          filter.type = "lowpass";
+          filter.frequency.setValueAtTime(600, ctx.currentTime);
+          noiseGain.gain.setValueAtTime(0.02, ctx.currentTime);
+        }
+
+        whiteNoise.connect(filter);
+        filter.connect(noiseGain);
+        noiseGain.connect(ctx.destination);
+        whiteNoise.start();
+        noiseNodeRef.current = whiteNoise as any;
+      }
     } catch (err) {
-      console.warn("Web Audio API not supported on this browser:", err);
+      console.warn("Web Audio API warning:", err);
     }
   };
 
@@ -158,6 +209,10 @@ export default function MeditationPlayerScreen() {
           osc2Ref.current?.stop();
           osc1Ref.current?.disconnect();
           osc2Ref.current?.disconnect();
+          if (noiseNodeRef.current) {
+            (noiseNodeRef.current as any).stop?.();
+            noiseNodeRef.current = null;
+          }
           osc1Ref.current = null;
           osc2Ref.current = null;
         }, 500);
@@ -173,13 +228,10 @@ export default function MeditationPlayerScreen() {
       const gain = ctx.createGain();
       osc.type = "sine";
       osc.frequency.setValueAtTime(freq, ctx.currentTime);
-
       gain.gain.setValueAtTime(0.3, ctx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 4);
-
       osc.connect(gain);
       gain.connect(ctx.destination);
-
       osc.start();
       osc.stop(ctx.currentTime + 4);
     } catch (e) {
@@ -202,7 +254,7 @@ export default function MeditationPlayerScreen() {
     stopAudio();
 
     if (audioCtxRef.current) {
-      playTibetanBowlChime(audioCtxRef.current, 324); // Completion chime
+      playTibetanBowlChime(audioCtxRef.current, 324);
     }
 
     try {
@@ -218,15 +270,44 @@ export default function MeditationPlayerScreen() {
 
       const data = await res.json();
       if (res.ok) {
-        setToastMessage(`🎉 Session Complete! +${selectedDuration} Mindfulness Minutes saved to your profile.`);
-        setTimeout(() => setToastMessage(null), 6000);
+        setStats((prev) => ({
+          totalMinutes: data.totalMinutes || prev.totalMinutes + selectedDuration,
+          streakDays: data.currentStreak || prev.streakDays,
+          totalSessions: prev.totalSessions + 1,
+        }));
+        setShowReflectionModal(true);
       }
     } catch (err) {
       console.error("Failed to save meditation log:", err);
     }
   };
 
-  // Format MM:SS
+  const handleSaveReflection = async () => {
+    setSavingReflection(true);
+    try {
+      if (reflectionInput.trim()) {
+        await fetch("/api/journal", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            title: `${selectedDuration}-Min Meditation Reflection`,
+            content: reflectionInput,
+            moodTag: "Reflective",
+            category: categoryDetails.name,
+          }),
+        });
+      }
+      setToastMessage(`🎉 Session Complete! +${selectedDuration} Mins & reflection saved to your Sanctuary Profile!`);
+      setShowReflectionModal(false);
+      setReflectionInput("");
+      setTimeout(() => setToastMessage(null), 6000);
+    } catch (err) {
+      console.error("Failed to save reflection:", err);
+    } finally {
+      setSavingReflection(false);
+    }
+  };
+
   const formatTime = (totalSec: number) => {
     const mins = Math.floor(totalSec / 60);
     const secs = totalSec % 60;
@@ -237,7 +318,7 @@ export default function MeditationPlayerScreen() {
   const progressPercent = Math.min(100, Math.max(0, ((totalSeconds - secondsLeft) / totalSeconds) * 100));
 
   return (
-    <div className="max-w-4xl mx-auto py-4 space-y-6 animate-fadeIn select-none">
+    <div className="max-w-4xl mx-auto py-4 space-y-6 animate-fadeIn select-none relative">
       {/* Toast Notification Banner */}
       {toastMessage && (
         <div className="p-4 rounded-2xl bg-secondary text-white text-xs font-bold text-center shadow-lg border border-white/20 animate-bounce">
@@ -245,17 +326,38 @@ export default function MeditationPlayerScreen() {
         </div>
       )}
 
-      {/* Sanctuary Header */}
-      <div className="p-6 md:p-8 rounded-3xl bg-surface-container-lowest border border-surface-variant/30 shadow-soft text-center space-y-2">
-        <span className="px-3.5 py-1 rounded-full bg-mint/20 text-secondary text-xs font-semibold uppercase tracking-wider">
-          Tailored for {categoryDetails.name}
+      {/* Feature 4: Live Mindfulness Stats Banner */}
+      <div className="grid grid-cols-3 gap-3">
+        <div className="p-4 rounded-2xl bg-primary-container/15 border border-primary/20 text-center">
+          <p className="text-[11px] font-semibold text-on-surface-variant/70 uppercase">Mindfulness Minutes</p>
+          <p className="text-xl font-heading font-black text-primary">{stats.totalMinutes} mins</p>
+        </div>
+        <div className="p-4 rounded-2xl bg-mint/20 border border-secondary/20 text-center">
+          <p className="text-[11px] font-semibold text-on-surface-variant/70 uppercase">Current Streak</p>
+          <p className="text-xl font-heading font-black text-secondary">{stats.streakDays} Days 🔥</p>
+        </div>
+        <div className="p-4 rounded-2xl bg-peach/30 border border-tertiary/20 text-center">
+          <p className="text-[11px] font-semibold text-on-surface-variant/70 uppercase">Total Sessions</p>
+          <p className="text-xl font-heading font-black text-tertiary">{stats.totalSessions} Sessions</p>
+        </div>
+      </div>
+
+      {/* Feature 1: Daily Mindfulness Reflection Card */}
+      <div className="p-5 rounded-2xl bg-surface-container-lowest border border-surface-variant/30 shadow-soft flex items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0">
+            <span className="material-symbols-outlined text-xl">format_quote</span>
+          </div>
+          <div className="space-y-0.5">
+            <p className="text-xs font-heading font-bold text-on-surface">Daily Mindfulness Reset</p>
+            <p className="text-xs text-on-surface-variant italic">
+              "Notice three small things that bring you quiet ease and breathing space today."
+            </p>
+          </div>
+        </div>
+        <span className="px-3 py-1 rounded-full bg-surface-container text-xs font-bold text-primary shrink-0">
+          Daily Reflection
         </span>
-        <h1 className="text-2xl md:text-3xl font-heading font-bold text-on-surface">
-          Mindfulness & Breathing Sanctuary
-        </h1>
-        <p className="text-xs md:text-sm text-on-surface-variant max-w-lg mx-auto">
-          Immerse yourself in real 432 Hz Solfeggio soundscapes and guided 4-7-8 breathing cycles.
-        </p>
       </div>
 
       {/* Duration Selector Tabs */}
@@ -322,7 +424,7 @@ export default function MeditationPlayerScreen() {
             {selectedDuration}-Minute {categoryDetails.name} Session
           </h2>
           <p className="text-xs text-primary font-semibold uppercase tracking-widest">
-            🎵 Mode: <span className="underline">{selectedMode}</span> — Real Web Audio Frequency Synthesis
+            🎵 Mode: <span className="underline">{selectedMode}</span> {natureSound !== "None" && `+ ${natureSound}`}
           </p>
         </div>
 
@@ -369,6 +471,26 @@ export default function MeditationPlayerScreen() {
         </div>
       </div>
 
+      {/* Feature 2: Ambient Nature Sound Layer */}
+      <div className="space-y-3">
+        <h3 className="font-heading font-bold text-lg text-on-surface">Ambient Nature Layer</h3>
+        <div className="flex flex-wrap items-center gap-3">
+          {(["None", "Gentle Rain", "Ocean Waves", "Forest Wind"] as const).map((sound) => (
+            <button
+              key={sound}
+              onClick={() => setNatureSound(sound)}
+              className={`px-4 py-2 rounded-full text-xs font-bold transition-all ${
+                natureSound === sound
+                  ? "bg-secondary text-white shadow-md scale-105"
+                  : "bg-surface-container-lowest border border-surface-variant/30 text-on-surface-variant hover:bg-surface-container-low"
+              }`}
+            >
+              🌿 {sound}
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* Soundscape & Audio Mode Options */}
       <div className="space-y-3">
         <h3 className="font-heading font-bold text-lg text-on-surface">Select Audio Soundscape Mode</h3>
@@ -398,6 +520,51 @@ export default function MeditationPlayerScreen() {
           ))}
         </div>
       </div>
+
+      {/* Feature 3: Post-Session Quick Reflection Modal */}
+      {showReflectionModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fadeIn">
+          <div className="bg-surface-container-lowest rounded-3xl p-8 max-w-md w-full border border-surface-variant/40 shadow-soft-xl space-y-5 text-center">
+            <div className="w-14 h-14 rounded-full bg-secondary-container text-on-secondary-container mx-auto flex items-center justify-center text-3xl">
+              🧘
+            </div>
+            <div className="space-y-2">
+              <h3 className="text-xl font-heading font-bold text-on-surface">Session Complete!</h3>
+              <p className="text-xs text-on-surface-variant">
+                How does your body & mind feel right now? (Optional reflection for your journal).
+              </p>
+            </div>
+
+            <textarea
+              rows={3}
+              value={reflectionInput}
+              onChange={(e) => setReflectionInput(e.target.value)}
+              placeholder="e.g. My shoulders felt relaxed and my mind settled down..."
+              className="w-full p-4 rounded-2xl bg-surface-container-low border border-surface-variant/40 text-xs focus:outline-none focus:ring-2 focus:ring-primary/40 resize-none"
+            />
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => {
+                  setShowReflectionModal(false);
+                  setToastMessage(`🎉 Session Complete! +${selectedDuration} Mins saved to your profile.`);
+                  setTimeout(() => setToastMessage(null), 5000);
+                }}
+                className="flex-1 py-3 rounded-full bg-surface-container text-on-surface-variant font-semibold text-xs hover:bg-surface-container-high"
+              >
+                Skip Reflection
+              </button>
+              <button
+                onClick={handleSaveReflection}
+                disabled={savingReflection}
+                className="flex-1 py-3 rounded-full bg-primary text-white font-bold text-xs shadow-md hover:bg-primary-purple transition-all"
+              >
+                {savingReflection ? "Saving..." : "Save to Journal →"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
