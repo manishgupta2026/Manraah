@@ -1,6 +1,6 @@
 # Manraah — AI-Powered Mental Wellness Platform
 
-**Manraah** is a compassionate, lifestyle-oriented AI wellness sanctuary designed to bridge high-tech artificial intelligence capabilities with soft, organic human wellness care. It offers multi-demographic tailored dashboards (Students, Working Professionals, Parents, Senior Citizens), an interactive AI Companion, 1-on-1 verified professional therapy booking, daily check-ins, mindful journaling, ambient sleep soundscapes, and 24/7 crisis support.
+**Manraah** is a compassionate, lifestyle-oriented AI wellness sanctuary designed to bridge high-tech artificial intelligence capabilities with soft, organic human wellness care. It offers multi-demographic tailored dashboards (Students, Young Professionals, Professionals, Parents, Couples, Families, Women, Men, Senior Citizens), an interactive AI Companion, 1-on-1 verified professional therapy booking, daily check-ins, mindful journaling, ambient sleep soundscapes, and 24/7 crisis support.
 
 ---
 
@@ -11,7 +11,7 @@ Landing (/)
   -> Category Selection (/category-selection) 
   -> Assessment (/assessment) 
   -> Wellness Score (/wellness-score)   [Dynamic serenity score & recommendations]
-  -> Signup / Login (/signup, /login)    [Persists assessment to DB]
+  -> Signup / Login (/signup, /login)    [Persists assessment to Neon PostgreSQL DB]
   -> Dashboard (/dashboard)              [Auth protected via middleware]
 ```
 
@@ -44,12 +44,14 @@ Manraah/
 │
 ├── backend/                   # Provider-Agnostic Data & Server Layer
 │   ├── auth/                  # Neon Auth / Better Auth helpers (client.ts)
-│   ├── db/                    # Provider-independent DB client stub (client.ts)
+│   ├── db/                    # Neon PostgreSQL client & SQL schema (client.ts, schema.sql)
 │   ├── types/                 # Shared TypeScript Interfaces (User, AssessmentResult, Mood, Journal, etc.)
 │   ├── queries/               # Feature Data Query Stubs (assessment.ts, mood.ts, journal.ts, etc.)
 │   └── README.md              # Backend documentation
 │
+├── scripts/                   # Local utilities (init_db.js, graphify.js)
 ├── middleware.ts              # Route protection & session redirection
+├── ARCHITECTURE_GRAPH.md      # Graphify interactive architectural dependency graph
 └── public/
     └── images/                # Localized static image assets & SVG logo
 ```
@@ -84,15 +86,32 @@ Manraah/
 
 ---
 
-## 🚀 How to Run Locally
+## 🛠️ CLI Utility Commands
 
 ```bash
 # 1. Install dependencies
 npm install
 
-# 2. Run the development server
+# 2. Run local development server
 npm run dev
 
 # 3. Build for production & verify compilation
 npm run build
+
+# 4. Initialize Neon PostgreSQL tables & seed data
+npm run db:init
+
+# 5. Generate interactive Mermaid architecture graph (ARCHITECTURE_GRAPH.md)
+npm run graphify
+
+# 6. Clear stale .next build cache
+npm run clean
 ```
+
+---
+
+## 🌐 Production Deployment (Vercel)
+
+This application is deployed on Vercel:
+- **Live URL**: `https://manraah.vercel.app`
+- **Environment Variables**: Add `DATABASE_URL` under Project Settings in Vercel.
