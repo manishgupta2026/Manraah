@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { AnimatePresence } from "framer-motion";
 import { CategoryProvider } from "@/frontend/lib/context/CategoryContext";
 import { AssessmentProvider } from "@/frontend/lib/context/AssessmentContext";
+import { WellnessProvider } from "@/frontend/lib/context/WellnessContext";
 import DesktopSidebar from "./DesktopSidebar";
 import MobileTabBar from "./MobileTabBar";
 import MobileDrawer from "./MobileDrawer";
@@ -27,21 +28,22 @@ export default function AppShell({ children }: { children: ReactNode }) {
   return (
     <CategoryProvider>
       <AssessmentProvider>
-        {isStandalone ? (
-          /* Standalone Onboarding / Auth Layout (No Navigation Shell) */
-          <div className="min-h-screen bg-background text-on-background font-sans antialiased">
-            {children}
-          </div>
-        ) : (
-          /* Main Application Shell with Sidebar & Header */
-          <div className="flex min-h-screen bg-background text-on-background font-sans antialiased overflow-hidden">
+        <WellnessProvider>
+          {isStandalone ? (
+            /* Standalone Onboarding / Auth Layout (No Navigation Shell) */
+            <div className="min-h-screen bg-background text-on-background font-sans antialiased">
+              {children}
+            </div>
+          ) : (
+            /* Main Application Shell with Sidebar & Header */
+            <div className="flex min-h-screen bg-background text-on-background font-sans antialiased overflow-hidden">
             {/* Desktop Left Sidebar */}
             <DesktopSidebar />
 
             {/* Main Content Area */}
-            <div className="flex-1 flex flex-col min-w-0 md:ml-[80px] lg:ml-[280px] h-screen overflow-y-auto pb-20 md:pb-8">
+            <div className="flex-1 flex flex-col min-w-0 md:ml-[80px] lg:ml-[260px] h-screen overflow-y-auto pb-16 md:pb-6">
               <Header onOpenMenu={() => setIsMobileDrawerOpen(true)} />
-              <main className="flex-1 px-4 md:px-8 py-6 max-w-7xl mx-auto w-full">
+              <main className="flex-1 px-3 md:px-6 py-4 max-w-7xl mx-auto w-full">
                 {children}
               </main>
             </div>
@@ -60,6 +62,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
             <MobileTabBar />
           </div>
         )}
+        </WellnessProvider>
       </AssessmentProvider>
     </CategoryProvider>
   );

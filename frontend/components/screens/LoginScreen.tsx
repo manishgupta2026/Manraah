@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import { signIn } from "@/backend/auth/client";
 
 import { useAssessment } from "@/frontend/lib/context/AssessmentContext";
-import { saveUserAssessment } from "@/backend/queries/assessment";
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -24,19 +23,16 @@ export default function LoginScreen() {
     setLoading(true);
     setError(null);
     try {
-      const session = await signIn(email, password);
-
-      // Save assessment details if they completed the onboarding assessment
-      if (session.user && detailedAnswers.length > 0) {
-        await saveUserAssessment(
-          session.user.id,
-          selectedCategory || "student",
-          detailedAnswers,
-          totalScore,
-          percentage,
-          wellnessLevel
-        );
-      }
+      // Pass the onboarding assessment details (if any) directly to signIn API
+      await signIn(
+        email,
+        password,
+        selectedCategory || "student",
+        detailedAnswers,
+        totalScore,
+        percentage,
+        wellnessLevel
+      );
 
       router.push("/dashboard");
     } catch (err: any) {

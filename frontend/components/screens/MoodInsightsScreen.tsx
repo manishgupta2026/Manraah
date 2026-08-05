@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
+import { useWellness } from "@/frontend/lib/context/WellnessContext";
 
 const MOOD_VALUES: Record<string, { value: number; emoji: string; color: string }> = {
   Amazing: { value: 10, emoji: "😊", color: "#10B981" },
@@ -23,11 +24,7 @@ const STRESS_LEVELS = ["Low", "Medium", "High", "Very High"];
 export default function MoodInsightsScreen() {
   const router = useRouter();
   const [filter, setFilter] = useState("week"); // today, week, month, year, all
-  const [history, setHistory] = useState<any[]>([]);
-  const [insights, setInsights] = useState<any[]>([]);
-  const [weeklySummary, setWeeklySummary] = useState<any>(null);
-  const [monthlySummary, setMonthlySummary] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const { dashboardData, isLoading, refetchDashboardData } = useWellness();
 
   // Edit / delete state
   const [editingEntry, setEditingEntry] = useState<any>(null);
@@ -36,37 +33,46 @@ export default function MoodInsightsScreen() {
   const [editStress, setEditStress] = useState("Medium");
   const [editReflection, setEditReflection] = useState("");
 
-  const loadData = async () => {
-    setLoading(true);
-    try {
-      const [histRes, insRes, weekRes, monthRes] = await Promise.all([
-        fetch(`/api/mood?filter=${filter}`),
-        fetch("/api/mood/insights"),
-        fetch("/api/mood/weekly"),
-        fetch("/api/mood/monthly"),
-      ]);
+  const rawHistory = dashboardData?.history || [];
+  const insights = dashboardData?.insights || [];
+  const weeklySummary = dashboardData?.weeklySummary || null;
+  const monthlySummary = dashboardData?.monthlySummary || null;
 
-      if (histRes.ok) setHistory(await histRes.json());
-      if (insRes.ok) setInsights(await insRes.json());
-      if (weekRes.ok) setWeeklySummary(await weekRes.json());
-      if (monthRes.ok) setMonthlySummary(await monthRes.json());
-    } catch (err) {
-      console.error("Error loading insights data:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    loadData();
-  }, [filter]);
+  // Filter history locally to avoid duplicate fetch queries
+  const history = useMemo(() => {
+    const now = new Date();
+    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    
+    return rawHistory.filter((entry: any) => {
+      const entryDate = new Date(entry.created_at);
+      if (filter === "today") {
+        return entryDate >= todayStart;
+      }
+      if (filter === "week") {
+        const diffTime = Math.abs(now.getTime() - entryDate.getTime());
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        return diffDays <= 7;
+      }
+      if (filter === "month") {
+        const diffTime = Math.abs(now.getTime() - entryDate.getTime());
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        return diffDays <= 30;
+      }
+      if (filter === "year") {
+        const diffTime = Math.abs(now.getTime() - entryDate.getTime());
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        return diffDays <= 365;
+      }
+      return true; // all
+    });
+  }, [rawHistory, filter]);
 
   const handleDelete = async (id: number) => {
     if (!confirm("Are you sure you want to delete this sanctuary log?")) return;
     try {
       const res = await fetch(`/api/mood/${id}`, { method: "DELETE" });
       if (res.ok) {
-        loadData();
+        await refetchDashboardData();
       }
     } catch (err) {
       console.error("Failed to delete mood entry:", err);
@@ -98,7 +104,7 @@ export default function MoodInsightsScreen() {
 
       if (res.ok) {
         setEditingEntry(null);
-        loadData();
+        await refetchDashboardData();
       }
     } catch (err) {
       console.error("Failed to update mood entry:", err);
@@ -224,7 +230,7 @@ export default function MoodInsightsScreen() {
         ))}
       </div>
 
-      {loading ? (
+      {isLoading ? (
         <div className="flex flex-col items-center justify-center py-12 space-y-3">
           <span className="material-symbols-outlined text-4xl text-primary animate-spin">spa</span>
           <p className="text-xs text-on-surface-variant font-bold uppercase tracking-wider">Syncing dashboard data...</p>

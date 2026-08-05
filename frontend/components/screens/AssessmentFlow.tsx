@@ -68,11 +68,11 @@ export default function AssessmentFlow() {
       setDirection(1);
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     } else {
-      // Completed all 10 questions
+      // Completed all 15 questions
       const results = evaluateWellness(updatedAnswers);
       setAssessmentResult(results);
       setAssessmentCompleted(true);
-      router.push("/login");
+      router.push("/wellness-score");
     }
   };
 
@@ -104,7 +104,7 @@ export default function AssessmentFlow() {
     }),
   };
 
-  // Progress percentage (out of 10 questions)
+  // Progress percentage (out of 15 questions)
   const progressPercentage = ((currentQuestionIndex) / totalQuestions) * 100;
 
   return (
@@ -134,7 +134,7 @@ export default function AssessmentFlow() {
           <div className="w-full bg-surface-container-high h-2.5 rounded-full overflow-hidden shadow-inner border border-surface-variant/20">
             <motion.div
               className="h-full bg-gradient-to-r from-primary to-primary-purple rounded-full"
-              initial={{ width: `${(currentQuestionIndex) * 10}%` }}
+              initial={{ width: `${((currentQuestionIndex) / (totalQuestions || 15)) * 100}%` }}
               animate={{ width: `${progressPercentage}%` }}
               transition={{ duration: 0.5, ease: "easeOut" }}
             />

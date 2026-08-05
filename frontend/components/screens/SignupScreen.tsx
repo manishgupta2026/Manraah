@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signUp } from "@/backend/auth/client";
-import { saveUserAssessment } from "@/backend/queries/assessment";
 import { useAssessment } from "@/frontend/lib/context/AssessmentContext";
 
 export default function SignupScreen() {
@@ -24,22 +23,19 @@ export default function SignupScreen() {
     setLoading(true);
     setError(null);
     try {
-      // 1. Create account via Neon Auth helper
-      const session = await signUp(name, email, password);
+      // 1. Create account & persist assessment in Neon DB
+      const session = await signUp(
+        name,
+        email,
+        password,
+        selectedCategory || "student",
+        detailedAnswers,
+        totalScore,
+        percentage,
+        wellnessLevel
+      );
 
-      // 2. Persist onboarding category, detailed answers, and score details to Neon DB
-      if (session.user) {
-        await saveUserAssessment(
-          session.user.id,
-          selectedCategory || "student",
-          detailedAnswers,
-          totalScore,
-          percentage,
-          wellnessLevel
-        );
-      }
-
-      // 3. Navigate to personalized dashboard
+      // 2. Navigate to personalized dashboard
       router.push("/dashboard");
     } catch (err: any) {
       console.error("Signup server-side error log:", err);

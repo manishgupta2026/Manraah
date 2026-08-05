@@ -8,10 +8,11 @@
     "start": "next start",
     "lint": "next lint",
     "clean": "node -e \"require('fs').rmSync('.next', {recursive:true, force:true})\"",
-    "db:init": "node scripts/init_db.js"
+    "db:init": "node scripts/init_db.js",
+    "graphify": "node scripts/graphify.js"
   },
   "dependencies": {
-    "@neondatabase/serverless": "^0.9.4",
+    "@neondatabase/serverless": "^0.10.4",
     "better-auth": "^1.6.25",
     "clsx": "^2.1.1",
     "drizzle-orm": "^0.45.2",

@@ -103,10 +103,10 @@ export function AssessmentProvider({ children }: { children: ReactNode }) {
 
   // Derived scoring and progress properties
   const totalScore = detailedAnswers.reduce((sum, ans) => sum + ans.score, 0);
-  const maxScore = 50; // 10 questions * 5 max points each
-  const percentage = Math.round((totalScore / maxScore) * 100);
-  const wellnessLevel = getWellnessLevel(totalScore); // Dynamic level mapped using percentage or score
-  const progress = Math.round((currentQuestionIndex / 10) * 100);
+  const maxScore = 75; // 15 questions * 5 max points each
+  const percentage = maxScore > 0 ? Math.round((totalScore / maxScore) * 100) : 0;
+  const wellnessLevel = getWellnessLevel(totalScore, 75); // Dynamic level mapped using percentage or score
+  const progress = Math.round((currentQuestionIndex / 15) * 100);
 
   const value = {
     answers,

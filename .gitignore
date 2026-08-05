@@ -25,3 +25,6 @@ yarn-error.log*
 *.pem
 .vscode/
 .idea/
+
+# Internal execution plans (Local only)
+MANISH_EXECUTION_PLAN.md
