@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useCategory } from "@/frontend/lib/context/CategoryContext";
 import { useAssessment } from "@/frontend/lib/context/AssessmentContext";
 import { getWellnessLevel, getWellnessMessage } from "@/frontend/lib/assessment/wellness";
+import { motion } from "framer-motion";
 
 export default function WellnessScoreScreen() {
   const { categoryDetails } = useCategory();
@@ -12,20 +13,19 @@ export default function WellnessScoreScreen() {
 
   // Handle fallback if the user navigated directly or refreshed
   const finalResult = assessmentResult || {
-    totalScore: Math.round((computedScore / 100) * 25) || 15,
-    maxScore: 25,
+    totalScore: Math.round((computedScore / 100) * 75) || 45,
+    maxScore: 75,
     percentage: computedScore || 60,
-    wellnessLevel: getWellnessLevel(Math.round((computedScore / 100) * 25) || 15),
-    message: getWellnessMessage(getWellnessLevel(Math.round((computedScore / 100) * 25) || 15)),
+    wellnessLevel: getWellnessLevel(Math.round((computedScore / 100) * 75) || 45, 75),
+    message: getWellnessMessage(getWellnessLevel(Math.round((computedScore / 100) * 75) || 45, 75)),
   };
 
-  // Human-readable labels for the question keys
-  const dimensionLabels: Record<string, string> = {
-    emotional_balance: "Emotional Balance",
-    stress_level: "Stress Resilience",
-    sleep_quality: "Sleep Quality",
-    motivation_energy: "Motivation & Energy",
-    confidence_coping: "Coping Confidence",
+  // Helper to format keys like "academic_pressure" to "Academic Pressure"
+  const formatKeyToLabel = (key: string): string => {
+    return key
+      .split("_")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
   };
 
   // Stylings based on wellness level
@@ -68,28 +68,39 @@ export default function WellnessScoreScreen() {
   const currentStyles = levelStyles[finalResult.wellnessLevel] || levelStyles.Stable;
 
   return (
-    <div className="max-w-3xl mx-auto py-8 px-4 space-y-8 animate-fadeIn relative">
+    <div className="max-w-3xl mx-auto py-10 px-4 space-y-8 animate-fadeIn relative">
       {/* Calming Backdrop Glows */}
       <div className="fixed inset-0 z-[-2] opacity-35 pointer-events-none">
         <div className="absolute top-[-10%] left-[-10%] w-[60vw] md:w-[500px] h-[60vw] md:h-[500px] rounded-full bg-primary-container blur-[100px]" />
         <div className="absolute bottom-[-10%] right-[-10%] w-[60vw] md:w-[500px] h-[60vw] md:h-[500px] rounded-full bg-secondary-container blur-[120px] opacity-30" />
       </div>
 
-      {/* Top Header */}
-      <div className="text-center space-y-3 z-10 relative">
-        <span className="px-4 py-1.5 rounded-full bg-primary-container/20 text-primary text-xs font-semibold uppercase tracking-wider">
-          Baseline Calibration Complete
-        </span>
-        <h1 className="text-3xl md:text-4xl font-heading font-bold text-on-surface">
-          Your Sanctuary Wellness Score
-        </h1>
-        <p className="text-sm md:text-base text-on-surface-variant max-w-lg mx-auto font-light">
-          Calculated for <strong className="text-primary font-semibold">{categoryDetails.name}</strong> wellness based on your emotional, sleep, and coping resilience levels.
+      {/* Completion Header Card */}
+      <motion.div 
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="p-8 rounded-3xl bg-surface-container-lowest border border-surface-variant/40 shadow-soft text-center space-y-4 relative overflow-hidden"
+      >
+        <div className="absolute -top-10 -right-10 w-32 h-32 bg-primary/5 rounded-full blur-xl" />
+        <div className="text-4xl">✨</div>
+        <h2 className="text-2xl md:text-3xl font-heading font-bold text-on-surface">
+          Thank you for sharing.
+        </h2>
+        <p className="text-sm md:text-base text-on-surface-variant/90 max-w-lg mx-auto font-light leading-relaxed">
+          We've prepared your personalized wellness journey.
+          <br />
+          Create your account or log in to unlock your dashboard.
         </p>
-      </div>
+      </motion.div>
 
       {/* Score Gauge Card */}
-      <div className="p-8 md:p-12 rounded-3xl bg-surface-container-lowest border border-surface-variant/30 shadow-ambient text-center space-y-8 z-10 relative">
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.6, delay: 0.1 }}
+        className="p-8 md:p-12 rounded-3xl bg-surface-container-lowest border border-surface-variant/30 shadow-ambient text-center space-y-8 z-10 relative"
+      >
         
         {/* Animated Circular Gauge */}
         <div className="relative w-48 h-48 mx-auto flex items-center justify-center">
@@ -148,19 +159,27 @@ export default function WellnessScoreScreen() {
 
         {/* Detailed Breakdown Section */}
         <div className="max-w-xl mx-auto space-y-4 pt-4 border-t border-surface-variant/20">
-          <h3 className="text-sm font-heading font-bold text-on-surface text-left uppercase tracking-wider opacity-85">
-            Dimension Breakdown
-          </h3>
+          <div className="flex justify-between items-center">
+            <h3 className="text-sm font-heading font-bold text-on-surface uppercase tracking-wider opacity-85">
+              Detailed Assessment Breakdown
+            </h3>
+            <span className="text-xs font-semibold text-primary px-3 py-1 rounded-full bg-primary/10">
+              Focus: {categoryDetails.name}
+            </span>
+          </div>
           
-          <div className="space-y-3.5">
+          <div className="space-y-4">
             {detailedAnswers.length > 0 ? (
               detailedAnswers.map((ans) => {
-                const label = dimensionLabels[ans.questionKey] || ans.questionKey;
+                const label = formatKeyToLabel(ans.questionKey);
                 return (
-                  <div key={ans.questionId} className="space-y-1.5 text-left">
+                  <div key={ans.questionId} className="space-y-1.5 text-left border-b border-surface-variant/10 pb-3 last:border-0 last:pb-0">
                     <div className="flex justify-between items-center text-xs font-semibold text-on-surface-variant">
-                      <span>{label}</span>
-                      <span className="text-primary">{ans.score} / 5</span>
+                      <span className="flex items-center gap-1.5">
+                        <span className={`w-1.5 h-1.5 rounded-full ${ans.questionType === "common" ? "bg-primary" : "bg-secondary"}`} />
+                        {label}
+                      </span>
+                      <span className="text-primary font-bold">{ans.score} / 5</span>
                     </div>
                     {/* Micro bar indicator */}
                     <div className="w-full bg-surface-container h-1.5 rounded-full overflow-hidden">
@@ -176,45 +195,34 @@ export default function WellnessScoreScreen() {
                 );
               })
             ) : (
-              // Fallback default breakdown list
-              Object.entries(dimensionLabels).map(([key, label], i) => {
-                const score = key === "stress_level" ? 3 : key === "sleep_quality" ? 4 : 3;
-                return (
-                  <div key={key} className="space-y-1.5 text-left">
-                    <div className="flex justify-between items-center text-xs font-semibold text-on-surface-variant">
-                      <span>{label}</span>
-                      <span className="text-primary">{score} / 5</span>
-                    </div>
-                    <div className="w-full bg-surface-container h-1.5 rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-primary rounded-full"
-                        style={{ width: `${(score / 5) * 100}%` }}
-                      />
-                    </div>
-                  </div>
-                );
-              })
+              <p className="text-xs text-on-surface-variant italic">No answers registered. Please complete the assessment flow.</p>
             )}
           </div>
         </div>
 
-      </div>
+      </motion.div>
 
       {/* CTA Buttons */}
-      <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4 z-10 relative">
-        <Link
-          href="/signup"
-          className="w-full sm:w-auto px-10 py-4 rounded-full bg-primary text-white font-bold text-sm shadow-lg hover:bg-primary-purple transition-all scale-105 text-center hover:-translate-y-0.5 active:scale-95"
-        >
-          Create Account & Save Score →
-        </Link>
+      <motion.div 
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+        className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4 z-10 relative"
+      >
         <Link
           href="/login"
-          className="w-full sm:w-auto px-8 py-4 rounded-full bg-surface-container-low text-on-surface font-semibold text-sm hover:bg-surface-container transition-all text-center"
+          className="w-full sm:w-auto px-12 py-4 rounded-full bg-primary text-white font-bold text-sm shadow-lg hover:bg-primary-purple hover:scale-[1.02] transition-all text-center flex items-center justify-center gap-2"
         >
-          I already have an account
+          Continue
+          <span className="material-symbols-outlined text-base">arrow_forward</span>
         </Link>
-      </div>
+        <Link
+          href="/signup"
+          className="w-full sm:w-auto px-8 py-4 rounded-full bg-surface-container-low text-on-surface font-semibold text-sm hover:bg-surface-container hover:scale-[1.02] transition-all text-center"
+        >
+          Create New Account
+        </Link>
+      </motion.div>
     </div>
   );
 }

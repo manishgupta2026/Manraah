@@ -9,15 +9,20 @@ export interface AssessmentQuestion {
   key: string;
   text: string;
   description: string;
+  type: "common" | "category";
+  category?: string;
   options: AssessmentOption[];
 }
 
 export interface AssessmentAnswer {
   questionId: number;
   questionKey: string;
+  questionType: "common" | "category";
+  category: string;
   selectedOptionId: string;
   selectedText: string;
   score: number;
+  answeredAt: string;
 }
 
 export interface WellnessResult {

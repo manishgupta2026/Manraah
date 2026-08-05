@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
+import { useWellness } from "@/frontend/lib/context/WellnessContext";
 import { getClientSession } from "@/backend/auth/client";
 
 const MOODS = [
@@ -29,6 +30,7 @@ const STRESS_LEVELS = ["Low", "Medium", "High", "Very High"];
 
 export default function MoodCheckInScreen() {
   const router = useRouter();
+  const { submitCheckIn } = useWellness();
   const [userId, setUserId] = useState<string | null>(null);
 
   // Steps: 0: Welcome, 1: Mood, 2: Factors, 3: Reflection, 4: Energy, 5: Stress, 6: Completion
@@ -90,23 +92,14 @@ export default function MoodCheckInScreen() {
     if (!userId) return;
     setLoading(true);
     try {
-      const response = await fetch("/api/mood", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          mood,
-          energy,
-          stress,
-          reflection,
-          factors: selectedFactors.join(", "),
-        }),
+      await submitCheckIn({
+        mood,
+        energy,
+        stress,
+        reflection,
+        factors: selectedFactors.join(", "),
       });
-
-      if (response.ok) {
-        setStep(6); // Success / Completion Screen
-      } else {
-        console.error("Failed to save mood entry");
-      }
+      setStep(6); // Success / Completion Screen
     } catch (err) {
       console.error("Error saving check-in:", err);
     } finally {

@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { AnimatePresence } from "framer-motion";
 import { CategoryProvider } from "@/frontend/lib/context/CategoryContext";
 import { AssessmentProvider } from "@/frontend/lib/context/AssessmentContext";
+import { WellnessProvider } from "@/frontend/lib/context/WellnessContext";
 import DesktopSidebar from "./DesktopSidebar";
 import MobileTabBar from "./MobileTabBar";
 import MobileDrawer from "./MobileDrawer";
@@ -27,14 +28,15 @@ export default function AppShell({ children }: { children: ReactNode }) {
   return (
     <CategoryProvider>
       <AssessmentProvider>
-        {isStandalone ? (
-          /* Standalone Onboarding / Auth Layout (No Navigation Shell) */
-          <div className="min-h-screen bg-background text-on-background font-sans antialiased">
-            {children}
-          </div>
-        ) : (
-          /* Main Application Shell with Sidebar & Header */
-          <div className="flex min-h-screen bg-background text-on-background font-sans antialiased overflow-hidden">
+        <WellnessProvider>
+          {isStandalone ? (
+            /* Standalone Onboarding / Auth Layout (No Navigation Shell) */
+            <div className="min-h-screen bg-background text-on-background font-sans antialiased">
+              {children}
+            </div>
+          ) : (
+            /* Main Application Shell with Sidebar & Header */
+            <div className="flex min-h-screen bg-background text-on-background font-sans antialiased overflow-hidden">
             {/* Desktop Left Sidebar */}
             <DesktopSidebar />
 
@@ -60,6 +62,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
             <MobileTabBar />
           </div>
         )}
+        </WellnessProvider>
       </AssessmentProvider>
     </CategoryProvider>
   );

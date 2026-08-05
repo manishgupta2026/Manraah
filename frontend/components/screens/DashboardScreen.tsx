@@ -2,8 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { motion } from "framer-motion";
-import { getClientSession } from "@/backend/auth/client";
+import { motion, AnimatePresence } from "framer-motion";
+import { useWellness } from "@/frontend/lib/context/WellnessContext";
 
 interface TimeTheme {
   greeting: string;
@@ -65,98 +65,56 @@ const cardVariants = {
   show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 80, damping: 12 } },
 };
 
+function DashboardSkeleton() {
+  return (
+    <div className="max-w-7xl mx-auto py-4 px-4 space-y-8 animate-pulse select-none">
+      {/* Hero row */}
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+        <div className="col-span-1 md:col-span-8 h-[240px] rounded-[32px] bg-surface-container-low" />
+        <div className="col-span-1 md:col-span-4 h-[240px] rounded-[32px] bg-surface-container-low" />
+      </div>
+      {/* Widgets row */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-12 gap-6">
+        <div className="col-span-1 md:col-span-4 h-[220px] rounded-[36px] bg-surface-container-low" />
+        <div className="col-span-1 md:col-span-4 h-[220px] rounded-[36px] bg-surface-container-low" />
+        <div className="col-span-1 md:col-span-4 h-[220px] rounded-[36px] bg-surface-container-low" />
+      </div>
+      {/* Garden row */}
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+        <div className="col-span-1 md:col-span-8 h-[240px] rounded-[36px] bg-surface-container-low" />
+        <div className="col-span-1 md:col-span-4 h-[240px] rounded-[36px] bg-surface-container-low" />
+      </div>
+      {/* Footer row */}
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+        <div className="col-span-1 md:col-span-4 h-[160px] rounded-[28px] bg-surface-container-low" />
+        <div className="col-span-1 md:col-span-4 h-[160px] rounded-[28px] bg-surface-container-low" />
+        <div className="col-span-1 md:col-span-4 h-[160px] rounded-[28px] bg-surface-container-low" />
+      </div>
+    </div>
+  );
+}
+
 export default function DashboardScreen() {
   const router = useRouter();
-  const [name, setName] = useState("Sanctuary Member");
-  const [loading, setLoading] = useState(true);
-
-  // States for calm mood dashboard widgets
-  const [todayMood, setTodayMood] = useState<any>(null);
-  const [moodTrend, setMoodTrend] = useState("Gathering calm logs...");
-  const [oneInsight, setOneInsight] = useState("Consistency leads to inner space and clarity.");
-  const [oneRecommendation, setOneRecommendation] = useState("Breathe slowly and allocate five minutes for reflection today.");
-  const [gardenStats, setGardenStats] = useState({ totalCheckIns: 0, currentStreak: 0 });
-  const [category, setCategory] = useState("student");
-
+  const { dashboardData, isLoading } = useWellness();
   const [themeKey, setThemeKey] = useState<"morning" | "afternoon" | "evening" | "night">("evening");
 
   useEffect(() => {
-    const session = getClientSession();
-    if (session.user) {
-      setName(session.user.name || "Sanctuary Member");
-    }
-
     const hour = new Date().getHours();
     if (hour >= 5 && hour < 12) setThemeKey("morning");
     else if (hour >= 12 && hour < 17) setThemeKey("afternoon");
     else if (hour >= 17 && hour < 21) setThemeKey("evening");
     else setThemeKey("night");
-
-    async function loadSanctuaryData() {
-      try {
-        const [histRes, insRes, weekRes, profileRes] = await Promise.all([
-          fetch("/api/mood"),
-          fetch("/api/mood/insights"),
-          fetch("/api/mood/weekly"),
-          session.user ? fetch(`/api/profile?userId=${session.user.id}`).then((r) => r.ok ? r.json() : null) : null,
-        ]);
-
-        if (profileRes?.category) {
-          setCategory(profileRes.category);
-        }
-
-        if (histRes.ok) {
-          const history = await histRes.json();
-          if (history.length > 0) {
-            setTodayMood(history[0]);
-            setGardenStats({
-              totalCheckIns: history.length,
-              currentStreak: 1, // calculated dynamically or set via streak api
-            });
-            
-            // Derive trend
-            const amazingHappyCount = history.slice(0, 5).filter((h: any) =>
-              ["amazing", "happy", "calm", "good"].includes(h.mood.toLowerCase())
-            ).length;
-            if (amazingHappyCount >= 3) {
-              setMoodTrend("Emotional state feels light and steady 🌸");
-            } else {
-              setMoodTrend("Experiencing subtle mood fluctuations 🍃");
-            }
-          }
-        }
-
-        if (insRes.ok) {
-          const insights = await insRes.json();
-          if (insights.length > 0 && insights[0]?.insightText) {
-            setOneInsight(insights[0].insightText);
-          }
-        }
-
-        if (weekRes.ok) {
-          const weekly = await weekRes.json();
-          if (weekly?.aiRecommendation) {
-            setOneRecommendation(weekly.aiRecommendation);
-          }
-        }
-      } catch (err) {
-        console.error("Failed to load dashboard data:", err);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    loadSanctuaryData();
   }, []);
 
-  if (loading) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
-        <span className="material-symbols-outlined text-4xl text-primary animate-spin">spa</span>
-        <p className="text-sm text-on-surface-variant font-medium">Entering your wellness sanctuary...</p>
-      </div>
-    );
+  if (isLoading || !dashboardData) {
+    return <DashboardSkeleton />;
   }
+
+  const { user, todayMood, history, streak, recommendation, insights } = dashboardData;
+  const name = user?.name || "Sanctuary Member";
+  const category = user?.selectedCategory || "student";
+  const totalCheckIns = history?.length || 0;
 
   const currentTheme = THEMES[themeKey];
   const isNight = themeKey === "night";
@@ -186,7 +144,31 @@ export default function DashboardScreen() {
     return { stage: "Forest 🌲", desc: "A lush, thriving forest of mindfulness.", color: "#065F46" };
   };
 
-  const gardenStage = getGardenStage(gardenStats.totalCheckIns);
+  const gardenStage = getGardenStage(totalCheckIns);
+
+  // Dynamic Mood Trend Calculation
+  const moodTrend = (() => {
+    if (history.length === 0) return "Gathering calm logs...";
+    const recentLogs = history.slice(0, 5);
+    const amazingHappyCount = recentLogs.filter((h: any) =>
+      ["amazing", "happy", "calm", "good"].includes(h.mood.toLowerCase())
+    ).length;
+    if (amazingHappyCount >= 3) {
+      return "Emotional state feels light and steady 🌸";
+    } else {
+      return "Experiencing subtle mood fluctuations 🍃";
+    }
+  })();
+
+  const oneInsight = insights?.[0]?.insightText || "Consistency leads to inner space and clarity.";
+
+  // Dynamic AI Companion bubble context based on today's logs
+  const aiCompanionBubble = (() => {
+    if (todayMood) {
+      return `Hello ${name} 🌿. I noticed you logged feeling ${todayMood.mood} with ${todayMood.energy}/10 energy today, focusing on your intention to "${todayMood.reflection || 'Be present'}". I'm here if you want to vent or stretch.`;
+    }
+    return `Welcome back, ${name} ✨. I'm here for you. You haven't checked in with today's mood yet. Shall we slow down and complete your log?`;
+  })();
 
   return (
     <div className="max-w-7xl mx-auto py-2 md:py-4 px-2 md:px-4 space-y-6 relative select-none animate-fadeIn">
@@ -272,9 +254,18 @@ export default function DashboardScreen() {
               <span className="text-2xl">💙</span>
             </div>
             <h4 className="font-heading font-extrabold text-sm text-on-surface">AI Companion</h4>
-            <p className="text-xs text-on-surface-variant leading-relaxed font-semibold mt-2">
-              "I noticed you've been feeling steady this week. Would you like to slow down together?"
-            </p>
+            <AnimatePresence mode="wait">
+              <motion.p
+                key={aiCompanionBubble}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.4 }}
+                className="text-xs text-on-surface-variant leading-relaxed font-semibold mt-2"
+              >
+                "{aiCompanionBubble}"
+              </motion.p>
+            </AnimatePresence>
           </div>
           <span className="text-[10px] font-bold text-primary uppercase tracking-widest pt-2">
             Start Confidential Venting →
@@ -293,21 +284,41 @@ export default function DashboardScreen() {
           <div>
             <span className="text-3xl block mb-4">🌸</span>
             <h4 className="font-heading font-extrabold text-sm text-on-surface">Today's Check-in</h4>
-            <p className="text-xs text-on-surface-variant leading-relaxed font-medium mt-1">
-              {todayMood 
-                ? `Reflection complete. Logged feeling ${todayMood.mood} with ${todayMood.energy}/10 energy.`
-                : "Allocate two minutes to check in with your mind and map daily variables."}
-            </p>
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={todayMood ? todayMood.id : "empty"}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.5 }}
+                className="text-xs text-on-surface-variant leading-relaxed font-medium mt-1"
+              >
+                {todayMood 
+                  ? `Reflection complete. Logged feeling ${todayMood.mood} with ${todayMood.energy}/10 energy.`
+                  : "Allocate two minutes to check in with your mind and map daily variables."}
+              </motion.div>
+            </AnimatePresence>
           </div>
-          {todayMood ? (
-            <span className="inline-block px-3 py-1 rounded-full text-[9px] font-bold bg-emerald-50 text-emerald-800 self-start">
-              Completed
-            </span>
-          ) : (
-            <span className="text-[10px] font-bold text-primary uppercase tracking-widest">
-              Log reflection →
-            </span>
-          )}
+          <AnimatePresence mode="wait">
+            {todayMood ? (
+              <motion.span
+                key="completed-badge"
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.9, opacity: 0 }}
+                className="inline-block px-3 py-1 rounded-full text-[9px] font-bold bg-emerald-50 text-emerald-800 self-start"
+              >
+                Completed
+              </motion.span>
+            ) : (
+              <motion.span
+                key="log-reflection-prompt"
+                className="text-[10px] font-bold text-primary uppercase tracking-widest"
+              >
+                Log reflection →
+              </motion.span>
+            )}
+          </AnimatePresence>
         </motion.div>
 
         {/* 4. Mood Trend */}
@@ -322,9 +333,18 @@ export default function DashboardScreen() {
               <span className="material-symbols-outlined text-2xl">trending_up</span>
             </div>
             <h4 className="font-heading font-extrabold text-sm text-on-surface">Mood Trend</h4>
-            <p className="text-xs text-on-surface-variant leading-relaxed font-medium mt-1.5">
-              {moodTrend}
-            </p>
+            <AnimatePresence mode="wait">
+              <motion.p
+                key={moodTrend}
+                initial={{ scale: 0.95, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.95, opacity: 0 }}
+                transition={{ type: "spring", stiffness: 100, damping: 15 }}
+                className="text-xs text-on-surface-variant leading-relaxed font-medium mt-1.5"
+              >
+                {moodTrend}
+              </motion.p>
+            </AnimatePresence>
           </div>
           <span className="text-[10px] font-bold text-primary uppercase tracking-widest">
             View timeline →
@@ -343,9 +363,18 @@ export default function DashboardScreen() {
               <span className="material-symbols-outlined text-2xl">insights</span>
             </div>
             <h4 className="font-heading font-extrabold text-sm text-on-surface">Today's Insight</h4>
-            <p className="text-xs text-on-surface-variant leading-relaxed font-semibold mt-1.5">
-              "{oneInsight}"
-            </p>
+            <AnimatePresence mode="wait">
+              <motion.p
+                key={oneInsight}
+                initial={{ x: 20, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                exit={{ x: -20, opacity: 0 }}
+                transition={{ ease: "easeOut", duration: 0.4 }}
+                className="text-xs text-on-surface-variant leading-relaxed font-semibold mt-1.5"
+              >
+                "{oneInsight}"
+              </motion.p>
+            </AnimatePresence>
           </div>
           <span className="text-[10px] font-bold text-primary uppercase tracking-widest">
             View correlations →
@@ -365,11 +394,19 @@ export default function DashboardScreen() {
             <span className="px-3 py-1 rounded-full bg-emerald-50 text-[9px] font-black uppercase tracking-wider text-emerald-800">
               Sanctuary Garden
             </span>
-            <h3 className="text-2xl font-heading font-black text-on-surface">
-              {gardenStage.stage}
-            </h3>
+            <AnimatePresence mode="wait">
+              <motion.h3
+                key={gardenStage.stage}
+                initial={{ scale: 0.95, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.95, opacity: 0 }}
+                className="text-2xl font-heading font-black text-on-surface"
+              >
+                {gardenStage.stage}
+              </motion.h3>
+            </AnimatePresence>
             <p className="text-xs text-on-surface-variant leading-relaxed font-medium">
-              {gardenStage.desc} You have logged **{gardenStats.totalCheckIns} reflections** total. Water your garden by checking in daily.
+              {gardenStage.desc} You have logged **{totalCheckIns} reflections** total. Water your garden by checking in daily.
             </p>
           </div>
 
@@ -378,13 +415,13 @@ export default function DashboardScreen() {
             <svg width="50" height="80" viewBox="0 0 60 90" fill="none">
               <ellipse cx="30" cy="85" rx="20" ry="5" fill="#78350F" opacity="0.6" />
               <path d="M30 85C30 50 30 25 30 15" stroke={gardenStage.color} strokeWidth="4" strokeLinecap="round" />
-              {gardenStats.totalCheckIns >= 2 && (
+              {totalCheckIns >= 2 && (
                 <>
                   <path d="M30 70C20 65 15 55 20 50C25 45 28 55 30 70Z" fill={gardenStage.color} />
                   <path d="M30 65C40 60 45 50 40 45C35 40 32 50 30 65Z" fill={gardenStage.color} />
                 </>
               )}
-              {gardenStats.totalCheckIns >= 5 && (
+              {totalCheckIns >= 5 && (
                 <circle cx="30" cy="15" r="9" fill="#EC4899" />
               )}
               <path d="M30 15C25 10 28 2 30 0C32 2 35 10 30 15Z" fill="#34D399" />
@@ -404,9 +441,18 @@ export default function DashboardScreen() {
               <span className="material-symbols-outlined text-2xl">spa</span>
             </div>
             <h4 className="font-heading font-extrabold text-sm text-on-surface">Weekly Reflection</h4>
-            <p className="text-xs text-on-surface leading-relaxed font-semibold mt-2.5">
-              🌿 "{oneRecommendation}"
-            </p>
+            <AnimatePresence mode="wait">
+              <motion.p
+                key={recommendation}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ type: "spring", stiffness: 80, damping: 12 }}
+                className="text-xs text-on-surface leading-relaxed font-semibold mt-2.5"
+              >
+                🌿 "{recommendation}"
+              </motion.p>
+            </AnimatePresence>
           </div>
           <span className="text-[10px] font-bold text-primary uppercase tracking-widest pt-2">
             See all suggestions →

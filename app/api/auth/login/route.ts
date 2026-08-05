@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { sql } from "@/backend/db/client";
+import { saveUserAssessment } from "@/backend/queries/assessment";
 import crypto from "crypto";
 
 function verifyPassword(password: string, storedHash: string): boolean {
@@ -12,7 +13,7 @@ function verifyPassword(password: string, storedHash: string): boolean {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { email, password } = body;
+    const { email, password, category, answers, computedScore, percentage, wellnessLevel } = body;
 
     if (!email || !password) {
       return NextResponse.json(
@@ -57,6 +58,25 @@ export async function POST(request: Request) {
       currentMood: user.current_mood || "Sanctuary Member",
       selectedCategory: user.selected_category || "student",
     };
+
+    // 3. Save assessment if provided
+    if (answers && Array.isArray(answers) && answers.length > 0) {
+      const userCategory = category || user.selected_category || "student";
+      // Update selected_category in users table
+      await sql`
+        UPDATE users SET selected_category = ${userCategory} WHERE id = ${user.id}
+      `;
+      userProfile.selectedCategory = userCategory;
+
+      await saveUserAssessment(
+        user.id,
+        userCategory,
+        answers,
+        typeof computedScore === "number" ? computedScore : 50,
+        typeof percentage === "number" ? percentage : 50,
+        wellnessLevel || "Balanced"
+      );
+    }
 
     const sessionData = {
       user: userProfile,
