@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { getClientSession } from "@/backend/auth/client";
+import ParentDashboard from "@/parent/Research/Documentation/Dashboard Planning/AI Knowledge/Feature Documentation/Development/ParentDashboard";
 
 interface TimeTheme {
   greeting: string;
@@ -187,6 +188,10 @@ export default function DashboardScreen() {
   };
 
   const gardenStage = getGardenStage(gardenStats.totalCheckIns);
+
+  if (category === "parent") {
+    return <ParentDashboard />;
+  }
 
   return (
     <div className="max-w-7xl mx-auto py-10 px-6 space-y-10 relative select-none animate-fadeIn">
