@@ -2,11 +2,18 @@ import { AssessmentQuestion, AssessmentAnswer } from "./types";
 import { COMMON_QUESTIONS, getCategoryQuestions } from "./questions";
 
 export class AssessmentEngine {
+  private cache: Record<string, AssessmentQuestion[]> = {};
+
   /**
    * Loads the 5 common questions and 10 category-specific questions,
    * merging them into a total of 15 questions.
    */
   getQuestionsForCategory(category: string | null): AssessmentQuestion[] {
+    const key = category || "student";
+    if (this.cache[key]) {
+      return this.cache[key];
+    }
+
     const common = COMMON_QUESTIONS.map(q => ({
       ...q,
       type: "common" as const
@@ -18,7 +25,8 @@ export class AssessmentEngine {
       category: category || "student"
     }));
 
-    return [...common, ...categoryQuestions];
+    this.cache[key] = [...common, ...categoryQuestions];
+    return this.cache[key];
   }
 
   getQuestionCount(category: string | null): number {

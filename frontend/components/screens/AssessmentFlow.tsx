@@ -41,7 +41,7 @@ export default function AssessmentFlow() {
     } else {
       setSelectedOptionId(null);
     }
-  }, [currentQuestionIndex, detailedAnswers, question]);
+  }, [currentQuestionIndex, detailedAnswers, question?.id]);
 
   const handleSelectOption = (optionId: string) => {
     setSelectedOptionId(optionId);
