@@ -45,16 +45,11 @@ export default function AssessmentFlow() {
 
   const handleSelectOption = (optionId: string) => {
     setSelectedOptionId(optionId);
-  };
 
-  const handleNext = () => {
-    if (!question || !selectedOptionId) return;
-
-    // Create the structured answer
-    const newAnswer = assessmentEngine.createAnswer(selectedCategory, question.id, selectedOptionId);
+    if (!question) return;
+    const newAnswer = assessmentEngine.createAnswer(selectedCategory, question.id, optionId);
     if (!newAnswer) return;
 
-    // Update detailedAnswers array in Context
     const updatedAnswers = [...detailedAnswers];
     const existingIndex = updatedAnswers.findIndex((ans) => ans.questionId === question.id);
     if (existingIndex > -1) {
@@ -63,13 +58,27 @@ export default function AssessmentFlow() {
       updatedAnswers.push(newAnswer);
     }
     setDetailedAnswers(updatedAnswers);
+  };
+
+  const handleNext = () => {
+    if (!question || !selectedOptionId) return;
+
+    let currentAnswers = detailedAnswers;
+    const hasAnswer = detailedAnswers.some((ans) => ans.questionId === question.id);
+    if (!hasAnswer) {
+      const newAnswer = assessmentEngine.createAnswer(selectedCategory, question.id, selectedOptionId);
+      if (newAnswer) {
+        currentAnswers = [...detailedAnswers, newAnswer];
+        setDetailedAnswers(currentAnswers);
+      }
+    }
 
     if (currentQuestionIndex < totalQuestions - 1) {
       setDirection(1);
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     } else {
       // Completed all 15 questions
-      const results = evaluateWellness(updatedAnswers);
+      const results = evaluateWellness(currentAnswers);
       setAssessmentResult(results);
       setAssessmentCompleted(true);
       router.push("/wellness-score");
@@ -166,33 +175,43 @@ export default function AssessmentFlow() {
                 </div>
 
                 {/* Option cards */}
-                <div className="space-y-3.5" role="radiogroup" aria-label={question.text}>
+                <div className="space-y-3.5 relative z-20" role="radiogroup" aria-label={question.text}>
                   {question.options.map((opt) => {
                     const isSelected = selectedOptionId === opt.id;
                     return (
-                      <button
+                      <motion.button
                         key={opt.id}
                         type="button"
                         role="radio"
                         aria-checked={isSelected}
                         onClick={() => handleSelectOption(opt.id)}
-                        className={`w-full flex items-center justify-between p-5 rounded-[24px] transition-all border text-left cursor-pointer group focus:outline-none focus:ring-2 focus:ring-primary/20 ${
+                        whileHover={{ scale: 1.01 }}
+                        whileTap={{ scale: 0.99 }}
+                        transition={{ type: "spring", stiffness: 350, damping: 25 }}
+                        className={`w-full flex items-center justify-between p-5 rounded-[24px] border text-left cursor-pointer group focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all ${
                           isSelected
-                            ? "bg-surface-container-lowest border-primary shadow-card-lift ring-2 ring-primary/20 text-primary font-bold"
+                            ? "bg-surface-container-lowest border-primary-purple shadow-[0_0_15px_rgba(124,107,196,0.15),_0_12px_36px_rgba(95,78,165,0.12)] ring-2 ring-primary/20 text-primary font-bold"
                             : "bg-surface-container-lowest border-surface-variant/30 shadow-soft hover:shadow-md hover:border-primary/30 text-on-surface-variant"
                         }`}
                       >
-                        <span className="text-sm md:text-base font-medium">{opt.text}</span>
+                        <span className="text-sm md:text-base font-medium select-none pointer-events-none">{opt.text}</span>
                         <div
-                          className={`w-6 h-6 rounded-full border flex items-center justify-center transition-all ${
+                          className={`w-6 h-6 rounded-full border flex items-center justify-center transition-all pointer-events-none ${
                             isSelected
                               ? "border-primary bg-primary"
                               : "border-outline-variant group-hover:border-primary/50"
                           }`}
                         >
-                          {isSelected && <div className="w-2.5 h-2.5 rounded-full bg-white" />}
+                          {isSelected && (
+                            <motion.div
+                              initial={{ scale: 0 }}
+                              animate={{ scale: 1 }}
+                              transition={{ type: "spring", stiffness: 500, damping: 25 }}
+                              className="w-2.5 h-2.5 rounded-full bg-white"
+                            />
+                          )}
                         </div>
-                      </button>
+                      </motion.button>
                     );
                   })}
                 </div>
