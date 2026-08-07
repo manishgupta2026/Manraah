@@ -145,27 +145,57 @@ export default function DashboardScreen() {
     return <ParentDashboard />;
   }
 
-  // Pure SVG Mood Trend Coordinates Calculation (Calming Curved Graph)
-  const plotPoints = [
-    { label: "31 Jul", score: 4 },
-    { label: "1 Aug", score: 3 },
-    { label: "2 Aug", score: 4 },
-    { label: "3 Aug", score: 3.5 },
-    { label: "4 Aug", score: 4.5 },
-    { label: "5 Aug", score: 4 },
-    { label: "Today", score: todayMood ? (todayMood.mood === "calm" || todayMood.mood === "happy" ? 4.5 : 4) : 4 }
-  ];
+  const moodScoreMap: Record<string, number> = {
+    Amazing: 5,
+    Happy: 4.5,
+    Calm: 4,
+    Okay: 3,
+    Low: 2,
+    Overwhelmed: 1
+  };
+
+  const getMoodEmoji = (moodStr: string) => {
+    const emojis: Record<string, string> = {
+      Amazing: "😁",
+      Happy: "😊",
+      Calm: "🙂",
+      Okay: "😐",
+      Low: "😔",
+      Overwhelmed: "😣"
+    };
+    return emojis[moodStr] || "🌸";
+  };
+
+  const recentCheckins = history.slice(0, 7).reverse();
+  const plotPoints = recentCheckins.length > 0 
+    ? recentCheckins.map((item: any) => {
+        const d = new Date(item.created_at);
+        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        const label = `${d.getDate()} ${months[d.getMonth()]}`;
+        const score = moodScoreMap[item.mood] || 3;
+        return { label, score, item };
+      })
+    : [
+        { label: "31 Jul", score: 4 },
+        { label: "1 Aug", score: 3 },
+        { label: "2 Aug", score: 4 },
+        { label: "3 Aug", score: 3.5 },
+        { label: "4 Aug", score: 4.5 },
+        { label: "5 Aug", score: 4 },
+        { label: "Today", score: todayMood ? (moodScoreMap[todayMood.mood] || 4) : 4 }
+      ];
 
   const svgW = 320;
   const svgH = 80;
   const coords = plotPoints.map((pt, idx) => {
-    const x = 20 + idx * ((svgW - 40) / (plotPoints.length - 1));
+    const divider = Math.max(plotPoints.length - 1, 1);
+    const x = 20 + idx * ((svgW - 40) / divider);
     const y = svgH - 12 - (pt.score - 1) * ((svgH - 24) / 4); // graded 1 to 5
     return { x, y, score: pt.score, label: pt.label };
   });
 
   // Calculate SVG curve path using Bezier Cubic
-  let pathD = `M ${coords[0].x} ${coords[0].y}`;
+  let pathD = coords.length > 0 ? `M ${coords[0].x} ${coords[0].y}` : "";
   for (let i = 0; i < coords.length - 1; i++) {
     const cpX1 = coords[i].x + (coords[i + 1].x - coords[i].x) / 2;
     const cpY1 = coords[i].y;
@@ -174,7 +204,7 @@ export default function DashboardScreen() {
     pathD += ` C ${cpX1} ${cpY1}, ${cpX2} ${cpY2}, ${coords[i + 1].x} ${coords[i + 1].y}`;
   }
 
-  const fillD = `${pathD} L ${coords[coords.length - 1].x} ${svgH} L ${coords[0].x} ${svgH} Z`;
+  const fillD = coords.length > 0 ? `${pathD} L ${coords[coords.length - 1].x} ${svgH} L ${coords[0].x} ${svgH} Z` : "";
 
   return (
     <div className={`max-w-7xl mx-auto py-2 md:py-4 px-2 md:px-4 space-y-6 relative select-none animate-fadeIn transition-colors duration-1000 ${
@@ -322,7 +352,7 @@ export default function DashboardScreen() {
         <motion.div
           variants={cardVariants}
           whileHover={{ y: -4 }}
-          onClick={() => router.push(todayMood ? "/mood-tracking" : "/mood-checkin")}
+          onClick={() => router.push(todayMood ? "/mood-tracking" : "/checkin")}
           className="col-span-12 md:col-span-4 p-6 rounded-[32px] bg-white/50 backdrop-blur-xl border border-white/40 shadow-soft hover:shadow-soft-lg cursor-pointer flex flex-col justify-between min-h-[250px] relative overflow-hidden"
         >
           {/* Leaf outline illustration inside background */}
@@ -332,20 +362,25 @@ export default function DashboardScreen() {
 
           <div className="space-y-4">
             <div className="flex items-center gap-2">
-              <span className="text-2xl filter drop-shadow-sm">🌸</span>
-              <h4 className="font-heading font-extrabold text-sm text-on-surface">Today's Check-in</h4>
+              <span className="text-2xl filter drop-shadow-sm">{todayMood ? "✅" : "🌸"}</span>
+              <h4 className="font-heading font-extrabold text-sm text-on-surface">
+                {todayMood ? "Checked in Today" : "Today's Check-in"}
+              </h4>
             </div>
             
             <div className="flex items-center gap-3">
               <span className="text-4xl filter drop-shadow-sm">
-                {todayMood ? getOptionEmoji(todayMood.energy / 2) : "😊"}
+                {todayMood ? getMoodEmoji(todayMood.mood) : "🌸"}
               </span>
               <div>
                 <p className="text-base font-black text-on-surface leading-tight">
-                  {todayMood ? todayMood.mood : "Calm"}
+                  {todayMood ? todayMood.mood : "Ready to log"}
                 </p>
-                <p className="text-[10px] text-on-surface-variant font-bold leading-normal mt-0.5">
-                  {todayMood ? "You've logged your check-in for today." : "Complete today's log to map mood."}
+                <p className="text-[10px] text-on-surface-variant font-bold leading-normal mt-1 block max-w-[160px] line-clamp-2">
+                  {todayMood 
+                    ? (todayMood.reflection || "You've taken a moment to care for yourself today.")
+                    : "Today's reflection is waiting for you."
+                  }
                 </p>
               </div>
             </div>
@@ -354,7 +389,7 @@ export default function DashboardScreen() {
           <button
             className="px-6 py-3 rounded-full bg-primary-container/10 border border-primary/10 text-primary hover:bg-primary-container/20 font-bold text-xs transition-all self-start"
           >
-            View Check-in
+            {todayMood ? "View Check-in" : "Complete Check-in"}
           </button>
         </motion.div>
 

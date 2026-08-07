@@ -170,6 +170,22 @@ export async function initDatabase() {
       )
     `;
 
+    // 11. Create wellness_metrics table
+    await sql`
+      CREATE TABLE IF NOT EXISTS wellness_metrics (
+        id SERIAL PRIMARY KEY,
+        user_id VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
+        date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        wellness_score INTEGER NOT NULL,
+        stress_score INTEGER NOT NULL,
+        energy_score INTEGER NOT NULL,
+        sleep_score INTEGER NOT NULL,
+        mood_score INTEGER NOT NULL,
+        streak INTEGER NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `;
+
     // Seed categories
     const existingCats = await sql`SELECT COUNT(*) FROM categories`;
     if (parseInt(existingCats[0].count) === 0) {
