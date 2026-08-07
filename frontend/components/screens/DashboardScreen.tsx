@@ -454,7 +454,7 @@ export default function DashboardScreen() {
           variants={cardVariants}
           whileHover={{ y: -4 }}
           onClick={() => router.push("/sleep")}
-          className="col-span-12 sm:col-span-6 md:col-span-3 p-5.5 rounded-[28px] bg-white/50 backdrop-blur-xl border border-white/40 shadow-soft hover:shadow-soft-lg cursor-pointer flex flex-col justify-between min-h-[190px] relative overflow-hidden"
+          className="col-span-12 sm:col-span-6 md:col-span-3 p-6 rounded-[28px] bg-white/50 backdrop-blur-xl border border-white/40 shadow-soft hover:shadow-soft-lg cursor-pointer flex flex-col justify-between min-h-[220px] relative overflow-hidden"
         >
           {/* Moonlight graphic */}
           <div className="absolute right-0 bottom-0 w-16 h-16 pointer-events-none opacity-80">
@@ -493,7 +493,7 @@ export default function DashboardScreen() {
           variants={cardVariants}
           whileHover={{ y: -4 }}
           onClick={() => router.push("/mood-tracking")}
-          className="col-span-12 sm:col-span-6 md:col-span-3 p-5.5 rounded-[28px] bg-white/50 backdrop-blur-xl border border-white/40 shadow-soft hover:shadow-soft-lg cursor-pointer flex flex-col justify-between min-h-[190px]"
+          className="col-span-12 sm:col-span-6 md:col-span-3 p-6 rounded-[28px] bg-white/50 backdrop-blur-xl border border-white/40 shadow-soft hover:shadow-soft-lg cursor-pointer flex flex-col justify-between min-h-[220px]"
         >
           <div className="space-y-2">
             <div className="flex items-center gap-2">
@@ -533,7 +533,7 @@ export default function DashboardScreen() {
           variants={cardVariants}
           whileHover={{ y: -4 }}
           onClick={() => router.push("/mood-tracking")}
-          className="col-span-12 sm:col-span-6 md:col-span-3 p-5.5 rounded-[28px] bg-white/50 backdrop-blur-xl border border-white/40 shadow-soft hover:shadow-soft-lg cursor-pointer flex flex-col justify-between min-h-[190px]"
+          className="col-span-12 sm:col-span-6 md:col-span-3 p-6 rounded-[28px] bg-white/50 backdrop-blur-xl border border-white/40 shadow-soft hover:shadow-soft-lg cursor-pointer flex flex-col justify-between min-h-[220px]"
         >
           <div className="space-y-2">
             <div className="flex items-center gap-2">
@@ -574,7 +574,7 @@ export default function DashboardScreen() {
           variants={cardVariants}
           whileHover={{ y: -4 }}
           onClick={() => router.push("/meditation")}
-          className="col-span-12 sm:col-span-6 md:col-span-3 p-5.5 rounded-[28px] bg-white/50 backdrop-blur-xl border border-white/40 shadow-soft hover:shadow-soft-lg cursor-pointer flex flex-col justify-between min-h-[190px] relative overflow-hidden"
+          className="col-span-12 sm:col-span-6 md:col-span-3 p-6 rounded-[28px] bg-white/50 backdrop-blur-xl border border-white/40 shadow-soft hover:shadow-soft-lg cursor-pointer flex flex-col justify-between min-h-[220px] relative overflow-hidden"
         >
           {/* Flowery corner vector */}
           <div className="absolute right-0 bottom-0 opacity-15 text-[80px] pointer-events-none select-none text-pink-600">
