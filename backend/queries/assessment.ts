@@ -8,7 +8,10 @@ import { AssessmentAnswer } from "@/frontend/lib/assessment/types";
  * Auto-initializes and queries user assessments in Neon PostgreSQL.
  */
 
+let isInitialized = false;
+
 export async function initDatabase() {
+  if (isInitialized) return;
   try {
     // 1. Create users table
     await sql`
@@ -248,6 +251,7 @@ export async function initDatabase() {
     }
 
     console.log("[Neon DB] Database tables initialized and seeded successfully.");
+    isInitialized = true;
   } catch (err) {
     console.error("[Neon DB] Table initialization failed:", err);
   }

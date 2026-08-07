@@ -1,6 +1,9 @@
 import { sql } from "@/backend/db/client";
 
+let isMoodInitialized = false;
+
 export async function initMoodDatabase() {
+  if (isMoodInitialized) return;
   try {
     // 1. Create mood_entries table
     await sql`
@@ -62,6 +65,7 @@ export async function initMoodDatabase() {
     await sql`CREATE INDEX IF NOT EXISTS idx_monthly_summaries_user ON monthly_mood_summaries(user_id)`;
 
     console.log("[Neon DB] Mood database tables and indexes initialized successfully.");
+    isMoodInitialized = true;
   } catch (err) {
     console.error("[Neon DB] Failed to initialize mood database:", err);
   }

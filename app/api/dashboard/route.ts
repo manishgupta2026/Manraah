@@ -13,11 +13,24 @@ export async function GET(req: Request) {
 
   try {
     // 1. Fetch user & profile info
-    const userResult = await sql`
+    let userResult = await sql`
       SELECT id, name, email, sanctuary_name, avatar, selected_category, streak_days, mindfulness_minutes, current_mood FROM users WHERE id = ${userId} LIMIT 1
     `;
     if (userResult.length === 0) {
-      return NextResponse.json({ error: "User profile not found" }, { status: 404 });
+      const defaultName = userId === "demo-user" ? "Demo Member" : "Sanctuary Member";
+      const defaultEmail = userId === "demo-user" ? "demo@manraah.com" : `${userId}@manraah.com`;
+      const defaultCategory = "parent"; // default to parent so parent dashboard is loaded
+      await sql`
+        INSERT INTO users (id, name, email, selected_category, streak_days, mindfulness_minutes, current_mood)
+        VALUES (${userId}, ${defaultName}, ${defaultEmail}, ${defaultCategory}, 1, 0, 'Sanctuary Member')
+        ON CONFLICT (id) DO NOTHING
+      `;
+      userResult = await sql`
+        SELECT id, name, email, sanctuary_name, avatar, selected_category, streak_days, mindfulness_minutes, current_mood FROM users WHERE id = ${userId} LIMIT 1
+      `;
+      if (userResult.length === 0) {
+        return NextResponse.json({ error: "User profile not found" }, { status: 404 });
+      }
     }
     const user = userResult[0];
 

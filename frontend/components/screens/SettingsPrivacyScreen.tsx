@@ -7,6 +7,8 @@ import { AuthSession } from "@/backend/types";
 import { getInitials, getPastelBgColor, getPastelTextColor } from "@/frontend/lib/avatar-helper";
 import ScreenHeader from "@/frontend/components/ui/ScreenHeader";
 
+const MOCK_TAKEN_USERNAMES = ["elena", "parent", "mama", "papa", "user", "admin", "mom", "dad", "parent123", "kartik"];
+
 export default function SettingsPrivacyScreen() {
   const router = useRouter();
   const [session, setSession] = useState<AuthSession | null>(null);
@@ -24,6 +26,13 @@ export default function SettingsPrivacyScreen() {
   const [dataSharing, setDataSharing] = useState(false);
   const [notifications, setNotifications] = useState(true);
 
+  // Parent Privacy Settings
+  const [username, setUsername] = useState("CalmParent-3804");
+  const [tempUsername, setTempUsername] = useState("");
+  const [usernameStatus, setUsernameStatus] = useState<"idle" | "available" | "taken">("idle");
+  const [usernameSuggestions, setUsernameSuggestions] = useState<string[]>([]);
+  const [showPhoneNumber, setShowPhoneNumber] = useState(false);
+
   useEffect(() => {
     const s = getClientSession();
     setSession(s);
@@ -32,6 +41,14 @@ export default function SettingsPrivacyScreen() {
       setCategory(s.user.selectedCategory || "student");
       setAvatar(s.user.avatar || "");
     }
+
+    const storedUsername = localStorage.getItem("parent_username") || "CalmParent-3804";
+    setUsername(storedUsername);
+    setTempUsername(storedUsername);
+
+    const storedShowPhone = localStorage.getItem("parent_show_phone") === "true";
+    setShowPhoneNumber(storedShowPhone);
+
     setLoading(false);
   }, []);
 
@@ -121,6 +138,46 @@ export default function SettingsPrivacyScreen() {
     }
   };
 
+  // Check Username Availability
+  const checkUsernameAvailability = () => {
+    const cleanName = tempUsername.trim().toLowerCase();
+    if (!cleanName) return;
+
+    if (MOCK_TAKEN_USERNAMES.includes(cleanName)) {
+      setUsernameStatus("taken");
+      const suggestionBase = tempUsername.trim().replace(/\s+/g, "");
+      const suggestions = [
+        `${suggestionBase}-${Math.floor(10 + Math.random() * 90)}`,
+        `Mindful${suggestionBase}`,
+        `Calm${suggestionBase}-${Math.floor(100 + Math.random() * 900)}`
+      ];
+      setUsernameSuggestions(suggestions);
+    } else {
+      setUsernameStatus("available");
+      setUsernameSuggestions([]);
+    }
+  };
+
+  const saveCustomUsername = () => {
+    if (usernameStatus !== "available" || !tempUsername.trim()) return;
+    const newName = tempUsername.trim();
+    setUsername(newName);
+    localStorage.setItem("parent_username", newName);
+    setUsernameStatus("idle");
+    alert("✅ Username updated successfully!");
+  };
+
+  const handleSuggestionClick = (name: string) => {
+    setTempUsername(name);
+    setUsernameStatus("available");
+    setUsernameSuggestions([]);
+  };
+
+  const handleTogglePhoneNumber = (checked: boolean) => {
+    setShowPhoneNumber(checked);
+    localStorage.setItem("parent_show_phone", checked ? "true" : "false");
+  };
+
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[50vh] space-y-4">
@@ -139,7 +196,7 @@ export default function SettingsPrivacyScreen() {
   const pastelText = getPastelTextColor(sanctuaryName);
 
   return (
-    <div className="max-w-3xl mx-auto py-6 space-y-8">
+    <div className="max-w-3xl mx-auto py-6 space-y-8 px-4 sm:px-6">
       <ScreenHeader title="⚙️ Settings" showBackButton={true} fallbackRoute="/dashboard" />
       {/* Header */}
       <div className="p-8 rounded-3xl bg-surface-container-lowest border border-surface-variant/30 shadow-soft flex items-center justify-between gap-6">
@@ -302,6 +359,83 @@ export default function SettingsPrivacyScreen() {
           <div className="p-8 rounded-3xl bg-surface-container-lowest border border-surface-variant/30 shadow-soft space-y-6">
             <h3 className="font-heading font-bold text-xl text-on-surface">Privacy & Security</h3>
 
+            {/* Username Customization Selector */}
+            <div className="p-6 rounded-2xl bg-surface-container-low border border-surface-variant/30 space-y-4">
+              <div>
+                <h4 className="font-heading font-bold text-sm text-on-surface">Confidential Username</h4>
+                <p className="text-xs text-on-surface-variant">Choose a unique anonymous username displayed on your dashboard greeting.</p>
+              </div>
+
+              {/* Username Input and Check */}
+              <div className="space-y-3 max-w-md">
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={tempUsername}
+                    onChange={(e) => {
+                      setTempUsername(e.target.value);
+                      setUsernameStatus("idle");
+                    }}
+                    placeholder="Enter anonymous username..."
+                    className="flex-1 text-xs px-3 py-2 bg-white border border-surface-variant/30 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary/40"
+                  />
+                  <button
+                    onClick={checkUsernameAvailability}
+                    className="px-4 py-2 bg-secondary text-white rounded-lg text-xs font-bold active:scale-95 transition-transform"
+                  >
+                    Check
+                  </button>
+                </div>
+
+                {/* Status Indicator */}
+                {usernameStatus === "available" && (
+                  <div className="flex items-center justify-between bg-emerald-50 p-2.5 rounded-lg border border-emerald-200">
+                    <span className="text-xs text-emerald-800 font-bold">✅ Username available!</span>
+                    <button
+                      onClick={saveCustomUsername}
+                      className="px-4 py-1.5 bg-primary text-white rounded-full text-xs font-bold active:scale-95 transition-transform"
+                    >
+                      Save Username
+                    </button>
+                  </div>
+                )}
+
+                {usernameStatus === "taken" && (
+                  <div className="bg-rose-50 p-3 rounded-lg border border-rose-200 space-y-2">
+                    <span className="text-xs text-rose-800 font-bold block">❌ This username is already taken.</span>
+                    <div className="space-y-1">
+                      <span className="text-[10px] text-on-surface-variant font-bold block">Suggestions:</span>
+                      <div className="flex flex-wrap gap-1.5">
+                        {usernameSuggestions.map((sug) => (
+                          <button
+                            key={sug}
+                            onClick={() => handleSuggestionClick(sug)}
+                            className="px-2 py-0.5 rounded bg-white hover:bg-surface-container text-[10px] border border-surface-variant/20 text-on-surface font-semibold"
+                          >
+                            {sug}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Display Phone Toggle Switch */}
+            <div className="flex items-center justify-between p-4 rounded-2xl bg-surface-container-low border border-surface-variant/30">
+              <div>
+                <h4 className="font-heading font-bold text-sm text-on-surface">Show Phone Number on Dashboard</h4>
+                <p className="text-xs text-on-surface-variant">Toggle whether your registered phone number (+91 ••••• ••982) is displayed in the header.</p>
+              </div>
+              <input
+                type="checkbox"
+                checked={showPhoneNumber}
+                onChange={(e) => handleTogglePhoneNumber(e.target.checked)}
+                className="w-5 h-5 rounded text-primary focus:ring-primary cursor-pointer accent-primary"
+              />
+            </div>
+
             <div className="flex items-center justify-between p-4 rounded-2xl bg-surface-container-low border border-surface-variant/30">
               <div>
                 <h4 className="font-heading font-bold text-sm text-on-surface">End-to-End Log Encryption</h4>
@@ -319,7 +453,7 @@ export default function SettingsPrivacyScreen() {
                 type="checkbox"
                 checked={notifications}
                 onChange={(e) => setNotifications(e.target.checked)}
-                className="w-5 h-5 rounded text-primary focus:ring-primary cursor-pointer"
+                className="w-5 h-5 rounded text-primary focus:ring-primary cursor-pointer accent-primary"
               />
             </div>
 
@@ -332,7 +466,7 @@ export default function SettingsPrivacyScreen() {
                 type="checkbox"
                 checked={dataSharing}
                 onChange={(e) => setDataSharing(e.target.checked)}
-                className="w-5 h-5 rounded text-primary focus:ring-primary cursor-pointer"
+                className="w-5 h-5 rounded text-primary focus:ring-primary cursor-pointer accent-primary"
               />
             </div>
           </div>
@@ -360,4 +494,3 @@ export default function SettingsPrivacyScreen() {
     </div>
   );
 }
-
