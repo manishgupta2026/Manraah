@@ -269,7 +269,7 @@ export default function DashboardScreen() {
           variants={cardVariants}
           whileHover={{ y: -4 }}
           onClick={() => router.push("/ai-chat")}
-          className="col-span-12 md:col-span-4 p-6.5 rounded-[32px] bg-white/50 backdrop-blur-xl border border-white/40 shadow-soft hover:shadow-soft-lg cursor-pointer flex flex-col justify-between min-h-[260px] relative overflow-hidden"
+          className="col-span-12 md:col-span-4 p-6 rounded-[32px] bg-white/50 backdrop-blur-xl border border-white/40 shadow-soft hover:shadow-soft-lg cursor-pointer flex flex-col justify-between min-h-[260px] relative overflow-hidden"
         >
           {/* Floating AI Robot companion vector */}
           <div className="absolute right-2 bottom-2 w-28 h-28 pointer-events-none z-0">
@@ -323,7 +323,7 @@ export default function DashboardScreen() {
           variants={cardVariants}
           whileHover={{ y: -4 }}
           onClick={() => router.push(todayMood ? "/mood-tracking" : "/mood-checkin")}
-          className="col-span-12 md:col-span-4 p-6.5 rounded-[32px] bg-white/50 backdrop-blur-xl border border-white/40 shadow-soft hover:shadow-soft-lg cursor-pointer flex flex-col justify-between min-h-[220px] relative overflow-hidden"
+          className="col-span-12 md:col-span-4 p-6 rounded-[32px] bg-white/50 backdrop-blur-xl border border-white/40 shadow-soft hover:shadow-soft-lg cursor-pointer flex flex-col justify-between min-h-[250px] relative overflow-hidden"
         >
           {/* Leaf outline illustration inside background */}
           <div className="absolute right-4 bottom-14 opacity-20 pointer-events-none text-emerald-800 text-[100px] select-none">
@@ -363,7 +363,7 @@ export default function DashboardScreen() {
           variants={cardVariants}
           whileHover={{ y: -4 }}
           onClick={() => router.push("/mood-tracking")}
-          className="col-span-12 md:col-span-4 p-6.5 rounded-[32px] bg-white/50 backdrop-blur-xl border border-white/40 shadow-soft hover:shadow-soft-lg cursor-pointer flex flex-col justify-between min-h-[220px]"
+          className="col-span-12 md:col-span-4 p-6 rounded-[32px] bg-white/50 backdrop-blur-xl border border-white/40 shadow-soft hover:shadow-soft-lg cursor-pointer flex flex-col justify-between min-h-[250px]"
         >
           <div className="space-y-2">
             <div className="flex items-center gap-2">
@@ -423,7 +423,7 @@ export default function DashboardScreen() {
           variants={cardVariants}
           whileHover={{ y: -4 }}
           onClick={() => router.push("/mood-tracking")}
-          className="col-span-12 md:col-span-4 p-6.5 rounded-[32px] bg-white/50 backdrop-blur-xl border border-white/40 shadow-soft hover:shadow-soft-lg cursor-pointer flex flex-col justify-between min-h-[220px] relative overflow-hidden"
+          className="col-span-12 md:col-span-4 p-6 rounded-[32px] bg-white/50 backdrop-blur-xl border border-white/40 shadow-soft hover:shadow-soft-lg cursor-pointer flex flex-col justify-between min-h-[250px] relative overflow-hidden"
         >
           {/* Subtle flower drawing inside background */}
           <div className="absolute right-2 bottom-2 opacity-25 pointer-events-none text-[80px] select-none">
