@@ -2,6 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
+import ScreenHeader from "@/frontend/components/ui/ScreenHeader";
 
 export default function HumanCompanionStub() {
   return (

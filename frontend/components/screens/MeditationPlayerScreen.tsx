@@ -2,8 +2,11 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { useCategory } from "@/frontend/lib/context/CategoryContext";
+import { useRouter } from "next/navigation";
+import ScreenHeader from "@/frontend/components/ui/ScreenHeader";
 
 export default function MeditationPlayerScreen() {
+  const router = useRouter();
   const { categoryDetails } = useCategory();
 
   // Selected session settings
@@ -319,6 +322,7 @@ export default function MeditationPlayerScreen() {
 
   return (
     <div className="max-w-4xl mx-auto py-4 space-y-6 animate-fadeIn select-none relative">
+      <ScreenHeader title="🧘 Meditation" showBackButton={true} fallbackRoute="/dashboard" />
       {/* Toast Notification Banner */}
       {toastMessage && (
         <div className="p-4 rounded-2xl bg-secondary text-white text-xs font-bold text-center shadow-lg border border-white/20 animate-bounce">

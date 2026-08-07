@@ -9,7 +9,8 @@ import {
 
 export const MOCK_USER: UserProfile = {
   id: "user-101",
-  name: "Aanya Sharma",
+  name: "Gentle Bloom",
+  sanctuaryName: "Gentle Bloom",
   avatar: "/images/user_avatar.jpg",
   email: "aanya@manraah.org",
   streakDays: 14,

@@ -1,16 +1,24 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signUp } from "@/backend/auth/client";
 import { useAssessment } from "@/frontend/lib/context/AssessmentContext";
+import ScreenHeader from "@/frontend/components/ui/ScreenHeader";
 
 export default function SignupScreen() {
   const router = useRouter();
   const { selectedCategory, detailedAnswers, totalScore, percentage, wellnessLevel } = useAssessment();
 
-  const [name, setName] = useState("");
+  // Guard: Do NOT allow signup before assessment
+  useEffect(() => {
+    if (!selectedCategory || !detailedAnswers || detailedAnswers.length < 15) {
+      router.push("/");
+    }
+  }, [selectedCategory, detailedAnswers, router]);
+
+  const [sanctuaryName, setSanctuaryName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -18,14 +26,14 @@ export default function SignupScreen() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name.trim() || !email.trim() || !password.trim()) return;
+    if (!email.trim() || !password.trim()) return;
 
     setLoading(true);
     setError(null);
     try {
       // 1. Create account & persist assessment in Neon DB
       const session = await signUp(
-        name,
+        sanctuaryName,
         email,
         password,
         selectedCategory || "student",
@@ -39,7 +47,7 @@ export default function SignupScreen() {
       router.push("/dashboard");
     } catch (err: any) {
       console.error("Signup server-side error log:", err);
-      setError("We couldn't create your account. Please try again.");
+      setError(err.message || "We couldn't create your account. Please try again.");
       setLoading(false);
     }
   };
@@ -47,6 +55,7 @@ export default function SignupScreen() {
 
   return (
     <div className="max-w-md mx-auto py-12 px-4 space-y-8 animate-fadeIn">
+      <ScreenHeader title="✨ Join Manraah" showBackButton={true} fallbackRoute="/" />
       {/* Header */}
       <div className="text-center space-y-4">
         <div className="w-12 h-12 rounded-2xl gradient-primary mx-auto flex items-center justify-center text-white shadow-md">
@@ -86,15 +95,19 @@ export default function SignupScreen() {
           </div>
         )}
         <div className="space-y-1.5">
-          <label className="block text-xs font-heading font-bold text-on-surface">Full Name</label>
+          <label className="block text-xs font-heading font-bold text-on-surface">
+            Sanctuary Name <span className="text-on-surface-variant/60 font-medium">(Optional)</span>
+          </label>
           <input
             type="text"
-            required
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Aanya Sharma"
-            className="w-full p-3.5 rounded-2xl bg-surface-container-low border border-surface-variant/40 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
+            value={sanctuaryName}
+            onChange={(e) => setSanctuaryName(e.target.value)}
+            placeholder="e.g. Gentle Bloom"
+            className="w-full p-3.5 rounded-2xl bg-surface-container-low border border-surface-variant/40 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 font-semibold text-on-surface"
           />
+          <p className="text-[10px] text-on-surface-variant/70 leading-normal mt-1">
+            Leave blank to automatically receive a peaceful name. We never ask for your real name.
+          </p>
         </div>
 
         <div className="space-y-1.5">

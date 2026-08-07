@@ -1,15 +1,25 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useCategory } from "@/frontend/lib/context/CategoryContext";
 import { useAssessment } from "@/frontend/lib/context/AssessmentContext";
 import { getWellnessLevel, getWellnessMessage } from "@/frontend/lib/assessment/wellness";
 import { motion } from "framer-motion";
+import ScreenHeader from "@/frontend/components/ui/ScreenHeader";
 
 export default function WellnessScoreScreen() {
+  const router = useRouter();
   const { categoryDetails } = useCategory();
-  const { assessmentResult, detailedAnswers, computedScore } = useAssessment();
+  const { assessmentResult, detailedAnswers, computedScore, selectedCategory } = useAssessment();
+
+  // Guard: Do NOT allow direct access without assessment
+  useEffect(() => {
+    if (!selectedCategory || !detailedAnswers || detailedAnswers.length < 15) {
+      router.push("/");
+    }
+  }, [selectedCategory, detailedAnswers, router]);
 
   // Handle fallback if the user navigated directly or refreshed
   const finalResult = assessmentResult || {
@@ -69,6 +79,7 @@ export default function WellnessScoreScreen() {
 
   return (
     <div className="max-w-3xl mx-auto py-10 px-4 space-y-8 animate-fadeIn relative">
+      <ScreenHeader title="✨ Wellness Score" showBackButton={true} fallbackRoute="/assessment" />
       {/* Calming Backdrop Glows */}
       <div className="fixed inset-0 z-[-2] opacity-35 pointer-events-none">
         <div className="absolute top-[-10%] left-[-10%] w-[60vw] md:w-[500px] h-[60vw] md:h-[500px] rounded-full bg-primary-container blur-[100px]" />

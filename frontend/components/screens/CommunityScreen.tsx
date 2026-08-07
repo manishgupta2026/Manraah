@@ -1,22 +1,38 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { MOCK_COMMUNITY_POSTS } from "@/frontend/lib/mock-data";
 import { CommunityPost } from "@/backend/types";
+import { getClientSession } from "@/backend/auth/client";
+import { getInitials, getPastelBgColor, getPastelTextColor } from "@/frontend/lib/avatar-helper";
+import { useRouter } from "next/navigation";
+import ScreenHeader from "@/frontend/components/ui/ScreenHeader";
 
 export default function CommunityScreen() {
+  const router = useRouter();
   const [posts, setPosts] = useState<CommunityPost[]>(MOCK_COMMUNITY_POSTS);
   const [newTitle, setNewTitle] = useState("");
   const [newContent, setNewContent] = useState("");
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    const session = getClientSession();
+    if (session.user) {
+      setUser(session.user);
+    }
+  }, []);
 
   const handleCreatePost = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newTitle.trim() || !newContent.trim()) return;
 
+    const authorName = user?.sanctuaryName || user?.name || "Sanctuary Member";
+    const authorAvatar = user?.avatar || "/images/user_avatar.jpg";
+
     const post: CommunityPost = {
       id: Date.now().toString(),
-      author: "Aanya Sharma",
-      avatar: "/images/user_avatar.jpg",
+      author: authorName,
+      avatar: authorAvatar,
       category: "Peer Discussion",
       timeAgo: "Just now",
       title: newTitle,
@@ -38,6 +54,7 @@ export default function CommunityScreen() {
 
   return (
     <div className="space-y-8">
+      <ScreenHeader title="🌱 Community" showBackButton={true} fallbackRoute="/dashboard" />
       {/* Header */}
       <div className="p-8 rounded-3xl bg-surface-container-lowest border border-surface-variant/30 shadow-soft space-y-3">
         <span className="px-4 py-1.5 rounded-full bg-peach/30 text-tertiary text-xs font-semibold uppercase tracking-wider">
@@ -53,21 +70,21 @@ export default function CommunityScreen() {
         {/* Main Feed */}
         <div className="lg:col-span-2 space-y-6">
           {/* Create Post Widget */}
-          <form onSubmit={handleCreatePost} className="p-6 rounded-3xl bg-surface-container-lowest border border-surface-variant/30 shadow-soft space-y-4">
+          <form onSubmit={handleCreatePost} className="p-6 rounded-3xl bg-surface-container-lowest border border-surface-variant/30 shadow-soft space-y-4 font-sans">
             <h3 className="font-heading font-bold text-base text-on-surface">Share a Thought or Question</h3>
             <input
               type="text"
               value={newTitle}
               onChange={(e) => setNewTitle(e.target.value)}
               placeholder="Post Title..."
-              className="w-full p-3 rounded-xl bg-surface-container-low border border-surface-variant/40 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 font-heading font-semibold"
+              className="w-full p-3 rounded-xl bg-surface-container-low border border-surface-variant/40 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 font-heading font-semibold text-on-surface"
             />
             <textarea
               rows={3}
               value={newContent}
               onChange={(e) => setNewContent(e.target.value)}
               placeholder="Write your post..."
-              className="w-full p-3 rounded-xl bg-surface-container-low border border-surface-variant/40 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
+              className="w-full p-3 rounded-xl bg-surface-container-low border border-surface-variant/40 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 text-on-surface"
             />
             <div className="flex justify-end">
               <button
@@ -81,35 +98,53 @@ export default function CommunityScreen() {
 
           {/* Posts Stream */}
           <div className="space-y-4">
-            {posts.map((post) => (
-              <div key={post.id} className="p-6 rounded-3xl bg-surface-container-lowest border border-surface-variant/30 shadow-soft space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-primary-container/20 border border-primary/20 flex items-center justify-center font-bold text-primary text-sm">
-                      {post.author.charAt(0)}
+            {posts.map((post) => {
+              const isCustomAvatar = post.avatar && post.avatar.startsWith("data:image/");
+              const initials = getInitials(post.author);
+              const pastelBg = getPastelBgColor(post.author);
+              const pastelText = getPastelTextColor(post.author);
+
+              return (
+                <div key={post.id} className="p-6 rounded-3xl bg-surface-container-lowest border border-surface-variant/30 shadow-soft space-y-4 font-sans">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      {isCustomAvatar ? (
+                        <img
+                          src={post.avatar}
+                          alt={post.author}
+                          className="w-10 h-10 rounded-full object-cover border border-primary/10 shadow-xs"
+                        />
+                      ) : (
+                        <div
+                          className="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm shadow-xs transition-all duration-300"
+                          style={{ backgroundColor: pastelBg, color: pastelText }}
+                        >
+                          {initials}
+                        </div>
+                      )}
+                      <div>
+                        <h4 className="font-heading font-bold text-sm text-on-surface">{post.author}</h4>
+                        <p className="text-[11px] text-on-surface-variant/70">{post.timeAgo} • {post.category}</p>
+                      </div>
                     </div>
-                    <div>
-                      <h4 className="font-heading font-bold text-sm text-on-surface">{post.author}</h4>
-                      <p className="text-[11px] text-on-surface-variant/70">{post.timeAgo} • {post.category}</p>
+                  </div>
+
+                  <h3 className="font-heading font-bold text-lg text-on-surface">{post.title}</h3>
+                  <p className="text-sm text-on-surface-variant leading-relaxed">{post.content}</p>
+
+                  <div className="flex items-center gap-6 pt-3 border-t border-surface-variant/30 text-xs font-semibold text-on-surface-variant">
+                    <button onClick={() => handleLike(post.id)} className="flex items-center gap-1.5 hover:text-primary transition-colors">
+                      <span className="material-symbols-outlined text-base">favorite</span>
+                      <span>{post.likes} Likes</span>
+                    </button>
+                    <div className="flex items-center gap-1.5">
+                      <span className="material-symbols-outlined text-base">chat_bubble</span>
+                      <span>{post.commentsCount} Comments</span>
                     </div>
                   </div>
                 </div>
-
-                <h3 className="font-heading font-bold text-lg text-on-surface">{post.title}</h3>
-                <p className="text-sm text-on-surface-variant leading-relaxed">{post.content}</p>
-
-                <div className="flex items-center gap-6 pt-3 border-t border-surface-variant/30 text-xs font-semibold text-on-surface-variant">
-                  <button onClick={() => handleLike(post.id)} className="flex items-center gap-1.5 hover:text-primary transition-colors">
-                    <span className="material-symbols-outlined text-base">favorite</span>
-                    <span>{post.likes} Likes</span>
-                  </button>
-                  <div className="flex items-center gap-1.5">
-                    <span className="material-symbols-outlined text-base">chat_bubble</span>
-                    <span>{post.commentsCount} Comments</span>
-                  </div>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 

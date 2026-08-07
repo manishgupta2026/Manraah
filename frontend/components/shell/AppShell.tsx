@@ -1,11 +1,12 @@
 "use client";
 
-import React, { ReactNode, useState } from "react";
+import React, { ReactNode, useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { AnimatePresence } from "framer-motion";
 import { CategoryProvider } from "@/frontend/lib/context/CategoryContext";
 import { AssessmentProvider } from "@/frontend/lib/context/AssessmentContext";
 import { WellnessProvider } from "@/frontend/lib/context/WellnessContext";
+import { HeaderProvider } from "@/frontend/lib/context/HeaderContext";
 import DesktopSidebar from "./DesktopSidebar";
 import MobileTabBar from "./MobileTabBar";
 import MobileDrawer from "./MobileDrawer";
@@ -26,6 +27,13 @@ export default function AppShell({ children }: { children: ReactNode }) {
   const isStandalone = STANDALONE_ROUTES.includes(pathname);
   const isAdminRoute = pathname.startsWith("/admin") || pathname.startsWith("/companion");
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
+
+  // Listen for custom menu drawer trigger from DynamicHeader
+  useEffect(() => {
+    const handleOpen = () => setIsMobileDrawerOpen(true);
+    window.addEventListener("open-mobile-drawer", handleOpen);
+    return () => window.removeEventListener("open-mobile-drawer", handleOpen);
+  }, []);
 
   return (
     <CategoryProvider>
@@ -77,3 +85,4 @@ export default function AppShell({ children }: { children: ReactNode }) {
     </CategoryProvider>
   );
 }
+

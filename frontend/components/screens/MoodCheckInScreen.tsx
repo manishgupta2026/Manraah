@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useWellness } from "@/frontend/lib/context/WellnessContext";
 import { getClientSession } from "@/backend/auth/client";
+import ScreenHeader from "@/frontend/components/ui/ScreenHeader";
 
 const MOODS = [
   { label: "Amazing", emoji: "😊", desc: "Feeling on top of the world", color: "hover:bg-emerald-50 hover:border-emerald-200" },
@@ -109,6 +110,11 @@ export default function MoodCheckInScreen() {
 
   return (
     <div className="max-w-xl mx-auto min-h-[80vh] flex flex-col justify-center py-8 px-4 relative overflow-hidden select-none">
+      <ScreenHeader
+        title="🌿 Log Mood"
+        showBackButton={true}
+        onBack={step > 0 && step < 6 ? handlePrev : () => router.push("/dashboard")}
+      />
       
       {/* Falling Flower Petals success animation for Step 6 */}
       {step === 6 && (

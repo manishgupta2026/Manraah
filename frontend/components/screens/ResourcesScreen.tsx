@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { MOCK_RESOURCES } from "@/frontend/lib/mock-data";
+import ScreenHeader from "@/frontend/components/ui/ScreenHeader";
 
 export default function ResourcesScreen() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -13,6 +14,7 @@ export default function ResourcesScreen() {
 
   return (
     <div className="space-y-8">
+      <ScreenHeader title="📚 Wellness Resources" showBackButton={true} fallbackRoute="/dashboard" />
       {/* Header */}
       <div className="p-8 rounded-3xl bg-surface-container-lowest border border-surface-variant/30 shadow-soft space-y-4">
         <span className="px-4 py-1.5 rounded-full bg-primary-container/20 text-primary text-xs font-semibold uppercase tracking-wider">

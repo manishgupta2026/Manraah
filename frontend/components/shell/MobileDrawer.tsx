@@ -1,10 +1,12 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import { MAIN_NAV_ITEMS } from "@/frontend/lib/constants";
+import { getClientSession } from "@/backend/auth/client";
+import { getInitials, getPastelBgColor, getPastelTextColor } from "@/frontend/lib/avatar-helper";
 
 interface MobileDrawerProps {
   isOpen: boolean;
@@ -13,6 +15,14 @@ interface MobileDrawerProps {
 
 export default function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
   const pathname = usePathname();
+  const [user, setUser] = useState<{ name?: string; sanctuaryName?: string; avatar?: string } | null>(null);
+
+  useEffect(() => {
+    const session = getClientSession();
+    if (session.user) {
+      setUser(session.user);
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -91,20 +101,38 @@ export default function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
             <span>Support Helpline 24/7</span>
           </Link>
 
-          <Link
-            href="/profile"
-            onClick={onClose}
-            className="flex items-center gap-3 p-2 rounded-xl hover:bg-surface-container transition-colors"
-          >
-            <div className="w-9 h-9 rounded-full bg-primary-container/20 flex items-center justify-center text-primary font-bold text-sm border border-primary/20 shrink-0">
-              AS
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-xs font-semibold text-on-surface truncate">Aanya Sharma</p>
-              <p className="text-[10px] text-on-surface-variant/70 truncate">Settings & Profile</p>
-            </div>
-            <span className="material-symbols-outlined text-lg text-outline">settings</span>
-          </Link>
+          {(() => {
+            const displayName = user?.sanctuaryName || user?.name || "Sanctuary Member";
+            const avatarVal = user?.avatar || "";
+            const isCustomAvatar = avatarVal.startsWith("data:image/");
+            return (
+              <Link
+                href="/profile"
+                onClick={onClose}
+                className="flex items-center gap-3 p-2 rounded-xl hover:bg-surface-container transition-colors"
+              >
+                {isCustomAvatar ? (
+                  <img
+                    src={avatarVal}
+                    alt="Avatar"
+                    className="w-9 h-9 rounded-full object-cover border border-primary/20 shrink-0 shadow-xs"
+                  />
+                ) : (
+                  <div
+                    className="w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs shrink-0 border border-primary/20 shadow-xs transition-all duration-300"
+                    style={{ backgroundColor: getPastelBgColor(displayName), color: getPastelTextColor(displayName) }}
+                  >
+                    {getInitials(displayName)}
+                  </div>
+                )}
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-semibold text-on-surface truncate">{displayName}</p>
+                  <p className="text-[10px] text-on-surface-variant/70 truncate">Settings & Profile</p>
+                </div>
+                <span className="material-symbols-outlined text-lg text-outline">settings</span>
+              </Link>
+            );
+          })()}
         </div>
       </motion.aside>
     </div>

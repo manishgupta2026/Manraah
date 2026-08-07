@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { sql } from "@/backend/db/client";
 import { saveUserAssessment } from "@/backend/queries/assessment";
+import { generateUniqueSanctuaryName } from "@/backend/auth/sanctuary";
 import crypto from "crypto";
 
 function verifyPassword(password: string, storedHash: string): boolean {
@@ -24,7 +25,7 @@ export async function POST(request: Request) {
 
     // 1. Fetch user from Neon PostgreSQL
     const users = await sql`
-      SELECT id, name, email, password_hash, avatar, selected_category, streak_days, mindfulness_minutes, current_mood
+      SELECT id, name, email, password_hash, sanctuary_name, avatar, selected_category, streak_days, mindfulness_minutes, current_mood
       FROM users
       WHERE LOWER(email) = LOWER(${email})
       LIMIT 1
@@ -48,9 +49,19 @@ export async function POST(request: Request) {
       );
     }
 
+    // Migration: generate Sanctuary Name for existing users if missing
+    let sanctuaryName = user.sanctuary_name;
+    if (!sanctuaryName) {
+      sanctuaryName = await generateUniqueSanctuaryName();
+      await sql`
+        UPDATE users SET sanctuary_name = ${sanctuaryName}, name = ${sanctuaryName} WHERE id = ${user.id}
+      `;
+    }
+
     const userProfile = {
       id: user.id,
-      name: user.name,
+      name: sanctuaryName,
+      sanctuaryName: sanctuaryName,
       email: user.email,
       avatar: user.avatar || "/images/user_avatar.jpg",
       streakDays: user.streak_days || 1,
@@ -62,11 +73,15 @@ export async function POST(request: Request) {
     // 3. Save assessment if provided
     if (answers && Array.isArray(answers) && answers.length > 0) {
       const userCategory = category || user.selected_category || "student";
-      // Update selected_category in users table
-      await sql`
-        UPDATE users SET selected_category = ${userCategory} WHERE id = ${user.id}
-      `;
-      userProfile.selectedCategory = userCategory;
+      // Update selected_category in users table ONLY if not already set (respect category immutability)
+      if (!user.selected_category) {
+        await sql`
+          UPDATE users SET selected_category = ${userCategory} WHERE id = ${user.id}
+        `;
+        userProfile.selectedCategory = userCategory;
+      } else {
+        userProfile.selectedCategory = user.selected_category;
+      }
 
       await saveUserAssessment(
         user.id,
@@ -98,7 +113,7 @@ export async function POST(request: Request) {
   } catch (err: any) {
     console.error("[Auth Login API Error]:", err);
     return NextResponse.json(
-      { error: err.message || "Failed to log in." },
+      { error: "Failed to log in. Please try again." },
       { status: 500 }
     );
   }

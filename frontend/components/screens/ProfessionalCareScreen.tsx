@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { MOCK_THERAPISTS } from "@/frontend/lib/mock-data";
+import ScreenHeader from "@/frontend/components/ui/ScreenHeader";
 
 export default function ProfessionalCareScreen() {
   const [selectedSpecialty, setSelectedSpecialty] = useState<string>("All");
@@ -15,6 +16,7 @@ export default function ProfessionalCareScreen() {
 
   return (
     <div className="space-y-8">
+      <ScreenHeader title="🩺 Professional Care" showBackButton={true} fallbackRoute="/dashboard" />
       {/* Header Banner */}
       <div className="p-8 rounded-3xl bg-surface-container-lowest border border-surface-variant/30 shadow-soft space-y-4">
         <span className="px-4 py-1.5 rounded-full bg-peach/30 text-tertiary text-xs font-semibold uppercase tracking-wider">

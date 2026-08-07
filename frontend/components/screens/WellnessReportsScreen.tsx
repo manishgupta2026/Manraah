@@ -2,10 +2,21 @@
 
 import React from "react";
 import { MOCK_USER } from "@/frontend/lib/mock-data";
+import ScreenHeader from "@/frontend/components/ui/ScreenHeader";
 
 export default function WellnessReportsScreen() {
+  const handleExport = () => {
+    alert("Exporting PDF report...");
+  };
+
   return (
     <div className="space-y-8">
+      <ScreenHeader
+        title="📊 Wellness Reports"
+        showBackButton={true}
+        fallbackRoute="/dashboard"
+        action={{ label: "Export PDF", onClick: handleExport }}
+      />
       {/* Header */}
       <div className="p-8 rounded-3xl bg-surface-container-lowest border border-surface-variant/30 shadow-soft space-y-4">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -16,10 +27,6 @@ export default function WellnessReportsScreen() {
             <h1 className="text-3xl font-heading font-bold text-on-surface mt-2">Monthly Serenity & Mood Report</h1>
             <p className="text-sm text-on-surface-variant">Generated for {MOCK_USER.name} • August 2026</p>
           </div>
-          <button className="px-6 py-2.5 rounded-full bg-primary text-white text-xs font-bold shadow-md hover:bg-primary-purple transition-all flex items-center gap-2">
-            <span className="material-symbols-outlined text-base">download</span>
-            <span>Export PDF Report</span>
-          </button>
         </div>
       </div>
 

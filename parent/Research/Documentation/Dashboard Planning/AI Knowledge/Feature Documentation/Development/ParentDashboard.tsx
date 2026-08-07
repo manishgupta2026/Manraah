@@ -47,19 +47,19 @@ const RESOURCE_LIBRARY = [
 
 const ADVICE_SCENARIOS = {
   tantrum: {
-    title: "Toddler Tantrum",
+    title: "🍼 Toddler Tantrum",
     advice: "A child's meltdown is a reflection of their nervous system being overloaded, not your parenting. Drop your shoulders, breathe in deeply for 4 seconds, and meet their big feelings with your calm."
   },
   sibling: {
-    title: "Sibling Conflict",
+    title: "💥 Sibling Conflict",
     advice: "Avoid taking sides immediately. Separate the children if needed, and let each describe their feelings. Use reflective listening: 'It sounds like you felt frustrated when your block tower was knocked down.'"
   },
   screentime: {
-    title: "Screen Time Battle",
+    title: "📱 Screen Time Battle",
     advice: "Establish clear boundaries in advance. Use a visual timer and offer a pleasant transition activity (like a shared puzzle, story, or outdoor play) to ease the transition."
   },
   bedtime: {
-    title: "Bedtime Struggle",
+    title: "😴 Bedtime Struggle",
     advice: "Create a warm, consistent wind-down routine 1 hour before bed. Eliminate screens, dim lights, and read a gentle story together. Keep your own energy calm and grounded as they transition."
   }
 };
@@ -72,10 +72,19 @@ const COMMUNICATION_TIPS = [
   "Pause for 3 seconds before responding to a stressful question."
 ];
 
+const MOCK_TAKEN_USERNAMES = ["elena", "parent", "mama", "papa", "user", "admin", "mom", "dad", "parent123"];
+
 export default function ParentDashboard() {
   const router = useRouter();
-  const [parentName, setParentName] = useState("Mindful Parent");
   
+  // Custom Username & Visibility States
+  const [username, setUsername] = useState("CalmParent-3804");
+  const [showName, setShowName] = useState(true);
+
+  // Phone Number & Visibility States
+  const [showPhoneNumber, setShowPhoneNumber] = useState(false);
+  const [phoneNumber] = useState("+91 ••••• ••982");
+
   // Dynamic Greeting based on time
   const [greeting, setGreeting] = useState("Hello");
   const [timeIcon, setTimeIcon] = useState("🌅");
@@ -90,10 +99,10 @@ export default function ParentDashboard() {
 
   // Today's Focus checklist
   const [tasks, setTasks] = useState([
-    { id: 1, text: "Log water intake (at least 4 glasses)", completed: false },
-    { id: 2, text: "Do 2 minutes of breathing space", completed: false },
-    { id: 3, text: "Connect with kids/partner (no devices)", completed: false },
-    { id: 4, text: "Dedicate 15 mins of Me-Time", completed: false },
+    { id: 1, text: "💧 Log water intake (at least 4 glasses)?", completed: false },
+    { id: 2, text: "🧘 Complete a 2-minute breathing space?", completed: false },
+    { id: 3, text: "🔇 Put devices away for family dinner time?", completed: false },
+    { id: 4, text: "🚶 Take a 15-minute mindful self-care walk?", completed: false },
   ]);
 
   // Family Wellness
@@ -121,19 +130,39 @@ export default function ParentDashboard() {
   const [aiChatLogs, setAiChatLogs] = useState<Array<{ sender: "user" | "ai"; text: string }>>([
     { sender: "ai", text: "Hello! How is your parenting journey going today? Ask me any advice or vent your feelings." }
   ]);
-  const [selectedAdviceKey, setSelectedAdviceKey] = useState<string | null>(null);
 
   // Overwhelmed Grounding Box
   const [overwhelmedMode, setOverwhelmedMode] = useState(false);
   const [groundingStep, setGroundingStep] = useState(1);
 
-  // Set greeting and time based details
+  // Periodic Privacy "Not Watched" Popup State
+  const [showSecurityPopup, setShowSecurityPopup] = useState(false);
+
+  // Set greeting, username and security popup times
   useEffect(() => {
+    // 1. Initial Load Username
     const session = getClientSession();
-    if (session.user) {
-      setParentName(session.user.name || "Mindful Parent");
+    const storedUsername = localStorage.getItem("parent_username");
+    if (storedUsername) {
+      setUsername(storedUsername);
+    } else if (session.user && (session.user.sanctuaryName || session.user.name)) {
+      const name = session.user.sanctuaryName || session.user.name || "Mindful Parent";
+      setUsername(name);
+      localStorage.setItem("parent_username", name);
+    } else {
+      const randomNum = Math.floor(1000 + Math.random() * 9000);
+      const initialName = `CalmParent-${randomNum}`;
+      setUsername(initialName);
+      localStorage.setItem("parent_username", initialName);
     }
 
+    // 2. Load ShowPhone Setting
+    const storedShowPhone = localStorage.getItem("parent_show_phone");
+    if (storedShowPhone === "true") {
+      setShowPhoneNumber(true);
+    }
+
+    // 3. Time Greeting
     const hour = new Date().getHours();
     if (hour >= 5 && hour < 12) {
       setGreeting("Good Morning");
@@ -147,6 +176,16 @@ export default function ParentDashboard() {
     } else {
       setGreeting("Good Night");
       setTimeIcon("🌌");
+    }
+
+    // 4. Periodic "Not Watched" Popup check (2 minutes interval for demo convenience)
+    const lastPopupTime = localStorage.getItem("parent_last_security_popup");
+    const now = Date.now();
+    
+    if (!lastPopupTime || now - parseInt(lastPopupTime) > 120000) {
+      // Show popup
+      setShowSecurityPopup(true);
+      localStorage.setItem("parent_last_security_popup", now.toString());
     }
   }, []);
 
@@ -183,6 +222,8 @@ export default function ParentDashboard() {
     return () => clearInterval(timer);
   }, [breathingActive, breathingPhase]);
 
+  // Note: Username settings & phone number visibility controls moved to Settings & Privacy profile screen.
+
   // Tasks progress calculations
   const completedCount = tasks.filter(t => t.completed).length;
   const progressPercent = tasks.length > 0 ? Math.round((completedCount / tasks.length) * 100) : 0;
@@ -195,7 +236,7 @@ export default function ParentDashboard() {
   // Add Water Glass
   const toggleWaterGlass = (index: number) => {
     if (index + 1 === waterGlasses) {
-      setWaterGlasses(index); // reduce by 1 if clicking the current max
+      setWaterGlasses(index); 
     } else {
       setWaterGlasses(index + 1);
     }
@@ -267,40 +308,95 @@ export default function ParentDashboard() {
         <div className="absolute bottom-1/4 left-1/4 w-[450px] h-[450px] rounded-full blur-[130px] opacity-20 bg-[#7C6BC4]" />
       </div>
 
-      <div className="z-10 relative space-y-8">
+      <div className="z-10 relative space-y-6">
         
+        {/* ==================== BACK BUTTON ==================== */}
+        <div className="flex items-center justify-between">
+          <button 
+            onClick={() => router.push("/")}
+            className="flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-surface-variant/20 text-xs font-bold text-primary shadow-sm hover:bg-surface-container active:scale-95 transition-all"
+          >
+            <span className="material-symbols-outlined text-sm font-black">arrow_back</span>
+            Back to home
+          </button>
+        </div>
+
+        {/* ==================== CATCHY DISCLAIMER BANNER ==================== */}
+        <motion.div 
+          initial={{ opacity: 0, y: -5 }} 
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-gradient-to-r from-primary/10 to-peach/10 border border-primary/20 rounded-2xl p-4 flex items-center justify-between gap-4"
+        >
+          <div className="flex items-center gap-3">
+            <span className="text-2xl">🤫</span>
+            <div>
+              <h4 className="font-heading font-black text-xs text-on-surface">Under Lock & Key</h4>
+              <p className="text-[10px] text-on-surface-variant font-semibold">
+                We are not revealing your identity. Everything you log, write, or ask here remains 100% private to your device.
+              </p>
+            </div>
+          </div>
+          <span className="px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 text-[9px] font-black uppercase tracking-wider">
+            Private Connection
+          </span>
+        </motion.div>
+
         {/* ==================== 1. HEADER ==================== */}
         <motion.div 
           initial={{ opacity: 0, y: -10 }} 
           animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col sm:flex-row sm:items-center sm:justify-between bg-white/50 backdrop-blur-md p-6 rounded-3xl border border-white/60 shadow-soft"
+          className="flex flex-col sm:flex-row sm:items-center sm:justify-between bg-white/60 backdrop-blur-md p-6 rounded-3xl border border-white/60 shadow-soft gap-4"
         >
-          <div className="space-y-1">
-            <div className="flex items-center gap-2">
-              <span className="text-xl sm:text-2xl">{timeIcon}</span>
-              <span className="text-xs uppercase tracking-wider font-extrabold text-tertiary">Mindful Parenting Sanctuary</span>
+          <div className="flex items-start gap-4 flex-1">
+            {/* Profile Avatar in Left Corner */}
+            <div 
+              onClick={() => router.push("/profile")} 
+              className="w-14 h-14 rounded-full border-2 border-primary/20 bg-peach/40 flex items-center justify-center cursor-pointer shadow-sm hover:scale-105 transition-transform flex-shrink-0"
+              title="View Profile"
+            >
+              <span className="text-2xl">👩‍👦</span>
             </div>
-            <h1 className="text-3xl font-heading font-black text-on-surface">
-              {greeting}, {parentName}
-            </h1>
-            <p className="text-xs text-on-surface-variant font-semibold">
-              Today is {getFormattedDate()}
-            </p>
+
+            <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                <span className="text-xl sm:text-2xl">{timeIcon}</span>
+                <span className="text-xs uppercase tracking-wider font-extrabold text-tertiary">Mindful Parenting Sanctuary</span>
+              </div>
+            
+            {/* Custom Username Header Display */}
+            <div className="flex items-center flex-wrap gap-2">
+              <h1 className="text-2xl sm:text-3xl font-heading font-black text-on-surface flex items-center gap-2">
+                {greeting}, {showName ? username : "••••••••"}
+              </h1>
+              
+              {/* Hide/Show Name Toggle */}
+              <button 
+                onClick={() => setShowName(!showName)}
+                className="p-1 rounded-full hover:bg-surface-container text-on-surface-variant/85 transition-colors"
+                title={showName ? "Hide Username" : "Show Username"}
+              >
+                <span className="material-symbols-outlined text-lg">
+                  {showName ? "visibility_off" : "visibility"}
+                </span>
+              </button>
+            </div>
+
+            <div className="flex items-center gap-3 text-xs text-on-surface-variant font-semibold">
+              <span>Today is {getFormattedDate()}</span>
+              {showPhoneNumber && (
+                <span className="px-2.5 py-0.5 rounded-md bg-peach/20 text-tertiary border border-peach/30 font-bold">
+                  📞 {phoneNumber}
+                </span>
+              )}
+            </div>
+          </div>
           </div>
 
-          <div className="flex items-center gap-4 mt-4 sm:mt-0">
+          <div className="flex items-center gap-4 mt-4 sm:mt-0 self-end sm:self-center">
             {/* Notification Icon */}
             <div className="relative cursor-pointer p-2 rounded-full hover:bg-surface-container transition-colors">
               <span className="material-symbols-outlined text-on-surface text-2xl">notifications</span>
               <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-tertiary rounded-full ring-2 ring-white" />
-            </div>
-
-            {/* Profile Avatar */}
-            <div 
-              onClick={() => router.push("/profile")} 
-              className="w-12 h-12 rounded-full border-2 border-primary/20 bg-peach/40 flex items-center justify-center cursor-pointer shadow-sm hover:scale-105 transition-transform"
-            >
-              <span className="text-xl">👩‍👦</span>
             </div>
           </div>
         </motion.div>
@@ -459,7 +555,7 @@ export default function ParentDashboard() {
                 "Breathe out when entering the house. Pause at the door for two breaths to shift parent modes."
               </div>
 
-              {/* Task list */}
+              {/* Task list with emojis in questions */}
               <div className="space-y-2">
                 {tasks.map((task) => (
                   <div 
@@ -742,25 +838,23 @@ export default function ParentDashboard() {
               </button>
             </div>
 
-            {/* Quick Parenting Advice buttons */}
+            {/* Quick Parenting Advice scenario buttons with Emojis in Questions */}
             <div className="space-y-1.5">
-              <span className="text-[10px] uppercase font-bold text-on-surface-variant/60">Quick Scenario Guide</span>
+              <span className="text-[10px] uppercase font-bold text-on-surface-variant/60">Common Scenario Questions</span>
               <div className="flex flex-wrap gap-1.5">
                 {Object.entries(ADVICE_SCENARIOS).map(([key, item]) => (
                   <button
                     key={key}
                     onClick={() => {
-                      setSelectedAdviceKey(key);
-                      // Add to logs automatically
                       setAiChatLogs(prev => [
                         ...prev, 
-                        { sender: "user", text: `I need advice regarding a ${item.title.toLowerCase()}.` },
+                        { sender: "user", text: `How can I handle a ${item.title.toLowerCase()} right now?` },
                         { sender: "ai", text: item.advice }
                       ]);
                     }}
-                    className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-peach/20 hover:bg-peach/30 text-tertiary transition-transform active:scale-95"
+                    className="px-2.5 py-1.5 rounded-xl text-[10px] font-bold bg-peach/20 hover:bg-peach/30 text-tertiary transition-transform active:scale-95 text-left border border-peach/10"
                   >
-                    💡 {item.title}
+                    {item.title}?
                   </button>
                 ))}
               </div>
@@ -902,40 +996,7 @@ export default function ParentDashboard() {
 
       </div>
 
-      {/* ==================== BOTTOM NAVIGATION ==================== */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 bg-white/75 backdrop-blur-md border-t border-surface-variant/20 py-2.5 shadow-[0_-8px_30px_rgba(124,107,196,0.06)] px-4">
-        <div className="max-w-md mx-auto flex items-center justify-between">
-          
-          <button onClick={() => router.push("/dashboard")} className="flex flex-col items-center gap-0.5 text-primary">
-            <span className="material-symbols-outlined text-xl font-bold">home</span>
-            <span className="text-[9px] font-black uppercase">Home</span>
-          </button>
-
-          <button onClick={() => router.push("/journal")} className="flex flex-col items-center gap-0.5 text-on-surface-variant/60 hover:text-primary">
-            <span className="material-symbols-outlined text-xl">menu_book</span>
-            <span className="text-[9px] font-bold uppercase">Journal</span>
-          </button>
-
-          <button onClick={() => router.push("/ai-chat")} className="flex flex-col items-center gap-0.5 text-on-surface-variant/60 hover:text-primary">
-            <span className="material-symbols-outlined text-xl">smart_toy</span>
-            <span className="text-[9px] font-bold uppercase">AI Support</span>
-          </button>
-
-          <button onClick={() => router.push("/resources")} className="flex flex-col items-center gap-0.5 text-on-surface-variant/60 hover:text-primary">
-            <span className="material-symbols-outlined text-xl">auto_stories</span>
-            <span className="text-[9px] font-bold uppercase">Resources</span>
-          </button>
-
-          <button onClick={() => router.push("/profile")} className="flex flex-col items-center gap-0.5 text-on-surface-variant/60 hover:text-primary">
-            <span className="material-symbols-outlined text-xl">person</span>
-            <span className="text-[9px] font-bold uppercase">Profile</span>
-          </button>
-
-        </div>
-      </div>
-
-      {/* Spacer to prevent fixed navigation cover */}
-      <div className="h-16" />
+      {/* Bottom Navigation Removed */}
 
       {/* ==================== BREATHING GUIDE DIALOG ==================== */}
       <AnimatePresence>
@@ -1128,6 +1189,47 @@ export default function ParentDashboard() {
                   </button>
                 )}
               </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ==================== PERIODIC PRIVACY MODAL ==================== */}
+      <AnimatePresence>
+        {showSecurityPopup && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-[#2E2A3D]/70 backdrop-blur-md flex items-center justify-center p-4"
+          >
+            <motion.div 
+              initial={{ scale: 0.95 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.95 }}
+              className="bg-white max-w-sm w-full p-8 rounded-[36px] text-center space-y-6 shadow-2xl relative border border-surface-variant/20"
+            >
+              <div className="w-16 h-16 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto shadow-sm">
+                <span className="material-symbols-outlined text-3xl font-black">lock_open</span>
+              </div>
+
+              <div className="space-y-1">
+                <span className="text-[10px] uppercase font-black tracking-widest text-secondary">Sanctuary Guard</span>
+                <h3 className="text-xl font-heading font-black text-on-surface">You Are Safe Here</h3>
+              </div>
+
+              <p className="text-xs text-on-surface-variant leading-relaxed px-2 font-medium">
+                🛡️ **We assure you that you are not being watched.**
+                <br /><br />
+                Your reflections, journal logs, and custom wellness data are completely encrypted and stored securely. We do not track or sell your emotional state.
+              </p>
+
+              <button 
+                onClick={() => setShowSecurityPopup(false)}
+                className="w-full py-3.5 bg-gradient-to-tr from-primary to-primary-purple text-white rounded-full font-bold text-xs shadow-md transition-transform active:scale-95"
+              >
+                I Feel Secure
+              </button>
             </motion.div>
           </motion.div>
         )}
