@@ -1,6 +1,10 @@
 const { neon } = require('@neondatabase/serverless');
 
-const connectionString = process.env.DATABASE_URL || "postgresql://neondb_owner:npg_BHXyxj9gdEV8@ep-aged-glade-axiish12-pooler.c-4.us-east-2.aws.neon.tech/manraah?sslmode=require&channel_binding=require";
+const connectionString = process.env.DATABASE_URL;
+if (!connectionString) {
+  console.error("❌ Error: DATABASE_URL environment variable is not defined.");
+  process.exit(1);
+}
 const sql = neon(connectionString);
 
 async function initDB() {

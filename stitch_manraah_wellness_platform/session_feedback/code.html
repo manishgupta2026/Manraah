@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Manraah - Session Feedback</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&amp;family=Work+Sans:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed-dim": "#6adaba",
+                        "surface-tint": "#6251a8",
+                        "surface-container-highest": "#e6dff8",
+                        "on-error-container": "#93000a",
+                        "surface-container-low": "#f7f1ff",
+                        "background": "#fdf7ff",
+                        "on-secondary-container": "#00725c",
+                        "secondary-fixed": "#88f7d6",
+                        "on-surface": "#1d192b",
+                        "secondary": "#006b56",
+                        "tertiary-fixed": "#ffd9e0",
+                        "on-background": "#1d192b",
+                        "inverse-on-surface": "#f5eeff",
+                        "on-secondary": "#ffffff",
+                        "on-surface-variant": "#484551",
+                        "outline-variant": "#cac4d3",
+                        "on-secondary-fixed-variant": "#005140",
+                        "on-primary-fixed": "#1d0061",
+                        "on-primary-container": "#fffbff",
+                        "primary-fixed": "#e6deff",
+                        "surface-bright": "#fdf7ff",
+                        "on-primary-fixed-variant": "#4a388e",
+                        "error": "#ba1a1a",
+                        "on-tertiary-fixed": "#38091a",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-fixed-dim": "#ffb1c3",
+                        "surface": "#fdf7ff",
+                        "inverse-primary": "#cbbeff",
+                        "surface-container": "#f2ebff",
+                        "on-primary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "surface-dim": "#ded6f0",
+                        "surface-container-high": "#ece4fe",
+                        "tertiary": "#874959",
+                        "outline": "#797582",
+                        "tertiary-container": "#a46172",
+                        "primary-container": "#7867c0",
+                        "on-tertiary-container": "#fffbff",
+                        "error-container": "#ffdad6",
+                        "primary-fixed-dim": "#cbbeff",
+                        "on-secondary-fixed": "#002018",
+                        "secondary-container": "#88f7d6",
+                        "inverse-surface": "#322e41",
+                        "primary": "#5f4ea5",
+                        "on-tertiary": "#ffffff",
+                        "surface-variant": "#e6dff8",
+                        "on-tertiary-fixed-variant": "#6e3444"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xs": "4px",
+                        "container-padding-mobile": "20px",
+                        "container-padding-desktop": "64px",
+                        "md": "24px",
+                        "sm": "12px",
+                        "base": "8px",
+                        "lg": "48px",
+                        "xl": "80px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Work Sans"],
+                        "body-md": ["Work Sans"],
+                        "display-lg": ["Quicksand"],
+                        "label-md": ["Work Sans"],
+                        "headline-lg": ["Quicksand"],
+                        "caption": ["Work Sans"],
+                        "headline-lg-mobile": ["Quicksand"],
+                        "headline-md": ["Quicksand"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+                        "caption": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: theme('colors.background');
+            color: theme('colors.on-background');
+            /* Soft radial gradient for atmospheric depth */
+            background-image: radial-gradient(circle at top right, theme('colors.surface-container-high'), transparent 50%),
+                              radial-gradient(circle at bottom left, theme('colors.surface-container'), transparent 50%);
+        }
+        
+        .shadow-ambient {
+            box-shadow: 0 20px 40px -10px rgba(95, 78, 165, 0.08), 0 10px 20px -5px rgba(95, 78, 165, 0.04);
+        }
+        
+        /* Mood Selection Styles */
+        .mood-btn {
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            filter: grayscale(100%) opacity(0.5);
+        }
+        
+        .mood-btn:hover {
+            filter: grayscale(50%) opacity(0.8);
+            transform: scale(1.1);
+        }
+        
+        .mood-btn.selected {
+            filter: grayscale(0%) opacity(1);
+            transform: scale(1.25);
+            /* Custom drop shadow using Mint (#5FCFB0) or Peach (#F5C99B) based on data attribute, handled in JS */
+        }
+        
+        /* Custom Scrollbar for textarea */
+        textarea::-webkit-scrollbar {
+            width: 6px;
+        }
+        textarea::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        textarea::-webkit-scrollbar-thumb {
+            background-color: theme('colors.outline-variant');
+            border-radius: 20px;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-container-padding-mobile md:p-container-padding-desktop">
+<!-- Top Navigation (Suppressed for this transactional flow, but kept minimal close button if needed) -->
+<div class="fixed top-0 left-0 w-full p-container-padding-mobile flex justify-end z-50">
+<button aria-label="Close" class="w-12 h-12 flex items-center justify-center rounded-full bg-surface-container-lowest shadow-ambient text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="close">close</span>
+</button>
+</div>
+<!-- Main Content Canvas -->
+<main class="w-full max-w-[600px] flex flex-col items-center space-y-lg animate-fade-in-up">
+<!-- Header -->
+<header class="text-center space-y-base">
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile md:font-headline-lg md:text-headline-lg text-primary tracking-tight">
+                How did that feel?
+            </h1>
+<p class="font-body-md text-body-md text-on-surface-variant">
+                Take a moment to reflect on your session.
+            </p>
+</header>
+<!-- Rating Scale -->
+<section class="w-full bg-surface-container-lowest rounded-[32px] p-md shadow-ambient flex flex-col items-center space-y-md">
+<div class="flex justify-between w-full max-w-[400px] px-sm" id="mood-selector">
+<!-- Very Sad -->
+<button class="mood-btn flex flex-col items-center space-y-2 group" data-mood="terrible">
+<div class="w-14 h-14 rounded-full flex items-center justify-center bg-[#F5C99B]/20 text-[#F5C99B]">
+<span class="material-symbols-outlined text-[32px]" data-icon="sentiment_very_dissatisfied" data-weight="fill" style="font-variation-settings: 'FILL' 1;">sentiment_very_dissatisfied</span>
+</div>
+</button>
+<!-- Sad -->
+<button class="mood-btn flex flex-col items-center space-y-2 group" data-mood="bad">
+<div class="w-14 h-14 rounded-full flex items-center justify-center bg-[#F5C99B]/40 text-[#F5C99B]">
+<span class="material-symbols-outlined text-[32px]" data-icon="sentiment_dissatisfied" data-weight="fill" style="font-variation-settings: 'FILL' 1;">sentiment_dissatisfied</span>
+</div>
+</button>
+<!-- Neutral -->
+<button class="mood-btn flex flex-col items-center space-y-2 group selected" data-mood="okay">
+<div class="w-14 h-14 rounded-full flex items-center justify-center bg-outline-variant/30 text-outline">
+<span class="material-symbols-outlined text-[32px]" data-icon="sentiment_neutral" data-weight="fill" style="font-variation-settings: 'FILL' 1;">sentiment_neutral</span>
+</div>
+</button>
+<!-- Good -->
+<button class="mood-btn flex flex-col items-center space-y-2 group" data-mood="good">
+<div class="w-14 h-14 rounded-full flex items-center justify-center bg-[#5FCFB0]/40 text-[#00725c]">
+<span class="material-symbols-outlined text-[32px]" data-icon="sentiment_satisfied" data-weight="fill" style="font-variation-settings: 'FILL' 1;">sentiment_satisfied</span>
+</div>
+</button>
+<!-- Joyful -->
+<button class="mood-btn flex flex-col items-center space-y-2 group" data-mood="great">
+<div class="w-14 h-14 rounded-full flex items-center justify-center bg-[#5FCFB0]/20 text-[#00725c]">
+<span class="material-symbols-outlined text-[32px]" data-icon="sentiment_very_satisfied" data-weight="fill" style="font-variation-settings: 'FILL' 1;">sentiment_very_satisfied</span>
+</div>
+</button>
+</div>
+<div class="flex justify-between w-full max-w-[400px] px-xs font-caption text-caption text-outline">
+<span>Challenging</span>
+<span>Uplifting</span>
+</div>
+</section>
+<!-- Text Field -->
+<section class="w-full flex flex-col space-y-base">
+<label class="font-label-md text-label-md text-on-surface ml-4" for="feedback-notes">
+                Anything else you'd like to share? <span class="text-outline-variant font-normal">(Optional)</span>
+</label>
+<div class="relative group">
+<textarea class="w-full bg-surface-container-lowest border border-surface-dim rounded-2xl p-md font-body-md text-body-md text-on-surface placeholder:text-outline-variant focus:outline-none focus:ring-2 focus:ring-primary-fixed-dim focus:border-transparent transition-all shadow-ambient resize-none" id="feedback-notes" placeholder="Jot down your thoughts here..." rows="4"></textarea>
+<!-- Decorative element to soften the field -->
+<div class="absolute bottom-4 right-4 text-outline-variant/50 pointer-events-none">
+<span class="material-symbols-outlined" data-icon="edit">edit</span>
+</div>
+</div>
+</section>
+<!-- Primary CTA -->
+<div class="w-full pt-md flex justify-center">
+<button class="w-full sm:w-auto min-w-[200px] py-4 px-8 bg-gradient-to-br from-primary to-surface-tint text-on-primary font-label-md text-label-md rounded-full shadow-[0_8px_20px_rgba(95,78,165,0.3)] hover:shadow-[0_12px_24px_rgba(95,78,165,0.4)] hover:-translate-y-1 active:translate-y-0 transition-all duration-300">
+                Done
+            </button>
+</div>
+</main>
+<!-- Secondary Action (Safety) -->
+<footer class="mt-xl pb-md">
+<a class="font-caption text-caption text-outline flex items-center space-x-1 hover:text-tertiary transition-colors" href="#">
+<span class="material-symbols-outlined text-[16px]" data-icon="flag">flag</span>
+<span>Report a concern</span>
+</a>
+</footer>
+<script>
+        // Micro-interaction for Mood Selector
+        document.addEventListener('DOMContentLoaded', () => {
+            const buttons = document.querySelectorAll('.mood-btn');
+            
+            buttons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // Remove selected from all
+                    buttons.forEach(b => {
+                        b.classList.remove('selected');
+                        // Reset shadow
+                        const iconContainer = b.querySelector('div');
+                        iconContainer.style.boxShadow = 'none';
+                    });
+                    
+                    // Add selected to clicked
+                    btn.classList.add('selected');
+                    
+                    // Apply specific shadow based on mood
+                    const mood = btn.dataset.mood;
+                    const iconContainer = btn.querySelector('div');
+                    
+                    if(mood === 'terrible' || mood === 'bad') {
+                        iconContainer.style.boxShadow = '0 8px 16px -4px rgba(245, 201, 155, 0.4)';
+                    } else if (mood === 'good' || mood === 'great') {
+                        iconContainer.style.boxShadow = '0 8px 16px -4px rgba(95, 207, 176, 0.4)';
+                    } else {
+                        iconContainer.style.boxShadow = '0 8px 16px -4px rgba(202, 196, 211, 0.4)';
+                    }
+                });
+            });
+            
+            // Initial shadow for default selected
+            const defaultSelected = document.querySelector('.mood-btn.selected div');
+            if(defaultSelected) {
+                defaultSelected.style.boxShadow = '0 8px 16px -4px rgba(202, 196, 211, 0.4)';
+            }
+        });
+    </script>
+</body></html>

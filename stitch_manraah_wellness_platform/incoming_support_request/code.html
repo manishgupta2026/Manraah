@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Manraah - Incoming Match Notification</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&amp;family=Work+Sans:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed-dim": "#6adaba",
+                        "surface-tint": "#6251a8",
+                        "surface-container-highest": "#e6dff8",
+                        "on-error-container": "#93000a",
+                        "surface-container-low": "#f7f1ff",
+                        "background": "#fdf7ff",
+                        "on-secondary-container": "#00725c",
+                        "secondary-fixed": "#88f7d6",
+                        "on-surface": "#1d192b",
+                        "secondary": "#006b56",
+                        "tertiary-fixed": "#ffd9e0",
+                        "on-background": "#1d192b",
+                        "inverse-on-surface": "#f5eeff",
+                        "on-secondary": "#ffffff",
+                        "on-surface-variant": "#484551",
+                        "outline-variant": "#cac4d3",
+                        "on-secondary-fixed-variant": "#005140",
+                        "on-primary-fixed": "#1d0061",
+                        "on-primary-container": "#fffbff",
+                        "primary-fixed": "#e6deff",
+                        "surface-bright": "#fdf7ff",
+                        "on-primary-fixed-variant": "#4a388e",
+                        "error": "#ba1a1a",
+                        "on-tertiary-fixed": "#38091a",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-fixed-dim": "#ffb1c3",
+                        "surface": "#fdf7ff",
+                        "inverse-primary": "#cbbeff",
+                        "surface-container": "#f2ebff",
+                        "on-primary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "surface-dim": "#ded6f0",
+                        "surface-container-high": "#ece4fe",
+                        "tertiary": "#874959",
+                        "outline": "#797582",
+                        "tertiary-container": "#a46172",
+                        "primary-container": "#7867c0",
+                        "on-tertiary-container": "#fffbff",
+                        "error-container": "#ffdad6",
+                        "primary-fixed-dim": "#cbbeff",
+                        "on-secondary-fixed": "#002018",
+                        "secondary-container": "#88f7d6",
+                        "inverse-surface": "#322e41",
+                        "primary": "#5f4ea5",
+                        "on-tertiary": "#ffffff",
+                        "surface-variant": "#e6dff8",
+                        "on-tertiary-fixed-variant": "#6e3444"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px",
+                        "2xl": "1.5rem"
+                    },
+                    "spacing": {
+                        "xs": "4px",
+                        "container-padding-mobile": "20px",
+                        "container-padding-desktop": "64px",
+                        "md": "24px",
+                        "sm": "12px",
+                        "base": "8px",
+                        "lg": "48px",
+                        "xl": "80px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Work Sans"],
+                        "body-md": ["Work Sans"],
+                        "display-lg": ["Quicksand"],
+                        "label-md": ["Work Sans"],
+                        "headline-lg": ["Quicksand"],
+                        "caption": ["Work Sans"],
+                        "headline-lg-mobile": ["Quicksand"],
+                        "headline-md": ["Quicksand"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+                        "caption": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: theme('colors.background');
+            color: theme('colors.on-background');
+        }
+        .soft-shadow {
+            box-shadow: 0 10px 40px -10px rgba(124, 107, 196, 0.08), 0 20px 60px -15px rgba(124, 107, 196, 0.05);
+        }
+        .glass-overlay {
+            background: rgba(253, 247, 255, 0.7);
+            backdrop-filter: blur(20px);
+        }
+    </style>
+</head>
+<body class="min-h-screen relative flex items-center justify-center overflow-hidden font-body-md text-body-md">
+<!-- Mock Background Dashboard Context -->
+<div class="absolute inset-0 z-0 flex p-container-padding-desktop gap-md opacity-30">
+<!-- SideNav Mock -->
+<aside class="w-64 bg-surface rounded-2xl shadow-sm border border-surface-variant p-md flex flex-col gap-sm hidden md:flex">
+<div class="h-8 bg-surface-variant rounded w-32 mb-lg"></div>
+<div class="h-10 bg-primary-container/20 rounded w-full"></div>
+<div class="h-10 bg-surface-variant rounded w-full"></div>
+<div class="h-10 bg-surface-variant rounded w-full"></div>
+</aside>
+<!-- Main Content Mock -->
+<main class="flex-1 flex flex-col gap-md">
+<header class="h-16 bg-surface rounded-2xl shadow-sm border border-surface-variant w-full flex items-center px-md justify-between">
+<div class="h-6 bg-surface-variant rounded w-48"></div>
+<div class="h-8 w-8 bg-surface-variant rounded-full"></div>
+</header>
+<div class="flex-1 bg-surface rounded-2xl shadow-sm border border-surface-variant p-lg">
+<div class="h-48 bg-surface-variant rounded-xl w-full mb-md"></div>
+<div class="flex gap-md">
+<div class="flex-1 h-32 bg-surface-variant rounded-xl"></div>
+<div class="flex-1 h-32 bg-surface-variant rounded-xl"></div>
+</div>
+</div>
+</main>
+</div>
+<!-- Modal Overlay Backdrop -->
+<div class="fixed inset-0 z-40 glass-overlay flex items-center justify-center p-container-padding-mobile md:p-container-padding-desktop">
+<!-- Modal Card -->
+<div class="bg-surface-container-lowest rounded-[24px] soft-shadow w-full max-w-[480px] p-lg flex flex-col items-center text-center relative overflow-hidden">
+<!-- Decorative Accent -->
+<div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-primary to-secondary-fixed"></div>
+<!-- Icon Header -->
+<div class="w-20 h-20 rounded-full bg-surface-container-high flex items-center justify-center mb-md relative">
+<div class="absolute inset-0 bg-primary/10 rounded-full animate-ping opacity-75"></div>
+<span class="material-symbols-outlined text-[40px] text-primary" data-icon="waving_hand">waving_hand</span>
+</div>
+<!-- Title -->
+<h2 class="font-headline-md text-headline-md text-on-surface mb-xs">
+                New Connection Request
+            </h2>
+<!-- Context Tag -->
+<div class="bg-tertiary-fixed/30 text-on-tertiary-fixed-variant px-md py-sm rounded-full font-label-md text-label-md mb-lg flex items-center gap-xs">
+<span class="material-symbols-outlined text-[18px]" data-icon="psychology_alt">psychology_alt</span>
+                Anonymous — Student, feeling anxious
+            </div>
+<!-- Descriptive Text -->
+<p class="font-body-md text-body-md text-on-surface-variant mb-xl max-w-[320px]">
+                Someone in the community is reaching out for support. Are you available to connect right now?
+            </p>
+<!-- Actions -->
+<div class="flex flex-col gap-sm w-full">
+<button class="w-full bg-secondary-fixed text-on-secondary-container hover:bg-secondary-fixed-dim font-label-md text-label-md py-sm rounded-full shadow-sm shadow-secondary/10 hover:shadow-md transition-all active:scale-95 flex items-center justify-center gap-xs">
+<span class="material-symbols-outlined text-[20px]" data-icon="check_circle">check_circle</span>
+                    Accept Connection
+                </button>
+<button class="w-full bg-transparent border border-outline-variant text-on-surface-variant hover:bg-surface-variant/50 font-label-md text-label-md py-sm rounded-full transition-all active:scale-95 flex items-center justify-center gap-xs">
+<span class="material-symbols-outlined text-[20px]" data-icon="schedule">schedule</span>
+                    Not right now
+                </button>
+</div>
+<!-- Subtext -->
+<p class="font-caption text-caption text-outline mt-md">
+                Taking a moment for yourself is okay. Declining won't affect your status.
+            </p>
+</div>
+</div>
+</body></html>

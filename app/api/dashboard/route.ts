@@ -20,20 +20,14 @@ export async function GET(req: Request) {
     }
     const user = userResult[0];
 
-    // 2. Fetch mood history logs
-    const history = await getMoodHistory(userId, "all");
-
-    // 3. Fetch weekly summary
-    const weeklySummary = await getWeeklySummary(userId);
-
-    // 4. Fetch monthly summary
-    const monthlySummary = await getMonthlySummary(userId);
-
-    // 5. Fetch insights
-    const insights = await getMoodInsights(userId);
-
-    // 6. Fetch user streak
-    const streak = await getUserStreak(userId);
+    // 2. Fetch all dashboard analytics concurrently in parallel (Promise.all)
+    const [history, weeklySummary, monthlySummary, insights, streak] = await Promise.all([
+      getMoodHistory(userId, "all"),
+      getWeeklySummary(userId),
+      getMonthlySummary(userId),
+      getMoodInsights(userId),
+      getUserStreak(userId),
+    ]);
 
     // 7. Get today's check-in details
     const todayMood = history.length > 0 ? history[0] : null;

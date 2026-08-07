@@ -10,6 +10,7 @@ import DesktopSidebar from "./DesktopSidebar";
 import MobileTabBar from "./MobileTabBar";
 import MobileDrawer from "./MobileDrawer";
 import Header from "./Header";
+import AdminHeader from "../shell-admin/AdminHeader";
 
 const STANDALONE_ROUTES = [
   "/",
@@ -23,6 +24,7 @@ const STANDALONE_ROUTES = [
 export default function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const isStandalone = STANDALONE_ROUTES.includes(pathname);
+  const isAdminRoute = pathname.startsWith("/admin") || pathname.startsWith("/companion");
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
 
   return (
@@ -30,38 +32,46 @@ export default function AppShell({ children }: { children: ReactNode }) {
       <AssessmentProvider>
         <WellnessProvider>
           {isStandalone ? (
-            /* Standalone Onboarding / Auth Layout (No Navigation Shell) */
+            /* Standalone Onboarding / Auth Layout */
             <div className="min-h-screen bg-background text-on-background font-sans antialiased">
               {children}
             </div>
-          ) : (
-            /* Main Application Shell with Sidebar & Header */
-            <div className="flex min-h-screen bg-background text-on-background font-sans antialiased overflow-hidden">
-            {/* Desktop Left Sidebar */}
-            <DesktopSidebar />
-
-            {/* Main Content Area */}
-            <div className="flex-1 flex flex-col min-w-0 md:ml-[80px] lg:ml-[260px] h-screen overflow-y-auto pb-16 md:pb-6">
-              <Header onOpenMenu={() => setIsMobileDrawerOpen(true)} />
-              <main className="flex-1 px-3 md:px-6 py-4 max-w-7xl mx-auto w-full">
+          ) : isAdminRoute ? (
+            /* Dedicated Admin Listener Portal Shell - Isolated from Regular User Navigation */
+            <div className="min-h-screen bg-background text-on-background font-sans antialiased flex flex-col">
+              <AdminHeader />
+              <main className="flex-1 px-4 md:px-8 py-6 max-w-7xl mx-auto w-full">
                 {children}
               </main>
             </div>
+          ) : (
+            /* Main Regular User Application Shell with Sidebar & Header */
+            <div className="flex min-h-screen bg-background text-on-background font-sans antialiased overflow-hidden">
+              {/* Desktop Left Sidebar */}
+              <DesktopSidebar />
 
-            {/* Mobile Animated Drawer navigation overlay */}
-            <AnimatePresence>
-              {isMobileDrawerOpen && (
-                <MobileDrawer
-                  isOpen={isMobileDrawerOpen}
-                  onClose={() => setIsMobileDrawerOpen(false)}
-                />
-              )}
-            </AnimatePresence>
+              {/* Main Content Area */}
+              <div className="flex-1 flex flex-col min-w-0 md:ml-[80px] lg:ml-[260px] h-screen overflow-y-auto pb-16 md:pb-6">
+                <Header onOpenMenu={() => setIsMobileDrawerOpen(true)} />
+                <main className="flex-1 px-3 md:px-6 py-4 max-w-7xl mx-auto w-full">
+                  {children}
+                </main>
+              </div>
 
-            {/* Mobile Bottom Navigation Bar */}
-            <MobileTabBar />
-          </div>
-        )}
+              {/* Mobile Animated Drawer navigation overlay */}
+              <AnimatePresence>
+                {isMobileDrawerOpen && (
+                  <MobileDrawer
+                    isOpen={isMobileDrawerOpen}
+                    onClose={() => setIsMobileDrawerOpen(false)}
+                  />
+                )}
+              </AnimatePresence>
+
+              {/* Mobile Bottom Navigation Bar */}
+              <MobileTabBar />
+            </div>
+          )}
         </WellnessProvider>
       </AssessmentProvider>
     </CategoryProvider>

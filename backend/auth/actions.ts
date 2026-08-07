@@ -1,10 +1,9 @@
 "use server";
 
 import { sql } from "@/backend/db/client";
-import { initDatabase, saveDailyCheckIn, getUserStreak, getDailyCheckInSummary } from "@/backend/queries/assessment";
+import { saveDailyCheckIn, getUserStreak, getDailyCheckInSummary } from "@/backend/queries/assessment";
 
 export async function getDashboardSummaryAction(userId: string): Promise<any> {
-  await initDatabase();
   try {
     const userResult = await sql`
       SELECT id, name, email FROM users WHERE id = ${userId} LIMIT 1

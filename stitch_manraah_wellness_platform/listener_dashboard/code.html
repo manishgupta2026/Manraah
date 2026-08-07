@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Listener Dashboard - Manraah</title>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&amp;family=Work+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed-dim": "#6adaba",
+                        "surface-tint": "#6251a8",
+                        "surface-container-highest": "#e6dff8",
+                        "on-error-container": "#93000a",
+                        "surface-container-low": "#f7f1ff",
+                        "background": "#fdf7ff",
+                        "on-secondary-container": "#00725c",
+                        "secondary-fixed": "#88f7d6",
+                        "on-surface": "#1d192b",
+                        "secondary": "#006b56",
+                        "tertiary-fixed": "#ffd9e0",
+                        "on-background": "#1d192b",
+                        "inverse-on-surface": "#f5eeff",
+                        "on-secondary": "#ffffff",
+                        "on-surface-variant": "#484551",
+                        "outline-variant": "#cac4d3",
+                        "on-secondary-fixed-variant": "#005140",
+                        "on-primary-fixed": "#1d0061",
+                        "on-primary-container": "#fffbff",
+                        "primary-fixed": "#e6deff",
+                        "surface-bright": "#fdf7ff",
+                        "on-primary-fixed-variant": "#4a388e",
+                        "error": "#ba1a1a",
+                        "on-tertiary-fixed": "#38091a",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-fixed-dim": "#ffb1c3",
+                        "surface": "#fdf7ff",
+                        "inverse-primary": "#cbbeff",
+                        "surface-container": "#f2ebff",
+                        "on-primary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "surface-dim": "#ded6f0",
+                        "surface-container-high": "#ece4fe",
+                        "tertiary": "#874959",
+                        "outline": "#797582",
+                        "tertiary-container": "#a46172",
+                        "primary-container": "#7867c0",
+                        "on-tertiary-container": "#fffbff",
+                        "error-container": "#ffdad6",
+                        "primary-fixed-dim": "#cbbeff",
+                        "on-secondary-fixed": "#002018",
+                        "secondary-container": "#88f7d6",
+                        "inverse-surface": "#322e41",
+                        "primary": "#5f4ea5",
+                        "on-tertiary": "#ffffff",
+                        "surface-variant": "#e6dff8",
+                        "on-tertiary-fixed-variant": "#6e3444"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xs": "4px",
+                        "container-padding-mobile": "20px",
+                        "container-padding-desktop": "64px",
+                        "md": "24px",
+                        "sm": "12px",
+                        "base": "8px",
+                        "lg": "48px",
+                        "xl": "80px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Work Sans"],
+                        "body-md": ["Work Sans"],
+                        "display-lg": ["Quicksand"],
+                        "label-md": ["Work Sans"],
+                        "headline-lg": ["Quicksand"],
+                        "caption": ["Work Sans"],
+                        "headline-lg-mobile": ["Quicksand"],
+                        "headline-md": ["Quicksand"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+                        "caption": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { background-color: theme('colors.background'); }
+        
+        .toggle-checkbox:checked {
+            right: 0;
+            border-color: theme('colors.secondary');
+        }
+        .toggle-checkbox:checked + .toggle-label {
+            background-color: theme('colors.secondary-fixed-dim');
+        }
+        
+        .pulse-available {
+            animation: pulse-soft 2s infinite;
+        }
+        
+        @keyframes pulse-soft {
+            0% { box-shadow: 0 0 0 0 rgba(106, 218, 186, 0.4); }
+            70% { box-shadow: 0 0 0 20px rgba(106, 218, 186, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(106, 218, 186, 0); }
+        }
+    </style>
+</head>
+<body class="text-on-background font-body-md flex h-screen overflow-hidden">
+<!-- SideNavBar -->
+<nav class="bg-surface h-screen w-64 fixed left-0 top-0 shadow-md shadow-primary/5 border-r border-surface-container-low flex flex-col py-md overflow-y-auto hidden md:flex z-30">
+<div class="px-md mb-lg">
+<h1 class="font-display-lg text-display-lg text-primary tracking-tight">Manraah</h1>
+<p class="font-label-md text-label-md text-on-surface-variant">Wellness Sanctuary</p>
+</div>
+<ul class="flex-1 space-y-xs px-sm">
+<li><a class="flex items-center px-sm py-sm rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform" href="#"><span class="material-symbols-outlined mr-sm" data-icon="home">home</span><span class="font-label-md text-label-md">Home</span></a></li>
+<li><a class="flex items-center px-sm py-sm rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform" href="#"><span class="material-symbols-outlined mr-sm" data-icon="insights">insights</span><span class="font-label-md text-label-md">My Journey</span></a></li>
+<li><a class="flex items-center px-sm py-sm rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform" href="#"><span class="material-symbols-outlined mr-sm" data-icon="smart_toy">smart_toy</span><span class="font-label-md text-label-md">AI Companion</span></a></li>
+<li><a class="flex items-center px-sm py-sm rounded-lg text-primary font-bold border-r-4 border-primary bg-primary-container/10 transition-colors active:scale-95 transition-transform" href="#"><span class="material-symbols-outlined mr-sm" data-icon="diversity_1">diversity_1</span><span class="font-label-md text-label-md">Human Companion</span></a></li>
+<li><a class="flex items-center px-sm py-sm rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform" href="#"><span class="material-symbols-outlined mr-sm" data-icon="medical_services">medical_services</span><span class="font-label-md text-label-md">Professional Care</span></a></li>
+<li><a class="flex items-center px-sm py-sm rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform" href="#"><span class="material-symbols-outlined mr-sm" data-icon="mood">mood</span><span class="font-label-md text-label-md">Mood &amp; Check-in</span></a></li>
+<li><a class="flex items-center px-sm py-sm rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform" href="#"><span class="material-symbols-outlined mr-sm" data-icon="edit_note">edit_note</span><span class="font-label-md text-label-md">Journal</span></a></li>
+<li><a class="flex items-center px-sm py-sm rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform" href="#"><span class="material-symbols-outlined mr-sm" data-icon="self_improvement">self_improvement</span><span class="font-label-md text-label-md">Meditation &amp; Sleep</span></a></li>
+<li><a class="flex items-center px-sm py-sm rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform" href="#"><span class="material-symbols-outlined mr-sm" data-icon="groups">groups</span><span class="font-label-md text-label-md">Community</span></a></li>
+<li><a class="flex items-center px-sm py-sm rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform" href="#"><span class="material-symbols-outlined mr-sm" data-icon="library_books">library_books</span><span class="font-label-md text-label-md">Resources</span></a></li>
+<li><a class="flex items-center px-sm py-sm rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform" href="#"><span class="material-symbols-outlined mr-sm" data-icon="assessment">assessment</span><span class="font-label-md text-label-md">Reports</span></a></li>
+<li><a class="flex items-center px-sm py-sm rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform" href="#"><span class="material-symbols-outlined mr-sm" data-icon="settings">settings</span><span class="font-label-md text-label-md">Settings</span></a></li>
+</ul>
+<div class="px-md mt-auto">
+<div class="flex items-center space-x-sm pt-md border-t border-surface-container-low">
+<div class="w-10 h-10 rounded-full bg-primary-container overflow-hidden">
+<img alt="User profile photo" class="w-full h-full object-cover" data-alt="A serene, softly lit portrait of a calm individual, representing a wellness listener profile picture, with gentle natural lighting and a warm, supportive smile, set against a blurred background of a cozy, inviting space, soft pastel colors." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDWIKWNUCppJLI1RfuXEhM3tTRPF7QlEJJPGZ0VvsBWUT01sLO1CF6OkFw6JImozMo3kYQe6LtzZdA-S6-q81AGKdeIEaMGQebrDRdrW3SaqgqMPVJM6oM26GFVQvPPwLG97IS-S4I3uO6CzZPXAm8BKPaL_yyQ7dXK-o-ElADUSsC1ASlGSCFw5Ctw3rRXdqKK023WeLm-E6-PglITedxz6KTzSnd9byNeB34V4oURtpAbw_W5CEKrg"/>
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface">Alex Rivera</p>
+<p class="font-caption text-caption text-on-surface-variant">Companion</p>
+</div>
+</div>
+</div>
+</nav>
+<!-- Main Content -->
+<main class="flex-1 ml-64 p-container-padding-desktop overflow-y-auto bg-background">
+<header class="mb-lg flex justify-between items-end">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-primary mb-xs">Welcome back, Alex.</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Your space to connect and support.</p>
+</div>
+<div class="flex items-center space-x-md text-on-surface-variant">
+<span class="material-symbols-outlined text-[24px] cursor-pointer hover:text-primary transition-colors" data-icon="notifications">notifications</span>
+<span class="material-symbols-outlined text-[24px] cursor-pointer hover:text-primary transition-colors" data-icon="settings">settings</span>
+</div>
+</header>
+<div class="max-w-[800px] mx-auto space-y-lg mt-xl">
+<!-- Central Availability Toggle -->
+<div class="bg-surface-container-lowest rounded-[32px] p-xl shadow-[0_8px_30px_rgba(124,107,196,0.06)] flex flex-col items-center justify-center text-center transition-all duration-500 ease-in-out" id="availability-card">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-md transition-colors duration-300" id="availability-text">You're Offline</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-xl max-w-md">Take your time. When you are ready to listen, toggle your status to let users know you are available.</p>
+<div class="relative inline-block w-40 h-20 align-middle select-none transition duration-200 ease-in">
+<input class="toggle-checkbox absolute block w-20 h-20 rounded-full bg-white border-4 border-surface-variant appearance-none cursor-pointer transition-transform duration-300 ease-in-out shadow-sm z-10" id="availability-toggle" name="toggle" type="checkbox"/>
+<label class="toggle-label block overflow-hidden h-20 rounded-full bg-surface-variant cursor-pointer transition-colors duration-300 shadow-inner" for="availability-toggle"></label>
+</div>
+<div class="mt-lg flex items-center space-x-sm opacity-60">
+<span class="material-symbols-outlined text-[20px]" data-icon="headset_mic">headset_mic</span>
+<span class="font-label-md text-label-md uppercase tracking-wider">Ready to listen</span>
+</div>
+</div>
+<!-- Stats Section -->
+<div class="grid grid-cols-3 gap-md">
+<div class="bg-surface-container-lowest rounded-[24px] p-md shadow-[0_4px_20px_rgba(124,107,196,0.04)] flex flex-col items-center justify-center text-center">
+<div class="w-12 h-12 rounded-full bg-primary-container/20 flex items-center justify-center text-primary mb-sm">
+<span class="material-symbols-outlined" data-icon="forum">forum</span>
+</div>
+<p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wide mb-xs">Sessions Today</p>
+<p class="font-headline-lg text-headline-lg text-on-surface">8</p>
+</div>
+<div class="bg-surface-container-lowest rounded-[24px] p-md shadow-[0_4px_20px_rgba(124,107,196,0.04)] flex flex-col items-center justify-center text-center">
+<div class="w-12 h-12 rounded-full bg-secondary-container/30 flex items-center justify-center text-secondary mb-sm">
+<span class="material-symbols-outlined" data-icon="timer">timer</span>
+</div>
+<p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wide mb-xs">Avg. Session</p>
+<p class="font-headline-lg text-headline-lg text-on-surface">24m</p>
+</div>
+<div class="bg-surface-container-lowest rounded-[24px] p-md shadow-[0_4px_20px_rgba(124,107,196,0.04)] flex flex-col items-center justify-center text-center">
+<div class="w-12 h-12 rounded-full bg-surface-variant flex items-center justify-center text-on-surface-variant mb-sm">
+<span class="material-symbols-outlined" data-icon="people">people</span>
+</div>
+<p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wide mb-xs">Waitlist</p>
+<p class="font-headline-lg text-headline-lg text-on-surface">0</p>
+</div>
+</div>
+</div>
+</main>
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const toggle = document.getElementById('availability-toggle');
+            const card = document.getElementById('availability-card');
+            const text = document.getElementById('availability-text');
+
+            toggle.addEventListener('change', function() {
+                if(this.checked) {
+                    // State ON
+                    card.classList.add('pulse-available');
+                    card.style.backgroundColor = '#f0fdf9'; // Very light mint for card bg
+                    text.textContent = "You're Available";
+                    text.classList.add('text-secondary');
+                    text.classList.remove('text-on-surface');
+                } else {
+                    // State OFF
+                    card.classList.remove('pulse-available');
+                    card.style.backgroundColor = '#ffffff';
+                    text.textContent = "You're Offline";
+                    text.classList.add('text-on-surface');
+                    text.classList.remove('text-secondary');
+                }
+            });
+        });
+    </script>
+</body></html>

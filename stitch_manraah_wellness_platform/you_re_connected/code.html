@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Manraah - Connected</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&amp;family=Work+Sans:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "secondary-fixed-dim": "#6adaba",
+                      "surface-tint": "#6251a8",
+                      "surface-container-highest": "#e6dff8",
+                      "on-error-container": "#93000a",
+                      "surface-container-low": "#f7f1ff",
+                      "background": "#fdf7ff",
+                      "on-secondary-container": "#00725c",
+                      "secondary-fixed": "#88f7d6",
+                      "on-surface": "#1d192b",
+                      "secondary": "#006b56",
+                      "tertiary-fixed": "#ffd9e0",
+                      "on-background": "#1d192b",
+                      "inverse-on-surface": "#f5eeff",
+                      "on-secondary": "#ffffff",
+                      "on-surface-variant": "#484551",
+                      "outline-variant": "#cac4d3",
+                      "on-secondary-fixed-variant": "#005140",
+                      "on-primary-fixed": "#1d0061",
+                      "on-primary-container": "#fffbff",
+                      "primary-fixed": "#e6deff",
+                      "surface-bright": "#fdf7ff",
+                      "on-primary-fixed-variant": "#4a388e",
+                      "error": "#ba1a1a",
+                      "on-tertiary-fixed": "#38091a",
+                      "surface-container-lowest": "#ffffff",
+                      "tertiary-fixed-dim": "#ffb1c3",
+                      "surface": "#fdf7ff",
+                      "inverse-primary": "#cbbeff",
+                      "surface-container": "#f2ebff",
+                      "on-primary": "#ffffff",
+                      "on-error": "#ffffff",
+                      "surface-dim": "#ded6f0",
+                      "surface-container-high": "#ece4fe",
+                      "tertiary": "#874959",
+                      "outline": "#797582",
+                      "tertiary-container": "#a46172",
+                      "primary-container": "#7867c0",
+                      "on-tertiary-container": "#fffbff",
+                      "error-container": "#ffdad6",
+                      "primary-fixed-dim": "#cbbeff",
+                      "on-secondary-fixed": "#002018",
+                      "secondary-container": "#88f7d6",
+                      "inverse-surface": "#322e41",
+                      "primary": "#5f4ea5",
+                      "on-tertiary": "#ffffff",
+                      "surface-variant": "#e6dff8",
+                      "on-tertiary-fixed-variant": "#6e3444"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px",
+                      "2xl": "1.5rem"
+              },
+              "spacing": {
+                      "xs": "4px",
+                      "container-padding-mobile": "20px",
+                      "container-padding-desktop": "64px",
+                      "md": "24px",
+                      "sm": "12px",
+                      "base": "8px",
+                      "lg": "48px",
+                      "xl": "80px",
+                      "safe": "env(safe-area-inset-bottom)"
+              },
+              "fontFamily": {
+                      "body-lg": ["Work Sans"],
+                      "body-md": ["Work Sans"],
+                      "display-lg": ["Quicksand"],
+                      "label-md": ["Work Sans"],
+                      "headline-lg": ["Quicksand"],
+                      "caption": ["Work Sans"],
+                      "headline-lg-mobile": ["Quicksand"],
+                      "headline-md": ["Quicksand"]
+              },
+              "fontSize": {
+                      "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                      "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                      "caption": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                      "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "600"}],
+                      "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}]
+              },
+              "boxShadow": {
+                  "ambient": "0 8px 40px -4px rgba(124, 107, 196, 0.08)",
+                  "ambient-hover": "0 12px 50px -4px rgba(124, 107, 196, 0.12)"
+              }
+            }
+          }
+        }
+    </script>
+<style>
+        body {
+            background-color: #FAF9FC;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined[data-weight="fill"] {
+            font-variation-settings: 'FILL' 1;
+        }
+        
+        /* Subtle glowing background animation */
+        @keyframes pulse-glow {
+            0% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 0.5; }
+        }
+        .bg-glow-pulse {
+            animation: pulse-glow 8s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="font-body-md text-on-surface antialiased min-h-screen flex flex-col relative overflow-hidden">
+<!-- Ambient Background Elements for Softness -->
+<div class="absolute inset-0 pointer-events-none overflow-hidden -z-10">
+<div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] rounded-full bg-primary-fixed-dim/30 blur-[100px] bg-glow-pulse"></div>
+<div class="absolute bottom-[-10%] right-[-10%] w-[60vw] h-[60vw] rounded-full bg-tertiary-fixed-dim/20 blur-[120px] bg-glow-pulse" style="animation-delay: -4s;"></div>
+</div>
+<!-- TopAppBar (Transactional - simplified with back button) -->
+<header class="fixed top-0 w-full z-50 bg-transparent flex items-center px-container-padding-mobile h-16 w-full">
+<button aria-label="Go back" class="w-10 h-10 flex items-center justify-center rounded-full bg-surface-container-lowest/80 backdrop-blur-md shadow-sm shadow-primary/5 text-primary active:scale-95 transition-transform duration-200">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<div class="mx-auto font-headline-md text-headline-md text-primary tracking-tight">Manraah</div>
+<div class="w-10"></div> <!-- Spacer for centering -->
+</header>
+<!-- Main Canvas -->
+<main class="flex-1 flex flex-col items-center justify-center px-container-padding-mobile md:px-container-padding-desktop pt-20 pb-safe z-10 w-full max-w-[680px] mx-auto">
+<!-- Connection Status Indicator -->
+<div class="mb-lg flex flex-col items-center animate-fade-in-up">
+<div class="inline-flex items-center gap-2 bg-secondary-fixed/20 text-on-secondary-container font-label-md text-label-md px-4 py-2 rounded-full mb-4">
+<span class="relative flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-secondary"></span>
+</span>
+                Matched Successfully
+            </div>
+<h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary text-center">
+                Someone is here for you
+            </h1>
+</div>
+<!-- The Listener Card (Bento/Glassmorphism hybrid) -->
+<div class="w-full bg-surface-container-lowest rounded-2xl shadow-ambient p-md flex flex-col items-center relative overflow-hidden transition-all duration-300 hover:shadow-ambient-hover mb-lg transform hover:-translate-y-1">
+<!-- Avatar Illustration -->
+<div class="w-32 h-32 rounded-full mb-6 relative mt-4 shadow-inner overflow-hidden border-4 border-surface-container-lowest">
+<div class="bg-cover bg-center w-full h-full" data-alt="A soft, modern, hand-drawn illustration of an empathetic, gender-neutral listener character. The style is gentle, organic, and minimalist with a pastel color palette featuring warm lavender, soft peach, and cream tones. The character is facing forward with a calm, welcoming expression, set against a pristine, light-mode background to evoke a sense of safety and wellness." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAan4y_G9mKa7uuZC-GzthaxpI84kJnTpkPFtPkrGOOLoqpRq5jyNqyy49ibrtX2r6W5FyAe7FL2Lu4f0F31pkXY5yAtlcaBzyrXwsWuqc8pZ6gP-4pbYNPhEpReHJECAJQmhAtC4CBBNIoCJ7_atkIl6qmiABVzCPAnYnAErfeyqEtaxz4EdPH1mweybbi2G1BZZyWtPqn1XVFdjcToa7wpStPE-5YWO9uFqZ3Wtsjqyz_IZeEMXYwIA')"></div>
+<!-- Online Status Dot -->
+<div class="absolute bottom-2 right-2 w-5 h-5 bg-secondary rounded-full border-2 border-surface-container-lowest z-10"></div>
+</div>
+<!-- Identity & Trust -->
+<h2 class="font-headline-md text-headline-md text-on-surface mb-2">Listener #742</h2>
+<p class="font-body-md text-body-md text-on-surface-variant text-center mb-6 max-w-[280px]">
+                "Here to listen and support you."
+            </p>
+<!-- Trust Badge -->
+<div class="flex items-center gap-xs bg-primary-container/10 text-primary font-label-md text-label-md px-3 py-1.5 rounded-full mb-8">
+<span class="material-symbols-outlined text-[16px]" data-weight="fill">verified</span>
+                Verified Manraah Listener
+            </div>
+<!-- Connection Details (Optional Bento-style grid inside card) -->
+<div class="w-full grid grid-cols-2 gap-4 mb-4 border-t border-outline-variant/30 pt-6">
+<div class="flex flex-col items-center text-center">
+<span class="material-symbols-outlined text-outline mb-1 text-[20px]">schedule</span>
+<span class="font-caption text-caption text-on-surface-variant">Available Now</span>
+</div>
+<div class="flex flex-col items-center text-center">
+<span class="material-symbols-outlined text-outline mb-1 text-[20px]">forum</span>
+<span class="font-caption text-caption text-on-surface-variant">Chat &amp; Audio</span>
+</div>
+</div>
+</div>
+<!-- Action Buttons -->
+<div class="w-full flex flex-row gap-4 justify-center items-center">
+<button class="flex-1 max-w-[200px] h-14 bg-[#F5C99B] text-white rounded-full font-label-md text-label-md shadow-sm shadow-[#F5C99B]/30 hover:shadow-md hover:shadow-[#F5C99B]/40 active:scale-95 transition-all duration-200 flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">chat_bubble</span>
+                Start Chat
+            </button>
+<button class="flex-1 max-w-[200px] h-14 bg-transparent border-2 border-[#F5C99B] text-[#e3a059] rounded-full font-label-md text-label-md hover:bg-[#F5C99B]/5 active:scale-95 transition-all duration-200 flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">call</span>
+                Start Call
+            </button>
+</div>
+</main>
+</body></html>

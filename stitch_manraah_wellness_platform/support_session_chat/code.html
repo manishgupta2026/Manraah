@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Manraah - Admin Chat</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed-dim": "#6adaba",
+                        "surface-tint": "#6251a8",
+                        "surface-container-highest": "#e6dff8",
+                        "on-error-container": "#93000a",
+                        "surface-container-low": "#f7f1ff",
+                        "background": "#fdf7ff",
+                        "on-secondary-container": "#00725c",
+                        "secondary-fixed": "#88f7d6",
+                        "on-surface": "#1d192b",
+                        "secondary": "#006b56",
+                        "tertiary-fixed": "#ffd9e0",
+                        "on-background": "#1d192b",
+                        "inverse-on-surface": "#f5eeff",
+                        "on-secondary": "#ffffff",
+                        "on-surface-variant": "#484551",
+                        "outline-variant": "#cac4d3",
+                        "on-secondary-fixed-variant": "#005140",
+                        "on-primary-fixed": "#1d0061",
+                        "on-primary-container": "#fffbff",
+                        "primary-fixed": "#e6deff",
+                        "surface-bright": "#fdf7ff",
+                        "on-primary-fixed-variant": "#4a388e",
+                        "error": "#ba1a1a",
+                        "on-tertiary-fixed": "#38091a",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-fixed-dim": "#ffb1c3",
+                        "surface": "#fdf7ff",
+                        "inverse-primary": "#cbbeff",
+                        "surface-container": "#f2ebff",
+                        "on-primary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "surface-dim": "#ded6f0",
+                        "surface-container-high": "#ece4fe",
+                        "tertiary": "#874959",
+                        "outline": "#797582",
+                        "tertiary-container": "#a46172",
+                        "primary-container": "#7867c0",
+                        "on-tertiary-container": "#fffbff",
+                        "error-container": "#ffdad6",
+                        "primary-fixed-dim": "#cbbeff",
+                        "on-secondary-fixed": "#002018",
+                        "secondary-container": "#88f7d6",
+                        "inverse-surface": "#322e41",
+                        "primary": "#5f4ea5",
+                        "on-tertiary": "#ffffff",
+                        "surface-variant": "#e6dff8",
+                        "on-tertiary-fixed-variant": "#6e3444",
+                        "peach-accent": "#F5C99B"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px",
+                        "2xl": "1.5rem"
+                    },
+                    "spacing": {
+                        "xs": "4px",
+                        "container-padding-mobile": "20px",
+                        "container-padding-desktop": "64px",
+                        "md": "24px",
+                        "sm": "12px",
+                        "base": "8px",
+                        "lg": "48px",
+                        "xl": "80px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Work Sans", "sans-serif"],
+                        "body-md": ["Work Sans", "sans-serif"],
+                        "display-lg": ["Quicksand", "sans-serif"],
+                        "label-md": ["Work Sans", "sans-serif"],
+                        "headline-lg": ["Quicksand", "sans-serif"],
+                        "caption": ["Work Sans", "sans-serif"],
+                        "headline-lg-mobile": ["Quicksand", "sans-serif"],
+                        "headline-md": ["Quicksand", "sans-serif"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+                        "caption": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@600;700&amp;family=Work+Sans:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body { font-family: 'Work Sans', sans-serif; }
+        h1, h2, h3, h4, h5, h6, .font-display, .font-headline { font-family: 'Quicksand', sans-serif; }
+        
+        /* Ambient shadows */
+        .shadow-ambient {
+            box-shadow: 0 10px 40px -10px rgba(124, 107, 196, 0.08), 0 4px 10px -4px rgba(124, 107, 196, 0.04);
+        }
+        
+        /* Glassmorphism */
+        .glass-panel {
+            background: rgba(253, 247, 255, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background-color: #ded6f0;
+            border-radius: 20px;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex overflow-hidden">
+<!-- SideNavBar -->
+<nav class="bg-surface dark:bg-surface-dim h-screen w-64 fixed left-0 top-0 bg-surface-container-low dark:bg-surface-container-lowest shadow-md shadow-primary/5 hidden md:flex flex-col h-full py-md overflow-y-auto z-50">
+<div class="px-md mb-lg">
+<h1 class="font-display-lg text-display-lg text-primary dark:text-primary-fixed-dim">Manraah</h1>
+<p class="font-label-md text-label-md text-on-surface-variant mt-1">Wellness Sanctuary</p>
+</div>
+<div class="flex-1 px-sm">
+<ul class="space-y-2">
+<li>
+<a class="flex items-center px-4 py-3 rounded-full text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform font-body-md text-body-md" href="#">
+<span class="material-symbols-outlined mr-3">home</span>
+                        Home
+                    </a>
+</li>
+<li>
+<a class="flex items-center px-4 py-3 rounded-full text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform font-body-md text-body-md" href="#">
+<span class="material-symbols-outlined mr-3">insights</span>
+                        My Journey
+                    </a>
+</li>
+<li>
+<a class="flex items-center px-4 py-3 rounded-full text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform font-body-md text-body-md" href="#">
+<span class="material-symbols-outlined mr-3">smart_toy</span>
+                        AI Companion
+                    </a>
+</li>
+<li>
+<a class="flex items-center px-4 py-3 rounded-full text-primary font-bold border-r-4 border-primary bg-primary-container/10 transition-colors active:scale-95 transition-transform font-body-md text-body-md" href="#">
+<span class="material-symbols-outlined mr-3" style="font-variation-settings: 'FILL' 1;">diversity_1</span>
+                        Human Companion
+                    </a>
+</li>
+<li>
+<a class="flex items-center px-4 py-3 rounded-full text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors active:scale-95 transition-transform font-body-md text-body-md" href="#">
+<span class="material-symbols-outlined mr-3">medical_services</span>
+                        Professional Care
+                    </a>
+</li>
+</ul>
+</div>
+</nav>
+<!-- Main Content Wrapper -->
+<main class="flex-1 ml-0 md:ml-64 flex flex-col h-screen relative bg-[#FAF9FC]">
+<!-- TopNavBar -->
+<header class="bg-surface/60 backdrop-blur-md dark:bg-surface-dim/60 fixed top-0 right-0 w-full md:w-[calc(100%-16rem)] z-40 bg-surface/80 backdrop-blur-xl shadow-sm shadow-primary/5 flex justify-between items-center h-16 px-container-padding-mobile md:px-container-padding-desktop ml-auto">
+<div class="flex items-center gap-4">
+<!-- Mobile menu button (hidden on desktop) -->
+<button class="md:hidden text-on-surface-variant">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<div class="font-headline-md text-headline-md text-primary hidden md:block">Chat Session</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant hover:bg-primary-container/20 rounded-full p-2 transition-all active:scale-95 duration-200">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="text-on-surface-variant hover:bg-primary-container/20 rounded-full p-2 transition-all active:scale-95 duration-200">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<div class="w-8 h-8 rounded-full overflow-hidden bg-surface-variant ml-2">
+<img alt="User profile avatar" class="w-full h-full object-cover" data-alt="A small, circular avatar portrait of a wellness guide in a professional yet warm setting, soft lighting, modern organic style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjWj3bmMpapmseaDQli1E4mSV2h79jJ9fKVY0H0sGX7ypafHGfbvJAtLb8GOkA0pd-pNwTJNJVVvEHfWaAIk_B9V7-RIfdwJksq2YYi1svU7hhdosn2kxr5eqHmn0bzPn6i1wunIhb8tbutKDvJft6yJt4-BQkKJTd5t4vr1Uu4pVVwAR1JXlE4oSaUxGM5tzPNz-FtZMHcGcYK2Ab7D0txB18v5Rros-52p7Oblvk5ENbEVxxIlvuTw"/>
+</div>
+</div>
+</header>
+<!-- Two Column Layout -->
+<div class="flex-1 flex mt-16 p-4 md:p-6 lg:p-container-padding-desktop gap-md h-[calc(100vh-64px)]">
+<!-- Left Column: Active Chat -->
+<section class="flex-1 flex flex-col bg-surface-container-lowest rounded-2xl shadow-ambient overflow-hidden">
+<!-- Chat Header -->
+<div class="p-sm md:p-md border-b border-surface-variant flex items-center justify-between bg-white z-10">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-peach-accent/20 flex items-center justify-center text-peach-accent relative">
+<span class="material-symbols-outlined text-2xl">person</span>
+<div class="absolute bottom-0 right-0 w-3 h-3 bg-secondary rounded-full border-2 border-white"></div>
+</div>
+<div>
+<h2 class="font-headline-md text-headline-md text-on-surface">Anonymous User</h2>
+<div class="flex items-center gap-2 mt-1">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-peach-accent/15 text-on-surface-variant font-caption text-caption">Student</span>
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-peach-accent/15 text-on-surface-variant font-caption text-caption">Anxious</span>
+</div>
+</div>
+</div>
+<button class="text-primary hover:bg-primary-container/10 p-2 rounded-full transition-colors hidden md:block">
+<span class="material-symbols-outlined">info</span>
+</button>
+</div>
+<!-- Chat Messages Area -->
+<div class="flex-1 overflow-y-auto p-4 md:p-6 space-y-6 bg-[#FAF9FC]">
+<!-- System Message -->
+<div class="flex justify-center">
+<span class="bg-surface-variant/50 text-on-surface-variant px-4 py-1.5 rounded-full font-caption text-caption">Session started at 10:42 AM</span>
+</div>
+<!-- User Message -->
+<div class="flex flex-col items-start max-w-[85%] md:max-w-[70%]">
+<div class="flex items-end gap-2">
+<div class="w-8 h-8 rounded-full bg-peach-accent/20 flex-shrink-0 flex items-center justify-center text-peach-accent">
+<span class="material-symbols-outlined text-sm">person</span>
+</div>
+<div class="bg-white p-4 rounded-2xl rounded-bl-sm shadow-sm border border-peach-accent/20">
+<p class="font-body-md text-body-md text-on-surface">Hi... I'm feeling really overwhelmed with finals coming up. I can't seem to focus on anything and I'm just panicking.</p>
+</div>
+</div>
+<span class="text-xs text-outline mt-1 ml-10">10:45 AM</span>
+</div>
+<!-- Admin Message -->
+<div class="flex flex-col items-end self-end max-w-[85%] md:max-w-[70%] ml-auto">
+<div class="flex items-end gap-2">
+<div class="bg-primary p-4 rounded-2xl rounded-br-sm shadow-sm text-on-primary">
+<p class="font-body-md text-body-md">Hello. I hear you, and it's completely understandable to feel overwhelmed right now. Finals are a high-pressure time. Let's take a deep breath together. What's the most pressing thing on your mind right now?</p>
+</div>
+<div class="w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
+<img alt="Admin" class="w-full h-full object-cover" data-alt="Small circular avatar of the admin" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC1OSG3FTrz2Q597XIk_cXBbfjbUEhiJ52GteaJZ6v9cXv2TADwFEvKv8axm_MS3-c5ZNTzpR7IaPDbLeVDybuuynIhxQ6YqXo8baiOv7TdcAJvIV3RrGfsDOfCDm1dmbo7U2E4eQGv9AJQ7eDPjqeDCYNn_vJ5wBASMLK9ZB44xiTqxuN53ON20ot2X6SFY-WUtkfnyJt5rjuf-6T2gNLrTVFh8ow_L1RkEZqSHQbiIyJgeK01ho3lEA"/>
+</div>
+</div>
+<span class="text-xs text-outline mt-1 mr-10">10:47 AM</span>
+</div>
+<!-- User Message -->
+<div class="flex flex-col items-start max-w-[85%] md:max-w-[70%]">
+<div class="flex items-end gap-2">
+<div class="w-8 h-8 rounded-full bg-peach-accent/20 flex-shrink-0 flex items-center justify-center text-peach-accent">
+<span class="material-symbols-outlined text-sm">person</span>
+</div>
+<div class="bg-white p-4 rounded-2xl rounded-bl-sm shadow-sm border border-peach-accent/20">
+<p class="font-body-md text-body-md text-on-surface">I have a biology paper due tomorrow and I haven't even started the outline. Every time I open the document my chest gets tight.</p>
+</div>
+</div>
+<span class="text-xs text-outline mt-1 ml-10">10:50 AM</span>
+</div>
+</div>
+<!-- Chat Input Area -->
+<div class="p-4 bg-white border-t border-surface-variant z-10">
+<div class="flex items-center gap-2 bg-surface-container-low rounded-2xl p-2 border border-outline-variant/30 focus-within:border-primary focus-within:shadow-[0_0_0_2px_rgba(120,103,192,0.2)] transition-all">
+<button class="text-on-surface-variant p-2 hover:bg-surface-variant rounded-full transition-colors">
+<span class="material-symbols-outlined">add_circle</span>
+</button>
+<input class="flex-1 bg-transparent border-none focus:ring-0 font-body-md text-body-md text-on-surface placeholder-on-surface-variant p-2" placeholder="Type a supportive message..." type="text"/>
+<button class="bg-gradient-to-br from-primary to-surface-tint text-on-primary p-3 rounded-xl hover:shadow-lg transition-all active:scale-95 flex items-center justify-center">
+<span class="material-symbols-outlined">send</span>
+</button>
+</div>
+<!-- End Session Button -->
+<div class="mt-4 flex justify-between items-center">
+<div class="text-xs text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">lock</span> End-to-end encrypted
+                        </div>
+<button class="px-6 py-2 rounded-full border border-error text-error hover:bg-error-container hover:text-on-error-container transition-colors font-label-md text-label-md flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">call_end</span>
+                            End Session
+                        </button>
+</div>
+</div>
+</section>
+<!-- Right Column: Session Notes Drawer (Desktop only) -->
+<aside class="hidden lg:flex w-80 xl:w-96 flex-col bg-surface-container-lowest rounded-2xl shadow-ambient overflow-hidden">
+<div class="p-md border-b border-surface-variant bg-white flex justify-between items-center">
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Private Notes</h3>
+<p class="font-caption text-caption text-on-surface-variant mt-1">(Visible only to you)</p>
+</div>
+<button class="text-on-surface-variant hover:bg-surface-variant p-2 rounded-full transition-colors">
+<span class="material-symbols-outlined">keep</span>
+</button>
+</div>
+<div class="flex-1 p-4 bg-surface-container-low/50 overflow-y-auto">
+<textarea class="w-full h-full bg-white border border-outline-variant/30 rounded-xl p-4 font-body-md text-body-md text-on-surface resize-none focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all shadow-sm" placeholder="Jot down context, key points, or intervention strategies here...">Student is experiencing acute anxiety regarding an impending biology paper deadline. Physical symptoms reported: chest tightness.
+Current intervention plan:
+- Validate feelings (done)
+- Grounding exercise?
+- Break task into micro-steps.</textarea>
+</div>
+<div class="p-4 bg-white border-t border-surface-variant">
+<button class="w-full py-3 rounded-full bg-secondary-container text-on-secondary-container hover:bg-secondary hover:text-on-secondary font-label-md text-label-md transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">save</span>
+                        Save Notes to Profile
+                    </button>
+</div>
+</aside>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden bg-surface/80 backdrop-blur-lg dark:bg-surface-dim/80 fixed bottom-0 w-full rounded-t-xl z-50 bg-surface/90 border-t border-outline-variant/30 shadow-[0_-4px_20px_rgba(124,107,196,0.08)] flex justify-around items-center h-20 px-4 pb-safe w-full">
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary active:scale-90 transition-all" href="#">
+<span class="material-symbols-outlined mb-1">home</span>
+<span class="font-label-md text-label-md text-[10px]">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary active:scale-90 transition-all" href="#">
+<span class="material-symbols-outlined mb-1">auto_stories</span>
+<span class="font-label-md text-label-md text-[10px]">Journey</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary active:scale-90 transition-all" href="#">
+<span class="material-symbols-outlined mb-1">chat_bubble</span>
+<span class="font-label-md text-label-md text-[10px]">AI Chat</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary active:scale-90 transition-all" href="#">
+<span class="material-symbols-outlined mb-1">local_library</span>
+<span class="font-label-md text-label-md text-[10px]">Resources</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full px-4 py-1 active:scale-90 transition-all" href="#">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">person</span>
+<span class="font-label-md text-label-md text-[10px]">Profile</span>
+</a>
+</nav>
+<script>
+        // Simple script to auto-scroll chat to bottom
+        document.addEventListener('DOMContentLoaded', () => {
+            const chatArea = document.querySelector('.overflow-y-auto');
+            if (chatArea) {
+                chatArea.scrollTop = chatArea.scrollHeight;
+            }
+        });
+    </script>
+</body></html>

@@ -25,6 +25,7 @@ export interface UserProfile {
   mindfulnessMinutes: number;
   currentMood: string;
   selectedCategory: UserCategory;
+  role?: "user" | "admin";
 }
 
 export interface AssessmentAnswers {
@@ -45,6 +46,7 @@ export interface AuthSession {
   user: UserProfile | null;
   token: string | null;
   isAuthenticated: boolean;
+  role?: "user" | "admin";
 }
 
 export interface MoodEntry {
@@ -108,4 +110,36 @@ export interface WellnessReport {
   stabilityIndexChange: number;
   topDiscussedThemes: string[];
   generatedAt: string;
+}
+
+// ----------------------------------------------------
+// Human Companion & Admin Companion Network Interfaces
+// ----------------------------------------------------
+
+export type HumanCompanionMode = "listener" | "peer_support";
+
+export type SessionFlag = "needs_followup" | "possible_crisis" | "no_flag";
+
+export interface AnonymizedListener {
+  id: string;
+  displayId: string;        // e.g. "Listener #104"
+  contextTag: string;       // e.g. "Active Listener • Mental Health Peer"
+  avatarBg: string;         // Mint accent styling token
+  rating: number;
+  totalSessions: number;
+}
+
+export interface AnonymizedUser {
+  id: string;
+  userTag: string;          // e.g. "Anonymous Student #842"
+  categoryTag: string;      // e.g. "Student (Exam Stress)"
+  topic: string;
+  waitTime: string;
+}
+
+export interface CompanionChatMessage {
+  id: string;
+  sender: "user" | "listener" | "system";
+  text: string;
+  timestamp: string;
 }

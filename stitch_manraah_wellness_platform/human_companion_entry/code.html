@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Manraah - Human Companion</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&amp;family=Work+Sans:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed-dim": "#6adaba",
+                        "surface-tint": "#6251a8",
+                        "surface-container-highest": "#e6dff8",
+                        "on-error-container": "#93000a",
+                        "surface-container-low": "#f7f1ff",
+                        "background": "#fdf7ff",
+                        "on-secondary-container": "#00725c",
+                        "secondary-fixed": "#88f7d6",
+                        "on-surface": "#1d192b",
+                        "secondary": "#006b56",
+                        "tertiary-fixed": "#ffd9e0",
+                        "on-background": "#1d192b",
+                        "inverse-on-surface": "#f5eeff",
+                        "on-secondary": "#ffffff",
+                        "on-surface-variant": "#484551",
+                        "outline-variant": "#cac4d3",
+                        "on-secondary-fixed-variant": "#005140",
+                        "on-primary-fixed": "#1d0061",
+                        "on-primary-container": "#fffbff",
+                        "primary-fixed": "#e6deff",
+                        "surface-bright": "#fdf7ff",
+                        "on-primary-fixed-variant": "#4a388e",
+                        "error": "#ba1a1a",
+                        "on-tertiary-fixed": "#38091a",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-fixed-dim": "#ffb1c3",
+                        "surface": "#fdf7ff",
+                        "inverse-primary": "#cbbeff",
+                        "surface-container": "#f2ebff",
+                        "on-primary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "surface-dim": "#ded6f0",
+                        "surface-container-high": "#ece4fe",
+                        "tertiary": "#874959",
+                        "outline": "#797582",
+                        "tertiary-container": "#a46172",
+                        "primary-container": "#7867c0",
+                        "on-tertiary-container": "#fffbff",
+                        "error-container": "#ffdad6",
+                        "primary-fixed-dim": "#cbbeff",
+                        "on-secondary-fixed": "#002018",
+                        "secondary-container": "#88f7d6",
+                        "inverse-surface": "#322e41",
+                        "primary": "#5f4ea5",
+                        "on-tertiary": "#ffffff",
+                        "surface-variant": "#e6dff8",
+                        "on-tertiary-fixed-variant": "#6e3444",
+                        "peach-accent": "#F5C99B",
+                        "mint-status": "#5FCFB0"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xs": "4px",
+                        "container-padding-mobile": "20px",
+                        "container-padding-desktop": "64px",
+                        "md": "24px",
+                        "sm": "12px",
+                        "base": "8px",
+                        "lg": "48px",
+                        "xl": "80px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Work Sans"],
+                        "body-md": ["Work Sans"],
+                        "display-lg": ["Quicksand"],
+                        "label-md": ["Work Sans"],
+                        "headline-lg": ["Quicksand"],
+                        "caption": ["Work Sans"],
+                        "headline-lg-mobile": ["Quicksand"],
+                        "headline-md": ["Quicksand"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                        "caption": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                        "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "600"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-family: 'Material Symbols Outlined';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 24px;
+            line-height: 1;
+            letter-spacing: normal;
+            text-transform: none;
+            display: inline-block;
+            white-space: nowrap;
+            word-wrap: normal;
+            direction: ltr;
+            -webkit-font-feature-settings: 'liga';
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        body {
+            background-color: #fdf7ff; /* using background token */
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background antialiased min-h-screen flex flex-col items-center justify-center">
+<!-- Mobile Container Wrapper -->
+<div class="w-full max-w-md bg-surface-container-lowest min-h-screen shadow-[0_10px_50px_-15px_rgba(124,107,196,0.15)] relative overflow-hidden flex flex-col">
+<!-- Header -->
+<header class="flex items-center px-container-padding-mobile h-16 w-full bg-surface-container-lowest/80 backdrop-blur-md sticky top-0 z-50 pt-8 pb-4">
+<button class="p-2 rounded-full hover:bg-surface-variant transition-colors group">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors" data-icon="arrow_back">arrow_back</span>
+</button>
+<h1 class="flex-1 text-center font-headline-md text-headline-md text-on-surface mr-10">Human Companion</h1>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-1 px-container-padding-mobile py-6 flex flex-col gap-8 overflow-y-auto pb-24">
+<!-- Description -->
+<div class="text-center px-4">
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                    Talk to someone who understands, anonymously. Whether you're navigating a tough day or just need to be heard, we're here.
+                </p>
+</div>
+<!-- Mode Select -->
+<div class="flex flex-col gap-4 w-full">
+<!-- Active Card: Talk to a Listener -->
+<div class="bg-surface-container-lowest rounded-2xl p-5 border border-primary/20 shadow-[0_4px_30px_0_rgba(124,107,196,0.08)] relative overflow-hidden cursor-pointer transition-transform active:scale-[0.98]">
+<div class="absolute top-0 left-0 w-1 h-full bg-primary"></div>
+<div class="flex gap-4 items-start">
+<div class="p-3 bg-primary-container rounded-full flex-shrink-0 text-on-primary-container">
+<span class="material-symbols-outlined" data-icon="support_agent" data-weight="fill" style="font-variation-settings: 'FILL' 1;">support_agent</span>
+</div>
+<div>
+<h3 class="font-headline-md text-body-lg font-semibold text-on-surface mb-1">Talk to a Listener</h3>
+<p class="font-body-md text-caption text-on-surface-variant">Connect with a trained, verified listener from the Manraah team.</p>
+</div>
+<div class="ml-auto flex items-center justify-center self-center w-6 h-6 rounded-full bg-primary text-on-primary">
+<span class="material-symbols-outlined text-sm" data-icon="check">check</span>
+</div>
+</div>
+</div>
+<!-- Disabled Card: Peer Support -->
+<div class="bg-surface-container/50 rounded-2xl p-5 border border-outline-variant/30 opacity-70 cursor-not-allowed">
+<div class="flex gap-4 items-start">
+<div class="p-3 bg-surface-variant rounded-full flex-shrink-0 text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="diversity_3">diversity_3</span>
+</div>
+<div class="flex-1">
+<div class="flex items-center gap-2 mb-1">
+<h3 class="font-headline-md text-body-lg font-semibold text-on-surface">Peer Support</h3>
+<span class="px-2 py-0.5 rounded-full bg-surface-variant text-on-surface-variant font-label-md text-[10px] uppercase tracking-wider">Coming Soon</span>
+</div>
+<p class="font-body-md text-caption text-on-surface-variant">Support and be supported by others in the community.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Spacer -->
+<div class="flex-1"></div>
+<!-- Primary CTA Area -->
+<div class="flex flex-col items-center justify-center mt-8 relative">
+<!-- Ambient Glow behind button -->
+<div class="absolute w-40 h-40 bg-peach-accent rounded-full blur-[40px] opacity-30 z-0"></div>
+<!-- Big Circular Button -->
+<button class="relative z-10 w-48 h-48 rounded-full bg-gradient-to-br from-[#FFDAB3] to-[#F5C99B] shadow-[0_10px_30px_-5px_rgba(245,201,155,0.6)] flex flex-col items-center justify-center gap-2 text-[#8B5A2B] hover:scale-105 active:scale-95 transition-all duration-300 group">
+<span class="material-symbols-outlined text-5xl mb-1 group-hover:animate-pulse" data-icon="volunteer_activism" data-weight="fill" style="font-variation-settings: 'FILL' 1;">volunteer_activism</span>
+<span class="font-headline-md text-headline-md text-[20px] font-bold text-center leading-tight">Find a<br/>Listener</span>
+</button>
+<!-- Privacy Note -->
+<div class="mt-8 flex items-center gap-2 px-4 py-2 bg-surface-container rounded-full shadow-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-sm text-mint-status" data-icon="lock" data-weight="fill" style="font-variation-settings: 'FILL' 1;">lock</span>
+<span class="font-body-md text-caption">Your identity stays anonymous throughout.</span>
+</div>
+</div>
+</main>
+</div>
+</body></html>
