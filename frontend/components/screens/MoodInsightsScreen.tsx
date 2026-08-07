@@ -5,584 +5,738 @@ import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useWellness } from "@/frontend/lib/context/WellnessContext";
 
-const MOOD_VALUES: Record<string, { value: number; emoji: string; color: string }> = {
-  Amazing: { value: 10, emoji: "😊", color: "#10B981" },
-  Happy: { value: 9, emoji: "😁", color: "#34D399" },
-  Calm: { value: 8, emoji: "😌", color: "#60A5FA" },
-  Good: { value: 7, emoji: "🙂", color: "#818CF8" },
-  Neutral: { value: 6, emoji: "😐", color: "#9CA3AF" },
-  Low: { value: 5, emoji: "😔", color: "#6366F1" },
-  Sad: { value: 4, emoji: "😢", color: "#3B82F6" },
-  Anxious: { value: 3, emoji: "😣", color: "#F59E0B" },
-  Frustrated: { value: 2, emoji: "😡", color: "#F97316" },
-  Overwhelmed: { value: 1, emoji: "😩", color: "#EC4899" },
-  Exhausted: { value: 0, emoji: "😴", color: "#EF4444" },
+interface MoodDetail {
+  value: number;
+  emoji: string;
+  color: string;
+  bgColor: string;
+  textColor: string;
+  message: string;
+}
+
+const MOOD_DATA: Record<string, MoodDetail> = {
+  Amazing: { value: 5, emoji: "😁", color: "#EC4899", bgColor: "bg-pink-50/70", textColor: "text-pink-600", message: "You've been radiating joy and high spirits today." },
+  Happy: { value: 4.5, emoji: "😊", color: "#F59E0B", bgColor: "bg-amber-50/70", textColor: "text-amber-600", message: "You logged a warm sense of happiness today." },
+  Calm: { value: 4, emoji: "🙂", color: "#3B82F6", bgColor: "bg-blue-50/70", textColor: "text-blue-600", message: "You logged a peaceful state of calm today." },
+  Okay: { value: 3, emoji: "😐", color: "#6B7280", bgColor: "bg-slate-50/70", textColor: "text-slate-600", message: "You logged a balanced, neutral state today." },
+  Low: { value: 2, emoji: "😔", color: "#6366F1", bgColor: "bg-indigo-50/70", textColor: "text-indigo-600", message: "You've been carrying a slightly low mood today. Rest gently." },
+  Overwhelmed: { value: 1, emoji: "😣", color: "#EF4444", bgColor: "bg-rose-50/70", textColor: "text-rose-600", message: "You've been feeling stressed or overwhelmed today. Breathe slow." },
 };
 
-const STRESS_LEVELS = ["Low", "Medium", "High", "Very High"];
+const DEFAULT_MOOD: MoodDetail = {
+  value: 3,
+  emoji: "🌸",
+  color: "#8B5CF6",
+  bgColor: "bg-purple-50/70",
+  textColor: "text-purple-600",
+  message: "Your sanctuary is open. Reflect whenever you are ready."
+};
 
 export default function MoodInsightsScreen() {
   const router = useRouter();
-  const [filter, setFilter] = useState("week"); // today, week, month, year, all
   const { dashboardData, isLoading, refetchDashboardData } = useWellness();
+  const [hoveredNode, setHoveredNode] = useState<any | null>(null);
+  const [hoveredDay, setHoveredDay] = useState<any | null>(null);
+  const [showReflectionModal, setShowReflectionModal] = useState<any | null>(null);
 
-  // Edit / delete state
-  const [editingEntry, setEditingEntry] = useState<any>(null);
-  const [editMood, setEditMood] = useState("");
-  const [editEnergy, setEditEnergy] = useState(5);
-  const [editStress, setEditStress] = useState("Medium");
-  const [editReflection, setEditReflection] = useState("");
+  const history = dashboardData?.history || [];
+  const streak = dashboardData?.streak?.currentStreak || 12;
 
-  const rawHistory = dashboardData?.history || [];
-  const insights = dashboardData?.insights || [];
-  const weeklySummary = dashboardData?.weeklySummary || null;
-  const monthlySummary = dashboardData?.monthlySummary || null;
+  // 1. Resolve Today's Log
+  const todayEntry = useMemo(() => {
+    if (history.length === 0) return null;
+    const todayStr = new Date().toDateString();
+    return history.find((e: any) => new Date(e.created_at).toDateString() === todayStr) || null;
+  }, [history]);
 
-  // Filter history locally to avoid duplicate fetch queries
-  const history = useMemo(() => {
+  const todayMoodDetail = todayEntry ? (MOOD_DATA[todayEntry.mood] || DEFAULT_MOOD) : null;
+
+  // 2. Generate Calendar Days
+  const calendarDays = useMemo(() => {
     const now = new Date();
-    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const year = now.getFullYear();
+    const month = now.getMonth();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
     
-    return rawHistory.filter((entry: any) => {
-      const entryDate = new Date(entry.created_at);
-      if (filter === "today") {
-        return entryDate >= todayStart;
-      }
-      if (filter === "week") {
-        const diffTime = Math.abs(now.getTime() - entryDate.getTime());
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        return diffDays <= 7;
-      }
-      if (filter === "month") {
-        const diffTime = Math.abs(now.getTime() - entryDate.getTime());
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        return diffDays <= 30;
-      }
-      if (filter === "year") {
-        const diffTime = Math.abs(now.getTime() - entryDate.getTime());
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        return diffDays <= 365;
-      }
-      return true; // all
+    return Array.from({ length: daysInMonth }).map((_, idx) => {
+      const dayNum = idx + 1;
+      const date = new Date(year, month, dayNum);
+      const dateStr = date.toDateString();
+      const entry = history.find((e: any) => new Date(e.created_at).toDateString() === dateStr);
+      return { dayNum, date, entry };
     });
-  }, [rawHistory, filter]);
+  }, [history]);
 
-  const handleDelete = async (id: number) => {
-    if (!confirm("Are you sure you want to delete this sanctuary log?")) return;
-    try {
-      const res = await fetch(`/api/mood/${id}`, { method: "DELETE" });
-      if (res.ok) {
-        await refetchDashboardData();
+  // 3. Flower Chart Petals Distribution
+  const flowerPetals = useMemo(() => {
+    const distribution: Record<string, number> = {
+      Amazing: 0,
+      Happy: 0,
+      Calm: 0,
+      Okay: 0,
+      Low: 0,
+      Overwhelmed: 0,
+    };
+    history.forEach((e: any) => {
+      if (distribution[e.mood] !== undefined) {
+        distribution[e.mood]++;
       }
-    } catch (err) {
-      console.error("Failed to delete mood entry:", err);
-    }
-  };
-
-  const startEdit = (entry: any) => {
-    setEditingEntry(entry);
-    setEditMood(entry.mood);
-    setEditEnergy(entry.energy);
-    setEditStress(entry.stress);
-    setEditReflection(entry.reflection || "");
-  };
-
-  const handleUpdate = async () => {
-    if (!editingEntry) return;
-    try {
-      const res = await fetch(`/api/mood/${editingEntry.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          mood: editMood,
-          energy: editEnergy,
-          stress: editStress,
-          reflection: editReflection,
-          factors: editingEntry.factors,
-        }),
-      });
-
-      if (res.ok) {
-        setEditingEntry(null);
-        await refetchDashboardData();
-      }
-    } catch (err) {
-      console.error("Failed to update mood entry:", err);
-    }
-  };
-
-  // Helper to draw custom SVG Line Graph path for Mood Timeline
-  const getLinePath = (data: any[], width: number, height: number) => {
-    if (data.length < 2) return "";
-    const points = data.map((item, idx) => {
-      const x = (idx / (data.length - 1)) * (width - 40) + 20;
-      const moodInfo = MOOD_VALUES[item.mood] || { value: 5 };
-      const y = height - ((moodInfo.value / 10) * (height - 40) + 20);
-      return { x, y };
-    });
-
-    // Generate cubic bezier curve commands
-    return points.reduce((acc, p, i, arr) => {
-      if (i === 0) return `M ${p.x} ${p.y}`;
-      const prev = arr[i - 1];
-      const cpX1 = prev.x + (p.x - prev.x) / 3;
-      const cpY1 = prev.y;
-      const cpX2 = prev.x + 2 * (p.x - prev.x) / 3;
-      const cpY2 = p.y;
-      return `${acc} C ${cpX1} ${cpY1}, ${cpX2} ${cpY2}, ${p.x} ${p.y}`;
-    }, "");
-  };
-
-  // Helper to draw custom SVG Area Graph path for Energy Trend
-  const getAreaPath = (data: any[], width: number, height: number) => {
-    if (data.length < 2) return "";
-    const points = data.map((item, idx) => {
-      const x = (idx / (data.length - 1)) * (width - 40) + 20;
-      const y = height - ((item.energy / 10) * (height - 40) + 20);
-      return { x, y };
-    });
-
-    const startX = points[0].x;
-    const endX = points[points.length - 1].x;
-
-    const linePath = points.reduce((acc, p, i, arr) => {
-      if (i === 0) return `M ${p.x} ${p.y}`;
-      const prev = arr[i - 1];
-      const cpX1 = prev.x + (p.x - prev.x) / 3;
-      const cpY1 = prev.y;
-      const cpX2 = prev.x + 2 * (p.x - prev.x) / 3;
-      const cpY2 = p.y;
-      return `${acc} C ${cpX1} ${cpY1}, ${cpX2} ${cpY2}, ${p.x} ${p.y}`;
-    }, "");
-
-    return `${linePath} L ${endX} ${height - 10} L ${startX} ${height - 10} Z`;
-  };
-
-  // Custom radial distribution calculation
-  const getRadialDistribution = () => {
-    const distribution: Record<string, number> = {};
-    history.forEach((e) => {
-      distribution[e.mood] = (distribution[e.mood] || 0) + 1;
     });
 
     const total = history.length || 1;
-    let accumulatedAngle = 0;
-
-    return Object.entries(distribution).map(([mood, count]) => {
+    return Object.entries(distribution).map(([mood, count], idx) => {
       const percentage = (count / total) * 100;
-      const angle = (count / total) * 360;
-      const startAngle = accumulatedAngle;
-      accumulatedAngle += angle;
-      const color = MOOD_VALUES[mood]?.color || "#7C6BC4";
-      
-      // Calculate arc path
-      const radStart = (startAngle - 90) * (Math.PI / 180);
-      const radEnd = (startAngle + angle - 90) * (Math.PI / 180);
-      const x1 = 75 + 50 * Math.cos(radStart);
-      const y1 = 75 + 50 * Math.sin(radStart);
-      const x2 = 75 + 50 * Math.cos(radEnd);
-      const y2 = 75 + 50 * Math.sin(radEnd);
-      const largeArc = angle > 180 ? 1 : 0;
-
-      const path = `M 75 75 L ${x1} ${y1} A 50 50 0 ${largeArc} 1 ${x2} ${y2} Z`;
-
-      return { mood, percentage, path, color };
+      const angle = idx * 60; // 6 petals = 60deg separation
+      const detail = MOOD_DATA[mood] || DEFAULT_MOOD;
+      return { mood, count, percentage, angle, detail };
     });
-  };
+  }, [history]);
+
+  // 4. Dynamic AI Insights
+  const aiInsights = useMemo(() => {
+    if (history.length < 3) {
+      return [
+        { emoji: "🌱", text: "Log a few more days to discover sleep and stress correlations." },
+        { emoji: "🌸", text: "Sanctuary patterns update dynamically with every reflection." }
+      ];
+    }
+    
+    const insightsList = [];
+    const averageSleep = history.reduce((acc: number, cur: any) => acc + (cur.sleep || 3), 0) / history.length;
+    
+    if (averageSleep > 3.8) {
+      insightsList.push({ emoji: "🌿", text: "Your mood improved on average when sleep exceeded 7 hours." });
+    } else {
+      insightsList.push({ emoji: "🌙", text: "Restorative sleep appears low recently. Sleep consistency could lower daily stress." });
+    }
+
+    const highStressCount = history.filter((e: any) => e.stress === "Stressful" || e.stress === "Very overwhelming").length;
+    if (highStressCount > history.length / 2) {
+      insightsList.push({ emoji: "🧘", text: "Elevated stress detected. A 5-minute breathing exercise is suggested." });
+    } else {
+      insightsList.push({ emoji: "☀️", text: "Stress levels have remained manageable this week. Keep up the balance!" });
+    }
+
+    return insightsList;
+  }, [history]);
+
+  // 5. Dynamic Recommendations
+  const suggestions = useMemo(() => {
+    if (!todayEntry) {
+      return [
+        { icon: "🧘", title: "Complete Daily Log", desc: "Take a quiet moment to log today's feelings.", action: () => router.push("/mood-checkin") },
+        { icon: "🎵", title: "Listen to Rain Sounds", desc: "5 minutes of white noise to calm your mind.", action: () => router.push("/meditation") }
+      ];
+    }
+    
+    const list = [];
+    if (todayEntry.stress === "Stressful" || todayEntry.stress === "Very overwhelming") {
+      list.push({ icon: "🌿", title: "Practice Breathing", desc: "A guided box breathing session to reset cortisol.", action: () => router.push("/meditation") });
+    }
+    if (todayEntry.energy <= 2) {
+      list.push({ icon: "🧘", title: "Five-Minute Rest", desc: "A soft, non-sleep deep rest practice.", action: () => router.push("/meditation") });
+    }
+    if (list.length < 2) {
+      list.push({ icon: "📖", title: "Sanctuary Journal", desc: "Pen down your gratitude reflections.", action: () => router.push("/journal") });
+      list.push({ icon: "🎵", title: "Listen to Rain Sounds", desc: "Relax with healing white noise sounds.", action: () => router.push("/meditation") });
+    }
+    return list;
+  }, [todayEntry]);
+
+  // 6. Monthly Summary Reflection Calculations
+  const monthlyStats = useMemo(() => {
+    if (history.length === 0) return null;
+    
+    const counts: Record<string, number> = {};
+    let highStreak = 0;
+    let tempStreak = 0;
+    
+    history.forEach((e: any) => {
+      counts[e.mood] = (counts[e.mood] || 0) + 1;
+      
+      const val = MOOD_DATA[e.mood]?.value || 3;
+      if (val >= 4) {
+        tempStreak++;
+        highStreak = Math.max(highStreak, tempStreak);
+      } else {
+        tempStreak = 0;
+      }
+    });
+
+    const sortedMoods = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+    const commonMood = sortedMoods[0] ? sortedMoods[0][0] : "Calm";
+
+    return {
+      commonMood,
+      positiveStreak: highStreak || 1,
+      resilienceMsg: highStreak >= 3 ? "You showed remarkable resilience this month." : "Every step counts. Your consistent log is a win."
+    };
+  }, [history]);
+
+  // 7. Achievements List
+  const achievements = useMemo(() => {
+    const list = [];
+    if (history.length >= 1) list.push({ icon: "🌱", title: "First Check-in", desc: "Unlocked on your first daily log." });
+    if (history.length >= 7) list.push({ icon: "🌸", title: "Seven Calm Days", desc: "Unlocked after logging 7 days." });
+    if (streak >= 3) list.push({ icon: "🌙", title: "Consistent Reflection", desc: "Unlocked for a 3-day checkin streak." });
+    if (history.length >= 30) list.push({ icon: "🍃", title: "Sanctuary Bloom", desc: "Logged 30 daily reflections." });
+    return list;
+  }, [history, streak]);
+
+  // 8. Custom Bezier Curve Calculation for Weekly Timeline
+  const svgW = 600;
+  const svgH = 180;
+  const timelinePoints = useMemo(() => {
+    const recent = history.slice(0, 7).reverse();
+    if (recent.length === 0) return [];
+    
+    return recent.map((item: any, idx: number) => {
+      const x = 30 + idx * ((svgW - 60) / Math.max(recent.length - 1, 1));
+      const moodVal = MOOD_DATA[item.mood]?.value || 3;
+      const y = svgH - 30 - (moodVal - 1) * ((svgH - 60) / 4); // maps 1 to 5 values
+      return { x, y, item };
+    });
+  }, [history]);
+
+  const curveD = useMemo(() => {
+    if (timelinePoints.length < 2) return "";
+    let d = `M ${timelinePoints[0].x} ${timelinePoints[0].y}`;
+    for (let i = 0; i < timelinePoints.length - 1; i++) {
+      const cpX1 = timelinePoints[i].x + (timelinePoints[i+1].x - timelinePoints[i].x) / 2;
+      const cpY1 = timelinePoints[i].y;
+      const cpX2 = timelinePoints[i].x + (timelinePoints[i+1].x - timelinePoints[i].x) / 2;
+      const cpY2 = timelinePoints[i+1].y;
+      d += ` C ${cpX1} ${cpY1}, ${cpX2} ${cpY2}, ${timelinePoints[i+1].x} ${timelinePoints[i+1].y}`;
+    }
+    return d;
+  }, [timelinePoints]);
+
+  if (isLoading) {
+    return (
+      <div className="max-w-4xl mx-auto space-y-12 py-10 px-4 animate-pulse select-none">
+        <div className="h-[180px] bg-slate-200/50 rounded-[32px]" />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="h-[240px] bg-slate-200/50 rounded-[32px]" />
+          <div className="h-[240px] bg-slate-200/50 rounded-[32px]" />
+        </div>
+      </div>
+    );
+  }
+
+  // 9. Empty State
+  if (history.length === 0) {
+    return (
+      <div className="max-w-2xl mx-auto py-16 px-4 text-center space-y-8 select-none relative z-10">
+        <div className="relative w-28 h-28 mx-auto flex items-center justify-center bg-purple-50 rounded-full border border-purple-100 shadow-inner">
+          <span className="text-5xl filter drop-shadow-sm animate-pulse">🌸</span>
+        </div>
+        
+        <div className="space-y-3">
+          <h1 className="text-3xl font-heading font-black text-on-surface">Your Emotional Garden</h1>
+          <p className="text-sm font-semibold text-on-surface-variant max-w-sm mx-auto leading-relaxed">
+            "Your emotional garden is waiting to bloom. Complete your first Daily Check-in to begin understanding your patterns."
+          </p>
+        </div>
+
+        <button
+          onClick={() => router.push("/checkin")}
+          className="px-10 py-4 rounded-full bg-primary hover:bg-primary-purple text-white font-bold text-sm shadow-md hover:shadow-lg transition-all scale-102 hover:scale-105 active:scale-98"
+        >
+          Complete Today's Check-in
+        </button>
+      </div>
+    );
+  }
 
   return (
-    <div className="max-w-4xl mx-auto space-y-12 py-6 px-4 animate-fadeIn select-none">
+    <div className="max-w-5xl mx-auto space-y-12 py-4 px-3 md:px-6 relative select-none">
       
-      {/* 1. Conversational Landing Greeting */}
-      <section className="text-center py-8 space-y-4">
-        <span className="text-4xl block animate-bounce">🌿</span>
-        <h1 className="text-3xl md:text-5xl font-heading font-black text-on-surface leading-tight tracking-tight">
-          How are you feeling today?
-        </h1>
-        <p className="text-sm md:text-base text-on-surface-variant max-w-sm mx-auto leading-relaxed">
-          Take a moment. There is no right or wrong emotion. Your sanctuary analytics are ready.
-        </p>
+      {/* Background breathes */}
+      <div className="absolute inset-0 pointer-events-none z-0">
+        <div className="absolute top-1/4 right-1/4 w-80 h-80 rounded-full bg-primary/5 blur-[120px]" />
+        <div className="absolute bottom-1/4 left-10 w-96 h-96 rounded-full bg-secondary-container/5 blur-[120px]" />
+      </div>
 
-        <div className="pt-4">
+      {/* PAGE HEADER */}
+      <section className="relative rounded-[32px] bg-gradient-to-tr from-[#6366F1] via-[#4F46E5] to-[#312E81] p-6 md:p-8 overflow-hidden shadow-[0_20px_50px_rgba(99,102,241,0.2)] border border-white/10 flex flex-col sm:flex-row justify-between items-center gap-6">
+        
+        {/* Soft mountain shapes inside backdrop */}
+        <div className="absolute inset-0 pointer-events-none opacity-20">
+          <svg viewBox="0 0 400 200" className="w-full h-full object-cover">
+            <path d="M 0 200 L 120 80 L 250 180 L 380 90 L 400 110 L 400 200 Z" fill="#312E81" />
+          </svg>
+        </div>
+
+        <div className="space-y-3 text-center sm:text-left z-10">
+          <span className="px-3.5 py-1 rounded-full text-[9px] font-black uppercase tracking-wider bg-white/15 text-indigo-100 border border-white/10 shadow-inner">
+            Your Emotional Journey
+          </span>
+          <h1 className="text-3xl md:text-4xl font-heading font-black text-white leading-tight">
+            Your Emotional Journey
+          </h1>
+          <p className="text-xs md:text-sm font-medium text-indigo-100/80 max-w-md leading-relaxed">
+            "Every feeling matters. Understanding your emotions is the first step toward caring for them."
+          </p>
+        </div>
+
+        <div className="flex gap-3 text-center z-10 shrink-0">
+          <div className="px-4 py-3 rounded-2xl bg-white/10 border border-white/10 text-white min-w-[80px]">
+            <span className="block text-[8px] font-bold uppercase text-indigo-200">Streak</span>
+            <span className="text-lg font-black">{streak}🔥</span>
+          </div>
+          <div className="px-4 py-3 rounded-2xl bg-white/10 border border-white/10 text-white min-w-[80px]">
+            <span className="block text-[8px] font-bold uppercase text-indigo-200">Logs</span>
+            <span className="text-lg font-black">{history.length}🌸</span>
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 1: TODAY'S MOOD */}
+      <section className="grid grid-cols-1 md:grid-cols-12 gap-6 items-stretch">
+        
+        {/* Today's Mood details */}
+        <div className="md:col-span-8 p-6.5 rounded-[32px] bg-white/50 backdrop-blur-xl border border-white/40 shadow-soft flex flex-col sm:flex-row items-center gap-6 justify-between relative overflow-hidden">
+          
+          <div className="absolute right-0 bottom-0 top-0 opacity-5 pointer-events-none text-[150px]">
+            🌸
+          </div>
+
+          <div className="flex flex-col sm:flex-row items-center gap-5 text-center sm:text-left z-10">
+            <motion.div
+              animate={{ y: [0, -4, 0], scale: [1, 1.05, 1] }}
+              transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+              className={`w-20 h-20 rounded-full flex items-center justify-center text-4xl shadow-inner ${
+                todayMoodDetail ? todayMoodDetail.bgColor : "bg-slate-100"
+              }`}
+            >
+              {todayMoodDetail ? todayMoodDetail.emoji : "🌸"}
+            </motion.div>
+            
+            <div className="space-y-1.5">
+              <span className="text-[9px] font-bold tracking-widest text-slate-400 uppercase">Today's Mood</span>
+              <h3 className={`text-xl font-black ${todayMoodDetail ? todayMoodDetail.textColor : "text-slate-700"}`}>
+                {todayEntry ? todayEntry.mood : "Not logged today"}
+              </h3>
+              <p className="text-xs text-on-surface-variant font-semibold leading-relaxed max-w-sm">
+                {todayMoodDetail ? todayMoodDetail.message : "You haven't logged today yet. Take a quiet minute to check in."}
+              </p>
+            </div>
+          </div>
+
+          <div className="z-10 shrink-0">
+            <button
+              onClick={() => {
+                if (todayEntry) {
+                  setShowReflectionModal(todayEntry);
+                } else {
+                  router.push("/checkin");
+                }
+              }}
+              className="px-6 py-3 rounded-full bg-primary hover:bg-primary-purple text-white font-bold text-xs shadow-md transition-all scale-102 hover:scale-105"
+            >
+              {todayEntry ? "View Today's Reflection" : "Complete Log"}
+            </button>
+          </div>
+        </div>
+
+        {/* Dynamic Sugestion widget */}
+        <div className="md:col-span-4 p-6 rounded-[32px] bg-white/50 backdrop-blur-xl border border-white/40 shadow-soft flex flex-col justify-between">
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <span className="text-lg">🌿</span>
+              <h4 className="font-heading font-extrabold text-xs text-on-surface-variant">A Gentle Suggestion</h4>
+            </div>
+            {suggestions[0] && (
+              <div className="pt-2">
+                <span className="text-2xl filter drop-shadow-xs">{suggestions[0].icon}</span>
+                <p className="font-heading font-black text-xs text-on-surface mt-1">{suggestions[0].title}</p>
+                <p className="text-[10px] text-on-surface-variant font-semibold mt-0.5 leading-normal">{suggestions[0].desc}</p>
+              </div>
+            )}
+          </div>
+
           <button
-            onClick={() => router.push("/mood-checkin")}
-            className="px-10 py-4 rounded-full bg-primary hover:bg-primary-purple text-white font-bold text-sm shadow-md hover:shadow-lg transition-all scale-102 hover:scale-105 active:scale-98"
+            onClick={() => suggestions[0]?.action()}
+            className="text-[9px] font-bold text-primary uppercase tracking-widest self-start flex items-center gap-1 hover:opacity-85 mt-4"
           >
-            Start Mood Check-in
+            <span>Begin Practice</span>
+            <span className="material-symbols-outlined text-[10px]">arrow_forward</span>
           </button>
         </div>
       </section>
 
-      {/* 2. Filter Navigation Bar */}
-      <div className="flex justify-center gap-1.5 p-1 rounded-full bg-surface-container-low max-w-md mx-auto border border-surface-variant/20">
-        {["today", "week", "month", "year", "all"].map((f) => (
-          <button
-            key={f}
-            onClick={() => setFilter(f)}
-            className={`px-5 py-2.5 rounded-full text-xs font-bold transition-all uppercase tracking-wider ${
-              filter === f
-                ? "bg-white text-primary shadow-sm"
-                : "text-on-surface-variant/70 hover:text-on-surface"
-            }`}
-          >
-            {f}
-          </button>
-        ))}
-      </div>
-
-      {isLoading ? (
-        <div className="flex flex-col items-center justify-center py-12 space-y-3">
-          <span className="material-symbols-outlined text-4xl text-primary animate-spin">spa</span>
-          <p className="text-xs text-on-surface-variant font-bold uppercase tracking-wider">Syncing dashboard data...</p>
+      {/* SECTION 2: MOOD TIMELINE */}
+      <section className="p-6 md:p-8 rounded-[32px] bg-white/50 backdrop-blur-xl border border-white/40 shadow-soft space-y-4">
+        <div>
+          <h3 className="font-heading font-black text-sm text-on-surface">Patterns You've Created</h3>
+          <p className="text-[10px] text-on-surface-variant font-semibold mt-0.5">Smooth connector lines of your recent 7 check-ins.</p>
         </div>
-      ) : (
-        <div className="space-y-12">
-          
-          {/* 3. Intelligent SVG Visualizations */}
-          <section className="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+        {timelinePoints.length < 2 ? (
+          <div className="py-12 text-center text-xs text-on-surface-variant font-bold">
+            Log at least two entries to map timelines.
+          </div>
+        ) : (
+          <div className="w-full relative select-none pt-4 overflow-visible">
             
-            {/* Chart 1: Mood Timeline */}
-            <div className="p-6 rounded-[32px] bg-white border border-surface-variant/10 shadow-soft space-y-4">
-              <h3 className="text-sm font-heading font-extrabold text-on-surface tracking-tight">Mood Timeline (Bezier Trend)</h3>
-              <div className="h-[200px] w-full flex items-center justify-center">
-                {history.length < 2 ? (
-                  <p className="text-xs text-on-surface-variant">Log at least two entries to view Bezier paths.</p>
-                ) : (
-                  <svg className="w-full h-full" viewBox="0 0 300 150">
-                    <defs>
-                      <linearGradient id="lineGlow" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#7C6BC4" stopOpacity="0.2" />
-                        <stop offset="100%" stopColor="#7C6BC4" stopOpacity="0" />
-                      </linearGradient>
-                    </defs>
-                    <path
-                      d={getLinePath(history.slice().reverse(), 300, 150)}
-                      fill="none"
-                      stroke="#7C6BC4"
-                      strokeWidth="3.5"
-                      strokeLinecap="round"
-                    />
-                  </svg>
-                )}
-              </div>
-            </div>
-
-            {/* Chart 2: Mood Distribution (Concentric rings) */}
-            <div className="p-6 rounded-[32px] bg-white border border-surface-variant/10 shadow-soft space-y-4">
-              <h3 className="text-sm font-heading font-extrabold text-on-surface tracking-tight">Mood Distribution</h3>
-              <div className="flex items-center justify-around h-[200px]">
-                {history.length === 0 ? (
-                  <p className="text-xs text-on-surface-variant">No check-ins logged.</p>
-                ) : (
-                  <>
-                    <svg className="w-36 h-36" viewBox="0 0 150 150">
-                      {getRadialDistribution().map((sector, idx) => (
-                        <path key={idx} d={sector.path} fill={sector.color} className="hover:opacity-85 transition-opacity" />
-                      ))}
-                    </svg>
-                    <div className="space-y-1.5 text-left max-h-[160px] overflow-y-auto pr-2 scrollbar-thin">
-                      {getRadialDistribution().map((s, idx) => (
-                        <div key={idx} className="flex items-center gap-2">
-                          <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: s.color }} />
-                          <span className="text-[10px] font-bold text-on-surface">{s.mood} ({Math.round(s.percentage)}%)</span>
-                        </div>
-                      ))}
-                    </div>
-                  </>
-                )}
-              </div>
-            </div>
-
-            {/* Chart 3: Energy Trend Area */}
-            <div className="p-6 rounded-[32px] bg-white border border-surface-variant/10 shadow-soft space-y-4">
-              <h3 className="text-sm font-heading font-extrabold text-on-surface tracking-tight">Energy Trend (1-10 area)</h3>
-              <div className="h-[200px] w-full flex items-center justify-center">
-                {history.length < 2 ? (
-                  <p className="text-xs text-on-surface-variant">Log entries to map energy areas.</p>
-                ) : (
-                  <svg className="w-full h-full" viewBox="0 0 300 150">
-                    <defs>
-                      <linearGradient id="areaGlow" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#34D399" stopOpacity="0.45" />
-                        <stop offset="100%" stopColor="#34D399" stopOpacity="0.0" />
-                      </linearGradient>
-                    </defs>
-                    <path
-                      d={getAreaPath(history.slice().reverse(), 300, 150)}
-                      fill="url(#areaGlow)"
-                    />
-                    <path
-                      d={getLinePath(history.slice().reverse(), 300, 150)}
-                      fill="none"
-                      stroke="#34D399"
-                      strokeWidth="2.5"
-                    />
-                  </svg>
-                )}
-              </div>
-            </div>
-
-            {/* Chart 4: Stress Index Grid Heatmap */}
-            <div className="p-6 rounded-[32px] bg-white border border-surface-variant/10 shadow-soft space-y-4">
-              <h3 className="text-sm font-heading font-extrabold text-on-surface tracking-tight">Stress Calendar (Heatmap)</h3>
-              <div className="flex flex-wrap gap-2.5 justify-center py-4">
-                {history.length === 0 ? (
-                  <p className="text-xs text-on-surface-variant">No stress values logged.</p>
-                ) : (
-                  history.slice(0, 28).reverse().map((entry, idx) => {
-                    const color = 
-                      entry.stress === "Low" ? "bg-emerald-100 border-emerald-300" :
-                      entry.stress === "Medium" ? "bg-amber-100 border-amber-300" :
-                      entry.stress === "High" ? "bg-rose-100 border-rose-300" :
-                      "bg-red-200 border-red-400";
-                    return (
-                      <div
-                        key={idx}
-                        className={`w-9 h-9 rounded-xl border flex items-center justify-center text-[10px] font-bold shadow-sm ${color}`}
-                        title={`Logged: ${entry.stress} stress`}
-                      >
-                        {entry.stress[0]}
-                      </div>
-                    );
-                  })
-                )}
-              </div>
-            </div>
-
-          </section>
-
-          {/* 4. Weekly & Monthly Summary Panel */}
-          {weeklySummary && (
-            <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* SVG Bezier Line Canvas */}
+            <svg viewBox={`0 0 ${svgW} ${svgH}`} className="w-full h-auto overflow-visible">
+              <path d={curveD} fill="none" stroke="#A78BFA" strokeWidth="3" strokeLinecap="round" />
               
-              {/* Card 1: Core Summary stats */}
-              <div className="p-6 rounded-[32px] bg-gradient-to-tr from-primary-container/20 to-secondary/15 border border-primary/10 shadow-soft space-y-4">
-                <span className="px-3.5 py-1 rounded-full bg-white text-[9px] font-black uppercase tracking-wider text-primary shadow-sm">
-                  Weekly Stats
-                </span>
-                <div className="space-y-2 pt-2">
-                  <div className="flex justify-between border-b border-surface-variant/5 pb-1">
-                    <span className="text-[10px] text-on-surface-variant font-semibold">Average Mood:</span>
-                    <span className="text-xs font-bold text-on-surface">{weeklySummary.avgMood}</span>
-                  </div>
-                  <div className="flex justify-between border-b border-surface-variant/5 pb-1">
-                    <span className="text-[10px] text-on-surface-variant font-semibold">Frequent Mood:</span>
-                    <span className="text-xs font-bold text-on-surface">{weeklySummary.frequentMood}</span>
-                  </div>
-                  <div className="flex justify-between border-b border-surface-variant/5 pb-1">
-                    <span className="text-[10px] text-on-surface-variant font-semibold">Best Day:</span>
-                    <span className="text-xs font-bold text-on-surface">{weeklySummary.bestDay}</span>
-                  </div>
-                  <div className="flex justify-between pb-1">
-                    <span className="text-[10px] text-on-surface-variant font-semibold">Hardest Day:</span>
-                    <span className="text-xs font-bold text-on-surface">{weeklySummary.hardestDay}</span>
-                  </div>
-                </div>
-              </div>
+              {/* Nodes circles */}
+              {timelinePoints.map((pt, idx) => (
+                <circle
+                  key={idx}
+                  cx={pt.x}
+                  cy={pt.y}
+                  r="5"
+                  fill="#7C3AED"
+                  className="cursor-pointer"
+                  onMouseEnter={() => setHoveredNode(pt)}
+                  onMouseLeave={() => setHoveredNode(null)}
+                />
+              ))}
+            </svg>
 
-              {/* Card 2: Triggers / Factors */}
-              <div className="p-6 rounded-[32px] bg-white border border-surface-variant/10 shadow-soft space-y-4">
-                <span className="px-3.5 py-1 rounded-full bg-emerald-50 text-[9px] font-black uppercase tracking-wider text-emerald-800 shadow-sm">
-                  Top Triggers
-                </span>
-                <div className="space-y-4 pt-2">
-                  <div>
-                    <p className="text-[10px] text-on-surface-variant/80 font-bold uppercase tracking-widest">Primary Influence</p>
-                    <p className="text-xl font-heading font-black text-on-surface mt-1">{weeklySummary.topTrigger}</p>
-                  </div>
-                  <div>
-                    <p className="text-[10px] text-on-surface-variant/80 font-bold uppercase tracking-widest">Average Stress</p>
-                    <p className="text-xl font-heading font-black text-secondary mt-1">{weeklySummary.avgStress}</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Card 3: AI Calming Recommendations */}
-              <div className="p-6 rounded-[32px] bg-white border border-surface-variant/10 shadow-soft space-y-4">
-                <span className="px-3.5 py-1 rounded-full bg-indigo-50 text-[9px] font-black uppercase tracking-wider text-indigo-800 shadow-sm">
-                  Sanctuary Recommendation
-                </span>
-                <p className="text-xs text-on-surface leading-relaxed font-semibold pt-2">
-                  🌿 "{weeklySummary.aiRecommendation}"
-                </p>
-              </div>
-
-            </section>
-          )}
-
-          {/* 5. Personalised Observation Insights */}
-          {insights.length > 0 && (
-            <section className="p-8 rounded-[36px] bg-[#FAFBFD] border border-surface-variant/5 shadow-soft space-y-4">
-              <h3 className="text-sm font-heading font-extrabold text-on-surface tracking-tight flex items-center gap-2">
-                <span className="material-symbols-outlined text-primary text-xl">insights</span>
-                AI Correlation Observations
-              </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {insights.map((ins, idx) => (
-                  <div key={idx} className="p-4 rounded-2xl bg-white border border-surface-variant/10 shadow-sm">
-                    <p className="text-xs text-on-surface leading-relaxed font-bold">✓ {ins.insightText}</p>
-                  </div>
-                ))}
-              </div>
-            </section>
-          )}
-
-          {/* 6. Timeline Log entries list */}
-          <section className="space-y-6">
-            <h3 className="text-sm font-heading font-extrabold text-on-surface tracking-tight flex items-center gap-2">
-              <span className="material-symbols-outlined text-primary text-xl">history</span>
-              Sanctuary Log History
-            </h3>
-            
-            <div className="space-y-4 max-w-lg mx-auto">
-              {history.map((entry) => {
-                const moodInfo = MOOD_VALUES[entry.mood] || { emoji: "🌸", color: "#7C6BC4" };
+            {/* Emojis positioning row */}
+            <div className="relative w-full h-8 mt-2 flex justify-between px-6 text-xs select-none">
+              {timelinePoints.map((pt, idx) => {
+                const moodInfo = MOOD_DATA[pt.item.mood] || DEFAULT_MOOD;
                 return (
-                  <motion.div
-                    key={entry.id}
-                    initial={{ opacity: 0, y: 10 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    className="p-5 rounded-3xl bg-white border border-surface-variant/10 shadow-soft flex items-start gap-4 relative overflow-hidden"
+                  <div
+                    key={idx}
+                    className="absolute -translate-x-1/2 flex flex-col items-center gap-1 cursor-pointer"
+                    style={{ left: `${(pt.x / svgW) * 100}%` }}
+                    onMouseEnter={() => setHoveredNode(pt)}
+                    onMouseLeave={() => setHoveredNode(null)}
                   >
-                    <span className="text-3xl">{moodInfo.emoji}</span>
-                    <div className="flex-1 space-y-1.5 text-left">
-                      <div className="flex items-center justify-between">
-                        <h4 className="font-heading font-black text-sm text-on-surface">
-                          {entry.mood} check-in
-                        </h4>
-                        <span className="text-[10px] text-on-surface-variant/75 font-semibold">
-                          {new Date(entry.created_at).toLocaleDateString(undefined, {
-                            month: "short",
-                            day: "numeric",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })}
-                        </span>
-                      </div>
-                      
-                      {entry.reflection && (
-                        <p className="text-xs text-on-surface-variant leading-relaxed font-medium bg-surface-container-low/40 p-3 rounded-xl">
-                          "{entry.reflection}"
-                        </p>
-                      )}
-                      
-                      <div className="flex flex-wrap gap-2 pt-1">
-                        <span className="px-2.5 py-0.5 rounded-full bg-slate-50 border border-slate-100 text-[8px] font-bold text-on-surface-variant uppercase">
-                          ⚡ Energy: {entry.energy}/10
-                        </span>
-                        <span className="px-2.5 py-0.5 rounded-full bg-indigo-50 border border-indigo-100 text-[8px] font-bold text-indigo-700 uppercase">
-                          🕯️ Stress: {entry.stress}
-                        </span>
-                        {entry.factors && entry.factors.split(",").map((f: string) => (
-                          <span key={f} className="px-2.5 py-0.5 rounded-full bg-primary-container/10 border border-primary/10 text-[8px] font-bold text-primary uppercase">
-                            {f.trim()}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Options: Edit & Delete buttons */}
-                    <div className="flex flex-col gap-1 items-end pl-2">
-                      <button
-                        onClick={() => startEdit(entry)}
-                        className="text-[10px] font-bold text-primary hover:underline"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => handleDelete(entry.id)}
-                        className="text-[10px] font-bold text-rose-600 hover:underline"
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </motion.div>
+                    <span className="text-xl filter drop-shadow-xs select-none">{moodInfo.emoji}</span>
+                    <span className="text-[8px] font-bold text-slate-400 uppercase">
+                      {new Date(pt.item.created_at).toLocaleDateString(undefined, { weekday: "short" })}
+                    </span>
+                  </div>
                 );
               })}
             </div>
-          </section>
 
+            {/* Hover Node details Card */}
+            <AnimatePresence>
+              {hoveredNode && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -5 }}
+                  className="absolute z-20 p-4 rounded-2xl bg-white border border-slate-200 shadow-xl max-w-xs text-left"
+                  style={{
+                    left: `${(hoveredNode.x / svgW) * 90}%`,
+                    top: `${(hoveredNode.y / svgH) * 50}%`
+                  }}
+                >
+                  <p className="text-[10px] font-black text-primary uppercase">
+                    {new Date(hoveredNode.item.created_at).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
+                  </p>
+                  <p className="text-xs font-black text-slate-800 mt-1">{hoveredNode.item.mood} Mood</p>
+                  
+                  <div className="flex gap-2.5 mt-2 text-[8px] font-bold text-slate-500">
+                    <span>⚡ Energy: {hoveredNode.item.energy}/5</span>
+                    <span>🌿 Stress: {hoveredNode.item.stress}</span>
+                  </div>
+
+                  {hoveredNode.item.reflection && (
+                    <p className="text-[9px] text-slate-400 font-semibold leading-relaxed border-t border-slate-100 pt-1.5 mt-1.5 line-clamp-2 italic">
+                      "{hoveredNode.item.reflection}"
+                    </p>
+                  )}
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+          </div>
+        )}
+      </section>
+
+      {/* SECTION 3: EMOTIONAL CALENDAR */}
+      <section className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
+        
+        {/* Monthly Calendar Grid (7 columns) */}
+        <div className="md:col-span-7 p-6 rounded-[32px] bg-white/50 backdrop-blur-xl border border-white/40 shadow-soft space-y-4">
+          <div>
+            <h3 className="font-heading font-black text-sm text-on-surface">Looking Back With Kindness</h3>
+            <p className="text-[10px] text-on-surface-variant font-semibold mt-0.5">Your monthly log calendar mapping checks.</p>
+          </div>
+
+          <div className="grid grid-cols-7 gap-2.5 pt-2">
+            {calendarDays.map((day) => {
+              const moodInfo = day.entry ? (MOOD_DATA[day.entry.mood] || DEFAULT_MOOD) : null;
+              return (
+                <div
+                  key={day.dayNum}
+                  onMouseEnter={() => day.entry && setHoveredDay(day)}
+                  onMouseLeave={() => setHoveredDay(null)}
+                  className={`aspect-square rounded-full flex items-center justify-center text-xs font-bold border transition-all cursor-pointer relative ${
+                    moodInfo
+                      ? `${moodInfo.bgColor} border-transparent text-slate-800 scale-102`
+                      : "bg-white/20 border-white/30 text-slate-400 hover:bg-white/40"
+                  }`}
+                >
+                  {moodInfo ? moodInfo.emoji : day.dayNum}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Hover Day Card */}
+          <AnimatePresence>
+            {hoveredDay && hoveredDay.entry && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0 }}
+                className="p-4 rounded-2xl bg-white border border-slate-200 shadow-lg text-left space-y-2 mt-4"
+              >
+                <div className="flex justify-between items-center">
+                  <span className="text-[9px] font-black text-primary uppercase">Day {hoveredDay.dayNum}</span>
+                  <span className="text-[8px] text-slate-400 font-bold">
+                    {new Date(hoveredDay.entry.created_at).toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" })}
+                  </span>
+                </div>
+                
+                <p className="text-xs font-black text-slate-800">Mood logged: {hoveredDay.entry.mood}</p>
+                <div className="flex gap-2.5 text-[8px] font-bold text-slate-500 uppercase">
+                  <span>⚡ Energy: {hoveredDay.entry.energy}/5</span>
+                  <span>🕯️ Stress: {hoveredDay.entry.stress}</span>
+                </div>
+
+                {hoveredDay.entry.reflection && (
+                  <p className="text-[9px] text-slate-400 leading-relaxed font-semibold italic border-t border-slate-100 pt-1.5">
+                    "{hoveredDay.entry.reflection}"
+                  </p>
+                )}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
-      )}
 
-      {/* Editing Dialog Modal overlay */}
-      {editingEntry && (
-        <div className="fixed inset-0 bg-black/35 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        {/* Flower Chart Petals Distribution (5 columns) */}
+        <div className="md:col-span-5 p-6 rounded-[32px] bg-white/50 backdrop-blur-xl border border-white/40 shadow-soft space-y-4 flex flex-col justify-between min-h-[300px]">
+          <div>
+            <h3 className="font-heading font-black text-sm text-on-surface">Emotional Garden Bloom</h3>
+            <p className="text-[10px] text-on-surface-variant font-semibold mt-0.5">Petals grow radially based on check-in frequency.</p>
+          </div>
+
+          {/* Flower Visual representation */}
+          <div className="relative w-44 h-44 mx-auto flex items-center justify-center my-4 overflow-visible">
+            {/* Center bud */}
+            <div className="w-10 h-10 rounded-full bg-amber-300 border-2 border-amber-400 z-10 shadow-md flex items-center justify-center text-xs font-bold text-amber-800">
+              🌱
+            </div>
+            
+            {/* Flower Petals */}
+            {flowerPetals.map((petal, idx) => {
+              // Radial scaling logic
+              const petalScale = Math.max(0.4, Math.min(0.4 + (petal.percentage / 100) * 1.2, 1.6));
+              return (
+                <motion.div
+                  key={idx}
+                  initial={{ scale: 0 }}
+                  animate={{ scale: petalScale }}
+                  transition={{ type: "spring", stiffness: 80, damping: 10, delay: idx * 0.05 }}
+                  className="absolute origin-center w-8 h-20 rounded-full opacity-70 shadow-sm flex flex-col items-center justify-start pt-2 cursor-pointer border border-white/10"
+                  style={{
+                    backgroundColor: petal.detail.color,
+                    transform: `rotate(${petal.angle}deg) translateY(-32px)`,
+                  }}
+                  title={`${petal.mood}: ${Math.round(petal.percentage)}%`}
+                >
+                  <span className="text-xs filter drop-shadow-xs rotate-[-angle] select-none pointer-events-none">
+                    {petal.detail.emoji}
+                  </span>
+                </motion.div>
+              );
+            })}
+          </div>
+
+          {/* Legend */}
+          <div className="grid grid-cols-3 gap-1.5 text-[8px] font-black text-slate-600">
+            {flowerPetals.map((p, idx) => (
+              <div key={idx} className="flex items-center gap-1 justify-center">
+                <div className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: p.detail.color }} />
+                <span>{p.mood}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 4: DYNAMIC OBSERVATIONS & DYNAMIC RECOMMENDATIONS */}
+      <section className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
+        
+        {/* Observations list (7 columns) */}
+        <div className="md:col-span-7 p-6 rounded-[32px] bg-white/50 backdrop-blur-xl border border-white/40 shadow-soft space-y-4">
+          <div className="flex items-center gap-2">
+            <span className="text-lg">🌿</span>
+            <h3 className="font-heading font-black text-sm text-on-surface">AI Observations</h3>
+          </div>
+
+          <div className="space-y-3.5">
+            {aiInsights.map((ins, idx) => (
+              <div key={idx} className="p-4 rounded-2xl bg-white border border-slate-100 shadow-soft-xs flex items-start gap-3">
+                <span className="text-xl filter drop-shadow-xs select-none">{ins.emoji}</span>
+                <p className="text-xs text-on-surface leading-relaxed font-semibold">
+                  {ins.text}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Personalized recommendations list (5 columns) */}
+        <div className="md:col-span-5 p-6 rounded-[32px] bg-white/50 backdrop-blur-xl border border-white/40 shadow-soft space-y-4">
+          <div className="flex items-center gap-2">
+            <span className="text-lg">🌙</span>
+            <h3 className="font-heading font-black text-sm text-on-surface">Suggested Practices</h3>
+          </div>
+
+          <div className="space-y-3">
+            {suggestions.map((s, idx) => (
+              <div
+                key={idx}
+                onClick={s.action}
+                className="p-3.5 rounded-2xl bg-white border border-slate-100 hover:border-primary/20 hover:shadow-soft-md cursor-pointer transition-all flex items-center justify-between"
+              >
+                <div className="flex items-center gap-3">
+                  <span className="text-2xl filter drop-shadow-xs select-none">{s.icon}</span>
+                  <div>
+                    <p className="font-heading font-black text-xs text-slate-800 leading-tight">{s.title}</p>
+                    <p className="text-[9px] text-slate-500 font-semibold mt-0.5 leading-normal">{s.desc}</p>
+                  </div>
+                </div>
+                <span className="material-symbols-outlined text-slate-400 text-sm">chevron_right</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 5: MOOD CORRELATIONS & MONTHLY SUMMARY */}
+      <section className="grid grid-cols-1 md:grid-cols-12 gap-8 items-stretch">
+        
+        {/* Summary Card (5 columns) */}
+        {monthlyStats && (
+          <div className="md:col-span-5 p-6.5 rounded-[32px] bg-gradient-to-tr from-purple-50/70 to-indigo-50/70 border border-purple-100 shadow-soft flex flex-col justify-between min-h-[280px]">
+            <div className="space-y-4">
+              <span className="px-3.5 py-1 rounded-full bg-white text-[9px] font-black uppercase text-primary border border-purple-100 shadow-sm inline-block">
+                Monthly reflection
+              </span>
+              
+              <div className="space-y-2 pt-2 text-left">
+                <div className="flex justify-between border-b border-purple-100/50 pb-1.5">
+                  <span className="text-[10px] text-slate-500 font-semibold">Common Mood:</span>
+                  <span className="text-xs font-black text-slate-800">{monthlyStats.commonMood}</span>
+                </div>
+                <div className="flex justify-between border-b border-purple-100/50 pb-1.5">
+                  <span className="text-[10px] text-slate-500 font-semibold">Positive Streak:</span>
+                  <span className="text-xs font-black text-slate-800">{monthlyStats.positiveStreak} Days</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-1.5 pt-4">
+              <p className="text-xs font-black text-slate-800 italic leading-relaxed">
+                "{monthlyStats.resilienceMsg}"
+              </p>
+              <p className="text-[9px] text-slate-500 font-bold leading-normal">
+                Monthly garden reflections show deep resilience.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Achievements list (7 columns) */}
+        <div className="md:col-span-7 p-6 rounded-[32px] bg-white/50 backdrop-blur-xl border border-white/40 shadow-soft space-y-4 flex flex-col justify-between">
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="text-lg">🏆</span>
+              <h3 className="font-heading font-black text-sm text-on-surface">Sanctuary Growth Milestones</h3>
+            </div>
+            <p className="text-[10px] text-on-surface-variant font-semibold mt-0.5">Soft milestones representing emotional logs.</p>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3.5 pt-2 w-full">
+            {achievements.map((ach, idx) => (
+              <div key={idx} className="p-3 rounded-2xl bg-white border border-slate-100 shadow-soft-xs flex items-center gap-2.5">
+                <span className="text-2xl filter drop-shadow-xs select-none">{ach.icon}</span>
+                <div className="text-left">
+                  <p className="font-heading font-black text-[10px] text-slate-800 leading-tight">{ach.title}</p>
+                  <p className="text-[8px] text-slate-500 font-semibold mt-0.5 leading-normal">{ach.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Today's Reflection Modal Dialog */}
+      AnimatePresence
+      {showReflectionModal && (
+        <div className="fixed inset-0 bg-black/15 backdrop-blur-[5px] z-50 flex items-center justify-center p-4">
           <motion.div
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            className="p-6 rounded-[32px] bg-white max-w-sm w-full border border-surface-variant/15 shadow-soft-xl space-y-6 text-left"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0 }}
+            className="p-7 rounded-[32px] bg-white max-w-sm w-full border border-slate-200 shadow-2xl space-y-5 text-left"
           >
-            <div>
-              <h3 className="font-heading font-black text-base text-on-surface">Edit Sanctuary Reflection</h3>
-              <p className="text-[10px] text-on-surface-variant">Update the logs saved on this day.</p>
-            </div>
-
-            <div className="space-y-3">
+            <div className="flex justify-between items-start">
               <div>
-                <label className="text-[10px] font-bold text-primary uppercase tracking-wider block mb-1">Mood:</label>
-                <select
-                  value={editMood}
-                  onChange={(e) => setEditMood(e.target.value)}
-                  className="w-full p-3.5 rounded-xl bg-surface-container-low border border-surface-variant/30 text-xs focus:outline-none focus:ring-2 focus:ring-primary/45 font-semibold text-on-surface"
-                >
-                  {Object.keys(MOOD_VALUES).map((key) => (
-                    <option key={key} value={key}>{key}</option>
-                  ))}
-                </select>
+                <span className="text-[9px] font-black text-primary uppercase">
+                  {new Date(showReflectionModal.created_at).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
+                </span>
+                <h3 className="font-heading font-black text-base text-slate-800 mt-0.5">Today's Sanctuary Log</h3>
               </div>
-
-              <div>
-                <label className="text-[10px] font-bold text-primary uppercase tracking-wider block mb-1">Energy (1-10):</label>
-                <input
-                  type="number"
-                  min="1"
-                  max="10"
-                  value={editEnergy}
-                  onChange={(e) => setEditEnergy(Number(e.target.value))}
-                  className="w-full p-3.5 rounded-xl bg-surface-container-low border border-surface-variant/30 text-xs focus:outline-none focus:ring-2 focus:ring-primary/45 font-semibold text-on-surface"
-                />
-              </div>
-
-              <div>
-                <label className="text-[10px] font-bold text-primary uppercase tracking-wider block mb-1">Stress:</label>
-                <select
-                  value={editStress}
-                  onChange={(e) => setEditStress(e.target.value)}
-                  className="w-full p-3.5 rounded-xl bg-surface-container-low border border-surface-variant/30 text-xs focus:outline-none focus:ring-2 focus:ring-primary/45 font-semibold text-on-surface"
-                >
-                  {STRESS_LEVELS.map((s) => (
-                    <option key={s} value={s}>{s}</option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label className="text-[10px] font-bold text-primary uppercase tracking-wider block mb-1">Reflection Note:</label>
-                <textarea
-                  rows={3}
-                  value={editReflection}
-                  onChange={(e) => setEditReflection(e.target.value)}
-                  className="w-full p-3 rounded-xl bg-surface-container-low border border-surface-variant/30 text-xs focus:outline-none focus:ring-2 focus:ring-primary/40 text-on-surface leading-relaxed"
-                />
-              </div>
-            </div>
-
-            <div className="flex gap-2 justify-end pt-2">
               <button
-                onClick={() => setEditingEntry(null)}
-                className="px-5 py-2.5 rounded-full border border-surface-variant/30 text-xs font-bold text-on-surface-variant"
+                onClick={() => setShowReflectionModal(null)}
+                className="text-slate-400 hover:text-slate-600 material-symbols-outlined text-lg"
               >
-                Cancel
-              </button>
-              <button
-                onClick={handleUpdate}
-                className="px-6 py-2.5 rounded-full bg-primary text-white text-xs font-bold shadow-md hover:bg-primary-purple"
-              >
-                Save Changes
+                close
               </button>
             </div>
+
+            <div className="space-y-3.5">
+              <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100 flex items-center gap-3">
+                <span className="text-3xl">{MOOD_DATA[showReflectionModal.mood]?.emoji || "🌸"}</span>
+                <div>
+                  <p className="text-xs font-black text-slate-800 leading-tight">Mood: {showReflectionModal.mood}</p>
+                  <span className="text-[8px] text-slate-500 font-bold uppercase mt-0.5 block">
+                    Logged stress: {showReflectionModal.stress}
+                  </span>
+                </div>
+              </div>
+
+              {showReflectionModal.reflection && (
+                <div className="space-y-1">
+                  <span className="text-[9px] font-black text-slate-400 uppercase tracking-wider block">Reflection Note:</span>
+                  <p className="text-xs text-slate-600 leading-relaxed font-semibold italic bg-slate-50/50 p-3 rounded-xl border border-slate-100">
+                    "{showReflectionModal.reflection}"
+                  </p>
+                </div>
+              )}
+
+              {showReflectionModal.factors && (
+                <div className="space-y-1">
+                  <span className="text-[9px] font-black text-slate-400 uppercase tracking-wider block">Gratitude details:</span>
+                  <p className="text-xs text-slate-600 leading-relaxed font-semibold italic bg-slate-50/50 p-3 rounded-xl border border-slate-100">
+                    "{showReflectionModal.factors}"
+                  </p>
+                </div>
+              )}
+            </div>
+
+            <button
+              onClick={() => setShowReflectionModal(null)}
+              className="w-full py-3 rounded-full bg-primary hover:bg-primary-purple text-white text-xs font-bold shadow-md text-center block"
+            >
+              Back to Journey
+            </button>
           </motion.div>
         </div>
       )}
