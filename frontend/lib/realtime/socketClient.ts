@@ -5,7 +5,8 @@ let socket: Socket | null = null;
 export function getSocketClient(): Socket {
   if (!socket) {
     const host = typeof window !== "undefined" ? window.location.hostname : "localhost";
-    const defaultSocketUrl = `http://${host}:3005`;
+    const isLocalhost = host === "localhost" || host === "127.0.0.1";
+    const defaultSocketUrl = isLocalhost ? "http://localhost:3005" : "https://tradesagaai.duckdns.org";
     const socketUrl = process.env.NEXT_PUBLIC_SOCKET_URL || defaultSocketUrl;
 
     console.log("⚡ Connecting Socket.IO client to:", socketUrl);
