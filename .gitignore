@@ -1,4 +1,15 @@
-# dependencies
+# Environment files & Secrets
+.env
+.env*
+!.env.example
+*.env
+*.pem
+*.key
+*.cert
+credentials.json
+service-account*.json
+
+# Dependencies
 /node_modules
 /.pnpm
 /.yarn
@@ -6,8 +17,6 @@
 # Next.js build output
 /.next/
 /out/
-
-# Production build
 /build
 
 # Debug & logs
@@ -15,16 +24,15 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
+*.log
 
-# Local environment variables
-.env*.local
-.env
-
-# IDE / OS files
+# IDE & OS files
 .DS_Store
-*.pem
+Thumbs.db
 .vscode/
 .idea/
 
-# Internal execution plans (Local only)
+# Internal execution plans & local documents (Local only)
 MANISH_EXECUTION_PLAN.md
+*.pdf
+*.PDF
