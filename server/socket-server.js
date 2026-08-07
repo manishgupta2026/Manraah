@@ -108,15 +108,18 @@ io.on("connection", (socket) => {
 
   // 5. Queue Join, Accept, & Broadcasts
   socket.on("queue_join", ({ room }) => {
+    console.log(`📢 Member queued for support in room ${room?.id}:`, room);
     io.to("companion_queue").emit("queue_update", { action: "join", room });
   });
 
   socket.on("queue_accept", ({ roomId, companionAlias }) => {
+    console.log(`✅ Companion ${companionAlias} accepted room ${roomId}`);
     io.to("companion_queue").emit("queue_update", { action: "accept", roomId });
     io.to(`room_${roomId}`).emit("session_accepted", { companionAlias, status: "ACTIVE" });
   });
 
   socket.on("queue_end", ({ roomId }) => {
+    console.log(`🔴 Queue ended for room ${roomId}`);
     io.to(`room_${roomId}`).emit("session_ended", { roomId });
     io.to("companion_queue").emit("queue_update", { action: "end", roomId });
   });
