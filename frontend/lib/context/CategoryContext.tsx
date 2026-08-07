@@ -1,7 +1,8 @@
 "use client";
 
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { UserCategory } from "@/backend/types";
+import { getClientSession } from "@/backend/auth/client";
 
 export interface CategoryInfo {
   id: UserCategory;
@@ -89,6 +90,16 @@ const CategoryContext = createContext<CategoryContextType | undefined>(undefined
 
 export function CategoryProvider({ children }: { children: ReactNode }) {
   const [category, setCategory] = useState<UserCategory>("student");
+
+  // Sync category with user session on mount
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const session = getClientSession();
+      if (session?.user?.selectedCategory) {
+        setCategory(session.user.selectedCategory as UserCategory);
+      }
+    }
+  }, []);
 
   const categoryDetails = CATEGORIES[category] || DEFAULT_CATEGORY;
 

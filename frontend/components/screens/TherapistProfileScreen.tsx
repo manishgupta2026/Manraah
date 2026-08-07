@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { MOCK_THERAPISTS } from "@/frontend/lib/mock-data";
+import ScreenHeader from "@/frontend/components/ui/ScreenHeader";
 
 export default function TherapistProfileScreen({ therapistId }: { therapistId: string }) {
   const router = useRouter();
@@ -22,11 +23,11 @@ export default function TherapistProfileScreen({ therapistId }: { therapistId: s
 
   return (
     <div className="max-w-4xl mx-auto py-6 space-y-8">
-      {/* Back Link */}
-      <Link href="/professional-care" className="inline-flex items-center gap-2 text-xs font-semibold text-primary hover:underline">
-        <span className="material-symbols-outlined text-base">arrow_back</span>
-        <span>Back to Therapists Directory</span>
-      </Link>
+      <ScreenHeader
+        title={`🩺 ${therapist.name}`}
+        showBackButton={true}
+        fallbackRoute="/professional-care"
+      />
 
       {/* Therapist Profile Header */}
       <div className="p-8 rounded-3xl bg-surface-container-lowest border border-surface-variant/30 shadow-soft flex flex-col md:flex-row gap-6 items-start">

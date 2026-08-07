@@ -5,8 +5,11 @@ import { MOCK_COMMUNITY_POSTS } from "@/frontend/lib/mock-data";
 import { CommunityPost } from "@/backend/types";
 import { getClientSession } from "@/backend/auth/client";
 import { getInitials, getPastelBgColor, getPastelTextColor } from "@/frontend/lib/avatar-helper";
+import { useRouter } from "next/navigation";
+import ScreenHeader from "@/frontend/components/ui/ScreenHeader";
 
 export default function CommunityScreen() {
+  const router = useRouter();
   const [posts, setPosts] = useState<CommunityPost[]>(MOCK_COMMUNITY_POSTS);
   const [newTitle, setNewTitle] = useState("");
   const [newContent, setNewContent] = useState("");
@@ -51,6 +54,7 @@ export default function CommunityScreen() {
 
   return (
     <div className="space-y-8">
+      <ScreenHeader title="🌱 Community" showBackButton={true} fallbackRoute="/dashboard" />
       {/* Header */}
       <div className="p-8 rounded-3xl bg-surface-container-lowest border border-surface-variant/30 shadow-soft space-y-3">
         <span className="px-4 py-1.5 rounded-full bg-peach/30 text-tertiary text-xs font-semibold uppercase tracking-wider">

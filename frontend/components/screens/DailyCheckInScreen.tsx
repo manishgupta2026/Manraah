@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { getClientSession } from "@/backend/auth/client";
 import { useWellness } from "@/frontend/lib/context/WellnessContext";
+import ScreenHeader from "@/frontend/components/ui/ScreenHeader";
 
 // Vector Battery Component for Energy Step
 const BatteryIcon = ({ level }: { level: number }) => {
@@ -213,6 +214,7 @@ export default function DailyCheckInScreen() {
 
   return (
     <div className="max-w-7xl mx-auto py-4 px-3 md:px-6 relative min-h-[85vh] flex flex-col justify-between overflow-hidden select-none">
+      <ScreenHeader title="🌸 Daily Check-in" showBackButton={true} fallbackRoute="/dashboard" />
       
       {/* Background Breathing Gradients */}
       <div className="absolute inset-0 pointer-events-none z-0">

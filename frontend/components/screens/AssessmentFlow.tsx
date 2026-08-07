@@ -7,6 +7,7 @@ import { useAssessment } from "@/frontend/lib/context/AssessmentContext";
 import { useCategory } from "@/frontend/lib/context/CategoryContext";
 import { assessmentEngine } from "@/frontend/lib/assessment/assessmentEngine";
 import { evaluateWellness } from "@/frontend/lib/assessment/wellness";
+import ScreenHeader from "@/frontend/components/ui/ScreenHeader";
 
 interface TimeTheme {
   background: string;
@@ -157,6 +158,25 @@ export default function AssessmentFlow() {
     }
   };
 
+  const handleSkip = () => {
+    let currentAnswers = [...detailedAnswers];
+    for (let i = currentQuestionIndex; i < totalQuestions; i++) {
+      const q = questions[i];
+      const hasAnswer = currentAnswers.some((ans) => ans.questionId === q.id);
+      if (!hasAnswer) {
+        const midOption = q.options[Math.floor(q.options.length / 2)] || q.options[0];
+        const newAnswer = assessmentEngine.createAnswer(selectedCategory, q.id, midOption.id);
+        if (newAnswer) {
+          currentAnswers.push(newAnswer);
+        }
+      }
+    }
+    const results = evaluateWellness(currentAnswers);
+    setAssessmentResult(results);
+    setAssessmentCompleted(true);
+    router.push("/wellness-score");
+  };
+
   // Conversational view sliding variants (slower, calming curves)
   const slideVariants = {
     enter: (dir: number) => ({
@@ -180,9 +200,16 @@ export default function AssessmentFlow() {
 
   const progressPercentage = ((currentQuestionIndex) / totalQuestions) * 100;
   const activeTheme = TIME_THEMES[timeOfDay];
+  const onBackAction = currentQuestionIndex > 0 ? handleBack : () => router.push("/category-selection");
 
   return (
     <div className={`bg-gradient-to-b ${activeTheme.background} ${timeOfDay === "night" ? "text-slate-100" : "text-on-background"} min-h-screen relative flex flex-col justify-between py-10 px-4 md:px-8 overflow-hidden transition-all duration-1000`}>
+      <ScreenHeader
+        title="📋 Assessment"
+        showBackButton={true}
+        onBack={onBackAction}
+        action={{ label: "Skip", onClick: handleSkip }}
+      />
       
       {/* 1. Breathing Glow Blobs (Time-based light source) */}
       <div className="fixed inset-0 z-[-2] pointer-events-none">

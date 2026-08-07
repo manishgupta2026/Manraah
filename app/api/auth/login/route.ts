@@ -73,11 +73,15 @@ export async function POST(request: Request) {
     // 3. Save assessment if provided
     if (answers && Array.isArray(answers) && answers.length > 0) {
       const userCategory = category || user.selected_category || "student";
-      // Update selected_category in users table
-      await sql`
-        UPDATE users SET selected_category = ${userCategory} WHERE id = ${user.id}
-      `;
-      userProfile.selectedCategory = userCategory;
+      // Update selected_category in users table ONLY if not already set (respect category immutability)
+      if (!user.selected_category) {
+        await sql`
+          UPDATE users SET selected_category = ${userCategory} WHERE id = ${user.id}
+        `;
+        userProfile.selectedCategory = userCategory;
+      } else {
+        userProfile.selectedCategory = user.selected_category;
+      }
 
       await saveUserAssessment(
         user.id,

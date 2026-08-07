@@ -2,10 +2,12 @@
 
 import React from "react";
 import Link from "next/link";
+import ScreenHeader from "@/frontend/components/ui/ScreenHeader";
 
 export default function HumanCompanionStub() {
   return (
     <div className="max-w-3xl mx-auto py-12 px-4 text-center space-y-8">
+      <ScreenHeader title="🤝 Human Companion" showBackButton={true} fallbackRoute="/dashboard" />
       <div className="w-24 h-24 rounded-full bg-peach/30 text-tertiary mx-auto flex items-center justify-center border-4 border-peach/50 shadow-soft">
         <span className="material-symbols-outlined text-5xl">record_voice_over</span>
       </div>

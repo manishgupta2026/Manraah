@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { getClientSession, signOut } from "@/backend/auth/client";
 import { AuthSession } from "@/backend/types";
 import { getInitials, getPastelBgColor, getPastelTextColor } from "@/frontend/lib/avatar-helper";
+import ScreenHeader from "@/frontend/components/ui/ScreenHeader";
 
 export default function SettingsPrivacyScreen() {
   const router = useRouter();
@@ -123,6 +124,7 @@ export default function SettingsPrivacyScreen() {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[50vh] space-y-4">
+        <ScreenHeader title="⚙️ Settings" showBackButton={true} fallbackRoute="/dashboard" />
         <span className="material-symbols-outlined text-4xl text-primary animate-spin">spa</span>
         <p className="text-sm text-on-surface-variant font-medium">Loading settings...</p>
       </div>
@@ -138,6 +140,7 @@ export default function SettingsPrivacyScreen() {
 
   return (
     <div className="max-w-3xl mx-auto py-6 space-y-8">
+      <ScreenHeader title="⚙️ Settings" showBackButton={true} fallbackRoute="/dashboard" />
       {/* Header */}
       <div className="p-8 rounded-3xl bg-surface-container-lowest border border-surface-variant/30 shadow-soft flex items-center justify-between gap-6">
         <div className="space-y-3">
@@ -262,11 +265,11 @@ export default function SettingsPrivacyScreen() {
               </div>
 
               <div className="space-y-1.5 md:col-span-2">
-                <label className="block text-xs font-heading font-bold text-on-surface">Sanctuary Category</label>
+                <label className="block text-xs font-heading font-bold text-on-surface">Sanctuary Category (Read-only)</label>
                 <select
+                  disabled
                   value={category}
-                  onChange={(e) => setCategory(e.target.value)}
-                  className="w-full p-3.5 rounded-2xl bg-surface-container-low border border-surface-variant/40 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 font-semibold text-on-surface"
+                  className="w-full p-3.5 rounded-2xl bg-surface-container-low/50 border border-surface-variant/20 text-sm text-on-surface-variant/60 font-medium select-none cursor-not-allowed"
                 >
                   <option value="student">Student (Academic stress reduction)</option>
                   <option value="young_pro">Young Professional (Career building & balance)</option>
@@ -279,7 +282,7 @@ export default function SettingsPrivacyScreen() {
                   <option value="senior_citizen">Senior Citizen (Gentle vitality & calm)</option>
                 </select>
                 <p className="text-[10px] text-on-surface-variant/65 leading-relaxed mt-1">
-                  Tailors your dashboard content and meditations based on your focus.
+                  Your category is chosen during onboarding and cannot be changed.
                 </p>
               </div>
             </div>

@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import ScreenHeader from "@/frontend/components/ui/ScreenHeader";
 
 export default function CrisisSupportScreen() {
   const [activeTab, setActiveTab] = useState<"helplines" | "grounding">("helplines");
@@ -9,6 +10,7 @@ export default function CrisisSupportScreen() {
 
   return (
     <div className="max-w-3xl mx-auto py-6 space-y-8">
+      <ScreenHeader title="❤️ Crisis Support" showBackButton={true} fallbackRoute="/dashboard" />
       {/* Header */}
       <div className="p-8 rounded-3xl bg-error-container text-on-error-container shadow-md space-y-3">
         <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider">

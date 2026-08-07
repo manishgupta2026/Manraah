@@ -7,6 +7,7 @@ import { getClientSession } from "@/backend/auth/client";
 import { useWellness } from "@/frontend/lib/context/WellnessContext";
 import ParentDashboard from "@/parent/Research/Documentation/Dashboard Planning/AI Knowledge/Feature Documentation/Development/ParentDashboard";
 import DailyPrivacyReminder from "@/frontend/components/ui/DailyPrivacyReminder";
+import ScreenHeader from "@/frontend/components/ui/ScreenHeader";
 
 interface TimeTheme {
   bgGradient: string;
@@ -210,6 +211,7 @@ export default function DashboardScreen() {
     <div className={`max-w-7xl mx-auto py-2 md:py-4 px-2 md:px-4 space-y-6 relative select-none animate-fadeIn transition-colors duration-1000 ${
       isNight ? "text-slate-100" : "text-on-background"
     }`}>
+      <ScreenHeader title="🌸 Manraah Sanctuary" showBackButton={true} fallbackRoute="/" />
       
       {/* Ambient background glows */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">

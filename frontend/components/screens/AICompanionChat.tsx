@@ -4,6 +4,8 @@ import React, { useState, useEffect } from "react";
 import { useCategory } from "@/frontend/lib/context/CategoryContext";
 import { getClientSession } from "@/backend/auth/client";
 import { getDailyCheckInSummaryAction } from "@/backend/auth/actions";
+import { useRouter } from "next/navigation";
+import ScreenHeader from "@/frontend/components/ui/ScreenHeader";
 
 interface ChatMessage {
   id: string;
@@ -13,6 +15,7 @@ interface ChatMessage {
 }
 
 export default function AICompanionChat() {
+  const router = useRouter();
   const { categoryDetails } = useCategory();
   const [activeTab, setActiveTab] = useState<"chat" | "modes" | "voice">("chat");
   const [selectedEmotion, setSelectedEmotion] = useState<string>("Seeking Calm");
@@ -95,6 +98,7 @@ How has this focus been serving you so far? Let's take a slow breath and talk ab
 
   return (
     <div className="space-y-6">
+      <ScreenHeader title="💜 AI Companion" showBackButton={true} fallbackRoute="/dashboard" />
       {/* Mode Switcher Tabs */}
       <div className="flex items-center justify-between p-2 rounded-2xl bg-surface-container-low border border-surface-variant/30 max-w-md mx-auto">
         <button

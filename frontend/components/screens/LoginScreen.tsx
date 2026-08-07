@@ -4,8 +4,8 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signIn } from "@/backend/auth/client";
-
 import { useAssessment } from "@/frontend/lib/context/AssessmentContext";
+import ScreenHeader from "@/frontend/components/ui/ScreenHeader";
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -45,6 +45,7 @@ export default function LoginScreen() {
 
   return (
     <div className="max-w-md mx-auto py-12 px-4 space-y-8 animate-fadeIn">
+      <ScreenHeader title="🔑 Sign In" showBackButton={true} fallbackRoute="/" />
       {/* Header */}
       <div className="text-center space-y-3">
         <div className="w-12 h-12 rounded-2xl gradient-primary mx-auto flex items-center justify-center text-white shadow-md">

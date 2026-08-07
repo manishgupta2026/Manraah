@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useCategory } from "@/frontend/lib/context/CategoryContext";
 import { useAssessment } from "@/frontend/lib/context/AssessmentContext";
 import { UserCategory } from "@/backend/types";
+import ScreenHeader from "@/frontend/components/ui/ScreenHeader";
 
 interface CategoryOption {
   id: UserCategory;
@@ -78,15 +79,12 @@ export default function CategorySelection() {
   const handleSelect = (id: UserCategory) => {
     setSelectedCategory(id);
     setCategory(id);
-  };
-
-  const handleContinue = () => {
-    if (!selectedCategory) return;
     router.push("/assessment");
   };
 
   return (
     <div className="bg-surface text-on-surface font-sans min-h-screen py-12 px-4 md:px-12 flex flex-col items-center">
+      <ScreenHeader title="🌿 Select Sanctuary" showBackButton={true} fallbackRoute="/" />
       {/* Ambient Background Layer */}
       <div className="fixed inset-0 z-[-2] opacity-35 pointer-events-none">
         <div className="absolute top-[-10%] left-[-10%] w-[60vw] md:w-[500px] h-[60vw] md:h-[500px] rounded-full bg-primary-container blur-[100px]" />
@@ -148,17 +146,6 @@ export default function CategorySelection() {
         })}
       </div>
 
-      {/* Action Button */}
-      <div className="mt-12 w-full max-w-[1024px] flex justify-end z-10">
-        <button
-          onClick={handleContinue}
-          disabled={!selectedCategory}
-          className="bg-primary hover:bg-primary-purple text-white font-bold text-sm px-10 py-4 rounded-full shadow-[0_8px_20px_rgba(95,78,165,0.25)] transition-all hover:-translate-y-0.5 active:scale-95 flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:shadow-none"
-        >
-          Continue Journey
-          <span className="material-symbols-outlined text-base">arrow_forward</span>
-        </button>
-      </div>
     </div>
   );
 }

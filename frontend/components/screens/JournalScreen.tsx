@@ -1,10 +1,13 @@
 "use client";
 
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import { MOCK_JOURNAL_ENTRIES } from "@/frontend/lib/mock-data";
 import { JournalEntry } from "@/backend/types";
+import ScreenHeader from "@/frontend/components/ui/ScreenHeader";
 
 export default function JournalScreen() {
+  const router = useRouter();
   const [entries, setEntries] = useState<JournalEntry[]>(MOCK_JOURNAL_ENTRIES);
   const [newTitle, setNewTitle] = useState("");
   const [newContent, setNewContent] = useState("");
@@ -31,6 +34,7 @@ export default function JournalScreen() {
 
   return (
     <div className="space-y-8">
+      <ScreenHeader title="📖 Journal" showBackButton={true} fallbackRoute="/dashboard" />
       {/* Header */}
       <div className="p-8 rounded-3xl bg-surface-container-lowest border border-surface-variant/30 shadow-soft space-y-3">
         <span className="px-4 py-1.5 rounded-full bg-pale-yellow/40 text-on-surface text-xs font-semibold uppercase tracking-wider">

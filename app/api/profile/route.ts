@@ -95,12 +95,7 @@ export async function PUT(request: Request) {
       `;
     }
 
-    // 3. Update category if provided
-    if (category) {
-      await sql`
-        UPDATE users SET selected_category = ${category} WHERE id = ${userId}
-      `;
-    }
+
 
     // 4. Update avatar if provided
     if (avatar) {

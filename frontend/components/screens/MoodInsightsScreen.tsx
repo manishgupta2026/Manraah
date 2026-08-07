@@ -4,6 +4,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useWellness } from "@/frontend/lib/context/WellnessContext";
+import ScreenHeader from "@/frontend/components/ui/ScreenHeader";
 
 interface MoodDetail {
   value: number;
@@ -214,6 +215,7 @@ export default function MoodInsightsScreen() {
   if (isLoading) {
     return (
       <div className="max-w-4xl mx-auto space-y-12 py-10 px-4 animate-pulse select-none">
+        <ScreenHeader title="🌿 Mood Journey" showBackButton={true} fallbackRoute="/dashboard" />
         <div className="h-[180px] bg-slate-200/50 rounded-[32px]" />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div className="h-[240px] bg-slate-200/50 rounded-[32px]" />
@@ -227,6 +229,7 @@ export default function MoodInsightsScreen() {
   if (history.length === 0) {
     return (
       <div className="max-w-2xl mx-auto py-16 px-4 text-center space-y-8 select-none relative z-10">
+        <ScreenHeader title="🌿 Mood Journey" showBackButton={true} fallbackRoute="/dashboard" />
         <div className="relative w-28 h-28 mx-auto flex items-center justify-center bg-purple-50 rounded-full border border-purple-100 shadow-inner">
           <span className="text-5xl filter drop-shadow-sm animate-pulse">🌸</span>
         </div>
@@ -250,6 +253,7 @@ export default function MoodInsightsScreen() {
 
   return (
     <div className="max-w-5xl mx-auto space-y-12 py-4 px-3 md:px-6 relative select-none">
+      <ScreenHeader title="🌿 Mood Journey" showBackButton={true} fallbackRoute="/dashboard" />
       
       {/* Background breathes */}
       <div className="absolute inset-0 pointer-events-none z-0">
