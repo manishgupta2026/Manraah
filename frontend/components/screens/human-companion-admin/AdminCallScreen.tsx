@@ -9,14 +9,14 @@ interface AdminCallScreenProps {
   user: AnonymizedUser;
   onEndCall: () => void;
   onSwitchToChat: () => void;
-  onTriggerFlag: () => void;
+  onTriggerFlag?: () => void;
 }
 
 export default function AdminCallScreen({
   user,
   onEndCall,
   onSwitchToChat,
-  onTriggerFlag,
+  onTriggerFlag = () => {},
 }: AdminCallScreenProps) {
   const [isMuted, setIsMuted] = useState(false);
   const [seconds, setSeconds] = useState(0);

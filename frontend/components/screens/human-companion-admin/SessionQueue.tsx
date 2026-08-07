@@ -5,7 +5,7 @@ import { AnonymizedUser } from "@/backend/types";
 
 interface SessionQueueProps {
   queue: AnonymizedUser[];
-  onSelectUser: (user: AnonymizedUser) => void;
+  onSelectUser?: (user: AnonymizedUser) => void;
 }
 
 export default function SessionQueue({ queue, onSelectUser }: SessionQueueProps) {
@@ -36,12 +36,14 @@ export default function SessionQueue({ queue, onSelectUser }: SessionQueueProps)
               <p className="text-xs text-on-surface-variant font-medium">{item.topic}</p>
             </div>
 
-            <button
-              onClick={() => onSelectUser(item)}
-              className="px-4 py-2 rounded-xl bg-primary hover:bg-primary-purple text-white text-xs font-bold transition-all shrink-0"
-            >
-              Accept Request →
-            </button>
+            {onSelectUser && (
+              <button
+                onClick={() => onSelectUser(item)}
+                className="px-4 py-2 rounded-xl bg-primary hover:bg-primary-purple text-white text-xs font-bold transition-all shrink-0"
+              >
+                Accept Request →
+              </button>
+            )}
           </div>
         ))}
       </div>

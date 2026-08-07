@@ -10,14 +10,14 @@ interface AdminChatScreenProps {
   user: AnonymizedUser;
   onEndSession: () => void;
   onSwitchToCall: () => void;
-  onTriggerFlag: () => void;
+  onTriggerFlag?: () => void;
 }
 
 export default function AdminChatScreen({
   user,
   onEndSession,
   onSwitchToCall,
-  onTriggerFlag,
+  onTriggerFlag = () => {},
 }: AdminChatScreenProps) {
   const [messages, setMessages] = useState<CompanionChatMessage[]>([
     {

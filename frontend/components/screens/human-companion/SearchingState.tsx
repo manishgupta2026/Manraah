@@ -3,13 +3,16 @@
 import React, { useEffect } from "react";
 
 interface SearchingStateProps {
-  onFound: () => void;
-  onCancel: () => void;
+  onFound?: () => void;
+  onCancel?: () => void;
+  onCancelSearch?: () => void;
 }
 
-export default function SearchingState({ onFound, onCancel }: SearchingStateProps) {
+export default function SearchingState({ onFound, onCancel, onCancelSearch }: SearchingStateProps) {
+  const handleCancel = onCancelSearch || onCancel || (() => {});
+
   useEffect(() => {
-    // Simulate matching latency before transitioning to MatchedScreen
+    if (!onFound) return;
     const timer = setTimeout(() => {
       onFound();
     }, 2800);
@@ -18,33 +21,35 @@ export default function SearchingState({ onFound, onCancel }: SearchingStateProp
   }, [onFound]);
 
   return (
-    <div className="max-w-xl mx-auto py-16 px-4 text-center space-y-8 animate-fadeIn select-none">
-      {/* Animated Pulsing Ring Container */}
-      <div className="relative w-48 h-48 mx-auto flex items-center justify-center">
-        <div className="absolute inset-0 rounded-full bg-mint/30 animate-ping" />
-        <div className="absolute inset-4 rounded-full bg-primary/20 animate-pulse" />
-        <div className="relative w-32 h-32 rounded-full bg-surface-container-lowest border-4 border-mint shadow-soft flex flex-col items-center justify-center text-primary space-y-1">
-          <span className="material-symbols-outlined text-4xl animate-bounce">
-            graphic_eq
+    <div className="max-w-md mx-auto py-16 px-4 text-center space-y-8 animate-fadeIn select-none">
+      {/* Outer Pulsing Radar Rings */}
+      <div className="relative w-40 h-40 mx-auto flex items-center justify-center">
+        <div className="absolute inset-0 rounded-full bg-mint/20 animate-ping" />
+        <div className="absolute inset-4 rounded-full bg-mint/30 animate-pulse" />
+        <div className="relative w-24 h-24 rounded-full bg-surface-container-lowest border-2 border-mint shadow-soft flex items-center justify-center">
+          <span className="material-symbols-outlined text-4xl text-secondary animate-bounce">
+            radar
           </span>
-          <span className="text-[10px] font-mono font-bold text-secondary">Matching...</span>
         </div>
       </div>
 
-      {/* Status Text */}
+      {/* Status Messaging */}
       <div className="space-y-2">
+        <span className="px-3 py-1 rounded-full bg-mint/20 text-secondary text-xs font-bold uppercase tracking-wider">
+          Connecting to Sanctuary Network...
+        </span>
         <h2 className="text-2xl font-heading font-bold text-on-surface">
-          Finding an Available Peer Listener...
+          Finding an Available Peer Listener
         </h2>
-        <p className="text-xs text-on-surface-variant max-w-sm mx-auto">
-          Searching active sanctuary members for a compassionate, non-judgmental 1-on-1 match.
+        <p className="text-xs text-on-surface-variant max-w-xs mx-auto leading-relaxed">
+          Matching you with a compassionate, trained peer listener. Your identity remains 100% masked.
         </p>
       </div>
 
       {/* Cancel Search Button */}
       <button
-        onClick={onCancel}
-        className="px-6 py-2.5 rounded-full bg-surface-container text-on-surface-variant font-bold text-xs hover:bg-surface-container-high transition-all"
+        onClick={handleCancel}
+        className="px-6 py-2.5 rounded-full bg-surface-container-low hover:bg-surface-container text-on-surface-variant font-bold text-xs transition-all border border-surface-variant/20"
       >
         Cancel Search
       </button>

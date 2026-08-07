@@ -7,10 +7,10 @@ interface MatchedScreenProps {
   listener: AnonymizedListener;
   onStartChat: () => void;
   onStartCall: () => void;
-  onCancel: () => void;
+  onCancel?: () => void;
 }
 
-export default function MatchedScreen({ listener, onStartChat, onStartCall, onCancel }: MatchedScreenProps) {
+export default function MatchedScreen({ listener, onStartChat, onStartCall, onCancel = () => {} }: MatchedScreenProps) {
   return (
     <div className="max-w-lg mx-auto py-12 px-4 space-y-8 animate-fadeIn text-center select-none">
       {/* Header Banner */}

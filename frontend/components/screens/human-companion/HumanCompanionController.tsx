@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import EntryModeSelect from "./EntryModeSelect";
 import SearchingState from "./SearchingState";
 import MatchedScreen from "./MatchedScreen";
@@ -17,6 +17,7 @@ export default function HumanCompanionController() {
   const [step, setStep] = useState<Step>("ENTRY");
   const [listener, setListener] = useState<AnonymizedListener | null>(null);
   const [currentRoomId, setCurrentRoomId] = useState<string | null>(null);
+  const searchPayloadRef = useRef<{ roomId: string; userTag: any; activeTopic: string } | null>(null);
 
   useEffect(() => {
     const socket = getSocketClient();
@@ -44,16 +45,39 @@ export default function HumanCompanionController() {
       setStep("FEEDBACK");
     };
 
+    const handleConnect = () => {
+      console.log("⚡ Socket connected/reconnected on member side.");
+      if (searchPayloadRef.current && step === "SEARCHING") {
+        const { roomId, userTag, activeTopic } = searchPayloadRef.current;
+        console.log("⚡ Re-emitting queue_join after socket connect:", roomId);
+        socket.emit("join_room", { roomId, userAlias: userTag.userTag });
+        socket.emit("queue_join", {
+          room: {
+            id: roomId,
+            userTag: userTag.userTag,
+            categoryTag: userTag.categoryTag,
+            topic: activeTopic,
+            waitTime: "Just now",
+          },
+        });
+      }
+    };
+
+    if (socket.connected) {
+      handleConnect();
+    }
+    socket.on("connect", handleConnect);
     socket.on("session_accepted", handleSessionAccepted);
     socket.on("mode_switch", handleModeSwitch);
     socket.on("session_ended", handleSessionEnded);
 
     return () => {
+      socket.off("connect", handleConnect);
       socket.off("session_accepted", handleSessionAccepted);
       socket.off("mode_switch", handleModeSwitch);
       socket.off("session_ended", handleSessionEnded);
     };
-  }, []);
+  }, [step]);
 
   const handleStartSearch = (mode: "listener" | "peer_support", userTopic?: string) => {
     const roomId = `sess_${Date.now()}`;
@@ -64,6 +88,9 @@ export default function HumanCompanionController() {
     const userTag = getAnonymizedUserTag(roomId, "Student");
     const activeTopic = userTopic || userTag.topic;
 
+    searchPayloadRef.current = { roomId, userTag, activeTopic };
+
+    console.log("⚡ Emitting join_room & queue_join for member:", roomId);
     // Join room & broadcast to listener queue
     socket.emit("join_room", { roomId, userAlias: userTag.userTag });
     socket.emit("queue_join", {
@@ -82,6 +109,7 @@ export default function HumanCompanionController() {
       const socket = getSocketClient();
       socket.emit("queue_end", { roomId: currentRoomId });
     }
+    searchPayloadRef.current = null;
     setStep("ENTRY");
     setListener(null);
     setCurrentRoomId(null);
@@ -108,6 +136,7 @@ export default function HumanCompanionController() {
       const socket = getSocketClient();
       socket.emit("queue_end", { roomId: currentRoomId });
     }
+    searchPayloadRef.current = null;
     setStep("FEEDBACK");
   };
 
@@ -115,46 +144,37 @@ export default function HumanCompanionController() {
     setStep("ENTRY");
     setListener(null);
     setCurrentRoomId(null);
+    searchPayloadRef.current = null;
   };
 
   return (
-    <div className="min-h-[80vh] flex flex-col justify-center">
+    <div className="space-y-6">
       {step === "ENTRY" && <EntryModeSelect onStartSearch={handleStartSearch} />}
-      
-      {step === "SEARCHING" && (
-        <SearchingState onFound={() => {}} onCancel={handleCancelSearch} />
-      )}
-
+      {step === "SEARCHING" && <SearchingState onCancelSearch={handleCancelSearch} />}
       {step === "MATCHED" && listener && (
         <MatchedScreen
           listener={listener}
           onStartChat={handleStartChat}
           onStartCall={handleStartCall}
-          onCancel={handleCancelSearch}
         />
       )}
-
-      {step === "CHAT" && listener && (
+      {step === "CHAT" && listener && currentRoomId && (
         <ChatScreen
           listener={listener}
-          roomId={currentRoomId || "sess_default"}
+          roomId={currentRoomId}
           onEndSession={handleEndSession}
           onSwitchToCall={handleStartCall}
         />
       )}
-
-      {step === "CALL" && listener && (
+      {step === "CALL" && listener && currentRoomId && (
         <CallScreen
           listener={listener}
-          roomId={currentRoomId || "sess_default"}
+          roomId={currentRoomId}
           onEndCall={handleEndSession}
           onSwitchToChat={handleStartChat}
         />
       )}
-
-      {step === "FEEDBACK" && (
-        <FeedbackScreen onComplete={handleFeedbackComplete} />
-      )}
+      {step === "FEEDBACK" && <FeedbackScreen onComplete={handleFeedbackComplete} />}
     </div>
   );
 }
