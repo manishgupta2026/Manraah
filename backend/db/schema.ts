@@ -2,11 +2,12 @@ import { pgTable, text, integer, timestamp, boolean, jsonb, serial, numeric, dou
 
 export const users = pgTable("users", {
   id: text("id").primaryKey(),
-  name: text("name").notNull(),
+  name: text("name"),
   email: text("email").notNull().unique(),
   emailVerified: boolean("email_verified").notNull().default(false),
   image: text("image"),
   avatar: text("avatar").default("/images/user_avatar.jpg"),
+  sanctuaryName: text("sanctuary_name").unique(),
   selectedCategory: text("selected_category").default("student"),
   streakDays: integer("streak_days").default(1),
   mindfulnessMinutes: integer("mindfulness_minutes").default(0),

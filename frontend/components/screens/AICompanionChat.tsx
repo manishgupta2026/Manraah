@@ -31,23 +31,24 @@ export default function AICompanionChat() {
 
         let greeting = `Hello! I'm your Manraah Companion, calibrated for ${categoryDetails.name} wellness. How are you feeling right now?`;
         
+        const displayName = session.user.sanctuaryName || session.user.name || "friend";
         if (weeklyRes && (weeklyRes.frequentMood === "Overwhelmed" || weeklyRes.frequentMood === "Low" || weeklyRes.frequentMood === "Anxious" || weeklyRes.frequentMood === "Exhausted")) {
-          greeting = `Hello ${session.user.name || "friend"} 🌿. I noticed you've been feeling a bit ${weeklyRes.frequentMood.toLowerCase()} this week. 
+          greeting = `Hello ${displayName} 🌿. I noticed you've been feeling a bit ${weeklyRes.frequentMood.toLowerCase()} this week. 
           
 Would you like to slow down together and try a gentle five-minute breathing exercise? I'm here to listen.`;
         } else if (dailyRes.success && dailyRes.summary) {
           const sum = dailyRes.summary;
           
           if (sum.energy_level <= 2) {
-            greeting = `Hello ${session.user.name} 🌿. I noticed your energy is a little low today (${sum.energy_level}/5) and you are feeling a bit ${sum.mood}. 
+            greeting = `Hello ${displayName} 🌿. I noticed your energy is a little low today (${sum.energy_level}/5) and you are feeling a bit ${sum.mood}. 
             
 Would you like to meditate together for five minutes, or perhaps share what is on your mind? I'm here to listen.`;
           } else if (sum.sleep_quality <= 2) {
-            greeting = `Hello ${session.user.name} 🌸. I see you logged feeling ${sum.mood} today, and your sleep last night was a bit light. 
+            greeting = `Hello ${displayName} 🌸. I see you logged feeling ${sum.mood} today, and your sleep last night was a bit light. 
             
 It's completely okay to take things slow. Would you like to try a calming breathing reset or explore some restful soundscapes?`;
           } else {
-            greeting = `Welcome back, ${session.user.name} ✨. I see that you logged a feeling of **${sum.mood}** in today's check-in, focusing on your intention to **${sum.daily_intention}**.
+            greeting = `Welcome back, ${displayName} ✨. I see that you logged a feeling of **${sum.mood}** in today's check-in, focusing on your intention to **${sum.daily_intention}**.
             
 How has this focus been serving you so far? Let's take a slow breath and talk about whatever you need today.`;
           }

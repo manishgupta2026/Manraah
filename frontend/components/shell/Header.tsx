@@ -3,13 +3,14 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { getClientSession } from "@/backend/auth/client";
+import { getInitials, getPastelBgColor, getPastelTextColor } from "@/frontend/lib/avatar-helper";
 
 interface HeaderProps {
   onOpenMenu?: () => void;
 }
 
 export default function Header({ onOpenMenu }: HeaderProps) {
-  const [user, setUser] = useState<{ name: string; email: string } | null>(null);
+  const [user, setUser] = useState<{ name?: string; sanctuaryName?: string; email: string; avatar?: string } | null>(null);
 
   useEffect(() => {
     const session = getClientSession();
@@ -17,13 +18,6 @@ export default function Header({ onOpenMenu }: HeaderProps) {
       setUser(session.user);
     }
   }, []);
-
-  const getInitials = (name?: string) => {
-    if (!name) return "AS";
-    const parts = name.trim().split(" ");
-    if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
-    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-  };
 
   return (
     <header className="sticky top-0 z-20 bg-surface-container-lowest/90 backdrop-blur-md border-b border-surface-variant/30 px-4 md:px-6 py-2.5 flex items-center justify-between shadow-xs shrink-0">
@@ -59,13 +53,27 @@ export default function Header({ onOpenMenu }: HeaderProps) {
           <span className="material-symbols-outlined text-sm">emergency</span>
           <span className="hidden sm:inline">Crisis Helpline</span>
         </Link>
-        <Link
-          href="/profile"
-          className="w-8 h-8 rounded-full bg-primary-container/30 border border-primary/20 flex items-center justify-center text-primary font-bold text-xs hover:bg-primary-container/50 transition-colors"
-          title={user?.name || "Profile Settings"}
-        >
-          {getInitials(user?.name)}
-        </Link>
+        {(() => {
+          const displayName = user?.sanctuaryName || user?.name || "Sanctuary Member";
+          return (
+            <Link
+              href="/profile"
+              className="w-8 h-8 rounded-full flex items-center justify-center hover:opacity-85 transition-colors overflow-hidden shrink-0 border border-primary/20"
+              title={displayName}
+            >
+              {user?.avatar && user.avatar.startsWith("data:image/") ? (
+                <img src={user.avatar} alt="Avatar" className="w-full h-full object-cover" />
+              ) : (
+                <div
+                  className="w-full h-full flex items-center justify-center font-bold text-[10px]"
+                  style={{ backgroundColor: getPastelBgColor(displayName), color: getPastelTextColor(displayName) }}
+                >
+                  {getInitials(displayName)}
+                </div>
+              )}
+            </Link>
+          );
+        })()}
       </div>
     </header>
   );

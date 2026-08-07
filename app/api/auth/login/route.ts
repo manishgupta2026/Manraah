@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { sql } from "@/backend/db/client";
 import { saveUserAssessment } from "@/backend/queries/assessment";
+import { generateUniqueSanctuaryName } from "@/backend/auth/sanctuary";
 import crypto from "crypto";
 
 function verifyPassword(password: string, storedHash: string): boolean {
@@ -24,7 +25,7 @@ export async function POST(request: Request) {
 
     // 1. Fetch user from Neon PostgreSQL
     const users = await sql`
-      SELECT id, name, email, password_hash, avatar, selected_category, streak_days, mindfulness_minutes, current_mood
+      SELECT id, name, email, password_hash, sanctuary_name, avatar, selected_category, streak_days, mindfulness_minutes, current_mood
       FROM users
       WHERE LOWER(email) = LOWER(${email})
       LIMIT 1
@@ -48,9 +49,19 @@ export async function POST(request: Request) {
       );
     }
 
+    // Migration: generate Sanctuary Name for existing users if missing
+    let sanctuaryName = user.sanctuary_name;
+    if (!sanctuaryName) {
+      sanctuaryName = await generateUniqueSanctuaryName();
+      await sql`
+        UPDATE users SET sanctuary_name = ${sanctuaryName}, name = ${sanctuaryName} WHERE id = ${user.id}
+      `;
+    }
+
     const userProfile = {
       id: user.id,
-      name: user.name,
+      name: sanctuaryName,
+      sanctuaryName: sanctuaryName,
       email: user.email,
       avatar: user.avatar || "/images/user_avatar.jpg",
       streakDays: user.streak_days || 1,

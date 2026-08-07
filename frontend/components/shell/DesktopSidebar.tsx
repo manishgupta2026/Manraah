@@ -5,23 +5,20 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { MAIN_NAV_ITEMS } from "@/frontend/lib/constants";
 import { getClientSession } from "@/backend/auth/client";
+import { getInitials, getPastelBgColor, getPastelTextColor } from "@/frontend/lib/avatar-helper";
 
 export default function DesktopSidebar() {
   const pathname = usePathname();
-  const [userName, setUserName] = useState("Aanya Sharma");
+  const [userName, setUserName] = useState("Sanctuary Member");
+  const [avatar, setAvatar] = useState("");
 
   useEffect(() => {
     const session = getClientSession();
-    if (session.user?.name) {
-      setUserName(session.user.name);
+    if (session.user) {
+      setUserName(session.user.sanctuaryName || session.user.name || "Sanctuary Member");
+      setAvatar(session.user.avatar || "");
     }
   }, []);
-
-  const getInitials = (name: string) => {
-    const parts = name.trim().split(" ");
-    if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
-    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-  };
 
   return (
     <aside className="hidden md:flex flex-col fixed top-0 left-0 h-screen w-[80px] lg:w-[260px] bg-surface-container-lowest border-r border-surface-variant/40 z-30 shadow-soft transition-all duration-300">
@@ -76,9 +73,20 @@ export default function DesktopSidebar() {
           className="flex items-center justify-center lg:justify-start gap-2.5 p-2 rounded-xl hover:bg-surface-container transition-colors"
           title={userName}
         >
-          <div className="w-8 h-8 rounded-full bg-primary-container/20 flex items-center justify-center text-primary font-bold text-xs border border-primary/20 shrink-0">
-            {getInitials(userName)}
-          </div>
+          {avatar && avatar.startsWith("data:image/") ? (
+            <img
+              src={avatar}
+              alt="Avatar"
+              className="w-8 h-8 rounded-full object-cover border border-primary/20 shadow-xs shrink-0"
+            />
+          ) : (
+            <div
+              className="w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs shrink-0 shadow-xs transition-all duration-300"
+              style={{ backgroundColor: getPastelBgColor(userName), color: getPastelTextColor(userName) }}
+            >
+              {getInitials(userName)}
+            </div>
+          )}
           <div className="hidden lg:block flex-1 min-w-0">
             <p className="text-xs font-semibold text-on-surface truncate">{userName}</p>
             <p className="text-[10px] text-on-surface-variant/70 truncate">Settings & Profile</p>

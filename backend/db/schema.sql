@@ -6,10 +6,11 @@
 -- 1. Users & Accounts Table
 CREATE TABLE IF NOT EXISTS users (
     id VARCHAR(100) PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
+    name VARCHAR(255),
     email VARCHAR(255) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
     avatar TEXT DEFAULT '/images/user_avatar.jpg',
+    sanctuary_name VARCHAR(255) UNIQUE,
     selected_category VARCHAR(100) DEFAULT 'student',
     streak_days INT DEFAULT 1,
     mindfulness_minutes INT DEFAULT 0,

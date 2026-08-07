@@ -11,10 +11,11 @@ async function initDB() {
     await sql`
       CREATE TABLE IF NOT EXISTS users (
           id VARCHAR(100) PRIMARY KEY,
-          name VARCHAR(255) NOT NULL,
+          name VARCHAR(255),
           email VARCHAR(255) UNIQUE NOT NULL,
           password_hash VARCHAR(255) NOT NULL,
           avatar TEXT DEFAULT '/images/user_avatar.jpg',
+          sanctuary_name VARCHAR(255) UNIQUE,
           selected_category VARCHAR(100) DEFAULT 'student',
           streak_days INT DEFAULT 1,
           mindfulness_minutes INT DEFAULT 0,
@@ -22,6 +23,12 @@ async function initDB() {
           created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
       );
     `;
+    try {
+      await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS sanctuary_name VARCHAR(255) UNIQUE`;
+      await sql`ALTER TABLE users ALTER COLUMN name DROP NOT NULL`;
+    } catch (e) {
+      // Ignored if tables are clean
+    }
     console.log("✓ Table 'users' ready");
 
     await sql`

@@ -14,11 +14,12 @@ export async function initDatabase() {
     await sql`
       CREATE TABLE IF NOT EXISTS users (
         id VARCHAR(255) PRIMARY KEY,
-        name VARCHAR(255) NOT NULL,
+        name VARCHAR(255),
         email VARCHAR(255) UNIQUE NOT NULL,
         email_verified BOOLEAN NOT NULL DEFAULT FALSE,
         image TEXT,
         avatar VARCHAR(255) DEFAULT '/images/user_avatar.jpg',
+        sanctuary_name VARCHAR(255) UNIQUE,
         selected_category VARCHAR(255) DEFAULT 'student',
         streak_days INTEGER DEFAULT 1,
         mindfulness_minutes INTEGER DEFAULT 0,
@@ -27,6 +28,18 @@ export async function initDatabase() {
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `;
+
+    try {
+      await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS sanctuary_name VARCHAR(255) UNIQUE`;
+    } catch (err) {
+      console.warn("Could not alter table users to add sanctuary_name:", err);
+    }
+
+    try {
+      await sql`ALTER TABLE users ALTER COLUMN name DROP NOT NULL`;
+    } catch (err) {
+      console.warn("Could not drop NOT NULL constraint from users name column:", err);
+    }
 
     // 2. Create user_profiles table
     await sql`

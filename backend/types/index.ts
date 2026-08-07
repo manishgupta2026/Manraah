@@ -18,7 +18,8 @@ export type UserCategory =
 
 export interface UserProfile {
   id: string;
-  name: string;
+  name?: string;
+  sanctuaryName?: string;
   avatar: string;
   email: string;
   streakDays: number;

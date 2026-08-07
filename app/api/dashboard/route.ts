@@ -3,6 +3,7 @@ import { getAuthSessionFromRequest } from "@/backend/auth/session";
 import { sql } from "@/backend/db/client";
 import { getMoodHistory, getWeeklySummary, getMoodInsights, getMonthlySummary } from "@/backend/queries/mood";
 import { getUserStreak } from "@/backend/queries/assessment";
+import { generateUniqueSanctuaryName } from "@/backend/auth/sanctuary";
 
 export const dynamic = "force-dynamic";
 
@@ -13,12 +14,21 @@ export async function GET(req: Request) {
   try {
     // 1. Fetch user & profile info
     const userResult = await sql`
-      SELECT id, name, email, selected_category, streak_days, mindfulness_minutes, current_mood FROM users WHERE id = ${userId} LIMIT 1
+      SELECT id, name, email, sanctuary_name, avatar, selected_category, streak_days, mindfulness_minutes, current_mood FROM users WHERE id = ${userId} LIMIT 1
     `;
     if (userResult.length === 0) {
       return NextResponse.json({ error: "User profile not found" }, { status: 404 });
     }
     const user = userResult[0];
+
+    // Migrate/generate sanctuary name if missing
+    let sanctuaryName = user.sanctuary_name;
+    if (!sanctuaryName) {
+      sanctuaryName = await generateUniqueSanctuaryName();
+      await sql`
+        UPDATE users SET sanctuary_name = ${sanctuaryName}, name = ${sanctuaryName} WHERE id = ${user.id}
+      `;
+    }
 
     // 2. Fetch mood history logs
     const history = await getMoodHistory(userId, "all");
@@ -62,8 +72,10 @@ export async function GET(req: Request) {
     const dashboardState = {
       user: {
         id: user.id,
-        name: user.name,
+        name: sanctuaryName,
+        sanctuaryName: sanctuaryName,
         email: user.email,
+        avatar: user.avatar || "/images/user_avatar.jpg",
         selectedCategory: user.selected_category || "student",
         streakDays: streak.currentStreak || user.streak_days || 1,
         mindfulnessMinutes: user.mindfulness_minutes || 0,
