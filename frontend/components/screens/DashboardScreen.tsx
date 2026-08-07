@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { getClientSession } from "@/backend/auth/client";
 import { useWellness } from "@/frontend/lib/context/WellnessContext";
 import ParentDashboard from "@/parent/Research/Documentation/Dashboard Planning/AI Knowledge/Feature Documentation/Development/ParentDashboard";
+import DailyPrivacyReminder from "@/frontend/components/ui/DailyPrivacyReminder";
 
 interface TimeTheme {
   greeting: string;
@@ -114,7 +115,7 @@ export default function DashboardScreen() {
   }
 
   const { user, todayMood, history, streak, recommendation, insights } = dashboardData;
-  const name = user?.name || "Sanctuary Member";
+  const name = user?.sanctuaryName || user?.name || "Sanctuary Member";
   const category = user?.selectedCategory || "student";
   const totalCheckIns = history?.length || 0;
 
@@ -519,6 +520,7 @@ export default function DashboardScreen() {
         </motion.div>
 
       </motion.div>
+      <DailyPrivacyReminder />
     </div>
   );
 }

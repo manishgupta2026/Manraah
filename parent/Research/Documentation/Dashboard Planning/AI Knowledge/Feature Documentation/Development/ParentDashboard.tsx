@@ -131,7 +131,7 @@ export default function ParentDashboard() {
   useEffect(() => {
     const session = getClientSession();
     if (session.user) {
-      setParentName(session.user.name || "Mindful Parent");
+      setParentName(session.user.sanctuaryName || session.user.name || "Mindful Parent");
     }
 
     const hour = new Date().getHours();

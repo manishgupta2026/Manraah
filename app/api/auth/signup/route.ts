@@ -113,7 +113,7 @@ export async function POST(request: Request) {
   } catch (err: any) {
     console.error("[Auth Signup API Error]:", err);
     return NextResponse.json(
-      { error: err.message || "Failed to create account." },
+      { error: "We couldn't create your account. Please try again." },
       { status: 500 }
     );
   }

@@ -109,7 +109,7 @@ export async function POST(request: Request) {
   } catch (err: any) {
     console.error("[Auth Login API Error]:", err);
     return NextResponse.json(
-      { error: err.message || "Failed to log in." },
+      { error: "Failed to log in. Please try again." },
       { status: 500 }
     );
   }

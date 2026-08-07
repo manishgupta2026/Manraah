@@ -7,6 +7,7 @@ export interface DashboardState {
   user: {
     id: string;
     name: string;
+    sanctuaryName?: string;
     email: string;
     selectedCategory: string;
     streakDays: number;
