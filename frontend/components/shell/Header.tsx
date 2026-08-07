@@ -37,28 +37,39 @@ export default function Header({ onOpenMenu }: HeaderProps) {
         <span className="font-heading font-bold text-base text-primary">Manraah</span>
       </div>
 
-      <div className="hidden md:block">
-        {/* Subtle Breadcrumb / Category Context */}
-        <span className="text-xs font-semibold text-on-surface-variant/60 tracking-wide uppercase">
-          Sanctuary Workspace
-        </span>
+      <div className="hidden md:flex items-center gap-2 relative bg-surface-container-low/40 border border-surface-variant/20 rounded-full px-3.5 py-1.5 w-72 shadow-soft-xs">
+        <span className="material-symbols-outlined text-sm text-outline">search</span>
+        <input 
+          type="text" 
+          placeholder="Search Manraah..." 
+          className="bg-transparent text-xs text-on-surface-variant border-none outline-none focus:ring-0 placeholder:text-outline/75 w-full font-bold"
+        />
       </div>
 
       {/* Right Quick Actions */}
-      <div className="flex items-center gap-2.5">
+      <div className="flex items-center gap-3">
+        {/* Notification bell */}
+        <div className="relative w-8 h-8 rounded-full bg-white border border-surface-variant/30 flex items-center justify-center text-on-surface-variant cursor-pointer hover:bg-primary-container/20 hover:text-primary transition-all shadow-soft-xs">
+          <span className="material-symbols-outlined text-base">notifications</span>
+          <span className="absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-error flex items-center justify-center text-[6px] font-black text-white border border-white">3</span>
+        </div>
+
+        {/* Crisis Help rounded pill */}
         <Link
           href="/crisis-support"
-          className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-error-container text-on-error-container text-xs font-semibold hover:bg-error/20 transition-colors shadow-xs"
+          className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-red-50 text-red-600 text-xs font-bold hover:bg-red-100/80 transition-colors shadow-soft-xs border border-red-200/40"
         >
           <span className="material-symbols-outlined text-sm">emergency</span>
-          <span className="hidden sm:inline">Crisis Helpline</span>
+          <span>Crisis Help</span>
         </Link>
+
+        {/* Profile only visible on mobile headers */}
         {(() => {
           const displayName = user?.sanctuaryName || user?.name || "Sanctuary Member";
           return (
             <Link
               href="/profile"
-              className="w-8 h-8 rounded-full flex items-center justify-center hover:opacity-85 transition-colors overflow-hidden shrink-0 border border-primary/20"
+              className="w-8 h-8 rounded-full flex items-center justify-center hover:opacity-85 transition-colors overflow-hidden shrink-0 border border-primary/20 md:hidden"
               title={displayName}
             >
               {user?.avatar && user.avatar.startsWith("data:image/") ? (
