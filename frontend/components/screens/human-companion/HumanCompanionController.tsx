@@ -47,7 +47,7 @@ export default function HumanCompanionController() {
 
     const handleConnect = () => {
       console.log("⚡ Socket connected/reconnected on member side.");
-      if (searchPayloadRef.current && step === "SEARCHING") {
+      if (searchPayloadRef.current) {
         const { roomId, userTag, activeTopic } = searchPayloadRef.current;
         console.log("⚡ Re-emitting queue_join after socket connect:", roomId);
         socket.emit("join_room", { roomId, userAlias: userTag.userTag });
@@ -82,13 +82,13 @@ export default function HumanCompanionController() {
   const handleStartSearch = (mode: "listener" | "peer_support", userTopic?: string) => {
     const roomId = `sess_${Date.now()}`;
     setCurrentRoomId(roomId);
-    setStep("SEARCHING");
 
     const socket = getSocketClient();
     const userTag = getAnonymizedUserTag(roomId, "Student");
     const activeTopic = userTopic || userTag.topic;
 
     searchPayloadRef.current = { roomId, userTag, activeTopic };
+    setStep("SEARCHING");
 
     console.log("⚡ Emitting join_room & queue_join for member:", roomId);
     // Join room & broadcast to listener queue

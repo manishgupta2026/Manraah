@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React from "react";
 
 interface SearchingStateProps {
   onFound?: () => void;
@@ -8,17 +8,8 @@ interface SearchingStateProps {
   onCancelSearch?: () => void;
 }
 
-export default function SearchingState({ onFound, onCancel, onCancelSearch }: SearchingStateProps) {
+export default function SearchingState({ onCancel, onCancelSearch }: SearchingStateProps) {
   const handleCancel = onCancelSearch || onCancel || (() => {});
-
-  useEffect(() => {
-    if (!onFound) return;
-    const timer = setTimeout(() => {
-      onFound();
-    }, 2800);
-
-    return () => clearTimeout(timer);
-  }, [onFound]);
 
   return (
     <div className="max-w-md mx-auto py-16 px-4 text-center space-y-8 animate-fadeIn select-none">
