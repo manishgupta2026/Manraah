@@ -106,7 +106,7 @@ export default function CallScreen({ listener, roomId = "sess_default", onEndCal
 
     socket.on("answer", async (data: { sdpAnswer: RTCSessionDescriptionInit }) => {
       console.log("⚡ User received WebRTC Answer:", data);
-      if (pc.signalingState !== "closed") {
+      if (pc.signalingState === "have-local-offer") {
         await pc.setRemoteDescription(new RTCSessionDescription(data.sdpAnswer));
         setCallStatus("CONNECTED");
       }

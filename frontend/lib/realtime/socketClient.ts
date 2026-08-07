@@ -20,9 +20,9 @@ export function getSocketClient(): Socket {
     socket = io(socketUrl, {
       autoConnect: true,
       reconnection: true,
-      reconnectionAttempts: 10,
+      reconnectionAttempts: 15,
       reconnectionDelay: 1000,
-      transports: ["websocket", "polling"],
+      transports: ["polling", "websocket"],
     });
 
     socket.on("connect", () => {

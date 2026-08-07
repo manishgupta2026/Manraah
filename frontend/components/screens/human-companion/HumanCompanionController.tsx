@@ -24,6 +24,7 @@ export default function HumanCompanionController() {
 
     const handleSessionAccepted = (data: { companionAlias?: string }) => {
       console.log("⚡ Real-time match accepted by listener:", data);
+      searchPayloadRef.current = null;
       setListener({
         id: "lst_active",
         displayId: data.companionAlias || "Peer Listener #104",
@@ -42,12 +43,13 @@ export default function HumanCompanionController() {
 
     const handleSessionEnded = () => {
       console.log("⚡ Real-time session ended by companion/listener");
+      searchPayloadRef.current = null;
       setStep("FEEDBACK");
     };
 
     const handleConnect = () => {
       console.log("⚡ Socket connected/reconnected on member side.");
-      if (searchPayloadRef.current) {
+      if (searchPayloadRef.current && step === "SEARCHING") {
         const { roomId, userTag, activeTopic } = searchPayloadRef.current;
         console.log("⚡ Re-emitting queue_join after socket connect:", roomId);
         socket.emit("join_room", { roomId, userAlias: userTag.userTag });

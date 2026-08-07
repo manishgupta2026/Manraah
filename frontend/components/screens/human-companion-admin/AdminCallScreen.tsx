@@ -113,7 +113,7 @@ export default function AdminCallScreen({
 
     socket.on("answer", async (data: { sdpAnswer: RTCSessionDescriptionInit }) => {
       console.log("⚡ Listener received WebRTC Answer:", data);
-      if (pc.signalingState !== "closed") {
+      if (pc.signalingState === "have-local-offer") {
         await pc.setRemoteDescription(new RTCSessionDescription(data.sdpAnswer));
         setCallStatus("CONNECTED");
       }
