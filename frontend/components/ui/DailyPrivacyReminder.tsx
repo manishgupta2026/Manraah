@@ -85,7 +85,7 @@ export default function DailyPrivacyReminder() {
   };
 
   const shiftGradientStyle = {
-    background: "linear-gradient(135deg, rgba(167, 139, 250, 0.4), rgba(99, 102, 241, 0.4), rgba(52, 211, 153, 0.3))",
+    background: "linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(243, 244, 255, 0.92))",
     backgroundSize: "200% 200%",
   };
 
@@ -98,7 +98,7 @@ export default function DailyPrivacyReminder() {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.4 }}
           onClick={handleBackdropClick}
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/35 backdrop-blur-md select-none"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/15 backdrop-blur-[5px] select-none"
         >
           {/* Glassmorphic Modal Card */}
           <motion.div
@@ -118,7 +118,7 @@ export default function DailyPrivacyReminder() {
             }}
             // Float gently effect
             style={shiftGradientStyle}
-            className="w-full max-w-md rounded-[32px] border border-white/25 shadow-2xl p-8 relative overflow-hidden text-center bg-white/20 backdrop-blur-xl flex flex-col items-center gap-6"
+            className="w-full max-w-md rounded-[32px] border border-white/70 shadow-[0_20px_50px_rgba(124,107,196,0.15)] p-8 relative overflow-hidden text-center backdrop-blur-xl flex flex-col items-center gap-6"
           >
             {/* Pulsing Animated Border Ring */}
             <div className="absolute inset-0 border-[2px] border-transparent rounded-[32px] pointer-events-none after:content-[''] after:absolute after:inset-[-2px] after:rounded-[32px] after:border-2 after:border-primary/20 after:animate-pulse" />
@@ -144,7 +144,7 @@ export default function DailyPrivacyReminder() {
                     repeat: Infinity,
                     delay: i * 1.5,
                   }}
-                  className="absolute w-1.5 h-1.5 rounded-full bg-white/50"
+                  className="absolute w-1.5 h-1.5 rounded-full bg-primary/20"
                   style={{
                     left: `${15 + i * 14}%`,
                     bottom: "-10px",
@@ -164,7 +164,7 @@ export default function DailyPrivacyReminder() {
             </div>
 
             {/* Footer with lock */}
-            <div className="z-10 py-1.5 px-4 rounded-full bg-surface-container-low/30 border border-white/10 text-xs font-bold text-on-surface-variant flex items-center gap-1.5">
+            <div className="z-10 py-1.5 px-4 rounded-full bg-primary-container/10 border border-primary/10 text-xs font-bold text-primary flex items-center gap-1.5">
               <span>🔒 Your wellbeing belongs to you.</span>
             </div>
 
