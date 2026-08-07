@@ -28,7 +28,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
   const isAdminRoute = pathname.startsWith("/admin") || pathname.startsWith("/companion");
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
 
-  // Listen for custom menu drawer trigger from DynamicHeader
+  // Listen for custom menu drawer trigger
   useEffect(() => {
     const handleOpen = () => setIsMobileDrawerOpen(true);
     window.addEventListener("open-mobile-drawer", handleOpen);
@@ -39,50 +39,51 @@ export default function AppShell({ children }: { children: ReactNode }) {
     <CategoryProvider>
       <AssessmentProvider>
         <WellnessProvider>
-          {isStandalone ? (
-            /* Standalone Onboarding / Auth Layout */
-            <div className="min-h-screen bg-background text-on-background font-sans antialiased">
-              {children}
-            </div>
-          ) : isAdminRoute ? (
-            /* Dedicated Admin Listener Portal Shell - Isolated from Regular User Navigation */
-            <div className="min-h-screen bg-background text-on-background font-sans antialiased flex flex-col">
-              <AdminHeader />
-              <main className="flex-1 px-4 md:px-8 py-6 max-w-7xl mx-auto w-full">
+          <HeaderProvider>
+            {isStandalone ? (
+              /* Standalone Onboarding / Auth Layout */
+              <div className="min-h-screen bg-background text-on-background font-sans antialiased">
                 {children}
-              </main>
-            </div>
-          ) : (
-            /* Main Regular User Application Shell with Sidebar & Header */
-            <div className="flex min-h-screen bg-background text-on-background font-sans antialiased overflow-hidden">
-              {/* Desktop Left Sidebar */}
-              <DesktopSidebar />
-
-              {/* Main Content Area */}
-              <div className="flex-1 flex flex-col min-w-0 md:ml-[80px] lg:ml-[260px] h-screen overflow-y-auto pb-16 md:pb-6">
-                <Header onOpenMenu={() => setIsMobileDrawerOpen(true)} />
-                <main className="flex-1 px-3 md:px-6 py-4 max-w-7xl mx-auto w-full">
+              </div>
+            ) : isAdminRoute ? (
+              /* Dedicated Admin Listener Portal Shell - Isolated from Regular User Navigation */
+              <div className="min-h-screen bg-background text-on-background font-sans antialiased flex flex-col">
+                <AdminHeader />
+                <main className="flex-1 px-4 md:px-8 py-6 max-w-7xl mx-auto w-full">
                   {children}
                 </main>
               </div>
+            ) : (
+              /* Main Regular User Application Shell with Sidebar & Header */
+              <div className="flex min-h-screen bg-background text-on-background font-sans antialiased overflow-hidden">
+                {/* Desktop Left Sidebar */}
+                <DesktopSidebar />
 
-              {/* Mobile Animated Drawer navigation overlay */}
-              <AnimatePresence>
-                {isMobileDrawerOpen && (
-                  <MobileDrawer
-                    isOpen={isMobileDrawerOpen}
-                    onClose={() => setIsMobileDrawerOpen(false)}
-                  />
-                )}
-              </AnimatePresence>
+                {/* Main Content Area */}
+                <div className="flex-1 flex flex-col min-w-0 md:ml-[80px] lg:ml-[260px] h-screen overflow-y-auto pb-16 md:pb-6">
+                  <Header onOpenMenu={() => setIsMobileDrawerOpen(true)} />
+                  <main className="flex-1 px-3 md:px-6 py-4 max-w-7xl mx-auto w-full">
+                    {children}
+                  </main>
+                </div>
 
-              {/* Mobile Bottom Navigation Bar */}
-              <MobileTabBar />
-            </div>
-          )}
+                {/* Mobile Animated Drawer navigation overlay */}
+                <AnimatePresence>
+                  {isMobileDrawerOpen && (
+                    <MobileDrawer
+                      isOpen={isMobileDrawerOpen}
+                      onClose={() => setIsMobileDrawerOpen(false)}
+                    />
+                  )}
+                </AnimatePresence>
+
+                {/* Mobile Bottom Navigation Bar */}
+                <MobileTabBar />
+              </div>
+            )}
+          </HeaderProvider>
         </WellnessProvider>
       </AssessmentProvider>
     </CategoryProvider>
   );
 }
-

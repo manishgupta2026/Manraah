@@ -19,7 +19,7 @@ export async function GET(req: Request) {
     if (userResult.length === 0) {
       const defaultName = userId === "demo-user" ? "Demo Member" : "Sanctuary Member";
       const defaultEmail = userId === "demo-user" ? "demo@manraah.com" : `${userId}@manraah.com`;
-      const defaultCategory = "parent"; // default to parent so parent dashboard is loaded
+      const defaultCategory = "parent";
       await sql`
         INSERT INTO users (id, name, email, selected_category, streak_days, mindfulness_minutes, current_mood)
         VALUES (${userId}, ${defaultName}, ${defaultEmail}, ${defaultCategory}, 1, 0, 'Sanctuary Member')
@@ -33,6 +33,15 @@ export async function GET(req: Request) {
       }
     }
     const user = userResult[0];
+
+    // Migrate/generate sanctuary name if missing
+    let sanctuaryName = user.sanctuary_name || user.name || "Sanctuary Member";
+    if (!user.sanctuary_name) {
+      sanctuaryName = await generateUniqueSanctuaryName();
+      await sql`
+        UPDATE users SET sanctuary_name = ${sanctuaryName}, name = ${sanctuaryName} WHERE id = ${user.id}
+      `;
+    }
 
     // 2. Fetch all dashboard analytics concurrently in parallel (Promise.all)
     const [history, weeklySummary, monthlySummary, insights, streak] = await Promise.all([
@@ -57,8 +66,7 @@ export async function GET(req: Request) {
     if (finalTodayMood) {
       const moodLower = finalTodayMood.mood.toLowerCase();
       
-      // Override recommendation dynamically based on checkin responses
-      if (finalTodayMood.energy <= 2 || moodLower === "exhausted" || moodLower === "exhausted" || moodLower === "tired" || moodLower === "sleepy") {
+      if (finalTodayMood.energy <= 2 || moodLower === "exhausted" || moodLower === "tired" || moodLower === "sleepy") {
         recommendation = "Your energy level is very depleted. We strongly recommend relaxing to sleep soundscapes (like Ocean Waves) instead of active meditation.";
       } else if (finalTodayMood.stress === "High" || finalTodayMood.stress === "Very High" || moodLower === "anxious" || moodLower === "overwhelmed" || moodLower === "frustrated") {
         recommendation = "System registers heightened tension rates. Try completing a 5-minute deep breathing session in the Mindfulness Player.";
