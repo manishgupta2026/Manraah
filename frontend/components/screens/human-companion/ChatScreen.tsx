@@ -47,7 +47,6 @@ export default function ChatScreen({ listener, roomId, onEndSession, onSwitchToC
     socket.emit("join_room", { roomId, userAlias: "User" });
 
     const handleIncomingChatMessage = (data: { id: string; senderType: string; message: string; createdAt?: string }) => {
-      console.log("⚡ Real-time chat message received on User side:", data);
       const isListener = data.senderType === "listener" || data.senderType === "companion";
       
       setMessages((prev) => {

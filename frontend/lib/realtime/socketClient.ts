@@ -15,18 +15,12 @@ export function getSocketClient(): Socket {
       socketUrl = "https://tradesagaai.duckdns.org";
     }
 
-    console.log("⚡ Connecting Socket.IO client to:", socketUrl);
-
     socket = io(socketUrl, {
       autoConnect: true,
       reconnection: true,
       reconnectionAttempts: 15,
       reconnectionDelay: 1000,
       transports: ["polling", "websocket"],
-    });
-
-    socket.on("connect", () => {
-      console.log("⚡ Connected to Manraah WebSocket Server:", socket?.id);
     });
 
     socket.on("connect_error", (err) => {

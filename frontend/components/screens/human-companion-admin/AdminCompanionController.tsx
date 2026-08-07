@@ -22,7 +22,6 @@ export default function AdminCompanionController() {
     const socket = getSocketClient();
 
     const subscribeQueue = () => {
-      console.log("⚡ Companion Listener subscribing to companion_queue on connection...");
       socket.emit("join_companion_queue");
     };
 
@@ -32,7 +31,6 @@ export default function AdminCompanionController() {
     socket.on("connect", subscribeQueue);
 
     const handleQueueUpdate = (data: { action: string; room?: any; roomId?: string }) => {
-      console.log("⚡ Listener Console received queue update:", data);
       if (data.action === "join" && data.room) {
         const incomingUser: AnonymizedUser = {
           id: data.room.id,
@@ -58,7 +56,6 @@ export default function AdminCompanionController() {
     };
 
     const handleSessionEnded = () => {
-      console.log("⚡ Real-time session ended by user");
       setActiveUser(null);
       setStep("FLAG");
     };

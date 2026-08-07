@@ -48,7 +48,6 @@ export default function AdminChatScreen({
     socket.emit("join_room", { roomId, userAlias: "Peer Listener #104" });
 
     const handleIncomingChatMessage = (data: { id: string; senderType: string; message: string; createdAt?: string }) => {
-      console.log("⚡ Real-time chat message received on Admin Listener side:", data);
       const isListener = data.senderType === "listener" || data.senderType === "companion";
 
       setMessages((prev) => {

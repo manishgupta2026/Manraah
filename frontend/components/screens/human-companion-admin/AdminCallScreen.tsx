@@ -50,7 +50,6 @@ export default function AdminCallScreen({
 
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
-      console.log("🎙️ Listener microphone permission granted!");
       localStreamRef.current = stream;
       setHasMicPermission(true);
       setMicErrorMsg(null);
@@ -75,7 +74,6 @@ export default function AdminCallScreen({
 
     // Receive Remote Audio Track & Play
     pc.ontrack = (event) => {
-      console.log("⚡ Admin Listener received remote audio track:", event.streams);
       if (remoteAudioRef.current && event.streams[0]) {
         remoteAudioRef.current.srcObject = event.streams[0];
         remoteAudioRef.current.play().catch((err) => console.warn("Audio autoplay fallback:", err));
@@ -89,7 +87,6 @@ export default function AdminCallScreen({
     };
 
     pc.onconnectionstatechange = () => {
-      console.log("⚡ Listener RTCPeerConnection state:", pc.connectionState);
       if (pc.connectionState === "connected") {
         setCallStatus("CONNECTED");
       }
@@ -100,7 +97,6 @@ export default function AdminCallScreen({
 
     // Socket Event Listeners
     socket.on("offer", async (data: { sdpOffer: RTCSessionDescriptionInit }) => {
-      console.log("⚡ Listener received WebRTC Offer:", data);
       if (pc.signalingState !== "closed") {
         await pc.setRemoteDescription(new RTCSessionDescription(data.sdpOffer));
         const answer = await pc.createAnswer();
@@ -112,7 +108,6 @@ export default function AdminCallScreen({
     });
 
     socket.on("answer", async (data: { sdpAnswer: RTCSessionDescriptionInit }) => {
-      console.log("⚡ Listener received WebRTC Answer:", data);
       if (pc.signalingState === "have-local-offer") {
         await pc.setRemoteDescription(new RTCSessionDescription(data.sdpAnswer));
         setCallStatus("CONNECTED");
