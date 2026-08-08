@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { MAIN_NAV_ITEMS } from "@/frontend/lib/constants";
+import { MAIN_NAV_ITEMS, getCategoryJourneyBadge } from "@/frontend/lib/constants";
 import { getClientSession } from "@/backend/auth/client";
 import { getInitials, getPastelBgColor, getPastelTextColor } from "@/frontend/lib/avatar-helper";
 
@@ -23,26 +23,6 @@ export default function DesktopSidebar() {
       setStreakDays(session.user.streakDays || 12);
     }
   }, []);
-
-  const getCategoryJourney = (cat: string) => {
-    const map: Record<string, string> = {
-      student: "Student Journey",
-      young_pro: "Young Professional",
-      youngprofessional: "Young Professional",
-      working_professional: "Working Professional",
-      workingprofessional: "Working Professional",
-      parent: "Parent Journey",
-      parents: "Parent Journey",
-      couple: "Harmony Journey",
-      couples: "Harmony Journey",
-      family: "Family Journey",
-      women: "Women's Journey",
-      men: "Men's Journey",
-      senior_citizen: "Golden Journey",
-      seniorcitizen: "Golden Journey",
-    };
-    return map[cat] || "Wellness Journey";
-  };
 
   return (
     <aside className="hidden md:flex flex-col fixed top-0 left-0 h-screen w-[80px] lg:w-[260px] bg-white border-r border-surface-variant/40 z-30 shadow-soft transition-all duration-300">
@@ -101,7 +81,7 @@ export default function DesktopSidebar() {
             )}
             <div className="min-w-0 flex-1">
               <p className="text-xs font-extrabold text-on-surface truncate leading-tight">{userName}</p>
-              <p className="text-[10px] font-bold text-primary truncate leading-tight mt-0.5">{getCategoryJourney(category)}</p>
+              <p className="text-[10px] font-bold text-primary truncate leading-tight mt-0.5">{getCategoryJourneyBadge(category)}</p>
             </div>
           </div>
           

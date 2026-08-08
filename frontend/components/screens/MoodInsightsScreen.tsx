@@ -40,7 +40,7 @@ export default function MoodInsightsScreen() {
   const [hoveredDay, setHoveredDay] = useState<any | null>(null);
   const [showReflectionModal, setShowReflectionModal] = useState<any | null>(null);
 
-  const history = dashboardData?.history || [];
+  const history = dashboardData?.moodHistory || [];
   const streak = dashboardData?.streak?.currentStreak || 12;
 
   // 1. Resolve Today's Log
@@ -388,7 +388,7 @@ export default function MoodInsightsScreen() {
               <path d={curveD} fill="none" stroke="#A78BFA" strokeWidth="3" strokeLinecap="round" />
               
               {/* Nodes circles */}
-              {timelinePoints.map((pt, idx) => (
+              {timelinePoints.map((pt: any, idx: number) => (
                 <circle
                   key={idx}
                   cx={pt.x}
@@ -404,7 +404,7 @@ export default function MoodInsightsScreen() {
 
             {/* Emojis positioning row */}
             <div className="relative w-full h-8 mt-2 flex justify-between px-6 text-xs select-none">
-              {timelinePoints.map((pt, idx) => {
+              {timelinePoints.map((pt: any, idx: number) => {
                 const moodInfo = MOOD_DATA[pt.item.mood] || DEFAULT_MOOD;
                 return (
                   <div

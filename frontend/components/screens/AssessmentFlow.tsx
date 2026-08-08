@@ -89,12 +89,11 @@ export default function AssessmentFlow() {
     else setTimeOfDay("night");
   }, []);
 
-  // Load the 10 questions dynamically based on selected category
+  // Load the 15 questions dynamically based on selected category (5 common + 10 category-specific)
   const questions = assessmentEngine.getQuestionsForCategory(selectedCategory);
   const totalQuestions = questions.length;
-  const isCompleted = currentQuestionIndex >= totalQuestions;
-
-  const question = !isCompleted ? questions[currentQuestionIndex] : null;
+  const safeIndex = Math.min(Math.max(0, currentQuestionIndex), Math.max(0, totalQuestions - 1));
+  const question = questions[safeIndex] || questions[0] || null;
 
   // Find if there is an existing answer for this question to pre-fill selection
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
@@ -107,7 +106,7 @@ export default function AssessmentFlow() {
     } else {
       setSelectedOptionId(null);
     }
-  }, [currentQuestionIndex, detailedAnswers, question?.id]);
+  }, [safeIndex, detailedAnswers, question?.id]);
 
   const handleSelectOption = (optionId: string) => {
     setSelectedOptionId(optionId);
@@ -139,9 +138,9 @@ export default function AssessmentFlow() {
       }
     }
 
-    if (currentQuestionIndex < totalQuestions - 1) {
+    if (safeIndex < totalQuestions - 1) {
       setDirection(1);
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
+      setCurrentQuestionIndex(safeIndex + 1);
     } else {
       // Completed all questions
       const results = evaluateWellness(currentAnswers);
@@ -152,15 +151,17 @@ export default function AssessmentFlow() {
   };
 
   const handleBack = () => {
-    if (currentQuestionIndex > 0) {
+    if (safeIndex > 0) {
       setDirection(-1);
-      setCurrentQuestionIndex(currentQuestionIndex - 1);
+      setCurrentQuestionIndex(safeIndex - 1);
+    } else {
+      router.push("/category-selection");
     }
   };
 
   const handleSkip = () => {
     let currentAnswers = [...detailedAnswers];
-    for (let i = currentQuestionIndex; i < totalQuestions; i++) {
+    for (let i = safeIndex; i < totalQuestions; i++) {
       const q = questions[i];
       const hasAnswer = currentAnswers.some((ans) => ans.questionId === q.id);
       if (!hasAnswer) {
@@ -198,9 +199,9 @@ export default function AssessmentFlow() {
     ease: [0.25, 0.8, 0.25, 1], // Smooth calming cubic-bezier curve
   };
 
-  const progressPercentage = ((currentQuestionIndex) / totalQuestions) * 100;
+  const progressPercentage = ((safeIndex) / totalQuestions) * 100;
   const activeTheme = TIME_THEMES[timeOfDay];
-  const onBackAction = currentQuestionIndex > 0 ? handleBack : () => router.push("/category-selection");
+  const onBackAction = safeIndex > 0 ? handleBack : () => router.push("/category-selection");
 
   return (
     <div className={`bg-gradient-to-b ${activeTheme.background} ${timeOfDay === "night" ? "text-slate-100" : "text-on-background"} min-h-screen relative flex flex-col justify-between py-10 px-4 md:px-8 overflow-hidden transition-all duration-1000`}>
@@ -295,7 +296,7 @@ export default function AssessmentFlow() {
               </span>
             </div>
             <span className="font-bold text-xs md:text-sm text-primary tracking-wide text-center md:text-right block">
-              Question {currentQuestionIndex + 1} of {totalQuestions}
+              Question {safeIndex + 1} of {totalQuestions}
             </span>
           </div>
 
@@ -303,7 +304,7 @@ export default function AssessmentFlow() {
           <div className={`w-full ${timeOfDay === "night" ? "bg-slate-800/80 border-slate-700/30" : "bg-white/40 border-white/20"} h-2.5 rounded-full overflow-hidden shadow-inner border`}>
             <motion.div
               className="h-full bg-gradient-to-r from-primary to-primary-purple rounded-full"
-              initial={{ width: `${((currentQuestionIndex) / (totalQuestions || 15)) * 100}%` }}
+              initial={{ width: `${((safeIndex) / (totalQuestions || 15)) * 100}%` }}
               animate={{ width: `${progressPercentage}%` }}
               transition={{ duration: 0.55, ease: "easeOut" }}
             />
@@ -315,7 +316,7 @@ export default function AssessmentFlow() {
           <AnimatePresence mode="wait" custom={direction}>
             {question && (
               <motion.div
-                key={`q-${currentQuestionIndex}`}
+                key={`q-${safeIndex}`}
                 custom={direction}
                 variants={slideVariants}
                 initial="enter"
@@ -402,11 +403,11 @@ export default function AssessmentFlow() {
 
         {/* Action Controls */}
         <div className={`flex justify-between items-center border-t pt-6 ${timeOfDay === "night" ? "border-slate-800/50" : "border-surface-variant/20"}`}>
-          {currentQuestionIndex > 0 ? (
+          {safeIndex > 0 ? (
             <button
               onClick={handleBack}
               type="button"
-              className={`px-6 py-3.5 rounded-full font-bold text-sm hover:scale-102 active:scale-98 transition-all flex items-center gap-2 border shadow-sm ${
+              className={`px-6 py-3.5 rounded-full font-bold text-sm hover:scale-102 active:scale-98 transition-all flex items-center gap-2 border shadow-sm cursor-pointer ${
                 timeOfDay === "night"
                   ? "bg-slate-900/60 border-slate-800/60 text-slate-300 hover:bg-slate-800/60"
                   : "bg-white/50 border-surface-variant/20 text-on-surface-variant hover:bg-white/80"
@@ -416,16 +417,27 @@ export default function AssessmentFlow() {
               Previous
             </button>
           ) : (
-            <div className="w-10" />
+            <button
+              onClick={() => router.push("/category-selection")}
+              type="button"
+              className={`px-6 py-3.5 rounded-full font-bold text-sm hover:scale-102 active:scale-98 transition-all flex items-center gap-2 border shadow-sm cursor-pointer ${
+                timeOfDay === "night"
+                  ? "bg-slate-900/60 border-slate-800/60 text-slate-300 hover:bg-slate-800/60"
+                  : "bg-white/50 border-surface-variant/20 text-on-surface-variant hover:bg-white/80"
+              }`}
+            >
+              <span className="material-symbols-outlined text-base">arrow_back</span>
+              Category
+            </button>
           )}
 
           <button
             onClick={handleNext}
             type="button"
             disabled={!selectedOptionId}
-            className="ml-auto px-10 py-3.5 rounded-full bg-primary text-white font-bold text-sm shadow-md hover:bg-primary-purple hover:scale-102 active:scale-98 transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center gap-2"
+            className="ml-auto px-10 py-3.5 rounded-full bg-primary text-white font-bold text-sm shadow-md hover:bg-primary-purple hover:scale-102 active:scale-98 transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center gap-2 cursor-pointer"
           >
-            {currentQuestionIndex === totalQuestions - 1 ? "Complete Assessment" : "Continue"}
+            {safeIndex === totalQuestions - 1 ? "Complete Assessment" : "Continue"}
             <span className="material-symbols-outlined text-base">arrow_forward</span>
           </button>
         </div>

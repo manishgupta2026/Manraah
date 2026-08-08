@@ -79,7 +79,12 @@ export default function WellnessScoreScreen() {
 
   return (
     <div className="max-w-3xl mx-auto py-10 px-4 space-y-8 animate-fadeIn relative">
-      <ScreenHeader title="✨ Wellness Score" showBackButton={true} fallbackRoute="/assessment" />
+      <ScreenHeader
+        title="✨ Wellness Score"
+        showBackButton={true}
+        fallbackRoute="/assessment"
+        onBack={() => router.push("/assessment")}
+      />
       {/* Calming Backdrop Glows */}
       <div className="fixed inset-0 z-[-2] opacity-35 pointer-events-none">
         <div className="absolute top-[-10%] left-[-10%] w-[60vw] md:w-[500px] h-[60vw] md:h-[500px] rounded-full bg-primary-container blur-[100px]" />
@@ -101,7 +106,7 @@ export default function WellnessScoreScreen() {
         <p className="text-sm md:text-base text-on-surface-variant/90 max-w-lg mx-auto font-light leading-relaxed">
           We've prepared your personalized wellness journey.
           <br />
-          Create your account or log in to unlock your dashboard.
+          Create your account to unlock your personalized dashboard.
         </p>
       </motion.div>
 
@@ -213,25 +218,27 @@ export default function WellnessScoreScreen() {
 
       </motion.div>
 
-      {/* CTA Buttons */}
+      {/* Action Controls & Primary CTA */}
       <motion.div 
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.2 }}
-        className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4 z-10 relative"
+        className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 z-10 relative"
       >
-        <Link
-          href="/login"
-          className="w-full sm:w-auto px-12 py-4 rounded-full bg-primary text-white font-bold text-sm shadow-lg hover:bg-primary-purple hover:scale-[1.02] transition-all text-center flex items-center justify-center gap-2"
+        <button
+          type="button"
+          onClick={() => router.push("/assessment")}
+          className="w-full sm:w-auto px-6 py-4 rounded-full bg-surface-container-low border border-surface-variant/30 text-on-surface-variant font-bold text-sm hover:bg-surface-container hover:scale-102 active:scale-98 transition-all flex items-center justify-center gap-2 cursor-pointer"
         >
-          Continue
-          <span className="material-symbols-outlined text-base">arrow_forward</span>
-        </Link>
+          <span className="material-symbols-outlined text-base">arrow_back</span>
+          <span>Back to Questions</span>
+        </button>
         <Link
           href="/signup"
-          className="w-full sm:w-auto px-8 py-4 rounded-full bg-surface-container-low text-on-surface font-semibold text-sm hover:bg-surface-container hover:scale-[1.02] transition-all text-center"
+          className="w-full sm:w-auto px-10 py-4 rounded-full bg-primary hover:bg-[#7C6BC4] text-white font-heading font-bold text-sm shadow-[0_10px_25px_rgba(95,78,165,0.25)] hover:shadow-[0_12px_30px_rgba(95,78,165,0.35)] hover:-translate-y-0.5 active:scale-98 transition-all flex items-center justify-center gap-2 text-center"
         >
-          Create New Account
+          <span>Create Your Sanctuary</span>
+          <span className="material-symbols-outlined text-base">arrow_forward</span>
         </Link>
       </motion.div>
     </div>

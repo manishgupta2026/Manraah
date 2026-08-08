@@ -30,3 +30,26 @@ export const MOBILE_TAB_ITEMS: NavItem[] = [
   { label: "Community", href: "/community", icon: "groups" },
   { label: "Profile", href: "/profile", icon: "person" },
 ];
+
+export function getCategoryJourneyBadge(cat: string | null | undefined): string {
+  if (!cat) return "🎓 Student Journey";
+  const key = cat.toLowerCase().replace(/[^a-z0-9_]/g, "");
+  const map: Record<string, string> = {
+    student: "🎓 Student Journey",
+    young_pro: "💼 Young Professional",
+    youngprofessional: "💼 Young Professional",
+    working_professional: "👔 Working Professional",
+    workingprofessional: "👔 Working Professional",
+    parent: "🍼 Parent Journey",
+    parents: "🍼 Parent Journey",
+    couple: "💖 Harmony Journey",
+    couples: "💖 Harmony Journey",
+    family: "🏡 Family Journey",
+    women: "🌸 Women's Journey",
+    men: "🌿 Men's Journey",
+    senior_citizen: "👵 Golden Journey",
+    seniorcitizen: "👵 Golden Journey",
+  };
+  return map[key] || "🌿 Wellness Journey";
+}
+

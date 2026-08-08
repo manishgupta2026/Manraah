@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { getClientSession, signOut } from "@/backend/auth/client";
 import { AuthSession } from "@/backend/types";
 import { getInitials, getPastelBgColor, getPastelTextColor } from "@/frontend/lib/avatar-helper";
+import { getCategoryJourneyBadge } from "@/frontend/lib/constants";
 import ScreenHeader from "@/frontend/components/ui/ScreenHeader";
 
 const MOCK_TAKEN_USERNAMES = ["elena", "parent", "mama", "papa", "user", "admin", "mom", "dad", "parent123", "kartik"];
@@ -321,25 +322,18 @@ export default function SettingsPrivacyScreen() {
                 </p>
               </div>
 
-              <div className="space-y-1.5 md:col-span-2">
-                <label className="block text-xs font-heading font-bold text-on-surface">Sanctuary Category (Read-only)</label>
-                <select
-                  disabled
-                  value={category}
-                  className="w-full p-3.5 rounded-2xl bg-surface-container-low/50 border border-surface-variant/20 text-sm text-on-surface-variant/60 font-medium select-none cursor-not-allowed"
-                >
-                  <option value="student">Student (Academic stress reduction)</option>
-                  <option value="young_pro">Young Professional (Career building & balance)</option>
-                  <option value="working_professional">Working Professional (Work-life harmony)</option>
-                  <option value="parent">Parent (Mindful parenting & patience)</option>
-                  <option value="couple">Couple (Nurturing shared life)</option>
-                  <option value="family">Family (Household well-being)</option>
-                  <option value="women">Women (Demographic-focused wellness)</option>
-                  <option value="men">Men (Focused mental health sanctuary)</option>
-                  <option value="senior_citizen">Senior Citizen (Gentle vitality & calm)</option>
-                </select>
-                <p className="text-[10px] text-on-surface-variant/65 leading-relaxed mt-1">
-                  Your category is chosen during onboarding and cannot be changed.
+              <div className="space-y-2 md:col-span-2">
+                <label className="block text-xs font-heading font-bold text-on-surface">Sanctuary Journey (Immutable)</label>
+                <div className="flex items-center justify-between p-3.5 rounded-2xl bg-surface-container-low/50 border border-surface-variant/30 text-sm">
+                  <span className="font-heading font-bold text-primary flex items-center gap-2">
+                    {getCategoryJourneyBadge(category)}
+                  </span>
+                  <span className="text-[10px] font-bold text-on-surface-variant/70 bg-primary/10 px-2.5 py-1 rounded-full uppercase tracking-wider">
+                    Read-only
+                  </span>
+                </div>
+                <p className="text-[10px] text-on-surface-variant/65 leading-relaxed">
+                  Your journey category was selected during onboarding and cannot be changed.
                 </p>
               </div>
             </div>

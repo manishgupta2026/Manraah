@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signUp } from "@/backend/auth/client";
-import { useAssessment } from "@/frontend/lib/context/AssessmentContext";
+import { useAssessment, clearOnboardingAssessment } from "@/frontend/lib/context/AssessmentContext";
 import ScreenHeader from "@/frontend/components/ui/ScreenHeader";
 
 export default function SignupScreen() {
@@ -32,7 +32,7 @@ export default function SignupScreen() {
     setError(null);
     try {
       // 1. Create account & persist assessment in Neon DB
-      const session = await signUp(
+      await signUp(
         sanctuaryName,
         email,
         password,
@@ -43,7 +43,10 @@ export default function SignupScreen() {
         wellnessLevel
       );
 
-      // 2. Navigate to personalized dashboard
+      // 2. Clear temporary session onboarding cache
+      clearOnboardingAssessment();
+
+      // 3. Navigate to personalized dashboard
       router.push("/dashboard");
     } catch (err: any) {
       console.error("Signup server-side error log:", err);
@@ -52,10 +55,14 @@ export default function SignupScreen() {
     }
   };
 
-
   return (
     <div className="max-w-md mx-auto py-12 px-4 space-y-8 animate-fadeIn">
-      <ScreenHeader title="✨ Join Manraah" showBackButton={true} fallbackRoute="/" />
+      <ScreenHeader
+        title="✨ Create Account"
+        showBackButton={true}
+        fallbackRoute="/wellness-score"
+        onBack={() => router.push("/wellness-score")}
+      />
       {/* Header */}
       <div className="text-center space-y-4">
         <div className="w-12 h-12 rounded-2xl gradient-primary mx-auto flex items-center justify-center text-white shadow-md">

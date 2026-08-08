@@ -64,6 +64,16 @@ function mapToLegacyAnswers(detailed: AssessmentAnswer[]): AssessmentAnswers {
 
 const AssessmentContext = createContext<AssessmentContextType | undefined>(undefined);
 
+const STORAGE_KEY = "manraah_onboarding_assessment";
+
+export function clearOnboardingAssessment() {
+  if (typeof window !== "undefined") {
+    try {
+      sessionStorage.removeItem(STORAGE_KEY);
+    } catch (e) {}
+  }
+}
+
 export function AssessmentProvider({ children }: { children: ReactNode }) {
   const [answers, setAnswers] = useState<AssessmentAnswers>({
     stressFrequency: 3,
@@ -76,8 +86,51 @@ export function AssessmentProvider({ children }: { children: ReactNode }) {
   const [detailedAnswers, setDetailedAnswers] = useState<AssessmentAnswer[]>([]);
   const [assessmentResult, setAssessmentResult] = useState<WellnessResult | null>(null);
   const [assessmentCompleted, setAssessmentCompleted] = useState<boolean>(false);
+  const [isHydrated, setIsHydrated] = useState<boolean>(false);
 
-  // Allow setting category without using localStorage
+  // Hydrate from sessionStorage on mount
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const stored = sessionStorage.getItem(STORAGE_KEY);
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (parsed.selectedCategory) setSelectedCategoryState(parsed.selectedCategory);
+          if (typeof parsed.currentQuestionIndex === "number") setCurrentQuestionIndex(parsed.currentQuestionIndex);
+          if (Array.isArray(parsed.detailedAnswers)) setDetailedAnswers(parsed.detailedAnswers);
+          if (parsed.assessmentResult) setAssessmentResult(parsed.assessmentResult);
+          if (typeof parsed.assessmentCompleted === "boolean") setAssessmentCompleted(parsed.assessmentCompleted);
+        }
+      } catch (e) {
+        console.error("Failed to restore assessment from session storage:", e);
+      } finally {
+        setIsHydrated(true);
+      }
+    }
+  }, []);
+
+  // Save to sessionStorage on state changes once hydrated
+  useEffect(() => {
+    if (!isHydrated || typeof window === "undefined") return;
+    try {
+      if (selectedCategory || detailedAnswers.length > 0) {
+        sessionStorage.setItem(
+          STORAGE_KEY,
+          JSON.stringify({
+            selectedCategory,
+            currentQuestionIndex,
+            detailedAnswers,
+            assessmentResult,
+            assessmentCompleted,
+          })
+        );
+      }
+    } catch (e) {
+      console.error("Failed to save assessment to session storage:", e);
+    }
+  }, [isHydrated, selectedCategory, currentQuestionIndex, detailedAnswers, assessmentResult, assessmentCompleted]);
+
+  // Allow setting category
   const setSelectedCategory = (cat: UserCategory | null) => {
     setSelectedCategoryState(cat);
   };
@@ -150,5 +203,6 @@ export function useAssessment() {
   }
   return context;
 }
+
 
 

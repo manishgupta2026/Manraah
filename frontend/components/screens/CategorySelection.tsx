@@ -84,7 +84,12 @@ export default function CategorySelection() {
 
   return (
     <div className="bg-surface text-on-surface font-sans min-h-screen py-12 px-4 md:px-12 flex flex-col items-center">
-      <ScreenHeader title="🌿 Select Sanctuary" showBackButton={true} fallbackRoute="/" />
+      <ScreenHeader
+        title="🌿 Select Sanctuary"
+        showBackButton={true}
+        fallbackRoute="/"
+        onBack={() => router.push("/")}
+      />
       {/* Ambient Background Layer */}
       <div className="fixed inset-0 z-[-2] opacity-35 pointer-events-none">
         <div className="absolute top-[-10%] left-[-10%] w-[60vw] md:w-[500px] h-[60vw] md:h-[500px] rounded-full bg-primary-container blur-[100px]" />

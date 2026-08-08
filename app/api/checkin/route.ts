@@ -166,31 +166,124 @@ export async function POST(req: Request) {
     }
 
     // 7. Generate updated dashboard payload (Single source of truth)
-    const userResult = await sql`
-      SELECT id, name, email, sanctuary_name, avatar, selected_category, streak_days, mindfulness_minutes, current_mood FROM users WHERE id = ${userId} LIMIT 1
-    `;
-    const user = userResult[0];
-    const sanctuaryName = user.sanctuary_name || user.name;
+    const [
+      userResult,
+      latestCheckInResult,
+      moodHistory,
+      wellnessMetrics,
+      journalEntries,
+      streakResult2,
+    ] = await Promise.all([
+      sql`
+        SELECT id, name, email, sanctuary_name, avatar, selected_category, streak_days, mindfulness_minutes, current_mood 
+        FROM users 
+        WHERE id = ${userId} 
+        LIMIT 1
+      `,
+      sql`
+        SELECT id, user_id, mood, energy_level, sleep_quality, gratitude_reflection, daily_intention, reflection, created_at 
+        FROM daily_checkins 
+        WHERE user_id = ${userId} 
+        ORDER BY created_at DESC 
+        LIMIT 1
+      `,
+      sql`
+        SELECT id, user_id, mood, energy, stress, reflection, factors, created_at 
+        FROM mood_entries 
+        WHERE user_id = ${userId} 
+        ORDER BY created_at DESC 
+        LIMIT 7
+      `,
+      sql`
+        SELECT id, user_id, date, wellness_score, stress_score, energy_score, sleep_score, mood_score, streak 
+        FROM wellness_metrics 
+        WHERE user_id = ${userId} 
+        ORDER BY date DESC 
+        LIMIT 7
+      `,
+      sql`
+        SELECT id, user_id, title, excerpt, content, mood_tag, category, created_at 
+        FROM journal_entries 
+        WHERE user_id = ${userId} 
+        ORDER BY created_at DESC 
+        LIMIT 5
+      `,
+      sql`
+        SELECT current_streak, longest_streak, last_checkin_date 
+        FROM user_streaks 
+        WHERE user_id = ${userId} 
+        LIMIT 1
+      `,
+    ]);
 
-    const history = await getMoodHistory(userId, "all");
-    const weeklySummary = await getWeeklySummary(userId);
-    const monthlySummary = await getMonthlySummary(userId);
-    const insights = await getMoodInsights(userId);
+    const user = userResult[0] || {};
+    const sanctuaryName = user.sanctuary_name || user.name || "Sanctuary Member";
 
-    const todayMood = history.length > 0 ? history[0] : null;
-    const isToday = todayMood ? new Date(todayMood.created_at).toDateString() === now.toDateString() : false;
-    const finalTodayMood = isToday ? todayMood : null;
+    let latestCheckIn: any = null;
+    if (latestCheckInResult.length > 0) {
+      const checkin = latestCheckInResult[0];
+      const matchMood = moodHistory.find(
+        (m: any) => new Date(m.created_at).toDateString() === new Date(checkin.created_at).toDateString()
+      );
+      latestCheckIn = {
+        ...checkin,
+        stress: matchMood ? matchMood.stress : "Manageable",
+      };
+    }
 
-    let recommendation = weeklySummary?.aiRecommendation || "Focus on matching your pace with slow cycles to restore internal alignment.";
-    if (finalTodayMood) {
-      const moodLower = finalTodayMood.mood.toLowerCase();
-      if (finalTodayMood.energy <= 2 || moodLower === "exhausted" || moodLower === "tired" || moodLower === "sleepy") {
-        recommendation = "Your energy level is very depleted. We strongly recommend relaxing to sleep soundscapes (like Ocean Waves) instead of active meditation.";
-      } else if (finalTodayMood.stress === "High" || finalTodayMood.stress === "Very High" || moodLower === "anxious" || moodLower === "overwhelmed" || moodLower === "frustrated") {
-        recommendation = "System registers heightened tension rates. Try completing a 5-minute deep breathing session in the Mindfulness Player.";
-      } else if (moodLower === "sad" || moodLower === "low") {
-        recommendation = "Logging reflections in the Sanctuary Journal is recommended to release emotional weight and build coping context.";
+    const streakInfo = streakResult2.length > 0 ? streakResult2[0] : { current_streak: currentStreak, longest_streak: 1 };
+
+    // Generate dynamic recommendations based on check-in count
+    let recommendation = "";
+    if (moodHistory.length < 5) {
+      recommendation = "We're still getting to know your wellness patterns. Keep checking in daily for more personalized suggestions.";
+    } else {
+      recommendation = "Focus on matching your pace with slow cycles to restore internal alignment.";
+      if (latestCheckIn) {
+        const moodLower = latestCheckIn.mood.toLowerCase();
+        if (latestCheckIn.energy_level <= 2 || moodLower === "exhausted" || moodLower === "tired" || moodLower === "sleepy") {
+          recommendation = "Your energy level is very depleted. We strongly recommend relaxing to sleep soundscapes (like Ocean Waves) instead of active meditation.";
+        } else if (latestCheckIn.stress === "High" || latestCheckIn.stress === "Very High" || latestCheckIn.stress === "Stressful" || latestCheckIn.stress === "Very overwhelming" || moodLower === "anxious" || moodLower === "overwhelmed" || moodLower === "frustrated") {
+          recommendation = "System registers heightened tension rates. Try completing a 5-minute deep breathing session in the Mindfulness Player.";
+        } else if (moodLower === "sad" || moodLower === "low") {
+          recommendation = "Logging reflections in the Sanctuary Journal is recommended to release emotional weight and build coping context.";
+        }
       }
+    }
+
+    // Generate dynamic insights based on check-in count
+    let insights = [];
+    if (moodHistory.length <= 2) {
+      insights = [{ insightText: "We're learning about your wellness journey." }];
+    } else if (moodHistory.length <= 6) {
+      insights = [{ insightText: "We're beginning to identify your emotional patterns." }];
+    } else {
+      const entries = moodHistory;
+      const generated = [];
+
+      const familyEntries = entries.filter((e: any) => e.factors?.toLowerCase().includes("family"));
+      const familyHappy = familyEntries.filter((e: any) => ["amazing", "happy", "calm", "good"].includes(e.mood.toLowerCase()));
+      if (familyEntries.length >= 2 && familyHappy.length / familyEntries.length >= 0.7) {
+        generated.push({ insightText: "Family interactions significantly lift your spirits." });
+      }
+
+      const studyEntries = entries.filter((e: any) => e.factors?.toLowerCase().includes("studies") || e.factors?.toLowerCase().includes("work"));
+      const studyTensed = studyEntries.filter((e: any) => ["anxious", "overwhelmed", "frustrated"].includes(e.mood.toLowerCase()) || ["High", "Very High", "Stressful", "Very overwhelming"].includes(e.stress));
+      if (studyEntries.length >= 2 && studyTensed.length / studyEntries.length >= 0.6) {
+        generated.push({ insightText: "Your stress indices increase noticeably during heavy work/study segments." });
+      }
+
+      const mondayEntries = entries.filter((e: any) => new Date(e.created_at).getDay() === 1);
+      const mondayAnxious = mondayEntries.filter((e: any) => e.mood.toLowerCase() === "anxious" || e.mood.toLowerCase() === "exhausted");
+      if (mondayEntries.length >= 2 && mondayAnxious.length / mondayEntries.length >= 0.5) {
+        generated.push({ insightText: "You experience higher morning fatigue/restlessness on Mondays." });
+      }
+
+      if (generated.length === 0) {
+        generated.push({ insightText: "Your stress levels show improvement on days with lower factor loads." });
+        generated.push({ insightText: "Logging reflections consistently correlates with higher energy scores." });
+      }
+      insights = generated;
     }
 
     const dashboardState = {
@@ -201,20 +294,22 @@ export async function POST(req: Request) {
         email: user.email,
         avatar: user.avatar || "/images/user_avatar.jpg",
         selectedCategory: user.selected_category || "student",
-        streakDays: currentStreak,
+        streakDays: streakInfo.current_streak || user.streak_days || 1,
         mindfulnessMinutes: user.mindfulness_minutes || 0,
         currentMood: user.current_mood || "Sanctuary Member",
       },
-      todayMood: finalTodayMood,
-      history,
-      weeklySummary,
-      monthlySummary,
-      insights,
+      todayMood: latestCheckIn && new Date(latestCheckIn.created_at).toDateString() === new Date().toDateString() ? latestCheckIn : null,
+      latestCheckIn,
+      moodHistory,
+      wellnessMetrics,
+      journalEntries,
       streak: {
-        currentStreak,
-        longestStreak: Math.max(currentStreak, streakResult[0]?.longest_streak || 1),
+        currentStreak: streakInfo.current_streak || 1,
+        longestStreak: streakInfo.longest_streak || 1,
       },
       recommendation,
+      recommendations: [recommendation],
+      insights,
     };
 
     return NextResponse.json(dashboardState);

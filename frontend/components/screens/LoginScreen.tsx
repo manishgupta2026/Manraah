@@ -4,13 +4,10 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signIn } from "@/backend/auth/client";
-import { useAssessment } from "@/frontend/lib/context/AssessmentContext";
 import ScreenHeader from "@/frontend/components/ui/ScreenHeader";
 
 export default function LoginScreen() {
   const router = useRouter();
-  const { selectedCategory, detailedAnswers, totalScore, percentage, wellnessLevel } = useAssessment();
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -23,29 +20,23 @@ export default function LoginScreen() {
     setLoading(true);
     setError(null);
     try {
-      // Pass the onboarding assessment details (if any) directly to signIn API
-      await signIn(
-        email,
-        password,
-        selectedCategory || "student",
-        detailedAnswers,
-        totalScore,
-        percentage,
-        wellnessLevel
-      );
-
+      await signIn(email.trim(), password);
       router.push("/dashboard");
     } catch (err: any) {
-      console.error("Login server-side error log:", err);
+      console.error("Login error log:", err);
       setError("Invalid email or password. Please try again.");
       setLoading(false);
     }
   };
 
-
   return (
     <div className="max-w-md mx-auto py-12 px-4 space-y-8 animate-fadeIn">
-      <ScreenHeader title="🔑 Sign In" showBackButton={true} fallbackRoute="/" />
+      <ScreenHeader
+        title="🔑 Log In"
+        showBackButton={true}
+        fallbackRoute="/"
+        onBack={() => router.push("/")}
+      />
       {/* Header */}
       <div className="text-center space-y-3">
         <div className="w-12 h-12 rounded-2xl gradient-primary mx-auto flex items-center justify-center text-white shadow-md">
@@ -70,7 +61,7 @@ export default function LoginScreen() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="aanya@example.com"
-            className="w-full p-3.5 rounded-2xl bg-surface-container-low border border-surface-variant/40 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
+            className="w-full p-3.5 rounded-2xl bg-surface-container-low border border-surface-variant/40 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 font-medium text-on-surface"
           />
         </div>
 
@@ -89,16 +80,16 @@ export default function LoginScreen() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full py-4 rounded-full bg-primary text-white font-bold text-sm shadow-md hover:bg-primary-purple transition-all scale-105"
+          className="w-full py-4 rounded-full bg-primary hover:bg-[#7C6BC4] text-white font-heading font-bold text-sm shadow-[0_10px_25px_rgba(95,78,165,0.25)] hover:shadow-[0_12px_30px_rgba(95,78,165,0.35)] transition-all hover:-translate-y-0.5 active:scale-98 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {loading ? "Signing In..." : "Log In to Sanctuary →"}
+          {loading ? "Entering Sanctuary..." : "Enter My Sanctuary →"}
         </button>
 
         <div className="text-center pt-2">
           <p className="text-xs text-on-surface-variant">
             Don't have an account yet?{" "}
-            <Link href="/signup" className="font-bold text-primary hover:underline">
-              Create Account
+            <Link href="/category-selection" className="font-bold text-primary hover:underline">
+              Get Started
             </Link>
           </p>
         </div>
@@ -106,3 +97,4 @@ export default function LoginScreen() {
     </div>
   );
 }
+

@@ -168,7 +168,7 @@ export default function WelcomeFlow() {
             <motion.div variants={itemVariants} className="flex flex-col sm:flex-row items-center gap-4 pt-2 w-full sm:w-auto">
               <button
                 onClick={() => router.push("/category-selection")}
-                className="w-full sm:w-auto px-9 py-4 rounded-full bg-primary hover:bg-[#7C6BC4] text-white font-heading font-bold text-sm shadow-[0_10px_25px_rgba(95,78,165,0.25)] hover:shadow-[0_12px_30px_rgba(95,78,165,0.35)] hover:-translate-y-0.5 active:scale-97 transition-all duration-300 flex items-center justify-center gap-1.5"
+                className="w-full sm:w-auto px-9 py-4 rounded-full bg-primary hover:bg-[#7C6BC4] text-white font-heading font-bold text-sm shadow-[0_10px_25px_rgba(95,78,165,0.25)] hover:shadow-[0_12px_30px_rgba(95,78,165,0.35)] hover:-translate-y-0.5 active:scale-97 transition-all duration-300 flex items-center justify-center gap-1.5 cursor-pointer"
               >
                 <span>🌿 Get Started</span>
               </button>
@@ -176,7 +176,7 @@ export default function WelcomeFlow() {
                 href="/login"
                 className={`w-full sm:w-auto text-center px-9 py-4 rounded-full bg-white/45 border border-[#7C6BC4]/20 font-heading font-semibold text-sm hover:-translate-y-0.5 active:scale-97 transition-all duration-300 ${isNight ? "text-slate-200 hover:bg-white/10" : "text-on-surface-variant hover:bg-primary/5"}`}
               >
-                Already have an account? Log In
+                Log In
               </Link>
             </motion.div>
           </div>
