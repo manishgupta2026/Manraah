@@ -124,9 +124,11 @@ export default function DailyCheckInScreen() {
   const { dashboardData, submitCheckIn } = useWellness();
 
   // Wizard step state: 
-  // 0: Welcome, 1: Mood, 2: Energy, 3: Stress, 4: Sleep, 5: Gratitude, 6: Reflection, 7: Success
+  // 0: Welcome, 1: Mood, 2: Energy, 3: Stress, 4: Sleep, 5: Gratitude, 6: Reflection
   const [step, setStep] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   // Check-in Inputs
   const [mood, setMood] = useState("");
@@ -138,6 +140,19 @@ export default function DailyCheckInScreen() {
 
   const [dateString, setDateString] = useState("");
   const [ambientLeaves, setAmbientLeaves] = useState<{ id: number; left: number; delay: number; duration: number }[]>([]);
+
+  // Prefill existing check-in data if already logged today
+  useEffect(() => {
+    if (dashboardData?.todayMood) {
+      const tm = dashboardData.todayMood;
+      if (tm.mood) setMood(tm.mood);
+      if (tm.energy_level !== undefined && tm.energy_level !== null) setEnergy(tm.energy_level);
+      if (tm.stress) setStress(tm.stress);
+      if (tm.sleep_quality !== undefined && tm.sleep_quality !== null) setSleep(tm.sleep_quality);
+      if (tm.gratitude_reflection) setGratitude(tm.gratitude_reflection);
+      if (tm.reflection) setReflection(tm.reflection);
+    }
+  }, [dashboardData?.todayMood]);
 
   useEffect(() => {
     // Format date beautifully
@@ -156,7 +171,7 @@ export default function DailyCheckInScreen() {
     setAmbientLeaves(leaves);
   }, []);
 
-  const streakVal = dashboardData?.streak?.currentStreak || 12;
+  const streakVal = dashboardData?.streak?.currentStreak || 1;
 
   // Empathetic microcopy tips
   const encouragementText = (() => {
@@ -176,7 +191,7 @@ export default function DailyCheckInScreen() {
   })();
 
   const handleNext = () => {
-    if (step < 7) setStep((p) => p + 1);
+    if (step < 6) setStep((p) => p + 1);
   };
 
   const handleBack = () => {
@@ -184,20 +199,27 @@ export default function DailyCheckInScreen() {
   };
 
   const handleSave = async () => {
+    if (loading) return;
     setLoading(true);
+    setErrorMessage(null);
     try {
       await submitCheckIn({
         mood: mood || "Calm",
-        energy: energy || 3,
+        energy: energy !== null ? energy : 3,
         stress: stress || "Manageable",
-        sleep: sleep || 3,
-        reflection: reflection || "A quiet moment of reflection.",
-        factors: gratitude || "Sanctuary logs",
+        sleep: sleep !== null ? sleep : 3,
+        reflection: reflection.trim(),
+        factors: gratitude.trim(),
+        gratitude: gratitude.trim(),
       });
-      setStep(7);
-    } catch (err) {
-      console.error("Failed saving daily log:", err);
-    } finally {
+      setSuccessMessage("Your reflection is safely tucked away 🌱");
+      // Seamlessly redirect to /dashboard after confirmation
+      setTimeout(() => {
+        router.push("/dashboard");
+      }, 500);
+    } catch (err: any) {
+      console.error("[DailyCheckIn] Failed saving daily log:", err);
+      setErrorMessage("Your reflection couldn't be saved right now. Your thoughts are still here — please try again.");
       setLoading(false);
     }
   };
@@ -601,7 +623,7 @@ export default function DailyCheckInScreen() {
                   <p className="text-xs text-on-surface-variant">Optional. Free writing inside your private sanctuary.</p>
                 </div>
 
-                <div className="max-w-lg mx-auto w-full">
+                <div className="max-w-lg mx-auto w-full space-y-3">
                   <textarea
                     rows={5}
                     value={reflection}
@@ -609,18 +631,31 @@ export default function DailyCheckInScreen() {
                     placeholder="Anything you'd like to share with yourself today..."
                     className="w-full p-5 rounded-2xl bg-white/30 border border-white/40 text-xs focus:outline-none focus:ring-2 focus:ring-primary/45 leading-relaxed text-slate-800 placeholder-slate-400 font-semibold"
                   />
+
+                  {errorMessage && (
+                    <div className="p-3 rounded-2xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold text-center animate-fadeIn">
+                      {errorMessage}
+                    </div>
+                  )}
+
+                  {successMessage && (
+                    <div className="p-3 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-bold text-center animate-fadeIn flex items-center justify-center gap-1.5">
+                      <span>✨</span>
+                      <span>{successMessage}</span>
+                    </div>
+                  )}
                 </div>
 
                 <div className="flex justify-between items-center w-full pt-4">
-                  <button onClick={handleBack} className="text-xs font-bold text-on-surface-variant hover:opacity-80">
+                  <button onClick={handleBack} disabled={loading} className="text-xs font-bold text-on-surface-variant hover:opacity-80 disabled:opacity-40">
                     Back
                   </button>
                   <button
                     onClick={handleSave}
                     disabled={loading}
-                    className="px-10 py-3.5 rounded-full bg-primary hover:bg-primary-purple text-white font-bold text-xs shadow-md disabled:opacity-50"
+                    className="px-10 py-3.5 rounded-full bg-primary hover:bg-primary-purple text-white font-bold text-xs shadow-md disabled:opacity-50 transition-all cursor-pointer"
                   >
-                    {loading ? "Saving Today's Reflection..." : "Save Today's Reflection"}
+                    {loading ? "Saving your reflection..." : "Save Today's Reflection"}
                   </button>
                 </div>
               </motion.div>

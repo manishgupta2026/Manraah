@@ -43,6 +43,7 @@ interface WellnessContextType {
     sleep?: number;
     reflection?: string;
     factors?: string;
+    gratitude?: string;
   }) => Promise<any>;
 }
 
@@ -122,6 +123,7 @@ export function WellnessProvider({ children }: { children: ReactNode }) {
     sleep?: number;
     reflection?: string;
     factors?: string;
+    gratitude?: string;
   }) => {
     try {
       const res = await fetch("/api/checkin", {

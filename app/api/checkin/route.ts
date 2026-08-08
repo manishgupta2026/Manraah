@@ -5,15 +5,22 @@ import { getMoodHistory, getWeeklySummary, getMoodInsights, getMonthlySummary } 
 
 export async function POST(req: Request) {
   const session = getAuthSessionFromRequest();
-  const userId = session.user?.id || "demo-user";
+  const userId = session.user?.id;
+
+  if (!userId) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
   try {
     const body = await req.json();
-    const { mood, energy, stress, sleep, reflection, factors } = body;
+    const { mood, energy, stress, sleep, reflection, factors, gratitude } = body;
 
     if (!mood || energy === undefined || !stress) {
       return NextResponse.json({ error: "Missing required fields: mood, energy, stress" }, { status: 400 });
     }
+
+    const gratitudeText = factors || gratitude || "";
+    const reflectionText = reflection || "";
 
     // 1. Establish start and end of today
     const now = new Date();
@@ -36,31 +43,42 @@ export async function POST(req: Request) {
     if (existingCheckin.length > 0) {
       await sql`
         UPDATE daily_checkins
-        SET mood = ${mood}, energy_level = ${Number(energy)}, sleep_quality = ${sleep ? Number(sleep) : 3},
-            gratitude_reflection = ${factors || "Checked in"}, daily_intention = ${reflection || "Take deep breaths"},
-            reflection = ${reflection || ""}
+        SET mood = ${mood}, energy_level = ${Number(energy)}, stress = ${stress}, sleep_quality = ${sleep ? Number(sleep) : 3},
+            gratitude_reflection = ${gratitudeText}, daily_intention = ${reflectionText},
+            reflection = ${reflectionText}, updated_at = CURRENT_TIMESTAMP
         WHERE id = ${existingCheckin[0].id}
       `;
     } else {
       await sql`
-        INSERT INTO daily_checkins (user_id, mood, energy_level, sleep_quality, gratitude_reflection, daily_intention, reflection, created_at)
-        VALUES (${userId}, ${mood}, ${Number(energy)}, ${sleep ? Number(sleep) : 3}, ${factors || "Checked in"}, ${reflection || "Take deep breaths"}, ${reflection || ""}, CURRENT_TIMESTAMP)
+        INSERT INTO daily_checkins (user_id, mood, energy_level, stress, sleep_quality, gratitude_reflection, daily_intention, reflection, created_at, updated_at)
+        VALUES (${userId}, ${mood}, ${Number(energy)}, ${stress}, ${sleep ? Number(sleep) : 3}, ${gratitudeText}, ${reflectionText}, ${reflectionText}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
       `;
     }
 
     // 4. Save / Update entry in mood_entries
+    const moodScoreMap: Record<string, number> = {
+      Amazing: 5,
+      Happy: 4.5,
+      Calm: 4,
+      Okay: 3,
+      Low: 2,
+      Overwhelmed: 1
+    };
+    const computedScore = Math.round((moodScoreMap[mood] || 3) * 2);
+
     if (existingMood.length > 0) {
       await sql`
         UPDATE mood_entries
-        SET mood = ${mood}, energy = ${Number(energy)}, stress = ${stress},
-            reflection = ${reflection || ""}, factors = ${factors || ""},
+        SET mood = ${mood}, energy = ${Number(energy)}, stress = ${stress}, score = ${computedScore},
+            reflection = ${reflectionText}, factors = ${gratitudeText},
             updated_at = CURRENT_TIMESTAMP
         WHERE id = ${existingMood[0].id}
       `;
     } else {
+      const moodId = `mood-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
       await sql`
-        INSERT INTO mood_entries (user_id, mood, energy, stress, reflection, factors, created_at, updated_at)
-        VALUES (${userId}, ${mood}, ${Number(energy)}, ${stress}, ${reflection || ""}, ${factors || ""}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+        INSERT INTO mood_entries (id, user_id, mood, score, energy, stress, reflection, factors, created_at, updated_at)
+        VALUES (${moodId}, ${userId}, ${mood}, ${computedScore}, ${Number(energy)}, ${stress}, ${reflectionText}, ${gratitudeText}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
       `;
     }
 
@@ -124,14 +142,6 @@ export async function POST(req: Request) {
     `;
 
     // 6. Calculate wellness metrics and insert/update in wellness_metrics table
-    const moodScoreMap: Record<string, number> = {
-      Amazing: 5,
-      Happy: 4.5,
-      Calm: 4,
-      Okay: 3,
-      Low: 2,
-      Overwhelmed: 1
-    };
     const stressScoreMap: Record<string, number> = {
       Peaceful: 5,
       Manageable: 4,
