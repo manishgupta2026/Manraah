@@ -1,4 +1,4 @@
-# Manraah — AI-Powered Mental Wellness Platform
+# Manraah —  Mental Wellness Platform
 
 **Manraah** is a compassionate, lifestyle-oriented AI wellness sanctuary designed to bridge high-tech artificial intelligence capabilities with soft, organic human wellness care. It offers multi-demographic tailored dashboards (Students, Young Professionals, Professionals, Parents, Couples, Families, Women, Men, Senior Citizens), an interactive AI Companion, 1-on-1 verified professional therapy booking, daily check-ins, mindful journaling, ambient sleep soundscapes, and 24/7 crisis support.
 
