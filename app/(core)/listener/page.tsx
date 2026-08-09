@@ -1,4 +1,4 @@
-import AdminCompanionController from "@/frontend/components/admin/companion/AdminCompanionController";
+import AdminMainDashboard from "@/frontend/components/admin/AdminMainDashboard";
 
 export const metadata = {
   title: "Volunteer Listener Portal | Manraah Sanctuary",
@@ -6,5 +6,5 @@ export const metadata = {
 };
 
 export default function ListenerPortalPage() {
-  return <AdminCompanionController />;
+  return <AdminMainDashboard initialTab="COMPANION" />;
 }

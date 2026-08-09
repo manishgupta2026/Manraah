@@ -1,10 +1,10 @@
-import AdminCompanionController from "@/frontend/components/admin/companion/AdminCompanionController";
+import AdminMainDashboard from "@/frontend/components/admin/AdminMainDashboard";
 
 export const metadata = {
-  title: "Companion & Admin Portal Dashboard | Manraah Sanctuary",
+  title: "Companion & Admin Operations Portal | Manraah Sanctuary",
   description: "Role-based management portal for human companions, supervisors, and platform administrators.",
 };
 
 export default function CompanionDashboardPage() {
-  return <AdminCompanionController />;
+  return <AdminMainDashboard initialTab="COMPANION" />;
 }
