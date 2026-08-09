@@ -11,7 +11,7 @@ import DesktopSidebar from "./DesktopSidebar";
 import MobileTabBar from "./MobileTabBar";
 import MobileDrawer from "./MobileDrawer";
 import Header from "./Header";
-import AdminHeader from "../shell-admin/AdminHeader";
+import AdminHeader from "../admin/shell/AdminHeader";
 
 const STANDALONE_ROUTES = [
   "/",

@@ -1,4 +1,4 @@
-import CompanionLoginScreen from "@/frontend/components/screens/CompanionLoginScreen";
+import CompanionLoginScreen from "@/frontend/components/admin/companion/CompanionLoginScreen";
 
 export const metadata = {
   title: "Companion & Admin Portal Login | Manraah Sanctuary",

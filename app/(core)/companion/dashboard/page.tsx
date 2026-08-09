@@ -1,4 +1,4 @@
-import AdminCompanionController from "@/frontend/components/screens/human-companion-admin/AdminCompanionController";
+import AdminCompanionController from "@/frontend/components/admin/companion/AdminCompanionController";
 
 export const metadata = {
   title: "Companion & Admin Portal Dashboard | Manraah Sanctuary",
