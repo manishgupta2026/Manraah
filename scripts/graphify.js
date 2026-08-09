@@ -107,8 +107,11 @@ function generateGraph() {
     "| **Cloud Database** | Neon PostgreSQL | 7 tables (`users`, `user_assessments`, `mood_entries`, `journal_entries`, `therapists`, `community_posts`, `resources`) |"
   ].join("\n");
 
-  fs.writeFileSync('ARCHITECTURE_GRAPH.md', docContent);
-  console.log("✓ Created ARCHITECTURE_GRAPH.md successfully!");
+  const path = require('path');
+  const targetPath = path.join(__dirname, '..', 'docs', 'architecture', 'ARCHITECTURE_GRAPH.md');
+  fs.mkdirSync(path.dirname(targetPath), { recursive: true });
+  fs.writeFileSync(targetPath, docContent);
+  console.log("✓ Created docs/architecture/ARCHITECTURE_GRAPH.md successfully!");
 }
 
 generateGraph();

@@ -49,9 +49,14 @@ Manraah/
 │   ├── queries/               # Feature Data Query Stubs (assessment.ts, mood.ts, journal.ts, etc.)
 │   └── README.md              # Backend documentation
 │
+├── docs/                      # Centralized Project Documentation & Assets
+│   ├── architecture/          # Architecture dependency graphs (ARCHITECTURE_GRAPH.md)
+│   ├── design/                # Design specifications & Stitch design mockups
+│   ├── market_research/       # India strategy bible, market analysis PDFs & parent research
+│   └── product/               # Product presentation PDFs, execution plans & companion specs
+│
 ├── scripts/                   # Local utilities (init_db.js, graphify.js)
 ├── middleware.ts              # Route protection & session redirection
-├── ARCHITECTURE_GRAPH.md      # Graphify interactive architectural dependency graph
 └── public/
     └── images/                # Localized static image assets & SVG logo
 ```

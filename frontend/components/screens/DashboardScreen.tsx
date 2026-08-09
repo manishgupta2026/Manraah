@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { getClientSession } from "@/backend/auth/client";
 import { useDashboard } from "@/frontend/lib/context/WellnessContext";
-import ParentDashboard from "@/parent/Research/Documentation/Dashboard Planning/AI Knowledge/Feature Documentation/Development/ParentDashboard";
+import ParentDashboard from "@/frontend/components/screens/ParentDashboard";
 import DailyPrivacyReminder from "@/frontend/components/ui/DailyPrivacyReminder";
 import ScreenHeader from "@/frontend/components/ui/ScreenHeader";
 import { getCategoryJourneyBadge } from "@/frontend/lib/constants";
