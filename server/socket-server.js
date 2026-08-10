@@ -186,7 +186,7 @@ io.on("connection", (socket) => {
   });
 });
 
-const PORT = process.env.SOCKET_PORT || 3005;
-server.listen(PORT, () => {
-  console.log(`🚀 Manraah Socket.IO Server running on http://localhost:${PORT}`);
+const PORT = process.env.PORT || 3005;
+server.listen(PORT, "0.0.0.0", () => {
+  console.log(`🚀 Manraah Socket.IO Server running on port ${PORT}`);
 });
