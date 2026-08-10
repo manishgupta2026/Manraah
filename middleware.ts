@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-const PROTECTED_ROUTES = [
+const PROTECTED_USER_ROUTES = [
   "/dashboard",
   "/ai-chat",
   "/checkin",
@@ -17,12 +17,9 @@ const PROTECTED_ROUTES = [
   "/profile",
   "/settings",
   "/professional-care",
-  "/human-companion",
   "/journey",
   "/crisis-support",
   "/call",
-  "/listener",
-  "/companion",
 ];
 
 const AUTH_ROUTES = ["/login", "/signup"];
@@ -42,48 +39,105 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const hasUserSession = 
+  // Session Cookies & Roles
+  const hasUserSession =
     request.cookies.has("better-auth.session_token") ||
     request.cookies.has("__Secure-better-auth.session_token") ||
     request.cookies.has("manraah_session");
 
-  const hasCompanionAdminSession = request.cookies.has("manraah_companion_session");
+  const companionRoleCookie = request.cookies.get("manraah_companion_role")?.value;
+  const companionSessionCookie = request.cookies.get("manraah_companion_session")?.value;
 
-  // 1. STRICT ADMIN PORTAL SECURITY GATE: /admin/* & /companion/dashboard
-  // Regular users (manraah_session) MUST NOT be allowed access.
-  // Access requires a dedicated manraah_companion_session cookie.
-  if (pathname.startsWith("/admin") || pathname.startsWith("/companion/dashboard")) {
-    if (!hasCompanionAdminSession) {
-      const loginUrl = new URL("/companion/login", request.url);
-      return NextResponse.redirect(loginUrl);
+  let companionRole: "admin" | "listener" | "user" | null = null;
+
+  if (
+    companionRoleCookie === "admin" ||
+    companionRoleCookie === "listener" ||
+    companionRoleCookie === "user"
+  ) {
+    companionRole = companionRoleCookie as any;
+  } else if (companionSessionCookie) {
+    try {
+      const decoded = decodeURIComponent(companionSessionCookie);
+      const parsed = JSON.parse(decoded);
+      companionRole = parsed?.companion?.role || (parsed?.isAuthenticated ? "listener" : null);
+    } catch {
+      try {
+        const parsed = JSON.parse(companionSessionCookie);
+        companionRole = parsed?.companion?.role || (parsed?.isAuthenticated ? "listener" : null);
+      } catch {
+        companionRole = null;
+      }
+    }
+  }
+
+  // 1. PUBLIC ADMIN & COMPANION LOGIN ROUTES
+  if (pathname === "/admin/login" || pathname === "/companion/login") {
+    if (companionRole === "admin") {
+      return NextResponse.redirect(new URL("/admin/dashboard", request.url));
+    }
+    if (companionRole === "listener") {
+      return NextResponse.redirect(new URL("/listener/human-companion", request.url));
+    }
+    return NextResponse.next();
+  }
+
+  // 2. ADMIN ROUTE GATEWAY (/admin/*) — Gated strictly for role === 'admin'
+  if (pathname.startsWith("/admin")) {
+    if (!companionRole || companionRole !== "admin") {
+      // If listener tries to access admin routes -> send to listener portal
+      if (companionRole === "listener") {
+        return NextResponse.redirect(new URL("/listener/human-companion", request.url));
+      }
+      // Unauthenticated or regular user -> send to admin login
+      return NextResponse.redirect(new URL("/admin/login", request.url));
     }
 
     const response = NextResponse.next();
-    // Security Hardening Headers
     response.headers.set("X-Frame-Options", "DENY");
     response.headers.set("X-Content-Type-Options", "nosniff");
     response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
     return response;
   }
 
-  // 2. Unauthenticated users trying to access protected user features -> redirect to /login
-  const isProtected = PROTECTED_ROUTES.some(
+  // 3. LISTENER ROUTE GATEWAY (/listener/* & /companion/dashboard) — Gated strictly for role === 'listener'
+  if (pathname.startsWith("/listener") || pathname.startsWith("/companion/dashboard")) {
+    if (!companionRole || companionRole !== "listener") {
+      // If admin tries to access listener action screens -> send to admin dashboard (oversight view)
+      if (companionRole === "admin") {
+        return NextResponse.redirect(new URL("/admin/human-companion-network", request.url));
+      }
+      // Unauthenticated or regular user -> send to user login
+      return NextResponse.redirect(new URL("/login", request.url));
+    }
+
+    return NextResponse.next();
+  }
+
+  // 4. PROTECTED USER ROUTES — Gated for authenticated users
+  const isProtectedUserRoute = PROTECTED_USER_ROUTES.some(
     (route) => pathname === route || pathname.startsWith(`${route}/`)
   );
 
-  if (isProtected && !hasUserSession && !hasCompanionAdminSession) {
-    const loginUrl = new URL("/login", request.url);
-    return NextResponse.redirect(loginUrl);
+  if (isProtectedUserRoute && !hasUserSession && !companionRole) {
+    return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  // 3. Authenticated users trying to access onboarding or auth routes -> redirect to /dashboard
+  // 5. AUTH / ONBOARDING REDIRECTS FOR LOGGED IN USERS
   const isAuthOrOnboarding = [...AUTH_ROUTES, ...ONBOARDING_ROUTES].some(
     (route) => pathname === route
   );
 
-  if (isAuthOrOnboarding && (hasUserSession || hasCompanionAdminSession)) {
-    const targetUrl = hasCompanionAdminSession ? "/admin/human-companion" : "/dashboard";
-    return NextResponse.redirect(new URL(targetUrl, request.url));
+  if (isAuthOrOnboarding) {
+    if (companionRole === "admin") {
+      return NextResponse.redirect(new URL("/admin/dashboard", request.url));
+    }
+    if (companionRole === "listener") {
+      return NextResponse.redirect(new URL("/listener/human-companion", request.url));
+    }
+    if (hasUserSession) {
+      return NextResponse.redirect(new URL("/dashboard", request.url));
+    }
   }
 
   return NextResponse.next();

@@ -1,11 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 interface UserRecord {
   id: string;
   userTag: string;
-  category: "Student" | "Working Professional" | "Parent" | "Senior Citizen";
+  category: string;
   serenityScore: number;
   status: "Active" | "Warning" | "Flagged";
   joinedDate: string;
@@ -16,54 +16,39 @@ export default function UserManagementTab() {
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<string>("ALL");
   const [selectedUser, setSelectedUser] = useState<UserRecord | null>(null);
+  const [users, setUsers] = useState<UserRecord[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const users: UserRecord[] = [
-    {
-      id: "usr_101",
-      userTag: "Anonymous Member #582",
-      category: "Student",
-      serenityScore: 82,
-      status: "Active",
-      joinedDate: "Aug 1, 2026",
-      lastActive: "2 mins ago",
-    },
-    {
-      id: "usr_102",
-      userTag: "Anonymous Member #914",
-      category: "Working Professional",
-      serenityScore: 64,
-      status: "Active",
-      joinedDate: "Jul 28, 2026",
-      lastActive: "15 mins ago",
-    },
-    {
-      id: "usr_103",
-      userTag: "Anonymous Member #204",
-      category: "Parent",
-      serenityScore: 48,
-      status: "Warning",
-      joinedDate: "Jul 20, 2026",
-      lastActive: "1 hour ago",
-    },
-    {
-      id: "usr_104",
-      userTag: "Anonymous Member #881",
-      category: "Senior Citizen",
-      serenityScore: 90,
-      status: "Active",
-      joinedDate: "Aug 4, 2026",
-      lastActive: "3 hours ago",
-    },
-    {
-      id: "usr_105",
-      userTag: "Anonymous Member #312",
-      category: "Student",
-      serenityScore: 35,
-      status: "Flagged",
-      joinedDate: "Jul 15, 2026",
-      lastActive: "Just now",
-    },
-  ];
+  useEffect(() => {
+    async function loadRealUsers() {
+      try {
+        const res = await fetch("/api/dashboard");
+        if (res.ok) {
+          const data = await res.json();
+          if (data.user) {
+            const realUser: UserRecord = {
+              id: data.user.id || "usr_active",
+              userTag: data.user.email ? `Member (${data.user.email})` : `Anonymous Member #${data.user.id?.slice(0, 4)}`,
+              category: data.userCategory || "Working Professional",
+              serenityScore: data.assessmentResult?.score || data.wellnessScore || 75,
+              status: "Active",
+              joinedDate: "Live Session",
+              lastActive: "Active Now",
+            };
+            setUsers([realUser]);
+          } else {
+            setUsers([]);
+          }
+        }
+      } catch (err) {
+        console.warn("Failed to fetch user directory:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadRealUsers();
+  }, []);
 
   const filteredUsers = users.filter((u) => {
     const matchesSearch =
@@ -77,18 +62,18 @@ export default function UserManagementTab() {
   return (
     <div className="space-y-6 animate-fadeIn select-none">
       {/* Header & Controls */}
-      <div className="p-6 rounded-3xl bg-surface-container-lowest border border-surface-variant/30 shadow-soft space-y-4">
+      <div className="p-6 rounded-3xl bg-surface-container-lowest/80 backdrop-blur-md border border-surface-variant/30 shadow-soft space-y-4">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
             <h2 className="font-heading font-bold text-lg text-on-surface">
               Member Directory & Moderation
             </h2>
             <p className="text-xs text-on-surface-variant">
-              Manage member accounts, inspect privacy-preserved serenity scores, and monitor flags.
+              Inspect active member sessions, privacy-preserved serenity scores, and moderation logs.
             </p>
           </div>
           <span className="px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold">
-            {filteredUsers.length} Members Listed
+            {filteredUsers.length} Active Member Session(s)
           </span>
         </div>
 
@@ -130,75 +115,89 @@ export default function UserManagementTab() {
       </div>
 
       {/* Users Table */}
-      <div className="p-6 rounded-3xl bg-surface-container-lowest border border-surface-variant/30 shadow-soft overflow-x-auto">
-        <table className="w-full text-left border-collapse">
-          <thead>
-            <tr className="border-b border-surface-variant/20 text-[11px] font-bold text-on-surface-variant uppercase tracking-wider">
-              <th className="pb-3 px-3">User Identifier</th>
-              <th className="pb-3 px-3">Demographic Cohort</th>
-              <th className="pb-3 px-3">Serenity Score</th>
-              <th className="pb-3 px-3">Account Status</th>
-              <th className="pb-3 px-3">Last Active</th>
-              <th className="pb-3 px-3 text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-surface-variant/10 text-xs">
-            {filteredUsers.map((u) => (
-              <tr key={u.id} className="hover:bg-surface-container-low/50 transition-all">
-                <td className="py-3.5 px-3 font-bold text-on-surface">
-                  {u.userTag}
-                  <span className="block text-[10px] font-medium text-on-surface-variant">{u.id}</span>
-                </td>
-                <td className="py-3.5 px-3 text-on-surface-variant font-medium">
-                  {u.category}
-                </td>
-                <td className="py-3.5 px-3 font-bold">
-                  <span
-                    className={`px-2.5 py-0.5 rounded-full text-[11px] ${
-                      u.serenityScore >= 75
-                        ? "bg-emerald-500/10 text-emerald-600"
-                        : u.serenityScore >= 50
-                        ? "bg-amber-500/10 text-amber-600"
-                        : "bg-rose-500/10 text-rose-600"
-                    }`}
-                  >
-                    {u.serenityScore} / 100
-                  </span>
-                </td>
-                <td className="py-3.5 px-3">
-                  <span
-                    className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold ${
-                      u.status === "Active"
-                        ? "bg-emerald-500/10 text-emerald-600"
-                        : u.status === "Warning"
-                        ? "bg-amber-500/10 text-amber-600"
-                        : "bg-rose-500/10 text-rose-600 animate-pulse"
-                    }`}
-                  >
-                    ● {u.status.toUpperCase()}
-                  </span>
-                </td>
-                <td className="py-3.5 px-3 text-on-surface-variant font-medium">
-                  {u.lastActive}
-                </td>
-                <td className="py-3.5 px-3 text-right">
-                  <button
-                    onClick={() => setSelectedUser(u)}
-                    className="px-3 py-1.5 rounded-xl bg-surface-container-high hover:bg-primary hover:text-white text-on-surface font-bold transition-all text-xs"
-                  >
-                    Inspect Details
-                  </button>
-                </td>
+      <div className="p-6 rounded-3xl bg-surface-container-lowest/80 backdrop-blur-md border border-surface-variant/30 shadow-soft overflow-x-auto">
+        {loading ? (
+          <div className="p-8 text-center text-xs font-bold text-on-surface-variant">
+            Loading active member directory...
+          </div>
+        ) : filteredUsers.length === 0 ? (
+          <div className="p-8 rounded-2xl bg-surface-container-low/50 text-center space-y-2">
+            <span className="material-symbols-outlined text-3xl text-primary opacity-50">person_off</span>
+            <p className="text-xs font-bold text-on-surface">No Members Matching Search Criteria</p>
+            <p className="text-[11px] text-on-surface-variant">
+              When members authenticate or join the platform, their privacy-preserved profiles will be listed here.
+            </p>
+          </div>
+        ) : (
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="border-b border-surface-variant/20 text-[11px] font-bold text-on-surface-variant uppercase tracking-wider">
+                <th className="pb-3 px-3">User Identifier</th>
+                <th className="pb-3 px-3">Demographic Cohort</th>
+                <th className="pb-3 px-3">Serenity Score</th>
+                <th className="pb-3 px-3">Account Status</th>
+                <th className="pb-3 px-3">Last Active</th>
+                <th className="pb-3 px-3 text-right">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-surface-variant/10 text-xs">
+              {filteredUsers.map((u) => (
+                <tr key={u.id} className="hover:bg-surface-container-low/50 transition-all">
+                  <td className="py-3.5 px-3 font-bold text-on-surface">
+                    {u.userTag}
+                    <span className="block text-[10px] font-medium text-on-surface-variant">{u.id}</span>
+                  </td>
+                  <td className="py-3.5 px-3 text-on-surface-variant font-medium">
+                    {u.category}
+                  </td>
+                  <td className="py-3.5 px-3 font-bold">
+                    <span
+                      className={`px-2.5 py-0.5 rounded-full text-[11px] ${
+                        u.serenityScore >= 75
+                          ? "bg-emerald-500/10 text-emerald-600"
+                          : u.serenityScore >= 50
+                          ? "bg-amber-500/10 text-amber-600"
+                          : "bg-rose-500/10 text-rose-600"
+                      }`}
+                    >
+                      {u.serenityScore} / 100
+                    </span>
+                  </td>
+                  <td className="py-3.5 px-3">
+                    <span
+                      className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold ${
+                        u.status === "Active"
+                          ? "bg-emerald-500/10 text-emerald-600"
+                          : u.status === "Warning"
+                          ? "bg-amber-500/10 text-amber-600"
+                          : "bg-rose-500/10 text-rose-600 animate-pulse"
+                      }`}
+                    >
+                      ● {u.status.toUpperCase()}
+                    </span>
+                  </td>
+                  <td className="py-3.5 px-3 text-on-surface-variant font-medium">
+                    {u.lastActive}
+                  </td>
+                  <td className="py-3.5 px-3 text-right">
+                    <button
+                      onClick={() => setSelectedUser(u)}
+                      className="px-3 py-1.5 rounded-xl bg-surface-container-high hover:bg-primary hover:text-white text-on-surface font-bold transition-all text-xs"
+                    >
+                      Inspect Details
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
 
       {/* User Details Modal */}
       {selectedUser && (
         <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="p-6 rounded-3xl bg-surface-container-lowest border border-surface-variant/30 shadow-soft-xl max-w-md w-full space-y-4 animate-fadeIn">
+          <div className="p-6 rounded-3xl bg-surface-container-lowest border border-surface-variant/30 shadow-card-lift max-w-md w-full space-y-4 animate-fadeIn">
             <div className="flex items-center justify-between border-b border-surface-variant/20 pb-3">
               <h3 className="font-heading font-bold text-base text-on-surface">
                 Member Inspection: {selectedUser.userTag}
@@ -215,7 +214,7 @@ export default function UserManagementTab() {
               <p><strong className="text-on-surface">Category:</strong> {selectedUser.category}</p>
               <p><strong className="text-on-surface">Serenity Score:</strong> {selectedUser.serenityScore} / 100</p>
               <p><strong className="text-on-surface">Account Status:</strong> {selectedUser.status}</p>
-              <p><strong className="text-on-surface">Joined Date:</strong> {selectedUser.joinedDate}</p>
+              <p><strong className="text-on-surface">Joined Session:</strong> {selectedUser.joinedDate}</p>
             </div>
 
             <div className="pt-2 flex items-center justify-end gap-3">

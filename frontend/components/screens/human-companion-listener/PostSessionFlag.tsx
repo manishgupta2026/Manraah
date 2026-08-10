@@ -1,15 +1,23 @@
 "use client";
 
 import React, { useState } from "react";
-import { SessionFlag } from "@/backend/types";
+import { AnonymizedUser, SessionFlag } from "@/backend/types";
 import { flagSession } from "@/backend/queries/human-companion";
 
 interface PostSessionFlagProps {
+  user?: AnonymizedUser;
   sessionId?: string;
-  onComplete: () => void;
+  onComplete?: () => void;
+  onSubmit?: () => void;
 }
 
-export default function PostSessionFlag({ sessionId = "sess_demo", onComplete }: PostSessionFlagProps) {
+export default function PostSessionFlag({
+  user,
+  sessionId = "sess_demo",
+  onComplete,
+  onSubmit,
+}: PostSessionFlagProps) {
+  const handleFinish = onSubmit || onComplete || (() => {});
   const [selectedFlag, setSelectedFlag] = useState<SessionFlag>("no_flag");
   const [notes, setNotes] = useState("");
   const [submitted, setSubmitted] = useState(false);
@@ -19,7 +27,7 @@ export default function PostSessionFlag({ sessionId = "sess_demo", onComplete }:
     await flagSession(sessionId, selectedFlag);
     setSubmitted(true);
     setTimeout(() => {
-      onComplete();
+      handleFinish();
     }, 1500);
   };
 

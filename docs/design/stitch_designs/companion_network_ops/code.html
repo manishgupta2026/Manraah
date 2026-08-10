@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Manraah Admin - Human Companion Network</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@600;700&amp;family=Work+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Configuration -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "secondary-fixed": "#88f7d6",
+                    "on-error": "#ffffff",
+                    "on-error-container": "#93000a",
+                    "secondary-container": "#88f7d6",
+                    "on-primary-fixed-variant": "#4a388e",
+                    "on-tertiary-fixed-variant": "#5e411e",
+                    "inverse-surface": "#2f3033",
+                    "on-surface": "#1a1c1e",
+                    "primary": "#5f4ea5",
+                    "on-secondary": "#ffffff",
+                    "error-container": "#ffdad6",
+                    "surface-container-highest": "#e3e2e5",
+                    "secondary-fixed-dim": "#6adaba",
+                    "surface-container-lowest": "#ffffff",
+                    "on-secondary-fixed-variant": "#005140",
+                    "background": "#faf9fc",
+                    "on-primary": "#ffffff",
+                    "on-tertiary-fixed": "#2b1700",
+                    "secondary": "#006b56",
+                    "primary-container": "#7867c0",
+                    "tertiary": "#765631",
+                    "tertiary-fixed-dim": "#eabf91",
+                    "surface-dim": "#dadadc",
+                    "surface-container-high": "#e8e8eb",
+                    "on-tertiary": "#ffffff",
+                    "on-tertiary-container": "#fffbff",
+                    "tertiary-fixed": "#ffddba",
+                    "on-background": "#1a1c1e",
+                    "on-surface-variant": "#484551",
+                    "surface-variant": "#e3e2e5",
+                    "surface-container": "#eeedf0",
+                    "on-primary-container": "#fffbff",
+                    "surface-tint": "#6251a8",
+                    "surface-bright": "#faf9fc",
+                    "surface-container-low": "#f4f3f6",
+                    "primary-fixed": "#e6deff",
+                    "tertiary-container": "#916e47",
+                    "outline": "#797582",
+                    "on-secondary-fixed": "#002018",
+                    "surface": "#faf9fc",
+                    "error": "#ba1a1a",
+                    "on-primary-fixed": "#1d0061",
+                    "outline-variant": "#cac4d3",
+                    "inverse-on-surface": "#f1f0f3",
+                    "inverse-primary": "#cbbeff",
+                    "primary-fixed-dim": "#cbbeff",
+                    "on-secondary-container": "#00725c"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "container-padding": "24px",
+                    "unit": "8px",
+                    "sidebar-width": "260px",
+                    "margin-mobile": "16px",
+                    "gutter": "20px"
+            },
+            "fontFamily": {
+                    "headline-md": ["Quicksand"],
+                    "headline-sm": ["Quicksand"],
+                    "body-md": ["Work Sans"],
+                    "body-lg": ["Work Sans"],
+                    "label-bold": ["Work Sans"],
+                    "data-mono": ["Work Sans"],
+                    "display-lg": ["Quicksand"]
+            },
+            "fontSize": {
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "label-bold": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "data-mono": ["13px", {"lineHeight": "18px", "fontWeight": "500"}],
+                    "display-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        .custom-shadow { box-shadow: 0px 4px 20px rgba(124, 107, 196, 0.08); }
+        .table-row-hover:hover { background-color: #F4F3F8; }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md text-body-md min-h-screen antialiased">
+<!-- TopNavBar -->
+<header class="fixed top-0 z-30 w-full h-16 flex justify-between items-center pl-[280px] pr-8 bg-background/80 backdrop-blur-md">
+<!-- Search -->
+<div class="relative w-96">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-surface-container-lowest border border-surface-variant rounded-xl text-body-md font-body-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" placeholder="Search listeners, sessions, or IDs..." type="text"/>
+</div>
+<!-- Trailing Actions -->
+<div class="flex items-center gap-4">
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors focus-within:ring-2 focus-within:ring-primary/20 rounded-full">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="h-6 w-[1px] bg-surface-variant mx-2"></div>
+<div class="flex items-center gap-3">
+<div class="text-right">
+<p class="font-label-bold text-label-bold text-on-surface">Admin User</p>
+<p class="font-body-md text-body-md text-on-surface-variant text-xs">Platform Admin</p>
+</div>
+<img class="w-10 h-10 rounded-full object-cover border border-surface-variant" data-alt="A small, professional corporate headshot of a platform administrator in a light-filled modern office setting. The style is clean, bright, and polished." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC6CrZMQ6p7mNWegaI7qOtssp0j4RWepLZoXCiJeOKRlsofYfXQj40tYurOYZTDNN-HpPHOCQ7V-xzPdlVWEZHygTssEg12CmhMlx3sYJwpWrMb1T4VgFO1qPtfIfAIEJvW6Hidb2njiNfvfTPsZ6gX68zrZgYNbJdVq7hOXnZ8puZeEWzCb3sAdHoW1rJ4Ei4mPobqjnoJvGS6tcKDOrC8Xh2MI06nN7GWXjkTfQJ4RE_RJlqul1AKcQ"/>
+</div>
+</div>
+</header>
+<!-- SideNavBar -->
+<nav class="fixed left-0 top-0 h-screen w-[260px] bg-surface flex flex-col py-unit px-4 z-40 border-r border-surface-variant/50">
+<!-- Brand -->
+<div class="flex items-center gap-3 px-3 py-6 mb-4">
+<div class="w-8 h-8 rounded bg-primary flex items-center justify-center text-on-primary font-bold">M</div>
+<div>
+<h2 class="text-headline-sm font-headline-sm font-semibold text-primary">Manraah Admin</h2>
+<p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-medium">Operational Clarity</p>
+</div>
+</div>
+<!-- Nav Links -->
+<div class="flex-1 flex flex-col gap-1 overflow-y-auto">
+<a class="flex items-center gap-3 px-3 py-2.5 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors rounded-lg group" href="#">
+<span class="material-symbols-outlined text-[20px] group-hover:scale-110 transition-transform">dashboard</span>
+<span class="font-label-bold text-label-bold">Overview</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors rounded-lg group" href="#">
+<span class="material-symbols-outlined text-[20px] group-hover:scale-110 transition-transform">group</span>
+<span class="font-label-bold text-label-bold">Users</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors rounded-lg group" href="#">
+<span class="material-symbols-outlined text-[20px] group-hover:scale-110 transition-transform">forum</span>
+<span class="font-label-bold text-label-bold">Community</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors rounded-lg group" href="#">
+<span class="material-symbols-outlined text-[20px] group-hover:scale-110 transition-transform">medical_services</span>
+<span class="font-label-bold text-label-bold">Professional Care</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors rounded-lg group" href="#">
+<span class="material-symbols-outlined text-[20px] group-hover:scale-110 transition-transform">emergency_home</span>
+<span class="font-label-bold text-label-bold">Crisis Escalation</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors rounded-lg group" href="#">
+<span class="material-symbols-outlined text-[20px] group-hover:scale-110 transition-transform">auto_stories</span>
+<span class="font-label-bold text-label-bold">Resources</span>
+</a>
+<!-- ACTIVE TAB -->
+<a class="flex items-center gap-3 px-3 py-2.5 text-primary font-bold bg-primary-container/20 rounded-lg scale-[0.98] transition-all duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">diversity_3</span>
+<span class="font-label-bold text-label-bold">Human Companion Network</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors rounded-lg group" href="#">
+<span class="material-symbols-outlined text-[20px] group-hover:scale-110 transition-transform">badge</span>
+<span class="font-label-bold text-label-bold">Team &amp; Roles</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors rounded-lg group mt-auto" href="#">
+<span class="material-symbols-outlined text-[20px] group-hover:scale-110 transition-transform">settings</span>
+<span class="font-label-bold text-label-bold">Settings</span>
+</a>
+</div>
+</nav>
+<!-- Main Content -->
+<main class="pl-[260px] pt-24 p-container-padding max-w-[1600px] mx-auto pb-20">
+<!-- Header -->
+<div class="mb-8 flex justify-between items-end">
+<div>
+<h1 class="font-display-lg text-display-lg text-on-background">Human Companion Network Operations</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant mt-2 max-w-2xl">Aggregate oversight of the active listener network. Monitor performance, availability, and session metrics in real-time.</p>
+</div>
+<button class="bg-primary text-on-primary px-4 py-2.5 rounded-lg font-label-bold text-label-bold hover:bg-surface-tint transition-colors shadow-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">person_add</span>
+                Onboard Listener
+            </button>
+</div>
+<!-- Network Performance (Bento Grid) -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter mb-8">
+<!-- Stat Card 1 -->
+<div class="bg-surface-container-lowest rounded-xl p-6 custom-shadow border border-surface-variant/30 flex flex-col justify-between h-32">
+<p class="font-label-bold text-label-bold text-on-surface-variant uppercase tracking-wider">Sessions Today</p>
+<div class="flex items-baseline gap-3">
+<span class="font-display-lg text-display-lg text-on-surface">142</span>
+<span class="text-secondary font-label-bold text-label-bold flex items-center"><span class="material-symbols-outlined text-[14px]">trending_up</span> +12%</span>
+</div>
+</div>
+<!-- Stat Card 2 -->
+<div class="bg-surface-container-lowest rounded-xl p-6 custom-shadow border border-surface-variant/30 flex flex-col justify-between h-32">
+<p class="font-label-bold text-label-bold text-on-surface-variant uppercase tracking-wider">Sessions This Week</p>
+<div class="flex items-baseline gap-3">
+<span class="font-display-lg text-display-lg text-on-surface">894</span>
+<span class="text-secondary font-label-bold text-label-bold flex items-center"><span class="material-symbols-outlined text-[14px]">trending_up</span> +4%</span>
+</div>
+</div>
+<!-- Stat Card 3 -->
+<div class="bg-surface-container-lowest rounded-xl p-6 custom-shadow border border-surface-variant/30 flex flex-col justify-between h-32 relative overflow-hidden">
+<p class="font-label-bold text-label-bold text-on-surface-variant uppercase tracking-wider z-10">Avg. Session Length</p>
+<div class="flex items-baseline gap-3 z-10">
+<span class="font-display-lg text-display-lg text-on-surface">24<span class="text-headline-sm font-headline-sm text-on-surface-variant ml-1">min</span></span>
+</div>
+<!-- Decorative background element -->
+<div class="absolute right-0 bottom-0 opacity-5 pointer-events-none transform translate-x-1/4 translate-y-1/4">
+<span class="material-symbols-outlined text-[120px]">timer</span>
+</div>
+</div>
+<!-- Stat Card 4 (Attention needed) -->
+<div class="bg-surface-container-lowest rounded-xl p-6 custom-shadow border border-tertiary-fixed-dim/50 bg-gradient-to-br from-surface-container-lowest to-tertiary-fixed/10 flex flex-col justify-between h-32">
+<p class="font-label-bold text-label-bold text-tertiary uppercase tracking-wider flex items-center gap-2">
+                    Current Queue Length
+                    <span class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span>
+</p>
+<div class="flex items-baseline gap-3">
+<span class="font-display-lg text-display-lg text-on-surface">18</span>
+<span class="text-on-surface-variant font-body-md text-body-md">users waiting</span>
+</div>
+</div>
+</div>
+<!-- Two Column Layout for Main Data -->
+<div class="grid grid-cols-1 xl:grid-cols-3 gap-gutter">
+<!-- Main Data Table (Spans 2 cols on extra large screens) -->
+<div class="xl:col-span-2 bg-surface-container-lowest rounded-xl custom-shadow border border-surface-variant/30 overflow-hidden flex flex-col">
+<div class="p-6 border-b border-surface-variant flex justify-between items-center bg-surface-bright">
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Listener Directory</h2>
+<div class="flex gap-2">
+<button class="p-2 border border-surface-variant rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-[20px]">filter_list</span>
+</button>
+<button class="p-2 border border-surface-variant rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-[20px]">download</span>
+</button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low border-b border-surface-variant">
+<th class="py-4 px-6 font-label-bold text-label-bold text-on-surface-variant uppercase tracking-wider font-semibold">Listener ID / Alias</th>
+<th class="py-4 px-6 font-label-bold text-label-bold text-on-surface-variant uppercase tracking-wider font-semibold">Status</th>
+<th class="py-4 px-6 font-label-bold text-label-bold text-on-surface-variant uppercase tracking-wider font-semibold">Sessions (Wk)</th>
+<th class="py-4 px-6 font-label-bold text-label-bold text-on-surface-variant uppercase tracking-wider font-semibold">Last Active</th>
+<th class="py-4 px-6 font-label-bold text-label-bold text-on-surface-variant uppercase tracking-wider font-semibold text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="font-body-md text-body-md">
+<!-- Row 1 -->
+<tr class="border-b border-surface-variant/50 table-row-hover transition-colors">
+<td class="py-4 px-6">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-primary-fixed text-on-primary-fixed flex items-center justify-center font-bold text-xs">EJ</div>
+<div>
+<p class="font-medium text-on-surface">Elena J.</p>
+<p class="text-on-surface-variant text-xs font-data-mono">LST-9824</p>
+</div>
+</div>
+</td>
+<td class="py-4 px-6">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-secondary-fixed/20 text-on-secondary-container font-label-bold text-label-bold text-[10px]">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary-fixed shadow-[0_0_4px_#88f7d6]"></span>
+                                        Online
+                                    </span>
+</td>
+<td class="py-4 px-6 font-data-mono text-on-surface">32</td>
+<td class="py-4 px-6 text-on-surface-variant">Right now</td>
+<td class="py-4 px-6 text-right">
+<button class="text-primary hover:text-surface-tint font-label-bold text-label-bold transition-colors">View Profile</button>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="border-b border-surface-variant/50 table-row-hover transition-colors">
+<td class="py-4 px-6">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-tertiary-fixed text-on-tertiary-fixed flex items-center justify-center font-bold text-xs">MS</div>
+<div>
+<p class="font-medium text-on-surface">Marcus S.</p>
+<p class="text-on-surface-variant text-xs font-data-mono">LST-7411</p>
+</div>
+</div>
+</td>
+<td class="py-4 px-6">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-variant/50 text-on-surface-variant font-label-bold text-label-bold text-[10px]">
+<span class="w-1.5 h-1.5 rounded-full bg-outline"></span>
+                                        Offline
+                                    </span>
+</td>
+<td class="py-4 px-6 font-data-mono text-on-surface">18</td>
+<td class="py-4 px-6 text-on-surface-variant">2 hours ago</td>
+<td class="py-4 px-6 text-right">
+<button class="text-primary hover:text-surface-tint font-label-bold text-label-bold transition-colors">View Profile</button>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="border-b border-surface-variant/50 table-row-hover transition-colors">
+<td class="py-4 px-6">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-primary-fixed text-on-primary-fixed flex items-center justify-center font-bold text-xs">AK</div>
+<div>
+<p class="font-medium text-on-surface">Aisha K.</p>
+<p class="text-on-surface-variant text-xs font-data-mono">LST-8830</p>
+</div>
+</div>
+</td>
+<td class="py-4 px-6">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-secondary-fixed/20 text-on-secondary-container font-label-bold text-label-bold text-[10px]">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary-fixed shadow-[0_0_4px_#88f7d6]"></span>
+                                        Online
+                                    </span>
+</td>
+<td class="py-4 px-6 font-data-mono text-on-surface">45</td>
+<td class="py-4 px-6 text-on-surface-variant">Right now</td>
+<td class="py-4 px-6 text-right">
+<button class="text-primary hover:text-surface-tint font-label-bold text-label-bold transition-colors">View Profile</button>
+</td>
+</tr>
+<!-- Row 4 (In Session) -->
+<tr class="border-b border-surface-variant/50 table-row-hover transition-colors">
+<td class="py-4 px-6">
+<div class="flex items-center gap-3">
+<img class="w-8 h-8 rounded-full object-cover" data-alt="A small circular avatar of a listener named David. He looks empathetic and professional, set against a soft neutral background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDEvPG5kvhme4gPwR4xP-Dmki-1ofZYqQIcHB3GHzJ54yj53elhMAvFDnwRympxlgwyfsWJ7q4DrfCXBQjoXn36aOAUb9jVXisd6eSaBOOQ0ww7K-zAcARm4IHYejX53JwQa0wgkUmwrG5J-rZjn--WhcwDOUvAFZbLkue9_fXLA-uExxRRdCbLpRjwsftM6ruZYBsm-GuS_I_mW7w2bEju3sLBdDllkmIz-YlkcZlSJi8xPE8RK2OrUA"/>
+<div>
+<p class="font-medium text-on-surface">David R.</p>
+<p class="text-on-surface-variant text-xs font-data-mono">LST-5521</p>
+</div>
+</div>
+</td>
+<td class="py-4 px-6">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary-container/20 text-primary font-label-bold text-label-bold text-[10px]">
+<span class="material-symbols-outlined text-[12px]">headset_mic</span>
+                                        In Session (12m)
+                                    </span>
+</td>
+<td class="py-4 px-6 font-data-mono text-on-surface">28</td>
+<td class="py-4 px-6 text-on-surface-variant">Right now</td>
+<td class="py-4 px-6 text-right">
+<button class="text-primary hover:text-surface-tint font-label-bold text-label-bold transition-colors">View Profile</button>
+</td>
+</tr>
+<!-- Row 5 -->
+<tr class="table-row-hover transition-colors">
+<td class="py-4 px-6">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-tertiary-fixed text-on-tertiary-fixed flex items-center justify-center font-bold text-xs">CH</div>
+<div>
+<p class="font-medium text-on-surface">Chloe H.</p>
+<p class="text-on-surface-variant text-xs font-data-mono">LST-1102</p>
+</div>
+</div>
+</td>
+<td class="py-4 px-6">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-variant/50 text-on-surface-variant font-label-bold text-label-bold text-[10px]">
+<span class="w-1.5 h-1.5 rounded-full bg-outline"></span>
+                                        Offline
+                                    </span>
+</td>
+<td class="py-4 px-6 font-data-mono text-on-surface">5</td>
+<td class="py-4 px-6 text-on-surface-variant">1 day ago</td>
+<td class="py-4 px-6 text-right">
+<button class="text-primary hover:text-surface-tint font-label-bold text-label-bold transition-colors">View Profile</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination Footer -->
+<div class="p-4 border-t border-surface-variant flex items-center justify-between bg-surface-bright mt-auto">
+<span class="text-sm text-on-surface-variant">Showing 1 to 5 of 248 entries</span>
+<div class="flex gap-1">
+<button class="p-1 rounded text-on-surface-variant hover:bg-surface-container-high disabled:opacity-50" disabled=""><span class="material-symbols-outlined text-[20px]">chevron_left</span></button>
+<button class="px-3 py-1 rounded bg-primary-container/20 text-primary font-medium text-sm">1</button>
+<button class="px-3 py-1 rounded hover:bg-surface-container-high text-on-surface-variant font-medium text-sm">2</button>
+<button class="px-3 py-1 rounded hover:bg-surface-container-high text-on-surface-variant font-medium text-sm">3</button>
+<button class="p-1 rounded text-on-surface-variant hover:bg-surface-container-high"><span class="material-symbols-outlined text-[20px]">chevron_right</span></button>
+</div>
+</div>
+</div>
+<!-- Side Panel: Currently Online -->
+<div class="xl:col-span-1 flex flex-col gap-gutter">
+<div class="bg-surface-container-lowest rounded-xl custom-shadow border border-surface-variant/30 p-6 flex-1 flex flex-col max-h-[600px]">
+<div class="flex justify-between items-center mb-6">
+<h2 class="font-headline-sm text-headline-sm text-on-surface flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-secondary-fixed shadow-[0_0_8px_#88f7d6]"></span>
+                            Currently Online
+                        </h2>
+<span class="bg-secondary-fixed/20 text-secondary-container px-2.5 py-0.5 rounded-full font-label-bold text-label-bold">42 Active</span>
+</div>
+<!-- Scrollable List -->
+<div class="flex-1 overflow-y-auto pr-2 space-y-4 custom-scrollbar">
+<!-- Online Item -->
+<div class="flex items-center justify-between group">
+<div class="flex items-center gap-3">
+<div class="relative">
+<div class="w-10 h-10 rounded-full bg-primary-fixed text-on-primary-fixed flex items-center justify-center font-bold text-sm">EJ</div>
+<div class="absolute bottom-0 right-0 w-3 h-3 bg-secondary-fixed border-2 border-surface-container-lowest rounded-full"></div>
+</div>
+<div>
+<p class="font-medium text-on-surface text-sm">Elena J.</p>
+<p class="text-on-surface-variant text-xs">Available</p>
+</div>
+</div>
+<button class="opacity-0 group-hover:opacity-100 transition-opacity p-1.5 text-on-surface-variant hover:bg-surface-container-high rounded-lg">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+<!-- Online Item -->
+<div class="flex items-center justify-between group">
+<div class="flex items-center gap-3">
+<div class="relative">
+<div class="w-10 h-10 rounded-full bg-primary-fixed text-on-primary-fixed flex items-center justify-center font-bold text-sm">AK</div>
+<div class="absolute bottom-0 right-0 w-3 h-3 bg-secondary-fixed border-2 border-surface-container-lowest rounded-full"></div>
+</div>
+<div>
+<p class="font-medium text-on-surface text-sm">Aisha K.</p>
+<p class="text-on-surface-variant text-xs">Available</p>
+</div>
+</div>
+<button class="opacity-0 group-hover:opacity-100 transition-opacity p-1.5 text-on-surface-variant hover:bg-surface-container-high rounded-lg">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+<!-- Online Item (In Session) -->
+<div class="flex items-center justify-between group">
+<div class="flex items-center gap-3">
+<div class="relative">
+<img class="w-10 h-10 rounded-full object-cover" data-alt="Small avatar of David R, a male listener." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCuyGiPpGJck-syAFqfs4gQTZqp-UxDk9-LwWm2cUYFK1ExnfHXTb7B_YSk9bhFJmkP_V5g-m1ysujdMoGeUjRrSTe-B9pH8W9Ww-mA21EvkxiuNxL-5P8xtF_6FKoz9RH-nu6Sgpf5lHJZWNHZ_y9nUbUBAbHxRULHj0p4n6cLla0p69oMGzXnqzdntOeJeCfBpj2mDkxTdw2K_BgFVuSRQPQhv_23ZpuVLIrUV2eWf43H4jumZTV3tQ"/>
+<div class="absolute bottom-0 right-0 w-3 h-3 bg-primary border-2 border-surface-container-lowest rounded-full"></div>
+</div>
+<div>
+<p class="font-medium text-on-surface text-sm">David R.</p>
+<p class="text-primary text-xs font-medium">In Session (12m)</p>
+</div>
+</div>
+<button class="opacity-0 group-hover:opacity-100 transition-opacity p-1.5 text-on-surface-variant hover:bg-surface-container-high rounded-lg">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+<!-- Online Item -->
+<div class="flex items-center justify-between group">
+<div class="flex items-center gap-3">
+<div class="relative">
+<div class="w-10 h-10 rounded-full bg-tertiary-fixed text-on-tertiary-fixed flex items-center justify-center font-bold text-sm">SL</div>
+<div class="absolute bottom-0 right-0 w-3 h-3 bg-secondary-fixed border-2 border-surface-container-lowest rounded-full"></div>
+</div>
+<div>
+<p class="font-medium text-on-surface text-sm">Sarah L.</p>
+<p class="text-on-surface-variant text-xs">Available</p>
+</div>
+</div>
+<button class="opacity-0 group-hover:opacity-100 transition-opacity p-1.5 text-on-surface-variant hover:bg-surface-container-high rounded-lg">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+<!-- Muted text for scrolling implication -->
+<div class="text-center pt-4">
+<span class="text-xs text-outline font-medium">View all 42 online</span>
+</div>
+</div>
+</div>
+<!-- Secondary Small Panel (E.g. Quick Actions or Shift Info) -->
+<div class="bg-surface-container-low rounded-xl border border-surface-variant/30 p-5">
+<h3 class="font-label-bold text-label-bold text-on-surface-variant uppercase tracking-wider mb-3">Shift Status</h3>
+<p class="text-sm text-on-surface mb-4">Current staffing levels are optimal for the projected queue volume.</p>
+<button class="w-full py-2 border border-primary text-primary rounded-lg font-label-bold text-label-bold hover:bg-primary/5 transition-colors">
+                        Broadcast Message to Network
+                    </button>
+</div>
+</div>
+</div>
+</main>
+<style>
+        /* Custom thin scrollbar for the online list to keep the UI clean */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #cac4d3; /* outline-variant */
+            border-radius: 10px;
+        }
+    </style>
+</body></html>

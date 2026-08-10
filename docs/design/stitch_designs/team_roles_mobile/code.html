@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Team &amp; Roles Management</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@600;700&amp;family=Work+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-error": "#ffffff",
+                      "surface-tint": "#6251a8",
+                      "inverse-primary": "#cbbeff",
+                      "secondary": "#006b56",
+                      "on-secondary-fixed-variant": "#005140",
+                      "inverse-on-surface": "#f1f0f3",
+                      "surface-container-high": "#e8e8eb",
+                      "secondary-container": "#88f7d6",
+                      "on-primary-fixed-variant": "#4a388e",
+                      "primary": "#5f4ea5",
+                      "on-tertiary-container": "#fffbff",
+                      "on-secondary-container": "#00725c",
+                      "on-primary-fixed": "#1d0061",
+                      "surface-container-highest": "#e3e2e5",
+                      "on-surface": "#1a1c1e",
+                      "surface-bright": "#faf9fc",
+                      "on-tertiary": "#ffffff",
+                      "surface-container": "#eeedf0",
+                      "primary-container": "#7867c0",
+                      "inverse-surface": "#2f3033",
+                      "background": "#faf9fc",
+                      "on-background": "#1a1c1e",
+                      "surface": "#faf9fc",
+                      "error": "#ba1a1a",
+                      "secondary-fixed": "#88f7d6",
+                      "surface-container-lowest": "#ffffff",
+                      "on-tertiary-fixed-variant": "#5e411e",
+                      "surface-variant": "#e3e2e5",
+                      "on-tertiary-fixed": "#2b1700",
+                      "primary-fixed": "#e6deff",
+                      "tertiary-fixed": "#ffddba",
+                      "on-primary-container": "#fffbff",
+                      "surface-dim": "#dadadc",
+                      "on-secondary-fixed": "#002018",
+                      "on-secondary": "#ffffff",
+                      "error-container": "#ffdad6",
+                      "outline-variant": "#cac4d3",
+                      "tertiary-fixed-dim": "#eabf91",
+                      "on-primary": "#ffffff",
+                      "secondary-fixed-dim": "#6adaba",
+                      "tertiary-container": "#916e47",
+                      "outline": "#797582",
+                      "on-surface-variant": "#484551",
+                      "tertiary": "#765631",
+                      "primary-fixed-dim": "#cbbeff",
+                      "surface-container-low": "#f4f3f6",
+                      "on-error-container": "#93000a"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "gutter": "20px",
+                      "unit": "8px",
+                      "container-padding": "24px",
+                      "sidebar-width": "260px",
+                      "margin-mobile": "16px"
+              },
+              "fontFamily": {
+                      "body-md": [
+                              "Work Sans"
+                      ],
+                      "data-mono": [
+                              "Work Sans"
+                      ],
+                      "headline-sm": [
+                              "Quicksand"
+                      ],
+                      "headline-md": [
+                              "Quicksand"
+                      ],
+                      "body-lg": [
+                              "Work Sans"
+                      ],
+                      "label-bold": [
+                              "Work Sans"
+                      ],
+                      "display-lg": [
+                              "Quicksand"
+                      ]
+              },
+              "fontSize": {
+                      "body-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "data-mono": [
+                              "13px",
+                              {
+                                      "lineHeight": "18px",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "headline-sm": [
+                              "20px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-lg": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "label-bold": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "display-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .icon-filled {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md h-screen flex flex-col antialiased">
+<!-- TopNavBar (Shared Component) - Rendered for Mobile context -->
+<header class="w-full h-16 sticky top-0 z-40 bg-surface/60 dark:bg-surface-dim/60 backdrop-blur-xl shadow-sm shadow-primary/5">
+<div class="flex items-center justify-between px-4 w-full h-full max-w-full">
+<div class="flex items-center gap-2">
+<button class="md:hidden text-on-surface p-2 rounded-full hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<h1 class="font-headline-md text-headline-md font-bold text-primary dark:text-inverse-primary">Manraah</h1>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant p-2 rounded-full hover:bg-primary-container/20 transition-colors duration-300 active:scale-95 transition-transform" data-icon="notifications">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<img alt="User Profile Avatar" class="w-8 h-8 rounded-full object-cover border border-outline-variant" data-alt="A small circular avatar showing a professional, friendly user profile image in a bright setting, with modern corporate styling." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCgSXdb6c_DrlGxaFhl-8BrsPDzEd2hJpNlee0u0CFYoGAgyGCDbVcca62dya5TQ89gAt9cbaDkBA7NK09htLSCv35rSWfH3oOCXe4UlSBXqn1j8HMKTYYAA8laZQYRKTw8o0HoPFyfWAMruirNItwIbTkxcmM3PWNgVcQvDfM4AueE0kC6dnijo55CIjN3N9ENibEN3rtfrJ6bnELa6f1jUe9LasiNyte15lp9yeSFp8RPGkHKnHdOFA"/>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-1 overflow-y-auto px-margin-mobile py-6 pb-24">
+<div class="flex justify-between items-end mb-6">
+<div>
+<h2 class="font-headline-md text-headline-md text-on-surface mb-1">Team Members</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Manage roles and permissions.</p>
+</div>
+</div>
+<!-- Summary KPI Cards (Horizontal scroll on mobile) -->
+<div class="flex gap-4 overflow-x-auto pb-4 -mx-margin-mobile px-margin-mobile snap-x scrollbar-hide">
+<!-- Total Members -->
+<div class="bg-surface-container-lowest rounded-xl p-4 min-w-[140px] shadow-[0px_4px_20px_rgba(124,107,196,0.08)] border border-surface-variant snap-start shrink-0">
+<div class="flex items-center gap-2 mb-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">group</span>
+<span class="font-label-bold text-label-bold uppercase text-on-surface-variant">Total</span>
+</div>
+<div class="font-headline-md text-headline-md text-on-surface">124</div>
+<div class="text-[12px] text-secondary mt-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">trending_up</span> +5 this month
+                </div>
+</div>
+<!-- Active Admins -->
+<div class="bg-surface-container-lowest rounded-xl p-4 min-w-[140px] shadow-[0px_4px_20px_rgba(124,107,196,0.08)] border border-surface-variant snap-start shrink-0">
+<div class="flex items-center gap-2 mb-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">admin_panel_settings</span>
+<span class="font-label-bold text-label-bold uppercase text-on-surface-variant">Admins</span>
+</div>
+<div class="font-headline-md text-headline-md text-on-surface">8</div>
+<div class="text-[12px] text-on-surface-variant mt-1">2 online now</div>
+</div>
+<!-- Pending Invites -->
+<div class="bg-surface-container-lowest rounded-xl p-4 min-w-[140px] shadow-[0px_4px_20px_rgba(124,107,196,0.08)] border border-surface-variant snap-start shrink-0">
+<div class="flex items-center gap-2 mb-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">mail</span>
+<span class="font-label-bold text-label-bold uppercase text-on-surface-variant">Pending</span>
+</div>
+<div class="font-headline-md text-headline-md text-on-surface">3</div>
+<div class="text-[12px] text-error mt-1">1 expired</div>
+</div>
+</div>
+<!-- Search & Filter -->
+<div class="mt-2 mb-6">
+<div class="relative w-full">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-outline">search</span>
+</div>
+<input class="block w-full pl-10 pr-3 py-3 border border-outline-variant rounded-xl leading-5 bg-surface-container-lowest placeholder-outline focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary font-body-md text-body-md text-on-surface transition-colors" placeholder="Search members..." type="text"/>
+</div>
+</div>
+<!-- Member List -->
+<div class="flex flex-col gap-3">
+<!-- Member Card 1 -->
+<div class="bg-surface-container-lowest rounded-xl p-4 shadow-[0px_4px_20px_rgba(124,107,196,0.08)] border border-surface-variant flex flex-col gap-4">
+<div class="flex items-center gap-3">
+<img alt="Sarah Jenkins" class="w-12 h-12 rounded-full object-cover bg-surface-variant" data-alt="Close up portrait of a young professional woman with dark hair in a bright office environment, modern corporate style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD79hH5fj9SR3Vsfzh_JNc0-xteAMUb-4WDQh_dGU1Wl-jr66R7gCO_ut_jnxNF8aFvY9YAxdKU-gwF_gpcTDimoOVRxUrMffEbnhaPn4XGnL0K0XRmGhWzLZFWQVA92jywnraV7VrGLR5pv8Ajn_h0D-uBHpC7CCEBXo_q8jXl2erjuByuswyFCWXpoEk1Vp81dMR0HyN-hWvGhqHXnbWwOcIPl2Q0ZGUBtW7T6-UPdjiIliEPty01-A"/>
+<div class="flex-1">
+<div class="font-body-md text-body-md font-semibold text-on-surface">Sarah Jenkins</div>
+<div class="font-data-mono text-data-mono text-on-surface-variant text-sm">sarah.j@manraah.com</div>
+</div>
+</div>
+<div class="flex items-center justify-between border-t border-surface-variant pt-3 mt-1">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full font-label-bold text-[10px] uppercase bg-primary-container/10 text-primary">
+                        Admin
+                    </span>
+<span class="font-data-mono text-data-mono text-on-surface-variant text-xs flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">calendar_today</span> Joined Oct 2023
+                    </span>
+</div>
+</div>
+<!-- Member Card 2 -->
+<div class="bg-surface-container-lowest rounded-xl p-4 shadow-[0px_4px_20px_rgba(124,107,196,0.08)] border border-surface-variant flex flex-col gap-4">
+<div class="flex items-center gap-3">
+<img alt="David Chen" class="w-12 h-12 rounded-full object-cover bg-surface-variant" data-alt="Portrait of a middle aged man with glasses and short beard, wearing a casual button down shirt in a light modern setting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDtBoSClsTM03FfB9AGnrNHNwTK0DCz04J47THne2f9UjcwJwrHr63dm5IPN0HMxxb_PoLB9EjQ0d0HntrP7vveri8Xdoa_1w57koDl7wkR0TmgubLsqjPmA-FeXrRKU0AuS8lIwOpLhmPUTm9NDZH_pUmEknJXu-hXMTYnWOfyJ9tXnIZfCYJSVpu2cCjVPWr8lsM31d4hVDzQNcQLFeNzmV065X2eD0F2Bo-E5GquQLF8vkH4ITd0OQ"/>
+<div class="flex-1">
+<div class="font-body-md text-body-md font-semibold text-on-surface">David Chen</div>
+<div class="font-data-mono text-data-mono text-on-surface-variant text-sm">david.c@manraah.com</div>
+</div>
+</div>
+<div class="flex items-center justify-between border-t border-surface-variant pt-3 mt-1">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full font-label-bold text-[10px] uppercase bg-secondary-container/30 text-on-secondary-container">
+                        Moderator
+                    </span>
+<span class="font-data-mono text-data-mono text-on-surface-variant text-xs flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">calendar_today</span> Joined Jan 2024
+                    </span>
+</div>
+</div>
+<!-- Member Card 3 -->
+<div class="bg-surface-container-lowest rounded-xl p-4 shadow-[0px_4px_20px_rgba(124,107,196,0.08)] border border-surface-variant flex flex-col gap-4">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-full bg-surface-variant flex items-center justify-center text-on-surface-variant font-headline-sm">
+                        ER
+                    </div>
+<div class="flex-1">
+<div class="font-body-md text-body-md font-semibold text-on-surface">Elena Rodriguez</div>
+<div class="font-data-mono text-data-mono text-on-surface-variant text-sm">elena.r@manraah.com</div>
+</div>
+</div>
+<div class="flex items-center justify-between border-t border-surface-variant pt-3 mt-1">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full font-label-bold text-[10px] uppercase bg-surface-variant text-on-surface-variant">
+                        Viewer
+                    </span>
+<span class="font-data-mono text-data-mono text-on-surface-variant text-xs flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">calendar_today</span> Joined Mar 2024
+                    </span>
+</div>
+</div>
+</div>
+</main>
+<!-- FAB for adding new member (Contextual to Team Management) -->
+<button class="fixed bottom-[88px] right-4 bg-primary text-on-primary w-14 h-14 rounded-2xl shadow-lg flex items-center justify-center hover:bg-primary/90 transition-colors z-30">
+<span class="material-symbols-outlined icon-filled">person_add</span>
+</button>
+</body></html>

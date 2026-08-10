@@ -1,10 +1,10 @@
-import AdminMainDashboard from "@/frontend/components/admin/AdminMainDashboard";
+import ListenerCompanionController from "@/frontend/components/screens/human-companion-listener/ListenerCompanionController";
 
 export const metadata = {
-  title: "Companion & Admin Operations Portal | Manraah Sanctuary",
-  description: "Role-based management portal for human companions, supervisors, and platform administrators.",
+  title: "Companion Listener Dashboard | Manraah Sanctuary",
+  description: "Peer listener workspace for accepting sessions, live chat, and WebRTC voice calls.",
 };
 
 export default function CompanionDashboardPage() {
-  return <AdminMainDashboard initialTab="COMPANION" />;
+  return <ListenerCompanionController />;
 }

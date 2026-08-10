@@ -1,10 +1,15 @@
-import AdminMainDashboard from "@/frontend/components/admin/AdminMainDashboard";
+import AdminShell from "@/frontend/components/shell/AdminShell";
+import DashboardOverview from "@/frontend/components/screens/admin/DashboardOverview";
 
 export const metadata = {
-  title: "Admin Operations & Analytics Dashboard | Manraah Sanctuary",
-  description: "Executive control dashboard for peer listener companion matching, user moderation, therapist verification, and system health.",
+  title: "Admin Dashboard Overview | Manraah Sanctuary",
+  description: "Executive Operations & Telemetry Dashboard.",
 };
 
-export default function AdminDashboardPage() {
-  return <AdminMainDashboard initialTab="OVERVIEW" />;
+export default function AdminDashboardOverviewPage() {
+  return (
+    <AdminShell>
+      <DashboardOverview />
+    </AdminShell>
+  );
 }

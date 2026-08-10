@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+
+<html class="h-full antialiased dark:bg-background" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Manraah Admin - Crisis Escalation Center</title>
+<!-- Fonts & Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&amp;family=Work+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Config -->
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "secondary-fixed": "#88f7d6",
+                      "on-error": "#ffffff",
+                      "on-error-container": "#93000a",
+                      "secondary-container": "#88f7d6",
+                      "on-primary-fixed-variant": "#4a388e",
+                      "on-tertiary-fixed-variant": "#5e411e",
+                      "inverse-surface": "#2f3033",
+                      "on-surface": "#1a1c1e",
+                      "primary": "#5f4ea5",
+                      "on-secondary": "#ffffff",
+                      "error-container": "#ffdad6",
+                      "surface-container-highest": "#e3e2e5",
+                      "secondary-fixed-dim": "#6adaba",
+                      "surface-container-lowest": "#ffffff",
+                      "on-secondary-fixed-variant": "#005140",
+                      "background": "#faf9fc",
+                      "on-primary": "#ffffff",
+                      "on-tertiary-fixed": "#2b1700",
+                      "secondary": "#006b56",
+                      "primary-container": "#7867c0",
+                      "tertiary": "#765631",
+                      "tertiary-fixed-dim": "#eabf91",
+                      "surface-dim": "#dadadc",
+                      "surface-container-high": "#e8e8eb",
+                      "on-tertiary": "#ffffff",
+                      "on-tertiary-container": "#fffbff",
+                      "tertiary-fixed": "#ffddba",
+                      "on-background": "#1a1c1e",
+                      "on-surface-variant": "#484551",
+                      "surface-variant": "#e3e2e5",
+                      "surface-container": "#eeedf0",
+                      "on-primary-container": "#fffbff",
+                      "surface-tint": "#6251a8",
+                      "surface-bright": "#faf9fc",
+                      "surface-container-low": "#f4f3f6",
+                      "primary-fixed": "#e6deff",
+                      "tertiary-container": "#916e47",
+                      "outline": "#797582",
+                      "on-secondary-fixed": "#002018",
+                      "surface": "#faf9fc",
+                      "error": "#ba1a1a",
+                      "on-primary-fixed": "#1d0061",
+                      "outline-variant": "#cac4d3",
+                      "inverse-on-surface": "#f1f0f3",
+                      "inverse-primary": "#cbbeff",
+                      "primary-fixed-dim": "#cbbeff",
+                      "on-secondary-container": "#00725c",
+                      "crisis-bg": "#FEECEB",
+                      "crisis-text": "#E57373"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "container-padding": "24px",
+                      "unit": "8px",
+                      "sidebar-width": "260px",
+                      "margin-mobile": "16px",
+                      "gutter": "20px"
+              },
+              "fontFamily": {
+                      "headline-md": [
+                              "Quicksand"
+                      ],
+                      "headline-sm": [
+                              "Quicksand"
+                      ],
+                      "body-md": [
+                              "Work Sans"
+                      ],
+                      "body-lg": [
+                              "Work Sans"
+                      ],
+                      "label-bold": [
+                              "Work Sans"
+                      ],
+                      "data-mono": [
+                              "Work Sans"
+                      ],
+                      "display-lg": [
+                              "Quicksand"
+                      ]
+              },
+              "fontSize": {
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-sm": [
+                              "20px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "body-lg": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "label-bold": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "data-mono": [
+                              "13px",
+                              {
+                                      "lineHeight": "18px",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "display-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+<style>
+        .ambient-shadow {
+            box-shadow: 0px 4px 20px rgba(124, 107, 196, 0.08);
+        }
+        .modal-shadow {
+            box-shadow: 0px 12px 32px rgba(0, 0, 0, 0.12);
+        }
+      </style>
+</head>
+<body class="bg-background text-on-background h-full flex overflow-hidden">
+<!-- SideNavBar -->
+<nav class="hidden md:flex bg-surface dark:bg-inverse-surface fixed left-0 top-0 h-screen w-[260px] flex-col py-unit px-4 border-r border-[#F0EEF5] z-50">
+<div class="mb-8 mt-4 flex flex-col gap-1 px-4">
+<h1 class="text-headline-sm font-headline-sm font-semibold text-primary dark:text-inverse-primary">Manraah Admin</h1>
+<p class="text-label-bold font-label-bold text-on-surface-variant">Operational Clarity</p>
+</div>
+<ul class="flex flex-col gap-1">
+<li>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant dark:text-surface-variant hover:text-on-surface hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors group" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="dashboard">dashboard</span>
+<span class="text-label-bold font-label-bold">Overview</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant dark:text-surface-variant hover:text-on-surface hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors group" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="group">group</span>
+<span class="text-label-bold font-label-bold">Users</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant dark:text-surface-variant hover:text-on-surface hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors group" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="forum">forum</span>
+<span class="text-label-bold font-label-bold">Community</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant dark:text-surface-variant hover:text-on-surface hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors group" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="medical_services">medical_services</span>
+<span class="text-label-bold font-label-bold">Professional Care</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-3 text-primary dark:text-inverse-primary font-bold bg-primary-container/20 dark:bg-primary/20 rounded-lg scale-[0.98] transition-all duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="emergency_home" data-weight="fill" style="font-variation-settings: 'FILL' 1;">emergency_home</span>
+<span class="text-label-bold font-label-bold">Crisis Escalation</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant dark:text-surface-variant hover:text-on-surface hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors group" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="auto_stories">auto_stories</span>
+<span class="text-label-bold font-label-bold">Resources</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant dark:text-surface-variant hover:text-on-surface hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors group" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="diversity_3">diversity_3</span>
+<span class="text-label-bold font-label-bold">Human Companion Network</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant dark:text-surface-variant hover:text-on-surface hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors group" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="badge">badge</span>
+<span class="text-label-bold font-label-bold">Team &amp; Roles</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant dark:text-surface-variant hover:text-on-surface hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors group" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="settings">settings</span>
+<span class="text-label-bold font-label-bold">Settings</span>
+</a>
+</li>
+</ul>
+</nav>
+<!-- Main Content Area -->
+<div class="flex-1 flex flex-col md:ml-[260px] h-screen overflow-hidden">
+<!-- TopNavBar -->
+<header class="bg-background/80 dark:bg-background/80 backdrop-blur-md docked full-width top-0 flex justify-between items-center w-full h-16 pl-8 pr-8 sticky z-40 border-b border-[#F0EEF5]">
+<div class="flex items-center gap-4 flex-1">
+<div class="relative w-64 focus-within:ring-2 focus-within:ring-primary/20 rounded-xl">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant" data-icon="search">search</span>
+<input class="w-full h-10 pl-10 pr-4 bg-surface-container-lowest border border-[#E0DEE7] rounded-xl text-body-md font-body-md focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary" placeholder="Search..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<button class="text-on-surface-variant hover:text-primary transition-colors relative">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-0 right-0 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<div class="flex items-center gap-3 pl-4 border-l border-[#E0DEE7]">
+<span class="text-body-md font-body-md font-medium text-primary hidden md:block">Platform Admin</span>
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[32px]" data-icon="account_circle">account_circle</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="flex-1 overflow-y-auto p-container-padding bg-background">
+<!-- Page Header -->
+<div class="mb-8">
+<h2 class="text-display-lg font-display-lg text-on-surface mb-2">Crisis Escalation Center</h2>
+<p class="text-body-lg font-body-lg text-on-surface-variant">Immediate attention required for flagged sessions.</p>
+</div>
+<!-- Dashboard Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+<!-- Active Flags Feed -->
+<div class="lg:col-span-8 flex flex-col gap-4">
+<!-- Top Actions -->
+<div class="flex justify-between items-center bg-white rounded-xl p-4 ambient-shadow mb-2">
+<div class="flex gap-2">
+<button class="px-4 py-2 bg-surface-container-lowest border border-outline-variant rounded-lg text-label-bold font-label-bold text-on-surface hover:bg-surface-container-low transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]" data-icon="filter_list">filter_list</span>
+                                Filter
+                            </button>
+<button class="px-4 py-2 bg-surface-container-lowest border border-outline-variant rounded-lg text-label-bold font-label-bold text-on-surface hover:bg-surface-container-low transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]" data-icon="sort">sort</span>
+                                Sort: Severity
+                            </button>
+</div>
+<span class="text-body-md font-body-md text-on-surface-variant">Showing 3 active flags</span>
+</div>
+<!-- Flag Card 1 - Critical -->
+<div class="bg-white rounded-xl p-6 ambient-shadow border-l-4 border-error">
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center gap-3">
+<span class="px-3 py-1 bg-crisis-bg text-crisis-text rounded-full text-label-bold font-label-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]" data-icon="warning">warning</span>
+                                    Critical
+                                </span>
+<span class="text-label-bold font-label-bold text-on-surface-variant">ID: #4092-A</span>
+<span class="text-label-bold font-label-bold text-on-surface-variant">• 2 mins ago</span>
+</div>
+<span class="px-3 py-1 bg-surface-container text-on-surface rounded-full text-label-bold font-label-bold border border-outline-variant">
+                                Source: AI Companion
+                            </span>
+</div>
+<div class="mb-6 bg-surface-container-lowest p-4 rounded-lg border border-[#F0EEF5]">
+<p class="text-body-md font-body-md text-on-surface line-clamp-3">
+<strong class="text-error">Trigger Phrase Detected:</strong> User mentioned intent to self-harm. Immediate intervention recommended. Conversation context suggests high distress levels over the past 48 hours.
+                            </p>
+</div>
+<div class="flex justify-end gap-3">
+<button class="px-4 py-2 rounded-lg text-label-bold font-label-bold text-primary hover:bg-primary-fixed transition-colors">
+                                Assign to Team
+                            </button>
+<button class="px-4 py-2 bg-primary text-white rounded-lg text-label-bold font-label-bold shadow-sm hover:bg-primary/90 transition-colors">
+                                Review Session
+                            </button>
+</div>
+</div>
+<!-- Flag Card 2 - High -->
+<div class="bg-white rounded-xl p-6 ambient-shadow border-l-4 border-tertiary-fixed-dim">
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center gap-3">
+<span class="px-3 py-1 bg-tertiary-fixed text-tertiary rounded-full text-label-bold font-label-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]" data-icon="error">error</span>
+                                    High
+                                </span>
+<span class="text-label-bold font-label-bold text-on-surface-variant">ID: #4088-B</span>
+<span class="text-label-bold font-label-bold text-on-surface-variant">• 15 mins ago</span>
+</div>
+<span class="px-3 py-1 bg-surface-container text-on-surface rounded-full text-label-bold font-label-bold border border-outline-variant">
+                                Source: Human Companion
+                            </span>
+</div>
+<div class="mb-6 bg-surface-container-lowest p-4 rounded-lg border border-[#F0EEF5]">
+<p class="text-body-md font-body-md text-on-surface">
+                                Companion escalated due to severe panic attack symptoms described by user. Companion is currently engaged but requests professional standby.
+                            </p>
+</div>
+<div class="flex justify-end gap-3">
+<button class="px-4 py-2 rounded-lg text-label-bold font-label-bold text-primary hover:bg-primary-fixed transition-colors">
+                                Assign to Team
+                            </button>
+<button class="px-4 py-2 bg-surface-container-highest text-on-surface rounded-lg text-label-bold font-label-bold shadow-sm hover:bg-surface-variant transition-colors border border-outline-variant">
+                                Mark In-Progress
+                            </button>
+</div>
+</div>
+</div>
+<!-- Right Sidebar: Audit Trail -->
+<div class="lg:col-span-4">
+<div class="bg-white rounded-xl p-6 ambient-shadow h-full">
+<h3 class="text-headline-sm font-headline-sm text-on-surface mb-6 border-b border-[#F0EEF5] pb-4">Recent Activity</h3>
+<div class="space-y-6 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-surface-variant before:to-transparent">
+<!-- Audit Item 1 -->
+<div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
+<div class="flex items-center justify-center w-10 h-10 rounded-full border border-white bg-secondary-container text-on-secondary-container shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10">
+<span class="material-symbols-outlined text-[18px]" data-icon="check_circle">check_circle</span>
+</div>
+<div class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] bg-surface-container-lowest p-4 rounded-lg border border-[#F0EEF5]">
+<div class="flex flex-col">
+<span class="text-label-bold font-label-bold text-primary mb-1">Resolved</span>
+<span class="text-body-md font-body-md text-on-surface">Flag #4075-C closed by Dr. Sarah J.</span>
+<span class="text-data-mono font-data-mono text-on-surface-variant text-xs mt-2">10:45 AM</span>
+</div>
+</div>
+</div>
+<!-- Audit Item 2 -->
+<div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
+<div class="flex items-center justify-center w-10 h-10 rounded-full border border-white bg-primary-container text-on-primary-container shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10">
+<span class="material-symbols-outlined text-[18px]" data-icon="assignment_ind">assignment_ind</span>
+</div>
+<div class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] bg-surface-container-lowest p-4 rounded-lg border border-[#F0EEF5]">
+<div class="flex flex-col">
+<span class="text-label-bold font-label-bold text-primary mb-1">Assigned</span>
+<span class="text-body-md font-body-md text-on-surface">Flag #4088-B assigned to Crisis Team A.</span>
+<span class="text-data-mono font-data-mono text-on-surface-variant text-xs mt-2">10:30 AM</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

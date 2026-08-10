@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Crisis Escalation Center - Mobile</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@600;700&amp;family=Work+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-error": "#ffffff",
+                    "surface-tint": "#6251a8",
+                    "inverse-primary": "#cbbeff",
+                    "secondary": "#006b56",
+                    "on-secondary-fixed-variant": "#005140",
+                    "inverse-on-surface": "#f1f0f3",
+                    "surface-container-high": "#e8e8eb",
+                    "secondary-container": "#88f7d6",
+                    "on-primary-fixed-variant": "#4a388e",
+                    "primary": "#5f4ea5",
+                    "on-tertiary-container": "#fffbff",
+                    "on-secondary-container": "#00725c",
+                    "on-primary-fixed": "#1d0061",
+                    "surface-container-highest": "#e3e2e5",
+                    "on-surface": "#1a1c1e",
+                    "surface-bright": "#faf9fc",
+                    "on-tertiary": "#ffffff",
+                    "surface-container": "#eeedf0",
+                    "primary-container": "#7867c0",
+                    "inverse-surface": "#2f3033",
+                    "background": "#faf9fc",
+                    "on-background": "#1a1c1e",
+                    "surface": "#faf9fc",
+                    "error": "#ba1a1a",
+                    "secondary-fixed": "#88f7d6",
+                    "surface-container-lowest": "#ffffff",
+                    "on-tertiary-fixed-variant": "#5e411e",
+                    "surface-variant": "#e3e2e5",
+                    "on-tertiary-fixed": "#2b1700",
+                    "primary-fixed": "#e6deff",
+                    "tertiary-fixed": "#ffddba",
+                    "on-primary-container": "#fffbff",
+                    "surface-dim": "#dadadc",
+                    "on-secondary-fixed": "#002018",
+                    "on-secondary": "#ffffff",
+                    "error-container": "#ffdad6",
+                    "outline-variant": "#cac4d3",
+                    "tertiary-fixed-dim": "#eabf91",
+                    "on-primary": "#ffffff",
+                    "secondary-fixed-dim": "#6adaba",
+                    "tertiary-container": "#916e47",
+                    "outline": "#797582",
+                    "on-surface-variant": "#484551",
+                    "tertiary": "#765631",
+                    "primary-fixed-dim": "#cbbeff",
+                    "surface-container-low": "#f4f3f6",
+                    "on-error-container": "#93000a"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "gutter": "20px",
+                    "unit": "8px",
+                    "container-padding": "24px",
+                    "sidebar-width": "260px",
+                    "margin-mobile": "16px"
+            },
+            "fontFamily": {
+                    "body-md": ["Work Sans"],
+                    "data-mono": ["Work Sans"],
+                    "headline-sm": ["Quicksand"],
+                    "headline-md": ["Quicksand"],
+                    "body-lg": ["Work Sans"],
+                    "label-bold": ["Work Sans"],
+                    "display-lg": ["Quicksand"]
+            },
+            "fontSize": {
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "data-mono": ["13px", {"lineHeight": "18px", "fontWeight": "500"}],
+                    "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "label-bold": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "display-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+            }
+          },
+        }
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .icon-fill {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md text-body-md antialiased min-h-screen flex flex-col">
+<!-- TopNavBar Component -->
+<header class="w-full h-16 sticky top-0 z-40 bg-surface/60 backdrop-blur-md shadow-sm shadow-primary/5 flex items-center justify-between px-margin-mobile w-full max-w-full">
+<div class="flex items-center gap-4">
+<button aria-label="Menu" class="text-primary hover:bg-primary-container/20 transition-colors duration-300 p-2 rounded-full active:scale-95 transition-transform md:hidden">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<span class="font-headline-md text-headline-md font-bold text-primary">Manraah</span>
+</div>
+<div class="flex items-center gap-3">
+<div class="relative hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px]">search</span>
+<input class="pl-10 pr-4 py-2 bg-surface-container-low border-none rounded-full text-body-md font-body-md focus:ring-2 focus:ring-primary w-48" placeholder="Search..." type="text"/>
+</div>
+<button class="text-primary hover:bg-primary-container/20 transition-colors duration-300 p-2 rounded-full active:scale-95 transition-transform relative">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 bg-error rounded-full border-2 border-surface"></span>
+</button>
+<img alt="User Profile Avatar" class="w-8 h-8 rounded-full object-cover border border-outline-variant/30 ml-1" data-alt="A professional studio portrait of a corporate administrator, warm lighting, neutral background, modern light-mode aesthetic, highly detailed." src="https://lh3.googleusercontent.com/aida-public/AB6AXuArj52LaS6-Ut5o55TUz0KWvQ2O2qGSHspRR6PtHaUFmBTp9xI6efTxY0tMVGD7SQy2tWR5BtRs5R8s8cAs73d4ZkAHHveZ3legTGgRpiFsFfYxADNW-tPiDPjid_e9EFwFjXFmgmMJGvREAGy66PzXi8gZJl1GKU71rFTpa3mrxvWj7Uyv4PGIChBBg99Nay1Xt21u_DgmFeha-_uKuDKpyEItamRsIIJPophxd3eEa3y46Z6k-kPlQA"/>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-1 w-full flex flex-col pt-4 pb-8">
+<!-- Header Section -->
+<div class="px-margin-mobile mb-6">
+<h1 class="font-headline-sm text-headline-sm text-on-surface mb-1">Escalation Center</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Review and assign active flags.</p>
+<!-- Quick Stats/Tabs (Mobile optimized) -->
+<div class="flex gap-2 mt-4 overflow-x-auto pb-2 scrollbar-hide">
+<button class="px-4 py-2 bg-primary-container text-on-primary-container rounded-full font-label-bold text-label-bold whitespace-nowrap border border-transparent">
+                    Active Alerts (3)
+                </button>
+<button class="px-4 py-2 bg-surface-container-low text-on-surface-variant hover:bg-surface-container-high rounded-full font-label-bold text-label-bold whitespace-nowrap border border-outline-variant/20 transition-colors">
+                    Recent Activity
+                </button>
+<button class="px-4 py-2 bg-surface-container-low text-on-surface-variant hover:bg-surface-container-high rounded-full font-label-bold text-label-bold whitespace-nowrap border border-outline-variant/20 transition-colors">
+                    Resolved
+                </button>
+</div>
+</div>
+<!-- High Priority Cards Stream -->
+<div class="px-margin-mobile flex flex-col gap-4">
+<!-- Card 1: Critical -->
+<article class="bg-surface-container-lowest rounded-xl p-4 shadow-sm shadow-primary/10 border border-error-container/50 relative overflow-hidden">
+<!-- Severity Bar Indicator -->
+<div class="absolute left-0 top-0 bottom-0 w-1.5 bg-error"></div>
+<div class="pl-2">
+<div class="flex justify-between items-start mb-3">
+<div class="flex items-center gap-2">
+<span class="bg-error-container text-on-error-container px-2.5 py-1 rounded-md font-label-bold text-label-bold flex items-center gap-1 uppercase tracking-wider">
+<span class="material-symbols-outlined text-[14px]" data-icon="warning" data-weight="fill" style="font-variation-settings: 'FILL' 1;">warning</span>
+                                Critical
+                            </span>
+</div>
+<span class="font-data-mono text-data-mono text-on-surface-variant">2m ago</span>
+</div>
+<div class="mb-3">
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Session #8492</h2>
+<p class="font-body-md text-body-md text-on-surface-variant flex items-center gap-1 mt-0.5">
+<span class="material-symbols-outlined text-[16px]">person</span> User ID: USR-992-A
+                        </p>
+</div>
+<!-- Highlighted Trigger Reason -->
+<div class="bg-error/5 border border-error/10 rounded-lg p-3 mb-5">
+<span class="block font-label-bold text-label-bold text-error mb-1">TRIGGER DETECTED</span>
+<p class="font-body-lg text-body-lg text-on-surface italic font-medium">"I have a plan and I don't want to be here anymore."</p>
+</div>
+<!-- Full Width Actions -->
+<div class="flex flex-col gap-2.5 mt-auto">
+<button class="w-full bg-primary text-on-primary py-3.5 rounded-lg font-label-bold text-label-bold flex items-center justify-center gap-2 hover:bg-primary/90 transition-colors shadow-sm">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+                            Review Session
+                        </button>
+<div class="flex gap-2.5">
+<button class="flex-1 border-2 border-primary/20 text-primary py-3 rounded-lg font-label-bold text-label-bold flex items-center justify-center gap-2 hover:bg-primary/5 transition-colors">
+<span class="material-symbols-outlined text-[18px]">person_add</span>
+                                Assign
+                            </button>
+<button class="flex-1 bg-surface-container text-on-surface py-3 rounded-lg font-label-bold text-label-bold flex items-center justify-center gap-2 hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-[18px]">more_horiz</span>
+                                More
+                            </button>
+</div>
+</div>
+</div>
+</article>
+<!-- Card 2: High -->
+<article class="bg-surface-container-lowest rounded-xl p-4 shadow-sm shadow-primary/5 border border-outline-variant/30 relative overflow-hidden">
+<div class="absolute left-0 top-0 bottom-0 w-1.5 bg-tertiary"></div>
+<div class="pl-2">
+<div class="flex justify-between items-start mb-3">
+<div class="flex items-center gap-2">
+<span class="bg-tertiary-fixed text-on-tertiary-fixed px-2.5 py-1 rounded-md font-label-bold text-label-bold flex items-center gap-1 uppercase tracking-wider">
+<span class="material-symbols-outlined text-[14px]" data-icon="error">error</span>
+                                High
+                            </span>
+</div>
+<span class="font-data-mono text-data-mono text-on-surface-variant">14m ago</span>
+</div>
+<div class="mb-3">
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Session #8488</h2>
+<p class="font-body-md text-body-md text-on-surface-variant flex items-center gap-1 mt-0.5">
+<span class="material-symbols-outlined text-[16px]">person</span> User ID: USR-411-C
+                        </p>
+</div>
+<div class="bg-surface-container-low border border-outline-variant/20 rounded-lg p-3 mb-5">
+<span class="block font-label-bold text-label-bold text-tertiary mb-1">ESCALATION REASON</span>
+<p class="font-body-lg text-body-lg text-on-surface font-medium">Repeated severe anxiety markers over 15 minutes.</p>
+</div>
+<div class="flex flex-col gap-2.5 mt-auto">
+<button class="w-full bg-primary text-on-primary py-3.5 rounded-lg font-label-bold text-label-bold flex items-center justify-center gap-2 hover:bg-primary/90 transition-colors shadow-sm">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+                            Review Session
+                        </button>
+<button class="w-full border-2 border-primary/20 text-primary py-3 rounded-lg font-label-bold text-label-bold flex items-center justify-center gap-2 hover:bg-primary/5 transition-colors">
+<span class="material-symbols-outlined text-[18px]">person_add</span>
+                            Assign to Specialist
+                        </button>
+</div>
+</div>
+</article>
+</div>
+<!-- Recent Activity Timeline (Accessible below cards) -->
+<section class="mt-8 px-margin-mobile">
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">history</span>
+                Recent Activity
+            </h3>
+<div class="relative border-l-2 border-surface-container-highest ml-3 space-y-6 pb-4">
+<!-- Timeline Item -->
+<div class="relative pl-6">
+<div class="absolute w-3 h-3 bg-secondary rounded-full -left-[7px] top-1.5 border-2 border-surface"></div>
+<div class="flex flex-col">
+<span class="font-data-mono text-data-mono text-on-surface-variant mb-0.5">10:42 AM</span>
+<p class="font-body-md text-body-md text-on-surface font-medium">Session #8470 resolved.</p>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm mt-1">Handled by Dr. A. Smith</p>
+</div>
+</div>
+<!-- Timeline Item -->
+<div class="relative pl-6">
+<div class="absolute w-3 h-3 bg-outline-variant rounded-full -left-[7px] top-1.5 border-2 border-surface"></div>
+<div class="flex flex-col">
+<span class="font-data-mono text-data-mono text-on-surface-variant mb-0.5">10:15 AM</span>
+<p class="font-body-md text-body-md text-on-surface font-medium">Alert downgraded for Session #8472.</p>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm mt-1">System automated review</p>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom Navigation Shell (Mobile Fallback) -->
+<nav class="md:hidden fixed bottom-0 w-full bg-surface-container-lowest border-t border-surface-container-highest flex justify-around items-center py-2 px-4 z-40 pb-safe">
+<a class="flex flex-col items-center p-2 text-on-surface-variant" href="#">
+<span class="material-symbols-outlined text-[24px]">home</span>
+<span class="font-label-bold text-[10px] mt-1">Home</span>
+</a>
+<a class="flex flex-col items-center p-2 text-primary" href="#">
+<div class="bg-primary-container/30 rounded-full px-4 py-1 mb-1">
+<span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 1;">warning</span>
+</div>
+<span class="font-label-bold text-[10px] text-primary">Alerts</span>
+</a>
+<a class="flex flex-col items-center p-2 text-on-surface-variant" href="#">
+<span class="material-symbols-outlined text-[24px]">history</span>
+<span class="font-label-bold text-[10px] mt-1">History</span>
+</a>
+</nav>
+<div class="h-16 md:hidden"></div> <!-- Spacer for bottom nav -->
+</body></html>

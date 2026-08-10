@@ -20,6 +20,8 @@ const STANDALONE_ROUTES = [
   "/wellness-score",
   "/login",
   "/signup",
+  "/admin/login",
+  "/companion/login",
 ];
 
 export default function AppShell({ children }: { children: ReactNode }) {
@@ -46,12 +48,9 @@ export default function AppShell({ children }: { children: ReactNode }) {
                 {children}
               </div>
             ) : isAdminRoute ? (
-              /* Dedicated Admin Listener Portal Shell - Isolated from Regular User Navigation */
-              <div className="min-h-screen bg-background text-on-background font-sans antialiased flex flex-col">
-                <AdminHeader />
-                <main className="flex-1 px-4 md:px-8 py-6 max-w-7xl mx-auto w-full">
-                  {children}
-                </main>
+              /* Dedicated Admin Shell - Clean Layout without stacked header bar */
+              <div className="min-h-screen bg-background text-on-background font-sans antialiased">
+                {children}
               </div>
             ) : (
               /* Main Regular User Application Shell with Sidebar & Header */

@@ -1,4 +1,22 @@
+const fs = require('fs');
+const path = require('path');
 const { neon } = require('@neondatabase/serverless');
+const crypto = require('crypto');
+
+// Load .env.local
+const envPath = path.join(__dirname, '..', '.env.local');
+if (fs.existsSync(envPath)) {
+  const envConfig = fs.readFileSync(envPath, 'utf8');
+  envConfig.split('\n').forEach((line) => {
+    const trimmed = line.trim();
+    if (trimmed && !trimmed.startsWith('#') && trimmed.includes('=')) {
+      const idx = trimmed.indexOf('=');
+      const key = trimmed.substring(0, idx).trim();
+      const value = trimmed.substring(idx + 1).trim();
+      process.env[key] = value;
+    }
+  });
+}
 
 const connectionString = process.env.DATABASE_URL;
 if (!connectionString) {
@@ -6,6 +24,12 @@ if (!connectionString) {
   process.exit(1);
 }
 const sql = neon(connectionString);
+
+function hashPassword(password) {
+  const salt = crypto.randomBytes(16).toString("hex");
+  const hash = crypto.scryptSync(password, salt, 64).toString("hex");
+  return `${salt}:${hash}`;
+}
 
 async function initDB() {
   console.log("Connecting to Neon PostgreSQL...");
@@ -31,9 +55,22 @@ async function initDB() {
       await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS sanctuary_name VARCHAR(255) UNIQUE`;
       await sql`ALTER TABLE users ALTER COLUMN name DROP NOT NULL`;
     } catch (e) {
-      // Ignored if tables are clean
+      // Ignored
     }
     console.log("✓ Table 'users' ready");
+
+    await sql`
+      CREATE TABLE IF NOT EXISTS companion_users (
+          id VARCHAR(100) PRIMARY KEY,
+          name VARCHAR(255) NOT NULL,
+          email VARCHAR(255) UNIQUE NOT NULL,
+          password_hash VARCHAR(255) NOT NULL,
+          role VARCHAR(50) NOT NULL DEFAULT 'admin',
+          status VARCHAR(50) DEFAULT 'ONLINE',
+          created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      );
+    `;
+    console.log("✓ Table 'companion_users' ready");
 
     await sql`
       CREATE TABLE IF NOT EXISTS user_assessments (
@@ -121,7 +158,23 @@ async function initDB() {
     `;
     console.log("✓ Table 'resources' ready");
 
-    // 2. Insert initial seed therapists if empty
+    // 2. Insert Real Admin & Listener Users into companion_users
+    const adminHash = hashPassword("AdminPass123!");
+    const listenerHash = hashPassword("CompanionPass123!");
+
+    await sql`
+      INSERT INTO companion_users (id, name, email, password_hash, role, status)
+      VALUES 
+      ('admin-usr-1', 'Executive Administrator', 'admin@manraah.com', ${adminHash}, 'admin', 'ONLINE'),
+      ('listener-usr-1', 'Dr. Sarah Jenkins', 'companion@manraah.com', ${listenerHash}, 'listener', 'ONLINE')
+      ON CONFLICT (email) DO UPDATE SET
+        password_hash = EXCLUDED.password_hash,
+        role = EXCLUDED.role,
+        name = EXCLUDED.name;
+    `;
+    console.log("✓ Real Admin ('admin@manraah.com') & Listener ('companion@manraah.com') seeded in Neon PostgreSQL database!");
+
+    // 3. Insert initial seed therapists if empty
     const existingTherapists = await sql`SELECT COUNT(*) FROM therapists`;
     if (parseInt(existingTherapists[0].count) === 0) {
       await sql`

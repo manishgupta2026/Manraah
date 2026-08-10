@@ -41,7 +41,7 @@ export default function AdminSidebar({
       id: "USERS" as AdminTab,
       label: "User Management",
       icon: "group",
-      badge: "1.4k",
+      badge: null,
     },
     {
       id: "CONTENT" as AdminTab,
@@ -66,12 +66,12 @@ export default function AdminSidebar({
   ];
 
   return (
-    <aside className="w-64 shrink-0 hidden lg:block bg-surface-container-lowest border-r border-surface-variant/30 min-h-[calc(100vh-4rem)] p-4 select-none">
+    <aside className="w-64 shrink-0 hidden lg:block bg-surface-container-lowest/80 backdrop-blur-md border-r border-surface-variant/30 min-h-[calc(100vh-4rem)] p-4 select-none">
       <div className="space-y-6">
         {/* Sidebar Header Section */}
         <div className="px-3 py-2 space-y-1">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-primary">
-            Admin Workspace
+          <span className="text-[10px] font-extrabold uppercase tracking-widest text-primary">
+            ADMIN WORKSPACE
           </span>
           <h2 className="font-heading font-bold text-sm text-on-surface">
             Operations & Control
@@ -86,12 +86,16 @@ export default function AdminSidebar({
               <button
                 key={item.id}
                 onClick={() => onSelectTab(item.id)}
-                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-2xl text-xs font-bold transition-all ${
+                className={`w-full flex items-center justify-between px-3.5 py-3 rounded-2xl text-xs font-bold transition-all relative overflow-hidden ${
                   isActive
                     ? "bg-primary text-white shadow-soft"
                     : "text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface"
                 }`}
               >
+                {isActive && (
+                  <span className="absolute left-0 top-0 bottom-0 w-1 bg-white rounded-r-full" />
+                )}
+
                 <div className="flex items-center gap-3">
                   <span className="material-symbols-outlined text-lg">
                     {item.icon}
@@ -117,18 +121,18 @@ export default function AdminSidebar({
           })}
         </nav>
 
-        {/* Quick System Badge */}
-        <div className="pt-6 border-t border-surface-variant/20 px-3">
-          <div className="p-3.5 rounded-2xl bg-surface-container-low border border-surface-variant/30 space-y-2">
+        {/* Quick System Status Card */}
+        <div className="pt-6 border-t border-surface-variant/20 px-1">
+          <div className="p-4 rounded-2xl bg-surface-container-low/70 border border-surface-variant/30 space-y-2">
             <div className="flex items-center justify-between text-xs">
               <span className="font-bold text-on-surface text-[11px]">Real-Time Server</span>
-              <span className="flex items-center gap-1 text-[10px] font-bold text-emerald-600">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping" />
+              <span className="flex items-center gap-1.5 text-[10px] font-bold text-emerald-600">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
                 Active
               </span>
             </div>
-            <p className="text-[10px] text-on-surface-variant/80 font-medium">
-              VPS Socket & Neon PostgreSQL synced over SSL.
+            <p className="text-[10px] text-on-surface-variant/80 font-medium leading-relaxed">
+              VPS Socket & Neon PostgreSQL synced securely over SSL.
             </p>
           </div>
         </div>

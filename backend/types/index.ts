@@ -16,6 +16,8 @@ export type UserCategory =
   | "senior_citizen"
   | string;
 
+export type UserRole = "user" | "listener" | "admin";
+
 export interface UserProfile {
   id: string;
   name?: string;
@@ -26,7 +28,7 @@ export interface UserProfile {
   mindfulnessMinutes: number;
   currentMood: string;
   selectedCategory: UserCategory;
-  role?: "user" | "admin";
+  role?: UserRole;
 }
 
 export interface AssessmentAnswers {
@@ -47,7 +49,7 @@ export interface AuthSession {
   user: UserProfile | null;
   token: string | null;
   isAuthenticated: boolean;
-  role?: "user" | "admin";
+  role?: UserRole;
 }
 
 export interface MoodEntry {
