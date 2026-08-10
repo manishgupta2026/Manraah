@@ -146,6 +146,11 @@ export default function AssessmentFlow() {
       const results = evaluateWellness(currentAnswers);
       setAssessmentResult(results);
       setAssessmentCompleted(true);
+      
+      const userType = selectedCategory === "couples" || selectedCategory === "couple" ? "couples" : (selectedCategory === "parents" || selectedCategory === "parent" ? "parents" : "student");
+      document.cookie = `userType=${userType}; path=/; max-age=86400`;
+      console.log("[Trace Point 1] After assessment: userType =", userType);
+
       router.push("/wellness-score");
     }
   };
@@ -175,6 +180,11 @@ export default function AssessmentFlow() {
     const results = evaluateWellness(currentAnswers);
     setAssessmentResult(results);
     setAssessmentCompleted(true);
+
+    const userType = selectedCategory === "couples" || selectedCategory === "couple" ? "couples" : (selectedCategory === "parents" || selectedCategory === "parent" ? "parents" : "student");
+    document.cookie = `userType=${userType}; path=/; max-age=86400`;
+    console.log("[Trace Point 1] After assessment: userType =", userType);
+
     router.push("/wellness-score");
   };
 

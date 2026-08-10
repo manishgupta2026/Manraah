@@ -61,7 +61,8 @@ export async function POST(request: Request) {
     // 3. Create user ID & hash password
     const userId = "usr_" + Date.now() + "_" + Math.random().toString(36).substring(2, 7);
     const passwordHash = hashPassword(password);
-    const userCategory = category || "student";
+    const rawCategory = category || "student";
+    const userCategory = rawCategory === "couples" || rawCategory === "couple" ? "couples" : (rawCategory === "parents" || rawCategory === "parent" ? "parents" : rawCategory);
 
     // 4. Insert user into Neon PostgreSQL
     await sql`
@@ -102,6 +103,13 @@ export async function POST(request: Request) {
     // 6. Create HTTP-Only session cookie response
     const response = NextResponse.json(sessionData);
     response.cookies.set("manraah_session", JSON.stringify(sessionData), {
+      httpOnly: false,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 60 * 60 * 24 * 30, // 30 days
+      path: "/",
+    });
+    response.cookies.set("userType", userProfile.selectedCategory, {
       httpOnly: false,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",

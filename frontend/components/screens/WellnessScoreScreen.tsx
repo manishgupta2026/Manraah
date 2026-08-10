@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCategory } from "@/frontend/lib/context/CategoryContext";
@@ -8,6 +8,8 @@ import { useAssessment } from "@/frontend/lib/context/AssessmentContext";
 import { getWellnessLevel, getWellnessMessage } from "@/frontend/lib/assessment/wellness";
 import { motion } from "framer-motion";
 import ScreenHeader from "@/frontend/components/ui/ScreenHeader";
+import { getClientSession, signOut } from "@/backend/auth/client";
+import { AuthSession } from "@/backend/types";
 
 export default function WellnessScoreScreen() {
   const router = useRouter();
@@ -20,6 +22,70 @@ export default function WellnessScoreScreen() {
       router.push("/");
     }
   }, [selectedCategory, detailedAnswers, router]);
+
+  const [session, setSession] = useState<AuthSession | null>(null);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    setSession(getClientSession());
+  }, []);
+
+  const handleSaveAndGoToDashboard = async () => {
+    if (!session || !session.user) return;
+    setSaving(true);
+    try {
+      const res = await fetch("/api/profile", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: session.user.id,
+          category: selectedCategory,
+          answers: detailedAnswers,
+          computedScore,
+          percentage: finalResult.percentage,
+          wellnessLevel: finalResult.wellnessLevel
+        })
+      });
+      
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to save assessment.");
+      }
+
+      // Sync local storage session category
+      const targetCategory = selectedCategory === "couples" || selectedCategory === "couple" ? "couples" : (selectedCategory === "parents" || selectedCategory === "parent" ? "parents" : selectedCategory || "student");
+      const updatedSession = {
+        ...session,
+        user: {
+          ...session.user,
+          selectedCategory: targetCategory,
+        }
+      } as AuthSession;
+      localStorage.setItem("manraah_auth_session", JSON.stringify(updatedSession));
+      document.cookie = `manraah_session=${JSON.stringify(updatedSession)}; path=/; max-age=2592000`;
+      document.cookie = `userType=${targetCategory}; path=/; max-age=2592000`;
+
+      router.push(`/dashboard/${targetCategory}`);
+    } catch (err) {
+      console.error("[Assessment Save Error]:", err);
+      const fallbackCategory = selectedCategory === "couples" || selectedCategory === "couple" ? "couples" : (selectedCategory === "parents" || selectedCategory === "parent" ? "parents" : selectedCategory || "student");
+      router.push(`/dashboard/${fallbackCategory}`);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleAuthRedirect = async (targetPath: string) => {
+    // Save userType to cookie BEFORE signing out so login/signup can read it
+    // even after full-page navigation clears React Context
+    if (selectedCategory) {
+      document.cookie = `manraah_userType=${selectedCategory}; path=/; max-age=3600`;
+      console.log("[WellnessScore] [POINT 1 — after assessment] Saved userType cookie:", selectedCategory);
+    }
+    // Sign out to clear stale session so the user can authenticate fresh
+    await signOut();
+    router.push(targetPath);
+  };
 
   // Handle fallback if the user navigated directly or refreshed
   const finalResult = assessmentResult || {
@@ -79,12 +145,7 @@ export default function WellnessScoreScreen() {
 
   return (
     <div className="max-w-3xl mx-auto py-10 px-4 space-y-8 animate-fadeIn relative">
-      <ScreenHeader
-        title="✨ Wellness Score"
-        showBackButton={true}
-        fallbackRoute="/assessment"
-        onBack={() => router.push("/assessment")}
-      />
+      <ScreenHeader title="✨ Wellness Score" showBackButton={true} fallbackRoute="/assessment" />
       {/* Calming Backdrop Glows */}
       <div className="fixed inset-0 z-[-2] opacity-35 pointer-events-none">
         <div className="absolute top-[-10%] left-[-10%] w-[60vw] md:w-[500px] h-[60vw] md:h-[500px] rounded-full bg-primary-container blur-[100px]" />
@@ -106,7 +167,7 @@ export default function WellnessScoreScreen() {
         <p className="text-sm md:text-base text-on-surface-variant/90 max-w-lg mx-auto font-light leading-relaxed">
           We've prepared your personalized wellness journey.
           <br />
-          Create your account to unlock your personalized dashboard.
+          Create your account or log in to unlock your dashboard.
         </p>
       </motion.div>
 
@@ -218,28 +279,54 @@ export default function WellnessScoreScreen() {
 
       </motion.div>
 
-      {/* Action Controls & Primary CTA */}
+      {/* CTA Buttons */}
       <motion.div 
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.2 }}
-        className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 z-10 relative"
+        className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4 z-10 relative"
       >
-        <button
-          type="button"
-          onClick={() => router.push("/assessment")}
-          className="w-full sm:w-auto px-6 py-4 rounded-full bg-surface-container-low border border-surface-variant/30 text-on-surface-variant font-bold text-sm hover:bg-surface-container hover:scale-102 active:scale-98 transition-all flex items-center justify-center gap-2 cursor-pointer"
-        >
-          <span className="material-symbols-outlined text-base">arrow_back</span>
-          <span>Back to Questions</span>
-        </button>
-        <Link
-          href="/signup"
-          className="w-full sm:w-auto px-10 py-4 rounded-full bg-primary hover:bg-[#7C6BC4] text-white font-heading font-bold text-sm shadow-[0_10px_25px_rgba(95,78,165,0.25)] hover:shadow-[0_12px_30px_rgba(95,78,165,0.35)] hover:-translate-y-0.5 active:scale-98 transition-all flex items-center justify-center gap-2 text-center"
-        >
-          <span>Create Your Sanctuary</span>
-          <span className="material-symbols-outlined text-base">arrow_forward</span>
-        </Link>
+        {session && session.isAuthenticated && session.user ? (
+          <div className="flex flex-col items-center gap-2">
+            <button
+              onClick={handleSaveAndGoToDashboard}
+              disabled={saving}
+              className="w-full sm:w-auto px-12 py-4 rounded-full bg-primary text-white font-bold text-sm shadow-lg hover:bg-primary-purple hover:scale-[1.02] disabled:opacity-50 transition-all text-center flex items-center justify-center gap-2"
+            >
+              {saving ? "Saving..." : "Save & Go to Dashboard"}
+              <span className="material-symbols-outlined text-base">arrow_forward</span>
+            </button>
+            <p className="text-xs text-[#5F309E] font-medium text-center bg-[#5F309E]/5 px-4 py-1.5 rounded-full mt-1 border border-[#5F309E]/10 flex items-center gap-1.5">
+              <span>Saving results to: <strong className="font-bold">{session.user.email}</strong></span>
+              <span className="text-[#5F309E]/30">|</span>
+              <button 
+                onClick={async () => {
+                  await signOut();
+                  setSession(null);
+                }} 
+                className="underline hover:text-[#7C6BC4] font-bold transition-colors cursor-pointer"
+              >
+                Log out
+              </button>
+            </p>
+          </div>
+        ) : (
+          <>
+            <button
+              onClick={() => handleAuthRedirect("/login")}
+              className="w-full sm:w-auto px-12 py-4 rounded-full bg-primary text-white font-bold text-sm shadow-lg hover:bg-primary-purple hover:scale-[1.02] transition-all text-center flex items-center justify-center gap-2"
+            >
+              Continue to Login
+              <span className="material-symbols-outlined text-base">arrow_forward</span>
+            </button>
+            <button
+              onClick={() => handleAuthRedirect("/signup")}
+              className="w-full sm:w-auto px-8 py-4 rounded-full bg-surface-container-low text-on-surface font-semibold text-sm hover:bg-surface-container hover:scale-[1.02] transition-all text-center"
+            >
+              Create New Account
+            </button>
+          </>
+        )}
       </motion.div>
     </div>
   );

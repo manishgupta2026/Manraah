@@ -4,11 +4,12 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { getClientSession } from "@/backend/auth/client";
-import { useDashboard } from "@/frontend/lib/context/WellnessContext";
-import ParentDashboard from "@/frontend/components/screens/ParentDashboard";
+import { useWellness } from "@/frontend/lib/context/WellnessContext";
+import { useCategory } from "@/frontend/lib/context/CategoryContext";
+import ParentDashboard from "@/parent/Research/Documentation/Dashboard Planning/AI Knowledge/Feature Documentation/Development/ParentDashboard";
+import CouplesDashboard from "@/Couples/03_Dashboard/Development/CouplesDashboard";
 import DailyPrivacyReminder from "@/frontend/components/ui/DailyPrivacyReminder";
 import ScreenHeader from "@/frontend/components/ui/ScreenHeader";
-import { getCategoryJourneyBadge } from "@/frontend/lib/constants";
 
 interface TimeTheme {
   bgGradient: string;
@@ -65,12 +66,16 @@ function getOptionEmoji(score: number): string {
 
 export default function DashboardScreen() {
   const router = useRouter();
-  const { dashboardData, isLoading, isFetching, error, refetch } = useDashboard();
+  const { dashboardData, isLoading } = useWellness();
   const [themeKey, setThemeKey] = useState<"morning" | "afternoon" | "evening" | "night">("evening");
   const [currentDateString, setCurrentDateString] = useState("6 Aug 2026");
-  const [hoveredPoint, setHoveredPoint] = useState<any | null>(null);
-  const [isTimedOut, setIsTimedOut] = useState<boolean>(false);
-  const [showReflectionModal, setShowReflectionModal] = useState<boolean>(false);
+
+  useEffect(() => {
+    const session = getClientSession();
+    if (!session || !session.isAuthenticated || !session.user) {
+      router.push("/login");
+    }
+  }, [router]);
 
   useEffect(() => {
     const hour = new Date().getHours();
@@ -83,47 +88,6 @@ export default function DashboardScreen() {
     const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     setCurrentDateString(`${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`);
   }, []);
-
-  // 8-second safety timeout so user is never stuck on skeleton indefinitely
-  useEffect(() => {
-    if (!isLoading && dashboardData) {
-      setIsTimedOut(false);
-      return;
-    }
-    const timer = setTimeout(() => {
-      if (isLoading || !dashboardData) {
-        setIsTimedOut(true);
-      }
-    }, 8000);
-    return () => clearTimeout(timer);
-  }, [isLoading, dashboardData]);
-
-  if (error || (isTimedOut && !dashboardData)) {
-    return (
-      <div className="max-w-md mx-auto my-20 p-8 rounded-3xl bg-surface-container-lowest border border-surface-variant/30 shadow-soft text-center space-y-6 animate-fadeIn">
-        <div className="w-16 h-16 rounded-full bg-primary-container/20 border border-primary/20 flex items-center justify-center mx-auto text-primary text-3xl">
-          🌿
-        </div>
-        <div className="space-y-2">
-          <h3 className="font-heading font-bold text-xl text-on-surface">
-            {isTimedOut ? "Your sanctuary is taking a little longer to open." : "We couldn't load your sanctuary right now."}
-          </h3>
-          <p className="text-xs text-on-surface-variant max-w-xs mx-auto">
-            Please check your connection or try refreshing your sanctuary.
-          </p>
-        </div>
-        <button
-          onClick={() => {
-            setIsTimedOut(false);
-            refetch();
-          }}
-          className="px-8 py-3.5 rounded-full bg-primary hover:bg-[#7C6BC4] text-white text-xs font-bold shadow-md hover:-translate-y-0.5 active:scale-98 transition-all cursor-pointer"
-        >
-          Try Again
-        </button>
-      </div>
-    );
-  }
 
   if (isLoading || !dashboardData) {
     return (
@@ -141,14 +105,29 @@ export default function DashboardScreen() {
     );
   }
 
-  const { user, todayMood, latestCheckIn, moodHistory: history = [], wellnessMetrics = [], streak, recommendation, insights } = dashboardData;
-  const name = user?.sanctuaryName || user?.name || "Sanctuary Member";
-  const category = user?.selectedCategory || "student";
+  const { user, todayMood, history, streak, recommendation, insights } = dashboardData;
+  const name = user?.sanctuaryName || user?.name || "Ashutosh Sahu";
+
+  // Check login state to determine whether to use database category or client context category
+  const { category: clientCategory } = useCategory();
+  const session = getClientSession();
+  const isLoggedIn = session && session.isAuthenticated && session.user;
+
+  // Source of truth priority:
+  // 1. DB value from dashboardData (authoritative after API loads)
+  // 2. Session cookie selectedCategory (immediate, written by login API)
+  // 3. React context clientCategory (onboarding flow, not yet authenticated)
+  const sessionCategory = session?.user?.selectedCategory;
+  const category = isLoggedIn
+    ? (dashboardData?.user?.selectedCategory || sessionCategory || "student")
+    : clientCategory;
+
+  console.log("[Dashboard] [POINT 3 — after login] DB:", dashboardData?.user?.selectedCategory, "| session cookie:", sessionCategory, "| resolved:", category);
   const streakDays = typeof streak === "number" 
     ? streak 
     : (streak && typeof streak === "object" && "currentStreak" in streak 
         ? (streak as any).currentStreak 
-        : 1);
+        : 12);
 
   const currentTheme = THEMES[themeKey];
   const isNight = themeKey === "night";
@@ -191,6 +170,10 @@ export default function DashboardScreen() {
     return <ParentDashboard />;
   }
 
+  if (category === "couple" || category === "couples") {
+    return <CouplesDashboard />;
+  }
+
   const moodScoreMap: Record<string, number> = {
     Amazing: 5,
     Happy: 4.5,
@@ -213,31 +196,35 @@ export default function DashboardScreen() {
   };
 
   const recentCheckins = history.slice(0, 7).reverse();
-  const plotPoints = recentCheckins.map((item: any) => {
-    const d = new Date(item.created_at);
-    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    const label = `${d.getDate()} ${months[d.getMonth()]}`;
-    const score = moodScoreMap[item.mood] || 3;
-    return { label, score, item };
-  });
+  const plotPoints = recentCheckins.length > 0 
+    ? recentCheckins.map((item: any) => {
+        const d = new Date(item.created_at);
+        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        const label = `${d.getDate()} ${months[d.getMonth()]}`;
+        const score = moodScoreMap[item.mood] || 3;
+        return { label, score, item };
+      })
+    : [
+        { label: "31 Jul", score: 4 },
+        { label: "1 Aug", score: 3 },
+        { label: "2 Aug", score: 4 },
+        { label: "3 Aug", score: 3.5 },
+        { label: "4 Aug", score: 4.5 },
+        { label: "5 Aug", score: 4 },
+        { label: "Today", score: todayMood ? (moodScoreMap[todayMood.mood] || 4) : 4 }
+      ];
 
   const svgW = 320;
   const svgH = 80;
-  
-  let coords: any[] = [];
-  if (plotPoints.length === 1) {
-    coords = [{ x: svgW / 2, y: svgH / 2, score: plotPoints[0].score, label: "Today", item: plotPoints[0].item }];
-  } else if (plotPoints.length > 1) {
-    coords = plotPoints.map((pt, idx) => {
-      const divider = plotPoints.length - 1;
-      const x = 20 + idx * ((svgW - 40) / divider);
-      const y = svgH - 12 - (pt.score - 1) * ((svgH - 24) / 4); // graded 1 to 5
-      return { x, y, score: pt.score, label: pt.label, item: pt.item };
-    });
-  }
+  const coords = plotPoints.map((pt, idx) => {
+    const divider = Math.max(plotPoints.length - 1, 1);
+    const x = 20 + idx * ((svgW - 40) / divider);
+    const y = svgH - 12 - (pt.score - 1) * ((svgH - 24) / 4); // graded 1 to 5
+    return { x, y, score: pt.score, label: pt.label };
+  });
 
   // Calculate SVG curve path using Bezier Cubic
-  let pathD = coords.length > 1 ? `M ${coords[0].x} ${coords[0].y}` : "";
+  let pathD = coords.length > 0 ? `M ${coords[0].x} ${coords[0].y}` : "";
   for (let i = 0; i < coords.length - 1; i++) {
     const cpX1 = coords[i].x + (coords[i + 1].x - coords[i].x) / 2;
     const cpY1 = coords[i].y;
@@ -246,7 +233,7 @@ export default function DashboardScreen() {
     pathD += ` C ${cpX1} ${cpY1}, ${cpX2} ${cpY2}, ${coords[i + 1].x} ${coords[i + 1].y}`;
   }
 
-  const fillD = coords.length > 1 ? `${pathD} L ${coords[coords.length - 1].x} ${svgH} L ${coords[0].x} ${svgH} Z` : "";
+  const fillD = coords.length > 0 ? `${pathD} L ${coords[coords.length - 1].x} ${svgH} L ${coords[0].x} ${svgH} Z` : "";
 
   return (
     <div className={`max-w-7xl mx-auto py-2 md:py-4 px-2 md:px-4 space-y-6 relative select-none animate-fadeIn transition-colors duration-1000 ${
@@ -281,7 +268,7 @@ export default function DashboardScreen() {
         {/* Hero Card (col-span-8) */}
         <motion.section
           variants={cardVariants}
-          className="col-span-12 md:col-span-8 relative rounded-[32px] bg-gradient-to-r from-[#4F46E5] via-[#4338CA] to-[#1E1B4B] p-6 md:p-8 flex flex-col justify-between overflow-hidden shadow-[0_20px_50px_rgba(99,102,241,0.25)] border border-white/10 min-h-[220px]"
+          className="col-span-12 md:col-span-8 relative rounded-[32px] bg-gradient-to-r from-[#4F46E5] via-[#4338CA] to-[#1E1B4B] p-6 md:p-8 flex flex-col justify-between overflow-hidden shadow-[0_20px_50px_rgba(99,102,241,0.25)] border border-white/10"
         >
           {/* SVG Sunset/Landscape Illustration on right */}
           <div className="absolute right-0 bottom-0 top-0 w-1/3 hidden sm:block pointer-events-none z-0 opacity-80">
@@ -302,8 +289,8 @@ export default function DashboardScreen() {
               <path d="M 120 185 C 120 180, 125 175, 130 180 C 135 175, 140 180, 140 185 Z" fill="#F472B6" opacity="0.75" />
             </svg>
           </div>
- 
-          <div className="space-y-4 z-10 flex-1 flex flex-col justify-center">
+
+          <div className="space-y-4 z-10">
             <div className="flex flex-wrap gap-2">
               <span className="px-3.5 py-1 rounded-full text-[9px] font-bold tracking-wider bg-white/15 text-white/90 border border-white/10 flex items-center gap-1 shadow-inner">
                 📅 {currentDateString}
@@ -314,26 +301,35 @@ export default function DashboardScreen() {
               <span className="px-3.5 py-1 rounded-full text-[9px] font-bold tracking-wider bg-white/15 text-white/90 border border-white/10 flex items-center gap-1 shadow-inner">
                 {themeKey === "night" ? "🌙 Night" : "☀️ " + themeKey.charAt(0).toUpperCase() + themeKey.slice(1)}
               </span>
-              <span className="px-3.5 py-1 rounded-full text-[9px] font-bold tracking-wider bg-white/15 text-white/90 border border-white/10 flex items-center gap-1 shadow-inner select-none pointer-events-none">
-                {getCategoryJourneyBadge(category)}
+              <span className="px-3.5 py-1 rounded-full text-[9px] font-bold tracking-wider bg-white/15 text-white/90 border border-white/10 flex items-center gap-1 shadow-inner">
+                🎓 {getCategoryName(category)}
               </span>
             </div>
- 
+
             <h1 className="text-3xl md:text-4xl font-heading font-black leading-tight tracking-tight text-white">
               {getTimeGreeting()}, {name} ✨
             </h1>
             <p className="text-sm font-medium max-w-md leading-relaxed text-indigo-100/80">
-              Every step you take in your sanctuary nurtures your inner balance.
+              You've taken another step towards a calmer mind today.
             </p>
           </div>
+
+          <div className="pt-6 z-10">
+            <button
+              onClick={() => router.push(todayMood ? "/mood-tracking" : "/mood-checkin")}
+              className="px-7 py-3.5 rounded-full bg-white text-indigo-950 font-bold text-xs shadow-md transition-all scale-102 hover:scale-105 hover:bg-slate-100 active:scale-98"
+            >
+              Continue Today's Journey
+            </button>
+          </div>
         </motion.section>
- 
+
         {/* AI Companion Card (col-span-4) */}
         <motion.section
           variants={cardVariants}
           whileHover={{ y: -4 }}
           onClick={() => router.push("/ai-chat")}
-          className="col-span-12 md:col-span-4 p-6 rounded-[32px] bg-white/50 backdrop-blur-xl border border-white/40 shadow-soft hover:shadow-soft-lg cursor-pointer flex flex-col justify-between min-h-[220px] relative overflow-hidden"
+          className="col-span-12 md:col-span-4 p-6 rounded-[32px] bg-white/50 backdrop-blur-xl border border-white/40 shadow-soft hover:shadow-soft-lg cursor-pointer flex flex-col justify-between min-h-[260px] relative overflow-hidden"
         >
           {/* Floating AI Robot companion vector */}
           <div className="absolute right-2 bottom-2 w-28 h-28 pointer-events-none z-0">
@@ -354,7 +350,7 @@ export default function DashboardScreen() {
               <circle cx="72" cy="55" r="4" fill="#4F46E5" />
             </svg>
           </div>
- 
+
           <div className="space-y-3.5 z-10">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-full bg-primary-container/20 flex items-center justify-center text-primary shadow-inner">
@@ -366,7 +362,7 @@ export default function DashboardScreen() {
               "{aiCompanionBubble}"
             </p>
           </div>
- 
+
           <div className="z-10 pt-4">
             <button
               onClick={(e) => {
@@ -379,249 +375,112 @@ export default function DashboardScreen() {
             </button>
           </div>
         </motion.section>
- 
+
         {/* ==================== ROW 2 ==================== */}
- 
+
         {/* Today's Check-in (col-span-4) */}
         <motion.div
           variants={cardVariants}
           whileHover={{ y: -4 }}
-          onClick={() => {
-            if (todayMood) {
-              setShowReflectionModal(true);
-            } else {
-              router.push("/checkin");
-            }
-          }}
-          className="col-span-12 md:col-span-4 p-6 rounded-[32px] bg-white/50 backdrop-blur-xl border border-white/40 shadow-soft hover:shadow-soft-lg cursor-pointer flex flex-col justify-between min-h-[260px] relative overflow-hidden"
+          onClick={() => router.push(todayMood ? "/mood-tracking" : "/checkin")}
+          className="col-span-12 md:col-span-4 p-6 rounded-[32px] bg-white/50 backdrop-blur-xl border border-white/40 shadow-soft hover:shadow-soft-lg cursor-pointer flex flex-col justify-between min-h-[250px] relative overflow-hidden"
         >
           {/* Leaf outline illustration inside background */}
-          <div className="absolute right-4 bottom-10 opacity-20 pointer-events-none text-emerald-800 text-[90px] select-none">
+          <div className="absolute right-4 bottom-14 opacity-20 pointer-events-none text-emerald-800 text-[100px] select-none">
             🍃
           </div>
 
-          {todayMood ? (
-            // CASE 2: User HAS completed check-in
-            <div className="space-y-3 flex-1 flex flex-col justify-between">
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xl filter drop-shadow-sm">🌸</span>
-                    <h4 className="font-heading font-extrabold text-sm text-on-surface">
-                      Today's Check-in
-                    </h4>
-                  </div>
-                  <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-[9px] font-bold">
-                    Completed
-                  </span>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <span className="text-3xl filter drop-shadow-sm">
-                    {getMoodEmoji(todayMood.mood)}
-                  </span>
-                  <div>
-                    <p className="text-base font-black text-on-surface leading-tight">
-                      {todayMood.mood}
-                    </p>
-                    <p className="text-[10px] text-on-surface-variant font-bold leading-normal mt-0.5">
-                      Completed at {(() => {
-                        try {
-                          const d = new Date(todayMood.created_at);
-                          return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                        } catch (e) {
-                          return "";
-                        }
-                      })()}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Metrics Pills */}
-              <div className="grid grid-cols-3 gap-1.5 text-center bg-white/35 p-2.5 rounded-2xl border border-white/40">
-                <div className="p-1 rounded-xl bg-white/50">
-                  <span className="text-[8px] font-bold text-on-surface-variant block">Energy</span>
-                  <span className="text-xs font-black text-emerald-700">{todayMood.energy_level}/5</span>
-                </div>
-                <div className="p-1 rounded-xl bg-white/50">
-                  <span className="text-[8px] font-bold text-on-surface-variant block">Stress</span>
-                  <span className="text-xs font-black text-orange-600 truncate block">{todayMood.stress || "Manageable"}</span>
-                </div>
-                <div className="p-1 rounded-xl bg-white/50">
-                  <span className="text-[8px] font-bold text-on-surface-variant block">Sleep</span>
-                  <span className="text-xs font-black text-indigo-700">{todayMood.sleep_quality}/5</span>
-                </div>
-              </div>
-
-              {/* Reflection preview if written */}
-              {todayMood.reflection && todayMood.reflection.trim().length > 0 && (
-                <div className="bg-white/30 p-2.5 rounded-xl border border-white/30 text-[10px] text-on-surface-variant font-semibold">
-                  <p className="italic line-clamp-2">
-                    "{todayMood.reflection}"
-                  </p>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setShowReflectionModal(true);
-                    }}
-                    className="text-[9px] font-bold text-primary hover:underline mt-1 block"
-                  >
-                    Read reflection →
-                  </button>
-                </div>
-              )}
-
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setShowReflectionModal(true);
-                }}
-                className="px-6 py-2 rounded-full bg-primary text-white font-bold text-xs transition-all self-start shadow-sm mt-1 hover:bg-primary-purple active:scale-98"
-              >
-                View Reflection
-              </button>
+          <div className="space-y-4">
+            <div className="flex items-center gap-2">
+              <span className="text-2xl filter drop-shadow-sm">{todayMood ? "✅" : "🌸"}</span>
+              <h4 className="font-heading font-extrabold text-sm text-on-surface">
+                {todayMood ? "Checked in Today" : "Today's Check-in"}
+              </h4>
             </div>
-          ) : (
-            // CASE 1: User has NOT completed check-in
-            <div className="space-y-4 flex-1 flex flex-col justify-between">
-              <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <span className="text-2xl filter drop-shadow-sm">🌸</span>
-                  <h4 className="font-heading font-extrabold text-sm text-on-surface">
-                    Today's Check-in
-                  </h4>
-                </div>
-                <p className="text-xs text-on-surface-variant font-semibold leading-relaxed">
-                  "Take a moment to check in with yourself."
+            
+            <div className="flex items-center gap-3">
+              <span className="text-4xl filter drop-shadow-sm">
+                {todayMood ? getMoodEmoji(todayMood.mood) : "🌸"}
+              </span>
+              <div>
+                <p className="text-base font-black text-on-surface leading-tight">
+                  {todayMood ? todayMood.mood : "Ready to log"}
+                </p>
+                <p className="text-[10px] text-on-surface-variant font-bold leading-normal mt-1 block max-w-[160px] line-clamp-2">
+                  {todayMood 
+                    ? (todayMood.reflection || "You've taken a moment to care for yourself today.")
+                    : "Today's reflection is waiting for you."
+                  }
                 </p>
               </div>
-
-              <div className="text-xs font-bold text-on-surface-variant/70">
-                Status: <span className="text-rose-500 font-extrabold">Not Completed</span>
-              </div>
-
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  router.push("/checkin");
-                }}
-                className="px-6 py-3 rounded-full bg-primary text-white hover:bg-primary-purple font-bold text-xs transition-all self-start shadow-md active:scale-98"
-              >
-                Complete Check-in
-              </button>
             </div>
-          )}
+          </div>
+
+          <button
+            className="px-6 py-3 rounded-full bg-primary-container/10 border border-primary/10 text-primary hover:bg-primary-container/20 font-bold text-xs transition-all self-start"
+          >
+            {todayMood ? "View Check-in" : "Complete Check-in"}
+          </button>
         </motion.div>
 
         {/* Mood Trend Chart (col-span-4) */}
         <motion.div
           variants={cardVariants}
           whileHover={{ y: -4 }}
-          onClick={() => history.length > 0 && router.push("/mood-tracking")}
-          className="col-span-12 md:col-span-4 p-6 rounded-[32px] bg-white/50 backdrop-blur-xl border border-white/40 shadow-soft hover:shadow-soft-lg cursor-pointer flex flex-col justify-between min-h-[250px] relative"
+          onClick={() => router.push("/mood-tracking")}
+          className="col-span-12 md:col-span-4 p-6 rounded-[32px] bg-white/50 backdrop-blur-xl border border-white/40 shadow-soft hover:shadow-soft-lg cursor-pointer flex flex-col justify-between min-h-[250px]"
         >
-          {history.length === 0 ? (
-            // EMPTY STATE
-            <div className="flex flex-col items-center justify-center text-center p-4 space-y-3 flex-1 min-h-[160px]">
-              <span className="text-4xl">🌱</span>
-              <p className="text-xs text-on-surface-variant font-semibold">
-                Your emotional journey starts with today's reflection.
-              </p>
-              <button
-                onClick={() => router.push("/checkin")}
-                className="px-6 py-2.5 rounded-full bg-primary text-white hover:bg-primary-purple font-bold text-xs shadow-md transition-all scale-102 hover:scale-105"
-              >
-                Complete Daily Check-in
-              </button>
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <span className="material-symbols-outlined text-base text-primary">trending_up</span>
+              <h4 className="font-heading font-extrabold text-sm text-on-surface">Mood Trend (7 Days)</h4>
             </div>
-          ) : (
-            <div className="space-y-2 flex-1 flex flex-col justify-between">
-              <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <span className="material-symbols-outlined text-base text-primary">trending_up</span>
-                  <h4 className="font-heading font-extrabold text-sm text-on-surface">Mood Trend</h4>
-                </div>
 
-                {/* Custom SVG Line Chart with Emojis */}
-                <div className="w-full h-24 relative mt-1 overflow-visible select-none">
-                  <svg viewBox={`0 0 ${svgW} ${svgH}`} className="w-full h-full overflow-visible">
-                    <defs>
-                      <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#A78BFA" stopOpacity="0.4" />
-                        <stop offset="100%" stopColor="#A78BFA" stopOpacity="0" />
-                      </linearGradient>
-                    </defs>
-                    {/* Grid guidelines */}
-                    <line x1="20" y1={svgH - 12} x2={svgW - 20} y2={svgH - 12} stroke="#E2E8F0" strokeWidth="1" strokeDasharray="3" />
-                    <line x1="20" y1={svgH / 2} x2={svgW - 20} y2={svgH / 2} stroke="#E2E8F0" strokeWidth="1" strokeDasharray="3" />
-                    <line x1="20" y1="12" x2={svgW - 20} y2="12" stroke="#E2E8F0" strokeWidth="1" strokeDasharray="3" />
-                    
-                    {/* Area under curve */}
-                    {coords.length > 1 && <path d={fillD} fill="url(#chartGrad)" />}
-                    {/* Trend line */}
-                    {coords.length > 1 && <path d={pathD} fill="none" stroke="#7C3AED" strokeWidth="2.5" strokeLinecap="round" />}
-                    
-                    {/* Points & Emojis */}
-                    {coords.map((pt, idx) => (
-                      <g key={idx}>
-                        <circle 
-                          cx={pt.x} 
-                          cy={pt.y} 
-                          r="4" 
-                          fill="#7C3AED" 
-                          className="cursor-pointer hover:r-6 hover:fill-primary-purple transition-all"
-                          onMouseEnter={() => setHoveredPoint(pt)}
-                          onMouseLeave={() => setHoveredPoint(null)}
-                        />
-                        <text x={pt.x} y={pt.y - 8} className="text-[12px] filter drop-shadow-sm select-none pointer-events-none" textAnchor="middle">
-                          {getOptionEmoji(pt.score)}
-                        </text>
-                      </g>
-                    ))}
-                  </svg>
-
-                  {hoveredPoint && (
-                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 bg-slate-900/95 text-white text-[9px] p-2.5 rounded-xl shadow-lg border border-white/10 z-30 pointer-events-none min-w-[125px] space-y-0.5">
-                      <p className="font-bold border-b border-white/10 pb-0.5 mb-1">{hoveredPoint.label}</p>
-                      <p>Mood: {hoveredPoint.item.mood}</p>
-                      <p>Energy: {(() => {
-                        const map: Record<number, string> = { 5: "Very High", 4: "Good", 3: "Moderate", 2: "Low", 1: "Exhausted" };
-                        return map[hoveredPoint.item.energy] || hoveredPoint.item.energy;
-                      })()}</p>
-                      <p>Stress: {hoveredPoint.item.stress}</p>
-                      <p>Sleep: {(() => {
-                        const matchMetric = wellnessMetrics.find((w: any) => new Date(w.date).toDateString() === new Date(hoveredPoint.item.created_at).toDateString());
-                        const sleepVal = matchMetric ? matchMetric.sleep_score : (hoveredPoint.item.sleep_quality || 3);
-                        const map: Record<number, string> = { 5: "Excellent", 4: "Good", 3: "Okay", 2: "Poor", 1: "Very Poor" };
-                        return map[sleepVal] || sleepVal;
-                      })()}</p>
-                    </div>
-                  )}
-                </div>
-
-                {/* Dates Row */}
-                <div className="flex justify-between px-1 text-[8px] font-bold text-on-surface-variant/70 tracking-wider">
-                  {plotPoints.map((pt, idx) => (
-                    <span key={idx}>{pt.label}</span>
-                  ))}
-                </div>
-              </div>
-
-              {history.length === 1 ? (
-                <p className="text-[9px] text-on-surface-variant/90 font-bold leading-normal text-center italic">
-                  "Your journey has just begun. Complete a few more daily reflections to discover meaningful patterns."
-                </p>
-              ) : (
-                <button
-                  className="text-[9px] font-bold text-primary uppercase tracking-widest self-start flex items-center gap-1 mt-1 hover:opacity-85"
-                >
-                  <span>View Full Report</span>
-                  <span className="material-symbols-outlined text-[10px]">arrow_forward</span>
-                </button>
-              )}
+            {/* Custom SVG Line Chart with Emojis */}
+            <div className="w-full h-24 relative mt-1 overflow-visible select-none">
+              <svg viewBox={`0 0 ${svgW} ${svgH}`} className="w-full h-full overflow-visible">
+                <defs>
+                  <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#A78BFA" stopOpacity="0.4" />
+                    <stop offset="100%" stopColor="#A78BFA" stopOpacity="0" />
+                  </linearGradient>
+                </defs>
+                {/* Grid guidelines */}
+                <line x1="20" y1={svgH - 12} x2={svgW - 20} y2={svgH - 12} stroke="#E2E8F0" strokeWidth="1" strokeDasharray="3" />
+                <line x1="20" y1={svgH / 2} x2={svgW - 20} y2={svgH / 2} stroke="#E2E8F0" strokeWidth="1" strokeDasharray="3" />
+                <line x1="20" y1="12" x2={svgW - 20} y2="12" stroke="#E2E8F0" strokeWidth="1" strokeDasharray="3" />
+                
+                {/* Area under curve */}
+                <path d={fillD} fill="url(#chartGrad)" />
+                {/* Trend line */}
+                <path d={pathD} fill="none" stroke="#7C3AED" strokeWidth="2.5" strokeLinecap="round" />
+                
+                {/* Points & Emojis */}
+                {coords.map((pt, idx) => (
+                  <g key={idx}>
+                    <circle cx={pt.x} cy={pt.y} r="3" fill="#7C3AED" />
+                    <text x={pt.x} y={pt.y - 6} className="text-[12px] filter drop-shadow-sm select-none" textAnchor="middle">
+                      {getOptionEmoji(pt.score)}
+                    </text>
+                  </g>
+                ))}
+              </svg>
             </div>
-          )}
+
+            {/* Dates Row */}
+            <div className="flex justify-between px-1 text-[8px] font-bold text-on-surface-variant/70 tracking-wider">
+              {plotPoints.map((pt, idx) => (
+                <span key={idx}>{pt.label}</span>
+              ))}
+            </div>
+          </div>
+
+          <button
+            className="text-[9px] font-bold text-primary uppercase tracking-widest self-start flex items-center gap-1 mt-1 hover:opacity-85"
+          >
+            <span>View Full Report</span>
+            <span className="material-symbols-outlined text-[10px]">arrow_forward</span>
+          </button>
         </motion.div>
 
         {/* Today's Insight (col-span-4) */}
@@ -677,33 +536,15 @@ export default function DashboardScreen() {
               <h4 className="font-heading font-extrabold text-xs text-on-surface-variant">Sleep Quality</h4>
             </div>
             
-            {latestCheckIn ? (
-              <>
-                <div className="pt-2 flex items-baseline gap-2">
-                  <span className="text-2xl font-black text-on-surface">
-                    {(() => {
-                      const map: Record<number, string> = { 5: "Excellent", 4: "Good", 3: "Okay", 2: "Poor", 1: "Very Poor" };
-                      return map[latestCheckIn.sleep_quality] || "Good";
-                    })()}
-                  </span>
-                  <span className="px-2 py-0.5 rounded-full text-[8px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-100">
-                    {latestCheckIn.sleep_quality}/5
-                  </span>
-                </div>
-                <p className="text-[10px] text-on-surface-variant/80 font-bold leading-normal">
-                  Sleep score recorded in your daily check-in.
-                </p>
-              </>
-            ) : (
-              <>
-                <div className="pt-2">
-                  <span className="text-base font-extrabold text-rose-500">No logs today</span>
-                </div>
-                <p className="text-[10px] text-on-surface-variant/80 font-bold leading-normal">
-                  Reflect on your sleep today to see insights.
-                </p>
-              </>
-            )}
+            <div className="pt-2 flex items-baseline gap-2">
+              <span className="text-2xl font-black text-on-surface">7h 15m</span>
+              <span className="px-2 py-0.5 rounded-full text-[8px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-100">
+                Good
+              </span>
+            </div>
+            <p className="text-[10px] text-on-surface-variant/80 font-bold leading-normal">
+              Keep a consistent sleep schedule to feel even better.
+            </p>
           </div>
 
           <span className="text-[9px] font-bold text-primary uppercase tracking-wider flex items-center gap-1 hover:opacity-85 mt-2">
@@ -726,55 +567,23 @@ export default function DashboardScreen() {
             </div>
 
             <div className="flex items-center justify-between pt-1 gap-2">
-              {latestCheckIn ? (
-                <>
-                  <div className="space-y-1">
-                    <span className="text-lg font-black text-orange-600 block truncate max-w-[90px]">
-                      {latestCheckIn.stress || "Manageable"}
-                    </span>
-                    <span className="text-[9px] text-on-surface-variant/85 font-semibold block leading-normal max-w-[100px]">
-                      Stress indices logged from reflection.
-                    </span>
-                  </div>
+              <div className="space-y-1">
+                <span className="text-2xl font-black text-orange-600 block">Moderate</span>
+                <span className="text-[9px] text-on-surface-variant/85 font-semibold block leading-normal max-w-[100px]">
+                  Try a 5-min breathing exercise.
+                </span>
+              </div>
 
-                  {/* Radial Gauge SVG */}
-                  <div className="w-14 h-14 relative shrink-0">
-                    <svg viewBox="0 0 40 40" className="w-full h-full">
-                      <path d="M 5 25 A 15 15 0 0 1 35 25" fill="none" stroke="#E2E8F0" strokeWidth="4" strokeLinecap="round" />
-                      <path d="M 5 25 A 15 15 0 0 1 25 12" fill="none" stroke="#F97316" strokeWidth="4" strokeLinecap="round" />
-                      {/* Needle */}
-                      <polygon 
-                        points="20,20 18,22 20,5 22,22" 
-                        fill="#475569" 
-                        transform={`rotate(${(() => {
-                          const stressStr = (latestCheckIn.stress || "").toLowerCase();
-                          if (stressStr.includes("peace") || stressStr.includes("low")) return -45;
-                          if (stressStr.includes("manage")) return -15;
-                          if (stressStr.includes("little")) return 15;
-                          if (stressStr.includes("stressful")) return 45;
-                          return 75; // overwhelming
-                        })()} 20 20)`} 
-                      />
-                      <circle cx="20" cy="20" r="3" fill="#1E293B" />
-                    </svg>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div className="space-y-1">
-                    <span className="text-base font-extrabold text-rose-500 block">No logs today</span>
-                    <span className="text-[9px] text-on-surface-variant/85 font-semibold block leading-normal max-w-[100px]">
-                      Record today's check-in to trace tension.
-                    </span>
-                  </div>
-                  <div className="w-14 h-14 relative shrink-0">
-                    <svg viewBox="0 0 40 40" className="w-full h-full opacity-40">
-                      <path d="M 5 25 A 15 15 0 0 1 35 25" fill="none" stroke="#E2E8F0" strokeWidth="4" strokeLinecap="round" />
-                      <circle cx="20" cy="20" r="3" fill="#1E293B" />
-                    </svg>
-                  </div>
-                </>
-              )}
+              {/* Radial Gauge SVG */}
+              <div className="w-14 h-14 relative shrink-0">
+                <svg viewBox="0 0 40 40" className="w-full h-full">
+                  <path d="M 5 25 A 15 15 0 0 1 35 25" fill="none" stroke="#E2E8F0" strokeWidth="4" strokeLinecap="round" />
+                  <path d="M 5 25 A 15 15 0 0 1 25 12" fill="none" stroke="#F97316" strokeWidth="4" strokeLinecap="round" />
+                  {/* Needle */}
+                  <polygon points="20,20 18,22 20,5 22,22" fill="#475569" transform="rotate(35 20 20)" />
+                  <circle cx="20" cy="20" r="3" fill="#1E293B" />
+                </svg>
+              </div>
             </div>
           </div>
 
@@ -798,48 +607,24 @@ export default function DashboardScreen() {
             </div>
 
             <div className="flex items-center justify-between pt-1 gap-2">
-              {latestCheckIn ? (
-                <>
-                  <div className="space-y-1">
-                    <span className="text-2xl font-black text-emerald-600 block">
-                      {(() => {
-                        const map: Record<number, string> = { 5: "Very High", 4: "Good", 3: "Moderate", 2: "Low", 1: "Exhausted" };
-                        return map[latestCheckIn.energy_level] || "Moderate";
-                      })()}
-                    </span>
-                    <span className="text-[9px] text-on-surface-variant/85 font-semibold block leading-normal max-w-[100px]">
-                      Energy logged: {latestCheckIn.energy_level}/5
-                    </span>
-                  </div>
+              <div className="space-y-1">
+                <span className="text-2xl font-black text-emerald-600 block">Good</span>
+                <span className="text-[9px] text-on-surface-variant/85 font-semibold block leading-normal max-w-[100px]">
+                  You have enough energy for goals.
+                </span>
+              </div>
 
-                  {/* Custom SVG Battery Illustration */}
-                  <div className="w-10 h-14 relative shrink-0 flex items-center justify-center">
-                    <svg viewBox="0 0 24 40" className="w-8 h-12 overflow-visible">
-                      <rect x="2" y="4" width="20" height="34" rx="4" fill="none" stroke="#94A3B8" strokeWidth="2" />
-                      <rect x="8" y="0" width="8" height="4" rx="1" fill="#94A3B8" />
-                      {/* Battery Segments */}
-                      {latestCheckIn.energy_level >= 1 && <rect x="5" y="28" width="14" height="7" rx="1" fill="#10B981" />}
-                      {latestCheckIn.energy_level >= 3 && <rect x="5" y="19" width="14" height="7" rx="1" fill="#10B981" />}
-                      {latestCheckIn.energy_level >= 5 && <rect x="5" y="10" width="14" height="7" rx="1" fill="#10B981" />}
-                    </svg>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div className="space-y-1">
-                    <span className="text-base font-extrabold text-rose-500 block">No logs today</span>
-                    <span className="text-[9px] text-on-surface-variant/85 font-semibold block leading-normal max-w-[100px]">
-                      Log your emotional energy reservoir.
-                    </span>
-                  </div>
-                  <div className="w-10 h-14 relative shrink-0 opacity-40">
-                    <svg viewBox="0 0 24 40" className="w-8 h-12 overflow-visible">
-                      <rect x="2" y="4" width="20" height="34" rx="4" fill="none" stroke="#94A3B8" strokeWidth="2" />
-                      <rect x="8" y="0" width="8" height="4" rx="1" fill="#94A3B8" />
-                    </svg>
-                  </div>
-                </>
-              )}
+              {/* Custom SVG Battery Illustration */}
+              <div className="w-10 h-14 relative shrink-0 flex items-center justify-center">
+                <svg viewBox="0 0 24 40" className="w-8 h-12 overflow-visible">
+                  <rect x="2" y="4" width="20" height="34" rx="4" fill="none" stroke="#94A3B8" strokeWidth="2" />
+                  <rect x="8" y="0" width="8" height="4" rx="1" fill="#94A3B8" />
+                  {/* Battery Segments */}
+                  <rect x="5" y="28" width="14" height="7" rx="1" fill="#10B981" />
+                  <rect x="5" y="19" width="14" height="7" rx="1" fill="#10B981" />
+                  <rect x="5" y="10" width="14" height="7" rx="1" fill="#10B981" />
+                </svg>
+              </div>
             </div>
           </div>
 
@@ -867,8 +652,8 @@ export default function DashboardScreen() {
               <h4 className="font-heading font-extrabold text-xs text-on-surface-variant">Recommendation</h4>
             </div>
 
-            <p className="text-[11px] text-on-surface-variant leading-relaxed font-bold italic pt-2 line-clamp-4">
-              "{recommendation || "We're still getting to know your wellness patterns. Keep checking in daily for more personalized suggestions."}"
+            <p className="text-[11px] text-on-surface-variant leading-relaxed font-bold italic pt-2">
+              "A short meditation before bed could improve tomorrow's focus."
             </p>
           </div>
 
@@ -989,7 +774,7 @@ export default function DashboardScreen() {
                 <p className="text-[9px] text-on-surface-variant/70 font-semibold mt-0.5">Your progress this week</p>
               </div>
             </div>
- 
+
             {/* Metrics List with Circular/Status Progress */}
             <div className="grid grid-cols-2 gap-4">
               
@@ -997,193 +782,67 @@ export default function DashboardScreen() {
               <div className="p-2.5 rounded-2xl bg-slate-50/70 border border-slate-100 flex items-center justify-between">
                 <div>
                   <span className="text-[8px] font-bold text-on-surface-variant/80 block">Check-ins</span>
-                  <span className="text-xs font-black text-slate-800 mt-1 block">
-                    {(() => {
-                      const oneWeekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
-                      return history.filter((item: any) => new Date(item.created_at).getTime() >= oneWeekAgo).length;
-                    })()}/7
-                  </span>
+                  <span className="text-xs font-black text-slate-800 mt-1 block">6/7</span>
                 </div>
                 {/* Micro circular progress */}
                 <div className="w-7 h-7 relative">
                   <svg className="w-full h-full transform -rotate-90">
                     <circle cx="14" cy="14" r="10" stroke="#F1F5F9" strokeWidth="2.5" fill="none" />
-                    <circle 
-                      cx="14" 
-                      cy="14" 
-                      r="10" 
-                      stroke="#8B5CF6" 
-                      strokeWidth="2.5" 
-                      fill="none" 
-                      strokeDasharray="62.8" 
-                      strokeDashoffset={(() => {
-                        const oneWeekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
-                        const count = history.filter((item: any) => new Date(item.created_at).getTime() >= oneWeekAgo).length;
-                        return 62.8 - (62.8 * Math.min(count, 7)) / 7;
-                      })()} 
-                    />
+                    <circle cx="14" cy="14" r="10" stroke="#8B5CF6" strokeWidth="2.5" fill="none" strokeDasharray="62.8" strokeDashoffset="8.9" />
                   </svg>
                 </div>
               </div>
- 
+
               {/* Avg Mood */}
               <div className="p-2.5 rounded-2xl bg-slate-50/70 border border-slate-100 flex items-center justify-between">
                 <div>
-                  <span className="text-[8px] font-bold text-on-surface-variant/80 block">Latest Mood</span>
-                  <span className="text-xs font-black text-slate-800 mt-1 block truncate max-w-[50px]">
-                    {latestCheckIn ? latestCheckIn.mood : "None"}
-                  </span>
+                  <span className="text-[8px] font-bold text-on-surface-variant/80 block">Avg Mood</span>
+                  <span className="text-xs font-black text-slate-800 mt-1 block">Calm</span>
                 </div>
-                <span className="text-base">
-                  {latestCheckIn ? getMoodEmoji(latestCheckIn.mood) : "🌸"}
-                </span>
+                <span className="text-base">😊</span>
               </div>
- 
+
               {/* Meditation */}
               <div className="p-2.5 rounded-2xl bg-slate-50/70 border border-slate-100 flex items-center justify-between">
                 <div>
                   <span className="text-[8px] font-bold text-on-surface-variant/80 block">Meditation</span>
-                  <span className="text-xs font-black text-slate-800 mt-1 block">
-                    {wellnessMetrics.filter((w: any) => w.mindfulness_minutes > 0).length} Mins
-                  </span>
+                  <span className="text-xs font-black text-slate-800 mt-1 block">3 Sessions</span>
                 </div>
                 <div className="w-7 h-7 relative">
                   <svg className="w-full h-full transform -rotate-90">
                     <circle cx="14" cy="14" r="10" stroke="#F1F5F9" strokeWidth="2.5" fill="none" />
-                    <circle cx="14" cy="14" r="10" stroke="#3B82F6" strokeWidth="2.5" fill="none" strokeDasharray="62.8" strokeDashoffset="45" />
+                    <circle cx="14" cy="14" r="10" stroke="#3B82F6" strokeWidth="2.5" fill="none" strokeDasharray="62.8" strokeDashoffset="25" />
                   </svg>
                 </div>
               </div>
- 
+
               {/* Journal */}
               <div className="p-2.5 rounded-2xl bg-slate-50/70 border border-slate-100 flex items-center justify-between">
                 <div>
-                  <span className="text-[8px] font-bold text-on-surface-variant/80 block">Journal Logs</span>
-                  <span className="text-xs font-black text-slate-800 mt-1 block">
-                    {dashboardData.journalEntries ? dashboardData.journalEntries.length : 0} Entries
-                  </span>
+                  <span className="text-[8px] font-bold text-on-surface-variant/80 block">Journal Entries</span>
+                  <span className="text-xs font-black text-slate-800 mt-1 block">4</span>
                 </div>
                 <div className="w-7 h-7 relative">
                   <svg className="w-full h-full transform -rotate-90">
                     <circle cx="14" cy="14" r="10" stroke="#F1F5F9" strokeWidth="2.5" fill="none" />
-                    <circle cx="14" cy="14" r="10" stroke="#10B981" strokeWidth="2.5" fill="none" strokeDasharray="62.8" strokeDashoffset="35" />
+                    <circle cx="14" cy="14" r="10" stroke="#10B981" strokeWidth="2.5" fill="none" strokeDasharray="62.8" strokeDashoffset="26" />
                   </svg>
                 </div>
               </div>
- 
+
             </div>
           </div>
+
+          <button
+            onClick={() => router.push("/reports")}
+            className="text-[9px] font-bold text-primary uppercase tracking-widest flex items-center gap-1 hover:opacity-85 mt-4"
+          >
+            <span>View Full Reflection</span>
+            <span className="material-symbols-outlined text-[10px]">arrow_forward</span>
+          </button>
         </motion.div>
+
       </motion.div>
- 
-      {/* Reflection Details Modal */}
-      <AnimatePresence>
-        {showReflectionModal && todayMood && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setShowReflectionModal(false)}
-              className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
-            />
-            <motion.div
-              initial={{ scale: 0.95, opacity: 0, y: 20 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.95, opacity: 0, y: 20 }}
-              className="relative z-10 w-full max-w-lg rounded-[32px] bg-white/95 backdrop-blur-xl border border-white/60 p-6 md:p-8 shadow-2xl space-y-6 text-slate-800 select-text max-h-[90vh] overflow-y-auto"
-            >
-              <div className="flex items-center justify-between border-b border-slate-100 pb-4">
-                <div className="flex items-center gap-3">
-                  <span className="text-3xl">{getMoodEmoji(todayMood.mood)}</span>
-                  <div>
-                    <h3 className="font-heading font-black text-lg text-slate-800">
-                      Today's Sanctuary Reflection
-                    </h3>
-                    <p className="text-xs text-slate-500 font-semibold">
-                      Recorded at {(() => {
-                        try {
-                          const d = new Date(todayMood.created_at);
-                          return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + " · " + currentDateString;
-                        } catch (e) {
-                          return currentDateString;
-                        }
-                      })()}
-                    </p>
-                  </div>
-                </div>
-                <button
-                  onClick={() => setShowReflectionModal(false)}
-                  className="w-8 h-8 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 flex items-center justify-center font-bold text-sm transition-all"
-                >
-                  ✕
-                </button>
-              </div>
-
-              {/* Metrics Summary */}
-              <div className="grid grid-cols-4 gap-2 text-center">
-                <div className="p-3 rounded-2xl bg-indigo-50/70 border border-indigo-100/60">
-                  <span className="text-[10px] font-bold text-indigo-600 block">Mood</span>
-                  <span className="text-sm font-black text-indigo-950 mt-0.5 block">{todayMood.mood}</span>
-                </div>
-                <div className="p-3 rounded-2xl bg-emerald-50/70 border border-emerald-100/60">
-                  <span className="text-[10px] font-bold text-emerald-600 block">Energy</span>
-                  <span className="text-sm font-black text-emerald-950 mt-0.5 block">{todayMood.energy_level}/5</span>
-                </div>
-                <div className="p-3 rounded-2xl bg-amber-50/70 border border-amber-100/60">
-                  <span className="text-[10px] font-bold text-amber-600 block">Stress</span>
-                  <span className="text-sm font-black text-amber-950 mt-0.5 block truncate">{todayMood.stress || "Manageable"}</span>
-                </div>
-                <div className="p-3 rounded-2xl bg-purple-50/70 border border-purple-100/60">
-                  <span className="text-[10px] font-bold text-purple-600 block">Sleep</span>
-                  <span className="text-sm font-black text-purple-950 mt-0.5 block">{todayMood.sleep_quality}/5</span>
-                </div>
-              </div>
-
-              {/* Written Reflection */}
-              <div className="space-y-2">
-                <h4 className="text-xs font-bold text-slate-600 uppercase tracking-wider flex items-center gap-1.5">
-                  <span>📝</span> Personal Thoughts & Notes
-                </h4>
-                <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/60 text-xs text-slate-700 leading-relaxed whitespace-pre-wrap font-medium">
-                  {todayMood.reflection && todayMood.reflection.trim().length > 0 ? (
-                    todayMood.reflection
-                  ) : (
-                    <span className="italic text-slate-400">No written thoughts recorded for this reflection.</span>
-                  )}
-                </div>
-              </div>
-
-              {/* Gratitude / Context */}
-              {todayMood.gratitude_reflection && todayMood.gratitude_reflection.trim().length > 0 && (
-                <div className="space-y-2">
-                  <h4 className="text-xs font-bold text-slate-600 uppercase tracking-wider flex items-center gap-1.5">
-                    <span>✨</span> What mattered today
-                  </h4>
-                  <div className="p-3.5 rounded-2xl bg-emerald-50/50 border border-emerald-100/60 text-xs text-slate-700 leading-relaxed font-medium">
-                    {todayMood.gratitude_reflection}
-                  </div>
-                </div>
-              )}
-
-              <div className="pt-2 flex justify-end gap-3">
-                <button
-                  onClick={() => router.push("/checkin")}
-                  className="px-5 py-2.5 rounded-full border border-slate-200 text-xs font-bold text-slate-700 hover:bg-slate-50 transition-all"
-                >
-                  Edit Reflection
-                </button>
-                <button
-                  onClick={() => setShowReflectionModal(false)}
-                  className="px-6 py-2.5 rounded-full bg-primary text-white text-xs font-bold shadow-md hover:bg-primary-purple transition-all"
-                >
-                  Close
-                </button>
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
 
       <DailyPrivacyReminder />
     </div>

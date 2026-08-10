@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { MAIN_NAV_ITEMS, getCategoryJourneyBadge } from "@/frontend/lib/constants";
+import { MAIN_NAV_ITEMS } from "@/frontend/lib/constants";
 import { getClientSession } from "@/backend/auth/client";
 import { getInitials, getPastelBgColor, getPastelTextColor } from "@/frontend/lib/avatar-helper";
 
@@ -23,6 +23,26 @@ export default function DesktopSidebar() {
       setStreakDays(session.user.streakDays || 12);
     }
   }, []);
+
+  const getCategoryJourney = (cat: string) => {
+    const map: Record<string, string> = {
+      student: "Student Journey",
+      young_pro: "Young Professional",
+      youngprofessional: "Young Professional",
+      working_professional: "Working Professional",
+      workingprofessional: "Working Professional",
+      parent: "Parent Journey",
+      parents: "Parent Journey",
+      couple: "Harmony Journey",
+      couples: "Harmony Journey",
+      family: "Family Journey",
+      women: "Women's Journey",
+      men: "Men's Journey",
+      senior_citizen: "Golden Journey",
+      seniorcitizen: "Golden Journey",
+    };
+    return map[cat] || "Wellness Journey";
+  };
 
   return (
     <aside className="hidden md:flex flex-col fixed top-0 left-0 h-screen w-[80px] lg:w-[260px] bg-white border-r border-surface-variant/40 z-30 shadow-soft transition-all duration-300">
@@ -61,45 +81,32 @@ export default function DesktopSidebar() {
         })}
       </nav>
 
-      {/* User Profile Card (Mockup Design) */}
+      {/* User Profile Card (Exactly like Screenshot) */}
       <div className="p-3 border-t border-surface-variant/30 bg-surface-container-lowest/60 shrink-0 hidden lg:block">
-        <div className="p-3.5 rounded-[20px] bg-white/60 backdrop-blur-xl border border-white/40 shadow-soft-sm space-y-3">
-          <div className="flex items-center gap-2.5">
-            {avatar && avatar.startsWith("data:image/") ? (
-              <img
-                src={avatar}
-                alt="Avatar"
-                className="w-9 h-9 rounded-full object-cover border border-primary/25 shadow-xs shrink-0"
-              />
-            ) : (
-              <div
-                className="w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs shrink-0 shadow-xs border border-primary/20"
-                style={{ backgroundColor: getPastelBgColor(userName), color: getPastelTextColor(userName) }}
-              >
-                {getInitials(userName)}
-              </div>
-            )}
-            <div className="min-w-0 flex-1">
-              <p className="text-xs font-extrabold text-on-surface truncate leading-tight">{userName}</p>
-              <p className="text-[10px] font-bold text-primary truncate leading-tight mt-0.5">{getCategoryJourneyBadge(category)}</p>
+        <Link
+          href="/profile"
+          className="flex items-center gap-3 p-2.5 rounded-[20px] hover:bg-surface-container transition-colors cursor-pointer"
+        >
+          {avatar && avatar.startsWith("data:image/") ? (
+            <img
+              src={avatar}
+              alt="Avatar"
+              className="w-9 h-9 rounded-full object-cover border border-primary/25 shadow-xs shrink-0"
+            />
+          ) : (
+            <div
+              className="w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs shrink-0 border border-primary/20 shadow-xs"
+              style={{ backgroundColor: getPastelBgColor(userName), color: getPastelTextColor(userName) }}
+            >
+              {getInitials(userName)}
             </div>
+          )}
+          <div className="flex-1 min-w-0">
+            <p className="text-xs font-extrabold text-on-surface truncate leading-tight">{userName}</p>
+            <p className="text-[10px] text-on-surface-variant/70 truncate leading-tight mt-0.5">Settings & Profile</p>
           </div>
-          
-          <p className="text-[10px] text-on-surface-variant/80 font-bold leading-normal">
-            Day {streakDays} of your wellness journey 🌿
-          </p>
-
-          <Link
-            href="/profile"
-            className="w-full flex items-center justify-between p-2 rounded-xl text-[10px] font-bold text-on-surface-variant hover:bg-primary-container/20 hover:text-primary transition-all bg-white border border-surface-variant/20 shadow-soft-xs"
-          >
-            <div className="flex items-center gap-1.5">
-              <span className="material-symbols-outlined text-sm">settings</span>
-              <span>Settings</span>
-            </div>
-            <span className="material-symbols-outlined text-[12px]">chevron_right</span>
-          </Link>
-        </div>
+          <span className="material-symbols-outlined text-lg text-outline">settings</span>
+        </Link>
       </div>
       
       {/* Mobile Icon profile footer for small screens */}

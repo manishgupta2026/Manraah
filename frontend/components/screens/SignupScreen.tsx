@@ -4,19 +4,29 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signUp } from "@/backend/auth/client";
-import { useAssessment, clearOnboardingAssessment } from "@/frontend/lib/context/AssessmentContext";
+import { useAssessment } from "@/frontend/lib/context/AssessmentContext";
 import ScreenHeader from "@/frontend/components/ui/ScreenHeader";
+
+function readCookie(name: string): string | null {
+  if (typeof document === "undefined") return null;
+  const match = document.cookie.match(new RegExp("(?:^|; )" + name + "=([^;]*)"));
+  return match ? decodeURIComponent(match[1]) : null;
+}
 
 export default function SignupScreen() {
   const router = useRouter();
   const { selectedCategory, detailedAnswers, totalScore, percentage, wellnessLevel } = useAssessment();
 
-  // Guard: Do NOT allow signup before assessment
+  // Resolve userType: React Context (same session) OR cookie (cross-navigation fallback)
+  const [resolvedCategory, setResolvedCategory] = useState<string>("");
+
   useEffect(() => {
-    if (!selectedCategory || !detailedAnswers || detailedAnswers.length < 15) {
-      router.push("/");
-    }
-  }, [selectedCategory, detailedAnswers, router]);
+    const fromContext = selectedCategory;
+    const fromCookie = readCookie("userType");
+    const resolved = fromContext || fromCookie || "";
+    setResolvedCategory(resolved);
+    console.log("[Trace Point 2] Before login: userType =", resolved || "not set");
+  }, [selectedCategory]);
 
   const [sanctuaryName, setSanctuaryName] = useState("");
   const [email, setEmail] = useState("");
@@ -31,23 +41,33 @@ export default function SignupScreen() {
     setLoading(true);
     setError(null);
     try {
+      console.log("[Signup] [POINT 3 — after signup] Sending category to API:", resolvedCategory);
+
       // 1. Create account & persist assessment in Neon DB
-      await signUp(
+      const session = await signUp(
         sanctuaryName,
         email,
         password,
-        selectedCategory || "student",
+        resolvedCategory,
         detailedAnswers,
         totalScore,
         percentage,
         wellnessLevel
       );
 
-      // 2. Clear temporary session onboarding cache
-      clearOnboardingAssessment();
+      // Clear userType cookie
+      document.cookie = "userType=; path=/; max-age=0";
 
-      // 3. Navigate to personalized dashboard
-      router.push("/dashboard");
+      const categoryRaw = resolvedCategory;
+      const targetUserType = categoryRaw === "couples" || categoryRaw === "couple" ? "couples" : (categoryRaw === "parents" || categoryRaw === "parent" ? "parents" : "");
+
+      if (targetUserType) {
+        console.log("[Trace Point 3] After login: userType =", targetUserType);
+        router.push(`/dashboard/${targetUserType}`);
+      } else {
+        console.log("[Trace Point 3] After login: no category, redirecting to category-selection");
+        router.push("/category-selection");
+      }
     } catch (err: any) {
       console.error("Signup server-side error log:", err);
       setError(err.message || "We couldn't create your account. Please try again.");
@@ -55,14 +75,10 @@ export default function SignupScreen() {
     }
   };
 
+
   return (
     <div className="max-w-md mx-auto py-12 px-4 space-y-8 animate-fadeIn">
-      <ScreenHeader
-        title="✨ Create Account"
-        showBackButton={true}
-        fallbackRoute="/wellness-score"
-        onBack={() => router.push("/wellness-score")}
-      />
+      <ScreenHeader title="✨ Join Manraah" showBackButton={true} fallbackRoute="/" />
       {/* Header */}
       <div className="text-center space-y-4">
         <div className="w-12 h-12 rounded-2xl gradient-primary mx-auto flex items-center justify-center text-white shadow-md">

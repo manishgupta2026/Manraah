@@ -1,5 +1,77 @@
 import { sql } from "@/backend/db/client";
 
+let isMoodInitialized = (global as any).isMoodDatabaseInitialized || false;
+
+export async function initMoodDatabase() {
+  if ((global as any).isMoodDatabaseInitialized || isMoodInitialized) return;
+  try {
+    // 1. Create mood_entries table
+    await sql`
+      CREATE TABLE IF NOT EXISTS mood_entries (
+        id SERIAL PRIMARY KEY,
+        user_id VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
+        mood VARCHAR(255) NOT NULL,
+        energy INTEGER NOT NULL,
+        stress VARCHAR(255) NOT NULL,
+        reflection TEXT,
+        factors TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `;
+
+    // 2. Create mood_insights table
+    await sql`
+      CREATE TABLE IF NOT EXISTS mood_insights (
+        id SERIAL PRIMARY KEY,
+        user_id VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
+        insight_text TEXT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `;
+
+    // 3. Create weekly_mood_summaries table
+    await sql`
+      CREATE TABLE IF NOT EXISTS weekly_mood_summaries (
+        id SERIAL PRIMARY KEY,
+        user_id VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
+        avg_mood VARCHAR(255) NOT NULL,
+        frequent_mood VARCHAR(255) NOT NULL,
+        best_day VARCHAR(255),
+        hardest_day VARCHAR(255),
+        top_trigger VARCHAR(255),
+        avg_energy DOUBLE PRECISION,
+        avg_stress VARCHAR(255),
+        reflection_summary TEXT,
+        ai_recommendation TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `;
+
+    // 4. Create monthly_mood_summaries table
+    await sql`
+      CREATE TABLE IF NOT EXISTS monthly_mood_summaries (
+        id SERIAL PRIMARY KEY,
+        user_id VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
+        summary_data TEXT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `;
+
+    // 5. Create Indexes
+    await sql`CREATE INDEX IF NOT EXISTS idx_mood_entries_user_created ON mood_entries(user_id, created_at DESC)`;
+    await sql`CREATE INDEX IF NOT EXISTS idx_mood_insights_user ON mood_insights(user_id)`;
+    await sql`CREATE INDEX IF NOT EXISTS idx_weekly_summaries_user ON weekly_mood_summaries(user_id)`;
+    await sql`CREATE INDEX IF NOT EXISTS idx_monthly_summaries_user ON monthly_mood_summaries(user_id)`;
+
+    console.log("[Neon DB] Mood database tables and indexes initialized successfully.");
+    isMoodInitialized = true;
+    (global as any).isMoodDatabaseInitialized = true;
+  } catch (err) {
+    console.error("[Neon DB] Failed to initialize mood database:", err);
+  }
+}
+
 export async function saveMoodEntry(
   userId: string,
   data: {
@@ -10,6 +82,7 @@ export async function saveMoodEntry(
     factors?: string;
   }
 ) {
+  await initMoodDatabase();
   try {
     const result = await sql`
       INSERT INTO mood_entries (user_id, mood, energy, stress, reflection, factors)
@@ -24,6 +97,7 @@ export async function saveMoodEntry(
 }
 
 export async function getMoodHistory(userId: string, filter: string) {
+  await initMoodDatabase();
   try {
     let query = sql`SELECT * FROM mood_entries WHERE user_id = ${userId}`;
     
@@ -83,6 +157,7 @@ export async function updateMoodEntry(
     factors?: string;
   }
 ) {
+  await initMoodDatabase();
   try {
     const result = await sql`
       UPDATE mood_entries
@@ -100,6 +175,7 @@ export async function updateMoodEntry(
 }
 
 export async function deleteMoodEntry(userId: string, entryId: string) {
+  await initMoodDatabase();
   try {
     await sql`
       DELETE FROM mood_entries 
@@ -114,6 +190,7 @@ export async function deleteMoodEntry(userId: string, entryId: string) {
 
 // Generate weekly summary dynamically if none exists, else return recent cached summary
 export async function getWeeklySummary(userId: string) {
+  await initMoodDatabase();
   try {
     const entries = await sql`
       SELECT * FROM mood_entries 
@@ -215,6 +292,7 @@ export async function getWeeklySummary(userId: string) {
 
 // Generate monthly summary dynamically
 export async function getMonthlySummary(userId: string) {
+  await initMoodDatabase();
   try {
     const entries = await sql`
       SELECT * FROM mood_entries 
@@ -267,6 +345,7 @@ export async function getMonthlySummary(userId: string) {
 
 // Generate non-generic observations and insights
 export async function getMoodInsights(userId: string) {
+  await initMoodDatabase();
   try {
     const entries = await sql`
       SELECT * FROM mood_entries 

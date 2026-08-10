@@ -1,13 +1,33 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signIn } from "@/backend/auth/client";
+import { useAssessment } from "@/frontend/lib/context/AssessmentContext";
 import ScreenHeader from "@/frontend/components/ui/ScreenHeader";
+
+function readCookie(name: string): string | null {
+  if (typeof document === "undefined") return null;
+  const match = document.cookie.match(new RegExp("(?:^|; )" + name + "=([^;]*)"));
+  return match ? decodeURIComponent(match[1]) : null;
+}
 
 export default function LoginScreen() {
   const router = useRouter();
+  const { selectedCategory, detailedAnswers, totalScore, percentage, wellnessLevel } = useAssessment();
+
+  // Resolve userType: React Context (same session) OR cookie (cross-navigation fallback)
+  const [resolvedCategory, setResolvedCategory] = useState<string>("student");
+
+  useEffect(() => {
+    const fromContext = selectedCategory;
+    const fromCookie = readCookie("userType");
+    const resolved = fromContext || fromCookie || "student";
+    setResolvedCategory(resolved);
+    console.log("[Trace Point 2] Before login: userType =", resolved);
+  }, [selectedCategory]);
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -20,23 +40,35 @@ export default function LoginScreen() {
     setLoading(true);
     setError(null);
     try {
-      await signIn(email.trim(), password);
-      router.push("/dashboard");
+      console.log("[Login] [POINT 3 — after login] Sending category to API:", resolvedCategory);
+
+      const session = await signIn(email, password, resolvedCategory, detailedAnswers, totalScore, percentage, wellnessLevel);
+
+      // Clear userType cookie
+      document.cookie = "userType=; path=/; max-age=0";
+      document.cookie = "manraah_userType=; path=/; max-age=0";
+
+      const categoryRaw = session.user?.selectedCategory || resolvedCategory;
+      const targetUserType = categoryRaw === "couples" || categoryRaw === "couple" ? "couples" : (categoryRaw === "parents" || categoryRaw === "parent" ? "parents" : "");
+
+      if (targetUserType) {
+        console.log("[Trace Point 3] After login: userType =", targetUserType);
+        router.push(`/dashboard/${targetUserType}`);
+      } else {
+        console.log("[Trace Point 3] After login: no category, redirecting to /category-selection");
+        router.push("/category-selection");
+      }
     } catch (err: any) {
-      console.error("Login error log:", err);
+      console.error("Login server-side error log:", err);
       setError("Invalid email or password. Please try again.");
       setLoading(false);
     }
   };
 
+
   return (
     <div className="max-w-md mx-auto py-12 px-4 space-y-8 animate-fadeIn">
-      <ScreenHeader
-        title="🔑 Log In"
-        showBackButton={true}
-        fallbackRoute="/"
-        onBack={() => router.push("/")}
-      />
+      <ScreenHeader title="🔑 Sign In" showBackButton={true} fallbackRoute="/" />
       {/* Header */}
       <div className="text-center space-y-3">
         <div className="w-12 h-12 rounded-2xl gradient-primary mx-auto flex items-center justify-center text-white shadow-md">
@@ -61,7 +93,7 @@ export default function LoginScreen() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="aanya@example.com"
-            className="w-full p-3.5 rounded-2xl bg-surface-container-low border border-surface-variant/40 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 font-medium text-on-surface"
+            className="w-full p-3.5 rounded-2xl bg-surface-container-low border border-surface-variant/40 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
           />
         </div>
 
@@ -80,16 +112,16 @@ export default function LoginScreen() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full py-4 rounded-full bg-primary hover:bg-[#7C6BC4] text-white font-heading font-bold text-sm shadow-[0_10px_25px_rgba(95,78,165,0.25)] hover:shadow-[0_12px_30px_rgba(95,78,165,0.35)] transition-all hover:-translate-y-0.5 active:scale-98 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full py-4 rounded-full bg-primary text-white font-bold text-sm shadow-md hover:bg-primary-purple transition-all scale-105"
         >
-          {loading ? "Entering Sanctuary..." : "Enter My Sanctuary →"}
+          {loading ? "Signing In..." : "Log In to Sanctuary →"}
         </button>
 
         <div className="text-center pt-2">
           <p className="text-xs text-on-surface-variant">
             Don't have an account yet?{" "}
-            <Link href="/category-selection" className="font-bold text-primary hover:underline">
-              Get Started
+            <Link href="/signup" className="font-bold text-primary hover:underline">
+              Create Account
             </Link>
           </p>
         </div>
@@ -97,4 +129,3 @@ export default function LoginScreen() {
     </div>
   );
 }
-

@@ -6,23 +6,16 @@ const PROTECTED_ROUTES = [
   "/ai-chat",
   "/checkin",
   "/journal",
-  "/mood",
-  "/mood-checkin",
-  "/mood-tracking",
   "/meditation",
   "/sleep",
   "/community",
   "/resources",
+  "/professional-care",
+  "/journey",
   "/reports",
   "/profile",
-  "/settings",
-  "/professional-care",
-  "/human-companion",
-  "/journey",
   "/crisis-support",
   "/call",
-  "/listener",
-  "/companion",
 ];
 
 const AUTH_ROUTES = ["/login", "/signup"];
@@ -31,59 +24,65 @@ const ONBOARDING_ROUTES = ["/", "/category-selection", "/assessment", "/wellness
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Skip internal Next.js system routes, api & static assets
+  // Skip internal Next.js system routes
   if (
     pathname.startsWith("/_next") ||
     pathname.startsWith("/api") ||
-    pathname.startsWith("/_document") ||
-    pathname.startsWith("/_error") ||
     pathname === "/favicon.ico"
   ) {
     return NextResponse.next();
   }
 
-  const hasUserSession = 
-    request.cookies.has("better-auth.session_token") ||
-    request.cookies.has("__Secure-better-auth.session_token") ||
-    request.cookies.has("manraah_session");
-
-  const hasCompanionAdminSession = request.cookies.has("manraah_companion_session");
-
-  // 1. STRICT ADMIN PORTAL SECURITY GATE: /admin/* & /companion/dashboard
-  // Regular users (manraah_session) MUST NOT be allowed access.
-  // Access requires a dedicated manraah_companion_session cookie.
-  if (pathname.startsWith("/admin") || pathname.startsWith("/companion/dashboard")) {
-    if (!hasCompanionAdminSession) {
-      const loginUrl = new URL("/companion/login", request.url);
-      return NextResponse.redirect(loginUrl);
+  let hasSession = false;
+  const manraahSessionCookie = request.cookies.get("manraah_session")?.value;
+  if (manraahSessionCookie) {
+    try {
+      // Decode and parse the session cookie
+      const parsed = JSON.parse(decodeURIComponent(manraahSessionCookie));
+      if (parsed && parsed.isAuthenticated && parsed.user && parsed.user.id) {
+        hasSession = true;
+      }
+    } catch (err) {
+      hasSession = false;
     }
-
-    const response = NextResponse.next();
-    // Security Hardening Headers
-    response.headers.set("X-Frame-Options", "DENY");
-    response.headers.set("X-Content-Type-Options", "nosniff");
-    response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
-    return response;
   }
 
-  // 2. Unauthenticated users trying to access protected user features -> redirect to /login
+  // 1. Unauthenticated users trying to access protected features -> redirect to /login
   const isProtected = PROTECTED_ROUTES.some(
     (route) => pathname === route || pathname.startsWith(`${route}/`)
   );
 
-  if (isProtected && !hasUserSession && !hasCompanionAdminSession) {
-    const loginUrl = new URL("/login", request.url);
+  if (isProtected && !hasSession) {
+    const userTypeCookie = request.cookies.get("userType")?.value || "student";
+    const userType = userTypeCookie === "couples" || userTypeCookie === "couple" ? "couples" : (userTypeCookie === "parents" || userTypeCookie === "parent" ? "parents" : "student");
+    const loginUrl = new URL(`/login?redirectTo=/dashboard/${userType}&userType=${userType}`, request.url);
     return NextResponse.redirect(loginUrl);
   }
 
-  // 3. Authenticated users trying to access onboarding or auth routes -> redirect to /dashboard
-  const isAuthOrOnboarding = [...AUTH_ROUTES, ...ONBOARDING_ROUTES].some(
-    (route) => pathname === route
-  );
+  // 2. Authenticated users on the welcome root only -> redirect to their dashboard
+  // DO NOT redirect /login or /signup — user may be coming from a fresh assessment
+  // and needs to authenticate to save their results.
+  if (pathname === "/" && hasSession) {
+    const userTypeCookie = request.cookies.get("userType")?.value;
+    let targetUserType = userTypeCookie || "";
 
-  if (isAuthOrOnboarding && (hasUserSession || hasCompanionAdminSession)) {
-    const targetUrl = hasCompanionAdminSession ? "/admin/human-companion" : "/dashboard";
-    return NextResponse.redirect(new URL(targetUrl, request.url));
+    if (!userTypeCookie && manraahSessionCookie) {
+      try {
+        const parsed = JSON.parse(decodeURIComponent(manraahSessionCookie));
+        if (parsed?.user?.selectedCategory) {
+          targetUserType = parsed.user.selectedCategory;
+        }
+      } catch {}
+    }
+
+    const userType = targetUserType === "couples" || targetUserType === "couple" ? "couples" : (targetUserType === "parents" || targetUserType === "parent" ? "parents" : "");
+    if (userType) {
+      const dashboardUrl = new URL(`/dashboard/${userType}`, request.url);
+      return NextResponse.redirect(dashboardUrl);
+    } else {
+      const selectionUrl = new URL("/category-selection", request.url);
+      return NextResponse.redirect(selectionUrl);
+    }
   }
 
   return NextResponse.next();
@@ -91,6 +90,6 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/((?!api|_next/static|_next/image|_next|_document|_error|favicon.ico|images).*)",
   ],
 };

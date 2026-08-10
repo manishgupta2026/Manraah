@@ -79,7 +79,17 @@ export async function signOut(): Promise<void> {
   if (typeof window !== "undefined") {
     localStorage.removeItem(SESSION_KEY);
     document.cookie = "manraah_session=; path=/; max-age=0";
+    document.cookie = "userType=; path=/; max-age=0";
+    document.cookie = "manraah_userType=; path=/; max-age=0";
   }
+}
+
+function getCookie(name: string): string | null {
+  if (typeof document === "undefined") return null;
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return decodeURIComponent(parts.pop()?.split(";").shift() || "");
+  return null;
 }
 
 export function getClientSession(): AuthSession {
@@ -88,7 +98,14 @@ export function getClientSession(): AuthSession {
   }
 
   try {
-    const raw = localStorage.getItem(SESSION_KEY);
+    let raw = localStorage.getItem(SESSION_KEY);
+    if (!raw) {
+      const cookieVal = getCookie("manraah_session");
+      if (cookieVal) {
+        localStorage.setItem(SESSION_KEY, cookieVal);
+        raw = cookieVal;
+      }
+    }
     if (!raw) return { user: null, token: null, isAuthenticated: false };
     return JSON.parse(raw) as AuthSession;
   } catch {

@@ -34,13 +34,13 @@ const CATEGORY_OPTIONS: CategoryOption[] = [
     emoji: "👔",
   },
   {
-    id: "parent",
+    id: "parents",
     name: "Parents",
     desc: "Balance family responsibilities, parenting stress, and personal wellbeing.",
     emoji: "🍼",
   },
   {
-    id: "couple",
+    id: "couples",
     name: "Couples",
     desc: "Nurturing relationship harmony, communication, and emotional connection.",
     emoji: "💖",
@@ -77,8 +77,14 @@ export default function CategorySelection() {
   const { selectedCategory, setSelectedCategory } = useAssessment();
 
   const handleSelect = (id: UserCategory) => {
-    setSelectedCategory(id);
-    setCategory(id);
+    const targetType = id === "couple" || id === "couples" ? "couples" : (id === "parent" || id === "parents" ? "parents" : id);
+    setSelectedCategory(targetType);
+    setCategory(targetType);
+
+    // Save full category id to cookie so login/signup can read it after navigation
+    document.cookie = `userType=${targetType}; path=/; max-age=86400`;
+    console.log("[CategorySelection] [POINT 1 — after category selection] userType selected:", targetType);
+
     router.push("/assessment");
   };
 
