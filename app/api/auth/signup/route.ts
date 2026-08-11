@@ -4,6 +4,32 @@ import { saveUserAssessment } from "@/backend/queries/assessment";
 import { generateUniqueSanctuaryName } from "@/backend/auth/sanctuary";
 import crypto from "crypto";
 
+// Allowed sanctuary categories
+const ALLOWED_CATEGORIES = new Set([
+  "student",
+  "young_pro",
+  "working_professional",
+  "parent",
+  "couple",
+  "family",
+  "women",
+  "men",
+  "senior_citizen",
+]);
+
+// Map common frontend variants to canonical DB category IDs
+function normalizeCategory(cat: string | undefined): string | null {
+  if (!cat) return null;
+  const c = cat.toLowerCase().trim();
+  if (ALLOWED_CATEGORIES.has(c)) return c;
+  if (c === "youngprofessional" || c === "young-pro") return "young_pro";
+  if (c === "workingprofessional" || c === "working-professional") return "working_professional";
+  if (c === "seniorcitizen" || c === "senior-citizen") return "senior_citizen";
+  if (c === "parents") return "parent";
+  if (c === "couples") return "couple";
+  return null;
+}
+
 // Secure password hashing using Node scrypt
 function hashPassword(password: string): string {
   const salt = crypto.randomBytes(16).toString("hex");
@@ -16,16 +42,35 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { email, password, sanctuaryName, category, initialAnswers, answers, computedScore, percentage, wellnessLevel } = body;
 
-    if (!email || !password) {
+    // 1. Input validation
+    if (!email || typeof email !== "string" || !email.trim()) {
       return NextResponse.json(
-        { error: "Email and password are required." },
+        { error: "Email address is required." },
         { status: 400 }
       );
     }
 
-    // 1. Check if user already exists
+    if (!password || typeof password !== "string" || password.length < 6) {
+      return NextResponse.json(
+        { error: "Password must be at least 6 characters long." },
+        { status: 400 }
+      );
+    }
+
+    // 2. Validate category against allowed Manraah categories
+    const validatedCategory = normalizeCategory(category);
+    if (!validatedCategory) {
+      return NextResponse.json(
+        { error: "Invalid sanctuary journey category. Please select a valid category." },
+        { status: 400 }
+      );
+    }
+
+    const cleanEmail = email.trim().toLowerCase();
+
+    // 3. Check if user already exists
     const existing = await sql`
-      SELECT id FROM users WHERE LOWER(email) = LOWER(${email}) LIMIT 1
+      SELECT id FROM users WHERE LOWER(email) = ${cleanEmail} LIMIT 1
     `;
 
     if (existing.length > 0) {
@@ -35,8 +80,8 @@ export async function POST(request: Request) {
       );
     }
 
-    // 2. Validate custom Sanctuary Name or generate one
-    let finalSanctuaryName = sanctuaryName ? sanctuaryName.trim() : "";
+    // 4. Validate custom Sanctuary Name or auto-generate one
+    let finalSanctuaryName = sanctuaryName && typeof sanctuaryName === "string" ? sanctuaryName.trim() : "";
     if (finalSanctuaryName) {
       if (finalSanctuaryName.length < 2 || finalSanctuaryName.length > 30) {
         return NextResponse.json(
@@ -58,23 +103,22 @@ export async function POST(request: Request) {
       finalSanctuaryName = await generateUniqueSanctuaryName();
     }
 
-    // 3. Create user ID & hash password
+    // 5. Create user ID & hash password
     const userId = "usr_" + Date.now() + "_" + Math.random().toString(36).substring(2, 7);
     const passwordHash = hashPassword(password);
-    const userCategory = category || "student";
     const initialJson = initialAnswers ? JSON.stringify(initialAnswers) : "{}";
 
-    // 4. Insert user into Neon PostgreSQL with permanent category
+    // 6. Insert user into Neon PostgreSQL with permanent category
     await sql`
       INSERT INTO users (id, name, email, password_hash, sanctuary_name, selected_category, streak_days, mindfulness_minutes, current_mood, initial_answers_json)
-      VALUES (${userId}, ${finalSanctuaryName}, ${email}, ${passwordHash}, ${finalSanctuaryName}, ${userCategory}, 1, 0, 'Sanctuary Member', ${initialJson}::jsonb)
+      VALUES (${userId}, ${finalSanctuaryName}, ${cleanEmail}, ${passwordHash}, ${finalSanctuaryName}, ${validatedCategory}, 1, 0, 'Sanctuary Member', ${initialJson}::jsonb)
     `;
 
-    // 5. Save assessment if provided
+    // 7. Save assessment if provided
     if (answers && Array.isArray(answers) && answers.length > 0) {
       await saveUserAssessment(
         userId,
-        userCategory,
+        validatedCategory,
         answers,
         typeof computedScore === "number" ? computedScore : 50,
         typeof percentage === "number" ? percentage : 50,
@@ -86,12 +130,12 @@ export async function POST(request: Request) {
       id: userId,
       name: finalSanctuaryName,
       sanctuaryName: finalSanctuaryName,
-      email,
+      email: cleanEmail,
       avatar: "/images/user_avatar.jpg",
       streakDays: 1,
       mindfulnessMinutes: 0,
       currentMood: "Sanctuary Member",
-      selectedCategory: userCategory,
+      selectedCategory: validatedCategory,
     };
 
     const sessionData = {
@@ -100,7 +144,7 @@ export async function POST(request: Request) {
       isAuthenticated: true,
     };
 
-    // 6. Create HTTP-Only session cookie response
+    // 8. Create HTTP session cookies
     const response = NextResponse.json(sessionData);
     response.cookies.set("manraah_session", JSON.stringify(sessionData), {
       httpOnly: false,
