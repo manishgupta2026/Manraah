@@ -44,6 +44,7 @@ export default function SignupScreen() {
         password,
         resolvedCategory,
         [],
+        [],
         0,
         0,
         ""

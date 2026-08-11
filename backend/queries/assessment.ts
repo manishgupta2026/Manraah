@@ -267,7 +267,8 @@ export async function saveUserAssessment(
   detailedAnswers: AssessmentAnswer[],
   totalScore: number,
   percentage: number,
-  wellnessLevel: string
+  wellnessLevel: string,
+  maxScore: number = 75
 ): Promise<any> {
   // Ensure tables are initialized
   await initDatabase();
@@ -305,7 +306,7 @@ export async function saveUserAssessment(
     // 3. Insert into the new assessments table
     const resultQuery = await sql`
       INSERT INTO assessments (user_id, category, total_score, max_score, percentage, wellness_level)
-      VALUES (${userId}, ${dbCategory}, ${totalScore}, 75, ${percentage}, ${wellnessLevel})
+      VALUES (${userId}, ${dbCategory}, ${totalScore}, ${maxScore || 75}, ${percentage}, ${wellnessLevel})
       RETURNING id
     `;
     const resultId = resultQuery[0]?.id;
