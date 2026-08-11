@@ -14,7 +14,7 @@ function hashPassword(password: string): string {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { email, password, sanctuaryName, category, answers, computedScore, percentage, wellnessLevel } = body;
+    const { email, password, sanctuaryName, category, initialAnswers, answers, computedScore, percentage, wellnessLevel } = body;
 
     if (!email || !password) {
       return NextResponse.json(
@@ -61,17 +61,17 @@ export async function POST(request: Request) {
     // 3. Create user ID & hash password
     const userId = "usr_" + Date.now() + "_" + Math.random().toString(36).substring(2, 7);
     const passwordHash = hashPassword(password);
-    const rawCategory = category || "student";
-    const userCategory = rawCategory === "couples" || rawCategory === "couple" ? "couples" : (rawCategory === "parents" || rawCategory === "parent" ? "parents" : rawCategory);
+    const userCategory = category || "student";
+    const initialJson = initialAnswers ? JSON.stringify(initialAnswers) : "{}";
 
-    // 4. Insert user into Neon PostgreSQL
+    // 4. Insert user into Neon PostgreSQL with permanent category
     await sql`
-      INSERT INTO users (id, name, email, password_hash, sanctuary_name, selected_category, streak_days, mindfulness_minutes, current_mood)
-      VALUES (${userId}, ${finalSanctuaryName}, ${email}, ${passwordHash}, ${finalSanctuaryName}, ${userCategory}, 1, 0, 'Sanctuary Member')
+      INSERT INTO users (id, name, email, password_hash, sanctuary_name, selected_category, streak_days, mindfulness_minutes, current_mood, initial_answers_json)
+      VALUES (${userId}, ${finalSanctuaryName}, ${email}, ${passwordHash}, ${finalSanctuaryName}, ${userCategory}, 1, 0, 'Sanctuary Member', ${initialJson}::jsonb)
     `;
 
     // 5. Save assessment if provided
-    if (answers && Array.isArray(answers)) {
+    if (answers && Array.isArray(answers) && answers.length > 0) {
       await saveUserAssessment(
         userId,
         userCategory,

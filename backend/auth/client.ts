@@ -7,6 +7,7 @@ export async function signUp(
   email: string,
   pass: string,
   category?: string,
+  initialAnswers?: any,
   answers?: any,
   computedScore?: number,
   percentage?: number,
@@ -15,7 +16,18 @@ export async function signUp(
   const res = await fetch("/api/auth/signup", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ name, email, password: pass, category, answers, computedScore, percentage, wellnessLevel }),
+    body: JSON.stringify({
+      name,
+      sanctuaryName: name,
+      email,
+      password: pass,
+      category,
+      initialAnswers,
+      answers,
+      computedScore,
+      percentage,
+      wellnessLevel,
+    }),
   });
 
   const data = await res.json();

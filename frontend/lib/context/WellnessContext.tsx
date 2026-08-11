@@ -15,8 +15,12 @@ export interface DashboardState {
     currentMood: string;
   } | null;
   todayMood: any | null;
-  history: any[];
-  weeklySummary: {
+  latestCheckIn?: any | null;
+  history?: any[];
+  moodHistory?: any[];
+  wellnessMetrics?: any[];
+  journalEntries?: any[];
+  weeklySummary?: {
     avgMood: string;
     frequentMood: string;
     bestDay: string;
@@ -27,7 +31,7 @@ export interface DashboardState {
     reflectionSummary: string;
     aiRecommendation: string;
   } | null;
-  monthlySummary: {
+  monthlySummary?: {
     heatmap: any[];
     moodDistribution: Record<string, number>;
     mostCommonEmotion: string;
@@ -41,7 +45,10 @@ export interface DashboardState {
     currentStreak: number;
     longestStreak: number;
   };
+  assessmentCompleted?: boolean;
+  latestAssessment?: any | null;
   recommendation: string;
+  recommendations?: string[];
 }
 
 interface WellnessContextType {
@@ -55,6 +62,7 @@ interface WellnessContextType {
     sleep?: number;
     reflection?: string;
     factors?: string;
+    gratitude?: string;
   }) => Promise<any>;
 }
 

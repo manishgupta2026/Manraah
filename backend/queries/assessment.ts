@@ -4,259 +4,7 @@ import { AssessmentAnswer } from "@/frontend/lib/assessment/types";
 
 /**
  * Assessment Database Queries
- * 
- * Auto-initializes and queries user assessments in Neon PostgreSQL.
  */
-
-let isInitialized = (global as any).isDatabaseInitialized || false;
-
-export async function initDatabase() {
-  if ((global as any).isDatabaseInitialized || isInitialized) return;
-  try {
-    // 1. Create users table
-    await sql`
-      CREATE TABLE IF NOT EXISTS users (
-        id VARCHAR(255) PRIMARY KEY,
-        name VARCHAR(255),
-        email VARCHAR(255) UNIQUE NOT NULL,
-        email_verified BOOLEAN NOT NULL DEFAULT FALSE,
-        image TEXT,
-        avatar VARCHAR(255) DEFAULT '/images/user_avatar.jpg',
-        sanctuary_name VARCHAR(255) UNIQUE,
-        selected_category VARCHAR(255) DEFAULT 'student',
-        streak_days INTEGER DEFAULT 1,
-        mindfulness_minutes INTEGER DEFAULT 0,
-        current_mood VARCHAR(255) DEFAULT 'Sanctuary Member',
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      )
-    `;
-
-    try {
-      await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS sanctuary_name VARCHAR(255) UNIQUE`;
-    } catch (err) {
-      console.warn("Could not alter table users to add sanctuary_name:", err);
-    }
-
-    try {
-      await sql`ALTER TABLE users ALTER COLUMN name DROP NOT NULL`;
-    } catch (err) {
-      console.warn("Could not drop NOT NULL constraint from users name column:", err);
-    }
-
-    // 2. Create user_profiles table
-    await sql`
-      CREATE TABLE IF NOT EXISTS user_profiles (
-        id VARCHAR(255) PRIMARY KEY,
-        user_id VARCHAR(255) UNIQUE REFERENCES users(id) ON DELETE CASCADE,
-        category VARCHAR(255),
-        wellness_level VARCHAR(255),
-        percentage INTEGER,
-        total_score INTEGER,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      )
-    `;
-
-    // 3. Create assessment_results table
-    await sql`
-      CREATE TABLE IF NOT EXISTS assessment_results (
-        id SERIAL PRIMARY KEY,
-        user_id VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
-        category VARCHAR(255),
-        total_score INTEGER,
-        percentage INTEGER,
-        wellness_level VARCHAR(255),
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      )
-    `;
-
-    // 4. Create legacy assessment_answers table
-    await sql`
-      CREATE TABLE IF NOT EXISTS assessment_answers (
-        id SERIAL PRIMARY KEY,
-        assessment_result_id INTEGER REFERENCES assessment_results(id) ON DELETE CASCADE,
-        user_id VARCHAR(255),
-        question_id INTEGER,
-        question_key VARCHAR(255),
-        selected_option_id VARCHAR(255),
-        selected_text TEXT,
-        score INTEGER
-      )
-    `;
-
-    // 5. Create daily_checkins table
-    await sql`
-      CREATE TABLE IF NOT EXISTS daily_checkins (
-        id SERIAL PRIMARY KEY,
-        user_id VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
-        mood VARCHAR(255) NOT NULL,
-        energy_level INTEGER NOT NULL,
-        sleep_quality INTEGER NOT NULL,
-        gratitude_reflection TEXT,
-        daily_intention TEXT,
-        reflection TEXT,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      )
-    `;
-
-    // Ensure reflection column exists in existing deployments
-    try {
-      await sql`ALTER TABLE daily_checkins ADD COLUMN IF NOT EXISTS reflection TEXT`;
-    } catch (err) {
-      console.warn("Could not alter table daily_checkins:", err);
-    }
-
-    // 6. Create user_streaks table
-    await sql`
-      CREATE TABLE IF NOT EXISTS user_streaks (
-        id VARCHAR(255) PRIMARY KEY,
-        user_id VARCHAR(255) UNIQUE REFERENCES users(id) ON DELETE CASCADE,
-        current_streak INTEGER DEFAULT 1,
-        longest_streak INTEGER DEFAULT 1,
-        last_checkin_date TIMESTAMP,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      )
-    `;
-
-    // 7. Create categories table
-    await sql`
-      CREATE TABLE IF NOT EXISTS categories (
-        id VARCHAR(100) PRIMARY KEY,
-        name VARCHAR(255) NOT NULL,
-        description TEXT,
-        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-      )
-    `;
-
-    // 8. Create questions table
-    await sql`
-      CREATE TABLE IF NOT EXISTS questions (
-        id INT PRIMARY KEY,
-        key VARCHAR(255) NOT NULL,
-        text TEXT NOT NULL,
-        description TEXT,
-        category VARCHAR(100) REFERENCES categories(id) ON DELETE CASCADE,
-        type VARCHAR(50) NOT NULL,
-        options JSONB NOT NULL,
-        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-      )
-    `;
-
-    // 9. Create new assessments table
-    await sql`
-      CREATE TABLE IF NOT EXISTS assessments (
-        id SERIAL PRIMARY KEY,
-        user_id VARCHAR(100) REFERENCES users(id) ON DELETE CASCADE,
-        category VARCHAR(100) REFERENCES categories(id) ON DELETE CASCADE,
-        total_score INT NOT NULL,
-        max_score INT NOT NULL,
-        percentage INT NOT NULL,
-        wellness_level VARCHAR(100) NOT NULL,
-        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-      )
-    `;
-
-    // 10. Create new detailed assessment_answers table
-    await sql`
-      CREATE TABLE IF NOT EXISTS assessment_answers_detailed (
-        id SERIAL PRIMARY KEY,
-        assessment_id INT REFERENCES assessments(id) ON DELETE CASCADE,
-        question_id INT NOT NULL,
-        question_key VARCHAR(255) NOT NULL,
-        question_type VARCHAR(50) NOT NULL,
-        category VARCHAR(100) NOT NULL,
-        selected_option_id VARCHAR(255) NOT NULL,
-        selected_text TEXT NOT NULL,
-        score INT NOT NULL,
-        answered_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-      )
-    `;
-
-    // 11. Create wellness_metrics table
-    await sql`
-      CREATE TABLE IF NOT EXISTS wellness_metrics (
-        id SERIAL PRIMARY KEY,
-        user_id VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
-        date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        wellness_score INTEGER NOT NULL,
-        stress_score INTEGER NOT NULL,
-        energy_score INTEGER NOT NULL,
-        sleep_score INTEGER NOT NULL,
-        mood_score INTEGER NOT NULL,
-        streak INTEGER NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      )
-    `;
-
-    // Seed categories
-    const existingCats = await sql`SELECT COUNT(*) FROM categories`;
-    if (parseInt(existingCats[0].count) === 0) {
-      console.log("[Neon DB] Seeding categories...");
-      const catsToInsert = [
-        { id: "student", name: "Student", description: "Academic balance, exam stress reduction & peer focus" },
-        { id: "young_pro", name: "Young Professional", description: "Starting out and building a career path" },
-        { id: "working_professional", name: "Working Professional", description: "Work-life harmony, burnout prevention & focus soundscapes" },
-        { id: "parent", name: "Parent", description: "Family balance, mindful patience & parent support circles" },
-        { id: "couple", name: "Couple", description: "Nurturing a shared life and relationship" },
-        { id: "family", name: "Family", description: "Fostering harmony and household well-being" },
-        { id: "women", name: "Women", description: "Focused on women's unique wellness needs" },
-        { id: "men", name: "Men", description: "Tailored support for men's mental health" },
-        { id: "senior_citizen", name: "Senior Citizen", description: "Gentle vitality, daily calm & voice-guided reflection" }
-      ];
-      for (const cat of catsToInsert) {
-        await sql`
-          INSERT INTO categories (id, name, description)
-          VALUES (${cat.id}, ${cat.name}, ${cat.description})
-          ON CONFLICT (id) DO NOTHING
-        `;
-      }
-    }
-
-    // Seed questions
-    const existingQuests = await sql`SELECT COUNT(*) FROM questions`;
-    if (parseInt(existingQuests[0].count) === 0) {
-      console.log("[Neon DB] Seeding questions...");
-      const { COMMON_QUESTIONS } = require("@/frontend/lib/assessment/questions/common");
-      const { studentQuestions } = require("@/frontend/lib/assessment/questions/student");
-      const { youngProfessionalQuestions } = require("@/frontend/lib/assessment/questions/youngProfessional");
-      const { workingProfessionalQuestions } = require("@/frontend/lib/assessment/questions/workingProfessional");
-      const { parentQuestions } = require("@/frontend/lib/assessment/questions/parent");
-      const { coupleQuestions } = require("@/frontend/lib/assessment/questions/couple");
-      const { familyQuestions } = require("@/frontend/lib/assessment/questions/family");
-      const { womenQuestions } = require("@/frontend/lib/assessment/questions/women");
-      const { menQuestions } = require("@/frontend/lib/assessment/questions/men");
-      const { seniorCitizenQuestions } = require("@/frontend/lib/assessment/questions/seniorCitizen");
-
-      const allQuests = [
-        ...COMMON_QUESTIONS.map((q: any) => ({ ...q, type: "common", category: null })),
-        ...studentQuestions.map((q: any) => ({ ...q, type: "category", category: "student" })),
-        ...youngProfessionalQuestions.map((q: any) => ({ ...q, type: "category", category: "young_pro" })),
-        ...workingProfessionalQuestions.map((q: any) => ({ ...q, type: "category", category: "working_professional" })),
-        ...parentQuestions.map((q: any) => ({ ...q, type: "category", category: "parent" })),
-        ...coupleQuestions.map((q: any) => ({ ...q, type: "category", category: "couple" })),
-        ...familyQuestions.map((q: any) => ({ ...q, type: "category", category: "family" })),
-        ...womenQuestions.map((q: any) => ({ ...q, type: "category", category: "women" })),
-        ...menQuestions.map((q: any) => ({ ...q, type: "category", category: "men" })),
-        ...seniorCitizenQuestions.map((q: any) => ({ ...q, type: "category", category: "senior_citizen" }))
-      ];
-
-      for (const q of allQuests) {
-        await sql`
-          INSERT INTO questions (id, key, text, description, category, type, options)
-          VALUES (${q.id}, ${q.key}, ${q.text}, ${q.description}, ${q.category}, ${q.type}, ${JSON.stringify(q.options)}::jsonb)
-          ON CONFLICT (id) DO NOTHING
-        `;
-      }
-    }
-
-    console.log("[Neon DB] Database tables initialized and seeded successfully.");
-    isInitialized = true;
-    (global as any).isDatabaseInitialized = true;
-  } catch (err) {
-    console.error("[Neon DB] Table initialization failed:", err);
-  }
-}
 
 export async function saveUserAssessment(
   userId: string,
@@ -264,60 +12,30 @@ export async function saveUserAssessment(
   detailedAnswers: AssessmentAnswer[],
   totalScore: number,
   percentage: number,
-  wellnessLevel: string
+  wellnessLevel: string,
+  maxScore: number = 50
 ): Promise<any> {
-  // Ensure tables are initialized
-  await initDatabase();
-
-  const dbCategory = category === "parents" || category === "parent" ? "parent" : (category === "couples" || category === "couple" ? "couple" : category);
-
   try {
-    // 1. Insert or update user profile details
-    const profileId = `profile-${Date.now()}`;
-    await sql`
-      INSERT INTO user_profiles (id, user_id, category, wellness_level, percentage, total_score)
-      VALUES (${profileId}, ${userId}, ${dbCategory}, ${wellnessLevel}, ${percentage}, ${totalScore})
-      ON CONFLICT (user_id) DO UPDATE SET
-        category = EXCLUDED.category,
-        wellness_level = EXCLUDED.wellness_level,
-        percentage = EXCLUDED.percentage,
-        total_score = EXCLUDED.total_score,
-        created_at = CURRENT_TIMESTAMP
-    `;
-
-    // 2. Insert into the legacy user_assessments table (for backward compatibility)
-    const stressAns = detailedAnswers.find((a) => a.questionKey === "stress_level");
-    const sleepAns = detailedAnswers.find((a) => a.questionKey === "sleep_quality");
-    const supportAns = detailedAnswers.find((a) => a.questionKey === "confidence_coping");
-
-    const stressFreq = stressAns ? Math.min(5, Math.max(1, 6 - stressAns.score)) : 3;
-    const sleepQual = sleepAns ? Math.min(5, Math.max(1, sleepAns.score)) : 4;
-    const supportLvl = supportAns ? Math.min(5, Math.max(1, supportAns.score)) : 3;
-
-    await sql`
-      INSERT INTO user_assessments (user_id, category, stress_frequency, sleep_quality, support_level, computed_score, answers_json)
-      VALUES (${userId}, ${dbCategory}, ${stressFreq}, ${sleepQual}, ${supportLvl}, ${totalScore}, ${JSON.stringify(detailedAnswers)}::jsonb)
-    `;
-
-    // 3. Insert into the new assessments table
+    // 1. Insert into assessments table
     const resultQuery = await sql`
       INSERT INTO assessments (user_id, category, total_score, max_score, percentage, wellness_level)
-      VALUES (${userId}, ${dbCategory}, ${totalScore}, 75, ${percentage}, ${wellnessLevel})
-      RETURNING id
+      VALUES (${userId}, ${category}, ${totalScore}, ${maxScore}, ${percentage}, ${wellnessLevel})
+      RETURNING id, user_id, category, total_score, max_score, percentage, wellness_level, created_at
     `;
-    const resultId = resultQuery[0]?.id;
+    const assessment = resultQuery[0];
+    const assessmentId = assessment?.id;
 
-    // 4. Insert each individual answer into the new detailed assessment_answers_detailed table
-    if (resultId) {
+    // 2. Insert individual answers into assessment_answers table
+    if (assessmentId && detailedAnswers && detailedAnswers.length > 0) {
       for (const ans of detailedAnswers) {
         await sql`
-          INSERT INTO assessment_answers_detailed (assessment_id, question_id, question_key, question_type, category, selected_option_id, selected_text, score, answered_at)
+          INSERT INTO assessment_answers (assessment_id, question_id, question_key, question_type, category, selected_option_id, selected_text, score, answered_at)
           VALUES (
-            ${resultId}, 
+            ${assessmentId}, 
             ${ans.questionId}, 
-            ${ans.questionKey}, 
-            ${ans.questionType}, 
-            ${ans.category}, 
+            ${ans.questionKey || `q_${ans.questionId}`}, 
+            ${ans.questionType || "category"}, 
+            ${ans.category || category}, 
             ${ans.selectedOptionId}, 
             ${ans.selectedText}, 
             ${ans.score}, 
@@ -327,8 +45,8 @@ export async function saveUserAssessment(
       }
     }
 
-    console.log("[Neon DB] Saved full 15-question user assessment successfully:", userId);
-    return { success: true };
+    console.log("[Neon DB] Saved Sanctuary assessment successfully for user:", userId);
+    return { success: true, assessment };
   } catch (err) {
     console.error("[Neon DB] Failed to save assessment:", err);
     throw err;
@@ -336,10 +54,12 @@ export async function saveUserAssessment(
 }
 
 export async function getUserProfile(userId: string): Promise<any> {
-  await initDatabase();
   try {
     const results = await sql`
-      SELECT * FROM user_profiles WHERE user_id = ${userId} LIMIT 1
+      SELECT id, name, email, sanctuary_name, avatar, selected_category, streak_days, mindfulness_minutes, current_mood 
+      FROM users 
+      WHERE id = ${userId} 
+      LIMIT 1
     `;
     if (results.length > 0) {
       return results[0];
@@ -352,20 +72,25 @@ export async function getUserProfile(userId: string): Promise<any> {
 }
 
 export async function getUserAssessment(userId: string): Promise<any> {
-  await initDatabase();
   try {
     const results = await sql`
-      SELECT * FROM assessment_results WHERE user_id = ${userId} ORDER BY created_at DESC LIMIT 1
+      SELECT id, user_id, category, total_score, max_score, percentage, wellness_level, created_at 
+      FROM assessments 
+      WHERE user_id = ${userId} 
+      ORDER BY created_at DESC 
+      LIMIT 1
     `;
     if (results.length === 0) return null;
 
-    const result = results[0];
+    const assessment = results[0];
     const answers = await sql`
-      SELECT * FROM assessment_answers WHERE assessment_result_id = ${result.id}
+      SELECT id, assessment_id, question_id, question_key, question_type, category, selected_option_id, selected_text, score, answered_at 
+      FROM assessment_answers 
+      WHERE assessment_id = ${assessment.id}
     `;
 
     return {
-      ...result,
+      ...assessment,
       answers,
     };
   } catch (err) {
@@ -385,7 +110,6 @@ export async function saveDailyCheckIn(
     reflection?: string;
   }
 ): Promise<{ success: boolean; currentStreak: number }> {
-  await initDatabase();
   try {
     // 1. Save check-in
     await sql`
@@ -461,7 +185,6 @@ export async function saveDailyCheckIn(
 }
 
 export async function getDailyCheckInSummary(userId: string): Promise<any> {
-  await initDatabase();
   try {
     const today = new Date();
     const startDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
@@ -480,7 +203,6 @@ export async function getDailyCheckInSummary(userId: string): Promise<any> {
 }
 
 export async function getUserStreak(userId: string): Promise<{ currentStreak: number; longestStreak: number }> {
-  await initDatabase();
   try {
     const results = await sql`
       SELECT current_streak, longest_streak FROM user_streaks WHERE user_id = ${userId} LIMIT 1
@@ -497,5 +219,3 @@ export async function getUserStreak(userId: string): Promise<{ currentStreak: nu
     return { currentStreak: 0, longestStreak: 0 };
   }
 }
-
-

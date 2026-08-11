@@ -1,4 +1,4 @@
-import ParentDashboard from "@/parent/Research/Documentation/Dashboard Planning/AI Knowledge/Feature Documentation/Development/ParentDashboard";
+import ParentDashboard from "@/frontend/components/screens/ParentDashboard";
 
 export default function ParentsDashboardPage() {
   return <ParentDashboard />;

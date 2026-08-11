@@ -3,6 +3,8 @@ import type { NextRequest } from "next/server";
 
 const PROTECTED_ROUTES = [
   "/dashboard",
+  "/assessment",
+  "/wellness-score",
   "/ai-chat",
   "/checkin",
   "/journal",
@@ -19,7 +21,7 @@ const PROTECTED_ROUTES = [
 ];
 
 const AUTH_ROUTES = ["/login", "/signup"];
-const ONBOARDING_ROUTES = ["/", "/category-selection", "/assessment", "/wellness-score"];
+const ONBOARDING_ROUTES = ["/", "/category-selection"];
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;

@@ -15,19 +15,7 @@ export async function POST(request: Request) {
     const sessionTitle = title || "Mindful Session";
     const sessionCategory = category || "Focus";
 
-    // 1. Ensure table exists
-    await sql`
-      CREATE TABLE IF NOT EXISTS meditation_logs (
-        id SERIAL PRIMARY KEY,
-        user_id VARCHAR(255) NOT NULL,
-        title VARCHAR(255) NOT NULL,
-        minutes INTEGER NOT NULL,
-        category VARCHAR(100) DEFAULT 'Mindfulness',
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      )
-    `;
-
-    // 2. Insert session log
+    // 1. Insert session log
     await sql`
       INSERT INTO meditation_logs (user_id, title, minutes, category)
       VALUES (${userId}, ${sessionTitle}, ${sessionMinutes}, ${sessionCategory})

@@ -6,10 +6,12 @@ import { motion, AnimatePresence } from "framer-motion";
 import { getClientSession } from "@/backend/auth/client";
 import { useWellness } from "@/frontend/lib/context/WellnessContext";
 import { useCategory } from "@/frontend/lib/context/CategoryContext";
-import ParentDashboard from "@/parent/Research/Documentation/Dashboard Planning/AI Knowledge/Feature Documentation/Development/ParentDashboard";
+import ParentDashboard from "@/frontend/components/screens/ParentDashboard";
 import CouplesDashboard from "@/Couples/03_Dashboard/Development/CouplesDashboard";
 import DailyPrivacyReminder from "@/frontend/components/ui/DailyPrivacyReminder";
 import ScreenHeader from "@/frontend/components/ui/ScreenHeader";
+import SanctuaryScoreModal from "@/frontend/components/ui/SanctuaryScoreModal";
+import { getCategoryJourneyBadge } from "@/frontend/lib/constants";
 
 interface TimeTheme {
   bgGradient: string;
@@ -69,6 +71,10 @@ export default function DashboardScreen() {
   const { dashboardData, isLoading } = useWellness();
   const [themeKey, setThemeKey] = useState<"morning" | "afternoon" | "evening" | "night">("evening");
   const [currentDateString, setCurrentDateString] = useState("6 Aug 2026");
+  const [hoveredPoint, setHoveredPoint] = useState<any | null>(null);
+  const [isTimedOut, setIsTimedOut] = useState<boolean>(false);
+  const [showReflectionModal, setShowReflectionModal] = useState<boolean>(false);
+  const [showScoreModal, setShowScoreModal] = useState<boolean>(false);
 
   useEffect(() => {
     const session = getClientSession();
@@ -76,6 +82,21 @@ export default function DashboardScreen() {
       router.push("/login");
     }
   }, [router]);
+
+  useEffect(() => {
+    if (dashboardData && dashboardData.assessmentCompleted === false) {
+      try {
+        const dismissed = sessionStorage.getItem("manraah_sanctuary_popup_dismissed") === "true";
+        if (!dismissed) {
+          setShowScoreModal(true);
+        }
+      } catch {
+        setShowScoreModal(true);
+      }
+    } else {
+      setShowScoreModal(false);
+    }
+  }, [dashboardData]);
 
   useEffect(() => {
     const hour = new Date().getHours();
@@ -105,7 +126,8 @@ export default function DashboardScreen() {
     );
   }
 
-  const { user, todayMood, history, streak, recommendation, insights } = dashboardData;
+  const { user, todayMood, streak, recommendation, insights } = dashboardData;
+  const history = dashboardData.history || dashboardData.moodHistory || [];
   const name = user?.sanctuaryName || user?.name || "Ashutosh Sahu";
 
   // Check login state to determine whether to use database category or client context category
@@ -845,6 +867,16 @@ export default function DashboardScreen() {
       </motion.div>
 
       <DailyPrivacyReminder />
+
+      <SanctuaryScoreModal
+        isOpen={showScoreModal}
+        onDismiss={() => {
+          setShowScoreModal(false);
+          try {
+            sessionStorage.setItem("manraah_sanctuary_popup_dismissed", "true");
+          } catch {}
+        }}
+      />
     </div>
   );
 }

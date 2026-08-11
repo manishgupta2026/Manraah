@@ -6,7 +6,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useAssessment } from "@/frontend/lib/context/AssessmentContext";
 import { useCategory } from "@/frontend/lib/context/CategoryContext";
 import { assessmentEngine } from "@/frontend/lib/assessment/assessmentEngine";
-import { evaluateWellness } from "@/frontend/lib/assessment/wellness";
+import { getClientSession } from "@/backend/auth/client";
+import { getCategoryJourneyBadge } from "@/frontend/lib/constants";
 import ScreenHeader from "@/frontend/components/ui/ScreenHeader";
 
 interface TimeTheme {
@@ -16,19 +17,19 @@ interface TimeTheme {
 
 const TIME_THEMES: Record<"morning" | "afternoon" | "evening" | "night", TimeTheme> = {
   morning: {
-    background: "from-[#FFFDF4] via-[#FFF5EC] to-[#EAE4F5]", // Warm sunlight
+    background: "from-[#FFFDF4] via-[#FFF5EC] to-[#EAE4F5]",
     glowColor: "bg-amber-200/20",
   },
   afternoon: {
-    background: "from-[#F2F4FD] via-[#ECE6F6] to-[#FCE6EC]", // Calming Lavender
+    background: "from-[#F2F4FD] via-[#ECE6F6] to-[#FCE6EC]",
     glowColor: "bg-primary-container/20",
   },
   evening: {
-    background: "from-[#FFF4E4] via-[#FDE4EB] to-[#ECE7F6]", // Golden sunset twilight
+    background: "from-[#FFF4E4] via-[#FDE4EB] to-[#ECE7F6]",
     glowColor: "bg-orange-300/15",
   },
   night: {
-    background: "from-[#090C16] via-[#10172A] to-[#20183B]", // Starlit moonlight
+    background: "from-[#090C16] via-[#10172A] to-[#20183B]",
     glowColor: "bg-indigo-300/10",
   },
 };
@@ -43,33 +44,32 @@ const AMBIENT_PARTICLES = [
 
 function getQuestionEmoji(text: string): string {
   const lower = text.toLowerCase();
-  if (lower.includes("happy") || lower.includes("calm") || lower.includes("balance") || lower.includes("emotion")) return "😊";
-  if (lower.includes("stress") || lower.includes("overwhelm") || lower.includes("anxious") || lower.includes("worry") || lower.includes("pressure")) return "😣";
-  if (lower.includes("sleep") || lower.includes("night") || lower.includes("restful") || lower.includes("wake")) return "😴";
-  if (lower.includes("motivate") || lower.includes("energy") || lower.includes("energetic") || lower.includes("drive")) return "⚡";
-  if (lower.includes("difficult") || lower.includes("handling") || lower.includes("confident") || lower.includes("cope") || lower.includes("handle")) return "🌱";
-  if (lower.includes("focus") || lower.includes("concentrat") || lower.includes("mind") || lower.includes("clear")) return "🧠";
-  if (lower.includes("social") || lower.includes("peer") || lower.includes("friend") || lower.includes("lonely") || lower.includes("connect")) return "👥";
-  if (lower.includes("work") || lower.includes("career") || lower.includes("job") || lower.includes("professional") || lower.includes("burnout")) return "💼";
+  if (lower.includes("academic") || lower.includes("exam") || lower.includes("study") || lower.includes("grade")) return "🎓";
+  if (lower.includes("workload") || lower.includes("burnout") || lower.includes("career") || lower.includes("job")) return "💼";
   if (lower.includes("family") || lower.includes("parent") || lower.includes("child") || lower.includes("home")) return "🏡";
   if (lower.includes("relationship") || lower.includes("couple") || lower.includes("partner") || lower.includes("love")) return "💖";
-  if (lower.includes("body") || lower.includes("physical") || lower.includes("health") || lower.includes("fitness")) return "💪";
+  if (lower.includes("sleep") || lower.includes("night") || lower.includes("restful")) return "🌙";
+  if (lower.includes("stress") || lower.includes("anxious") || lower.includes("pressure") || lower.includes("worry")) return "😣";
+  if (lower.includes("energy") || lower.includes("fatigue") || lower.includes("tired")) return "⚡";
+  if (lower.includes("focus") || lower.includes("mind") || lower.includes("clarity")) return "🧠";
+  if (lower.includes("friend") || lower.includes("peer") || lower.includes("social")) return "👥";
   return "🌿";
 }
 
 function getOptionEmoji(score: number): string {
-  if (score === 5) return "😊";
+  if (score === 5) return "😌";
   if (score === 4) return "🙂";
   if (score === 3) return "😐";
-  if (score === 2) return "😕";
-  return "😞";
+  if (score === 2) return "😟";
+  return "😔";
 }
 
 export default function AssessmentFlow() {
   const router = useRouter();
-  const { categoryDetails } = useCategory();
+  const { category: contextCategory } = useCategory();
   const {
     selectedCategory,
+    setSelectedCategory,
     currentQuestionIndex,
     setCurrentQuestionIndex,
     detailedAnswers,
@@ -78,8 +78,21 @@ export default function AssessmentFlow() {
     setAssessmentCompleted,
   } = useAssessment();
 
-  const [direction, setDirection] = useState(1); // 1 = forward, -1 = backward
+  const [activeCategory, setActiveCategory] = useState<string>("student");
+  const [direction, setDirection] = useState(1);
   const [timeOfDay, setTimeOfDay] = useState<"morning" | "afternoon" | "evening" | "night">("afternoon");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  // Sync category with session or context
+  useEffect(() => {
+    const session = getClientSession();
+    const cat = session.user?.selectedCategory || selectedCategory || contextCategory || "student";
+    setActiveCategory(cat);
+    if (selectedCategory !== cat) {
+      setSelectedCategory(cat as any);
+    }
+  }, [selectedCategory, contextCategory, setSelectedCategory]);
 
   useEffect(() => {
     const hour = new Date().getHours();
@@ -89,16 +102,15 @@ export default function AssessmentFlow() {
     else setTimeOfDay("night");
   }, []);
 
-  // Load the 15 questions dynamically based on selected category (5 common + 10 category-specific)
-  const questions = assessmentEngine.getQuestionsForCategory(selectedCategory);
-  const totalQuestions = questions.length;
+  // Load the 10 category-specific questions
+  const questions = assessmentEngine.getQuestionsForCategory(activeCategory);
+  const totalQuestions = questions.length || 10;
   const safeIndex = Math.min(Math.max(0, currentQuestionIndex), Math.max(0, totalQuestions - 1));
   const question = questions[safeIndex] || questions[0] || null;
 
-  // Find if there is an existing answer for this question to pre-fill selection
+  // Selected option state for current question
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
 
-  // Sync selectedOptionId when current index or answers change
   useEffect(() => {
     if (question) {
       const ans = detailedAnswers.find((a) => a.questionId === question.id);
@@ -106,13 +118,14 @@ export default function AssessmentFlow() {
     } else {
       setSelectedOptionId(null);
     }
-  }, [safeIndex, detailedAnswers, question?.id]);
+  }, [safeIndex, detailedAnswers, question]);
 
   const handleSelectOption = (optionId: string) => {
     setSelectedOptionId(optionId);
+    setErrorMessage(null);
 
     if (!question) return;
-    const newAnswer = assessmentEngine.createAnswer(selectedCategory, question.id, optionId);
+    const newAnswer = assessmentEngine.createAnswer(activeCategory, question.id, optionId);
     if (!newAnswer) return;
 
     const updatedAnswers = [...detailedAnswers];
@@ -125,15 +138,15 @@ export default function AssessmentFlow() {
     setDetailedAnswers(updatedAnswers);
   };
 
-  const handleNext = () => {
-    if (!question || !selectedOptionId) return;
+  const handleNext = async () => {
+    if (!question || !selectedOptionId || isSubmitting) return;
 
-    let currentAnswers = detailedAnswers;
-    const hasAnswer = detailedAnswers.some((ans) => ans.questionId === question.id);
+    let currentAnswers = [...detailedAnswers];
+    const hasAnswer = currentAnswers.some((ans) => ans.questionId === question.id);
     if (!hasAnswer) {
-      const newAnswer = assessmentEngine.createAnswer(selectedCategory, question.id, selectedOptionId);
+      const newAnswer = assessmentEngine.createAnswer(activeCategory, question.id, selectedOptionId);
       if (newAnswer) {
-        currentAnswers = [...detailedAnswers, newAnswer];
+        currentAnswers.push(newAnswer);
         setDetailedAnswers(currentAnswers);
       }
     }
@@ -142,16 +155,44 @@ export default function AssessmentFlow() {
       setDirection(1);
       setCurrentQuestionIndex(safeIndex + 1);
     } else {
-      // Completed all questions
-      const results = evaluateWellness(currentAnswers);
-      setAssessmentResult(results);
-      setAssessmentCompleted(true);
-      
-      const userType = selectedCategory === "couples" || selectedCategory === "couple" ? "couples" : (selectedCategory === "parents" || selectedCategory === "parent" ? "parents" : "student");
-      document.cookie = `userType=${userType}; path=/; max-age=86400`;
-      console.log("[Trace Point 1] After assessment: userType =", userType);
+      // Last question reached -> Submit to backend
+      setIsSubmitting(true);
+      setErrorMessage(null);
 
-      router.push("/wellness-score");
+      try {
+        const res = await fetch("/api/assessment", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ answers: currentAnswers }),
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          throw new Error(data.error || "Failed to save your Sanctuary Score. Please try again.");
+        }
+
+        // Store result from backend response
+        setAssessmentResult({
+          totalScore: data.totalScore,
+          maxScore: data.maxScore || 50,
+          percentage: data.percentage,
+          wellnessLevel: data.wellnessLevel,
+          message: data.message,
+        });
+        setAssessmentCompleted(true);
+
+        // Store completion in session/local storage
+        try {
+          localStorage.setItem("manraah_assessment_completed", "true");
+        } catch {}
+
+        router.push("/wellness-score");
+      } catch (err: any) {
+        console.error("Assessment submission error:", err);
+        setErrorMessage(err.message || "Something went wrong while saving your score. Please try again.");
+        setIsSubmitting(false);
+      }
     }
   };
 
@@ -159,300 +200,256 @@ export default function AssessmentFlow() {
     if (safeIndex > 0) {
       setDirection(-1);
       setCurrentQuestionIndex(safeIndex - 1);
+      setErrorMessage(null);
     } else {
-      router.push("/category-selection");
+      router.push("/dashboard");
     }
   };
 
-  const handleSkip = () => {
-    let currentAnswers = [...detailedAnswers];
-    for (let i = safeIndex; i < totalQuestions; i++) {
-      const q = questions[i];
-      const hasAnswer = currentAnswers.some((ans) => ans.questionId === q.id);
-      if (!hasAnswer) {
-        const midOption = q.options[Math.floor(q.options.length / 2)] || q.options[0];
-        const newAnswer = assessmentEngine.createAnswer(selectedCategory, q.id, midOption.id);
-        if (newAnswer) {
-          currentAnswers.push(newAnswer);
-        }
-      }
-    }
-    const results = evaluateWellness(currentAnswers);
-    setAssessmentResult(results);
-    setAssessmentCompleted(true);
+  const currentTheme = TIME_THEMES[timeOfDay];
+  const isNight = timeOfDay === "night";
 
-    const userType = selectedCategory === "couples" || selectedCategory === "couple" ? "couples" : (selectedCategory === "parents" || selectedCategory === "parent" ? "parents" : "student");
-    document.cookie = `userType=${userType}; path=/; max-age=86400`;
-    console.log("[Trace Point 1] After assessment: userType =", userType);
-
-    router.push("/wellness-score");
-  };
-
-  // Conversational view sliding variants (slower, calming curves)
+  // Animation variants
   const slideVariants = {
     enter: (dir: number) => ({
-      x: dir > 0 ? 120 : -120,
+      x: dir > 0 ? 50 : -50,
       opacity: 0,
     }),
     center: {
       x: 0,
       opacity: 1,
+      transition: { duration: 0.35, ease: "easeOut" },
     },
     exit: (dir: number) => ({
-      x: dir > 0 ? -120 : 120,
+      x: dir > 0 ? -50 : 50,
       opacity: 0,
+      transition: { duration: 0.25, ease: "easeIn" },
     }),
   };
 
-  const transitionSettings = {
-    duration: 0.65,
-    ease: [0.25, 0.8, 0.25, 1], // Smooth calming cubic-bezier curve
-  };
+  if (!question) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-surface">
+        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
 
-  const progressPercentage = ((safeIndex) / totalQuestions) * 100;
-  const activeTheme = TIME_THEMES[timeOfDay];
-  const onBackAction = safeIndex > 0 ? handleBack : () => router.push("/category-selection");
+  const qEmoji = getQuestionEmoji(question.text);
+  const progressPercent = Math.round(((safeIndex + 1) / totalQuestions) * 100);
 
   return (
-    <div className={`bg-gradient-to-b ${activeTheme.background} ${timeOfDay === "night" ? "text-slate-100" : "text-on-background"} min-h-screen relative flex flex-col justify-between py-10 px-4 md:px-8 overflow-hidden transition-all duration-1000`}>
+    <div
+      className={`min-h-screen relative flex flex-col justify-between overflow-x-hidden bg-gradient-to-b ${currentTheme.background} transition-colors duration-1000 select-none py-6 px-4 md:px-8`}
+    >
       <ScreenHeader
-        title="📋 Assessment"
+        title="🌿 Sanctuary Score Assessment"
         showBackButton={true}
-        onBack={onBackAction}
-        action={{ label: "Skip", onClick: handleSkip }}
+        fallbackRoute="/dashboard"
+        onBack={handleBack}
       />
-      
-      {/* 1. Breathing Glow Blobs (Time-based light source) */}
-      <div className="fixed inset-0 z-[-2] pointer-events-none">
-        <motion.div
-          animate={{
-            scale: [1, 1.15, 1],
-            opacity: [0.35, 0.5, 0.35],
-          }}
-          transition={{
-            duration: 14,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-          className={`absolute top-[-15%] left-[-15%] w-[70vw] md:w-[600px] h-[70vw] md:h-[600px] rounded-full ${activeTheme.glowColor} filter blur-[120px]`}
-        />
-        <motion.div
-          animate={{
-            scale: [1.1, 0.95, 1.1],
-            opacity: [0.2, 0.3, 0.2],
-          }}
-          transition={{
-            duration: 18,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-          className={`absolute bottom-[-15%] right-[-15%] w-[65vw] md:w-[550px] h-[65vw] md:h-[550px] rounded-full bg-secondary-container/15 filter blur-[130px]`}
-        />
-      </div>
 
-      {/* 2. Ambient Falling Elements (Leafs & Petals) */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden z-[-1]">
-        {AMBIENT_PARTICLES.map((p) => (
-          <motion.div
-            key={p.id}
-            initial={{ y: -50, opacity: 0, rotate: 0 }}
+      {/* Floating Animated Particles */}
+      <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+        {AMBIENT_PARTICLES.map((particle) => (
+          <motion.span
+            key={particle.id}
+            initial={{ y: "105vh", opacity: 0, rotate: 0 }}
             animate={{
-              y: "110vh",
+              y: "-10vh",
               opacity: [0, 0.4, 0.4, 0],
-              x: [0, 50, -50, 15],
-              rotate: [0, 180, 360],
+              rotate: 360,
+              x: [0, 30, -30, 0],
             }}
             transition={{
-              duration: p.duration,
+              duration: particle.duration,
               repeat: Infinity,
-              delay: p.delay,
+              delay: particle.delay,
               ease: "linear",
             }}
-            className={`absolute ${p.size} text-primary-purple/35 select-none`}
-            style={{ left: p.x }}
+            className="absolute text-emerald-600/15 select-none"
+            style={{ left: particle.x }}
           >
-            {p.type === "leaf" ? "🍃" : "🌸"}
-          </motion.div>
+            {particle.type === "leaf" ? "🍃" : "🌸"}
+          </motion.span>
         ))}
       </div>
 
-      {/* 3. Faint Mountain Silhouette Outline */}
-      <div className={`absolute bottom-0 left-0 w-full pointer-events-none ${timeOfDay === "night" ? "opacity-[0.06] text-white" : "opacity-[0.04] text-primary"} z-[-1] overflow-hidden`}>
-        <svg viewBox="0 0 1440 320" className="w-full h-auto min-h-[220px]" fill="currentColor" preserveAspectRatio="none">
-          <path d="M0,224L60,197.3C120,171,240,117,360,112C480,107,600,149,720,181.3C840,213,960,235,1080,218.7C1200,203,1320,149,1380,122.7L1440,96L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z" />
-        </svg>
-      </div>
-
-      {/* 4. Subtle Pulsing Lotuses in Corners */}
-      <div className={`absolute top-[18%] left-[4%] text-[150px] ${timeOfDay === "night" ? "text-indigo-400/5" : "text-primary/5"} pointer-events-none select-none animate-pulse duration-[8s] hidden lg:block`}>
-        🪷
-      </div>
-      <div className={`absolute bottom-[22%] right-[2%] text-[180px] ${timeOfDay === "night" ? "text-purple-400/5" : "text-secondary/5"} pointer-events-none select-none animate-pulse duration-[11s] hidden lg:block`}>
-        🪷
+      {/* Dynamic Glow Blurs */}
+      <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+        <motion.div
+          animate={{ scale: [1, 1.15, 1], x: [0, 25, 0], y: [0, -25, 0] }}
+          transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
+          className={`absolute top-[10%] right-[10%] w-[360px] h-[360px] rounded-full blur-[110px] opacity-35 ${currentTheme.glowColor}`}
+        />
+        <motion.div
+          animate={{ scale: [1.1, 0.9, 1.1], x: [0, -25, 0], y: [0, 25, 0] }}
+          transition={{ duration: 22, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute bottom-[10%] left-[10%] w-[320px] h-[320px] rounded-full bg-secondary-container/15 blur-[100px] opacity-25"
+        />
       </div>
 
       {/* Main Container */}
-      <div className="max-w-2xl mx-auto w-full flex-1 flex flex-col justify-between gap-8 z-10">
-        
-        {/* Progress Area */}
-        <div className="space-y-4">
-          <div className="flex flex-col md:flex-row md:justify-between md:items-end gap-2">
-            <div>
-              <span className="text-xs md:text-sm font-bold text-primary/75 tracking-wider uppercase flex items-center gap-1.5 justify-center md:justify-start">
-                🌸 Let's get to know you
-              </span>
-              <span className={`text-[10px] font-bold uppercase tracking-widest block text-center md:text-left mt-0.5 ${timeOfDay === "night" ? "text-slate-400" : "text-on-surface-variant/60"}`}>
-                Focus: {categoryDetails.name}
-              </span>
-            </div>
-            <span className="font-bold text-xs md:text-sm text-primary tracking-wide text-center md:text-right block">
-              Question {safeIndex + 1} of {totalQuestions}
+      <main className="flex-1 max-w-2xl w-full mx-auto flex flex-col justify-center py-4 md:py-8 z-10 relative">
+        {/* Top Header Card */}
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <span className="px-3.5 py-1 rounded-full text-[10px] font-heading font-bold uppercase tracking-wider bg-primary/10 text-primary border border-primary/20 shadow-xs">
+              {getCategoryJourneyBadge(activeCategory)}
             </span>
           </div>
 
-          {/* Progress Bar */}
-          <div className={`w-full ${timeOfDay === "night" ? "bg-slate-800/80 border-slate-700/30" : "bg-white/40 border-white/20"} h-2.5 rounded-full overflow-hidden shadow-inner border`}>
-            <motion.div
-              className="h-full bg-gradient-to-r from-primary to-primary-purple rounded-full"
-              initial={{ width: `${((safeIndex) / (totalQuestions || 15)) * 100}%` }}
-              animate={{ width: `${progressPercentage}%` }}
-              transition={{ duration: 0.55, ease: "easeOut" }}
-            />
+          {/* Progress Indicator */}
+          <div className="px-4 py-1.5 rounded-full bg-white/70 backdrop-blur-md border border-primary/20 text-xs font-heading font-bold text-primary shadow-xs">
+            Question {safeIndex + 1} of {totalQuestions}
           </div>
         </div>
 
-        {/* Animated Question Content */}
-        <div className="flex-1 flex flex-col justify-center min-h-[460px] py-2">
-          <AnimatePresence mode="wait" custom={direction}>
-            {question && (
-              <motion.div
-                key={`q-${safeIndex}`}
-                custom={direction}
-                variants={slideVariants}
-                initial="enter"
-                animate="center"
-                exit="exit"
-                transition={transitionSettings}
-                // Glassmorphic Question Card
-                className={`rounded-[36px] border shadow-2xl p-6 md:p-10 space-y-8 relative z-20 flex flex-col justify-between ${
-                  timeOfDay === "night" 
-                    ? "bg-slate-900/60 border-slate-800/50" 
-                    : "bg-white/40 border-white/30 backdrop-blur-xl"
-                }`}
-              >
-                {/* Question block */}
-                <div className="space-y-4 text-center md:text-left">
-                  <h2 className="text-xl md:text-2xl font-heading font-extrabold leading-relaxed tracking-tight flex flex-col md:flex-row items-center gap-3">
-                    <span className="text-3xl filter drop-shadow-sm shrink-0 mb-1.5 md:mb-0">
-                      {getQuestionEmoji(question.text)}
-                    </span>
-                    <span className="flex-1">{question.text}</span>
-                  </h2>
-                  <p className={`text-xs md:text-sm font-semibold italic max-w-lg mx-auto md:mx-0 ${timeOfDay === "night" ? "text-slate-400" : "text-on-surface-variant/75"}`}>
-                    "There are no right or wrong answers. Answer honestly so we can better support you."
-                  </p>
-                </div>
+        {/* Progress bar line */}
+        <div className="w-full bg-primary/10 h-2 rounded-full overflow-hidden mb-6">
+          <motion.div
+            className="h-full bg-gradient-to-r from-primary via-[#7C6BC4] to-secondary-container rounded-full"
+            initial={{ width: `${(safeIndex / totalQuestions) * 100}%` }}
+            animate={{ width: `${progressPercent}%` }}
+            transition={{ duration: 0.35 }}
+          />
+        </div>
 
-                {/* Option Cards Grid */}
-                <div className="space-y-3.5 relative z-20" role="radiogroup" aria-label={question.text}>
-                  {question.options.map((opt) => {
-                    const isSelected = selectedOptionId === opt.id;
-                    return (
-                      <motion.button
-                        key={opt.id}
-                        type="button"
-                        role="radio"
-                        aria-checked={isSelected}
-                        onClick={() => handleSelectOption(opt.id)}
-                        whileHover={{ scale: 1.015 }}
-                        whileTap={{ scale: 0.985 }}
-                        animate={isSelected ? { y: -4, scale: 1.025 } : { y: 0, scale: 1 }}
-                        transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                        className={`w-full flex items-center justify-between p-5 rounded-[24px] border text-left cursor-pointer group focus:outline-none transition-all duration-300 relative z-20 ${
-                          isSelected
-                            ? timeOfDay === "night"
-                              ? "bg-slate-800/80 border-primary-purple shadow-[0_0_20px_rgba(124,107,196,0.3),_0_12px_36px_rgba(95,78,165,0.18)] ring-2 ring-primary/30 text-white font-bold"
-                              : "bg-white/60 border-primary-purple shadow-[0_0_20px_rgba(124,107,196,0.2),_0_12px_36px_rgba(95,78,165,0.12)] ring-2 ring-primary/20 text-primary font-bold"
-                            : timeOfDay === "night"
-                              ? "bg-slate-900/40 border-slate-800/60 shadow-soft hover:shadow-md hover:border-slate-700/50 hover:bg-slate-800/30 text-slate-300"
-                              : "bg-white/40 border-white/30 shadow-soft hover:shadow-md hover:border-primary/20 hover:bg-white/50 text-on-surface-variant"
-                        }`}
-                      >
-                        <div className="flex items-center gap-3.5 select-none pointer-events-none">
-                          <span className="text-xl shrink-0 filter drop-shadow-sm">{getOptionEmoji(opt.score)}</span>
-                          <span className="text-sm md:text-base font-semibold leading-normal">{opt.text}</span>
-                        </div>
-                        <div
-                          className={`w-6 h-6 rounded-full border flex items-center justify-center transition-all pointer-events-none ${
-                            isSelected
-                              ? "border-primary bg-primary"
-                              : timeOfDay === "night"
-                                ? "border-slate-700 bg-slate-800/40 group-hover:border-primary/45"
-                                : "border-outline-variant bg-white/20 group-hover:border-primary/40"
+        {/* Error message banner */}
+        {errorMessage && (
+          <div className="mb-4 p-4 rounded-2xl bg-red-500/10 border border-red-500/25 text-xs font-semibold text-red-600 animate-fadeIn flex items-center justify-between">
+            <span>{errorMessage}</span>
+            <button
+              onClick={() => setErrorMessage(null)}
+              className="text-red-700 font-bold ml-2 hover:underline"
+            >
+              ✕
+            </button>
+          </div>
+        )}
+
+        {/* Question Box */}
+        <div className="p-6 md:p-10 rounded-[32px] bg-white/75 backdrop-blur-xl border border-white/60 shadow-[0_20px_50px_rgba(95,78,165,0.08)] space-y-6">
+          <AnimatePresence mode="wait" custom={direction}>
+            <motion.div
+              key={question.id}
+              custom={direction}
+              variants={slideVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              className="space-y-6"
+            >
+              {/* Question header */}
+              <div className="space-y-2 text-left">
+                <div className="flex items-center gap-2">
+                  <span className="text-2xl filter drop-shadow-xs">{qEmoji}</span>
+                  <span className="text-[10px] font-heading font-bold uppercase tracking-wider text-primary">
+                    Sanctuary Score Inquiry
+                  </span>
+                </div>
+                <h2 className="text-xl md:text-2xl font-heading font-black text-on-surface leading-tight tracking-tight">
+                  {question.text}
+                </h2>
+                {question.description && (
+                  <p className="text-xs text-on-surface-variant/80 font-medium leading-relaxed">
+                    {question.description}
+                  </p>
+                )}
+              </div>
+
+              {/* 5 Options List */}
+              <div className="space-y-3">
+                {question.options.map((opt) => {
+                  const isSelected = selectedOptionId === opt.id;
+                  const optEmoji = getOptionEmoji(opt.score);
+
+                  return (
+                    <button
+                      key={opt.id}
+                      type="button"
+                      onClick={() => handleSelectOption(opt.id)}
+                      className={`w-full p-4 rounded-2xl border text-left transition-all duration-200 flex items-center justify-between gap-3 group cursor-pointer ${
+                        isSelected
+                          ? "bg-primary-container/25 border-primary shadow-sm ring-2 ring-primary/25"
+                          : "bg-white/60 hover:bg-white/90 border-surface-variant/30 hover:border-primary/30 shadow-xs"
+                      }`}
+                    >
+                      <div className="flex items-center gap-3.5">
+                        <span className="text-2xl filter drop-shadow-xs">{optEmoji}</span>
+                        <span
+                          className={`text-xs md:text-sm font-semibold leading-snug ${
+                            isSelected ? "text-primary font-bold" : "text-on-surface"
                           }`}
                         >
-                          {isSelected && (
-                            <motion.span
-                              initial={{ scale: 0, rotate: -45 }}
-                              animate={{ scale: 1, rotate: 0 }}
-                              transition={{ type: "spring", stiffness: 500, damping: 22 }}
-                              className="material-symbols-outlined text-white text-[12px] font-extrabold"
-                            >
-                              check
-                            </motion.span>
-                          )}
-                        </div>
-                      </motion.button>
-                    );
-                  })}
-                </div>
-              </motion.div>
-            )}
+                          {opt.text}
+                        </span>
+                      </div>
+
+                      <div
+                        className={`w-5 h-5 rounded-full border flex items-center justify-center shrink-0 transition-all ${
+                          isSelected
+                            ? "border-primary bg-primary text-white"
+                            : "border-surface-variant/50 group-hover:border-primary/40 bg-white"
+                        }`}
+                      >
+                        {isSelected && (
+                          <span className="material-symbols-outlined text-xs font-bold leading-none">
+                            check
+                          </span>
+                        )}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </motion.div>
           </AnimatePresence>
-        </div>
 
-        {/* Action Controls */}
-        <div className={`flex justify-between items-center border-t pt-6 ${timeOfDay === "night" ? "border-slate-800/50" : "border-surface-variant/20"}`}>
-          {safeIndex > 0 ? (
+          {/* Action buttons */}
+          <div className="flex items-center justify-between pt-4 border-t border-surface-variant/20 gap-4">
             <button
+              type="button"
               onClick={handleBack}
-              type="button"
-              className={`px-6 py-3.5 rounded-full font-bold text-sm hover:scale-102 active:scale-98 transition-all flex items-center gap-2 border shadow-sm cursor-pointer ${
-                timeOfDay === "night"
-                  ? "bg-slate-900/60 border-slate-800/60 text-slate-300 hover:bg-slate-800/60"
-                  : "bg-white/50 border-surface-variant/20 text-on-surface-variant hover:bg-white/80"
-              }`}
+              disabled={isSubmitting}
+              className="px-5 py-3 rounded-full border border-[#7C6BC4]/20 hover:bg-primary/5 text-on-surface-variant font-heading font-bold text-xs transition-all active:scale-95 flex items-center gap-1 cursor-pointer disabled:opacity-40"
             >
-              <span className="material-symbols-outlined text-base">arrow_back</span>
-              Previous
+              <span className="material-symbols-outlined text-sm">arrow_back</span>
+              <span>{safeIndex > 0 ? "Back" : "Dashboard"}</span>
             </button>
-          ) : (
+
             <button
-              onClick={() => router.push("/category-selection")}
               type="button"
-              className={`px-6 py-3.5 rounded-full font-bold text-sm hover:scale-102 active:scale-98 transition-all flex items-center gap-2 border shadow-sm cursor-pointer ${
-                timeOfDay === "night"
-                  ? "bg-slate-900/60 border-slate-800/60 text-slate-300 hover:bg-slate-800/60"
-                  : "bg-white/50 border-surface-variant/20 text-on-surface-variant hover:bg-white/80"
+              onClick={handleNext}
+              disabled={!selectedOptionId || isSubmitting}
+              className={`px-8 py-3.5 rounded-full font-heading font-bold text-xs shadow-md transition-all duration-200 flex items-center gap-2 active:scale-95 ${
+                selectedOptionId && !isSubmitting
+                  ? "bg-primary hover:bg-[#7C6BC4] text-white cursor-pointer shadow-[0_10px_25px_rgba(95,78,165,0.25)]"
+                  : "bg-slate-200 text-slate-400 cursor-not-allowed"
               }`}
             >
-              <span className="material-symbols-outlined text-base">arrow_back</span>
-              Category
+              {isSubmitting ? (
+                <>
+                  <div className="w-4 h-4 rounded-full border-2 border-white border-t-transparent animate-spin" />
+                  <span>Saving your Sanctuary Score...</span>
+                </>
+              ) : (
+                <>
+                  <span>{safeIndex === totalQuestions - 1 ? "Submit Sanctuary Score" : "Continue"}</span>
+                  <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                </>
+              )}
             </button>
-          )}
-
-          <button
-            onClick={handleNext}
-            type="button"
-            disabled={!selectedOptionId}
-            className="ml-auto px-10 py-3.5 rounded-full bg-primary text-white font-bold text-sm shadow-md hover:bg-primary-purple hover:scale-102 active:scale-98 transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center gap-2 cursor-pointer"
-          >
-            {safeIndex === totalQuestions - 1 ? "Complete Assessment" : "Continue"}
-            <span className="material-symbols-outlined text-base">arrow_forward</span>
-          </button>
+          </div>
         </div>
+      </main>
 
-      </div>
+      {/* Calm privacy reminder */}
+      <footer className="w-full max-w-2xl mx-auto text-center z-10 relative">
+        <p className="text-[10px] text-on-surface-variant/70 font-medium">
+          🌿 Your responses are encrypted and personalized strictly for your inner wellbeing journey.
+        </p>
+      </footer>
     </div>
   );
 }

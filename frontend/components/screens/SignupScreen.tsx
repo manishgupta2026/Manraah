@@ -5,28 +5,23 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signUp } from "@/backend/auth/client";
 import { useAssessment } from "@/frontend/lib/context/AssessmentContext";
+import { useCategory } from "@/frontend/lib/context/CategoryContext";
+import { getCategoryJourneyBadge } from "@/frontend/lib/constants";
 import ScreenHeader from "@/frontend/components/ui/ScreenHeader";
-
-function readCookie(name: string): string | null {
-  if (typeof document === "undefined") return null;
-  const match = document.cookie.match(new RegExp("(?:^|; )" + name + "=([^;]*)"));
-  return match ? decodeURIComponent(match[1]) : null;
-}
 
 export default function SignupScreen() {
   const router = useRouter();
-  const { selectedCategory, detailedAnswers, totalScore, percentage, wellnessLevel } = useAssessment();
+  const { selectedCategory } = useAssessment();
+  const { category: contextCategory } = useCategory();
 
-  // Resolve userType: React Context (same session) OR cookie (cross-navigation fallback)
-  const [resolvedCategory, setResolvedCategory] = useState<string>("");
+  const activeCategory = selectedCategory || contextCategory || "student";
 
+  // Guard: if no category is selected, prompt user to choose a category first
   useEffect(() => {
-    const fromContext = selectedCategory;
-    const fromCookie = readCookie("userType");
-    const resolved = fromContext || fromCookie || "";
-    setResolvedCategory(resolved);
-    console.log("[Trace Point 2] Before login: userType =", resolved || "not set");
-  }, [selectedCategory]);
+    if (!selectedCategory && !contextCategory) {
+      router.push("/category-selection");
+    }
+  }, [selectedCategory, contextCategory, router]);
 
   const [sanctuaryName, setSanctuaryName] = useState("");
   const [email, setEmail] = useState("");
@@ -40,83 +35,79 @@ export default function SignupScreen() {
 
     setLoading(true);
     setError(null);
-    try {
-      console.log("[Signup] [POINT 3 — after signup] Sending category to API:", resolvedCategory);
 
-      // 1. Create account & persist assessment in Neon DB
-      const session = await signUp(
+    let initialAnswers = null;
+    try {
+      const stored = localStorage.getItem("manraah_initial_answers");
+      if (stored) {
+        initialAnswers = JSON.parse(stored);
+      }
+    } catch {
+      initialAnswers = null;
+    }
+
+    try {
+      // Create user account with permanent category and initial answers
+      await signUp(
         sanctuaryName,
-        email,
+        email.trim(),
         password,
-        resolvedCategory,
-        detailedAnswers,
-        totalScore,
-        percentage,
-        wellnessLevel
+        activeCategory,
+        initialAnswers
       );
 
-      // Clear userType cookie
-      document.cookie = "userType=; path=/; max-age=0";
-
-      const categoryRaw = resolvedCategory;
-      const targetUserType = categoryRaw === "couples" || categoryRaw === "couple" ? "couples" : (categoryRaw === "parents" || categoryRaw === "parent" ? "parents" : "");
-
-      if (targetUserType) {
-        console.log("[Trace Point 3] After login: userType =", targetUserType);
-        router.push(`/dashboard/${targetUserType}`);
-      } else {
-        console.log("[Trace Point 3] After login: no category, redirecting to category-selection");
-        router.push("/category-selection");
-      }
+      // Navigate directly to dashboard
+      router.push("/dashboard");
     } catch (err: any) {
-      console.error("Signup server-side error log:", err);
+      console.error("Signup error:", err);
       setError(err.message || "We couldn't create your account. Please try again.");
       setLoading(false);
     }
   };
 
-
   return (
     <div className="max-w-md mx-auto py-12 px-4 space-y-8 animate-fadeIn">
-      <ScreenHeader title="✨ Join Manraah" showBackButton={true} fallbackRoute="/" />
+      <ScreenHeader
+        title="✨ Create Sanctuary Account"
+        showBackButton={true}
+        fallbackRoute="/category-selection"
+        onBack={() => router.push("/category-selection")}
+      />
+
       {/* Header */}
-      <div className="text-center space-y-4">
-        <div className="w-12 h-12 rounded-2xl gradient-primary mx-auto flex items-center justify-center text-white shadow-md">
-          <span className="material-symbols-outlined text-2xl">spa</span>
+      <div className="text-center space-y-3">
+        <div className="w-12 h-12 rounded-2xl bg-primary/10 mx-auto flex items-center justify-center text-primary shadow-xs">
+          <span className="material-symbols-outlined text-2xl font-bold">spa</span>
         </div>
-        <div className="space-y-2">
+        <div className="space-y-1.5">
           <h1 className="text-2xl font-heading font-bold text-on-surface leading-tight">
-            Your Personalized Wellness Journey is Ready
+            Welcome to Your Sanctuary
           </h1>
           <p className="text-xs text-on-surface-variant max-w-sm mx-auto">
-            Create your account to unlock your personalized dashboard.
+            Create your anonymous sanctuary account to begin your journey.
           </p>
         </div>
 
-        {/* Dynamic Status checklist */}
-        <div className="flex flex-col items-start gap-2.5 py-4 px-6 rounded-2xl bg-primary-container/10 border border-primary/10 max-w-xs mx-auto text-left">
-          <div className="flex items-center gap-3 text-on-surface-variant">
-            <span className="material-symbols-outlined text-emerald-500 font-bold text-lg">check_circle</span>
-            <span className="text-xs font-semibold">✓ Assessment Completed</span>
-          </div>
-          <div className="flex items-center gap-3 text-on-surface-variant">
-            <span className="material-symbols-outlined text-emerald-500 font-bold text-lg">check_circle</span>
-            <span className="text-xs font-semibold">✓ Wellness Profile Ready</span>
-          </div>
-          <div className="flex items-center gap-3 text-on-surface-variant">
-            <span className="material-symbols-outlined text-emerald-500 font-bold text-lg">check_circle</span>
-            <span className="text-xs font-semibold">✓ AI Companion Ready</span>
-          </div>
+        {/* Selected Category Read-Only Tag */}
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-xs font-heading font-bold text-primary shadow-xs">
+          <span>{getCategoryJourneyBadge(activeCategory)}</span>
+          <span className="text-[10px] text-on-surface-variant/70 uppercase tracking-wider font-semibold">
+            (Permanent)
+          </span>
         </div>
       </div>
 
       {/* Form Card */}
-      <form onSubmit={handleSubmit} className="p-8 rounded-3xl bg-surface-container-lowest border border-surface-variant/30 shadow-soft space-y-5">
+      <form
+        onSubmit={handleSubmit}
+        className="p-8 rounded-3xl bg-surface-container-lowest border border-surface-variant/30 shadow-soft space-y-5"
+      >
         {error && (
           <div className="p-4 text-xs font-semibold text-red-500 bg-red-500/10 border border-red-500/20 rounded-2xl">
             {error}
           </div>
         )}
+
         <div className="space-y-1.5">
           <label className="block text-xs font-heading font-bold text-on-surface">
             Sanctuary Name <span className="text-on-surface-variant/60 font-medium">(Optional)</span>
@@ -160,9 +151,9 @@ export default function SignupScreen() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full py-4 rounded-full bg-primary text-white font-bold text-sm shadow-md hover:bg-primary-purple transition-all scale-105"
+          className="w-full py-4 rounded-full bg-primary hover:bg-[#7C6BC4] text-white font-heading font-bold text-sm shadow-[0_10px_25px_rgba(95,78,165,0.25)] hover:shadow-[0_12px_30px_rgba(95,78,165,0.35)] transition-all hover:-translate-y-0.5 active:scale-98 cursor-pointer disabled:opacity-50"
         >
-          {loading ? "Unlocking Sanctuary..." : "Unlock My Dashboard →"}
+          {loading ? "Creating Sanctuary..." : "Enter My Sanctuary →"}
         </button>
 
         <div className="text-center pt-2">
