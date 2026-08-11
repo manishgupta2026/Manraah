@@ -78,6 +78,11 @@ export function WellnessProvider({ children }: { children: ReactNode }) {
       if (res.ok) {
         const data = await res.json();
         setDashboardData(data);
+        if (typeof window !== "undefined") {
+          try {
+            localStorage.setItem("manraah_dashboard_cache", JSON.stringify(data));
+          } catch {}
+        }
       }
     } catch (err) {
       console.error("Failed to fetch dashboard data:", err);
@@ -87,7 +92,42 @@ export function WellnessProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
-    // Load initial data for both authenticated and guest/demo sessions
+    // Safely hydrate client-side cache after initial SSR hydration pass
+    if (typeof window !== "undefined") {
+      try {
+        const cached = localStorage.getItem("manraah_dashboard_cache");
+        if (cached) {
+          setDashboardData(JSON.parse(cached));
+          setIsLoading(false);
+        }
+      } catch {}
+
+      const session = getClientSession();
+      if (session?.user) {
+        const u = session.user;
+        setDashboardData((prev) => prev || {
+          user: {
+            id: u.id || "demo-user",
+            name: u.sanctuaryName || u.name || "Sanctuary Member",
+            sanctuaryName: u.sanctuaryName || u.name || "Sanctuary Member",
+            email: u.email || "",
+            selectedCategory: u.selectedCategory || "student",
+            streakDays: u.streakDays || 1,
+            mindfulnessMinutes: u.mindfulnessMinutes || 0,
+            currentMood: u.currentMood || "Sanctuary Member",
+          },
+          todayMood: null,
+          history: [],
+          weeklySummary: null,
+          monthlySummary: null,
+          insights: [],
+          streak: { currentStreak: u.streakDays || 1, longestStreak: 1 },
+          recommendation: "Focus on matching your pace with slow cycles to restore internal alignment.",
+        });
+        setIsLoading(false);
+      }
+    }
+
     fetchDashboard();
   }, []);
 

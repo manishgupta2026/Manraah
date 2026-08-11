@@ -210,7 +210,6 @@ export default function DailyCheckInScreen() {
         sleep: sleep !== null ? sleep : 3,
         reflection: reflection.trim(),
         factors: gratitude.trim(),
-        gratitude: gratitude.trim(),
       });
       setSuccessMessage("Your reflection is safely tucked away 🌱");
       // Seamlessly redirect to /dashboard after confirmation

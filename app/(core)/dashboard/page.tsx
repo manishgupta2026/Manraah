@@ -10,9 +10,8 @@ export default function DashboardPage() {
   useEffect(() => {
     const session = getClientSession();
     if (session && session.isAuthenticated && session.user) {
-      const category = session.user.selectedCategory;
-      const targetUserType = category === "couples" || category === "couple" ? "couples" : (category === "parents" || category === "parent" ? "parents" : "student");
-      router.replace(`/dashboard/${targetUserType}`);
+      const category = session.user.selectedCategory || "student";
+      router.replace(`/dashboard/${category}`);
     } else {
       router.replace("/login");
     }

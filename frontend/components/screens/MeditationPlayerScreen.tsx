@@ -4,10 +4,15 @@ import React, { useState, useEffect, useRef } from "react";
 import { useCategory } from "@/frontend/lib/context/CategoryContext";
 import { useRouter } from "next/navigation";
 import ScreenHeader from "@/frontend/components/ui/ScreenHeader";
+import { getCategoryPersonalization } from "@/frontend/lib/mock-data";
+import { getClientSession } from "@/backend/auth/client";
 
 export default function MeditationPlayerScreen() {
   const router = useRouter();
-  const { categoryDetails } = useCategory();
+  const { categoryDetails, category } = useCategory();
+  const session = getClientSession();
+  const resolvedCategory = session?.user?.selectedCategory || category;
+  const p = getCategoryPersonalization(resolvedCategory);
 
   // Selected session settings
   const [selectedDuration, setSelectedDuration] = useState<number>(5); // 1, 3, 5, 10 mins
@@ -323,6 +328,20 @@ export default function MeditationPlayerScreen() {
   return (
     <div className="max-w-4xl mx-auto py-4 space-y-6 animate-fadeIn select-none relative">
       <ScreenHeader title="🧘 Meditation" showBackButton={true} fallbackRoute="/dashboard" />
+
+      {/* Category Focus Mode Banner */}
+      {p.meditationBannerTitle && (
+        <div className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-mint/15 border border-secondary/20">
+          <span className="text-base">🧘</span>
+          <div className="flex-1">
+            <p className="text-xs font-bold text-secondary">{p.meditationBannerTitle}</p>
+            <p className="text-[10px] text-on-surface-variant">
+              {p.meditationBannerBody}
+            </p>
+          </div>
+          <span className="px-3 py-1 rounded-full bg-secondary text-white text-[10px] font-bold">{p.meditationBadge}</span>
+        </div>
+      )}
       {/* Toast Notification Banner */}
       {toastMessage && (
         <div className="p-4 rounded-2xl bg-secondary text-white text-xs font-bold text-center shadow-lg border border-white/20 animate-bounce">

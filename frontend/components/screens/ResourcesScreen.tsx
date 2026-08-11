@@ -1,13 +1,45 @@
 "use client";
 
 import React, { useState } from "react";
-import { MOCK_RESOURCES } from "@/frontend/lib/mock-data";
+import { MOCK_RESOURCES, getCategoryPersonalization } from "@/frontend/lib/mock-data";
 import ScreenHeader from "@/frontend/components/ui/ScreenHeader";
+import { useCategory } from "@/frontend/lib/context/CategoryContext";
+import { getClientSession } from "@/backend/auth/client";
 
 export default function ResourcesScreen() {
+  const { category } = useCategory();
+  const session = getClientSession();
+  const resolvedCategory = session?.user?.selectedCategory || category;
+  const p = getCategoryPersonalization(resolvedCategory);
+
+  const [resourcesList, setResourcesList] = useState<any[]>(MOCK_RESOURCES);
+
+  React.useEffect(() => {
+    async function loadResources() {
+      try {
+        const res = await fetch("/api/resources");
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data) && data.length > 0) {
+            setResourcesList(data);
+          }
+        }
+      } catch (e) {
+        console.error("Failed to load resources:", e);
+      }
+    }
+    loadResources();
+  }, []);
+
+  // Sort resources matching category tags first
+  const orderedResources = [
+    ...resourcesList.filter((r) => p.resourceTags.includes(r.category)),
+    ...resourcesList.filter((r) => !p.resourceTags.includes(r.category)),
+  ];
+
   const [searchTerm, setSearchTerm] = useState("");
 
-  const filtered = MOCK_RESOURCES.filter((r) =>
+  const filtered = orderedResources.filter((r) =>
     r.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
     r.category.toLowerCase().includes(searchTerm.toLowerCase())
   );

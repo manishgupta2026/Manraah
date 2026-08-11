@@ -3,8 +3,16 @@
 import React from "react";
 import Link from "next/link";
 import ScreenHeader from "@/frontend/components/ui/ScreenHeader";
+import { useCategory } from "@/frontend/lib/context/CategoryContext";
+import { getCategoryPersonalization } from "@/frontend/lib/mock-data";
+import { getClientSession } from "@/backend/auth/client";
 
 export default function HumanCompanionStub() {
+  const { category } = useCategory();
+  const session = getClientSession();
+  const resolvedCategory = session?.user?.selectedCategory || category;
+  const p = getCategoryPersonalization(resolvedCategory);
+  const contextTag = p.contextTag;
   return (
     <div className="max-w-3xl mx-auto py-12 px-4 text-center space-y-8 animate-fadeIn">
       <div className="w-24 h-24 rounded-full bg-emerald-500/10 text-emerald-600 mx-auto flex items-center justify-center border-4 border-emerald-500/30 shadow-soft">
@@ -29,6 +37,16 @@ export default function HumanCompanionStub() {
         <p className="text-xs text-on-surface-variant leading-relaxed">
           You are assigned an anonymous alias (e.g. <span className="font-bold text-primary">Anonymous User #104</span>). No names, emails, or personal identifiers are ever shared with peer listeners or exposed over WebSockets.
         </p>
+        {contextTag && (
+          <div className="mt-3 p-3 rounded-2xl bg-mint/10 border border-secondary/20">
+            <p className="text-xs text-secondary font-semibold">
+              🎤 Your session context tag: <span className="font-bold text-on-surface">"{contextTag}"</span>
+            </p>
+            <p className="text-[10px] text-on-surface-variant mt-1">
+              This optional tag helps listeners understand your situation. You can choose not to share it — your anonymity is fully protected either way.
+            </p>
+          </div>
+        )}
       </div>
 
       <div className="flex flex-col sm:flex-row justify-center gap-4 pt-2">

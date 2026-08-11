@@ -1,75 +1,12 @@
 import { sql } from "@/backend/db/client";
 
-let isMoodInitialized = (global as any).isMoodDatabaseInitialized || false;
+let isMoodInitialized = true;
+(globalThis as any).isMoodDatabaseInitialized = true;
 
 export async function initMoodDatabase() {
-  if ((global as any).isMoodDatabaseInitialized || isMoodInitialized) return;
-  try {
-    // 1. Create mood_entries table
-    await sql`
-      CREATE TABLE IF NOT EXISTS mood_entries (
-        id SERIAL PRIMARY KEY,
-        user_id VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
-        mood VARCHAR(255) NOT NULL,
-        energy INTEGER NOT NULL,
-        stress VARCHAR(255) NOT NULL,
-        reflection TEXT,
-        factors TEXT,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      )
-    `;
-
-    // 2. Create mood_insights table
-    await sql`
-      CREATE TABLE IF NOT EXISTS mood_insights (
-        id SERIAL PRIMARY KEY,
-        user_id VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
-        insight_text TEXT NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      )
-    `;
-
-    // 3. Create weekly_mood_summaries table
-    await sql`
-      CREATE TABLE IF NOT EXISTS weekly_mood_summaries (
-        id SERIAL PRIMARY KEY,
-        user_id VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
-        avg_mood VARCHAR(255) NOT NULL,
-        frequent_mood VARCHAR(255) NOT NULL,
-        best_day VARCHAR(255),
-        hardest_day VARCHAR(255),
-        top_trigger VARCHAR(255),
-        avg_energy DOUBLE PRECISION,
-        avg_stress VARCHAR(255),
-        reflection_summary TEXT,
-        ai_recommendation TEXT,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      )
-    `;
-
-    // 4. Create monthly_mood_summaries table
-    await sql`
-      CREATE TABLE IF NOT EXISTS monthly_mood_summaries (
-        id SERIAL PRIMARY KEY,
-        user_id VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
-        summary_data TEXT NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      )
-    `;
-
-    // 5. Create Indexes
-    await sql`CREATE INDEX IF NOT EXISTS idx_mood_entries_user_created ON mood_entries(user_id, created_at DESC)`;
-    await sql`CREATE INDEX IF NOT EXISTS idx_mood_insights_user ON mood_insights(user_id)`;
-    await sql`CREATE INDEX IF NOT EXISTS idx_weekly_summaries_user ON weekly_mood_summaries(user_id)`;
-    await sql`CREATE INDEX IF NOT EXISTS idx_monthly_summaries_user ON monthly_mood_summaries(user_id)`;
-
-    console.log("[Neon DB] Mood database tables and indexes initialized successfully.");
-    isMoodInitialized = true;
-    (global as any).isMoodDatabaseInitialized = true;
-  } catch (err) {
-    console.error("[Neon DB] Failed to initialize mood database:", err);
-  }
+  if (isMoodInitialized || (globalThis as any).isMoodDatabaseInitialized) return;
+  isMoodInitialized = true;
+  (globalThis as any).isMoodDatabaseInitialized = true;
 }
 
 export async function saveMoodEntry(

@@ -56,35 +56,27 @@ export function middleware(request: NextRequest) {
 
   if (isProtected && !hasSession) {
     const userTypeCookie = request.cookies.get("userType")?.value || "student";
-    const userType = userTypeCookie === "couples" || userTypeCookie === "couple" ? "couples" : (userTypeCookie === "parents" || userTypeCookie === "parent" ? "parents" : "student");
-    const loginUrl = new URL(`/login?redirectTo=/dashboard/${userType}&userType=${userType}`, request.url);
+    const loginUrl = new URL(`/login?redirectTo=/dashboard/${userTypeCookie}&userType=${userTypeCookie}`, request.url);
     return NextResponse.redirect(loginUrl);
   }
 
   // 2. Authenticated users on the welcome root only -> redirect to their dashboard
-  // DO NOT redirect /login or /signup — user may be coming from a fresh assessment
-  // and needs to authenticate to save their results.
   if (pathname === "/" && hasSession) {
-    const userTypeCookie = request.cookies.get("userType")?.value;
-    let targetUserType = userTypeCookie || "";
+    let targetUserCategory = request.cookies.get("userType")?.value || "";
 
-    if (!userTypeCookie && manraahSessionCookie) {
+    if (!targetUserCategory && manraahSessionCookie) {
       try {
         const parsed = JSON.parse(decodeURIComponent(manraahSessionCookie));
         if (parsed?.user?.selectedCategory) {
-          targetUserType = parsed.user.selectedCategory;
+          targetUserCategory = parsed.user.selectedCategory;
         }
       } catch {}
     }
 
-    const userType = targetUserType === "couples" || targetUserType === "couple" ? "couples" : (targetUserType === "parents" || targetUserType === "parent" ? "parents" : "");
-    if (userType) {
-      const dashboardUrl = new URL(`/dashboard/${userType}`, request.url);
-      return NextResponse.redirect(dashboardUrl);
-    } else {
-      const selectionUrl = new URL("/category-selection", request.url);
-      return NextResponse.redirect(selectionUrl);
-    }
+    const c = targetUserCategory.toLowerCase();
+    const routeSubpath = c === "couples" || c === "couple" ? "couples" : (c === "parents" || c === "parent" ? "parents" : "student");
+    const dashboardUrl = new URL(`/dashboard/${routeSubpath}`, request.url);
+    return NextResponse.redirect(dashboardUrl);
   }
 
   return NextResponse.next();

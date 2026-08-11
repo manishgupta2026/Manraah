@@ -1,13 +1,14 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { getClientSession } from "@/backend/auth/client";
 import { useWellness } from "@/frontend/lib/context/WellnessContext";
 import { useCategory } from "@/frontend/lib/context/CategoryContext";
 import ParentDashboard from "@/frontend/components/screens/ParentDashboard";
 import CouplesDashboard from "@/Couples/03_Dashboard/Development/CouplesDashboard";
+import StudentDashboard from "@/frontend/components/screens/StudentDashboard";
 import DailyPrivacyReminder from "@/frontend/components/ui/DailyPrivacyReminder";
 import ScreenHeader from "@/frontend/components/ui/ScreenHeader";
 import SanctuaryScoreModal from "@/frontend/components/ui/SanctuaryScoreModal";
@@ -68,6 +69,7 @@ function getOptionEmoji(score: number): string {
 
 export default function DashboardScreen() {
   const router = useRouter();
+  const pathname = usePathname();
   const { dashboardData, isLoading } = useWellness();
   const [themeKey, setThemeKey] = useState<"morning" | "afternoon" | "evening" | "night">("evening");
   const [currentDateString, setCurrentDateString] = useState("6 Aug 2026");
@@ -130,19 +132,23 @@ export default function DashboardScreen() {
   const history = dashboardData.history || dashboardData.moodHistory || [];
   const name = user?.sanctuaryName || user?.name || "Ashutosh Sahu";
 
-  // Check login state to determine whether to use database category or client context category
-  const { category: clientCategory } = useCategory();
-  const session = getClientSession();
-  const isLoggedIn = session && session.isAuthenticated && session.user;
+  // Extract explicit category segment from URL path e.g. /dashboard/student -> student
+  const urlCategory = pathname?.startsWith("/dashboard/")
+    ? pathname.replace("/dashboard/", "").split("/")[0]?.toLowerCase()
+    : undefined;
 
   // Source of truth priority:
-  // 1. DB value from dashboardData (authoritative after API loads)
-  // 2. Session cookie selectedCategory (immediate, written by login API)
-  // 3. React context clientCategory (onboarding flow, not yet authenticated)
+  // 1. Explicit URL route parameter (e.g. /dashboard/student)
+  // 2. DB value from dashboardData (authoritative after API loads)
+  // 3. Session cookie selectedCategory (immediate, written by login API)
+  // 4. React context clientCategory (onboarding flow)
+  const { category: clientCategory } = useCategory();
+  const session = getClientSession();
   const sessionCategory = session?.user?.selectedCategory;
-  const category = isLoggedIn
-    ? (dashboardData?.user?.selectedCategory || sessionCategory || "student")
-    : clientCategory;
+
+  const category = (urlCategory && urlCategory !== "" && urlCategory !== "dashboard")
+    ? urlCategory
+    : (sessionCategory || dashboardData?.user?.selectedCategory || clientCategory || "student");
 
   console.log("[Dashboard] [POINT 3 — after login] DB:", dashboardData?.user?.selectedCategory, "| session cookie:", sessionCategory, "| resolved:", category);
   const streakDays = typeof streak === "number" 
@@ -150,6 +156,9 @@ export default function DashboardScreen() {
     : (streak && typeof streak === "object" && "currentStreak" in streak 
         ? (streak as any).currentStreak 
         : 12);
+
+  // Show assessment banner if user hasn't taken assessment yet
+  const hasCompletedAssessment = !!(user as any)?.assessmentScore || !!(user as any)?.wellnessScore;
 
   const currentTheme = THEMES[themeKey];
   const isNight = themeKey === "night";
@@ -187,6 +196,10 @@ export default function DashboardScreen() {
     }
     return `I noticed you haven't checked in today. Would you like to slow down and share how you feel?`;
   })();
+
+  if (category === "student") {
+    return <StudentDashboard />;
+  }
 
   if (category === "parent") {
     return <ParentDashboard />;
@@ -396,6 +409,80 @@ export default function DashboardScreen() {
               Let's Talk ✨
             </button>
           </div>
+        </motion.section>
+
+        {/* ==================== Assessment Widget: Score display + Retest button OR Initial CTA ==================== */}
+        <motion.section
+          variants={cardVariants}
+          className="col-span-12 relative rounded-[28px] overflow-hidden"
+        >
+          {hasCompletedAssessment ? (
+            <div className="bg-white/50 backdrop-blur-xl border border-white/40 shadow-soft p-5 md:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 rounded-2xl bg-primary-container/15 flex flex-col items-center justify-center border border-primary/20 shrink-0">
+                  <span className="text-lg font-heading font-extrabold text-primary">
+                    {(user as any).assessmentPercentage || (user as any).assessmentScore || 75}%
+                  </span>
+                  <span className="text-[8px] font-bold text-on-surface-variant/70 uppercase">Score</span>
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-base font-heading font-bold text-on-surface">Wellness Assessment Profile</h3>
+                    <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 text-[10px] font-bold uppercase tracking-wider border border-emerald-500/20">
+                      {(user as any).wellnessLevel || "Active"}
+                    </span>
+                  </div>
+                  <p className="text-xs text-on-surface-variant/80 mt-0.5">
+                    Your assessment results have calibrated your companion tone and personalized recommendations.
+                  </p>
+                </div>
+              </div>
+
+              {/* Small Retest Button */}
+              <motion.button
+                onClick={() => router.push("/assessment")}
+                whileHover={{ scale: 1.04 }}
+                whileTap={{ scale: 0.96 }}
+                className="px-4 py-2 rounded-full bg-surface-container-low border border-surface-variant/40 text-primary hover:bg-primary-container/10 font-bold text-xs shadow-xs transition-all flex items-center gap-1.5 shrink-0 self-end sm:self-center cursor-pointer"
+              >
+                <span>Retest</span>
+                <span className="material-symbols-outlined text-sm">restart_alt</span>
+              </motion.button>
+            </div>
+          ) : (
+            <div className="relative overflow-hidden rounded-[28px]">
+              <div className="absolute inset-0 bg-gradient-to-r from-[#5f4ea5] via-[#7C6BC4] to-[#a46172] opacity-90" />
+              <div className="absolute -top-8 -right-8 w-48 h-48 rounded-full bg-white/10 blur-2xl pointer-events-none" />
+              <div className="absolute -bottom-4 -left-4 w-32 h-32 rounded-full bg-white/8 blur-xl pointer-events-none" />
+              <div className="relative z-10 p-5 md:p-6 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                <div className="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center shrink-0 border border-white/30">
+                  <span className="text-2xl">🧠</span>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="px-2 py-0.5 rounded-full bg-white/20 text-white text-[9px] font-bold uppercase tracking-wider">New</span>
+                    <h3 className="text-base font-heading font-bold text-white">Discover Your Wellness Score</h3>
+                  </div>
+                  <p className="text-xs text-white/75 leading-relaxed">
+                    Take a 5-minute assessment to unlock personalized insights, tailored recommendations, and your full wellness profile.
+                  </p>
+                  <div className="flex items-center gap-3 mt-2">
+                    {["📊 Personalized Insights", "⏱️ 5 Minutes", "🔒 Private"].map((b) => (
+                      <span key={b} className="text-[9px] font-semibold text-white/60">{b}</span>
+                    ))}
+                  </div>
+                </div>
+                <motion.button
+                  onClick={() => router.push("/assessment")}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.97 }}
+                  className="shrink-0 px-6 py-3 rounded-full bg-white text-[#5f4ea5] font-bold text-xs shadow-lg hover:shadow-xl transition-all whitespace-nowrap"
+                >
+                  Start Assessment →
+                </motion.button>
+              </div>
+            </div>
+          )}
         </motion.section>
 
         {/* ==================== ROW 2 ==================== */}

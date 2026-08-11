@@ -5,29 +5,31 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signUp } from "@/backend/auth/client";
 import { useAssessment } from "@/frontend/lib/context/AssessmentContext";
-import { useCategory } from "@/frontend/lib/context/CategoryContext";
-import { getCategoryJourneyBadge } from "@/frontend/lib/constants";
 import ScreenHeader from "@/frontend/components/ui/ScreenHeader";
+
+function readCookie(name: string): string | null {
+  if (typeof document === "undefined") return null;
+  const match = document.cookie.match(new RegExp("(?:^|; )" + name + "=([^;]*)"));
+  return match ? decodeURIComponent(match[1]) : null;
+}
 
 export default function SignupScreen() {
   const router = useRouter();
   const { selectedCategory } = useAssessment();
-  const { category: contextCategory } = useCategory();
 
-  const activeCategory = selectedCategory || contextCategory || "student";
-
-  // Guard: if no category is selected, prompt user to choose a category first
-  useEffect(() => {
-    if (!selectedCategory && !contextCategory) {
-      router.push("/category-selection");
-    }
-  }, [selectedCategory, contextCategory, router]);
-
+  const [resolvedCategory, setResolvedCategory] = useState<string>("");
   const [sanctuaryName, setSanctuaryName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fromContext = selectedCategory;
+    const fromCookie = readCookie("userType");
+    const resolved = fromContext || fromCookie || "";
+    setResolvedCategory(resolved);
+  }, [selectedCategory]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,31 +37,31 @@ export default function SignupScreen() {
 
     setLoading(true);
     setError(null);
-
-    let initialAnswers = null;
     try {
-      const stored = localStorage.getItem("manraah_initial_answers");
-      if (stored) {
-        initialAnswers = JSON.parse(stored);
-      }
-    } catch {
-      initialAnswers = null;
-    }
-
-    try {
-      // Create user account with permanent category and initial answers
-      await signUp(
+      const session = await signUp(
         sanctuaryName,
-        email.trim(),
+        email,
         password,
-        activeCategory,
-        initialAnswers
+        resolvedCategory,
+        [],
+        0,
+        0,
+        ""
       );
 
-      // Navigate directly to dashboard
-      router.push("/dashboard");
+      document.cookie = "userType=; path=/; max-age=0";
+
+      const categoryRaw = session.user?.selectedCategory || resolvedCategory;
+      const targetRoute =
+        categoryRaw === "couples" || categoryRaw === "couple"
+          ? "/dashboard/couples"
+          : categoryRaw === "parents" || categoryRaw === "parent"
+          ? "/dashboard/parents"
+          : "/dashboard/student";
+
+      router.push(targetRoute);
     } catch (err: any) {
-      console.error("Signup error:", err);
+      console.error("Signup server-side error log:", err);
       setError(err.message || "We couldn't create your account. Please try again.");
       setLoading(false);
     }
@@ -67,41 +69,41 @@ export default function SignupScreen() {
 
   return (
     <div className="max-w-md mx-auto py-12 px-4 space-y-8 animate-fadeIn">
-      <ScreenHeader
-        title="✨ Create Sanctuary Account"
-        showBackButton={true}
-        fallbackRoute="/category-selection"
-        onBack={() => router.push("/category-selection")}
-      />
+      <ScreenHeader title="✨ Join Manraah" showBackButton={true} fallbackRoute="/" />
 
       {/* Header */}
-      <div className="text-center space-y-3">
-        <div className="w-12 h-12 rounded-2xl bg-primary/10 mx-auto flex items-center justify-center text-primary shadow-xs">
-          <span className="material-symbols-outlined text-2xl font-bold">spa</span>
+      <div className="text-center space-y-4">
+        <div className="w-12 h-12 rounded-2xl gradient-primary mx-auto flex items-center justify-center text-white shadow-md">
+          <span className="material-symbols-outlined text-2xl">spa</span>
         </div>
-        <div className="space-y-1.5">
+        <div className="space-y-2">
           <h1 className="text-2xl font-heading font-bold text-on-surface leading-tight">
-            Welcome to Your Sanctuary
+            Your Personalized Wellness Journey is Ready
           </h1>
           <p className="text-xs text-on-surface-variant max-w-sm mx-auto">
-            Create your anonymous sanctuary account to begin your journey.
+            Create your account to unlock your personalized dashboard.
           </p>
         </div>
 
-        {/* Selected Category Read-Only Tag */}
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-xs font-heading font-bold text-primary shadow-xs">
-          <span>{getCategoryJourneyBadge(activeCategory)}</span>
-          <span className="text-[10px] text-on-surface-variant/70 uppercase tracking-wider font-semibold">
-            (Permanent)
-          </span>
+        {/* Status checklist */}
+        <div className="flex flex-col items-start gap-2.5 py-4 px-6 rounded-2xl bg-primary-container/10 border border-primary/10 max-w-xs mx-auto text-left">
+          <div className="flex items-center gap-3 text-on-surface-variant">
+            <span className="material-symbols-outlined text-emerald-500 font-bold text-lg">check_circle</span>
+            <span className="text-xs font-semibold">✓ Category Selected</span>
+          </div>
+          <div className="flex items-center gap-3 text-on-surface-variant">
+            <span className="material-symbols-outlined text-emerald-500 font-bold text-lg">check_circle</span>
+            <span className="text-xs font-semibold">✓ Wellness Profile Ready</span>
+          </div>
+          <div className="flex items-center gap-3 text-on-surface-variant">
+            <span className="material-symbols-outlined text-emerald-500 font-bold text-lg">check_circle</span>
+            <span className="text-xs font-semibold">✓ AI Companion Ready</span>
+          </div>
         </div>
       </div>
 
       {/* Form Card */}
-      <form
-        onSubmit={handleSubmit}
-        className="p-8 rounded-3xl bg-surface-container-lowest border border-surface-variant/30 shadow-soft space-y-5"
-      >
+      <form onSubmit={handleSubmit} className="p-8 rounded-3xl bg-surface-container-lowest border border-surface-variant/30 shadow-soft space-y-5">
         {error && (
           <div className="p-4 text-xs font-semibold text-red-500 bg-red-500/10 border border-red-500/20 rounded-2xl">
             {error}
@@ -132,7 +134,7 @@ export default function SignupScreen() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="aanya@example.com"
-            className="w-full p-3.5 rounded-2xl bg-surface-container-low border border-surface-variant/40 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
+            className="w-full p-3.5 rounded-2xl bg-surface-container-low border border-surface-variant/40 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 text-on-surface"
           />
         </div>
 
@@ -144,16 +146,16 @@ export default function SignupScreen() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="••••••••"
-            className="w-full p-3.5 rounded-2xl bg-surface-container-low border border-surface-variant/40 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
+            className="w-full p-3.5 rounded-2xl bg-surface-container-low border border-surface-variant/40 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 text-on-surface"
           />
         </div>
 
         <button
           type="submit"
           disabled={loading}
-          className="w-full py-4 rounded-full bg-primary hover:bg-[#7C6BC4] text-white font-heading font-bold text-sm shadow-[0_10px_25px_rgba(95,78,165,0.25)] hover:shadow-[0_12px_30px_rgba(95,78,165,0.35)] transition-all hover:-translate-y-0.5 active:scale-98 cursor-pointer disabled:opacity-50"
+          className="w-full py-4 rounded-full bg-primary text-white font-bold text-sm shadow-md hover:bg-primary-purple transition-all scale-105"
         >
-          {loading ? "Creating Sanctuary..." : "Enter My Sanctuary →"}
+          {loading ? "Unlocking Sanctuary..." : "Unlock My Dashboard →"}
         </button>
 
         <div className="text-center pt-2">

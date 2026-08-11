@@ -1,56 +1,113 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCategory } from "@/frontend/lib/context/CategoryContext";
 import { useAssessment } from "@/frontend/lib/context/AssessmentContext";
 import { getWellnessLevel, getWellnessMessage } from "@/frontend/lib/assessment/wellness";
 import { motion } from "framer-motion";
 import ScreenHeader from "@/frontend/components/ui/ScreenHeader";
+import { getClientSession, signOut } from "@/backend/auth/client";
+import { AuthSession } from "@/backend/types";
 
 export default function WellnessScoreScreen() {
   const router = useRouter();
   const { categoryDetails } = useCategory();
-  const { assessmentResult, detailedAnswers, selectedCategory } = useAssessment();
-  const [result, setResult] = useState<any>(assessmentResult);
-  const [loading, setLoading] = useState(!assessmentResult);
+  const { assessmentResult, detailedAnswers, computedScore, selectedCategory } = useAssessment();
+
+  // Guard: Do NOT allow direct access without assessment
+  useEffect(() => {
+    if (!selectedCategory || !detailedAnswers || detailedAnswers.length < 15) {
+      router.push("/");
+    }
+  }, [selectedCategory, detailedAnswers, router]);
+
+  const [session, setSession] = useState<AuthSession | null>(null);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    if (!assessmentResult) {
-      // Fetch latest assessment from backend if user refreshed page
-      fetch("/api/assessment")
-        .then((res) => res.json())
-        .then((data) => {
-          if (data && data.latestAssessment) {
-            const a = data.latestAssessment;
-            setResult({
-              totalScore: a.total_score,
-              maxScore: a.max_score || 50,
-              percentage: a.percentage,
-              wellnessLevel: a.wellness_level,
-              message: getWellnessMessage(a.wellness_level),
-              answers: a.answers || [],
-            });
-          }
-          setLoading(false);
-        })
-        .catch(() => {
-          setLoading(false);
-        });
-    } else {
-      setResult(assessmentResult);
-      setLoading(false);
-    }
-  }, [assessmentResult]);
+    setSession(getClientSession());
+  }, []);
 
-  const finalResult = result || {
-    totalScore: 42,
-    maxScore: 50,
-    percentage: 84,
-    wellnessLevel: "Flourishing",
-    message: "You are experiencing a solid level of inner balance and emotional resilience.",
+  const handleSaveAndGoToDashboard = async () => {
+    if (!session || !session.user) return;
+    setSaving(true);
+    try {
+      const res = await fetch("/api/profile", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: session.user.id,
+          category: selectedCategory,
+          answers: detailedAnswers,
+          computedScore,
+          percentage: finalResult.percentage,
+          wellnessLevel: finalResult.wellnessLevel
+        })
+      });
+      
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to save assessment.");
+      }
+
+      // Sync local storage session category
+      const targetCategory = selectedCategory === "couples" || selectedCategory === "couple" ? "couples" : (selectedCategory === "parents" || selectedCategory === "parent" ? "parents" : selectedCategory || "student");
+      const updatedSession = {
+        ...session,
+        user: {
+          ...session.user,
+          selectedCategory: targetCategory,
+        }
+      } as AuthSession;
+      localStorage.setItem("manraah_auth_session", JSON.stringify(updatedSession));
+      document.cookie = `manraah_session=${JSON.stringify(updatedSession)}; path=/; max-age=2592000`;
+      document.cookie = `userType=${targetCategory}; path=/; max-age=2592000`;
+
+      const c = (targetCategory || "").toLowerCase();
+      const targetSubpath = c === "couples" || c === "couple" ? "couples" : (c === "parents" || c === "parent" ? "parents" : "student");
+      router.push(`/dashboard/${targetSubpath}`);
+    } catch (err) {
+      console.error("[Assessment Save Error]:", err);
+      const c = (selectedCategory || "").toLowerCase();
+      const fallbackSubpath = c === "couples" || c === "couple" ? "couples" : (c === "parents" || c === "parent" ? "parents" : "student");
+      router.push(`/dashboard/${fallbackSubpath}`);
+    } finally {
+      setSaving(false);
+    }
   };
 
+  const handleAuthRedirect = async (targetPath: string) => {
+    // Save userType to cookie BEFORE signing out so login/signup can read it
+    // even after full-page navigation clears React Context
+    if (selectedCategory) {
+      document.cookie = `manraah_userType=${selectedCategory}; path=/; max-age=3600`;
+      console.log("[WellnessScore] [POINT 1 — after assessment] Saved userType cookie:", selectedCategory);
+    }
+    // Sign out to clear stale session so the user can authenticate fresh
+    await signOut();
+    router.push(targetPath);
+  };
+
+  // Handle fallback if the user navigated directly or refreshed
+  const finalResult = assessmentResult || {
+    totalScore: Math.round((computedScore / 100) * 75) || 45,
+    maxScore: 75,
+    percentage: computedScore || 60,
+    wellnessLevel: getWellnessLevel(Math.round((computedScore / 100) * 75) || 45, 75),
+    message: getWellnessMessage(getWellnessLevel(Math.round((computedScore / 100) * 75) || 45, 75)),
+  };
+
+  // Helper to format keys like "academic_pressure" to "Academic Pressure"
+  const formatKeyToLabel = (key: string): string => {
+    return key
+      .split("_")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  };
+
+  // Stylings based on wellness level
   const levelStyles: Record<
     string,
     { badge: string; text: string; bg: string; stroke: string }
@@ -89,59 +146,42 @@ export default function WellnessScoreScreen() {
 
   const currentStyles = levelStyles[finalResult.wellnessLevel] || levelStyles.Stable;
 
-  const formatKeyToLabel = (key: string): string => {
-    return key
-      .split("_")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(" ");
-  };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-surface">
-        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
-  }
-
   return (
-    <div className="max-w-3xl mx-auto py-8 px-4 space-y-8 animate-fadeIn relative select-none">
-      <ScreenHeader
-        title="✨ Your Sanctuary Score"
-        showBackButton={true}
-        fallbackRoute="/dashboard"
-        onBack={() => router.push("/dashboard")}
-      />
-
-      {/* Ambient background glows */}
-      <div className="fixed inset-0 z-[-2] opacity-35 pointer-events-none overflow-hidden">
-        <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full bg-primary-container blur-[100px]" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] rounded-full bg-secondary-container blur-[120px] opacity-30" />
+    <div className="max-w-3xl mx-auto py-10 px-4 space-y-8 animate-fadeIn relative">
+      <ScreenHeader title="✨ Wellness Score" showBackButton={true} fallbackRoute="/assessment" />
+      {/* Calming Backdrop Glows */}
+      <div className="fixed inset-0 z-[-2] opacity-35 pointer-events-none">
+        <div className="absolute top-[-10%] left-[-10%] w-[60vw] md:w-[500px] h-[60vw] md:h-[500px] rounded-full bg-primary-container blur-[100px]" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[60vw] md:w-[500px] h-[60vw] md:h-[500px] rounded-full bg-secondary-container blur-[120px] opacity-30" />
       </div>
 
-      {/* Top Header Card */}
-      <motion.div
+      {/* Completion Header Card */}
+      <motion.div 
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="p-8 rounded-[32px] bg-white/70 backdrop-blur-xl border border-white/60 shadow-[0_20px_50px_rgba(95,78,165,0.08)] text-center space-y-3 relative overflow-hidden"
+        transition={{ duration: 0.6 }}
+        className="p-8 rounded-3xl bg-surface-container-lowest border border-surface-variant/40 shadow-soft text-center space-y-4 relative overflow-hidden"
       >
-        <div className="text-4xl filter drop-shadow-xs">🌿</div>
-        <h1 className="text-2xl md:text-3xl font-heading font-black text-on-surface tracking-tight">
-          Your Sanctuary Score
-        </h1>
-        <p className="text-xs md:text-sm text-on-surface-variant max-w-md mx-auto leading-relaxed">
-          Thank you for taking a thoughtful moment to understand your inner wellness.
+        <div className="absolute -top-10 -right-10 w-32 h-32 bg-primary/5 rounded-full blur-xl" />
+        <div className="text-4xl">✨</div>
+        <h2 className="text-2xl md:text-3xl font-heading font-bold text-on-surface">
+          Thank you for sharing.
+        </h2>
+        <p className="text-sm md:text-base text-on-surface-variant/90 max-w-lg mx-auto font-light leading-relaxed">
+          We've prepared your personalized wellness journey.
+          <br />
+          Create your account or log in to unlock your dashboard.
         </p>
       </motion.div>
 
       {/* Score Gauge Card */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.96 }}
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5, delay: 0.1 }}
-        className="p-8 md:p-12 rounded-[32px] bg-white/75 backdrop-blur-xl border border-white/60 shadow-ambient text-center space-y-6 z-10 relative"
+        transition={{ duration: 0.6, delay: 0.1 }}
+        className="p-8 md:p-12 rounded-3xl bg-surface-container-lowest border border-surface-variant/30 shadow-ambient text-center space-y-8 z-10 relative"
       >
+        
         {/* Animated Circular Gauge */}
         <div className="relative w-48 h-48 mx-auto flex items-center justify-center">
           <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
@@ -167,13 +207,13 @@ export default function WellnessScoreScreen() {
             />
           </svg>
           <div className="absolute flex flex-col items-center justify-center space-y-0.5">
-            <span className="text-4xl font-heading font-black text-on-surface">
+            <span className="text-4xl font-heading font-bold text-on-surface">
               {finalResult.totalScore}
             </span>
             <span className="text-[10px] text-on-surface-variant/70 font-bold uppercase tracking-wider">
-              / {finalResult.maxScore || 50} Score
+              / {finalResult.maxScore} Score
             </span>
-            <span className="text-xs text-primary font-black">
+            <span className="text-[11px] text-primary font-semibold">
               {finalResult.percentage}%
             </span>
           </div>
@@ -181,66 +221,115 @@ export default function WellnessScoreScreen() {
 
         {/* Wellness Level Badge */}
         <div className="flex justify-center">
-          <span
-            className={`px-5 py-2 rounded-full border text-xs md:text-sm font-heading font-extrabold tracking-wide uppercase shadow-xs ${currentStyles.badge}`}
-          >
-            {finalResult.wellnessLevel}
+          <span className={`px-5 py-2 rounded-full border text-sm font-bold tracking-wide uppercase ${currentStyles.badge}`}>
+            Level: {finalResult.wellnessLevel}
           </span>
         </div>
 
-        {/* Dynamic Calm Feedback Card */}
-        <div
-          className={`p-6 rounded-2xl border text-left space-y-2 max-w-xl mx-auto ${currentStyles.bg} border-surface-variant/30`}
-        >
-          <div className="flex items-center gap-2 font-heading font-bold text-sm text-on-surface">
-            <span className="material-symbols-outlined text-lg text-primary">spa</span>
-            <span>Personalized Sanctuary Understanding</span>
+        {/* Dynamic Feedback Card */}
+        <div className={`p-6 rounded-2xl border text-left space-y-3 max-w-xl mx-auto ${currentStyles.bg} border-surface-variant/30`}>
+          <div className="flex items-center gap-2 font-heading font-bold text-base text-on-surface">
+            <span className="material-symbols-outlined text-xl text-primary">spa</span>
+            <span>Recommended Sanctuary Focus</span>
           </div>
-          <p className="text-xs text-on-surface-variant leading-relaxed font-medium">
-            {finalResult.message}
+          <p className="text-xs md:text-sm text-on-surface-variant leading-relaxed font-light">
+            {finalResult.message} We have calibrated your companion tone and custom breathing practices to guide you back to balance.
           </p>
         </div>
 
-        {/* Question Breakdown Preview if available */}
-        {detailedAnswers.length > 0 && (
-          <div className="max-w-xl mx-auto space-y-3 pt-4 border-t border-surface-variant/20 text-left">
-            <h4 className="text-xs font-heading font-bold uppercase tracking-wider text-on-surface-variant">
-              Assessment Summary ({detailedAnswers.length} Questions)
-            </h4>
-            <div className="space-y-2.5 max-h-56 overflow-y-auto pr-1">
-              {detailedAnswers.map((ans) => (
-                <div
-                  key={ans.questionId}
-                  className="p-3 rounded-xl bg-white/60 border border-surface-variant/20 flex items-center justify-between text-xs"
-                >
-                  <span className="font-semibold text-on-surface truncate max-w-[280px]">
-                    {formatKeyToLabel(ans.questionKey)}
-                  </span>
-                  <span className="font-black text-primary px-2.5 py-0.5 rounded-full bg-primary/10">
-                    {ans.score} / 5
-                  </span>
-                </div>
-              ))}
-            </div>
+        {/* Detailed Breakdown Section */}
+        <div className="max-w-xl mx-auto space-y-4 pt-4 border-t border-surface-variant/20">
+          <div className="flex justify-between items-center">
+            <h3 className="text-sm font-heading font-bold text-on-surface uppercase tracking-wider opacity-85">
+              Detailed Assessment Breakdown
+            </h3>
+            <span className="text-xs font-semibold text-primary px-3 py-1 rounded-full bg-primary/10">
+              Focus: {categoryDetails.name}
+            </span>
           </div>
-        )}
+          
+          <div className="space-y-4">
+            {detailedAnswers.length > 0 ? (
+              detailedAnswers.map((ans) => {
+                const label = formatKeyToLabel(ans.questionKey);
+                return (
+                  <div key={ans.questionId} className="space-y-1.5 text-left border-b border-surface-variant/10 pb-3 last:border-0 last:pb-0">
+                    <div className="flex justify-between items-center text-xs font-semibold text-on-surface-variant">
+                      <span className="flex items-center gap-1.5">
+                        <span className={`w-1.5 h-1.5 rounded-full ${ans.questionType === "common" ? "bg-primary" : "bg-secondary"}`} />
+                        {label}
+                      </span>
+                      <span className="text-primary font-bold">{ans.score} / 5</span>
+                    </div>
+                    {/* Micro bar indicator */}
+                    <div className="w-full bg-surface-container h-1.5 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-primary rounded-full transition-all duration-500"
+                        style={{ width: `${(ans.score / 5) * 100}%` }}
+                      />
+                    </div>
+                    <p className="text-[10px] text-on-surface-variant/60 font-light italic">
+                      Selected: "{ans.selectedText}"
+                    </p>
+                  </div>
+                );
+              })
+            ) : (
+              <p className="text-xs text-on-surface-variant italic">No answers registered. Please complete the assessment flow.</p>
+            )}
+          </div>
+        </div>
+
       </motion.div>
 
-      {/* Action CTA */}
-      <motion.div
+      {/* CTA Buttons */}
+      <motion.div 
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: 0.2 }}
-        className="flex justify-center pt-2 z-10 relative"
+        transition={{ duration: 0.5, delay: 0.2 }}
+        className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4 z-10 relative"
       >
-        <button
-          type="button"
-          onClick={() => router.push("/dashboard")}
-          className="w-full sm:w-auto px-12 py-4 rounded-full bg-primary hover:bg-[#7C6BC4] text-white font-heading font-bold text-sm shadow-[0_10px_25px_rgba(95,78,165,0.25)] hover:shadow-[0_12px_30px_rgba(95,78,165,0.35)] transition-all hover:-translate-y-0.5 active:scale-98 cursor-pointer flex items-center justify-center gap-2"
-        >
-          <span>Continue to Dashboard</span>
-          <span className="material-symbols-outlined text-base">arrow_forward</span>
-        </button>
+        {session && session.isAuthenticated && session.user ? (
+          <div className="flex flex-col items-center gap-2">
+            <button
+              onClick={handleSaveAndGoToDashboard}
+              disabled={saving}
+              className="w-full sm:w-auto px-12 py-4 rounded-full bg-primary text-white font-bold text-sm shadow-lg hover:bg-primary-purple hover:scale-[1.02] disabled:opacity-50 transition-all text-center flex items-center justify-center gap-2"
+            >
+              {saving ? "Saving..." : "Save & Go to Dashboard"}
+              <span className="material-symbols-outlined text-base">arrow_forward</span>
+            </button>
+            <p className="text-xs text-[#5F309E] font-medium text-center bg-[#5F309E]/5 px-4 py-1.5 rounded-full mt-1 border border-[#5F309E]/10 flex items-center gap-1.5">
+              <span>Saving results to: <strong className="font-bold">{session.user.email}</strong></span>
+              <span className="text-[#5F309E]/30">|</span>
+              <button 
+                onClick={async () => {
+                  await signOut();
+                  setSession(null);
+                }} 
+                className="underline hover:text-[#7C6BC4] font-bold transition-colors cursor-pointer"
+              >
+                Log out
+              </button>
+            </p>
+          </div>
+        ) : (
+          <>
+            <button
+              onClick={() => handleAuthRedirect("/login")}
+              className="w-full sm:w-auto px-12 py-4 rounded-full bg-primary text-white font-bold text-sm shadow-lg hover:bg-primary-purple hover:scale-[1.02] transition-all text-center flex items-center justify-center gap-2"
+            >
+              Continue to Login
+              <span className="material-symbols-outlined text-base">arrow_forward</span>
+            </button>
+            <button
+              onClick={() => handleAuthRedirect("/signup")}
+              className="w-full sm:w-auto px-8 py-4 rounded-full bg-surface-container-low text-on-surface font-semibold text-sm hover:bg-surface-container hover:scale-[1.02] transition-all text-center"
+            >
+              Create New Account
+            </button>
+          </>
+        )}
       </motion.div>
     </div>
   );

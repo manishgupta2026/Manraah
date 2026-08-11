@@ -40,7 +40,7 @@ export default function MoodInsightsScreen() {
   const [hoveredDay, setHoveredDay] = useState<any | null>(null);
   const [showReflectionModal, setShowReflectionModal] = useState<any | null>(null);
 
-  const history = dashboardData?.moodHistory || [];
+  const history = (dashboardData as any)?.moodHistory || dashboardData?.history || [];
   const streak = dashboardData?.streak?.currentStreak || 12;
 
   // 1. Resolve Today's Log

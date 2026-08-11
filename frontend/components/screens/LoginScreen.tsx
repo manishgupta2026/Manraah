@@ -1,33 +1,13 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signIn } from "@/backend/auth/client";
-import { useAssessment } from "@/frontend/lib/context/AssessmentContext";
 import ScreenHeader from "@/frontend/components/ui/ScreenHeader";
-
-function readCookie(name: string): string | null {
-  if (typeof document === "undefined") return null;
-  const match = document.cookie.match(new RegExp("(?:^|; )" + name + "=([^;]*)"));
-  return match ? decodeURIComponent(match[1]) : null;
-}
 
 export default function LoginScreen() {
   const router = useRouter();
-  const { selectedCategory, detailedAnswers, totalScore, percentage, wellnessLevel } = useAssessment();
-
-  // Resolve userType: React Context (same session) OR cookie (cross-navigation fallback)
-  const [resolvedCategory, setResolvedCategory] = useState<string>("student");
-
-  useEffect(() => {
-    const fromContext = selectedCategory;
-    const fromCookie = readCookie("userType");
-    const resolved = fromContext || fromCookie || "student";
-    setResolvedCategory(resolved);
-    console.log("[Trace Point 2] Before login: userType =", resolved);
-  }, [selectedCategory]);
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -40,24 +20,21 @@ export default function LoginScreen() {
     setLoading(true);
     setError(null);
     try {
-      console.log("[Login] [POINT 3 — after login] Sending category to API:", resolvedCategory);
-
-      const session = await signIn(email, password, resolvedCategory, detailedAnswers, totalScore, percentage, wellnessLevel);
+      const session = await signIn(email, password, "", [], 0, 0, "");
 
       // Clear userType cookie
       document.cookie = "userType=; path=/; max-age=0";
       document.cookie = "manraah_userType=; path=/; max-age=0";
 
-      const categoryRaw = session.user?.selectedCategory || resolvedCategory;
-      const targetUserType = categoryRaw === "couples" || categoryRaw === "couple" ? "couples" : (categoryRaw === "parents" || categoryRaw === "parent" ? "parents" : "");
+      const categoryRaw = session.user?.selectedCategory || "";
+      const targetRoute =
+        categoryRaw === "couples" || categoryRaw === "couple"
+          ? "/dashboard/couples"
+          : categoryRaw === "parents" || categoryRaw === "parent"
+          ? "/dashboard/parents"
+          : "/dashboard/student";
 
-      if (targetUserType) {
-        console.log("[Trace Point 3] After login: userType =", targetUserType);
-        router.push(`/dashboard/${targetUserType}`);
-      } else {
-        console.log("[Trace Point 3] After login: no category, redirecting to /category-selection");
-        router.push("/category-selection");
-      }
+      router.push(targetRoute);
     } catch (err: any) {
       console.error("Login server-side error log:", err);
       setError("Invalid email or password. Please try again.");
@@ -65,10 +42,10 @@ export default function LoginScreen() {
     }
   };
 
-
   return (
     <div className="max-w-md mx-auto py-12 px-4 space-y-8 animate-fadeIn">
       <ScreenHeader title="🔑 Sign In" showBackButton={true} fallbackRoute="/" />
+
       {/* Header */}
       <div className="text-center space-y-3">
         <div className="w-12 h-12 rounded-2xl gradient-primary mx-auto flex items-center justify-center text-white shadow-md">
@@ -85,6 +62,7 @@ export default function LoginScreen() {
             {error}
           </div>
         )}
+
         <div className="space-y-1.5">
           <label className="block text-xs font-heading font-bold text-on-surface">Email Address</label>
           <input
@@ -93,7 +71,7 @@ export default function LoginScreen() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="aanya@example.com"
-            className="w-full p-3.5 rounded-2xl bg-surface-container-low border border-surface-variant/40 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
+            className="w-full p-3.5 rounded-2xl bg-surface-container-low border border-surface-variant/40 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 text-on-surface"
           />
         </div>
 
@@ -105,7 +83,7 @@ export default function LoginScreen() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="••••••••"
-            className="w-full p-3.5 rounded-2xl bg-surface-container-low border border-surface-variant/40 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
+            className="w-full p-3.5 rounded-2xl bg-surface-container-low border border-surface-variant/40 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 text-on-surface"
           />
         </div>
 
@@ -119,7 +97,7 @@ export default function LoginScreen() {
 
         <div className="text-center pt-2">
           <p className="text-xs text-on-surface-variant">
-            Don't have an account yet?{" "}
+            Don&apos;t have an account yet?{" "}
             <Link href="/signup" className="font-bold text-primary hover:underline">
               Create Account
             </Link>
