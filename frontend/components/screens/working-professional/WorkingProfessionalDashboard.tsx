@@ -11,9 +11,8 @@ import DailyCheckInCard from "./DailyCheckInCard";
 import LeaveWorkAtWorkCard from "./LeaveWorkAtWorkCard";
 import SanctuaryScoreCard from "./SanctuaryScoreCard";
 import WellnessToolsSection from "./WellnessToolsSection";
-import RecentRhythmCard from "./RecentRhythmCard";
-import WorkdayJournalCard from "./WorkdayJournalCard";
 import AICompanionPresenceCard from "./AICompanionPresenceCard";
+import RecentRhythmCard from "./RecentRhythmCard";
 import DailyInsightCard from "./DailyInsightCard";
 import BreathingModal from "./BreathingModal";
 
@@ -23,18 +22,18 @@ const containerVariants = {
   show: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.06,
-      delayChildren: 0.04,
+      staggerChildren: 0.05,
+      delayChildren: 0.03,
     },
   },
 };
 
 const itemVariants = {
-  hidden: { opacity: 0, y: 14 },
+  hidden: { opacity: 0, y: 12 },
   show: {
     opacity: 1,
     y: 0,
-    transition: { type: "spring", stiffness: 90, damping: 14 },
+    transition: { type: "spring", stiffness: 95, damping: 14 },
   },
 };
 
@@ -83,40 +82,16 @@ export default function WorkingProfessionalDashboard() {
     }
   };
 
-  const handleSaveReflection = async (content: string) => {
-    try {
-      const res = await fetch("/api/reflections", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          content,
-          title: "Workday Decompression",
-          category: "Workday Decompression",
-          moodTag: dashboardData?.todayMood?.mood || "Calm",
-        }),
-      });
-      if (res.ok) {
-        await loadWpData();
-        return true;
-      }
-      return false;
-    } catch (err) {
-      console.error("Failed to save reflection:", err);
-      return false;
-    }
-  };
-
   const user = wpData?.user || dashboardData?.user;
   const sanctuaryName = user?.sanctuaryName || user?.name || "Golden Sparrow 62";
-  const streakDays = wpData?.streak?.currentStreak || dashboardData?.streak?.currentStreak || user?.streakDays || 3;
+  const streakDays = wpData?.streak?.currentStreak || dashboardData?.streak?.currentStreak || user?.streakDays || 1;
   const todayMood = wpData?.todayMood || dashboardData?.todayMood;
   const score = user?.assessmentPercentage || user?.assessmentScore || 76;
   const level = user?.wellnessLevel || "STABLE";
   const history = wpData?.history || dashboardData?.history || dashboardData?.moodHistory || [];
-  const latestReflection = wpData?.recentReflections?.[0]?.content || "";
 
   return (
-    <div className={`max-w-7xl mx-auto py-3 md:py-6 px-3 sm:px-6 space-y-7 select-none animate-fadeIn transition-colors duration-500 ${isAmbientMode ? "dark" : ""}`}>
+    <div className={`max-w-7xl mx-auto py-3 md:py-6 px-3 sm:px-6 space-y-6 select-none animate-fadeIn transition-colors duration-500 ${isAmbientMode ? "dark" : ""}`}>
       {/* 1. HERO EXPERIENCE */}
       <WorkingProfessionalHero
         sanctuaryName={sanctuaryName}
@@ -132,7 +107,7 @@ export default function WorkingProfessionalDashboard() {
         variants={containerVariants}
         initial="hidden"
         animate="show"
-        className="space-y-7"
+        className="space-y-6"
       >
         {/* ROW 2: Arriving Check-in (5 cols) + Leave Work at Work (4 cols) + Sanctuary Score (3 cols) */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-5">
@@ -155,29 +130,24 @@ export default function WorkingProfessionalDashboard() {
           </motion.div>
         </div>
 
-        {/* ROW 3: Wellness Tools for Your Journey (4 Horizontal Cards) */}
-        <motion.div variants={itemVariants}>
-          <WellnessToolsSection />
-        </motion.div>
+        {/* ROW 3: Wellness Tools (8 cols / ~65%) + AI Companion (4 cols / ~35%) */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+          <motion.div variants={itemVariants} className="lg:col-span-8">
+            <WellnessToolsSection />
+          </motion.div>
 
-        {/* ROW 4: Rhythm + Journal + AI Companion / Daily Insight */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-5">
-          {/* Your Recent Rhythm */}
           <motion.div variants={itemVariants} className="lg:col-span-4">
+            <AICompanionPresenceCard />
+          </motion.div>
+        </div>
+
+        {/* ROW 4: Recent Rhythm (8 cols / ~65%) + Daily Insight (4 cols / ~35%) */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+          <motion.div variants={itemVariants} className="lg:col-span-8">
             <RecentRhythmCard history={history} />
           </motion.div>
 
-          {/* Leave the workday here. */}
           <motion.div variants={itemVariants} className="lg:col-span-4">
-            <WorkdayJournalCard
-              initialContent={latestReflection}
-              onSaveReflection={handleSaveReflection}
-            />
-          </motion.div>
-
-          {/* AI Companion Section & Daily Insight Stack */}
-          <motion.div variants={itemVariants} className="md:col-span-2 lg:col-span-4 space-y-5">
-            <AICompanionPresenceCard />
             <DailyInsightCard />
           </motion.div>
         </div>

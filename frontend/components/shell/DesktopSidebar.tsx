@@ -104,6 +104,17 @@ export default function DesktopSidebar() {
           </div>
           <span className="material-symbols-outlined text-lg text-outline">settings</span>
         </Link>
+
+        {/* Inspirational Sanctuary Note */}
+        <div className="mt-2.5 p-3 rounded-2xl bg-[#FAF8FF] dark:bg-white/5 border border-purple-100/70 dark:border-white/10 relative overflow-hidden">
+          <span className="text-sm text-[#5F4EA5] dark:text-purple-300 font-serif">❝</span>
+          <p className="text-[10px] text-[#484551] dark:text-purple-200/80 font-medium leading-relaxed mt-0.5 pr-6">
+            You don't have to carry it all. You just have to take one breath at a time.
+          </p>
+          <div className="absolute right-1 bottom-1 text-lg opacity-80 pointer-events-none select-none">
+            🌿
+          </div>
+        </div>
       </div>
       
       {/* Mobile Icon profile footer for small screens */}

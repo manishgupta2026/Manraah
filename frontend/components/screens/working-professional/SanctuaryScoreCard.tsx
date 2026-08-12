@@ -19,8 +19,18 @@ export default function SanctuaryScoreCard({
   const circ = 2 * Math.PI * radius;
   const strokeDashoffset = circ - (score / 100) * circ;
 
+  const timelineDays = [
+    { label: "S", active: false },
+    { label: "M", active: false },
+    { label: "T", active: false },
+    { label: "W", active: false },
+    { label: "T", active: true }, // Today
+    { label: "F", active: false },
+    { label: "S", active: false },
+  ];
+
   return (
-    <div className="rounded-[28px] bg-white/85 dark:bg-[#1E1933]/90 backdrop-blur-xl border border-[#E6DEFF]/80 dark:border-purple-500/20 p-6 sm:p-7 shadow-[0_6px_24px_rgba(95,78,165,0.03)] flex flex-col justify-between min-h-[340px] space-y-4">
+    <div className="rounded-[28px] bg-white/85 dark:bg-[#1E1933]/90 backdrop-blur-xl border border-[#E6DEFF]/80 dark:border-purple-500/20 p-6 sm:p-7 shadow-[0_6px_24px_rgba(95,78,165,0.03)] flex flex-col justify-between min-h-[340px] space-y-3">
       {/* Header */}
       <div className="flex items-center gap-2">
         <span className="material-symbols-outlined text-lg text-[#5F4EA5]">insights</span>
@@ -73,19 +83,30 @@ export default function SanctuaryScoreCard({
         </div>
       </div>
 
-      {/* Mini 3-Metric Row */}
-      <div className="grid grid-cols-3 gap-2 p-2.5 rounded-2xl bg-[#FAF8FF] dark:bg-white/5 border border-purple-100/70 dark:border-white/10 text-[11px] font-heading font-bold">
-        <div className="flex flex-col items-center">
-          <span className="text-[#797582] dark:text-purple-200/70 text-[10px]">Mind</span>
-          <span className="text-emerald-700 dark:text-emerald-300">↗ +6%</span>
-        </div>
-        <div className="flex flex-col items-center border-x border-purple-100/80 dark:border-white/10">
-          <span className="text-[#797582] dark:text-purple-200/70 text-[10px]">Energy</span>
-          <span className="text-[#5F4EA5] dark:text-purple-300">→ +2%</span>
-        </div>
-        <div className="flex flex-col items-center">
-          <span className="text-[#797582] dark:text-purple-200/70 text-[10px]">Rest</span>
-          <span className="text-emerald-700 dark:text-emerald-300">↗ +8%</span>
+      {/* 7-Day Timeline Sparkline */}
+      <div className="py-2">
+        <div className="relative flex items-center justify-between px-2">
+          {/* Connecting Line */}
+          <div className="absolute top-1/2 left-4 right-4 h-0.5 bg-[#E6DEFF] dark:bg-white/10 -translate-y-1/2 -z-0" />
+
+          {timelineDays.map((d, i) => (
+            <div key={i} className="flex flex-col items-center gap-1.5 relative z-10">
+              <div
+                className={`w-3 h-3 rounded-full flex items-center justify-center transition-all ${
+                  d.active
+                    ? "bg-[#5F4EA5] ring-4 ring-purple-100 dark:ring-purple-900/50 scale-125"
+                    : "bg-white dark:bg-white/20 border border-purple-200"
+                }`}
+              />
+              <span className={`text-[10px] font-heading ${
+                d.active
+                  ? "font-black text-[#5F4EA5] dark:text-purple-300"
+                  : "font-bold text-[#797582] dark:text-purple-200/60"
+              }`}>
+                {d.label}
+              </span>
+            </div>
+          ))}
         </div>
       </div>
 

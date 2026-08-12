@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import React from "react";
+import { motion } from "framer-motion";
 
 interface WorkingProfessionalHeroProps {
   sanctuaryName: string;
@@ -40,49 +40,61 @@ export default function WorkingProfessionalHero({
           : "bg-gradient-to-r from-[#F7F2FE] via-[#EDE4FD] to-[#DDE0FA] border-[#E6DEFF]/90 text-[#1D192B]"
       }`}
     >
-      {/* Ambient Moving Blobs & Floating Leaves */}
+      {/* Floating Gentle Leaves & Ambient Breathing Particles */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden select-none">
+        {/* Ambient Moving Blobs */}
         <motion.div
           animate={{
-            scale: isAmbientMode ? [1, 1.3, 1] : [1, 1.15, 1],
-            x: [0, 20, 0],
-            y: [0, -15, 0],
-            opacity: isAmbientMode ? [0.4, 0.7, 0.4] : [0.25, 0.4, 0.25],
+            scale: [1, 1.15, 1],
+            x: [0, 15, 0],
+            y: [0, -10, 0],
+            opacity: isAmbientMode ? [0.35, 0.6, 0.35] : [0.2, 0.35, 0.2],
           }}
-          transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute -top-12 -left-12 w-96 h-96 rounded-full bg-[#E6DEFF] blur-3xl"
-        />
-        <motion.div
-          animate={{
-            scale: [1.1, 0.95, 1.1],
-            x: [0, -20, 0],
-            y: [0, 20, 0],
-            opacity: isAmbientMode ? [0.3, 0.5, 0.3] : [0.15, 0.3, 0.15],
-          }}
-          transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute -bottom-16 right-1/3 w-80 h-80 rounded-full bg-[#88F7D6]/20 blur-3xl"
+          transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute -top-10 -left-10 w-96 h-96 rounded-full bg-[#E6DEFF] blur-3xl"
         />
 
-        {/* Floating subtle ambient particles */}
+        {/* Floating Leaves drifting across the middle */}
         <motion.span
-          animate={{ y: [0, -15, 0], opacity: [0.3, 0.7, 0.3] }}
-          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-1/4 left-1/2 text-sm"
+          animate={{
+            x: [0, 25, 0],
+            y: [0, -18, 0],
+            rotate: [0, 15, 0],
+            opacity: [0.3, 0.7, 0.3],
+          }}
+          transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-1/3 left-[45%] text-sm"
         >
           🍃
         </motion.span>
         <motion.span
-          animate={{ y: [0, 15, 0], opacity: [0.2, 0.6, 0.2] }}
+          animate={{
+            x: [0, -20, 0],
+            y: [0, 15, 0],
+            rotate: [0, -12, 0],
+            opacity: [0.25, 0.6, 0.25],
+          }}
           transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-          className="absolute bottom-1/3 left-1/3 text-xs"
+          className="absolute bottom-1/3 left-[52%] text-xs"
         >
-          ✨
+          🍂
+        </motion.span>
+        <motion.span
+          animate={{
+            x: [0, 15, 0],
+            y: [0, -12, 0],
+            opacity: [0.2, 0.5, 0.2],
+          }}
+          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+          className="absolute top-1/4 left-[58%] text-xs"
+        >
+          🍃
         </motion.span>
       </div>
 
-      {/* Left Text & Actions */}
+      {/* Left Content Area */}
       <div className="relative z-10 max-w-xl space-y-4">
-        {/* Contextual Pills */}
+        {/* Contextual Badges */}
         <div className="flex flex-wrap items-center gap-2">
           <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-heading font-bold shadow-2xs backdrop-blur-md border ${
             isAmbientMode
@@ -124,12 +136,15 @@ export default function WorkingProfessionalHero({
           </h2>
 
           <p className="text-xs sm:text-sm opacity-75 font-normal leading-relaxed max-w-md">
-            You've made it through enough today. Take a moment to slow down, breathe.
+            You've made it through enough today.<br />
+            Take a moment to slow down, breathe,<br />
+            and come back to yourself.
           </p>
         </div>
 
-        {/* Primary & Secondary CTAs */}
+        {/* Three CTAs in a Row */}
         <div className="pt-2 flex flex-wrap items-center gap-3">
+          {/* Primary CTA */}
           <motion.button
             onClick={onOpenReset}
             whileHover={{ scale: 1.02 }}
@@ -139,6 +154,7 @@ export default function WorkingProfessionalHero({
             <span>🌿 Take a 2-Minute Reset →</span>
           </motion.button>
 
+          {/* Secondary CTA */}
           <motion.button
             onClick={onOpenAI}
             whileHover={{ scale: 1.02 }}
@@ -149,24 +165,27 @@ export default function WorkingProfessionalHero({
                 : "bg-white/90 hover:bg-white text-[#5F4EA5] border-purple-200/80"
             }`}
           >
-            <span>Talk to AI Companion</span>
+            <span>✨ Talk to AI Companion →</span>
+          </motion.button>
+
+          {/* Ambient Toggle CTA */}
+          <motion.button
+            onClick={onToggleAmbient}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className={`px-4 py-3 rounded-full font-heading font-bold text-xs sm:text-sm shadow-2xs transition-all flex items-center gap-1.5 cursor-pointer backdrop-blur-sm border ${
+              isAmbientMode
+                ? "bg-[#5F4EA5] text-white border-purple-400"
+                : "bg-white/60 hover:bg-white/85 text-[#484551] border-purple-100"
+            }`}
+          >
+            <span>{isAmbientMode ? "⏸ Ambient on" : "▶ Play ambient"}</span>
           </motion.button>
         </div>
       </div>
 
-      {/* Right Artwork & Speech Bubble */}
+      {/* Right Artwork Illustration */}
       <div className="relative shrink-0 w-64 sm:w-80 lg:w-[380px] h-60 sm:h-72 lg:h-76 z-10 flex items-center justify-center">
-        {/* Floating Speech Bubble */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1, y: [0, -4, 0] }}
-          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute -top-2 sm:top-2 left-2 sm:left-4 z-20 px-3.5 py-1.5 rounded-2xl bg-white/90 dark:bg-[#2A234A]/90 backdrop-blur-md border border-purple-200/80 shadow-md text-[11px] font-heading font-bold text-[#5F4EA5] dark:text-purple-200 flex items-center gap-1"
-        >
-          <span>❝ Small pauses, big difference. ✨ ❞</span>
-        </motion.div>
-
-        {/* Working Professional Illustration */}
         <motion.div
           animate={{ y: [0, -5, 0] }}
           transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
@@ -178,20 +197,6 @@ export default function WorkingProfessionalHero({
             className="w-full h-full object-contain filter drop-shadow-lg rounded-2xl select-none pointer-events-none"
           />
         </motion.div>
-
-        {/* Play Ambient Pill Button */}
-        <motion.button
-          onClick={onToggleAmbient}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          className={`absolute bottom-2 right-2 sm:right-4 z-20 px-3.5 py-1.5 rounded-full text-[10px] sm:text-[11px] font-heading font-bold flex items-center gap-1.5 transition-all shadow-md cursor-pointer backdrop-blur-md border ${
-            isAmbientMode
-              ? "bg-[#5F4EA5] text-white border-purple-400"
-              : "bg-black/70 hover:bg-black/85 text-white border-white/20"
-          }`}
-        >
-          <span>{isAmbientMode ? "⏸ Ambient on" : "▶ Play ambient ✦"}</span>
-        </motion.button>
       </div>
     </motion.section>
   );
