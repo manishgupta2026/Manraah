@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { getClientSession } from "@/backend/auth/client";
+import { getCategoryDashboardRoute } from "@/frontend/lib/category-routes";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -11,7 +12,8 @@ export default function DashboardPage() {
     const session = getClientSession();
     if (session && session.isAuthenticated && session.user) {
       const category = session.user.selectedCategory || "student";
-      router.replace(`/dashboard/${category}`);
+      const target = getCategoryDashboardRoute(category);
+      router.replace(target);
     } else {
       router.replace("/login");
     }

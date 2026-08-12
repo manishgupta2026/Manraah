@@ -6,11 +6,16 @@ import { motion, AnimatePresence } from "framer-motion";
 interface BreathingModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onSessionCompleted?: () => void;
 }
 
 type Phase = "Inhale" | "Hold" | "Exhale" | "Rest";
 
-export default function BreathingModal({ isOpen, onClose }: BreathingModalProps) {
+export default function BreathingModal({
+  isOpen,
+  onClose,
+  onSessionCompleted,
+}: BreathingModalProps) {
   const [phase, setPhase] = useState<Phase>("Inhale");
   const [secondsRemaining, setSecondsRemaining] = useState<number>(120);
   const [cycles, setCycles] = useState<number>(0);
@@ -24,6 +29,21 @@ export default function BreathingModal({ isOpen, onClose }: BreathingModalProps)
       setSecondsRemaining((s) => {
         if (s <= 1) {
           setIsDone(true);
+          // Persist session to backend
+          fetch("/api/sessions", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              type: "decompression",
+              duration: 120,
+              completed: true,
+              metadata: { cycles: cycles + 1 },
+            }),
+          }).catch((e) => console.warn("Session logging notice:", e));
+
+          if (onSessionCompleted) {
+            onSessionCompleted();
+          }
           return 0;
         }
         return s - 1;
@@ -31,7 +51,7 @@ export default function BreathingModal({ isOpen, onClose }: BreathingModalProps)
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [isOpen, isDone]);
+  }, [isOpen, isDone, cycles, onSessionCompleted]);
 
   // Breathing Cycle: 4s Inhale, 4s Hold, 4s Exhale, 2s Rest
   useEffect(() => {

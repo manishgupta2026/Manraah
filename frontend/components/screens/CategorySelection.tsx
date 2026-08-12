@@ -34,7 +34,11 @@ export default function CategorySelection() {
     document.cookie = `userType=${targetType}; path=/; max-age=86400`;
     console.log("[CategorySelection] [POINT 1 — after category selection] userType selected:", targetType);
 
-    router.push("/signup");
+    if (targetType === "working_professional" || targetType === "working-professional") {
+      router.push("/onboarding/working-professional");
+    } else {
+      router.push("/signup");
+    }
   };
 
   return (

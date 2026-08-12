@@ -1,89 +1,150 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface WorkdayJournalCardProps {
-  initialContent?: string;
-  onSaveReflection: (content: string) => Promise<boolean>;
+  recentReflections?: any[];
+  onReflectionSaved?: () => void;
 }
 
 export default function WorkdayJournalCard({
-  initialContent = "",
-  onSaveReflection,
+  recentReflections = [],
+  onReflectionSaved,
 }: WorkdayJournalCardProps) {
-  const [content, setContent] = useState<string>(initialContent);
+  const [content, setContent] = useState<string>("");
   const [isSaving, setIsSaving] = useState<boolean>(false);
-  const [savedSuccess, setSavedSuccess] = useState<boolean>(false);
+  const [showSuccess, setShowSuccess] = useState<boolean>(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!content.trim()) return;
 
     setIsSaving(true);
     try {
-      const ok = await onSaveReflection(content.trim());
-      if (ok) {
-        setSavedSuccess(true);
-        setTimeout(() => setSavedSuccess(false), 3000);
+      const res = await fetch("/api/reflections", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          content: content.trim(),
+          title: "Workday Decompression",
+          moodTag: "Reflective",
+          category: "Workday Decompression",
+        }),
+      });
+
+      if (res.ok) {
+        setContent("");
+        setShowSuccess(true);
+        setTimeout(() => setShowSuccess(false), 2500);
+        if (onReflectionSaved) {
+          onReflectionSaved();
+        }
       }
+    } catch (err) {
+      console.error("Failed to save reflection:", err);
     } finally {
       setIsSaving(false);
     }
   };
 
+  const formatDate = (dateStr: string) => {
+    try {
+      const d = new Date(dateStr);
+      return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+    } catch {
+      return "Today";
+    }
+  };
+
   return (
-    <div className="rounded-[28px] bg-white/85 dark:bg-[#1E1933]/90 backdrop-blur-xl border border-[#E6DEFF]/80 dark:border-purple-500/20 p-6 shadow-[0_6px_24px_rgba(95,78,165,0.03)] flex flex-col justify-between min-h-[280px] space-y-3">
+    <div className="rounded-[32px] bg-white/90 dark:bg-[#1E1933]/90 backdrop-blur-xl border border-purple-100/60 dark:border-purple-500/20 p-7 sm:p-8 shadow-[0_8px_30px_rgba(95,78,165,0.03)] space-y-4">
       {/* Header */}
-      <div className="space-y-0.5">
-        <h3 className="text-base font-heading font-extrabold text-[#1D192B] dark:text-white">
-          Leave the workday here.
-        </h3>
-        <p className="text-xs text-[#797582] dark:text-purple-200/70 font-normal leading-tight">
-          What's something you'd like to let go of before tonight?
-        </p>
+      <div className="flex items-center justify-between">
+        <div className="space-y-0.5">
+          <div className="flex items-center gap-2">
+            <span className="material-symbols-outlined text-lg text-[#6351A5]">edit_note</span>
+            <h3 className="text-base font-heading font-extrabold text-[#231E39] dark:text-white">
+              Workday Reflection
+            </h3>
+          </div>
+          <p className="text-xs text-[#746F89] dark:text-purple-200/70 font-normal">
+            Leave what happened at work on paper.
+          </p>
+        </div>
+
+        <Link
+          href="/journal"
+          className="text-xs font-heading font-semibold text-[#6351A5] hover:text-[#7360B8] flex items-center gap-1"
+        >
+          <span>Open Journal</span>
+          <span className="material-symbols-outlined text-sm">arrow_forward</span>
+        </Link>
       </div>
 
-      {/* Textarea Form */}
-      <form onSubmit={handleSubmit} className="space-y-3 flex-1 flex flex-col justify-between">
-        <textarea
-          rows={3}
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          placeholder="Write whatever is on your mind..."
-          className="w-full p-3.5 rounded-2xl bg-[#FAF8FF] dark:bg-white/5 border border-purple-100 dark:border-white/10 text-xs text-[#1D192B] dark:text-white placeholder:text-[#797582]/60 dark:placeholder:text-purple-200/40 focus:outline-none focus:ring-1.5 focus:ring-[#5F4EA5]/40 focus:border-[#5F4EA5] resize-none transition-all flex-1"
-        />
+      {/* Quick Input Form */}
+      <form onSubmit={handleSave} className="space-y-2 pt-1">
+        <div className="relative">
+          <textarea
+            rows={2}
+            placeholder="How was your day? Write a quick thought to clear your mind..."
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            className="w-full p-3.5 rounded-2xl bg-[#FAF8FE] dark:bg-white/5 border border-purple-100/60 dark:border-white/10 text-xs text-[#231E39] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#6351A5]/30 resize-none"
+          />
+        </div>
 
-        {/* Footer & Action */}
-        <div className="flex items-center justify-between pt-0.5">
-          <AnimatePresence>
-            {savedSuccess ? (
-              <motion.span
-                initial={{ opacity: 0, x: -5 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0 }}
-                className="text-[11px] font-bold text-emerald-700 dark:text-emerald-300"
-              >
-                ✓ Saved to encrypted journal
-              </motion.span>
-            ) : (
-              <span className="text-[10px] text-[#797582] dark:text-purple-200/60 font-medium">
-                🔒 Private &amp; encrypted
-              </span>
-            )}
-          </AnimatePresence>
-
-          <motion.button
+        <div className="flex items-center justify-between">
+          <span className="text-[11px] text-[#746F89]">
+            {showSuccess ? "✓ Reflection saved peacefully." : "Private & encrypted."}
+          </span>
+          <button
             type="submit"
             disabled={isSaving || !content.trim()}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            className="px-5 py-2 rounded-full bg-[#5F4EA5] hover:bg-[#7C6BC4] text-white font-heading font-bold text-xs shadow-xs transition-all ml-auto disabled:opacity-40 cursor-pointer flex items-center gap-1"
+            className="px-5 py-2 rounded-full bg-[#6351A5] hover:bg-[#7360B8] text-white font-heading font-semibold text-xs shadow-xs transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-40"
           >
             {isSaving ? "Saving..." : "Save Reflection"}
-          </motion.button>
+          </button>
         </div>
       </form>
+
+      {/* Recent Reflections List or Empty State */}
+      <div className="pt-2 space-y-2">
+        <div className="text-[11px] font-heading font-bold text-[#746F89] dark:text-purple-200/60">
+          Recent Reflections
+        </div>
+
+        {recentReflections && recentReflections.length > 0 ? (
+          <div className="space-y-2">
+            {recentReflections.slice(0, 2).map((refl: any) => (
+              <div
+                key={refl.id}
+                className="p-3 rounded-2xl bg-[#FAF8FE] dark:bg-white/5 border border-purple-100/60 dark:border-white/5 space-y-1"
+              >
+                <div className="flex items-center justify-between text-[10px] text-[#746F89]">
+                  <span className="font-heading font-semibold text-[#6351A5] bg-purple-100/60 px-2 py-0.5 rounded-md">
+                    {refl.mood_tag || "Reflective"}
+                  </span>
+                  <span>{formatDate(refl.created_at)}</span>
+                </div>
+                <p className="text-xs text-[#231E39] dark:text-white/90 line-clamp-2 leading-relaxed">
+                  "{refl.content || refl.excerpt}"
+                </p>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="p-4 rounded-2xl bg-[#FAF8FE] dark:bg-white/5 border border-dashed border-purple-100/80 text-center space-y-1">
+            <p className="text-xs font-heading font-medium text-[#231E39] dark:text-white">
+              No reflections yet today.
+            </p>
+            <p className="text-[11px] text-[#746F89]">
+              Take 60 seconds to release a thought before your evening begins.
+            </p>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

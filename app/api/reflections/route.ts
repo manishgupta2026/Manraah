@@ -54,8 +54,8 @@ export async function POST(req: Request) {
     const finalCategory = category || "Workday Decompression";
 
     const result = await sql`
-      INSERT INTO journal_entries (id, user_id, title, excerpt, content, mood_tag, category, created_at, updated_at)
-      VALUES (${id}, ${userId}, ${finalTitle}, ${excerpt}, ${trimmedContent}, ${finalMoodTag}, ${finalCategory}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+      INSERT INTO journal_entries (id, user_id, title, excerpt, content, mood_tag, category, created_at)
+      VALUES (${id}, ${userId}, ${finalTitle}, ${excerpt}, ${trimmedContent}, ${finalMoodTag}, ${finalCategory}, CURRENT_TIMESTAMP)
       RETURNING id, user_id, title, excerpt, content, mood_tag, category, created_at
     `;
 

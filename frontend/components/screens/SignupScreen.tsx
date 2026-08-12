@@ -11,6 +11,7 @@ import { DobPicker } from "@/frontend/components/ui/DobPicker";
 import { GenderSelect } from "@/frontend/components/ui/GenderSelect";
 import { motion } from "framer-motion";
 import Logo from "@/frontend/components/ui/Logo";
+import { getCategoryDashboardRoute } from "@/frontend/lib/category-routes";
 
 function readCookie(name: string): string | null {
   if (typeof document === "undefined") return null;
@@ -91,12 +92,7 @@ export default function SignupScreen() {
       document.cookie = "userType=; path=/; max-age=0";
 
       const categoryRaw = session.user?.selectedCategory || resolvedCategory;
-      const targetRoute =
-        categoryRaw === "couples" || categoryRaw === "couple"
-          ? "/dashboard/couples"
-          : categoryRaw === "parents" || categoryRaw === "parent"
-          ? "/dashboard/parents"
-          : "/dashboard/student";
+      const targetRoute = getCategoryDashboardRoute(categoryRaw);
 
       router.push(targetRoute);
     } catch (err: any) {

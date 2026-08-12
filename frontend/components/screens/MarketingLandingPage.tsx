@@ -553,7 +553,11 @@ export default function MarketingLandingPage() {
     } catch {
       // ignore
     }
-    router.push("/category-selection");
+    if (catId === "working_professional" || catId === "working-professional") {
+      router.push("/onboarding/working-professional");
+    } else {
+      router.push("/category-selection");
+    }
   };
 
   return (

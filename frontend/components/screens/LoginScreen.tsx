@@ -7,6 +7,7 @@ import { signIn } from "@/backend/auth/client";
 import { FormInput } from "@/frontend/components/ui/FormInput";
 import { motion } from "framer-motion";
 import Logo from "@/frontend/components/ui/Logo";
+import { getCategoryDashboardRoute } from "@/frontend/lib/category-routes";
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -29,12 +30,7 @@ export default function LoginScreen() {
       document.cookie = "manraah_userType=; path=/; max-age=0";
 
       const categoryRaw = session.user?.selectedCategory || "";
-      const targetRoute =
-        categoryRaw === "couples" || categoryRaw === "couple"
-          ? "/dashboard/couples"
-          : categoryRaw === "parents" || categoryRaw === "parent"
-          ? "/dashboard/parents"
-          : "/dashboard/student";
+      const targetRoute = getCategoryDashboardRoute(categoryRaw);
 
       router.push(targetRoute);
     } catch (err: any) {
