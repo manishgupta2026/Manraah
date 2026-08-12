@@ -14,7 +14,7 @@ export default function RecentRhythmCard({ history = [] }: RecentRhythmCardProps
       label: "Mind",
       status: "Feeling steadier",
       icon: "💜",
-      stroke: "#5F4EA5",
+      stroke: "#6351A5",
       fill: "url(#mindGrad)",
       path: "M 0 25 C 20 18, 40 32, 60 20 C 80 10, 100 24, 120 15 C 140 8, 160 20, 180 12 L 180 40 L 0 40 Z",
       linePath: "M 0 25 C 20 18, 40 32, 60 20 C 80 10, 100 24, 120 15 C 140 8, 160 20, 180 12",
@@ -24,7 +24,7 @@ export default function RecentRhythmCard({ history = [] }: RecentRhythmCardProps
       label: "Energy",
       status: "Holding steady",
       icon: "🌿",
-      stroke: "#006B56",
+      stroke: "#1F7A65",
       fill: "url(#energyGrad)",
       path: "M 0 20 C 25 24, 50 16, 75 22 C 100 28, 125 18, 150 20 C 165 21, 175 19, 180 20 L 180 40 L 0 40 Z",
       linePath: "M 0 20 C 25 24, 50 16, 75 22 C 100 28, 125 18, 150 20 C 165 21, 175 19, 180 20",
@@ -42,22 +42,22 @@ export default function RecentRhythmCard({ history = [] }: RecentRhythmCardProps
   ];
 
   return (
-    <div className="rounded-[28px] bg-white/85 dark:bg-[#1E1933]/90 backdrop-blur-xl border border-[#E6DEFF]/80 dark:border-purple-500/20 p-6 shadow-[0_6px_24px_rgba(95,78,165,0.03)] space-y-4">
+    <div className="rounded-[32px] bg-white/90 dark:bg-[#1E1933]/90 backdrop-blur-xl border border-purple-100/60 dark:border-purple-500/20 p-7 shadow-[0_8px_30px_rgba(95,78,165,0.03)] space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="space-y-0.5">
           <div className="flex items-center gap-2">
-            <span className="material-symbols-outlined text-lg text-[#5F4EA5]">insights</span>
-            <h3 className="text-base font-heading font-extrabold text-[#1D192B] dark:text-white">
+            <span className="material-symbols-outlined text-lg text-[#6351A5]">insights</span>
+            <h3 className="text-base font-heading font-extrabold text-[#231E39] dark:text-white">
               Your recent rhythm
             </h3>
           </div>
-          <p className="text-xs text-[#797582] dark:text-purple-200/70 font-normal">
+          <p className="text-xs text-[#746F89] dark:text-purple-200/70 font-normal">
             Small changes are still changes.
           </p>
         </div>
 
-        <span className="text-[10px] font-heading font-bold text-[#797582] dark:text-purple-200/60 bg-[#FAF8FF] dark:bg-white/10 px-3 py-1 rounded-full border border-purple-100 dark:border-white/10">
+        <span className="text-[10px] font-heading font-bold text-[#746F89] dark:text-purple-200/60 bg-[#FAF8FE] dark:bg-white/10 px-3 py-1 rounded-full border border-purple-100/60 dark:border-white/10">
           7-day snapshot
         </span>
       </div>
@@ -67,15 +67,15 @@ export default function RecentRhythmCard({ history = [] }: RecentRhythmCardProps
         {RHYTHMS.map((r) => (
           <div
             key={r.id}
-            className="p-3.5 rounded-2xl bg-[#FAF8FF] dark:bg-white/5 border border-purple-100/70 dark:border-white/10 flex flex-col justify-between min-h-[110px] overflow-hidden relative shadow-2xs"
+            className="p-4 rounded-2xl bg-[#FAF8FE] dark:bg-white/5 border border-purple-100/60 dark:border-white/5 flex flex-col justify-between min-h-[110px] overflow-hidden relative shadow-2xs"
           >
             {/* Top Label & Status */}
             <div className="space-y-1 relative z-10">
-              <div className="flex items-center gap-1.5 text-xs font-heading font-extrabold text-[#1D192B] dark:text-white">
+              <div className="flex items-center gap-1.5 text-xs font-heading font-extrabold text-[#231E39] dark:text-white">
                 <span>{r.icon}</span>
                 <span>{r.label}</span>
               </div>
-              <p className="text-[11px] text-[#797582] dark:text-purple-200/70 font-normal">
+              <p className="text-[11px] text-[#746F89] dark:text-purple-200/70 font-normal">
                 {r.status}
               </p>
             </div>
@@ -85,15 +85,15 @@ export default function RecentRhythmCard({ history = [] }: RecentRhythmCardProps
               <svg viewBox="0 0 180 40" className="w-full h-full overflow-visible">
                 <defs>
                   <linearGradient id="mindGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#5F4EA5" stopOpacity="0.2" />
-                    <stop offset="100%" stopColor="#5F4EA5" stopOpacity="0.0" />
+                    <stop offset="0%" stopColor="#6351A5" stopOpacity="0.18" />
+                    <stop offset="100%" stopColor="#6351A5" stopOpacity="0.0" />
                   </linearGradient>
                   <linearGradient id="energyGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#006B56" stopOpacity="0.2" />
-                    <stop offset="100%" stopColor="#006B56" stopOpacity="0.0" />
+                    <stop offset="0%" stopColor="#1F7A65" stopOpacity="0.18" />
+                    <stop offset="100%" stopColor="#1F7A65" stopOpacity="0.0" />
                   </linearGradient>
                   <linearGradient id="restGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#7C6BC4" stopOpacity="0.2" />
+                    <stop offset="0%" stopColor="#7C6BC4" stopOpacity="0.18" />
                     <stop offset="100%" stopColor="#7C6BC4" stopOpacity="0.0" />
                   </linearGradient>
                 </defs>
@@ -107,7 +107,7 @@ export default function RecentRhythmCard({ history = [] }: RecentRhythmCardProps
                   strokeLinecap="round"
                   initial={{ pathLength: 0 }}
                   animate={{ pathLength: 1 }}
-                  transition={{ duration: 1.2, ease: "easeOut" }}
+                  transition={{ duration: 1.4, ease: "easeOut" }}
                 />
               </svg>
             </div>

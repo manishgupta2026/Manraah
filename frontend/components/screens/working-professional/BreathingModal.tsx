@@ -33,7 +33,7 @@ export default function BreathingModal({ isOpen, onClose }: BreathingModalProps)
     return () => clearInterval(interval);
   }, [isOpen, isDone]);
 
-  // Breathing Box Cycle: 4s Inhale, 4s Hold, 4s Exhale, 2s Rest
+  // Breathing Cycle: 4s Inhale, 4s Hold, 4s Exhale, 2s Rest
   useEffect(() => {
     if (!isOpen || isDone) return;
 
@@ -61,7 +61,7 @@ export default function BreathingModal({ isOpen, onClose }: BreathingModalProps)
   const getPhaseGuide = () => {
     switch (phase) {
       case "Inhale":
-        return "Breathe in deeply through your nose...";
+        return "Breathe in deeply and gently through your nose...";
       case "Hold":
         return "Gently hold stillness within...";
       case "Exhale":
@@ -85,42 +85,42 @@ export default function BreathingModal({ isOpen, onClose }: BreathingModalProps)
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-50 bg-[#1D192B]/50 backdrop-blur-md flex items-center justify-center p-4"
+        className="fixed inset-0 z-50 bg-[#1D192B]/40 backdrop-blur-md flex items-center justify-center p-4"
       >
         <motion.div
-          initial={{ scale: 0.92, opacity: 0, y: 15 }}
+          initial={{ scale: 0.94, opacity: 0, y: 10 }}
           animate={{ scale: 1, opacity: 1, y: 0 }}
-          exit={{ scale: 0.92, opacity: 0, y: 15 }}
-          transition={{ type: "spring", stiffness: 100, damping: 18 }}
-          className="relative w-full max-w-md rounded-[32px] bg-gradient-to-br from-[#FAF8FF] via-[#F4EEFF] to-[#EAE0FC] border border-[#E6DEFF] p-7 sm:p-9 shadow-2xl text-center select-none overflow-hidden"
+          exit={{ scale: 0.94, opacity: 0, y: 10 }}
+          transition={{ type: "spring", stiffness: 90, damping: 16 }}
+          className="relative w-full max-w-md rounded-[36px] bg-gradient-to-br from-[#FCFBFE] via-[#F6F0FD] to-[#EDE5FA] border border-purple-100/80 p-8 sm:p-10 shadow-2xl text-center select-none overflow-hidden"
         >
           {/* Background Ambient Glow */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 rounded-full bg-[#E6DEFF] blur-3xl opacity-60 pointer-events-none" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 rounded-full bg-[#EAE2FB] blur-3xl opacity-50 pointer-events-none" />
 
           {/* Close button */}
           <button
             onClick={onClose}
-            className="absolute top-5 right-5 w-8 h-8 rounded-full bg-white/80 border border-purple-100 flex items-center justify-center text-[#797582] hover:text-[#1D192B] transition-colors cursor-pointer shadow-xs"
+            className="absolute top-6 right-6 w-8 h-8 rounded-full bg-white/80 border border-purple-100/70 flex items-center justify-center text-[#746F89] hover:text-[#231E39] transition-colors cursor-pointer shadow-2xs"
           >
             <span className="material-symbols-outlined text-sm">close</span>
           </button>
 
           {isDone ? (
             <div className="py-6 space-y-4 relative z-10">
-              <div className="w-16 h-16 rounded-full bg-emerald-100/80 text-emerald-800 flex items-center justify-center text-3xl mx-auto shadow-xs">
+              <div className="w-16 h-16 rounded-full bg-emerald-100/70 text-emerald-800 flex items-center justify-center text-3xl mx-auto shadow-xs">
                 🌿
               </div>
               <div className="space-y-1.5">
-                <h3 className="text-xl font-heading font-black text-[#1D192B]">
-                  You are centered and ready.
+                <h3 className="text-xl font-heading font-black text-[#231E39]">
+                  You are centered and rested.
                 </h3>
-                <p className="text-xs sm:text-sm text-[#484551] max-w-xs mx-auto leading-relaxed">
-                  You completed {cycles} mindful breathing cycles. Work can wait — enjoy the rest of your evening.
+                <p className="text-xs sm:text-sm text-[#534F64] max-w-xs mx-auto leading-relaxed">
+                  You completed {cycles} mindful breathing cycles. Work can wait — enjoy your evening peace.
                 </p>
               </div>
               <button
                 onClick={onClose}
-                className="px-6 py-2.5 rounded-full bg-[#5F4EA5] text-white font-heading font-bold text-xs shadow-md hover:bg-[#7C6BC4] transition-all cursor-pointer"
+                className="px-7 py-2.5 rounded-full bg-[#6351A5] hover:bg-[#7360B8] text-white font-heading font-semibold text-xs shadow-sm transition-all cursor-pointer"
               >
                 Return to Sanctuary
               </button>
@@ -128,14 +128,14 @@ export default function BreathingModal({ isOpen, onClose }: BreathingModalProps)
           ) : (
             <div className="space-y-6 relative z-10">
               <div className="space-y-1">
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold text-[#5F4EA5] bg-white/80 border border-[#E6DEFF] shadow-xs">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-heading font-medium text-[#6351A5] bg-white/80 border border-purple-100/70 shadow-2xs">
                   🌿 2-Minute Reset
                 </span>
-                <h3 className="text-xl font-heading font-black text-[#1D192B]">
+                <h3 className="text-xl font-heading font-extrabold text-[#231E39]">
                   Leave Work at Work
                 </h3>
-                <p className="text-xs text-[#797582] font-semibold">
-                  Time remaining: <span className="text-[#5F4EA5]">{formatTime(secondsRemaining)}</span>
+                <p className="text-xs text-[#746F89]">
+                  Time remaining: <span className="text-[#6351A5] font-bold">{formatTime(secondsRemaining)}</span>
                 </p>
               </div>
 
@@ -144,7 +144,7 @@ export default function BreathingModal({ isOpen, onClose }: BreathingModalProps)
                 <motion.div
                   animate={{
                     scale: phase === "Inhale" || phase === "Hold" ? 1.25 : 0.85,
-                    opacity: phase === "Inhale" || phase === "Hold" ? 0.6 : 0.2,
+                    opacity: phase === "Inhale" || phase === "Hold" ? 0.5 : 0.2,
                   }}
                   transition={{
                     duration: phase === "Inhale" ? 4 : phase === "Exhale" ? 4 : 1,
@@ -161,13 +161,13 @@ export default function BreathingModal({ isOpen, onClose }: BreathingModalProps)
                     duration: phase === "Inhale" ? 4 : phase === "Exhale" ? 4 : 1,
                     ease: "easeInOut",
                   }}
-                  className="w-36 h-36 rounded-full bg-gradient-to-br from-[#5F4EA5] via-[#7C6BC4] to-[#5FCFB0] shadow-[0_10px_35px_rgba(95,78,165,0.3)] flex flex-col items-center justify-center text-white"
+                  className="w-36 h-36 rounded-full bg-gradient-to-br from-[#6351A5] via-[#7C6BC4] to-[#5FCFB0] shadow-[0_10px_35px_rgba(99,81,165,0.25)] flex flex-col items-center justify-center text-white"
                 >
                   <motion.span
                     key={phase}
-                    initial={{ opacity: 0, y: 4 }}
+                    initial={{ opacity: 0, y: 3 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="text-base font-heading font-black tracking-wider uppercase"
+                    className="text-base font-heading font-extrabold tracking-wider uppercase"
                   >
                     {phase}
                   </motion.span>
@@ -175,10 +175,10 @@ export default function BreathingModal({ isOpen, onClose }: BreathingModalProps)
               </div>
 
               <div className="space-y-1">
-                <p className="text-xs sm:text-sm font-heading font-bold text-[#1D192B]">
+                <p className="text-xs sm:text-sm font-heading font-medium text-[#231E39]">
                   {getPhaseGuide()}
                 </p>
-                <p className="text-[11px] text-[#797582]">
+                <p className="text-[11px] text-[#746F89]">
                   Cycles completed: {cycles}
                 </p>
               </div>
@@ -186,7 +186,7 @@ export default function BreathingModal({ isOpen, onClose }: BreathingModalProps)
               <div>
                 <button
                   onClick={onClose}
-                  className="text-xs text-[#797582] hover:text-[#1D192B] transition-colors font-medium cursor-pointer"
+                  className="text-xs text-[#746F89] hover:text-[#231E39] transition-colors font-medium cursor-pointer"
                 >
                   Pause &amp; Close
                 </button>

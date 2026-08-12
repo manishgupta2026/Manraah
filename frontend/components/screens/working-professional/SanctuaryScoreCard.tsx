@@ -30,11 +30,11 @@ export default function SanctuaryScoreCard({
   ];
 
   return (
-    <div className="rounded-[28px] bg-white/85 dark:bg-[#1E1933]/90 backdrop-blur-xl border border-[#E6DEFF]/80 dark:border-purple-500/20 p-6 sm:p-7 shadow-[0_6px_24px_rgba(95,78,165,0.03)] flex flex-col justify-between min-h-[340px] space-y-3">
+    <div className="rounded-[32px] bg-white/90 dark:bg-[#1E1933]/90 backdrop-blur-xl border border-purple-100/60 dark:border-purple-500/20 p-7 sm:p-8 shadow-[0_8px_30px_rgba(95,78,165,0.03)] flex flex-col justify-between min-h-[340px] space-y-4">
       {/* Header */}
       <div className="flex items-center gap-2">
-        <span className="material-symbols-outlined text-lg text-[#5F4EA5]">insights</span>
-        <h3 className="text-base font-heading font-extrabold text-[#1D192B] dark:text-white">
+        <span className="material-symbols-outlined text-lg text-[#6351A5]">insights</span>
+        <h3 className="text-base font-heading font-extrabold text-[#231E39] dark:text-white">
           Sanctuary Score
         </h3>
       </div>
@@ -44,13 +44,13 @@ export default function SanctuaryScoreCard({
         {/* Animated Circular Gauge */}
         <div className="relative w-24 h-24 shrink-0 flex items-center justify-center">
           <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
-            <circle cx="50" cy="50" r={radius} stroke="#F2EBFF" strokeWidth="8" fill="none" className="dark:stroke-white/10" />
+            <circle cx="50" cy="50" r={radius} stroke="#F3EEFB" strokeWidth="7" fill="none" className="dark:stroke-white/10" />
             <motion.circle
               cx="50"
               cy="50"
               r={radius}
-              stroke="#5F4EA5"
-              strokeWidth="8"
+              stroke="#6351A5"
+              strokeWidth="7"
               strokeDasharray={circ}
               initial={{ strokeDashoffset: circ }}
               animate={{ strokeDashoffset }}
@@ -62,46 +62,46 @@ export default function SanctuaryScoreCard({
 
           {/* Center Score Text */}
           <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-            <span className="text-2xl font-heading font-black text-[#1D192B] dark:text-white leading-none">
+            <span className="text-2xl font-heading font-extrabold text-[#231E39] dark:text-white leading-none">
               {score}
             </span>
-            <span className="text-[10px] font-bold text-[#797582] dark:text-purple-200/70 mt-0.5">/100</span>
+            <span className="text-[10px] font-bold text-[#746F89] dark:text-purple-200/70 mt-0.5">/100</span>
           </div>
         </div>
 
         {/* Status Text */}
         <div className="space-y-1">
           <div className="flex items-center gap-1.5">
-            <span className="text-xs font-heading font-black text-[#006B56] dark:text-emerald-300 uppercase tracking-wider">
+            <span className="text-xs font-heading font-extrabold text-[#1F7A65] dark:text-emerald-300 uppercase tracking-wider">
               {level}
             </span>
-            <span className="text-xs text-[#006B56] dark:text-emerald-300 font-bold">↗</span>
+            <span className="text-xs text-[#1F7A65] dark:text-emerald-300 font-bold">↗</span>
           </div>
-          <p className="text-xs text-[#484551] dark:text-purple-200/90 font-normal leading-tight max-w-[140px]">
+          <p className="text-xs text-[#534F64] dark:text-purple-200/90 font-normal leading-tight max-w-[140px]">
             Your mindset is steadier than last week.
           </p>
         </div>
       </div>
 
       {/* 7-Day Timeline Sparkline */}
-      <div className="py-2">
+      <div className="py-1">
         <div className="relative flex items-center justify-between px-2">
           {/* Connecting Line */}
-          <div className="absolute top-1/2 left-4 right-4 h-0.5 bg-[#E6DEFF] dark:bg-white/10 -translate-y-1/2 -z-0" />
+          <div className="absolute top-1/2 left-3 right-3 h-[1.5px] bg-[#EAE2FB] dark:bg-white/10 -translate-y-1/2 -z-0" />
 
           {timelineDays.map((d, i) => (
             <div key={i} className="flex flex-col items-center gap-1.5 relative z-10">
               <div
-                className={`w-3 h-3 rounded-full flex items-center justify-center transition-all ${
+                className={`w-2.5 h-2.5 rounded-full flex items-center justify-center transition-all ${
                   d.active
-                    ? "bg-[#5F4EA5] ring-4 ring-purple-100 dark:ring-purple-900/50 scale-125"
-                    : "bg-white dark:bg-white/20 border border-purple-200"
+                    ? "bg-[#6351A5] ring-4 ring-purple-100/80 dark:ring-purple-900/50 scale-125"
+                    : "bg-white dark:bg-white/20 border border-purple-200/80"
                 }`}
               />
               <span className={`text-[10px] font-heading ${
                 d.active
-                  ? "font-black text-[#5F4EA5] dark:text-purple-300"
-                  : "font-bold text-[#797582] dark:text-purple-200/60"
+                  ? "font-black text-[#6351A5] dark:text-purple-300"
+                  : "font-medium text-[#746F89] dark:text-purple-200/60"
               }`}>
                 {d.label}
               </span>
@@ -114,7 +114,7 @@ export default function SanctuaryScoreCard({
       <div className="pt-1 flex justify-center">
         <button
           onClick={() => router.push("/reports")}
-          className="text-xs font-heading font-bold text-[#5F4EA5] dark:text-purple-300 hover:text-[#7C6BC4] transition-colors flex items-center gap-1 cursor-pointer"
+          className="text-xs font-heading font-semibold text-[#6351A5] dark:text-purple-300 hover:text-[#7360B8] transition-colors flex items-center gap-1 cursor-pointer"
         >
           <span>View Wellness Report</span>
           <span className="material-symbols-outlined text-xs">arrow_forward</span>
