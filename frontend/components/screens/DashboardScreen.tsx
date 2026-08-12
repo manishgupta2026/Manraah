@@ -9,6 +9,7 @@ import { useCategory } from "@/frontend/lib/context/CategoryContext";
 import ParentDashboard from "@/frontend/components/screens/ParentDashboard";
 import CouplesDashboard from "@/Couples/03_Dashboard/Development/CouplesDashboard";
 import StudentDashboard from "@/frontend/components/screens/StudentDashboard";
+import WorkingProfessionalDashboard from "@/frontend/components/screens/WorkingProfessionalDashboard";
 import DailyPrivacyReminder from "@/frontend/components/ui/DailyPrivacyReminder";
 import ScreenHeader from "@/frontend/components/ui/ScreenHeader";
 import SanctuaryScoreModal from "@/frontend/components/ui/SanctuaryScoreModal";
@@ -201,7 +202,11 @@ export default function DashboardScreen() {
     return <StudentDashboard />;
   }
 
-  if (category === "parent") {
+  if (category === "working_professional" || category === "working-professional" || category === "young_pro" || category === "youngprofessional") {
+    return <WorkingProfessionalDashboard />;
+  }
+
+  if (category === "parent" || category === "parents") {
     return <ParentDashboard />;
   }
 

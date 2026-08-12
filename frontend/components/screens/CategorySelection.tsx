@@ -13,6 +13,18 @@ export default function CategorySelection() {
   const { setCategory } = useCategory();
   const { selectedCategory, setSelectedCategory } = useAssessment();
 
+  React.useEffect(() => {
+    try {
+      const match = document.cookie.match(/(?:^|;\s*)userType=([^;]*)/);
+      if (match && match[1]) {
+        setSelectedCategory(match[1] as UserCategory);
+        setCategory(match[1]);
+      }
+    } catch {
+      // ignore
+    }
+  }, [setCategory, setSelectedCategory]);
+
   const handleSelect = (id: string) => {
     const targetType = id;
     setSelectedCategory(targetType as UserCategory);

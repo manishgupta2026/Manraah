@@ -547,6 +547,15 @@ export default function MarketingLandingPage() {
     router.push("/category-selection");
   };
 
+  const handleSelectCategory = async (catId: string) => {
+    try {
+      document.cookie = `userType=${catId}; path=/; max-age=86400`;
+    } catch {
+      // ignore
+    }
+    router.push("/category-selection");
+  };
+
   return (
     <div className="min-h-screen bg-surface text-on-surface font-sans select-none overflow-x-hidden">
       {/* ==================== 2. HERO SECTION — INTERACTIVE MOOD CHECK-IN ==================== */}
@@ -1508,7 +1517,7 @@ export default function MarketingLandingPage() {
             return (
               <div
                 key={cat.id}
-                onClick={handleGetStarted}
+                onClick={() => handleSelectCategory(cat.id)}
                 className={`snap-start shrink-0 w-[270px] sm:w-[310px] h-[360px] sm:h-[400px] rounded-[32px] p-7 relative overflow-hidden flex flex-col justify-between shadow-card-lift hover:-translate-y-2 hover:shadow-2xl transition-all duration-300 group cursor-pointer border border-white/20`}
               >
                 {/* Full-Bleed Background Image */}
@@ -2193,11 +2202,11 @@ export default function MarketingLandingPage() {
             <div className="space-y-3 text-left">
               <h4 className="font-heading font-bold text-white text-xs uppercase tracking-wider">Categories</h4>
               <ul className="space-y-2 text-xs text-white/70">
-                <li><button onClick={handleGetStarted} className="hover:text-white transition-colors text-left">Students</button></li>
-                <li><button onClick={handleGetStarted} className="hover:text-white transition-colors text-left">Working Professionals</button></li>
-                <li><button onClick={handleGetStarted} className="hover:text-white transition-colors text-left">Parents</button></li>
-                <li><button onClick={handleGetStarted} className="hover:text-white transition-colors text-left">Couples</button></li>
-                <li><button onClick={handleGetStarted} className="hover:text-white transition-colors text-left">Other Life Paths</button></li>
+                <li><button onClick={() => handleSelectCategory("student")} className="hover:text-white transition-colors text-left">Students</button></li>
+                <li><button onClick={() => handleSelectCategory("working_professional")} className="hover:text-white transition-colors text-left">Working Professionals</button></li>
+                <li><button onClick={() => handleSelectCategory("parent")} className="hover:text-white transition-colors text-left">Parents</button></li>
+                <li><button onClick={() => handleSelectCategory("couple")} className="hover:text-white transition-colors text-left">Couples</button></li>
+                <li><button onClick={() => handleSelectCategory("other")} className="hover:text-white transition-colors text-left">Other Life Paths</button></li>
               </ul>
             </div>
 

@@ -1,0 +1,245 @@
+================================================================================
+                    MANRAAH WELLNESS SANCTUARY
+                   THEME & ARCHITECTURE OVERVIEW
+================================================================================
+
+1. DESIGN SYSTEM & THEME: "LAVENDER SANCTUARY"
+--------------------------------------------------------------------------------
+
+The visual design is built on a calming Material You / Glassmorphic aesthetic 
+tailored for emotional safety, privacy, and inner wellness.
+
+A. TYPOGRAPHY
+- Headings: 'Quicksand', sans-serif (warm, rounded, and welcoming)
+- Body: 'Work Sans', sans-serif / Inter (clean, high legibility)
+- Icons: Google Material Symbols Outlined + curated contextual emojis
+
+B. COLOR PALETTE (Tailwind & CSS Tokens)
+- Primary (Lavender Purple):
+    DEFAULT: #5F4EA5
+    Purple:  #7C6BC4
+    Container: #7867C0
+    Fixed / Light: #E6DEFF
+  Usage: Primary actions, active navigation, gauges, brand elements
+
+- Secondary (Calming Mint):
+    DEFAULT: #006B56
+    Container / Light: #88F7D6 / #5FCFB0
+  Usage: "Flourishing" wellness indicators, success states, balance indicators
+
+- Tertiary (Rose / Peach):
+    DEFAULT: #874959
+    Container: #A46172
+    Light: #FFD9E0 / #F4A6B8 / #F5C99B
+  Usage: Emotional tags, gratitude highlights, evening mood gradients
+
+- Surface / Backgrounds:
+    Surface: #FDF7FF
+    Surface Container Lowest: #FFFFFF
+    Surface Container Low:    #F7F1FF
+    Surface Container:        #F2EBFF
+    Surface Container High:   #ECE4FE
+  Usage: Soothing Lavender mist backdrop and floating card containers
+
+- Typography Colors:
+    On-Surface (Charcoal): #1D192B
+    On-Surface Variant:    #484551
+    Outline:               #797582
+
+- Error / Alert:
+    DEFAULT: #BA1A1A
+    Container: #FFDAD6
+
+C. VISUAL EFFECTS & MICRO-INTERACTIONS
+- Glassmorphism (.glass-panel):
+    Background: rgba(255, 255, 255, 0.70)
+    Backdrop Filter: blur(20px)
+    Border: 1px solid rgba(230, 223, 248, 0.50)
+
+- Gradients:
+    gradient-primary: linear-gradient(135deg, #7C6BC4 0%, #5F4EA5 100%)
+    gradient-mint:    linear-gradient(135deg, #5FCFB0 0%, #006B56 100%)
+    gradient-peach:   linear-gradient(135deg, #F5C99B 0%, #F4A6B8 100%)
+
+- Time-of-Day Adaptive Ambiance:
+    Morning:   Golden glow (#FFFDF4 -> #FFF5EC -> #EAE4F5)
+    Afternoon: Lavender bloom (#F2F4FD -> #ECE6F6 -> #FCE6EC)
+    Evening:   Warm sunset (#FFF4E4 -> #FDE4EB -> #ECE7F6)
+    Night:     Deep Indigo (#0A0D18 -> #12192C -> #221B3F)
+
+- Ambient Animations:
+    Floating leaves (🍃) and blossoms (🌸) floating upward with soft parallax.
+
+
+================================================================================
+2. PROJECT DIRECTORY STRUCTURE (Next.js 14 App Router)
+================================================================================
+
+Manraah/
+│
+├── app/                                  # Next.js 14 Routing Layer
+│   ├── (onboarding)/                     # Visitor Onboarding & Assessment
+│   │   ├── page.tsx                      # 3 Screening questions -> Marketing Landing
+│   │   ├── category-selection/page.tsx   # 9 Journey categories selection
+│   │   ├── assessment/page.tsx           # 10 Category-specific assessment
+│   │   └── wellness-score/page.tsx       # Sanctuary Score result screen
+│   │
+│   ├── (core)/                           # Authenticated Platform Features
+│   │   ├── layout.tsx                    # Wraps pages with AppShell (Sidebar & Nav)
+│   │   ├── dashboard/                    # Dynamic user dashboard
+│   │   │   ├── page.tsx                  # Main router to category dashboards
+│   │   │   ├── [category]/page.tsx       # Dynamic category router
+│   │   │   ├── student/page.tsx          # Student-specific dashboard
+│   │   │   ├── parents/page.tsx          # Parents-specific dashboard
+│   │   │   └── couples/page.tsx          # Couples-specific dashboard
+│   │   ├── checkin/ & mood-checkin/      # Daily emotional check-in & intention
+│   │   ├── mood-tracking/ & mood/        # Real-time mood trend logs & analytics
+│   │   ├── journal/                      # Private encrypted sanctuary journal
+│   │   ├── meditation/                   # Mindful audio player & sessions
+│   │   ├── sleep/                        # Sleep soundscapes & restful timer
+│   │   ├── human-companion/ & call/      # Real-time anonymous companion & WebRTC
+│   │   ├── community/                    # Safe, anonymous peer support circles
+│   │   ├── journey/                      # Wellness milestone timeline
+│   │   ├── reports/                      # Longitudinal weekly/monthly reports
+│   │   ├── profile/ & settings/          # Read-only journey settings & privacy
+│   │   ├── crisis-support/               # 24/7 Verified crisis resources
+│   │   └── professional-care/            # Verified therapist booking directory
+│   │
+│   ├── admin/                            # Administrative & Operations Portal
+│   │   ├── dashboard/                    # Admin command center (User/Content/Health)
+│   │   ├── human-companion/              # Companion queue & session monitoring
+│   │   └── login/                        # Isolated companion/admin authentication
+│   │
+│   ├── api/                              # REST API Route Handlers
+│   │   ├── assessment/                   # Sanctuary Score calculation & answers
+│   │   ├── auth/ (signup, login, etc.)   # Scrypt auth & session cookies
+│   │   ├── dashboard/                    # Unified parallel dashboard query
+│   │   ├── checkin/ & mood/              # Daily reflections & mood logs
+│   │   ├── meditation/ (log, stats)      # Mindfulness minutes persistence
+│   │   ├── journal/                      # Journal CRUD endpoints
+│   │   ├── community/                    # Community posts & engagement
+│   │   ├── companion/ (queue, me, etc.)  # Real-time companion queue state
+│   │   └── therapists/                   # Directory listing & verification
+│   │
+│   ├── (public marketing pages)/         # Static informational routes
+│   │   ├── about/                        # Mission, sanctuary values & team
+│   │   ├── contact/                      # Contact and support form
+│   │   ├── privacy/                      # Privacy policy & encryption standards
+│   │   ├── security/                     # Security architecture & HIPAA alignment
+│   │   ├── terms/                        # Terms of service
+│   │   └── forgot-password/              # Password recovery flow
+│   │
+│   ├── layout.tsx                        # Global root layout & font definitions
+│   ├── globals.css                       # Design tokens, gradients, animations
+│   └── favicon.ico                       # Platform sanctuary icon
+│
+├── frontend/                             # Frontend Component & Logic Library
+│   ├── components/
+│   │   ├── screens/                      # Main view controllers
+│   │   │   ├── MarketingLandingPage.tsx  # Interactive public landing page
+│   │   │   ├── DashboardScreen.tsx       # Core dashboard shell
+│   │   │   ├── StudentDashboard.tsx      # Student wellness UI
+│   │   │   ├── ParentDashboard.tsx       # Parent wellness UI
+│   │   │   ├── AssessmentFlow.tsx        # 10-Question assessment engine UI
+│   │   │   ├── WellnessScoreScreen.tsx   # Real Sanctuary Score results
+│   │   │   ├── SignupScreen.tsx          # Permanent category signup
+│   │   │   ├── LoginScreen.tsx           # Authentication login
+│   │   │   └── ActiveSessionScreen.tsx   # Realtime companion session
+│   │   │
+│   │   ├── admin/                        # Admin Portal Submodules
+│   │   │   ├── AdminMainDashboard.tsx    # Admin tabs shell
+│   │   │   ├── overview/AdminOverviewTab.tsx
+│   │   │   ├── users/UserManagementTab.tsx
+│   │   │   ├── content/ContentManagementTab.tsx
+│   │   │   ├── system/SystemHealthTab.tsx
+│   │   │   └── therapists/TherapistVerificationTab.tsx
+│   │   │
+│   │   ├── shell/                        # Application Navigation Shell
+│   │   │   ├── AppShell.tsx              # Responsive container
+│   │   │   ├── DesktopSidebar.tsx        # Left persistent sidebar
+│   │   │   ├── MobileDrawer.tsx          # Bottom/drawer navigation for mobile
+│   │   │   └── PublicNavbar.tsx          # Navbar for unauthenticated pages
+│   │   │
+│   │   └── ui/                           # Reusable UI Primitives
+│   │       ├── SanctuaryScoreModal.tsx   # First-time dashboard score discovery popup
+│   │       ├── ScreenHeader.tsx          # Unified back/title navigation header
+│   │       ├── DobPicker.tsx             # Custom date of birth picker
+│   │       ├── GenderSelect.tsx          # Gender selection dropdown
+│   │       ├── CustomSelect.tsx          # Styled glassmorphic dropdown
+│   │       ├── FormInput.tsx             # Floating-label form inputs
+│   │       └── Logo.tsx                  # Manraah brand logo with responsive sizing
+│   │
+│   └── lib/                              # Frontend Business Logic & State
+│       ├── assessment/                   # 10-Question datasets for all 9 categories
+│       │   ├── assessmentEngine.ts       # Question resolver & answer builder
+│       │   ├── scoring.ts                # Pure score algorithm (Max 50 points)
+│       │   ├── wellness.ts               # Wellness level mapping & messages
+│       │   └── questions/                # Category question files
+│       ├── context/                      # React Context Providers
+│       │   ├── WellnessContext.tsx       # Global dashboard, check-in, streak state
+│       │   ├── AssessmentContext.tsx     # Active assessment state
+│       │   └── CategoryContext.tsx       # Selected category state
+│       ├── realtime/                     # Socket.IO client
+│       │   └── socketClient.ts           # Dynamic NEXT_PUBLIC_SOCKET_URL connection
+│       ├── webrtc/                       # WebRTC Voice Signaling
+│       │   └── iceConfig.ts              # STUN/TURN server configuration
+│       └── constants.ts                  # Category badges & metadata
+│
+├── backend/                              # Server-Side Core Logic
+│   ├── auth/                             # Node scrypt password hashing & sessions
+│   │   ├── auth.ts                       # Better-Auth configuration
+│   │   ├── client.ts                     # Client-side session helpers
+│   │   ├── session.ts                    # Request cookie parser
+│   │   └── sanctuary.ts                  # Anonymous sanctuary name generator
+│   ├── db/                               # Database Connection Pool
+│   │   ├── client.ts                     # Neon PostgreSQL serverless client
+│   │   └── schema.ts                     # Drizzle ORM schema definitions
+│   ├── queries/                          # Pure SQL application queries
+│   │   ├── assessment.ts                 # Sanctuary Score queries & streaks
+│   │   └── mood.ts                       # Mood history, weekly & monthly summaries
+│   └── types/                            # Shared TypeScript interfaces & models
+│
+├── database/                             # Database Migrations (Zero runtime DDL)
+│   └── migrations/
+│       ├── 001_initial_schema.sql        # Users & sessions
+│       ├── 002_assessment_questions.sql  # Categories & questions schema
+│       ├── 003_assessment_responses.sql  # Assessment answers schema
+│       ├── 004_sanctuary_scores.sql      # Assessments (0-50 score & level)
+│       ├── 005_meditation_and_indexes.sql# Meditation logs & performance indexes
+│       └── 006_user_initial_answers.sql  # Initial screening answers JSON column
+│
+├── server/                               # Realtime Standalone Microservice
+│   └── socket-server.js                  # Socket.IO & WebRTC signaling server with CORS
+│
+├── middleware.ts                         # Edge route protection & auth redirects
+├── tailwind.config.ts                    # Lavender color tokens & font mappings
+└── package.json                          # Dependencies & build scripts
+
+
+================================================================================
+3. CORE ARCHITECTURAL PRINCIPLES
+================================================================================
+
+1. PERMANENT CATEGORY JOURNEY
+   - User chooses 1 of 9 categories during onboarding (e.g. Student, Parent, Young Pro).
+   - Stored permanently in the database on user creation.
+   - Strictly read-only on dashboards, settings, and profile screens.
+
+2. SANCTUARY SCORE DISCOVERY
+   - 3 screening questions for new visitors (stored locally, no DB footprint).
+   - 10 category-specific assessment questions (Scores 1 to 5 per question = Max 50).
+   - Calculated server-side by /api/assessment and saved to Neon DB.
+   - First-time dashboard visit shows a gentle, dismissible SanctuaryScoreModal.
+
+3. SECURITY & PRIVACY
+   - Anonymous Sanctuary Names (e.g. "Gentle Bloom") used by default. Real names never required.
+   - Server-side validation on all category questions (client categories not trusted blindly).
+   - Passwords hashed with Node crypto scrypt.
+   - JWT / Session cookies managed with Lax same-site policies.
+
+4. REALTIME SOCKET.IO CLIENT
+   - Frontend reads process.env.NEXT_PUBLIC_SOCKET_URL in production.
+   - Sensible fallback to http://localhost:3005 in local development.
+   - Server CORS explicitly allows production Render origin and localhost.
+
+================================================================================
