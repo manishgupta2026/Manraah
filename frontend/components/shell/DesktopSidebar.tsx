@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { MAIN_NAV_ITEMS } from "@/frontend/lib/constants";
 import { getClientSession } from "@/backend/auth/client";
 import { getInitials, getPastelBgColor, getPastelTextColor } from "@/frontend/lib/avatar-helper";
+import Logo from "@/frontend/components/ui/Logo";
 
 export default function DesktopSidebar() {
   const pathname = usePathname();
@@ -47,14 +48,10 @@ export default function DesktopSidebar() {
   return (
     <aside className="hidden md:flex flex-col fixed top-0 left-0 h-screen w-[80px] lg:w-[260px] bg-white border-r border-surface-variant/40 z-30 shadow-soft transition-all duration-300">
       {/* Brand Header */}
-      <div className="p-3 lg:px-5 lg:py-4 flex items-center justify-center lg:justify-start gap-3 border-b border-surface-variant/30 shrink-0">
-        <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center text-primary shadow-xs shrink-0">
-          <span className="material-symbols-outlined text-xl">spa</span>
-        </div>
-        <div className="hidden lg:block">
-          <h1 className="font-heading font-black text-base text-primary leading-tight">Manraah</h1>
-          <p className="text-[10px] text-on-surface-variant/70 font-bold uppercase tracking-wider">Sanctuary for Mind</p>
-        </div>
+      <div className="p-3 lg:px-5 lg:py-4 flex items-center justify-center lg:justify-start border-b border-surface-variant/30 shrink-0">
+        <Link href="/" className="inline-block hover:opacity-90 transition-opacity">
+          <Logo size="sm" className="h-7 lg:h-8 w-auto" />
+        </Link>
       </div>
 
       {/* Navigation Links */}

@@ -11,20 +11,35 @@ import DesktopSidebar from "./DesktopSidebar";
 import MobileTabBar from "./MobileTabBar";
 import MobileDrawer from "./MobileDrawer";
 import Header from "./Header";
+import PublicNavbar from "./PublicNavbar";
 import AdminHeader from "../admin/shell/AdminHeader";
 
 const STANDALONE_ROUTES = [
   "/",
+  "/about",
   "/category-selection",
   "/assessment",
   "/wellness-score",
   "/login",
   "/signup",
+  "/forgot-password",
+  "/terms",
+  "/privacy",
+  "/security",
+  "/contact",
 ];
 
 export default function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const isStandalone = STANDALONE_ROUTES.includes(pathname);
+  const isStandalone =
+    STANDALONE_ROUTES.includes(pathname) ||
+    pathname.startsWith("/about") ||
+    pathname.startsWith("/forgot-password") ||
+    pathname.startsWith("/terms") ||
+    pathname.startsWith("/privacy") ||
+    pathname.startsWith("/security") ||
+    pathname.startsWith("/contact");
+
   const isAdminRoute = pathname.startsWith("/admin") || pathname.startsWith("/companion");
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
 
@@ -41,9 +56,10 @@ export default function AppShell({ children }: { children: ReactNode }) {
         <WellnessProvider>
           <HeaderProvider>
             {isStandalone ? (
-              /* Standalone Onboarding / Auth Layout */
-              <div className="min-h-screen bg-background text-on-background font-sans antialiased">
-                {children}
+              /* Standalone Onboarding / Auth / Public Layout with Global Public Header */
+              <div className="min-h-screen bg-background text-on-background font-sans antialiased flex flex-col">
+                <PublicNavbar />
+                <div className="flex-1">{children}</div>
               </div>
             ) : isAdminRoute ? (
               /* Dedicated Admin Listener Portal Shell - Isolated from Regular User Navigation */

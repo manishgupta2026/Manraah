@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import WelcomeFlow from "@/frontend/components/screens/WelcomeFlow";
+import MarketingLandingPage from "@/frontend/components/screens/MarketingLandingPage";
 import InitialQuestionsFlow from "@/frontend/components/screens/InitialQuestionsFlow";
 
 export default function Home() {
@@ -29,5 +29,6 @@ export default function Home() {
     return <InitialQuestionsFlow onComplete={() => setHasCompletedInitial(true)} />;
   }
 
-  return <WelcomeFlow />;
+  return <MarketingLandingPage />;
 }
+

@@ -40,7 +40,22 @@ function hashPassword(password: string): string {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { email, password, sanctuaryName, category, initialAnswers, answers, computedScore, percentage, wellnessLevel } = body;
+    const {
+      email,
+      password,
+      name,
+      sanctuaryName,
+      category,
+      phone,
+      dob,
+      country,
+      gender,
+      initialAnswers,
+      answers,
+      computedScore,
+      percentage,
+      wellnessLevel,
+    } = body;
 
     // 1. Input validation
     if (!email || typeof email !== "string" || !email.trim()) {
@@ -103,15 +118,34 @@ export async function POST(request: Request) {
       finalSanctuaryName = await generateUniqueSanctuaryName();
     }
 
+    const fullName = name && typeof name === "string" && name.trim() ? name.trim() : finalSanctuaryName;
+    const cleanPhone = phone && typeof phone === "string" ? phone.trim() : null;
+    const cleanDob = dob && typeof dob === "string" ? dob.trim() : null;
+    const cleanCountry = country && typeof country === "string" ? country.trim() : null;
+    const cleanGender = gender && typeof gender === "string" ? gender.trim() : null;
+
     // 5. Create user ID & hash password
     const userId = "usr_" + Date.now() + "_" + Math.random().toString(36).substring(2, 7);
     const passwordHash = hashPassword(password);
     const initialJson = initialAnswers ? JSON.stringify(initialAnswers) : "{}";
 
-    // 6. Insert user into Neon PostgreSQL with permanent category
+    // Ensure table has optional columns if not present
+    try {
+      await sql`
+        ALTER TABLE users 
+        ADD COLUMN IF NOT EXISTS phone VARCHAR(50),
+        ADD COLUMN IF NOT EXISTS dob VARCHAR(50),
+        ADD COLUMN IF NOT EXISTS country VARCHAR(100),
+        ADD COLUMN IF NOT EXISTS gender VARCHAR(50);
+      `;
+    } catch {
+      // ignore if alter fails due to perms or existing
+    }
+
+    // 6. Insert user into Neon PostgreSQL with permanent category & details
     await sql`
-      INSERT INTO users (id, name, email, password_hash, sanctuary_name, selected_category, streak_days, mindfulness_minutes, current_mood, initial_answers_json)
-      VALUES (${userId}, ${finalSanctuaryName}, ${cleanEmail}, ${passwordHash}, ${finalSanctuaryName}, ${validatedCategory}, 1, 0, 'Sanctuary Member', ${initialJson}::jsonb)
+      INSERT INTO users (id, name, email, password_hash, sanctuary_name, selected_category, phone, dob, country, gender, streak_days, mindfulness_minutes, current_mood, initial_answers_json)
+      VALUES (${userId}, ${fullName}, ${cleanEmail}, ${passwordHash}, ${finalSanctuaryName}, ${validatedCategory}, ${cleanPhone}, ${cleanDob}, ${cleanCountry}, ${cleanGender}, 1, 0, 'Sanctuary Member', ${initialJson}::jsonb)
     `;
 
     // 7. Save assessment if provided
@@ -128,9 +162,13 @@ export async function POST(request: Request) {
 
     const userProfile = {
       id: userId,
-      name: finalSanctuaryName,
+      name: fullName,
       sanctuaryName: finalSanctuaryName,
       email: cleanEmail,
+      phone: cleanPhone || undefined,
+      dob: cleanDob || undefined,
+      country: cleanCountry || undefined,
+      gender: cleanGender || undefined,
       avatar: "/images/user_avatar.jpg",
       streakDays: 1,
       mindfulnessMinutes: 0,

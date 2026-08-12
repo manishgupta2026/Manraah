@@ -11,7 +11,11 @@ export async function signUp(
   answers?: any,
   computedScore?: number,
   percentage?: number,
-  wellnessLevel?: string
+  wellnessLevel?: string,
+  phone?: string,
+  dob?: string,
+  country?: string,
+  gender?: string
 ): Promise<AuthSession> {
   const res = await fetch("/api/auth/signup", {
     method: "POST",
@@ -27,6 +31,10 @@ export async function signUp(
       computedScore,
       percentage,
       wellnessLevel,
+      phone,
+      dob,
+      country,
+      gender,
     }),
   });
 

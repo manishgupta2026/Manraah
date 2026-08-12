@@ -20,6 +20,11 @@ const workSans = Work_Sans({
 export const metadata: Metadata = {
   title: "Manraah — AI-Powered Mental Wellness Platform",
   description: "A sanctuary for mind and soul. Compassionate clarity bridging AI capabilities with soft human wellness care.",
+  icons: {
+    icon: "/logo/logo.svg",
+    shortcut: "/logo/logo.svg",
+    apple: "/logo/logo.svg",
+  },
 };
 
 export default function RootLayout({

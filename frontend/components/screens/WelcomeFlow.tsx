@@ -1,10 +1,16 @@
 "use client";
 
+/**
+ * ARCHIVED / RETIRED COMPONENT
+ * Replaced by MarketingLandingPage.tsx for the public-facing marketing landing page at root route /.
+ */
+
 import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { getClientSession, signOut } from "@/backend/auth/client";
+import Logo from "@/frontend/components/ui/Logo";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -65,15 +71,9 @@ export default function WelcomeFlow() {
     <div className="min-h-screen bg-surface flex flex-col select-none">
       {/* Header */}
       <header className="w-full max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary shadow-xs">
-            <span className="material-symbols-outlined text-2xl font-bold">spa</span>
-          </div>
-          <div>
-            <h1 className="font-heading font-extrabold text-base text-primary tracking-tight leading-none">Manraah</h1>
-            <p className="text-[8px] text-on-surface-variant/75 font-bold uppercase tracking-wider mt-0.5">Sanctuary for Mind</p>
-          </div>
-        </div>
+        <Link href="/" className="inline-block hover:opacity-90 transition-opacity">
+          <Logo size="md" priority className="h-8 sm:h-9" />
+        </Link>
 
         <Link
           href="/login"
