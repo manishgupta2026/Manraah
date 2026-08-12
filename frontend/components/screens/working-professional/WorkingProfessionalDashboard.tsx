@@ -15,6 +15,7 @@ import AICompanionPresenceCard from "./AICompanionPresenceCard";
 import RecentRhythmCard from "./RecentRhythmCard";
 import DailyInsightCard from "./DailyInsightCard";
 import BreathingModal from "./BreathingModal";
+import RainAmbient from "@/frontend/components/ambient/RainAmbient";
 
 // Stagger animation container
 const containerVariants = {
@@ -91,23 +92,28 @@ export default function WorkingProfessionalDashboard() {
   const history = wpData?.history || dashboardData?.history || dashboardData?.moodHistory || [];
 
   return (
-    <div className={`max-w-7xl mx-auto py-3 md:py-6 px-3 sm:px-6 space-y-6 select-none animate-fadeIn transition-colors duration-500 ${isAmbientMode ? "dark" : ""}`}>
+    <div className="relative max-w-7xl mx-auto py-3 md:py-6 px-3 sm:px-6 space-y-6 select-none animate-fadeIn">
+      {/* 🌧 Atmospheric Rain Ambience Layer (Behind UI, pointer-events: none, theme untouched) */}
+      <RainAmbient isActive={isAmbientMode} />
+
       {/* 1. HERO EXPERIENCE */}
-      <WorkingProfessionalHero
-        sanctuaryName={sanctuaryName}
-        streakDays={streakDays}
-        onOpenReset={() => setIsResetOpen(true)}
-        onOpenAI={() => router.push("/ai-chat")}
-        isAmbientMode={isAmbientMode}
-        onToggleAmbient={() => setIsAmbientMode(!isAmbientMode)}
-      />
+      <div className="relative z-10">
+        <WorkingProfessionalHero
+          sanctuaryName={sanctuaryName}
+          streakDays={streakDays}
+          onOpenReset={() => setIsResetOpen(true)}
+          onOpenAI={() => router.push("/ai-chat")}
+          isAmbientMode={isAmbientMode}
+          onToggleAmbient={() => setIsAmbientMode(!isAmbientMode)}
+        />
+      </div>
 
       {/* 2. MAIN SANCTUARY GRIDS */}
       <motion.div
         variants={containerVariants}
         initial="hidden"
         animate="show"
-        className="space-y-6"
+        className="relative z-10 space-y-6"
       >
         {/* ROW 2: Arriving Check-in (5 cols) + Leave Work at Work (4 cols) + Sanctuary Score (3 cols) */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-5">

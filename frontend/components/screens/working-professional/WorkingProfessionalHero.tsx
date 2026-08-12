@@ -34,11 +34,7 @@ export default function WorkingProfessionalHero({
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8, ease: "easeOut" }}
-      className={`relative rounded-[36px] overflow-hidden border transition-all duration-1000 p-8 sm:p-10 lg:p-11 min-h-[340px] flex flex-col md:flex-row items-center justify-between gap-8 shadow-[0_12px_45px_rgba(95,78,165,0.04)] ${
-        isAmbientMode
-          ? "bg-gradient-to-r from-[#1C172E] via-[#241E3D] to-[#181427] border-purple-500/20 text-white"
-          : "bg-gradient-to-r from-[#FBF9FE] via-[#F3EDFB] to-[#E9E1F7] border-purple-100/60 text-[#231E39]"
-      }`}
+      className="relative rounded-[36px] overflow-hidden border border-purple-100/60 p-8 sm:p-10 lg:p-11 min-h-[340px] flex flex-col md:flex-row items-center justify-between gap-8 shadow-[0_12px_45px_rgba(95,78,165,0.04)] bg-gradient-to-r from-[#FBF9FE] via-[#F3EDFB] to-[#E9E1F7] text-[#231E39]"
     >
       {/* Ultra-Slow Ambient Breathing Glows */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden select-none">
@@ -47,7 +43,7 @@ export default function WorkingProfessionalHero({
             scale: [1, 1.12, 1],
             x: [0, 15, 0],
             y: [0, -10, 0],
-            opacity: isAmbientMode ? [0.35, 0.55, 0.35] : [0.25, 0.4, 0.25],
+            opacity: [0.25, 0.4, 0.25],
           }}
           transition={{ duration: 16, repeat: Infinity, ease: "easeInOut" }}
           className="absolute -top-16 -left-16 w-[450px] h-[450px] rounded-full bg-[#EAE2FB] blur-3xl"
@@ -57,7 +53,7 @@ export default function WorkingProfessionalHero({
             scale: [1.08, 0.95, 1.08],
             x: [0, -15, 0],
             y: [0, 12, 0],
-            opacity: isAmbientMode ? [0.25, 0.45, 0.25] : [0.15, 0.28, 0.15],
+            opacity: [0.15, 0.28, 0.15],
           }}
           transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
           className="absolute -bottom-16 right-1/3 w-[400px] h-[400px] rounded-full bg-[#CFF4EB] blur-3xl"
@@ -68,29 +64,17 @@ export default function WorkingProfessionalHero({
       <div className="relative z-10 max-w-xl space-y-4">
         {/* Soft Contextual Pills */}
         <div className="flex flex-wrap items-center gap-2">
-          <span className={`inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-[11px] font-heading font-medium backdrop-blur-md border shadow-2xs ${
-            isAmbientMode
-              ? "bg-white/10 text-purple-200 border-white/10"
-              : "bg-white/90 text-[#6351A5] border-purple-100/70"
-          }`}>
+          <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-[11px] font-heading font-medium backdrop-blur-md border shadow-2xs bg-white/90 text-[#6351A5] border-purple-100/70">
             <span className="text-[10px]">📅</span>
             <span>{getTodayFormatted()}</span>
           </span>
 
-          <span className={`inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-[11px] font-heading font-medium backdrop-blur-md border shadow-2xs ${
-            isAmbientMode
-              ? "bg-white/10 text-amber-200 border-white/10"
-              : "bg-white/90 text-[#B45309] border-amber-100/60"
-          }`}>
+          <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-[11px] font-heading font-medium backdrop-blur-md border shadow-2xs bg-white/90 text-[#B45309] border-amber-100/60">
             <span className="text-[10px]">🔥</span>
             <span>{streakDays}-day sanctuary streak</span>
           </span>
 
-          <span className={`inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-[11px] font-heading font-medium backdrop-blur-md border shadow-2xs ${
-            isAmbientMode
-              ? "bg-white/10 text-purple-200 border-white/10"
-              : "bg-white/90 text-[#534F64] border-purple-100/70"
-          }`}>
+          <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-[11px] font-heading font-medium backdrop-blur-md border shadow-2xs bg-white/90 text-[#534F64] border-purple-100/70">
             <span className="text-[10px]">💼</span>
             <span>Working Professional</span>
           </span>
@@ -98,16 +82,16 @@ export default function WorkingProfessionalHero({
 
         {/* Headings */}
         <div className="space-y-1.5 pt-1">
-          <h1 className="text-2xl sm:text-3xl lg:text-[34px] font-heading font-extrabold tracking-tight leading-tight">
+          <h1 className="text-2xl sm:text-3xl lg:text-[34px] font-heading font-extrabold tracking-tight leading-tight text-[#231E39]">
             Good evening,<br />
-            <span className={isAmbientMode ? "text-[#D8CCFD]" : "text-[#6351A5]"}>{displayName}</span> 🌿
+            <span className="text-[#6351A5]">{displayName}</span> 🌿
           </h1>
 
-          <h2 className="text-sm sm:text-base font-heading font-bold opacity-90 pt-1 text-[#231E39] dark:text-white/90">
+          <h2 className="text-sm sm:text-base font-heading font-bold pt-1 text-[#231E39]">
             Work can wait. Your mind doesn't have to.
           </h2>
 
-          <p className="text-xs sm:text-sm text-[#534F64] dark:text-purple-200/80 font-normal leading-relaxed max-w-md pt-0.5">
+          <p className="text-xs sm:text-sm text-[#534F64] font-normal leading-relaxed max-w-md pt-0.5">
             You've made it through enough today. Take a moment to slow down, breathe, and come back to yourself.
           </p>
         </div>
@@ -127,26 +111,24 @@ export default function WorkingProfessionalHero({
             onClick={onOpenAI}
             whileHover={{ scale: 1.015 }}
             whileTap={{ scale: 0.985 }}
-            className={`px-5 py-2.5 rounded-full font-heading font-semibold text-xs sm:text-sm shadow-2xs transition-all flex items-center gap-1.5 cursor-pointer backdrop-blur-sm border ${
-              isAmbientMode
-                ? "bg-white/10 hover:bg-white/15 text-white border-white/15"
-                : "bg-white/95 hover:bg-white text-[#6351A5] border-purple-200/70"
-            }`}
+            className="px-5 py-2.5 rounded-full font-heading font-semibold text-xs sm:text-sm shadow-2xs transition-all flex items-center gap-1.5 cursor-pointer backdrop-blur-sm border bg-white/95 hover:bg-white text-[#6351A5] border-purple-200/70"
           >
             <span>✨ Talk to AI Companion →</span>
           </motion.button>
 
+          {/* Ambient Rain Audio & Visual Toggle */}
           <motion.button
             onClick={onToggleAmbient}
             whileHover={{ scale: 1.015 }}
             whileTap={{ scale: 0.985 }}
+            aria-label={isAmbientMode ? "Stop ambient rain sound and visuals" : "Play ambient rain sound and visuals"}
             className={`px-4 py-2.5 rounded-full font-heading font-medium text-xs shadow-2xs transition-all flex items-center gap-1.5 cursor-pointer backdrop-blur-sm border ${
               isAmbientMode
-                ? "bg-[#6351A5] text-white border-purple-400/40"
-                : "bg-white/60 hover:bg-white/90 text-[#534F64] border-purple-100/60"
+                ? "bg-[#6351A5] text-white border-purple-300 shadow-[0_2px_12px_rgba(99,81,165,0.25)]"
+                : "bg-white/80 hover:bg-white text-[#534F64] border-purple-100/80"
             }`}
           >
-            <span>{isAmbientMode ? "⏸ Ambient on" : "▶ Play ambient"}</span>
+            <span>{isAmbientMode ? "🌧 Rain ambience" : "▶ Play ambient"}</span>
           </motion.button>
         </div>
       </div>
