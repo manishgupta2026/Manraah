@@ -100,7 +100,7 @@ export default function DesktopSidebar() {
           )}
           <div className="flex-1 min-w-0">
             <p className="text-xs font-extrabold text-on-surface truncate leading-tight">{userName}</p>
-            <p className="text-[10px] text-on-surface-variant/70 truncate leading-tight mt-0.5">Settings & Profile</p>
+            <p className="text-[10px] text-on-surface-variant/70 truncate leading-tight mt-0.5">{getCategoryJourney(category)}</p>
           </div>
           <span className="material-symbols-outlined text-lg text-outline">settings</span>
         </Link>

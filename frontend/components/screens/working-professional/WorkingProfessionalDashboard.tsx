@@ -6,45 +6,45 @@ import { motion } from "framer-motion";
 import { useWellness } from "@/frontend/lib/context/WellnessContext";
 import { getClientSession } from "@/backend/auth/client";
 
-import WelcomeHero from "./WelcomeHero";
-import DailyCheckinCard from "./DailyCheckinCard";
-import WorkLifeBalanceCard from "./WorkLifeBalanceCard";
+import WorkingProfessionalHero from "./WorkingProfessionalHero";
+import ArrivingCheckInCard from "./ArrivingCheckInCard";
+import YourBalanceCard from "./YourBalanceCard";
 import SanctuaryScoreCard from "./SanctuaryScoreCard";
-import DecompressCard from "./DecompressCard";
-import BreathingResetModal from "./BreathingResetModal";
-import AICompanionOrbCard from "./AICompanionOrbCard";
-import WorkdayReflectionCard from "./WorkdayReflectionCard";
-import WellnessTrendCard from "./WellnessTrendCard";
+import LeaveWorkAtWorkCard from "./LeaveWorkAtWorkCard";
+import SomethingOnYourMindCard from "./SomethingOnYourMindCard";
+import EveningReflectionCard from "./EveningReflectionCard";
+import YourWeekGentlyCard from "./YourWeekGentlyCard";
 import DailyInsightCard from "./DailyInsightCard";
+import BreathingModal from "./BreathingModal";
 
-// Container stagger animation variants
+// Stagger animation container
 const containerVariants = {
   hidden: { opacity: 0 },
   show: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.08,
-      delayChildren: 0.05,
+      staggerChildren: 0.06,
+      delayChildren: 0.04,
     },
   },
 };
 
-const cardVariants = {
-  hidden: { opacity: 0, y: 18 },
+const itemVariants = {
+  hidden: { opacity: 0, y: 16 },
   show: {
     opacity: 1,
     y: 0,
-    transition: { type: "spring", stiffness: 95, damping: 15 },
+    transition: { type: "spring", stiffness: 90, damping: 14 },
   },
 };
 
 export default function WorkingProfessionalDashboard() {
   const router = useRouter();
-  const { dashboardData, submitCheckIn, refetchDashboardData, isLoading } = useWellness();
-  const [isBreathingModalOpen, setIsBreathingModalOpen] = useState<boolean>(false);
+  const { dashboardData, submitCheckIn, isLoading } = useWellness();
+  const [isResetOpen, setIsResetOpen] = useState<boolean>(false);
   const [wpData, setWpData] = useState<any | null>(null);
 
-  // Progressive parallel fetch for working-professional-specific balance and reflections
+  // Progressive parallel fetch for working professional details
   const loadWpData = useCallback(async () => {
     try {
       const res = await fetch("/api/dashboard/working-professional");
@@ -53,7 +53,7 @@ export default function WorkingProfessionalDashboard() {
         setWpData(json);
       }
     } catch (err) {
-      console.warn("Could not fetch working professional details:", err);
+      console.warn("Could not load working professional data:", err);
     }
   }, []);
 
@@ -69,25 +69,21 @@ export default function WorkingProfessionalDashboard() {
     }
   }, [router]);
 
-  // Handle saving check-in dynamically
   const handleSaveCheckin = async (payload: {
     mood: string;
     energy: number;
     stress: string;
-    sleep?: number;
-    reflection?: string;
   }) => {
     try {
       await submitCheckIn(payload);
       await loadWpData();
       return true;
     } catch (err) {
-      console.error("Check-in error:", err);
+      console.error("Failed to save checkin:", err);
       return false;
     }
   };
 
-  // Handle saving workday reflection dynamically
   const handleSaveReflection = async (content: string) => {
     try {
       const res = await fetch("/api/reflections", {
@@ -106,89 +102,92 @@ export default function WorkingProfessionalDashboard() {
       }
       return false;
     } catch (err) {
-      console.error("Reflection save error:", err);
+      console.error("Failed to save reflection:", err);
       return false;
     }
   };
 
   const user = wpData?.user || dashboardData?.user;
-  const sanctuaryName = user?.sanctuaryName || user?.name || "Gentle Willow";
+  const sanctuaryName = user?.sanctuaryName || user?.name || "Golden Sparrow 62";
   const streakDays = wpData?.streak?.currentStreak || dashboardData?.streak?.currentStreak || user?.streakDays || 3;
   const todayMood = wpData?.todayMood || dashboardData?.todayMood;
   const score = user?.assessmentPercentage || user?.assessmentScore || 75;
-  const level = user?.wellnessLevel || "Stable";
-  const history = wpData?.history || dashboardData?.history || dashboardData?.moodHistory || [];
+  const level = user?.wellnessLevel || "STABLE";
   const balance = wpData?.balance;
+  const history = wpData?.history || dashboardData?.history || dashboardData?.moodHistory || [];
   const latestReflection = wpData?.recentReflections?.[0]?.content || "";
-  const oneInsight = wpData?.insights?.[0]?.insightText || dashboardData?.insights?.[0]?.insightText;
 
   return (
-    <div className="max-w-7xl mx-auto py-2 md:py-4 px-2 md:px-4 space-y-6 select-none animate-fadeIn">
-      {/* 1. First View / Hero Section (occupies 35-40% of viewport) */}
-      <WelcomeHero
+    <div className="max-w-7xl mx-auto py-3 md:py-6 px-3 sm:px-6 space-y-6 select-none animate-fadeIn">
+      {/* ROW 1: Hero Experience */}
+      <WorkingProfessionalHero
         sanctuaryName={sanctuaryName}
         streakDays={streakDays}
-        onOpenReset={() => setIsBreathingModalOpen(true)}
+        onOpenReset={() => setIsResetOpen(true)}
         onOpenAI={() => router.push("/ai-chat")}
       />
 
-      {/* Main Bento Grid Layout */}
+      {/* Main Grid Layout */}
       <motion.div
         variants={containerVariants}
         initial="hidden"
         animate="show"
-        className="grid grid-cols-1 md:grid-cols-12 gap-6"
+        className="space-y-6"
       >
-        {/* ROW 1: Today's Check-in (col-span-7) + Decompress Card (col-span-5) */}
-        <motion.div variants={cardVariants} className="col-span-12 md:col-span-7">
-          <DailyCheckinCard
-            todayMood={todayMood}
-            onSaveCheckin={handleSaveCheckin}
-          />
-        </motion.div>
+        {/* ROW 2: Arriving Check-in + Your Balance + Sanctuary Score (3 Cards) */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <motion.div variants={itemVariants}>
+            <ArrivingCheckInCard
+              todayMood={todayMood}
+              onSaveCheckin={handleSaveCheckin}
+            />
+          </motion.div>
 
-        <motion.div variants={cardVariants} className="col-span-12 md:col-span-5">
-          <DecompressCard
-            onStartReset={() => setIsBreathingModalOpen(true)}
-          />
-        </motion.div>
+          <motion.div variants={itemVariants}>
+            <YourBalanceCard balance={balance} />
+          </motion.div>
 
-        {/* ROW 2: Work/Life Balance (col-span-6) + Sanctuary Score (col-span-6) */}
-        <motion.div variants={cardVariants} className="col-span-12 md:col-span-6">
-          <WorkLifeBalanceCard balance={balance} />
-        </motion.div>
+          <motion.div variants={itemVariants}>
+            <SanctuaryScoreCard score={score} level={level} />
+          </motion.div>
+        </div>
 
-        <motion.div variants={cardVariants} className="col-span-12 md:col-span-6">
-          <SanctuaryScoreCard score={score} level={level} />
-        </motion.div>
+        {/* ROW 3: Leave Work at Work + Something on your mind + Evening reflection (3 Cards) */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <motion.div variants={itemVariants}>
+            <LeaveWorkAtWorkCard
+              onStartReset={() => setIsResetOpen(true)}
+            />
+          </motion.div>
 
-        {/* ROW 3: AI Companion (col-span-6) + Workday Reflection (col-span-6) */}
-        <motion.div variants={cardVariants} className="col-span-12 md:col-span-6">
-          <AICompanionOrbCard todayMood={todayMood} />
-        </motion.div>
+          <motion.div variants={itemVariants}>
+            <SomethingOnYourMindCard />
+          </motion.div>
 
-        <motion.div variants={cardVariants} className="col-span-12 md:col-span-6">
-          <WorkdayReflectionCard
-            initialReflection={latestReflection}
-            onSaveReflection={handleSaveReflection}
-          />
-        </motion.div>
+          <motion.div variants={itemVariants}>
+            <EveningReflectionCard
+              initialContent={latestReflection}
+              onSaveReflection={handleSaveReflection}
+            />
+          </motion.div>
+        </div>
 
-        {/* ROW 4: 7-Day Wellness Trend (col-span-12) */}
-        <motion.div variants={cardVariants} className="col-span-12">
-          <WellnessTrendCard history={history} />
-        </motion.div>
+        {/* ROW 4: Your week, gently (7 cols) + Daily insight (5 cols) */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <motion.div variants={itemVariants} className="lg:col-span-7">
+            <YourWeekGentlyCard history={history} />
+          </motion.div>
 
-        {/* ROW 5: Single Daily Insight (col-span-12) */}
-        <motion.div variants={cardVariants} className="col-span-12">
-          <DailyInsightCard customInsight={oneInsight} />
-        </motion.div>
+          <motion.div variants={itemVariants} className="lg:col-span-5">
+            <DailyInsightCard />
+          </motion.div>
+        </div>
       </motion.div>
 
-      {/* Interactive 2-Minute Breathing Reset Modal */}
-      <BreathingResetModal
-        isOpen={isBreathingModalOpen}
-        onClose={() => setIsBreathingModalOpen(false)}
+      {/* 2-Minute Breathing Reset Modal */}
+      <BreathingModal
+        isOpen={isResetOpen}
+        onClose={() => setIsResetOpen(false)}
       />
     </div>
   );
