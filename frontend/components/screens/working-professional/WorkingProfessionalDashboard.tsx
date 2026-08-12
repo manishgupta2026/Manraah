@@ -7,13 +7,13 @@ import { useWellness } from "@/frontend/lib/context/WellnessContext";
 import { getClientSession } from "@/backend/auth/client";
 
 import WorkingProfessionalHero from "./WorkingProfessionalHero";
-import ArrivingCheckInCard from "./ArrivingCheckInCard";
-import YourBalanceCard from "./YourBalanceCard";
-import SanctuaryScoreCard from "./SanctuaryScoreCard";
+import DailyCheckInCard from "./DailyCheckInCard";
 import LeaveWorkAtWorkCard from "./LeaveWorkAtWorkCard";
-import SomethingOnYourMindCard from "./SomethingOnYourMindCard";
-import EveningReflectionCard from "./EveningReflectionCard";
-import YourWeekGentlyCard from "./YourWeekGentlyCard";
+import SanctuaryScoreCard from "./SanctuaryScoreCard";
+import WellnessToolsSection from "./WellnessToolsSection";
+import RecentRhythmCard from "./RecentRhythmCard";
+import WorkdayJournalCard from "./WorkdayJournalCard";
+import AICompanionPresenceCard from "./AICompanionPresenceCard";
 import DailyInsightCard from "./DailyInsightCard";
 import BreathingModal from "./BreathingModal";
 
@@ -30,7 +30,7 @@ const containerVariants = {
 };
 
 const itemVariants = {
-  hidden: { opacity: 0, y: 16 },
+  hidden: { opacity: 0, y: 14 },
   show: {
     opacity: 1,
     y: 0,
@@ -42,6 +42,7 @@ export default function WorkingProfessionalDashboard() {
   const router = useRouter();
   const { dashboardData, submitCheckIn, isLoading } = useWellness();
   const [isResetOpen, setIsResetOpen] = useState<boolean>(false);
+  const [isAmbientMode, setIsAmbientMode] = useState<boolean>(false);
   const [wpData, setWpData] = useState<any | null>(null);
 
   // Progressive parallel fetch for working professional details
@@ -69,18 +70,16 @@ export default function WorkingProfessionalDashboard() {
     }
   }, [router]);
 
-  const handleSaveCheckin = async (payload: {
-    mood: string;
-    energy: number;
-    stress: string;
-  }) => {
+  const handleSaveMood = async (mood: string) => {
     try {
-      await submitCheckIn(payload);
+      await submitCheckIn({
+        mood,
+        energy: 3,
+        stress: mood === "Stressed" || mood === "Overwhelmed" ? "High" : "Manageable",
+      });
       await loadWpData();
-      return true;
     } catch (err) {
-      console.error("Failed to save checkin:", err);
-      return false;
+      console.error("Failed to save mood:", err);
     }
   };
 
@@ -111,80 +110,80 @@ export default function WorkingProfessionalDashboard() {
   const sanctuaryName = user?.sanctuaryName || user?.name || "Golden Sparrow 62";
   const streakDays = wpData?.streak?.currentStreak || dashboardData?.streak?.currentStreak || user?.streakDays || 3;
   const todayMood = wpData?.todayMood || dashboardData?.todayMood;
-  const score = user?.assessmentPercentage || user?.assessmentScore || 75;
+  const score = user?.assessmentPercentage || user?.assessmentScore || 76;
   const level = user?.wellnessLevel || "STABLE";
-  const balance = wpData?.balance;
   const history = wpData?.history || dashboardData?.history || dashboardData?.moodHistory || [];
   const latestReflection = wpData?.recentReflections?.[0]?.content || "";
 
   return (
-    <div className="max-w-7xl mx-auto py-3 md:py-6 px-3 sm:px-6 space-y-6 select-none animate-fadeIn">
-      {/* ROW 1: Hero Experience */}
+    <div className={`max-w-7xl mx-auto py-3 md:py-6 px-3 sm:px-6 space-y-7 select-none animate-fadeIn transition-colors duration-500 ${isAmbientMode ? "dark" : ""}`}>
+      {/* 1. HERO EXPERIENCE */}
       <WorkingProfessionalHero
         sanctuaryName={sanctuaryName}
         streakDays={streakDays}
         onOpenReset={() => setIsResetOpen(true)}
         onOpenAI={() => router.push("/ai-chat")}
+        isAmbientMode={isAmbientMode}
+        onToggleAmbient={() => setIsAmbientMode(!isAmbientMode)}
       />
 
-      {/* Main Grid Layout */}
+      {/* 2. MAIN SANCTUARY GRIDS */}
       <motion.div
         variants={containerVariants}
         initial="hidden"
         animate="show"
-        className="space-y-6"
+        className="space-y-7"
       >
-        {/* ROW 2: Arriving Check-in + Your Balance + Sanctuary Score (3 Cards) */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <motion.div variants={itemVariants}>
-            <ArrivingCheckInCard
+        {/* ROW 2: Arriving Check-in (5 cols) + Leave Work at Work (4 cols) + Sanctuary Score (3 cols) */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-5">
+          <motion.div variants={itemVariants} className="lg:col-span-5">
+            <DailyCheckInCard
               todayMood={todayMood}
-              onSaveCheckin={handleSaveCheckin}
+              onSaveMood={handleSaveMood}
+              onStartReset={() => setIsResetOpen(true)}
             />
           </motion.div>
 
-          <motion.div variants={itemVariants}>
-            <YourBalanceCard balance={balance} />
-          </motion.div>
-
-          <motion.div variants={itemVariants}>
-            <SanctuaryScoreCard score={score} level={level} />
-          </motion.div>
-        </div>
-
-        {/* ROW 3: Leave Work at Work + Something on your mind + Evening reflection (3 Cards) */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <motion.div variants={itemVariants}>
+          <motion.div variants={itemVariants} className="lg:col-span-4">
             <LeaveWorkAtWorkCard
               onStartReset={() => setIsResetOpen(true)}
             />
           </motion.div>
 
-          <motion.div variants={itemVariants}>
-            <SomethingOnYourMindCard />
+          <motion.div variants={itemVariants} className="md:col-span-2 lg:col-span-3">
+            <SanctuaryScoreCard score={score} level={level} />
+          </motion.div>
+        </div>
+
+        {/* ROW 3: Wellness Tools for Your Journey (4 Horizontal Cards) */}
+        <motion.div variants={itemVariants}>
+          <WellnessToolsSection />
+        </motion.div>
+
+        {/* ROW 4: Rhythm + Journal + AI Companion / Daily Insight */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-5">
+          {/* Your Recent Rhythm */}
+          <motion.div variants={itemVariants} className="lg:col-span-4">
+            <RecentRhythmCard history={history} />
           </motion.div>
 
-          <motion.div variants={itemVariants}>
-            <EveningReflectionCard
+          {/* Leave the workday here. */}
+          <motion.div variants={itemVariants} className="lg:col-span-4">
+            <WorkdayJournalCard
               initialContent={latestReflection}
               onSaveReflection={handleSaveReflection}
             />
           </motion.div>
-        </div>
 
-        {/* ROW 4: Your week, gently (7 cols) + Daily insight (5 cols) */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          <motion.div variants={itemVariants} className="lg:col-span-7">
-            <YourWeekGentlyCard history={history} />
-          </motion.div>
-
-          <motion.div variants={itemVariants} className="lg:col-span-5">
+          {/* AI Companion Section & Daily Insight Stack */}
+          <motion.div variants={itemVariants} className="md:col-span-2 lg:col-span-4 space-y-5">
+            <AICompanionPresenceCard />
             <DailyInsightCard />
           </motion.div>
         </div>
       </motion.div>
 
-      {/* 2-Minute Breathing Reset Modal */}
+      {/* 2-Minute Calming Breathing Decompression Experience */}
       <BreathingModal
         isOpen={isResetOpen}
         onClose={() => setIsResetOpen(false)}

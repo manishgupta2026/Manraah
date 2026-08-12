@@ -5,35 +5,40 @@ import { motion } from "framer-motion";
 
 export default function DailyInsightCard() {
   return (
-    <div className="rounded-[28px] bg-white/85 backdrop-blur-xl border border-[#E6DEFF]/80 p-6 shadow-[0_6px_24px_rgba(95,78,165,0.03)] flex flex-col justify-between min-h-[260px] relative overflow-hidden">
+    <div className="rounded-[28px] bg-white/85 dark:bg-[#1E1933]/90 backdrop-blur-xl border border-[#E6DEFF]/80 dark:border-purple-500/20 p-6 shadow-[0_6px_24px_rgba(95,78,165,0.03)] flex flex-col justify-between min-h-[280px] relative overflow-hidden">
       {/* Background Soft Glow */}
-      <div className="absolute top-0 right-0 w-44 h-44 rounded-full bg-amber-100/25 blur-3xl pointer-events-none" />
+      <div className="absolute top-0 right-0 w-44 h-44 rounded-full bg-amber-100/25 dark:bg-amber-500/10 blur-3xl pointer-events-none" />
 
       {/* Header */}
       <div className="flex items-center gap-2 relative z-10">
-        <span className="text-base text-[#5F4EA5]">❝</span>
-        <h3 className="text-base font-heading font-extrabold text-[#1D192B]">
-          Daily insight
+        <span className="text-sm text-[#5F4EA5] dark:text-purple-300">❝</span>
+        <h3 className="text-base font-heading font-extrabold text-[#1D192B] dark:text-white">
+          Daily Insight
         </h3>
       </div>
 
-      {/* Content Row: Quote on Left + Lantern Illustration on Right */}
-      <div className="flex items-center justify-between gap-4 relative z-10 py-1 flex-1">
+      {/* Content Row */}
+      <div className="flex items-center justify-between gap-3 relative z-10 py-1 flex-1">
         {/* Quote Text */}
-        <p className="text-sm sm:text-base font-heading font-bold text-[#1D192B] leading-relaxed max-w-[240px]">
-          Rest isn't something you earn after being productive.
-        </p>
+        <div className="space-y-1.5 max-w-[200px]">
+          <p className="text-xs sm:text-sm font-heading font-bold text-[#1D192B] dark:text-white leading-relaxed">
+            Rest isn't something you earn after being productive.
+          </p>
+          <p className="text-[11px] text-[#797582] dark:text-purple-200/70 font-normal">
+            Give your mind the same patience you give your work.
+          </p>
+        </div>
 
         {/* Lantern Illustration with Warm Glow */}
-        <div className="relative w-28 h-28 sm:w-32 sm:h-32 shrink-0 flex items-center justify-center pointer-events-none select-none">
+        <div className="relative w-24 h-24 sm:w-28 sm:h-28 shrink-0 flex items-center justify-center pointer-events-none select-none">
           {/* Animated Warm Golden Halo */}
           <motion.div
             animate={{
-              scale: [1, 1.15, 1],
-              opacity: [0.5, 0.8, 0.5],
+              scale: [1, 1.2, 1],
+              opacity: [0.5, 0.85, 0.5],
             }}
             transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute w-16 h-16 rounded-full bg-amber-300/40 blur-xl"
+            className="absolute w-14 h-14 rounded-full bg-amber-300/40 blur-xl"
           />
 
           {/* Clean SVG Lantern / Sanctuary Lamp Artwork */}
@@ -56,7 +61,7 @@ export default function DailyInsightCard() {
             {/* Candle Inside */}
             <rect x="46" y="65" width="8" height="22" rx="2" fill="#FEF3C7" stroke="#FDE68A" strokeWidth="1" />
 
-            {/* Candle Flame (Glowing) */}
+            {/* Candle Flame */}
             <ellipse cx="50" cy="56" rx="4" ry="7" fill="#F59E0B" />
             <ellipse cx="50" cy="57" rx="2" ry="4" fill="#FEF08A" />
 
