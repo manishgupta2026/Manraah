@@ -88,13 +88,14 @@ export default function PublicFooter() {
             <h4 className="font-heading font-bold text-white text-xs uppercase tracking-wider">Product</h4>
             <ul className="space-y-2 text-xs text-white/70">
               <li><Link href="/how-it-works" className="hover:text-white transition-colors">How it Works</Link></li>
-              <li><Link href="/features" className="hover:text-white transition-colors">Features</Link></li>
+              <li><Link href="/features" className="hover:text-white transition-colors">Features Overview</Link></li>
               <li><Link href="/retreat" className="hover:text-white transition-colors">Daily Retreat</Link></li>
-              <li><Link href="/ai-chat" className="hover:text-white transition-colors">AI Companion</Link></li>
-              <li><Link href="/human-companion" className="hover:text-white transition-colors">Human Companion</Link></li>
-              <li><Link href="/professional-care" className="hover:text-white transition-colors">Professional Care</Link></li>
-              <li><Link href="/checkin" className="hover:text-white transition-colors">Mood Tracker</Link></li>
-              <li><Link href="/journal" className="hover:text-white transition-colors">Reflective Journal</Link></li>
+              <li><Link href="/features?tab=ai" className="hover:text-white transition-colors">AI Companion</Link></li>
+              <li><Link href="/features?tab=human" className="hover:text-white transition-colors">Human Companion</Link></li>
+              <li><Link href="/features?tab=pro" className="hover:text-white transition-colors">Professional Care</Link></li>
+              <li><Link href="/features?tab=mood" className="hover:text-white transition-colors">Mood Tracker</Link></li>
+              <li><Link href="/features?tab=journal" className="hover:text-white transition-colors">Reflective Journal</Link></li>
+              <li><Link href="/features?tab=meditation" className="hover:text-white transition-colors">Meditation &amp; Sleep</Link></li>
             </ul>
           </div>
 
@@ -102,11 +103,11 @@ export default function PublicFooter() {
           <div className="space-y-3 text-left">
             <h4 className="font-heading font-bold text-white text-xs uppercase tracking-wider">Categories</h4>
             <ul className="space-y-2 text-xs text-white/70">
-              <li><button onClick={() => handleSelectCategory("student")} className="hover:text-white transition-colors text-left cursor-pointer">Students</button></li>
-              <li><button onClick={() => handleSelectCategory("working_professional")} className="hover:text-white transition-colors text-left cursor-pointer">Working Professionals</button></li>
-              <li><button onClick={() => handleSelectCategory("parent")} className="hover:text-white transition-colors text-left cursor-pointer">Parents</button></li>
-              <li><button onClick={() => handleSelectCategory("couple")} className="hover:text-white transition-colors text-left cursor-pointer">Couples</button></li>
-              <li><button onClick={() => handleSelectCategory("other")} className="hover:text-white transition-colors text-left cursor-pointer">Other Life Paths</button></li>
+              <li><Link href="/#categories" className="hover:text-white transition-colors">Students</Link></li>
+              <li><Link href="/#categories" className="hover:text-white transition-colors">Working Professionals</Link></li>
+              <li><Link href="/#categories" className="hover:text-white transition-colors">Parents</Link></li>
+              <li><Link href="/#categories" className="hover:text-white transition-colors">Couples</Link></li>
+              <li><Link href="/category-selection" className="hover:text-white transition-colors">All Life Categories →</Link></li>
             </ul>
           </div>
 

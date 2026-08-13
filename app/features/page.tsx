@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, Suspense } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { signOut } from "@/backend/auth/client";
 
@@ -137,11 +137,23 @@ const FEATURES_DATA = [
   },
 ];
 
-export default function FeaturesPage() {
+function FeaturesContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [selectedPillar, setSelectedPillar] = useState<number>(0);
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
   const pillTabsRef = useRef<HTMLDivElement>(null);
+
+  // Read ?tab= from URL and auto-select matching pillar
+  useEffect(() => {
+    const tab = searchParams?.get("tab");
+    if (tab) {
+      const matchIdx = FEATURES_DATA.findIndex((f) => f.id === tab);
+      if (matchIdx !== -1) {
+        setSelectedPillar(matchIdx);
+      }
+    }
+  }, [searchParams]);
 
   // Auto-scroll active pill into view smoothly
   useEffect(() => {
@@ -660,5 +672,13 @@ export default function FeaturesPage() {
 
       </div>
     </div>
+  );
+}
+
+export default function FeaturesPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-surface" />}>
+      <FeaturesContent />
+    </Suspense>
   );
 }
