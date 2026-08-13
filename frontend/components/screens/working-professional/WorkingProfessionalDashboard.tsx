@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import { getClientSession } from "@/backend/auth/client";
 
 import WorkingProfessionalHero from "./WorkingProfessionalHero";
-import DailyCheckInCard from "./DailyCheckInCard";
+import DailyCheckInCard from "./DailyCheckinCard";
 import LeaveWorkAtWorkCard from "./LeaveWorkAtWorkCard";
 import SanctuaryScoreCard from "./SanctuaryScoreCard";
 import WellnessScoreCalculatorModal from "./WellnessScoreCalculatorModal";

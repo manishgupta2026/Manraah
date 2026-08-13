@@ -30,7 +30,7 @@ export default function ContactPage() {
             We&apos;re Here to Listen & Help
           </h1>
           <p className="text-xs text-on-surface-variant font-medium">
-            Have questions, feedback, or need assistance with your sanctuary account? Reach out anytime.
+            Have questions, feedback, or need assistance with your retreat account? Reach out anytime.
           </p>
         </div>
 

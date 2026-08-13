@@ -156,7 +156,7 @@ export default function DailyPrivacyReminder() {
             {/* Main Content */}
             <div className="space-y-3 z-10">
               <h2 className="text-2xl font-heading font-black text-on-surface leading-tight">
-                🌿 Your Sanctuary is Private
+                🌿 Your Retreat is Private
               </h2>
               <p className="text-sm font-medium text-on-surface-variant/90 leading-relaxed max-w-sm">
                 Everything you write, journal, and share inside Manraah remains private. This is your personal space to reflect honestly and safely.

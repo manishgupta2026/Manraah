@@ -35,12 +35,30 @@ export default function PublicNavbar() {
         </Link>
 
         {/* Navigation Links (Desktop) */}
-        <nav className="hidden lg:flex items-center gap-7 text-sm font-heading font-semibold text-on-surface-variant">
-          <Link href="/#how-it-works" className="hover:text-primary transition-colors">
+        <nav className="hidden lg:flex items-center gap-6 text-sm font-heading font-semibold text-on-surface-variant">
+          <Link
+            href="/how-it-works"
+            className={`transition-colors hover:text-primary ${
+              pathname === "/how-it-works" ? "text-primary font-bold" : ""
+            }`}
+          >
             How it Works
           </Link>
-          <Link href="/#features" className="hover:text-primary transition-colors">
+          <Link
+            href="/features"
+            className={`transition-colors hover:text-primary ${
+              pathname === "/features" ? "text-primary font-bold" : ""
+            }`}
+          >
             Features
+          </Link>
+          <Link
+            href="/retreat"
+            className={`transition-colors hover:text-primary ${
+              pathname === "/retreat" || pathname === "/sanctuary" ? "text-primary font-bold" : ""
+            }`}
+          >
+            Daily Retreat
           </Link>
           <Link href="/#testimonials" className="hover:text-primary transition-colors">
             Stories
@@ -49,12 +67,17 @@ export default function PublicNavbar() {
             For You
           </Link>
           <Link href="/#trust" className="hover:text-primary transition-colors">
-            Privacy & Trust
+            Privacy &amp; Trust
           </Link>
           <Link href="/#faq" className="hover:text-primary transition-colors">
             FAQ
           </Link>
-          <Link href="/about" className="hover:text-primary transition-colors">
+          <Link
+            href="/about"
+            className={`transition-colors hover:text-primary ${
+              pathname === "/about" ? "text-primary font-bold" : ""
+            }`}
+          >
             About Us
           </Link>
         </nav>
@@ -74,7 +97,7 @@ export default function PublicNavbar() {
 
           <button
             onClick={handleGetStarted}
-            className={`px-6 py-2.5 rounded-full font-heading font-bold text-xs shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all flex items-center gap-1.5 ${
+            className={`px-6 py-2.5 rounded-full font-heading font-bold text-xs shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all flex items-center gap-1.5 cursor-pointer ${
               isSignupPage || pathname === "/category-selection"
                 ? "bg-primary-purple text-white ring-2 ring-primary/20"
                 : "bg-primary hover:bg-primary-purple text-white"
@@ -87,7 +110,7 @@ export default function PublicNavbar() {
         {/* Mobile Hamburger Menu Toggle */}
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="lg:hidden p-2 rounded-xl bg-surface-container text-on-surface hover:bg-surface-variant/50 transition-colors"
+          className="lg:hidden p-2 rounded-xl bg-surface-container text-on-surface hover:bg-surface-variant/50 transition-colors cursor-pointer"
           aria-label="Toggle navigation menu"
         >
           <span className="material-symbols-outlined text-2xl font-bold">
@@ -107,18 +130,31 @@ export default function PublicNavbar() {
           >
             <nav className="flex flex-col gap-3 font-heading font-semibold text-sm text-on-surface">
               <Link
-                href="/#how-it-works"
+                href="/how-it-works"
                 onClick={() => setMobileMenuOpen(false)}
-                className="py-2 border-b border-surface-variant/20 hover:text-primary"
+                className={`py-2 border-b border-surface-variant/20 hover:text-primary ${
+                  pathname === "/how-it-works" ? "text-primary font-bold" : ""
+                }`}
               >
                 How it Works
               </Link>
               <Link
-                href="/#features"
+                href="/features"
                 onClick={() => setMobileMenuOpen(false)}
-                className="py-2 border-b border-surface-variant/20 hover:text-primary"
+                className={`py-2 border-b border-surface-variant/20 hover:text-primary ${
+                  pathname === "/features" ? "text-primary font-bold" : ""
+                }`}
               >
                 Features
+              </Link>
+              <Link
+                href="/retreat"
+                onClick={() => setMobileMenuOpen(false)}
+                className={`py-2 border-b border-surface-variant/20 hover:text-primary ${
+                  pathname === "/retreat" || pathname === "/sanctuary" ? "text-primary font-bold" : ""
+                }`}
+              >
+                Daily Retreat
               </Link>
               <Link
                 href="/#testimonials"
@@ -139,7 +175,7 @@ export default function PublicNavbar() {
                 onClick={() => setMobileMenuOpen(false)}
                 className="py-2 border-b border-surface-variant/20 hover:text-primary"
               >
-                Privacy & Trust
+                Privacy &amp; Trust
               </Link>
               <Link
                 href="/#faq"
@@ -151,7 +187,9 @@ export default function PublicNavbar() {
               <Link
                 href="/about"
                 onClick={() => setMobileMenuOpen(false)}
-                className="py-2 hover:text-primary"
+                className={`py-2 hover:text-primary ${
+                  pathname === "/about" ? "text-primary font-bold" : ""
+                }`}
               >
                 About Us
               </Link>

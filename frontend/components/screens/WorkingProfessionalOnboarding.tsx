@@ -155,10 +155,10 @@ export default function WorkingProfessionalOnboarding() {
             >
               <div className="space-y-1.5 text-center sm:text-left">
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-heading font-medium bg-[#F6F0FD] text-[#6351A5] border border-purple-100/80">
-                  💼 Working Professional Sanctuary
+                  💼 Working Professional Retreat
                 </span>
                 <h1 className="text-2xl sm:text-3xl font-heading font-extrabold text-[#231E39] dark:text-white">
-                  Welcome. Let's personalize your sanctuary.
+                  Welcome. Let's personalize your retreat.
                 </h1>
                 <p className="text-xs sm:text-sm text-[#746F89] dark:text-purple-200/70">
                   Tell us a little about your workday rhythm so we can support your peace.
@@ -334,7 +334,7 @@ export default function WorkingProfessionalOnboarding() {
               {/* Wellness Goals */}
               <div className="space-y-2 pt-2">
                 <label className="text-xs font-heading font-bold text-[#231E39] dark:text-purple-200">
-                  What are your primary sanctuary goals? <span className="text-gray-400 font-normal">(select all that apply)</span>
+                  What are your primary retreat goals? <span className="text-gray-400 font-normal">(select all that apply)</span>
                 </label>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                   {WELLNESS_GOALS.map((g) => {
@@ -394,7 +394,7 @@ export default function WorkingProfessionalOnboarding() {
                   How are you arriving right now?
                 </h2>
                 <p className="text-xs sm:text-sm text-[#746F89] dark:text-purple-200/70">
-                  This will calculate your initial Sanctuary Wellness Score.
+                  This will calculate your initial Retreat Wellness Score.
                 </p>
               </div>
 
@@ -517,7 +517,7 @@ export default function WorkingProfessionalOnboarding() {
                 <div className="p-6 rounded-2xl bg-[#F6F0FD] border border-purple-200/80 text-center space-y-3">
                   <div className="w-10 h-10 rounded-full border-2 border-[#6351A5] border-t-transparent animate-spin mx-auto" />
                   <p className="text-xs sm:text-sm font-heading font-extrabold text-[#231E39]">
-                    Calculating your personalized Sanctuary Score...
+                    Calculating your personalized Retreat Score...
                   </p>
                   {calculatedScore && (
                     <motion.div
@@ -543,7 +543,7 @@ export default function WorkingProfessionalOnboarding() {
                     onClick={handleFinish}
                     className="px-8 py-3.5 rounded-full bg-[#6351A5] hover:bg-[#7360B8] text-white font-heading font-bold text-xs sm:text-sm shadow-lg shadow-purple-900/20 transition-all flex items-center gap-2 cursor-pointer"
                   >
-                    Complete &amp; Enter Sanctuary 🌿
+                    Complete &amp; Enter Retreat 🌿
                   </button>
                 </div>
               )}
@@ -555,7 +555,7 @@ export default function WorkingProfessionalOnboarding() {
       {/* Footer reassurance */}
       <div className="max-w-md w-full mx-auto text-center z-10">
         <p className="text-[11px] text-[#746F89] dark:text-purple-200/60">
-          Your answers are private, protected, and used solely to personalize your sanctuary.
+          Your answers are private, protected, and used solely to personalize your retreat.
         </p>
       </div>
     </div>

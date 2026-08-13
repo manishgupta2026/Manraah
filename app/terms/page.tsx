@@ -62,7 +62,7 @@ export default function TermsPage() {
               <span>Account Registration & Security</span>
             </h2>
             <p>
-              You are responsible for maintaining the confidentiality of your account credentials. You agree to provide accurate email details and notify us immediately of any unauthorized access. You may choose an anonymous Sanctuary Alias to represent your display identity in community spaces.
+              You are responsible for maintaining the confidentiality of your account credentials. You agree to provide accurate email details and notify us immediately of any unauthorized access. You may choose an anonymous Retreat Alias to represent your display identity in community spaces.
             </p>
           </section>
 

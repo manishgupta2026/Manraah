@@ -45,7 +45,7 @@ export default function PrivacyPage() {
               We collect minimal information necessary to deliver personalized mental wellness support:
             </p>
             <ul className="list-disc pl-5 space-y-1.5">
-              <li><strong>Account Credentials:</strong> Email address, hashed password, optional Full Name, and Sanctuary Alias.</li>
+              <li><strong>Account Credentials:</strong> Email address, hashed password, optional Full Name, and Retreat Alias.</li>
               <li><strong>Demographics (Optional):</strong> Date of birth, gender identity, country, and phone number (used for age-appropriate content adaptation and emergency helpline routing).</li>
               <li><strong>Wellness Logs:</strong> Mood check-ins, journal reflections, assessment answers, and companion chat sessions.</li>
             </ul>

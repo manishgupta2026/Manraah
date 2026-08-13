@@ -58,10 +58,10 @@ export default function SanctuaryScoreModal({ isOpen, onDismiss }: SanctuaryScor
             </div>
             <div className="space-y-1">
               <span className="px-3 py-1 rounded-full text-[10px] font-heading font-bold uppercase tracking-wider bg-primary/10 text-primary border border-primary/15 inline-block">
-                Sanctuary Discovery
+                Retreat Discovery
               </span>
               <h2 className="text-xl md:text-2xl font-heading font-black text-on-surface tracking-tight leading-tight">
-                Let's discover your Sanctuary Score
+                Let's discover your Retreat Score
               </h2>
             </div>
             <p className="text-xs md:text-sm text-on-surface-variant leading-relaxed max-w-xs mx-auto font-medium">
@@ -75,7 +75,7 @@ export default function SanctuaryScoreModal({ isOpen, onDismiss }: SanctuaryScor
               onClick={handleComplete}
               className="w-full py-4 rounded-full bg-primary hover:bg-[#7C6BC4] text-white font-heading font-bold text-xs shadow-[0_10px_25px_rgba(95,78,165,0.25)] hover:shadow-[0_12px_30px_rgba(95,78,165,0.35)] transition-all hover:-translate-y-0.5 active:scale-98 cursor-pointer flex items-center justify-center gap-1.5"
             >
-              <span>Complete My Sanctuary Score</span>
+              <span>Complete My Retreat Score</span>
               <span className="material-symbols-outlined text-sm">arrow_forward</span>
             </button>
 

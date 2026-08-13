@@ -60,25 +60,6 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
-  // 2. Authenticated users on the welcome root only -> redirect to their dashboard
-  if (pathname === "/" && hasSession) {
-    let targetUserCategory = request.cookies.get("userType")?.value || "";
-
-    if (!targetUserCategory && manraahSessionCookie) {
-      try {
-        const parsed = JSON.parse(decodeURIComponent(manraahSessionCookie));
-        if (parsed?.user?.selectedCategory) {
-          targetUserCategory = parsed.user.selectedCategory;
-        }
-      } catch {}
-    }
-
-    const c = targetUserCategory.toLowerCase();
-    const routeSubpath = c === "couples" || c === "couple" ? "couples" : (c === "parents" || c === "parent" ? "parents" : "student");
-    const dashboardUrl = new URL(`/dashboard/${routeSubpath}`, request.url);
-    return NextResponse.redirect(dashboardUrl);
-  }
-
   return NextResponse.next();
 }
 

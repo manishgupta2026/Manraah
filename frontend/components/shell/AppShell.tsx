@@ -12,10 +12,15 @@ import MobileTabBar from "./MobileTabBar";
 import MobileDrawer from "./MobileDrawer";
 import Header from "./Header";
 import PublicNavbar from "./PublicNavbar";
+import PublicFooter from "./PublicFooter";
 import AdminHeader from "../admin/shell/AdminHeader";
 
 const STANDALONE_ROUTES = [
   "/",
+  "/how-it-works",
+  "/features",
+  "/retreat",
+  "/sanctuary",
   "/about",
   "/category-selection",
   "/assessment",
@@ -33,7 +38,17 @@ export default function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const isStandalone =
     STANDALONE_ROUTES.includes(pathname) ||
+    pathname.startsWith("/how-it-works") ||
+    pathname.startsWith("/features") ||
+    pathname.startsWith("/retreat") ||
+    pathname.startsWith("/sanctuary") ||
     pathname.startsWith("/about") ||
+    pathname.startsWith("/onboarding") ||
+    pathname.startsWith("/category-selection") ||
+    pathname.startsWith("/assessment") ||
+    pathname.startsWith("/wellness-score") ||
+    pathname.startsWith("/login") ||
+    pathname.startsWith("/signup") ||
     pathname.startsWith("/forgot-password") ||
     pathname.startsWith("/terms") ||
     pathname.startsWith("/privacy") ||
@@ -56,10 +71,11 @@ export default function AppShell({ children }: { children: ReactNode }) {
         <WellnessProvider>
           <HeaderProvider>
             {isStandalone ? (
-              /* Standalone Onboarding / Auth / Public Layout with Global Public Header */
-              <div className="min-h-screen bg-background text-on-background font-sans antialiased flex flex-col">
+              /* Standalone Onboarding / Auth / Public Layout with Global Public Header & Footer */
+              <div className="min-h-screen bg-background text-on-background font-sans antialiased flex flex-col justify-between">
                 <PublicNavbar />
                 <div className="flex-1">{children}</div>
+                <PublicFooter />
               </div>
             ) : isAdminRoute ? (
               /* Dedicated Admin Listener Portal Shell - Isolated from Regular User Navigation */

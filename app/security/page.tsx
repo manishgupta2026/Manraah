@@ -43,7 +43,7 @@ export default function SecurityPage() {
               Anonymous Alias Protection
             </h3>
             <p className="text-xs text-on-surface-variant leading-relaxed font-normal">
-              Community participation relies strictly on optional Sanctuary Aliases, insulating your public identity from your email address.
+              Community participation relies strictly on optional Retreat Aliases, insulating your public identity from your email address.
             </p>
           </div>
 

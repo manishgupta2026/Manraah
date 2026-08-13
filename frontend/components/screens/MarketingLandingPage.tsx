@@ -32,75 +32,6 @@ const USER_CATEGORY_GRADIENTS: Record<string, { bg: string; badge: string }> = {
   },
 };
 
-// Hero Interactive Category Previews Dataset (5 sorted categories)
-const HERO_CATEGORY_PREVIEWS = [
-  {
-    id: "student",
-    label: "Student",
-    icon: "🎓",
-    badge: "Student Mode",
-    userMsg: "Exams are next week and my mind won't stop racing...",
-    aiResponse: "I hear you. Let's take a slow deep breath together right now. You've prepared hard, let's break tonight down into small gentle steps.",
-    action1: "🫁 2-Min Reset",
-    action2: "🎧 Focus Audio",
-    action3: "📝 Express Journal",
-    score: "86",
-    status: "Calm & Grounded",
-  },
-  {
-    id: "working_professional",
-    label: "Working Pro",
-    icon: "💼",
-    badge: "Burnout Relief",
-    userMsg: "Back-to-back meetings all week and I'm running on empty. How do I disengage tonight?",
-    aiResponse: "It takes courage to acknowledge burnout. Let's establish a firm boundary for tonight: close work tabs, step away, and do a 3-minute evening decompression.",
-    action1: "🌿 Work-Life Transition",
-    action2: "🫁 Evening Reset",
-    action3: "📊 Stress Audit",
-    score: "78",
-    status: "Restoring Energy",
-  },
-  {
-    id: "parent",
-    label: "Parent",
-    icon: "🍼",
-    badge: "Parenting Care",
-    userMsg: "Juggling work and toddler tantrums today... I feel guilty for feeling frustrated.",
-    aiResponse: "Parenting is deeply demanding, and feeling exhausted doesn't mean you're failing. You're doing a wonderful job. Give yourself permission to pause for 5 minutes.",
-    action1: "💖 Parent Calming Breath",
-    action2: "☕ 5-Min Reset",
-    action3: "🕊️ Patience Prompt",
-    score: "82",
-    status: "Nurturing Heart",
-  },
-  {
-    id: "couple",
-    label: "Couple",
-    icon: "💖",
-    badge: "Relationship Harmony",
-    userMsg: "We've both been feeling stressed lately and communication has felt tense...",
-    aiResponse: "Stress can create distance between even the closest partners. Let's focus on gentle active listening and a 3-minute shared gratitude reflection tonight.",
-    action1: "🕊️ Conflict De-escalation",
-    action2: "💬 Connection Prompt",
-    action3: "🌸 Shared Calm",
-    score: "88",
-    status: "Harmonious Bond",
-  },
-  {
-    id: "other",
-    label: "Other",
-    icon: "✨",
-    badge: "Personalized Path",
-    userMsg: "I'm going through a big life transition right now and need space to process.",
-    aiResponse: "Transitions carry both challenge and growth. Your sanctuary is here for whatever you need today — no judgment, just steady, gentle presence.",
-    action1: "🌿 Life Transition Guide",
-    action2: "📝 Daily Mindful Log",
-    action3: "🎧 Evening Peace",
-    score: "85",
-    status: "Grounded & Centered",
-  },
-];
-
 // ─── Hero Mood Check-In Data (same emoji set as DailyCheckInScreen MOODS) ───
 const HERO_MOODS = [
   {
@@ -210,142 +141,6 @@ const TRUST_BADGES = [
     bg: "bg-peach/25",
     iconColor: "text-[#9E5D28]",
     border: "border-peach/30",
-  },
-];
-
-// Interactive Feature Showcase Tabs Data
-const FEATURE_TABS = [
-  {
-    id: "ai",
-    label: "AI Companion",
-    icon: "smart_toy",
-    panelBg: "bg-[#F2EBFF]",
-    panelBorder: "border-primary/20",
-    badge: "24/7 AI Guidance",
-    headline: "Support, any time you need to talk",
-    description: "Unpack your thoughts with a 24/7 empathetic assistant trained in active listening, cognitive reflection, and compassionate guidance. Receive immediate, non-judgmental support whenever your mind feels overwhelmed.",
-    cta: "Try AI Companion",
-    mockupSide: "left" as const,
-  },
-  {
-    id: "human",
-    label: "Human Companion",
-    icon: "record_voice_over",
-    panelBg: "bg-[#FFF4E8]",
-    panelBorder: "border-peach/40",
-    badge: "Peer Listening",
-    headline: "Genuine empathy from real peer listeners",
-    description: "Connect with compassionate, trained peer companions who understand your exact life stage. Share your feelings in a safe space built on warmth, mutual respect, and shared lived experience.",
-    cta: "Connect with a Listener",
-    mockupSide: "right" as const,
-  },
-  {
-    id: "pro",
-    label: "Professional Care",
-    icon: "medical_services",
-    panelBg: "bg-[#FFF0F3]",
-    panelBorder: "border-tertiary/20",
-    badge: "Clinical Expertise",
-    headline: "Clinical expertise when you need deeper care",
-    description: "Book 1-on-1 sessions with verified, licensed therapists and counselors. Get dedicated professional guidance tailored to anxiety, burnout, life transitions, and relationship health.",
-    cta: "Book Professional Session",
-    mockupSide: "left" as const,
-  },
-  {
-    id: "mood",
-    label: "Mood Tracking",
-    icon: "mood",
-    panelBg: "bg-[#FFF0F5]",
-    panelBorder: "border-pink/30",
-    badge: "Self Awareness",
-    headline: "Track your emotional rhythm over time",
-    description: "Log daily feelings in seconds, identify emotional triggers, and watch your mental resilience grow. Gain clear visual insights into how sleep, work, and routines impact your mood.",
-    cta: "Log Your Mood",
-    mockupSide: "right" as const,
-  },
-  {
-    id: "journal",
-    label: "Reflective Journal",
-    icon: "auto_stories",
-    panelBg: "bg-[#FFFBEA]",
-    panelBorder: "border-pale-yellow/60",
-    badge: "Daily Reflection",
-    headline: "Private, guided space for your thoughts",
-    description: "Release daily mental clutter with gentle AI prompts and voice-to-text notes. Your journal entries are 100% private, encrypted, and designed to help you process emotions effortlessly.",
-    cta: "Start Journaling",
-    mockupSide: "left" as const,
-  },
-  {
-    id: "meditation",
-    label: "Meditation & Sleep",
-    icon: "self_improvement",
-    panelBg: "bg-[#E8FAF4]",
-    panelBorder: "border-mint/30",
-    badge: "Calm & Rest",
-    headline: "Calm your nervous system in minutes",
-    description: "Immerse yourself in guided breathwork, soothing bedtime soundscapes, and body-scan relaxation sessions. Lower stress levels and improve sleep quality with ad-free audio.",
-    cta: "Listen & Unwind",
-    mockupSide: "right" as const,
-  },
-  {
-    id: "community",
-    label: "Community",
-    icon: "groups",
-    panelBg: "bg-[#F5F2FF]",
-    panelBorder: "border-primary/20",
-    badge: "Safe Circles",
-    headline: "Safe, anonymous circles where you belong",
-    description: "Join moderated peer support spaces organized by life stage. Share reflections, exchange encouragement, and connect with people who truly understand what you're going through.",
-    cta: "Join a Circle",
-    mockupSide: "left" as const,
-  },
-  {
-    id: "resources",
-    label: "Resources",
-    icon: "menu_book",
-    panelBg: "bg-[#EBFBF7]",
-    panelBorder: "border-secondary/20",
-    badge: "Expert Toolkits",
-    headline: "Bite-sized toolkits for mental wellness",
-    description: "Explore expert-crafted guides, anxiety relief toolkits, and practical self-care articles. Grounded in clinical psychology to give you actionable strategies for everyday challenges.",
-    cta: "Explore Toolkits",
-    mockupSide: "right" as const,
-  },
-];
-
-// Steps data
-const HOW_IT_WORKS_STEPS = [
-  {
-    step: "01",
-    title: "Choose Your Path",
-    desc: "Select your category (Student, Parent, Working Pro, Senior, etc.) so Manraah adapts its voice and tools to your life context.",
-    icon: "tune",
-    color: "bg-primary/15 text-primary border-primary/30",
-    badgeBg: "bg-primary text-white",
-  },
-  {
-    step: "02",
-    title: "Quick Check-in",
-    desc: "Complete a brief, 1-minute assessment to establish your baseline stress level, current energy, and immediate wellness goals.",
-    icon: "assignment_turned_in",
-    color: "bg-pink/25 text-[#9E3B54] border-pink/40",
-    badgeBg: "bg-[#9E3B54] text-white",
-  },
-  {
-    step: "03",
-    title: "Get Your Personalized Space",
-    desc: "Unlock a custom dashboard featuring your AI companion, daily wellness score, curated meditations, and journal prompts.",
-    icon: "auto_awesome",
-    color: "bg-mint/25 text-[#006B56] border-mint/40",
-    badgeBg: "bg-[#006B56] text-white",
-  },
-  {
-    step: "04",
-    title: "Grow at Your Pace",
-    desc: "Engage daily with mood tracking, breathing exercises, or peer listeners whenever you need a moment of peace.",
-    icon: "trending_up",
-    color: "bg-peach/30 text-[#9E5D28] border-peach/50",
-    badgeBg: "bg-[#9E5D28] text-white",
   },
 ];
 
@@ -464,78 +259,137 @@ const TESTIMONIALS_ROW_2 = [
   },
 ];
 
-// Lightweight count-up counter component triggered on scroll view
-function AnimatedScoreCounter({ target, inView, duration = 1200 }: { target: number; inView: boolean; duration?: number }) {
-  const [count, setCount] = useState(0);
-
-  useEffect(() => {
-    if (!inView) return;
-    let startTime: number | null = null;
-    let frameId: number;
-
-    const animate = (timestamp: number) => {
-      if (!startTime) startTime = timestamp;
-      const progress = Math.min((timestamp - startTime) / duration, 1);
-      const easeOut = 1 - Math.pow(1 - progress, 3);
-      setCount(Math.round(easeOut * target));
-
-      if (progress < 1) {
-        frameId = requestAnimationFrame(animate);
-      }
-    };
-
-    frameId = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(frameId);
-  }, [inView, target, duration]);
-
-  return <>{count}</>;
-}
+// Top Hero Showcase Carousel Images (Editorial Showcase with Square 1:1 Aspect Ratio)
+const HERO_CAROUSEL_IMAGES = [
+  {
+    src: "/social/1.png",
+    alt: "Manraah Social Reflection 1",
+    title: "Quiet Your Racing Thoughts",
+    subtitle: "A gentle 24/7 AI retreat ready to listen without judgment whenever your mind feels loud.",
+    tag: "AI Retreat",
+    cta: "Find Stillness Tonight",
+  },
+  {
+    src: "/social/2.png",
+    alt: "Manraah Social Reflection 2",
+    title: "Release Daily Overwhelm",
+    subtitle: "Ground your nervous system in two minutes with guided mindful breathing and emotional resets.",
+    tag: "Burnout Reset",
+    cta: "Take a Deep Breath",
+  },
+  {
+    src: "/social/3.png",
+    alt: "Manraah Social Reflection 3",
+    title: "Space to Feel & Be Heard",
+    subtitle: "Connect with trained peer listeners who truly understand your exact stage in life.",
+    tag: "Peer Empathy",
+    cta: "Connect With a Listener",
+  },
+  {
+    src: "/social/4.png",
+    alt: "Manraah Social Reflection 4",
+    title: "Gentle Healing Everyday",
+    subtitle: "Track your emotional rhythm and build mental resilience through private daily check-ins.",
+    tag: "Self Compassion",
+    cta: "Start Your Check-in",
+  },
+  {
+    src: "/social/5.png",
+    alt: "Manraah Social Reflection 5",
+    title: "Reclaim Your Inner Peace",
+    subtitle: "Release mental clutter with encrypted voice journaling and reflective prompts.",
+    tag: "Mindful Living",
+    cta: "Open Your Journal",
+  },
+  {
+    src: "/social/6.png",
+    alt: "Manraah Social Reflection 6",
+    title: "Rest Deeply Tonight",
+    subtitle: "Unwind your body and mind with soothing bedtime soundscapes and sleep audio.",
+    tag: "Bedtime Rest",
+    cta: "Listen to Soundscape",
+  },
+  {
+    src: "/social/7.png",
+    alt: "Manraah Social Reflection 7",
+    title: "You Are Never Alone",
+    subtitle: "Anonymous, moderated peer circles where you can share reflections safely.",
+    tag: "Safe Circles",
+    cta: "Explore Circles",
+  },
+  {
+    src: "/social/9.png",
+    alt: "Manraah Social Reflection 9",
+    title: "Personalized Care for You",
+    subtitle: "Direct access to certified clinical psychologists whenever deeper support is needed.",
+    tag: "Clinical Care",
+    cta: "Connect to Care",
+  },
+  {
+    src: "/social/10.png",
+    alt: "Manraah Social Reflection 10",
+    title: "Ground Your Nervous System",
+    subtitle: "Evidence-based 5-4-3-2-1 toolkits designed by clinical psychologists for panic de-escalation.",
+    tag: "Emergency Relief",
+    cta: "Open Grounding Guide",
+  },
+  {
+    src: "/social/11.png",
+    alt: "Manraah Social Reflection 11",
+    title: "Grow at Your Own Rhythm",
+    subtitle: "Tailored daily support calibrated for Students, Working Professionals, Parents, and Couples.",
+    tag: "Life Pathways",
+    cta: "Choose Your Path",
+  },
+];
 
 export default function MarketingLandingPage() {
   const router = useRouter();
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
-  const [activeFeatureTab, setActiveFeatureTab] = useState<number>(0);
   const [selectedMoodIdx, setSelectedMoodIdx] = useState<number | null>(null);
+  const [activeHeroSlide, setActiveHeroSlide] = useState<number>(0);
+  const [isHeroCarouselHovered, setIsHeroCarouselHovered] = useState<boolean>(false);
+  const [heroTouchStartX, setHeroTouchStartX] = useState<number | null>(null);
   const categoryCarouselRef = useRef<HTMLDivElement>(null);
-  const featureTabsRef = useRef<HTMLDivElement>(null);
-  const scoreRef = useRef<HTMLDivElement>(null);
-  const scoreInView = useInView(scoreRef, { once: true, amount: 0.25 });
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
 
-  // Auto-scroll the active tab pill into view when navigating via gestures or buttons
+  // Auto-advance hero carousel every 5.5 seconds (pausing when hovered)
   useEffect(() => {
-    if (featureTabsRef.current) {
-      const activeTabEl = featureTabsRef.current.children[activeFeatureTab] as HTMLElement;
-      if (activeTabEl) {
-        activeTabEl.scrollIntoView({
-          behavior: "smooth",
-          block: "nearest",
-          inline: "center",
-        });
-      }
+    if (isHeroCarouselHovered) return;
+    const interval = setInterval(() => {
+      setActiveHeroSlide((prev) => (prev + 1) % HERO_CAROUSEL_IMAGES.length);
+    }, 5500);
+    return () => clearInterval(interval);
+  }, [isHeroCarouselHovered]);
+
+  const handleNextHeroSlide = () => {
+    setActiveHeroSlide((prev) => (prev + 1) % HERO_CAROUSEL_IMAGES.length);
+  };
+
+  const handlePrevHeroSlide = () => {
+    setActiveHeroSlide((prev) => (prev - 1 + HERO_CAROUSEL_IMAGES.length) % HERO_CAROUSEL_IMAGES.length);
+  };
+
+  const handleHeroTouchStart = (e: React.TouchEvent) => {
+    setHeroTouchStartX(e.touches[0].clientX);
+  };
+
+  const handleHeroTouchEnd = (e: React.TouchEvent) => {
+    if (heroTouchStartX === null) return;
+    const diffX = heroTouchStartX - e.changedTouches[0].clientX;
+    if (diffX > 40) {
+      handleNextHeroSlide();
+    } else if (diffX < -40) {
+      handlePrevHeroSlide();
     }
-  }, [activeFeatureTab]);
+    setHeroTouchStartX(null);
+  };
 
   const scrollCategoryCarousel = (direction: "left" | "right") => {
     if (categoryCarouselRef.current) {
       const scrollAmount = direction === "left" ? -340 : 340;
       categoryCarouselRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" });
     }
-  };
-
-  const scrollFeatureTabs = (direction: "left" | "right") => {
-    if (featureTabsRef.current) {
-      const scrollAmount = direction === "left" ? -240 : 240;
-      featureTabsRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" });
-    }
-  };
-
-  const handleNextFeature = () => {
-    setActiveFeatureTab((prev) => (prev + 1) % FEATURE_TABS.length);
-  };
-
-  const handlePrevFeature = () => {
-    setActiveFeatureTab((prev) => (prev - 1 + FEATURE_TABS.length) % FEATURE_TABS.length);
   };
 
   const handleGetStarted = async () => {
@@ -560,10 +414,166 @@ export default function MarketingLandingPage() {
     }
   };
 
+  const currentSlide = HERO_CAROUSEL_IMAGES[activeHeroSlide];
+  const nextSlide = HERO_CAROUSEL_IMAGES[(activeHeroSlide + 1) % HERO_CAROUSEL_IMAGES.length];
+
   return (
     <div className="min-h-screen bg-surface text-on-surface font-sans select-none overflow-x-hidden">
-      {/* ==================== 2. HERO SECTION — INTERACTIVE MOOD CHECK-IN ==================== */}
-      <section className="relative py-14 md:py-20 lg:py-28 px-6 max-w-5xl mx-auto">
+      {/* ==================== 1. TOP HERO SHOWCASE — EDITORIAL SLIDER ==================== */}
+      <section className="relative pt-4 pb-12 md:pt-6 md:pb-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto overflow-hidden">
+        
+        {/* Retreat Theme Showcase Canvas */}
+        <div className="relative rounded-[32px] sm:rounded-[44px] bg-surface-container-lowest border border-surface-variant/70 shadow-card-lift text-on-surface p-6 sm:p-8 lg:p-11 overflow-hidden">
+          
+          {/* Subtle Atmospheric Glow Lights */}
+          <div className="absolute -top-24 -left-24 w-96 h-96 bg-primary/10 rounded-full blur-[120px] pointer-events-none" />
+          <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-mint/20 rounded-full blur-[120px] pointer-events-none" />
+          <div className="absolute top-1/2 left-1/3 w-80 h-80 bg-peach/20 rounded-full blur-[100px] pointer-events-none" />
+
+          {/* Top Bar inside showcase */}
+          <div className="relative z-10 flex items-center justify-between border-b border-surface-variant/40 pb-3 mb-5 sm:mb-8">
+            <div className="flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-primary animate-pulse" />
+              <span className="text-xs font-heading font-bold text-on-surface uppercase tracking-widest">
+                Manraah • Daily Retreat
+              </span>
+            </div>
+            <Link
+              href="/retreat"
+              className="px-3 py-1 rounded-full text-xs font-heading font-bold bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 transition-all cursor-pointer inline-flex items-center gap-1.5"
+            >
+              <span>{currentSlide.tag}</span>
+              <span className="material-symbols-outlined text-xs">arrow_forward</span>
+            </Link>
+          </div>
+
+          {/* Main Showcase Stage */}
+          <div
+            onMouseEnter={() => setIsHeroCarouselHovered(true)}
+            onMouseLeave={() => setIsHeroCarouselHovered(false)}
+            onTouchStart={handleHeroTouchStart}
+            onTouchEnd={handleHeroTouchEnd}
+            className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-8 items-center min-h-[300px] sm:min-h-[360px]"
+          >
+            {/* ── Left Side: Bold Typography & Action Link ── */}
+            <div className="lg:col-span-6 text-left space-y-4 lg:pr-4 z-20">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={currentSlide.src}
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -15 }}
+                  transition={{ duration: 0.35, ease: "easeOut" }}
+                  className="space-y-4"
+                >
+                  <h2 className="text-3xl sm:text-4xl lg:text-5xl font-heading font-black text-on-surface leading-[1.12] tracking-tight">
+                    {currentSlide.title}
+                  </h2>
+                  <p className="text-sm sm:text-base text-on-surface-variant leading-relaxed font-normal max-w-md">
+                    {currentSlide.subtitle}
+                  </p>
+                  <div className="pt-2">
+                    <button
+                      onClick={handleGetStarted}
+                      className="inline-flex items-center gap-2 text-sm sm:text-base font-heading font-bold text-primary hover:text-primary-purple transition-colors group cursor-pointer border-b-2 border-primary/30 hover:border-primary pb-1"
+                    >
+                      <span>{currentSlide.cta}</span>
+                      <span className="material-symbols-outlined text-base group-hover:translate-x-1 transition-transform">
+                        arrow_forward
+                      </span>
+                    </button>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+            </div>
+
+            {/* ── Center & Right: Featured Active Image + Next Slide Peek (Square 1:1 Aspect Ratio without Cropping) ── */}
+            <div className="lg:col-span-6 flex items-center justify-center lg:justify-end gap-4 sm:gap-6 relative overflow-visible">
+              {/* Featured Active Image Card (1:1 Square) */}
+              <div className="relative max-w-[320px] sm:max-w-[390px] lg:max-w-[420px] w-full rounded-[24px] sm:rounded-[32px] overflow-hidden border border-surface-variant/60 shadow-ambient-deep aspect-square bg-surface-container-low flex items-center justify-center">
+                <AnimatePresence mode="wait">
+                  <motion.img
+                    key={currentSlide.src}
+                    src={currentSlide.src}
+                    alt={currentSlide.alt}
+                    initial={{ opacity: 0, scale: 0.96 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 1.03 }}
+                    transition={{ duration: 0.45, ease: "easeOut" }}
+                    className="w-full h-full object-contain select-none"
+                    loading="eager"
+                  />
+                </AnimatePresence>
+
+                {/* Floating Nav Arrows on Active Card */}
+                <div className="absolute bottom-3 right-3 sm:bottom-5 sm:right-5 flex items-center gap-2 z-30">
+                  <button
+                    onClick={handlePrevHeroSlide}
+                    aria-label="Previous reflection"
+                    className="w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-surface-container-lowest/95 hover:bg-surface-container-lowest text-on-surface border border-surface-variant/60 shadow-md backdrop-blur-md flex items-center justify-center transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                  >
+                    <span className="material-symbols-outlined text-lg sm:text-xl">chevron_left</span>
+                  </button>
+                  <button
+                    onClick={handleNextHeroSlide}
+                    aria-label="Next reflection"
+                    className="w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-surface-container-lowest/95 hover:bg-surface-container-lowest text-on-surface border border-surface-variant/60 shadow-md backdrop-blur-md flex items-center justify-center transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                  >
+                    <span className="material-symbols-outlined text-lg sm:text-xl">chevron_right</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Next Slide Peek (Square 1:1 Aspect Ratio on larger screens) */}
+              <div 
+                onClick={handleNextHeroSlide}
+                className="hidden sm:block w-18 sm:w-24 lg:w-32 aspect-square rounded-[18px] sm:rounded-[24px] overflow-hidden opacity-50 hover:opacity-85 transition-opacity border border-surface-variant/60 shrink-0 cursor-pointer shadow-sm bg-surface-container-low"
+              >
+                <img
+                  src={nextSlide.src}
+                  alt={nextSlide.alt}
+                  className="w-full h-full object-contain select-none"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom Bar: Segmented Dash Progress Bar (NO numberings) */}
+          <div className="relative z-10 flex items-center justify-between pt-5 sm:pt-6 mt-4 sm:mt-6 border-t border-surface-variant/40">
+            {/* Horizontal Segmented Progress Dashes */}
+            <div className="flex items-center gap-1.5 sm:gap-2.5">
+              {HERO_CAROUSEL_IMAGES.map((_, idx) => {
+                const isActive = activeHeroSlide === idx;
+                return (
+                  <button
+                    key={idx}
+                    onClick={() => setActiveHeroSlide(idx)}
+                    aria-label={`Go to slide ${idx + 1}`}
+                    className={`h-1 sm:h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
+                      isActive
+                        ? "w-7 sm:w-12 bg-primary shadow-xs"
+                        : "w-2.5 sm:w-5 bg-surface-variant hover:bg-primary/30"
+                    }`}
+                  />
+                );
+              })}
+            </div>
+
+            {/* Quick Link on bottom right */}
+            <button
+              onClick={handleGetStarted}
+              className="text-xs sm:text-sm font-heading font-bold text-on-surface-variant hover:text-primary transition-colors cursor-pointer hidden sm:flex items-center gap-1.5"
+            >
+              <span>Begin Free Retreat</span>
+              <span className="material-symbols-outlined text-sm">arrow_forward</span>
+            </button>
+          </div>
+
+        </div>
+      </section>
+
+      {/* ═══ 2. HERO SECTION — INTERACTIVE MOOD CHECK-IN, HEADLINE & CTAs ═══ */}
+      <section className="relative py-16 md:py-24 px-6 max-w-5xl mx-auto border-t border-surface-variant/20">
 
         {/* Soft Atmospheric Glow Blobs */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[80vw] md:w-[600px] h-[400px] bg-primary/10 rounded-full blur-[130px] pointer-events-none -z-10" />
@@ -577,9 +587,10 @@ export default function MarketingLandingPage() {
           className="flex flex-col items-center text-center gap-8"
         >
           {/* Eyebrow Label */}
-          <motion.p variants={itemVariants} className="text-xs font-heading font-bold text-primary tracking-widest uppercase">
-            Your Everyday Mental Sanctuary
-          </motion.p>
+          <motion.div variants={itemVariants} className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-heading font-bold uppercase tracking-widest">
+            <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+            <span>A Retreat for Mind &amp; Soul</span>
+          </motion.div>
 
           {/* ── MOOD CHECK-IN PROMPT ── */}
           <motion.div variants={itemVariants} className="w-full max-w-xl space-y-4">
@@ -599,14 +610,14 @@ export default function MarketingLandingPage() {
                     className={`flex flex-col items-center gap-1 px-3 py-2.5 sm:px-4 sm:py-3 rounded-2xl border transition-all duration-200 cursor-pointer group ${
                       isSelected
                         ? `${mood.color} ring-2 ${mood.ring} shadow-md scale-[1.08]`
-                        : "bg-surface-container border-surface-variant/40 hover:bg-surface-container-high hover:border-surface-variant/60 hover:scale-[1.04]"
+                        : "bg-surface-container-lowest border-surface-variant/40 hover:bg-surface-container hover:border-surface-variant/60 hover:scale-[1.04]"
                     }`}
                   >
                     <span className={`text-2xl sm:text-3xl leading-none transition-transform duration-200 ${isSelected ? "scale-110" : "group-hover:scale-105"}`}>
                       {mood.emoji}
                     </span>
                     <span className={`text-[10px] sm:text-[11px] font-heading font-bold leading-none ${
-                      isSelected ? "opacity-100" : "text-on-surface-variant"
+                      isSelected ? "opacity-100 font-black" : "text-on-surface-variant"
                     }`}>
                       {mood.label}
                     </span>
@@ -696,12 +707,12 @@ export default function MarketingLandingPage() {
               </motion.button>
             </AnimatePresence>
 
-            <a
-              href="#how-it-works"
+            <Link
+              href="/how-it-works"
               className="px-8 py-4 rounded-full bg-surface-container border border-surface-variant/40 font-heading font-semibold text-sm text-on-surface text-center hover:bg-primary/5 hover:-translate-y-0.5 transition-all"
             >
               See How It Works
-            </a>
+            </Link>
           </motion.div>
 
           {/* ── Social Proof Row ── */}
@@ -719,19 +730,19 @@ export default function MarketingLandingPage() {
           </motion.div>
         </motion.div>
 
-        {/* Trust Badges Grid */}
+        {/* ── Trust Badges Strip ── */}
         <motion.div
           variants={containerVariants}
           initial="hidden"
           whileInView="show"
           viewport={{ once: true }}
-          className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-16 lg:mt-20"
+          className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-16 lg:mt-20 max-w-6xl mx-auto"
         >
           {TRUST_BADGES.map((b, idx) => (
             <motion.div
               key={idx}
               variants={itemVariants}
-              className={`p-5 rounded-[24px] bg-surface-container-lowest border ${b.border} shadow-ambient hover:-translate-y-1 hover:shadow-md transition-all flex flex-col justify-between h-36`}
+              className={`p-5 rounded-[24px] bg-surface-container-lowest border ${b.border} shadow-ambient hover:-translate-y-1 hover:shadow-md transition-all flex flex-col justify-between h-36 text-left`}
             >
               <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${b.bg} ${b.iconColor}`}>
                 <span className="material-symbols-outlined text-xl font-bold">{b.icon}</span>
@@ -895,7 +906,7 @@ export default function MarketingLandingPage() {
                   <div>
                     <h3 className="text-sm font-heading font-bold text-on-surface">100% Anonymous &amp; Private</h3>
                     <p className="text-[12px] text-on-surface-variant leading-relaxed mt-0.5">
-                      End-to-end encrypted, avatar-first — your sanctuary stays completely yours.
+                      End-to-end encrypted, avatar-first — your retreat stays completely yours.
                     </p>
                   </div>
                 </div>
@@ -903,567 +914,6 @@ export default function MarketingLandingPage() {
             </motion.div>
 
           </motion.div>
-        </div>
-      </section>
-
-      {/* ==================== 4. HOW IT WORKS (ILLUSTRATED ZIGZAG MOCKUP JOURNEY) ==================== */}
-      <section id="how-it-works" className="py-20 md:py-28 px-6 max-w-7xl mx-auto overflow-hidden">
-        <div className="text-center max-w-3xl mx-auto mb-16 sm:mb-24 space-y-4">
-          <p className="text-xs font-heading font-bold text-[#006B56] tracking-widest uppercase">
-            Simple 4-Step Flow
-          </p>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-heading font-extrabold text-on-surface">
-            Your Journey to Peace in 4 Steps
-          </h2>
-          <p className="text-base sm:text-lg text-on-surface-variant">
-            Start feeling supported, understood, and grounded in less than two minutes.
-          </p>
-        </div>
-
-        {/* Zigzag Journey Container */}
-        <div className="relative max-w-6xl mx-auto min-h-[460px]">
-          
-          {/* Desktop SVG Dashed Zigzag Arrow Path (visible at lg >= 1024px) */}
-          <svg
-            className="hidden lg:block absolute inset-0 w-full h-full pointer-events-none z-0"
-            viewBox="0 0 1100 420"
-            fill="none"
-            preserveAspectRatio="none"
-          >
-            <defs>
-              <marker
-                id="arrowhead"
-                markerWidth="8"
-                markerHeight="8"
-                refX="6"
-                refY="4"
-                orient="auto"
-              >
-                <polygon points="0 0, 8 4, 0 8" fill="#7C6BC4" />
-              </marker>
-            </defs>
-
-            {/* Path 1: Card 1 -> Card 2 top-left */}
-            <path
-              d="M 225 140 C 275 140, 290 160, 335 160"
-              stroke="#7C6BC4"
-              strokeWidth="2.5"
-              strokeDasharray="6 6"
-              markerEnd="url(#arrowhead)"
-              opacity="0.8"
-            />
-            {/* Path 2: Card 2 -> Card 3 left */}
-            <path
-              d="M 485 180 C 535 180, 555 140, 605 140"
-              stroke="#7C6BC4"
-              strokeWidth="2.5"
-              strokeDasharray="6 6"
-              markerEnd="url(#arrowhead)"
-              opacity="0.8"
-            />
-            {/* Path 3: Card 3 -> Card 4 top-left */}
-            <path
-              d="M 755 140 C 805 140, 825 160, 870 160"
-              stroke="#7C6BC4"
-              strokeWidth="2.5"
-              strokeDasharray="6 6"
-              markerEnd="url(#arrowhead)"
-              opacity="0.8"
-            />
-          </svg>
-
-          {/* 4 Zigzag Step Items Grid */}
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true }}
-            className="grid grid-cols-1 lg:grid-cols-4 gap-12 lg:gap-6 relative z-10"
-          >
-            {HOW_IT_WORKS_STEPS.map((s, idx) => {
-              const isEven = idx % 2 === 1; // Step 2 & 4 are lower on desktop
-              return (
-                <motion.div
-                  key={idx}
-                  variants={itemVariants}
-                  className={`flex flex-col items-center group ${
-                    isEven ? "lg:translate-y-16" : "lg:translate-y-0"
-                  } transition-transform duration-300`}
-                >
-                  {/* Illustrated App Window Mockup Card */}
-                  <div className="w-full max-w-[250px] sm:max-w-[260px] h-[180px] rounded-[28px] bg-surface-container-lowest border border-surface-variant/40 shadow-card-lift p-4 flex flex-col justify-between relative overflow-hidden group-hover:-translate-y-2 group-hover:shadow-2xl transition-all duration-300">
-                    
-                    {/* Mockup Frame Header Bar */}
-                    <div className="flex items-center justify-between border-b border-surface-variant/20 pb-2.5">
-                      <div className="flex items-center gap-1.5">
-                        <div className="w-2 h-2 rounded-full bg-rose-400" />
-                        <div className="w-2 h-2 rounded-full bg-amber-400" />
-                        <div className="w-2 h-2 rounded-full bg-emerald-400" />
-                      </div>
-                      <span className={`px-2.5 py-0.5 rounded-full text-[9px] font-heading font-black ${s.badgeBg}`}>
-                        Step {s.step}
-                      </span>
-                    </div>
-
-                    {/* Step-specific Stylized Illustrative Content */}
-                    <div className="flex-1 flex flex-col justify-center py-2">
-                      {idx === 0 && (
-                        // Step 1: Category Selection Grid preview
-                        <div className="space-y-2">
-                          <p className="text-[10px] font-heading font-bold text-on-surface-variant text-center">Select Category</p>
-                          <div className="grid grid-cols-2 gap-1.5 text-[9px] font-heading font-bold">
-                            <div className="p-1.5 rounded-xl bg-primary/10 text-primary border border-primary/20 text-center truncate">🎓 Student</div>
-                            <div className="p-1.5 rounded-xl bg-peach/25 text-[#9E5D28] border border-peach/40 text-center truncate">💼 Working Pro</div>
-                            <div className="p-1.5 rounded-xl bg-pink/20 text-[#874959] border border-pink/30 text-center truncate">🍼 Parent</div>
-                            <div className="p-1.5 rounded-xl bg-mint/20 text-[#006B56] border border-mint/30 text-center truncate">👵 Senior</div>
-                          </div>
-                        </div>
-                      )}
-
-                      {idx === 1 && (
-                        // Step 2: Assessment Check-in preview
-                        <div className="space-y-2.5">
-                          <p className="text-[10px] font-heading font-bold text-on-surface text-center">How is your stress level today?</p>
-                          <div className="flex justify-center gap-1 text-[9px] font-heading font-bold">
-                            <span className="px-2.5 py-1 rounded-full bg-mint/20 text-[#006B56] border border-mint/30">🌸 Calm</span>
-                            <span className="px-2.5 py-1 rounded-full bg-primary/15 text-primary border border-primary/30">✨ Moderate</span>
-                            <span className="px-2.5 py-1 rounded-full bg-pink/20 text-[#874959] border border-pink/30">🌊 High</span>
-                          </div>
-                          <div className="w-full h-1.5 bg-surface-container-high rounded-full overflow-hidden">
-                            <div className="h-full bg-primary w-[65%] rounded-full" />
-                          </div>
-                        </div>
-                      )}
-
-                      {idx === 2 && (
-                        // Step 3: Sanctuary Dashboard preview
-                        <div className="space-y-2">
-                          <div className="flex items-center justify-between p-2 rounded-xl bg-primary/10 border border-primary/20 text-[9px] font-bold">
-                            <span className="text-primary">✨ Daily Score</span>
-                            <span className="text-on-surface">84 / 100</span>
-                          </div>
-                          <div className="p-2 rounded-xl bg-surface-container-low border border-surface-variant/30 text-[9px] text-on-surface-variant italic font-normal">
-                            &quot;AI Companion: Hello! Ready to reflect today?&quot;
-                          </div>
-                          <div className="flex justify-between text-[8px] font-bold text-emerald-600">
-                            <span>🫁 2-Min Reset</span>
-                            <span>📝 Journal</span>
-                          </div>
-                        </div>
-                      )}
-
-                      {idx === 3 && (
-                        // Step 4: Wellness Activity Screen preview
-                        <div className="space-y-2 text-center">
-                          <div className="w-10 h-10 mx-auto rounded-full bg-mint/25 text-[#006B56] border border-mint/40 flex items-center justify-center font-bold text-sm shadow-xs">
-                            ✨
-                          </div>
-                          <p className="text-[10px] font-heading font-bold text-on-surface">Deep Unwind Session</p>
-                          <div className="w-3/4 mx-auto h-1.5 bg-surface-container-high rounded-full overflow-hidden">
-                            <div className="h-full bg-mint w-[80%] rounded-full" />
-                          </div>
-                          <p className="text-[8px] font-bold text-emerald-600">+18% Resilience Growth</p>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Title & Description Below Mockup Card */}
-                  <div className="text-center mt-5 space-y-1.5">
-                    <h3 className="font-heading font-black text-lg text-on-surface group-hover:text-primary transition-colors">
-                      {s.title}
-                    </h3>
-                    <p className="text-xs text-on-surface-variant leading-relaxed font-normal max-w-[240px] mx-auto">
-                      {s.desc}
-                    </p>
-                  </div>
-                </motion.div>
-              );
-            })}
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ==================== 5. INTERACTIVE FEATURE SHOWCASE ==================== */}
-      <section id="features" className="py-20 md:py-28 bg-[#F2EBFF]/40 border-y border-surface-variant/20 px-6 overflow-hidden">
-        <div className="max-w-7xl mx-auto space-y-10">
-          <div className="text-center max-w-3xl mx-auto space-y-4">
-            <p className="text-xs font-heading font-bold text-primary tracking-widest uppercase">
-              Integrated Tools
-            </p>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-heading font-extrabold text-on-surface">
-              Everything You Need for Mindful Wellbeing
-            </h2>
-            <p className="text-base sm:text-lg text-on-surface-variant">
-              Tap or swipe through our 8 core pillars to explore personalized guidance, peer support, and clinical toolkits.
-            </p>
-          </div>
-
-          {/* Horizontal Pill Tab Bar with Left/Right Scroll Arrows */}
-          <div className="relative flex items-center gap-2 max-w-full">
-            <button
-              onClick={() => scrollFeatureTabs("left")}
-              className="hidden sm:flex w-10 h-10 rounded-full bg-surface-container-lowest border border-surface-variant/40 text-on-surface hover:bg-primary hover:text-white transition-all items-center justify-center shrink-0 shadow-xs cursor-pointer"
-              aria-label="Scroll tabs left"
-            >
-              <span className="material-symbols-outlined text-lg">chevron_left</span>
-            </button>
-
-            <div
-              ref={featureTabsRef}
-              className="flex items-center gap-2.5 overflow-x-auto pb-2 pt-1 scroll-smooth [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden w-full"
-            >
-              {FEATURE_TABS.map((tab, idx) => {
-                const isActive = activeFeatureTab === idx;
-                return (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveFeatureTab(idx)}
-                    className={`px-4 sm:px-5 py-2.5 sm:py-3 rounded-full text-xs font-heading font-bold whitespace-nowrap transition-all flex items-center gap-2 cursor-pointer shrink-0 ${
-                      isActive
-                        ? "bg-on-surface text-white shadow-md scale-[1.02]"
-                        : "bg-surface-container-lowest border border-surface-variant/40 text-on-surface-variant hover:bg-surface-container hover:text-on-surface"
-                    }`}
-                  >
-                    <span className="material-symbols-outlined text-base">{tab.icon}</span>
-                    <span>{tab.label}</span>
-                  </button>
-                );
-              })}
-            </div>
-
-            <button
-              onClick={() => scrollFeatureTabs("right")}
-              className="hidden sm:flex w-10 h-10 rounded-full bg-surface-container-lowest border border-surface-variant/40 text-on-surface hover:bg-primary hover:text-white transition-all items-center justify-center shrink-0 shadow-xs cursor-pointer"
-              aria-label="Scroll tabs right"
-            >
-              <span className="material-symbols-outlined text-lg">chevron_right</span>
-            </button>
-          </div>
-
-          {/* Full-Bleed Animated Feature Panel with Swipe Gestures & Controls */}
-          <AnimatePresence mode="wait">
-            {(() => {
-              const tab = FEATURE_TABS[activeFeatureTab];
-              const isMockupLeft = tab.mockupSide === "left";
-
-              return (
-                <motion.div
-                  key={tab.id}
-                  initial={{ opacity: 0, y: 15 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -15 }}
-                  transition={{ duration: 0.25 }}
-                  onTouchStart={(e) => setTouchStartX(e.touches[0].clientX)}
-                  onTouchEnd={(e) => {
-                    if (touchStartX === null) return;
-                    const touchEndX = e.changedTouches[0].clientX;
-                    const diff = touchStartX - touchEndX;
-                    if (Math.abs(diff) > 40) {
-                      if (diff > 0) handleNextFeature();
-                      else handlePrevFeature();
-                    }
-                    setTouchStartX(null);
-                  }}
-                  className={`p-6 sm:p-8 md:p-12 rounded-[32px] border ${tab.panelBg} ${tab.panelBorder} shadow-card-lift min-h-[440px] flex flex-col justify-between`}
-                >
-                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center w-full">
-                    
-                    {/* Mockup Column */}
-                    <div className={`lg:col-span-6 ${isMockupLeft ? "lg:order-1" : "lg:order-2"}`}>
-                      {tab.id === "ai" && (
-                        <div className="w-full p-4 sm:p-6 rounded-[28px] bg-surface-container-lowest border border-surface-variant/40 shadow-xl space-y-4">
-                          <div className="flex items-center justify-between border-b border-surface-variant/20 pb-3">
-                            <div className="flex items-center gap-2.5">
-                              <div className="w-9 h-9 rounded-xl bg-primary/15 text-primary flex items-center justify-center font-bold shrink-0">
-                                <span className="material-symbols-outlined text-lg">smart_toy</span>
-                              </div>
-                              <div>
-                                <h4 className="font-heading font-extrabold text-xs sm:text-sm text-on-surface">Your AI Companion</h4>
-                                <p className="text-[10px] text-emerald-600 font-semibold flex items-center gap-1"><span>●</span> Active 24/7</p>
-                              </div>
-                            </div>
-                            <span className="px-2.5 py-0.5 rounded-full text-[9px] font-heading font-bold bg-primary/10 text-primary shrink-0">Active Listener</span>
-                          </div>
-                          <div className="space-y-3 text-xs">
-                            <div className="flex justify-end">
-                              <div className="max-w-[90%] sm:max-w-[85%] p-3 rounded-2xl rounded-tr-xs bg-primary text-white font-medium shadow-xs leading-relaxed">
-                                I get so stressed before exams. It feels like my mind won&apos;t quiet down.
-                              </div>
-                            </div>
-                            <div className="flex justify-start">
-                              <div className="max-w-[90%] sm:max-w-[85%] p-3 rounded-2xl rounded-tl-xs bg-surface-container-low border border-surface-variant/30 text-on-surface font-medium leading-relaxed">
-                                I hear you. Exam pressure can feel overwhelming. Let&apos;s take a slow deep breath together right now and break down tonight into manageable steps.
-                              </div>
-                            </div>
-                          </div>
-                          <div className="p-2.5 rounded-xl bg-mint/15 border border-mint/30 flex items-center justify-between text-[11px] text-[#006B56] font-bold">
-                            <div className="flex items-center gap-2">
-                              <span className="material-symbols-outlined text-sm">air</span>
-                              <span>2-Min Breathing Reset</span>
-                            </div>
-                            <span className="material-symbols-outlined text-base">play_circle</span>
-                          </div>
-                        </div>
-                      )}
-
-                      {tab.id === "human" && (
-                        <div className="w-full p-4 sm:p-6 rounded-[28px] bg-surface-container-lowest border border-peach/40 shadow-xl space-y-4">
-                          <div className="flex items-center justify-between border-b border-surface-variant/20 pb-3">
-                            <div className="flex items-center gap-3">
-                              <div className="w-10 h-10 rounded-full bg-peach/40 text-[#9E5D28] font-bold flex items-center justify-center text-sm shrink-0">
-                                M
-                              </div>
-                              <div>
-                                <h4 className="font-heading font-extrabold text-sm text-on-surface">Maya K.</h4>
-                                <p className="text-[10px] text-emerald-600 font-semibold flex items-center gap-1"><span>●</span> Certified Peer Listener</p>
-                              </div>
-                            </div>
-                            <span className="px-2.5 py-1 rounded-full text-[10px] font-heading font-bold bg-peach/25 text-[#9E5D28] shrink-0">
-                              ⭐️ 4.9 (120+ Sessions)
-                            </span>
-                          </div>
-                          <div className="p-4 rounded-2xl bg-[#FFF9F2] border border-peach/30 text-xs text-on-surface leading-relaxed font-medium">
-                            &quot;I&apos;ve been in that exact spot during my junior year. You&apos;re doing better than you think. Take it one day at a time.&quot;
-                          </div>
-                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs pt-1">
-                            <span className="text-on-surface-variant/70 text-[11px]">100% Anonymous & Private</span>
-                            <button className="px-4 py-2 rounded-full bg-[#9E5D28] text-white font-heading font-bold text-xs shadow-xs shrink-0">
-                              Start Chat Session
-                            </button>
-                          </div>
-                        </div>
-                      )}
-
-                      {tab.id === "pro" && (
-                        <div className="w-full p-4 sm:p-6 rounded-[28px] bg-surface-container-lowest border border-pink/30 shadow-xl space-y-4">
-                          <div className="flex items-center gap-3 border-b border-surface-variant/20 pb-3">
-                            <div className="w-12 h-12 rounded-2xl bg-pink/25 text-[#874959] flex items-center justify-center font-bold text-lg shrink-0">
-                              Dr
-                            </div>
-                            <div>
-                              <h4 className="font-heading font-extrabold text-sm text-on-surface">Dr. Ananya Roy, Psy.D.</h4>
-                              <p className="text-xs text-primary font-semibold">Licensed Clinical Psychologist</p>
-                              <p className="text-[10px] text-on-surface-variant/70">8+ Years Exp • CBT & Anxiety Specialist</p>
-                            </div>
-                          </div>
-                          <div className="flex flex-wrap gap-2">
-                            <span className="px-2.5 py-1 rounded-lg bg-pink/15 text-[#874959] text-[10px] font-bold">Anxiety & Burnout</span>
-                            <span className="px-2.5 py-1 rounded-lg bg-primary/10 text-primary text-[10px] font-bold">Relationships</span>
-                          </div>
-                          <div className="p-3 rounded-xl bg-surface-container-low border border-surface-variant/30 flex items-center justify-between text-xs">
-                            <span className="font-medium text-on-surface">Next Available: <strong>Tomorrow at 4:00 PM</strong></span>
-                            <span className="material-symbols-outlined text-primary text-base">video_camera_front</span>
-                          </div>
-                          <button className="w-full py-3 rounded-full bg-[#874959] text-white font-heading font-bold text-xs shadow-xs">
-                            Book 1-on-1 Session
-                          </button>
-                        </div>
-                      )}
-
-                      {tab.id === "mood" && (
-                        <div className="w-full p-4 sm:p-6 rounded-[28px] bg-surface-container-lowest border border-pink/30 shadow-xl space-y-4">
-                          <div className="flex items-center justify-between border-b border-surface-variant/20 pb-3">
-                            <h4 className="font-heading font-extrabold text-sm text-on-surface">Daily Mood Check-in</h4>
-                            <span className="text-xs font-bold text-emerald-600 bg-emerald-500/10 px-2.5 py-1 rounded-full">Resilience: 84%</span>
-                          </div>
-                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-xs font-heading font-bold">
-                            <div className="p-2.5 rounded-xl bg-mint/20 text-[#006B56] border border-mint/40">🌸 Calm</div>
-                            <div className="p-2.5 rounded-xl bg-primary/15 text-primary border border-primary/30">✨ Hopeful</div>
-                            <div className="p-2.5 rounded-xl bg-peach/25 text-[#9E5D28] border border-peach/40">🌙 Thoughtful</div>
-                            <div className="p-2.5 rounded-xl bg-pink/20 text-[#874959] border border-pink/30">🌊 Stressed</div>
-                          </div>
-                          <div className="space-y-1 pt-2">
-                            <div className="flex justify-between text-[10px] text-on-surface-variant font-bold">
-                              <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
-                            </div>
-                            <div className="flex items-end justify-between h-14 pt-2">
-                              <div className="w-5 bg-primary/20 h-8 rounded-t-md" />
-                              <div className="w-5 bg-primary/40 h-10 rounded-t-md" />
-                              <div className="w-5 bg-primary/60 h-12 rounded-t-md" />
-                              <div className="w-5 bg-primary h-14 rounded-t-md" />
-                              <div className="w-5 bg-primary/80 h-11 rounded-t-md" />
-                              <div className="w-5 bg-mint/60 h-13 rounded-t-md" />
-                              <div className="w-5 bg-mint h-14 rounded-t-md" />
-                            </div>
-                          </div>
-                          <p className="text-[11px] text-on-surface-variant bg-pink/10 p-2.5 rounded-xl font-medium">
-                            💡 <strong>Pattern Recognized:</strong> Your calm score rises by +18% on days with evening reflections.
-                          </p>
-                        </div>
-                      )}
-
-                      {tab.id === "journal" && (
-                        <div className="w-full p-4 sm:p-6 rounded-[28px] bg-surface-container-lowest border border-pale-yellow/80 shadow-xl space-y-4">
-                          <div className="flex items-center justify-between border-b border-surface-variant/20 pb-3">
-                            <span className="px-3 py-1 rounded-full text-[10px] font-heading font-bold bg-pale-yellow/60 text-[#8A6D14]">
-                              📝 Daily Reflection
-                            </span>
-                            <span className="text-[10px] text-on-surface-variant/70 font-medium">Today • 8:30 PM</span>
-                          </div>
-                          <div className="p-4 rounded-2xl bg-[#FFFDF5] border border-pale-yellow/70 space-y-2">
-                            <p className="text-xs font-heading font-bold text-[#8A6D14]">What brought you a moment of quiet joy today?</p>
-                            <p className="text-xs text-on-surface leading-relaxed italic font-normal">
-                              &quot;Finished the team presentation on time and spent 20 minutes walking in the evening air with coffee. Felt genuinely peaceful.&quot;
-                            </p>
-                          </div>
-                          <div className="p-3 rounded-xl bg-primary/5 border border-primary/15 flex items-center gap-2 text-[11px] text-primary font-medium">
-                            <span className="material-symbols-outlined text-base">auto_awesome</span>
-                            <span>AI Insight: Acknowledging small wins is strengthening your daily calm.</span>
-                          </div>
-                        </div>
-                      )}
-
-                      {tab.id === "meditation" && (
-                        <div className="w-full p-4 sm:p-6 rounded-[28px] bg-surface-container-lowest border border-mint/40 shadow-xl space-y-4">
-                          <div className="flex items-center justify-between border-b border-surface-variant/20 pb-3">
-                            <div className="flex items-center gap-2">
-                              <span className="material-symbols-outlined text-mint text-xl font-bold">graphic_eq</span>
-                              <h4 className="font-heading font-extrabold text-sm text-on-surface">Now Playing</h4>
-                            </div>
-                            <span className="px-2.5 py-1 rounded-full text-[10px] font-heading font-bold bg-mint/20 text-[#006B56]">
-                              8 Min Breathwork
-                            </span>
-                          </div>
-                          <div className="text-center space-y-1 py-1">
-                            <h5 className="font-heading font-bold text-base text-on-surface">Deep Night Unwind</h5>
-                            <p className="text-xs text-on-surface-variant">Guided Body Scan & Soothing Rain</p>
-                          </div>
-                          <div className="space-y-2">
-                            <div className="w-full h-2 bg-surface-container-high rounded-full overflow-hidden">
-                              <div className="h-full bg-mint w-[45%] rounded-full" />
-                            </div>
-                            <div className="flex justify-between text-[10px] text-on-surface-variant/70 font-medium">
-                              <span>03:40</span>
-                              <span>08:00</span>
-                            </div>
-                          </div>
-                          <div className="flex items-center justify-center gap-6 pt-1">
-                            <span className="material-symbols-outlined text-on-surface-variant cursor-pointer text-xl">replay_10</span>
-                            <div className="w-11 h-11 rounded-full bg-[#006B56] text-white flex items-center justify-center shadow-md cursor-pointer">
-                              <span className="material-symbols-outlined text-2xl">pause</span>
-                            </div>
-                            <span className="material-symbols-outlined text-on-surface-variant cursor-pointer text-xl">forward_10</span>
-                          </div>
-                        </div>
-                      )}
-
-                      {tab.id === "community" && (
-                        <div className="w-full p-4 sm:p-6 rounded-[28px] bg-surface-container-lowest border border-primary/20 shadow-xl space-y-4">
-                          <div className="flex items-center justify-between border-b border-surface-variant/20 pb-3">
-                            <div className="flex items-center gap-2">
-                              <span className="material-symbols-outlined text-primary text-xl font-bold">groups</span>
-                              <h4 className="font-heading font-extrabold text-sm text-on-surface">Student Lounge Circle</h4>
-                            </div>
-                            <span className="px-2.5 py-1 rounded-full text-[10px] font-heading font-bold bg-primary/10 text-primary">
-                              Moderated Space
-                            </span>
-                          </div>
-                          <div className="p-4 rounded-2xl bg-surface-container-low border border-surface-variant/30 space-y-2">
-                            <div className="flex items-center justify-between text-[11px]">
-                              <span className="font-heading font-bold text-primary">Anonymous GentleBloom</span>
-                              <span className="text-on-surface-variant/60">15m ago</span>
-                            </div>
-                            <p className="text-xs text-on-surface leading-relaxed">
-                              &quot;Finally set clear boundaries with my study group this week and took an evening off. Feeling so much lighter!&quot;
-                            </p>
-                          </div>
-                          <div className="flex items-center justify-between text-xs text-on-surface-variant font-bold pt-1">
-                            <div className="flex items-center gap-3">
-                              <span className="flex items-center gap-1 text-primary">💜 24 Replies</span>
-                              <span className="flex items-center gap-1 text-[#006B56]">✨ 18 Encouragements</span>
-                            </div>
-                          </div>
-                        </div>
-                      )}
-
-                      {tab.id === "resources" && (
-                        <div className="w-full p-4 sm:p-6 rounded-[28px] bg-surface-container-lowest border border-secondary/20 shadow-xl space-y-4">
-                          <div className="flex items-center justify-between border-b border-surface-variant/20 pb-3">
-                            <span className="px-2.5 py-1 rounded-full text-[10px] font-heading font-bold bg-mint/20 text-[#006B56]">
-                              Anxiety Relief Toolkit
-                            </span>
-                            <span className="text-[11px] text-on-surface-variant font-medium flex items-center gap-1">
-                              <span className="material-symbols-outlined text-sm">schedule</span> 3 Min Read
-                            </span>
-                          </div>
-                          <h4 className="font-heading font-bold text-base text-on-surface">
-                            5-Step Grounding Exercise for Sudden Panic
-                          </h4>
-                          <div className="space-y-1.5 text-xs text-on-surface-variant">
-                            <div className="p-2 rounded-xl bg-surface-container-low flex items-center gap-2 font-medium">
-                              <span className="w-5 h-5 rounded-full bg-mint/30 text-[#006B56] font-bold text-[10px] flex items-center justify-center">1</span>
-                              <span>Name 5 things you can see around you</span>
-                            </div>
-                            <div className="p-2 rounded-xl bg-surface-container-low flex items-center gap-2 font-medium">
-                              <span className="w-5 h-5 rounded-full bg-mint/30 text-[#006B56] font-bold text-[10px] flex items-center justify-center">2</span>
-                              <span>Touch 4 physical textures nearby</span>
-                            </div>
-                          </div>
-                          <div className="flex items-center justify-between text-xs font-bold text-[#006B56] pt-1">
-                            <span>Reviewed by Clinical Psychologist</span>
-                            <span className="material-symbols-outlined text-base">bookmark</span>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Text Column */}
-                    <div className={`lg:col-span-6 space-y-6 ${isMockupLeft ? "lg:order-2" : "lg:order-1"}`}>
-                      <span className="px-3.5 py-1.5 rounded-full text-xs font-heading font-bold bg-surface-container-lowest text-on-surface border border-surface-variant/40 uppercase tracking-widest inline-block shadow-xs">
-                        {tab.badge}
-                      </span>
-
-                      <h3 className="text-2xl sm:text-3xl lg:text-4xl font-heading font-black text-on-surface tracking-tight leading-tight">
-                        {tab.headline}
-                      </h3>
-
-                      <p className="text-base sm:text-lg text-on-surface-variant leading-relaxed font-normal">
-                        {tab.description}
-                      </p>
-
-                      <div className="pt-2">
-                        <button
-                          onClick={handleGetStarted}
-                          className="px-7 py-3.5 rounded-full bg-primary hover:bg-primary-purple text-white font-heading font-bold text-sm shadow-md hover:shadow-lg transition-all inline-flex items-center gap-2 cursor-pointer"
-                        >
-                          <span>{tab.cta}</span>
-                          <span className="material-symbols-outlined text-lg">arrow_forward</span>
-                        </button>
-                      </div>
-                    </div>
-
-                  </div>
-
-                  {/* Feature Navigation Bar (Prev / Next Arrows + Counter) */}
-                  <div className="flex items-center justify-between border-t border-surface-variant/20 pt-5 mt-8">
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={handlePrevFeature}
-                        className="px-4 py-2 rounded-full bg-surface-container-lowest border border-surface-variant/40 text-on-surface hover:bg-primary hover:text-white transition-all flex items-center gap-1.5 text-xs font-heading font-bold shadow-xs cursor-pointer"
-                        aria-label="Previous feature"
-                      >
-                        <span className="material-symbols-outlined text-base">arrow_back</span>
-                        <span className="hidden sm:inline">Previous</span>
-                      </button>
-                      <button
-                        onClick={handleNextFeature}
-                        className="px-4 py-2 rounded-full bg-surface-container-lowest border border-surface-variant/40 text-on-surface hover:bg-primary hover:text-white transition-all flex items-center gap-1.5 text-xs font-heading font-bold shadow-xs cursor-pointer"
-                        aria-label="Next feature"
-                      >
-                        <span className="hidden sm:inline">Next Feature</span>
-                        <span className="material-symbols-outlined text-base">arrow_forward</span>
-                      </button>
-                    </div>
-
-                    <span className="text-xs font-heading font-bold text-on-surface-variant/70">
-                      Feature {activeFeatureTab + 1} of {FEATURE_TABS.length}
-                    </span>
-                  </div>
-                </motion.div>
-              );
-            })()}
-          </AnimatePresence>
         </div>
       </section>
 
@@ -1588,7 +1038,7 @@ export default function MarketingLandingPage() {
               Built on Absolute Privacy & Clinical Integrity
             </h2>
             <p className="text-base sm:text-lg text-on-surface-variant">
-              Your mental sanctuary is protected by enterprise-grade security and evidence-based psychological frameworks.
+              Your mental retreat is protected by enterprise-grade security and evidence-based psychological frameworks.
             </p>
           </div>
 
@@ -1777,181 +1227,6 @@ export default function MarketingLandingPage() {
         </div>
       </section>
 
-      {/* ==================== 8. WELLNESS SCORE PREVIEW ==================== */}
-      <section className="py-20 md:py-28 px-4 sm:px-6 max-w-7xl mx-auto border-t border-surface-variant/30">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-14 items-center">
-          
-          {/* ═══ LEFT: TEXT & CTA CONTENT ═══ */}
-          <div className="lg:col-span-5 flex flex-col items-center lg:items-start text-center lg:text-left space-y-6">
-            <div className="space-y-4">
-              <p className="text-xs font-heading font-bold text-[#874959] tracking-widest uppercase">
-                Interactive Score Teaser
-              </p>
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-heading font-extrabold text-on-surface leading-tight tracking-tight">
-                Visualize Your Mind&apos;s Daily Progress
-              </h2>
-              <p className="text-base sm:text-lg text-on-surface-variant leading-relaxed font-normal">
-                Get a clear, compassionate snapshot of your mental wellbeing with your personalized Wellness Score. Track stress resilience, emotional clarity, and sleep trends over time.
-              </p>
-            </div>
-
-            <div className="pt-1 w-full sm:w-auto">
-              <button
-                onClick={handleGetStarted}
-                className="w-full sm:w-auto px-8 py-4 rounded-full bg-primary hover:bg-primary-purple text-white font-heading font-bold text-sm shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all inline-flex items-center justify-center gap-2 cursor-pointer"
-              >
-                <span>Take Your First Check-in</span>
-                <span className="material-symbols-outlined text-lg">arrow_forward</span>
-              </button>
-            </div>
-          </div>
-
-          {/* ═══ RIGHT: REALISTIC BROWSER MOCKUP WITH ANIMATED METRICS ═══ */}
-          <div className="lg:col-span-7 flex justify-center w-full">
-            <div 
-              ref={scoreRef}
-              className="w-full max-w-xl rounded-[24px] sm:rounded-[32px] overflow-hidden border border-surface-variant/40 shadow-card-lift bg-surface-container-lowest text-left transform transition-all duration-700"
-            >
-              {/* Browser Chrome Top Bar */}
-              <div className="bg-[#24212D] px-4 sm:px-6 py-3 sm:py-3.5 flex items-center justify-between border-b border-white/10 select-none">
-                {/* Window control dots */}
-                <div className="flex items-center gap-2">
-                  <div className="w-2.5 sm:w-3 h-2.5 sm:h-3 rounded-full bg-[#FF5F56]" />
-                  <div className="w-2.5 sm:w-3 h-2.5 sm:h-3 rounded-full bg-[#FFBD2E]" />
-                  <div className="w-2.5 sm:w-3 h-2.5 sm:h-3 rounded-full bg-[#27C93F]" />
-                </div>
-
-                {/* URL / Tab Address Bar */}
-                <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 border border-white/10 text-[10px] sm:text-[11px] font-mono text-white/70 max-w-[190px] sm:max-w-xs truncate">
-                  <span className="material-symbols-outlined text-[13px] text-emerald-400">lock</span>
-                  <span className="truncate">app.manraah.com/dashboard</span>
-                </div>
-
-                {/* Subtle Controls */}
-                <div className="flex items-center gap-1.5 text-white/30">
-                  <span className="material-symbols-outlined text-xs sm:text-sm">dashboard</span>
-                </div>
-              </div>
-
-              {/* Browser Content Area: Score Card with Animated Numbers & Bars */}
-              <div className="p-5 sm:p-7 md:p-8 space-y-6 bg-surface-container-lowest">
-                {/* Card Header */}
-                <div className="flex items-center justify-between border-b border-surface-variant/20 pb-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-mint/20 text-[#006B56] flex items-center justify-center font-bold">
-                      🌿
-                    </div>
-                    <div>
-                      <h4 className="font-heading font-bold text-base text-on-surface">Daily Wellness Score</h4>
-                      <p className="text-xs text-on-surface-variant font-medium">Updated 5 minutes ago</p>
-                    </div>
-                  </div>
-                  <span className="px-3 py-1 rounded-full text-xs font-heading font-bold bg-mint/20 text-[#006B56]">
-                    Balanced state
-                  </span>
-                </div>
-
-                {/* Big Score Display */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between bg-surface-container/50 p-5 sm:p-6 rounded-[24px] gap-4">
-                  <div>
-                    <span className="text-xs font-heading font-bold text-on-surface-variant uppercase tracking-wider">
-                      Overall Score
-                    </span>
-                    <div className="text-4xl sm:text-5xl font-heading font-black text-primary mt-1">
-                      <AnimatedScoreCounter target={84} inView={scoreInView} />{" "}
-                      <span className="text-lg font-normal text-on-surface-variant">/ 100</span>
-                    </div>
-                  </div>
-                  {/* Thick Progress bar with animated fill */}
-                  <div className="w-full sm:w-44 h-3.5 bg-surface-container-high rounded-full overflow-hidden">
-                    <div 
-                      className="h-full bg-gradient-to-r from-mint via-primary/80 to-primary rounded-full transition-all duration-1200 ease-out"
-                      style={{ width: scoreInView ? "84%" : "0%" }}
-                    />
-                  </div>
-                </div>
-
-                {/* Metric Breakdown Grid (1-column on mobile, 2-column on tablet/desktop) */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-xs font-heading">
-                  {/* Stress Resilience */}
-                  <div className="p-3.5 sm:p-4 rounded-2xl bg-surface-container/30 border border-surface-variant/20 space-y-2">
-                    <div className="flex items-center justify-between">
-                      <span className="text-on-surface-variant font-medium">Stress Resilience</span>
-                      <p className="font-bold text-sm text-on-surface">
-                        <AnimatedScoreCounter target={88} inView={scoreInView} />% (Optimal)
-                      </p>
-                    </div>
-                    <div className="w-full h-1.5 bg-surface-container-high rounded-full overflow-hidden">
-                      <div 
-                        className="h-full bg-emerald-500 rounded-full transition-all duration-1200 ease-out"
-                        style={{ width: scoreInView ? "88%" : "0%" }}
-                      />
-                    </div>
-                  </div>
-
-                  {/* Emotional Balance */}
-                  <div className="p-3.5 sm:p-4 rounded-2xl bg-surface-container/30 border border-surface-variant/20 space-y-2">
-                    <div className="flex items-center justify-between">
-                      <span className="text-on-surface-variant font-medium">Emotional Balance</span>
-                      <p className="font-bold text-sm text-on-surface">
-                        <AnimatedScoreCounter target={82} inView={scoreInView} />% (Steady)
-                      </p>
-                    </div>
-                    <div className="w-full h-1.5 bg-surface-container-high rounded-full overflow-hidden">
-                      <div 
-                        className="h-full bg-primary rounded-full transition-all duration-1200 ease-out"
-                        style={{ width: scoreInView ? "82%" : "0%" }}
-                      />
-                    </div>
-                  </div>
-
-                  {/* Mindfulness Habit */}
-                  <div className="p-3.5 sm:p-4 rounded-2xl bg-surface-container/30 border border-surface-variant/20 space-y-2">
-                    <div className="flex items-center justify-between">
-                      <span className="text-on-surface-variant font-medium">Mindfulness Habit</span>
-                      <p className="font-bold text-sm text-on-surface">
-                        <AnimatedScoreCounter target={85} inView={scoreInView} />% (High)
-                      </p>
-                    </div>
-                    <div className="w-full h-1.5 bg-surface-container-high rounded-full overflow-hidden">
-                      <div 
-                        className="h-full bg-mint rounded-full transition-all duration-1200 ease-out"
-                        style={{ width: scoreInView ? "85%" : "0%" }}
-                      />
-                    </div>
-                  </div>
-
-                  {/* Restful Sleep */}
-                  <div className="p-3.5 sm:p-4 rounded-2xl bg-surface-container/30 border border-surface-variant/20 space-y-2">
-                    <div className="flex items-center justify-between">
-                      <span className="text-on-surface-variant font-medium">Restful Sleep</span>
-                      <p className="font-bold text-sm text-on-surface">
-                        <AnimatedScoreCounter target={80} inView={scoreInView} />% (Good)
-                      </p>
-                    </div>
-                    <div className="w-full h-1.5 bg-surface-container-high rounded-full overflow-hidden">
-                      <div 
-                        className="h-full bg-peach rounded-full transition-all duration-1200 ease-out"
-                        style={{ width: scoreInView ? "80%" : "0%" }}
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Personalized Insight */}
-                <div className="p-4 rounded-2xl bg-primary/5 border border-primary/15 flex items-start sm:items-center gap-3 text-xs text-on-surface-variant">
-                  <span className="material-symbols-outlined text-primary text-xl shrink-0 mt-0.5 sm:mt-0">lightbulb</span>
-                  <span>
-                    <strong>Personalized Insight:</strong> You&apos;re showing steady progress in managing stress during busy work hours this week!
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-        </div>
-      </section>
-
       {/* ==================== TESTIMONIALS SECTION (CONTINUOUS AUTO-SCROLLING MARQUEE) ==================== */}
       <section id="testimonials" className="py-20 md:py-28 overflow-hidden border-t border-surface-variant/20">
         <div className="text-center max-w-3xl mx-auto mb-14 px-6 space-y-4">
@@ -2121,7 +1396,7 @@ export default function MarketingLandingPage() {
 
         <div className="max-w-4xl mx-auto space-y-8 relative z-10">
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-heading font-black tracking-tight leading-tight">
-            Your Sanctuary for Mind is Just One Step Away
+            Your Retreat for Mind is Just One Step Away
           </h2>
           <p className="text-base sm:text-lg text-white/90 max-w-2xl mx-auto leading-relaxed font-normal">
             Join individuals building daily emotional clarity, resilience, and peace with Manraah.
@@ -2138,114 +1413,6 @@ export default function MarketingLandingPage() {
           </div>
         </div>
       </section>
-
-      {/* ==================== 11. FOOTER ==================== */}
-      <footer className="bg-[#262235] text-surface/90 pt-16 pb-12 px-6 border-t border-white/10">
-        <div className="max-w-7xl mx-auto space-y-12">
-          {/* Main Footer Columns */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 text-sm">
-            {/* Brand Column */}
-            <div className="lg:col-span-2 space-y-5 text-left">
-              <Link href="/" className="inline-block hover:opacity-90 transition-opacity">
-                <Logo variant="white" size="md" className="h-8 sm:h-9" />
-              </Link>
-              <p className="text-xs text-white/70 leading-relaxed max-w-sm">
-                A private, compassionate mental wellness sanctuary combining 24/7 AI companion care, verified peer listeners, licensed therapists, and category-based personalization.
-              </p>
-
-              {/* Social Media Links */}
-              <div className="pt-1">
-                <p className="text-[11px] font-heading font-bold text-white/50 uppercase tracking-wider mb-2.5">Follow Our Journey</p>
-                <div className="flex items-center gap-2">
-                  <a
-                    href="#"
-                    aria-label="X (Twitter)"
-                    className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white/80 hover:text-white flex items-center justify-center transition-colors text-xs"
-                  >
-                    𝕏
-                  </a>
-                  <a
-                    href="#"
-                    aria-label="Instagram"
-                    className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white/80 hover:text-white flex items-center justify-center transition-colors text-xs"
-                  >
-                    <span className="material-symbols-outlined text-sm">photo_camera</span>
-                  </a>
-                  <a
-                    href="#"
-                    aria-label="LinkedIn"
-                    className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white/80 hover:text-white flex items-center justify-center transition-colors text-xs"
-                  >
-                    <span className="material-symbols-outlined text-sm">work</span>
-                  </a>
-                  <a
-                    href="#"
-                    aria-label="Community"
-                    className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white/80 hover:text-white flex items-center justify-center transition-colors text-xs"
-                  >
-                    <span className="material-symbols-outlined text-sm">forum</span>
-                  </a>
-                </div>
-              </div>
-            </div>
-
-            {/* Product Links */}
-            <div className="space-y-3 text-left">
-              <h4 className="font-heading font-bold text-white text-xs uppercase tracking-wider">Product</h4>
-              <ul className="space-y-2 text-xs text-white/70">
-                <li><a href="#how-it-works" className="hover:text-white transition-colors">How it Works</a></li>
-                <li><Link href="/ai-chat" className="hover:text-white transition-colors">AI Companion</Link></li>
-                <li><Link href="/human-companion" className="hover:text-white transition-colors">Human Companion</Link></li>
-                <li><Link href="/professional-care" className="hover:text-white transition-colors">Professional Care</Link></li>
-                <li><Link href="/checkin" className="hover:text-white transition-colors">Mood Tracker</Link></li>
-                <li><Link href="/journal" className="hover:text-white transition-colors">Reflective Journal</Link></li>
-              </ul>
-            </div>
-
-            {/* Categories Links */}
-            <div className="space-y-3 text-left">
-              <h4 className="font-heading font-bold text-white text-xs uppercase tracking-wider">Categories</h4>
-              <ul className="space-y-2 text-xs text-white/70">
-                <li><button onClick={() => handleSelectCategory("student")} className="hover:text-white transition-colors text-left">Students</button></li>
-                <li><button onClick={() => handleSelectCategory("working_professional")} className="hover:text-white transition-colors text-left">Working Professionals</button></li>
-                <li><button onClick={() => handleSelectCategory("parent")} className="hover:text-white transition-colors text-left">Parents</button></li>
-                <li><button onClick={() => handleSelectCategory("couple")} className="hover:text-white transition-colors text-left">Couples</button></li>
-                <li><button onClick={() => handleSelectCategory("other")} className="hover:text-white transition-colors text-left">Other Life Paths</button></li>
-              </ul>
-            </div>
-
-            {/* Trust & Legal Links */}
-            <div className="space-y-3 text-left">
-              <h4 className="font-heading font-bold text-white text-xs uppercase tracking-wider">Trust &amp; Legal</h4>
-              <ul className="space-y-2 text-xs text-white/70">
-                <li><a href="#trust" className="hover:text-white transition-colors">Privacy &amp; Encryption</a></li>
-                <li><a href="#faq" className="hover:text-white transition-colors">FAQ</a></li>
-                <li><Link href="/login" className="hover:text-white transition-colors">Sign In</Link></li>
-                <li><button onClick={handleGetStarted} className="hover:text-white transition-colors text-left">Get Started</button></li>
-              </ul>
-            </div>
-          </div>
-
-          {/* Calm Crisis Helpline Notice */}
-          <div className="p-4 sm:p-5 rounded-2xl bg-white/[0.04] border border-white/10 text-xs text-white/75 space-y-1.5 text-left">
-            <div className="font-heading font-bold text-white/90 flex items-center gap-1.5">
-              <span className="material-symbols-outlined text-base text-mint">favorite</span>
-              <span>24/7 Immediate Support Notice</span>
-            </div>
-            <p className="leading-relaxed">
-              If you or someone you know is in immediate crisis or emotional distress, please reach out to professional emergency resources: call <span className="font-bold text-white underline decoration-white/30">[National Crisis Helpline Placeholder — e.g., 988 in US/Canada, 14416 Tele-MANAS in India, or 112 in EU]</span>. Manraah is an everyday supportive wellness companion, not an emergency medical intervention service.
-            </p>
-          </div>
-
-          {/* Bottom Copyright Bar */}
-          <div className="pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between text-xs text-white/50 gap-4">
-            <p>© 2026 Manraah. All rights reserved.</p>
-            <p className="flex items-center gap-1">
-              <span>Crafted with compassion for mind &amp; soul</span>
-            </p>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }
