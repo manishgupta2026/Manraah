@@ -60,7 +60,12 @@ export default function PublicNavbar() {
           >
             Daily Retreat
           </Link>
-          <Link href="/#testimonials" className="hover:text-primary transition-colors">
+          <Link
+            href="/stories"
+            className={`transition-colors hover:text-primary ${
+              pathname === "/stories" ? "text-primary font-bold" : ""
+            }`}
+          >
             Stories
           </Link>
           <Link href="/#categories" className="hover:text-primary transition-colors">
@@ -157,9 +162,11 @@ export default function PublicNavbar() {
                 Daily Retreat
               </Link>
               <Link
-                href="/#testimonials"
+                href="/stories"
                 onClick={() => setMobileMenuOpen(false)}
-                className="py-2 border-b border-surface-variant/20 hover:text-primary"
+                className={`py-2 border-b border-surface-variant/20 hover:text-primary ${
+                  pathname === "/stories" ? "text-primary font-bold" : ""
+                }`}
               >
                 Stories
               </Link>

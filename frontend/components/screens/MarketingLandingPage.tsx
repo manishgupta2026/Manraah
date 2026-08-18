@@ -415,165 +415,89 @@ export default function MarketingLandingPage() {
   };
 
   const currentSlide = HERO_CAROUSEL_IMAGES[activeHeroSlide];
-  const nextSlide = HERO_CAROUSEL_IMAGES[(activeHeroSlide + 1) % HERO_CAROUSEL_IMAGES.length];
 
   return (
     <div className="min-h-screen bg-surface text-on-surface font-sans select-none overflow-x-hidden">
-      {/* ==================== 1. TOP HERO SHOWCASE — EDITORIAL SLIDER ==================== */}
-      <section className="relative pt-4 pb-12 md:pt-6 md:pb-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto overflow-hidden">
-        
-        {/* Retreat Theme Showcase Canvas */}
-        <div className="relative rounded-[32px] sm:rounded-[44px] bg-surface-container-lowest border border-surface-variant/70 shadow-card-lift text-on-surface p-6 sm:p-8 lg:p-11 overflow-hidden">
-          
-          {/* Subtle Atmospheric Glow Lights */}
-          <div className="absolute -top-24 -left-24 w-96 h-96 bg-primary/10 rounded-full blur-[120px] pointer-events-none" />
-          <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-mint/20 rounded-full blur-[120px] pointer-events-none" />
-          <div className="absolute top-1/2 left-1/3 w-80 h-80 bg-peach/20 rounded-full blur-[100px] pointer-events-none" />
-
-          {/* Top Bar inside showcase */}
-          <div className="relative z-10 flex items-center justify-between border-b border-surface-variant/40 pb-3 mb-5 sm:mb-8">
-            <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-primary animate-pulse" />
-              <span className="text-xs font-heading font-bold text-on-surface uppercase tracking-widest">
-                Manraah • Daily Retreat
-              </span>
-            </div>
-            <Link
-              href="/retreat"
-              className="px-3 py-1 rounded-full text-xs font-heading font-bold bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 transition-all cursor-pointer inline-flex items-center gap-1.5"
+      {/* ==================== 1. TOP HERO FULL-WIDTH PANORAMIC CAROUSEL ==================== */}
+      <section className="relative w-full overflow-hidden">
+        <div
+          onMouseEnter={() => setIsHeroCarouselHovered(true)}
+          onMouseLeave={() => setIsHeroCarouselHovered(false)}
+          onTouchStart={handleHeroTouchStart}
+          onTouchEnd={handleHeroTouchEnd}
+          className="relative w-full h-[320px] sm:h-[420px] md:h-[480px] lg:h-[540px] bg-surface-container-high overflow-hidden select-none"
+        >
+          {/* Active Image Slide Transition */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentSlide.src}
+              initial={{ opacity: 0, scale: 1.02 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.99 }}
+              transition={{ duration: 0.55, ease: "easeInOut" }}
+              className="absolute inset-0 w-full h-full"
             >
-              <span>{currentSlide.tag}</span>
-              <span className="material-symbols-outlined text-xs">arrow_forward</span>
-            </Link>
-          </div>
+              {/* Soft Ambient Blurred Fill Background for Ultrawide Displays */}
+              <img
+                src={currentSlide.src}
+                alt=""
+                aria-hidden="true"
+                className="absolute inset-0 w-full h-full object-cover blur-2xl opacity-40 scale-110 pointer-events-none"
+              />
+              {/* Main Full-Bleed Panoramic Hero Image */}
+              <img
+                src={currentSlide.src}
+                alt={currentSlide.alt}
+                className="relative z-0 w-full h-full object-cover select-none"
+                loading="eager"
+              />
+            </motion.div>
+          </AnimatePresence>
 
-          {/* Main Showcase Stage */}
-          <div
-            onMouseEnter={() => setIsHeroCarouselHovered(true)}
-            onMouseLeave={() => setIsHeroCarouselHovered(false)}
-            onTouchStart={handleHeroTouchStart}
-            onTouchEnd={handleHeroTouchEnd}
-            className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-8 items-center min-h-[300px] sm:min-h-[360px]"
+          {/* Bottom Atmosphere Gradient Fade (Blends seamlessly into the page background below) */}
+          <div className="absolute inset-x-0 bottom-0 h-32 sm:h-44 bg-gradient-to-t from-surface via-surface/65 to-transparent pointer-events-none z-10" />
+
+          {/* Floating Left Navigation Button */}
+          <button
+            onClick={handlePrevHeroSlide}
+            aria-label="Previous slide"
+            className="absolute left-3 sm:left-8 md:left-12 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/80 hover:bg-white text-on-surface shadow-lg backdrop-blur-md flex items-center justify-center transition-all hover:scale-105 active:scale-95 cursor-pointer z-20 border border-white/50 opacity-85 hover:opacity-100"
           >
-            {/* ── Left Side: Bold Typography & Action Link ── */}
-            <div className="lg:col-span-6 text-left space-y-4 lg:pr-4 z-20">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={currentSlide.src}
-                  initial={{ opacity: 0, y: 15 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -15 }}
-                  transition={{ duration: 0.35, ease: "easeOut" }}
-                  className="space-y-4"
-                >
-                  <h2 className="text-3xl sm:text-4xl lg:text-5xl font-heading font-black text-on-surface leading-[1.12] tracking-tight">
-                    {currentSlide.title}
-                  </h2>
-                  <p className="text-sm sm:text-base text-on-surface-variant leading-relaxed font-normal max-w-md">
-                    {currentSlide.subtitle}
-                  </p>
-                  <div className="pt-2">
-                    <button
-                      onClick={handleGetStarted}
-                      className="inline-flex items-center gap-2 text-sm sm:text-base font-heading font-bold text-primary hover:text-primary-purple transition-colors group cursor-pointer border-b-2 border-primary/30 hover:border-primary pb-1"
-                    >
-                      <span>{currentSlide.cta}</span>
-                      <span className="material-symbols-outlined text-base group-hover:translate-x-1 transition-transform">
-                        arrow_forward
-                      </span>
-                    </button>
-                  </div>
-                </motion.div>
-              </AnimatePresence>
-            </div>
+            <span className="material-symbols-outlined text-xl sm:text-2xl">chevron_left</span>
+          </button>
 
-            {/* ── Center & Right: Featured Active Image + Next Slide Peek (Square 1:1 Aspect Ratio without Cropping) ── */}
-            <div className="lg:col-span-6 flex items-center justify-center lg:justify-end gap-4 sm:gap-6 relative overflow-visible">
-              {/* Featured Active Image Card (1:1 Square) */}
-              <div className="relative max-w-[320px] sm:max-w-[390px] lg:max-w-[420px] w-full rounded-[24px] sm:rounded-[32px] overflow-hidden border border-surface-variant/60 shadow-ambient-deep aspect-square bg-surface-container-low flex items-center justify-center">
-                <AnimatePresence mode="wait">
-                  <motion.img
-                    key={currentSlide.src}
-                    src={currentSlide.src}
-                    alt={currentSlide.alt}
-                    initial={{ opacity: 0, scale: 0.96 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 1.03 }}
-                    transition={{ duration: 0.45, ease: "easeOut" }}
-                    className="w-full h-full object-contain select-none"
-                    loading="eager"
-                  />
-                </AnimatePresence>
+          {/* Floating Right Navigation Button */}
+          <button
+            onClick={handleNextHeroSlide}
+            aria-label="Next slide"
+            className="absolute right-3 sm:right-8 md:right-12 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/80 hover:bg-white text-on-surface shadow-lg backdrop-blur-md flex items-center justify-center transition-all hover:scale-105 active:scale-95 cursor-pointer z-20 border border-white/50 opacity-85 hover:opacity-100"
+          >
+            <span className="material-symbols-outlined text-xl sm:text-2xl">chevron_right</span>
+          </button>
 
-                {/* Floating Nav Arrows on Active Card */}
-                <div className="absolute bottom-3 right-3 sm:bottom-5 sm:right-5 flex items-center gap-2 z-30">
-                  <button
-                    onClick={handlePrevHeroSlide}
-                    aria-label="Previous reflection"
-                    className="w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-surface-container-lowest/95 hover:bg-surface-container-lowest text-on-surface border border-surface-variant/60 shadow-md backdrop-blur-md flex items-center justify-center transition-all hover:scale-105 active:scale-95 cursor-pointer"
-                  >
-                    <span className="material-symbols-outlined text-lg sm:text-xl">chevron_left</span>
-                  </button>
-                  <button
-                    onClick={handleNextHeroSlide}
-                    aria-label="Next reflection"
-                    className="w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-surface-container-lowest/95 hover:bg-surface-container-lowest text-on-surface border border-surface-variant/60 shadow-md backdrop-blur-md flex items-center justify-center transition-all hover:scale-105 active:scale-95 cursor-pointer"
-                  >
-                    <span className="material-symbols-outlined text-lg sm:text-xl">chevron_right</span>
-                  </button>
-                </div>
-              </div>
-
-              {/* Next Slide Peek (Square 1:1 Aspect Ratio on larger screens) */}
-              <div 
-                onClick={handleNextHeroSlide}
-                className="hidden sm:block w-18 sm:w-24 lg:w-32 aspect-square rounded-[18px] sm:rounded-[24px] overflow-hidden opacity-50 hover:opacity-85 transition-opacity border border-surface-variant/60 shrink-0 cursor-pointer shadow-sm bg-surface-container-low"
-              >
-                <img
-                  src={nextSlide.src}
-                  alt={nextSlide.alt}
-                  className="w-full h-full object-contain select-none"
+          {/* Floating Bottom Center Pill with Dots */}
+          <div className="absolute bottom-6 sm:bottom-8 left-1/2 -translate-x-1/2 z-20 px-3.5 py-1.5 rounded-full bg-white/90 hover:bg-white backdrop-blur-md shadow-md border border-white/70 flex items-center gap-2 transition-all">
+            {HERO_CAROUSEL_IMAGES.map((_, idx) => {
+              const isActive = activeHeroSlide === idx;
+              return (
+                <button
+                  key={idx}
+                  onClick={() => setActiveHeroSlide(idx)}
+                  aria-label={`Go to slide ${idx + 1}`}
+                  className={`rounded-full transition-all duration-300 cursor-pointer ${
+                    isActive
+                      ? "w-2.5 h-2.5 bg-[#5F4EA5] scale-110 shadow-xs"
+                      : "w-2 h-2 bg-[#D1CADF] hover:bg-[#5F4EA5]/50"
+                  }`}
                 />
-              </div>
-            </div>
+              );
+            })}
           </div>
-
-          {/* Bottom Bar: Segmented Dash Progress Bar (NO numberings) */}
-          <div className="relative z-10 flex items-center justify-between pt-5 sm:pt-6 mt-4 sm:mt-6 border-t border-surface-variant/40">
-            {/* Horizontal Segmented Progress Dashes */}
-            <div className="flex items-center gap-1.5 sm:gap-2.5">
-              {HERO_CAROUSEL_IMAGES.map((_, idx) => {
-                const isActive = activeHeroSlide === idx;
-                return (
-                  <button
-                    key={idx}
-                    onClick={() => setActiveHeroSlide(idx)}
-                    aria-label={`Go to slide ${idx + 1}`}
-                    className={`h-1 sm:h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
-                      isActive
-                        ? "w-7 sm:w-12 bg-primary shadow-xs"
-                        : "w-2.5 sm:w-5 bg-surface-variant hover:bg-primary/30"
-                    }`}
-                  />
-                );
-              })}
-            </div>
-
-            {/* Quick Link on bottom right */}
-            <button
-              onClick={handleGetStarted}
-              className="text-xs sm:text-sm font-heading font-bold text-on-surface-variant hover:text-primary transition-colors cursor-pointer hidden sm:flex items-center gap-1.5"
-            >
-              <span>Begin Free Retreat</span>
-              <span className="material-symbols-outlined text-sm">arrow_forward</span>
-            </button>
-          </div>
-
         </div>
       </section>
 
       {/* ═══ 2. HERO SECTION — INTERACTIVE MOOD CHECK-IN, HEADLINE & CTAs ═══ */}
-      <section className="relative py-16 md:py-24 px-6 max-w-5xl mx-auto border-t border-surface-variant/20">
+      <section className="relative pt-2 pb-16 md:pb-24 px-6 max-w-5xl mx-auto">
 
         {/* Soft Atmospheric Glow Blobs */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[80vw] md:w-[600px] h-[400px] bg-primary/10 rounded-full blur-[130px] pointer-events-none -z-10" />
@@ -1227,9 +1151,9 @@ export default function MarketingLandingPage() {
         </div>
       </section>
 
-      {/* ==================== TESTIMONIALS SECTION (CONTINUOUS AUTO-SCROLLING MARQUEE) ==================== */}
+      {/* ==================== TESTIMONIALS SECTION (SINGLE CONTINUOUS MARQUEE LINE) ==================== */}
       <section id="testimonials" className="py-20 md:py-28 overflow-hidden border-t border-surface-variant/20">
-        <div className="text-center max-w-3xl mx-auto mb-14 px-6 space-y-4">
+        <div className="text-center max-w-3xl mx-auto mb-12 px-6 space-y-4">
           <p className="text-xs font-heading font-bold text-[#006B56] tracking-widest uppercase">
             Real Perspectives &amp; Reflections
           </p>
@@ -1242,17 +1166,17 @@ export default function MarketingLandingPage() {
         </div>
 
         {/* Marquee Wrapper with edge gradient fade masks */}
-        <div className="relative w-full overflow-hidden space-y-6 select-none">
+        <div className="relative w-full overflow-hidden select-none">
           {/* Left/Right Edge Gradient Fade Masks */}
           <div className="pointer-events-none absolute inset-y-0 left-0 w-12 sm:w-32 bg-gradient-to-r from-surface to-transparent z-20" />
           <div className="pointer-events-none absolute inset-y-0 right-0 w-12 sm:w-32 bg-gradient-to-l from-surface to-transparent z-20" />
 
-          {/* Top Marquee Row (Continuous left scroll) */}
-          <div className="flex animate-marquee pause-on-hover gap-6 items-stretch py-2">
-            {[...TESTIMONIALS_ROW_1, ...TESTIMONIALS_ROW_1].map((item, idx) => (
+          {/* Single Continuous Marquee Row */}
+          <div className="flex animate-marquee pause-on-hover gap-6 items-stretch py-3">
+            {[...TESTIMONIALS_ROW_1, ...TESTIMONIALS_ROW_2, ...TESTIMONIALS_ROW_1, ...TESTIMONIALS_ROW_2].map((item, idx) => (
               <div
-                key={`row1-${idx}`}
-                className="w-[300px] sm:w-[380px] shrink-0 p-6 sm:p-7 rounded-[28px] bg-surface-container-lowest border border-surface-variant/40 shadow-ambient hover:shadow-card-lift hover:border-primary/30 transition-all duration-300 flex flex-col justify-between space-y-4"
+                key={`single-row-${idx}`}
+                className="w-[310px] sm:w-[380px] shrink-0 p-6 sm:p-7 rounded-[28px] bg-surface-container-lowest border border-surface-variant/40 shadow-ambient hover:shadow-card-lift hover:border-primary/30 transition-all duration-300 flex flex-col justify-between space-y-4"
               >
                 <div className="space-y-3">
                   <div className="flex items-center justify-between gap-2">
@@ -1284,45 +1208,17 @@ export default function MarketingLandingPage() {
               </div>
             ))}
           </div>
+        </div>
 
-          {/* Bottom Marquee Row (Continuous right scroll) - Hidden on mobile, shown on tablet/desktop */}
-          <div className="hidden sm:flex animate-marquee-reverse pause-on-hover gap-6 items-stretch py-2">
-            {[...TESTIMONIALS_ROW_2, ...TESTIMONIALS_ROW_2].map((item, idx) => (
-              <div
-                key={`row2-${idx}`}
-                className="w-[300px] sm:w-[380px] shrink-0 p-6 sm:p-7 rounded-[28px] bg-surface-container-lowest border border-surface-variant/40 shadow-ambient hover:shadow-card-lift hover:border-primary/30 transition-all duration-300 flex flex-col justify-between space-y-4"
-              >
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between gap-2">
-                    <div className="flex items-center gap-0.5 text-amber-400 text-sm">
-                      {"★".repeat(5)}
-                    </div>
-                    <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-heading font-bold ${item.badgeStyle}`}>
-                      {item.badge}
-                    </span>
-                  </div>
-                  <p className="text-xs sm:text-sm text-on-surface leading-relaxed font-medium">
-                    &quot;{item.quote}&quot;
-                  </p>
-                </div>
-
-                <div className="pt-3 border-t border-surface-variant/20 flex items-center gap-3">
-                  <div className={`w-9 h-9 rounded-full ${item.avatarBg} font-heading font-bold flex items-center justify-center text-xs shrink-0 shadow-xs`}>
-                    {item.initial}
-                  </div>
-                  <div>
-                    <h4 className="font-heading font-extrabold text-xs sm:text-sm text-on-surface leading-tight">
-                      {item.role}
-                    </h4>
-                    <p className="text-[11px] text-on-surface-variant font-medium mt-0.5">
-                      {item.reflection}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-
+        {/* Read More Stories CTA Button */}
+        <div className="text-center pt-10 px-6">
+          <Link
+            href="/stories"
+            className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-surface-container-lowest hover:bg-primary/10 text-primary border border-primary/30 font-heading font-bold text-sm shadow-xs hover:shadow-md transition-all hover:scale-105 cursor-pointer"
+          >
+            <span>Explore All Member Stories &amp; Journeys</span>
+            <span className="material-symbols-outlined text-base">arrow_forward</span>
+          </Link>
         </div>
       </section>
 

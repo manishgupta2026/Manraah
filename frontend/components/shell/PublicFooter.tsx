@@ -90,6 +90,7 @@ export default function PublicFooter() {
               <li><Link href="/how-it-works" className="hover:text-white transition-colors">How it Works</Link></li>
               <li><Link href="/features" className="hover:text-white transition-colors">Features Overview</Link></li>
               <li><Link href="/retreat" className="hover:text-white transition-colors">Daily Retreat</Link></li>
+              <li><Link href="/stories" className="hover:text-white transition-colors">Member Stories</Link></li>
               <li><Link href="/features?tab=ai" className="hover:text-white transition-colors">AI Companion</Link></li>
               <li><Link href="/features?tab=human" className="hover:text-white transition-colors">Human Companion</Link></li>
               <li><Link href="/features?tab=pro" className="hover:text-white transition-colors">Professional Care</Link></li>
