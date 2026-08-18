@@ -74,7 +74,12 @@ export default function PublicNavbar() {
           <Link href="/#trust" className="hover:text-primary transition-colors">
             Privacy &amp; Trust
           </Link>
-          <Link href="/#faq" className="hover:text-primary transition-colors">
+          <Link
+            href="/faq"
+            className={`transition-colors hover:text-primary ${
+              pathname === "/faq" ? "text-primary font-bold" : ""
+            }`}
+          >
             FAQ
           </Link>
           <Link
@@ -185,9 +190,11 @@ export default function PublicNavbar() {
                 Privacy &amp; Trust
               </Link>
               <Link
-                href="/#faq"
+                href="/faq"
                 onClick={() => setMobileMenuOpen(false)}
-                className="py-2 border-b border-surface-variant/20 hover:text-primary"
+                className={`py-2 border-b border-surface-variant/20 hover:text-primary ${
+                  pathname === "/faq" ? "text-primary font-bold" : ""
+                }`}
               >
                 FAQ
               </Link>

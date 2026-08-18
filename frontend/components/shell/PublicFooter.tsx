@@ -117,6 +117,7 @@ export default function PublicFooter() {
             <h4 className="font-heading font-bold text-white text-xs uppercase tracking-wider">Trust &amp; Legal</h4>
             <ul className="space-y-2 text-xs text-white/70">
               <li><Link href="/about" className="hover:text-white transition-colors">About Us</Link></li>
+              <li><Link href="/faq" className="hover:text-white transition-colors">Frequently Asked Questions (FAQ)</Link></li>
               <li><Link href="/privacy" className="hover:text-white transition-colors">Privacy &amp; Encryption</Link></li>
               <li><Link href="/security" className="hover:text-white transition-colors">Security Standards</Link></li>
               <li><Link href="/terms" className="hover:text-white transition-colors">Terms of Service</Link></li>

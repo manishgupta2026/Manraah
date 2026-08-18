@@ -144,33 +144,6 @@ const TRUST_BADGES = [
   },
 ];
 
-// FAQ Data
-const FAQ_ITEMS = [
-  {
-    q: "Is Manraah a replacement for clinical therapy?",
-    a: "No. Manraah is an everyday mental wellness companion designed for stress management, daily reflection, peer support, and habit building. While we facilitate access to licensed practitioners through Professional Care, Manraah itself does not provide medical diagnoses or emergency psychiatric intervention.",
-  },
-  {
-    q: "Is my personal data and conversation history private?",
-    a: "Yes, 100%. We employ end-to-end encryption across all journal entries, chat logs, and assessment scores. Your private reflections belong strictly to you and will never be sold, analyzed for advertising, or made public.",
-  },
-  {
-    q: "Is Manraah free to get started?",
-    a: "Yes! Creating an account gives you free access to daily mood check-ins, core AI companion conversations, basic meditation audio, and community discussion spaces. Optional premium features and 1-on-1 professional sessions are available if you seek deeper care.",
-  },
-  {
-    q: "Can I talk to real humans as well as the AI companion?",
-    a: "Absolutely. In addition to our 24/7 AI Companion, Manraah offers Human Companion sessions with trained peer listeners, as well as Professional Care booking with verified therapists and counselors.",
-  },
-  {
-    q: "What should I do if I am in immediate crisis or danger?",
-    a: "If you are facing immediate danger, self-harm thoughts, or severe mental distress, please reach out to emergency services immediately. Manraah features an in-app Crisis Support center with 24/7 national helpline contacts, but it is not an emergency dispatch service.",
-  },
-  {
-    q: "How does category-based personalization work?",
-    a: "When you choose your life category (such as Student, Parent, or Working Professional), Manraah customizes the tone of AI interactions, dashboard widgets, reflection prompts, and community circles to directly address your life stage challenges.",
-  },
-];
 
 // Illustrative Voices & Reflections (Non-fabricated, role-based attributions)
 const TESTIMONIALS_ROW_1 = [
@@ -345,7 +318,6 @@ const HERO_CAROUSEL_IMAGES = [
 
 export default function MarketingLandingPage() {
   const router = useRouter();
-  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
   const [selectedMoodIdx, setSelectedMoodIdx] = useState<number | null>(null);
   const [activeHeroSlide, setActiveHeroSlide] = useState<number>(0);
   const [isHeroCarouselHovered, setIsHeroCarouselHovered] = useState<boolean>(false);
@@ -1222,57 +1194,6 @@ export default function MarketingLandingPage() {
         </div>
       </section>
 
-      {/* ==================== 9. FAQ ACCORDION ==================== */}
-      <section id="faq" className="py-20 md:py-28 bg-[#F2EBFF]/40 border-y border-surface-variant/20 px-6">
-        <div className="max-w-4xl mx-auto space-y-14">
-          <div className="text-center space-y-4">
-            <p className="text-xs font-heading font-bold text-primary tracking-widest uppercase">
-              Frequently Asked Questions
-            </p>
-            <h2 className="text-3xl sm:text-4xl font-heading font-extrabold text-on-surface">
-              Everything You Need to Know
-            </h2>
-            <p className="text-base text-on-surface-variant">
-              Got questions before getting started? We've got answers.
-            </p>
-          </div>
-
-          <div className="space-y-4">
-            {FAQ_ITEMS.map((item, idx) => {
-              const isOpen = openFaqIndex === idx;
-              return (
-                <div
-                  key={idx}
-                  className="rounded-[24px] bg-surface-container-lowest border border-surface-variant/30 shadow-ambient overflow-hidden transition-colors"
-                >
-                  <button
-                    onClick={() => setOpenFaqIndex(isOpen ? null : idx)}
-                    className="w-full p-6 text-left font-heading font-bold text-base sm:text-lg text-on-surface flex items-center justify-between gap-4"
-                  >
-                    <span>{item.q}</span>
-                    <span className="material-symbols-outlined text-primary transition-transform duration-200 shrink-0">
-                      {isOpen ? "expand_less" : "expand_more"}
-                    </span>
-                  </button>
-
-                  <AnimatePresence>
-                    {isOpen && (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: "auto" }}
-                        exit={{ opacity: 0, height: 0 }}
-                        className="px-6 pb-6 pt-0 text-sm text-on-surface-variant leading-relaxed font-normal"
-                      >
-                        {item.a}
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
 
       {/* ==================== 10. FINAL CTA BAND ==================== */}
       <section className="py-20 md:py-28 bg-gradient-to-br from-[#4A388E] via-[#5F4EA5] to-[#3B2C78] text-white px-6 text-center relative overflow-hidden">
