@@ -11,10 +11,17 @@ import DesktopSidebar from "./DesktopSidebar";
 import MobileTabBar from "./MobileTabBar";
 import MobileDrawer from "./MobileDrawer";
 import Header from "./Header";
+import PublicNavbar from "./PublicNavbar";
+import PublicFooter from "./PublicFooter";
 import AdminHeader from "../admin/shell/AdminHeader";
 
 const STANDALONE_ROUTES = [
   "/",
+  "/how-it-works",
+  "/features",
+  "/stories",
+  "/faq",
+  "/about",
   "/category-selection",
   "/assessment",
   "/wellness-score",
@@ -22,11 +29,34 @@ const STANDALONE_ROUTES = [
   "/signup",
   "/admin/login",
   "/companion/login",
+  "/forgot-password",
+  "/terms",
+  "/privacy",
+  "/security",
+  "/contact",
 ];
 
 export default function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const isStandalone = STANDALONE_ROUTES.includes(pathname);
+  const isStandalone =
+    STANDALONE_ROUTES.includes(pathname) ||
+    pathname.startsWith("/how-it-works") ||
+    pathname.startsWith("/features") ||
+    pathname.startsWith("/stories") ||
+    pathname.startsWith("/faq") ||
+    pathname.startsWith("/about") ||
+    pathname.startsWith("/onboarding") ||
+    pathname.startsWith("/category-selection") ||
+    pathname.startsWith("/assessment") ||
+    pathname.startsWith("/wellness-score") ||
+    pathname.startsWith("/login") ||
+    pathname.startsWith("/signup") ||
+    pathname.startsWith("/forgot-password") ||
+    pathname.startsWith("/terms") ||
+    pathname.startsWith("/privacy") ||
+    pathname.startsWith("/security") ||
+    pathname.startsWith("/contact");
+
   const isAdminRoute = pathname.startsWith("/admin") || pathname.startsWith("/companion");
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
 
@@ -43,9 +73,11 @@ export default function AppShell({ children }: { children: ReactNode }) {
         <WellnessProvider>
           <HeaderProvider>
             {isStandalone ? (
-              /* Standalone Onboarding / Auth Layout */
-              <div className="min-h-screen bg-background text-on-background font-sans antialiased">
-                {children}
+              /* Standalone Onboarding / Auth / Public Layout with Global Public Header & Footer */
+              <div className="min-h-screen bg-background text-on-background font-sans antialiased flex flex-col justify-between">
+                <PublicNavbar />
+                <div className="flex-1">{children}</div>
+                <PublicFooter />
               </div>
             ) : isAdminRoute ? (
               /* Dedicated Admin Shell - Clean Layout without stacked header bar */

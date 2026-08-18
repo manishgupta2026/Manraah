@@ -6,6 +6,7 @@ import { getClientSession } from "@/backend/auth/client";
 import { getDailyCheckInSummaryAction } from "@/backend/auth/actions";
 import { useRouter } from "next/navigation";
 import ScreenHeader from "@/frontend/components/ui/ScreenHeader";
+import { getCategoryPersonalization } from "@/frontend/lib/mock-data";
 
 interface ChatMessage {
   id: string;
@@ -16,7 +17,11 @@ interface ChatMessage {
 
 export default function AICompanionChat() {
   const router = useRouter();
-  const { categoryDetails } = useCategory();
+  const { categoryDetails, category } = useCategory();
+  const session = getClientSession();
+  const resolvedCategory = session?.user?.selectedCategory || category;
+  const p = getCategoryPersonalization(resolvedCategory);
+  const quickReplies = p.aiQuickReplies;
   const [activeTab, setActiveTab] = useState<"chat" | "modes" | "voice">("chat");
   const [selectedEmotion, setSelectedEmotion] = useState<string>("Seeking Calm");
   const [inputMessage, setInputMessage] = useState<string>(" ");
@@ -208,6 +213,19 @@ How has this focus been serving you so far? Let's take a slow breath and talk ab
                   </span>
                 </div>
               </div>
+            ))}
+          </div>
+
+          {/* Quick-reply chips */}
+          <div className="px-4 pb-2 flex flex-wrap gap-2 bg-surface-container-lowest border-t border-surface-variant/20 pt-3">
+            {quickReplies.map((chip) => (
+              <button
+                key={chip}
+                onClick={() => { setInputMessage(chip); }}
+                className="px-3 py-1.5 rounded-full text-[11px] font-semibold bg-surface-container-low border border-surface-variant/30 text-on-surface-variant hover:bg-primary/10 hover:text-primary hover:border-primary/30 transition-all"
+              >
+                {chip}
+              </button>
             ))}
           </div>
 

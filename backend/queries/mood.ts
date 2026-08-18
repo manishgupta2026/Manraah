@@ -1,5 +1,14 @@
 import { sql } from "@/backend/db/client";
 
+let isMoodInitialized = true;
+(globalThis as any).isMoodDatabaseInitialized = true;
+
+export async function initMoodDatabase() {
+  if (isMoodInitialized || (globalThis as any).isMoodDatabaseInitialized) return;
+  isMoodInitialized = true;
+  (globalThis as any).isMoodDatabaseInitialized = true;
+}
+
 export async function saveMoodEntry(
   userId: string,
   data: {
@@ -10,6 +19,7 @@ export async function saveMoodEntry(
     factors?: string;
   }
 ) {
+  await initMoodDatabase();
   try {
     const result = await sql`
       INSERT INTO mood_entries (user_id, mood, energy, stress, reflection, factors)
@@ -24,6 +34,7 @@ export async function saveMoodEntry(
 }
 
 export async function getMoodHistory(userId: string, filter: string) {
+  await initMoodDatabase();
   try {
     let query = sql`SELECT * FROM mood_entries WHERE user_id = ${userId}`;
     
@@ -83,6 +94,7 @@ export async function updateMoodEntry(
     factors?: string;
   }
 ) {
+  await initMoodDatabase();
   try {
     const result = await sql`
       UPDATE mood_entries
@@ -100,6 +112,7 @@ export async function updateMoodEntry(
 }
 
 export async function deleteMoodEntry(userId: string, entryId: string) {
+  await initMoodDatabase();
   try {
     await sql`
       DELETE FROM mood_entries 
@@ -114,6 +127,7 @@ export async function deleteMoodEntry(userId: string, entryId: string) {
 
 // Generate weekly summary dynamically if none exists, else return recent cached summary
 export async function getWeeklySummary(userId: string) {
+  await initMoodDatabase();
   try {
     const entries = await sql`
       SELECT * FROM mood_entries 
@@ -215,6 +229,7 @@ export async function getWeeklySummary(userId: string) {
 
 // Generate monthly summary dynamically
 export async function getMonthlySummary(userId: string) {
+  await initMoodDatabase();
   try {
     const entries = await sql`
       SELECT * FROM mood_entries 
@@ -267,6 +282,7 @@ export async function getMonthlySummary(userId: string) {
 
 // Generate non-generic observations and insights
 export async function getMoodInsights(userId: string) {
+  await initMoodDatabase();
   try {
     const entries = await sql`
       SELECT * FROM mood_entries 

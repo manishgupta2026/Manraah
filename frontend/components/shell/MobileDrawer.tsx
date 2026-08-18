@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import { MAIN_NAV_ITEMS } from "@/frontend/lib/constants";
 import { getClientSession } from "@/backend/auth/client";
 import { getInitials, getPastelBgColor, getPastelTextColor } from "@/frontend/lib/avatar-helper";
+import Logo from "@/frontend/components/ui/Logo";
 
 interface MobileDrawerProps {
   isOpen: boolean;
@@ -48,18 +49,12 @@ export default function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
         <div className="space-y-6">
           {/* Header & Brand with Close */}
           <div className="flex items-center justify-between pb-4 border-b border-surface-variant/30">
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl gradient-primary flex items-center justify-center text-white shadow-md">
-                <span className="material-symbols-outlined text-xl">spa</span>
-              </div>
-              <div>
-                <h1 className="font-heading font-black text-lg text-primary leading-tight">Manraah</h1>
-                <p className="text-[10px] text-on-surface-variant/70 font-sans">Sanctuary for Mind</p>
-              </div>
-            </div>
+            <Link href="/" onClick={onClose} className="inline-block hover:opacity-90 transition-opacity">
+              <Logo size="md" className="h-8 w-auto" />
+            </Link>
             <button
               onClick={onClose}
-              className="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center hover:bg-surface-container-high transition-colors"
+              className="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center hover:bg-surface-container-high transition-colors cursor-pointer"
             >
               <span className="material-symbols-outlined text-on-surface text-lg">close</span>
             </button>

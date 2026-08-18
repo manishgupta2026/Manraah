@@ -53,3 +53,50 @@ export function getCategoryJourneyBadge(cat: string | null | undefined): string 
   return map[key] || "🌿 Wellness Journey";
 }
 
+export interface UserCategoryInfo {
+  id: string;
+  name: string;
+  desc: string;
+  emoji: string;
+  image: string;
+}
+
+export const USER_CATEGORIES: UserCategoryInfo[] = [
+  {
+    id: "student",
+    name: "Student",
+    desc: "Manage academic stress, exam anxiety, focus, and emotional balance.",
+    emoji: "🎓",
+    image: "/category/student.png",
+  },
+  {
+    id: "working_professional",
+    name: "Working Professional",
+    desc: "Navigate workplace pressure, career balance, and burnout prevention.",
+    emoji: "💼",
+    image: "/category/Working.png",
+  },
+  {
+    id: "parent",
+    name: "Parent",
+    desc: "Decompress parenting stress, family balance, and personal renewal.",
+    emoji: "🍼",
+    image: "/category/family.png",
+  },
+  {
+    id: "couple",
+    name: "Couple",
+    desc: "Nurture relationship harmony, emotional intimacy, and communication.",
+    emoji: "💖",
+    image: "/category/couple.png",
+  },
+  {
+    id: "other",
+    name: "Other",
+    desc: "Personalized mindfulness and gentle support tailored to your unique journey.",
+    emoji: "✨",
+    image: "/category/other.png",
+  },
+];
+
+

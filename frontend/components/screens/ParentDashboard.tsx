@@ -1,11 +1,10 @@
 "use client";
- 
+
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
-import { getClientSession } from "@/backend/auth/client";
-import { useWellness } from "@/frontend/lib/context/WellnessContext";
- 
+import { getClientSession, signOut } from "@/backend/auth/client";
+
 // Core Parent Themes & Colors from Design.md
 // Parent accent is Peach (#F5C99B) and Primary is Lavender/Purple (#7C6BC4)
 const MOODS = [
@@ -16,21 +15,6 @@ const MOODS = [
   { emoji: "😔", name: "Anxious", color: "bg-purple-100 text-purple-800" },
 ];
 
-const getMoodEmoji = (moodStr: string) => {
-  const emojis: Record<string, string> = {
-    Joyful: "😊",
-    Calm: "😌",
-    Tired: "🥱",
-    Overwhelmed: "🤯",
-    Anxious: "😔",
-    Amazing: "😁",
-    Happy: "😊",
-    Okay: "😐",
-    Low: "😔"
-  };
-  return emojis[moodStr] || "🌸";
-};
- 
 const RESOURCE_LIBRARY = [
   {
     type: "article",
@@ -60,7 +44,7 @@ const RESOURCE_LIBRARY = [
     color: "text-primary",
   },
 ];
- 
+
 const ADVICE_SCENARIOS = {
   tantrum: {
     title: "🍼 Toddler Tantrum",
@@ -79,7 +63,7 @@ const ADVICE_SCENARIOS = {
     advice: "Create a warm, consistent wind-down routine 1 hour before bed. Eliminate screens, dim lights, and read a gentle story together. Keep your own energy calm and grounded as they transition."
   }
 };
- 
+
 const COMMUNICATION_TIPS = [
   "A child's behavior is communication. Look for the need beneath.",
   "Connect before you redirect. Hug or make eye contact first.",
@@ -87,31 +71,73 @@ const COMMUNICATION_TIPS = [
   "Praise the effort, not the outcome: 'I noticed how hard you worked on cleaning up.'",
   "Pause for 3 seconds before responding to a stressful question."
 ];
- 
+
 const MOCK_TAKEN_USERNAMES = ["elena", "parent", "mama", "papa", "user", "admin", "mom", "dad", "parent123"];
- 
+
+const HEADER_THEMES = {
+  morning: {
+    cardBg: "bg-gradient-to-r from-[#FFFDF2]/90 via-[#FFF3EB]/90 to-[#ECE5F5]/90 border-amber-200/50 shadow-soft",
+    textTitle: "text-slate-800",
+    textSubtitle: "text-tertiary",
+    textMuted: "text-slate-600",
+    btnHover: "hover:bg-black/5",
+    bellIcon: "text-slate-700",
+    bellHover: "hover:bg-slate-800/10",
+  },
+  afternoon: {
+    cardBg: "bg-gradient-to-r from-[#F2F4FD]/90 via-[#ECE6F6]/90 to-[#FCE6EC]/90 border-primary/20 shadow-soft",
+    textTitle: "text-slate-800",
+    textSubtitle: "text-primary",
+    textMuted: "text-slate-600",
+    btnHover: "hover:bg-black/5",
+    bellIcon: "text-slate-700",
+    bellHover: "hover:bg-slate-800/10",
+  },
+  evening: {
+    cardBg: "bg-gradient-to-r from-[#FFF4E4]/95 via-[#FDE4EB]/95 to-[#ECE7F6]/95 border-orange-200/60 shadow-soft",
+    textTitle: "text-slate-800",
+    textSubtitle: "text-tertiary font-black",
+    textMuted: "text-slate-600 font-semibold",
+    btnHover: "hover:bg-black/5",
+    bellIcon: "text-slate-700",
+    bellHover: "hover:bg-slate-800/10",
+  },
+  night: {
+    cardBg: "bg-gradient-to-r from-[#0C0F1A]/95 via-[#141B2E]/95 to-[#2A2045]/95 border-[#2A2045]/60 shadow-dark-soft",
+    textTitle: "text-white",
+    textSubtitle: "text-pink/90 font-black",
+    textMuted: "text-slate-300 font-semibold",
+    btnHover: "hover:bg-white/10",
+    bellIcon: "text-slate-200",
+    bellHover: "hover:bg-white/10",
+  }
+};
+
 export default function ParentDashboard() {
   const router = useRouter();
-  const { dashboardData, refetchDashboardData } = useWellness();
-  const latestCheckIn = dashboardData?.latestCheckIn;
-  const history = dashboardData?.moodHistory || [];
-  const wellnessMetrics = dashboardData?.wellnessMetrics || [];
-  const dbJournalEntries = dashboardData?.journalEntries || [];
-  const streak = dashboardData?.streak;
-  const currentStreak = streak?.currentStreak || 1;
   
   // Custom Username & Visibility States
   const [username, setUsername] = useState("CalmParent-3804");
+  const [email, setEmail] = useState("");
   const [showName, setShowName] = useState(true);
- 
+
   // Phone Number & Visibility States
   const [showPhoneNumber, setShowPhoneNumber] = useState(false);
   const [phoneNumber] = useState("+91 ••••• ••982");
- 
+
   // Dynamic Greeting based on time
   const [greeting, setGreeting] = useState("Hello");
   const [timeIcon, setTimeIcon] = useState("🌅");
- 
+  const [timeOfDay, setTimeOfDay] = useState<"morning" | "afternoon" | "evening" | "night">("morning");
+
+  // User States
+  const [selectedMood, setSelectedMood] = useState("Calm");
+  const [selectedMoodEmoji, setSelectedMoodEmoji] = useState("😌");
+  const [stressLevel, setStressLevel] = useState(4);
+  const [energyLevel, setEnergyLevel] = useState(6);
+  const [sleepHours, setSleepHours] = useState(7.0);
+  const [sleepQuality, setSleepQuality] = useState<"Deep" | "Light" | "Interrupted">("Light");
+
   // Today's Focus checklist
   const [tasks, setTasks] = useState([
     { id: 1, text: "💧 Log water intake (at least 4 glasses)?", completed: false },
@@ -119,29 +145,33 @@ export default function ParentDashboard() {
     { id: 3, text: "🔇 Put devices away for family dinner time?", completed: false },
     { id: 4, text: "🚶 Take a 15-minute mindful self-care walk?", completed: false },
   ]);
- 
+
   // Family Wellness
   const [familyScore, setFamilyScore] = useState(82);
   const [familyTime, setFamilyTime] = useState(40); // in minutes
   const [activeTipIdx, setActiveTipIdx] = useState(0);
- 
+
   // Personal Care
   const [meTimeMinutes, setMeTimeMinutes] = useState(15);
   const [waterGlasses, setWaterGlasses] = useState(3);
   const [breathingActive, setBreathingActive] = useState(false);
   const [breathingPhase, setBreathingPhase] = useState<"Inhale" | "Hold" | "Exhale">("Inhale");
   const [breathingSeconds, setBreathingSeconds] = useState(4);
- 
+
   // Journal
   const [journalInput, setJournalInput] = useState("");
+  const [journalEntries, setJournalEntries] = useState([
+    { date: "Yesterday", content: "Had a wonderful screen-free dinner. The kids shared funny stories from school." },
+    { date: "Aug 3", content: "Felt overwhelmed in the morning, but taking a 3-minute pause helped me react calmly." }
+  ]);
   const [saveStatus, setSaveStatus] = useState("");
- 
+
   // AI Chat & Advice
   const [aiChatInput, setAiChatInput] = useState("");
   const [aiChatLogs, setAiChatLogs] = useState<Array<{ sender: "user" | "ai"; text: string }>>([
     { sender: "ai", text: "Hello! How is your parenting journey going today? Ask me any advice or vent your feelings." }
   ]);
- 
+
   // Overwhelmed Grounding Box
   const [overwhelmedMode, setOverwhelmedMode] = useState(false);
   const [groundingStep, setGroundingStep] = useState(1);
@@ -153,18 +183,19 @@ export default function ParentDashboard() {
   useEffect(() => {
     // 1. Initial Load Username
     const session = getClientSession();
-    const storedUsername = localStorage.getItem("parent_username");
-    if (storedUsername) {
-      setUsername(storedUsername);
-    } else if (session.user && (session.user.sanctuaryName || session.user.name)) {
-      const name = session.user.sanctuaryName || session.user.name || "Mindful Parent";
-      setUsername(name);
-      localStorage.setItem("parent_username", name);
+    if (session && session.isAuthenticated && session.user) {
+      setUsername(session.user.sanctuaryName || session.user.name || "Mindful Parent");
+      setEmail(session.user.email || "");
     } else {
-      const randomNum = Math.floor(1000 + Math.random() * 9000);
-      const initialName = `CalmParent-${randomNum}`;
-      setUsername(initialName);
-      localStorage.setItem("parent_username", initialName);
+      const storedUsername = localStorage.getItem("parent_username");
+      if (storedUsername) {
+        setUsername(storedUsername);
+      } else {
+        const randomNum = Math.floor(1000 + Math.random() * 9000);
+        const initialName = `CalmParent-${randomNum}`;
+        setUsername(initialName);
+        localStorage.setItem("parent_username", initialName);
+      }
     }
 
     // 2. Load ShowPhone Setting
@@ -178,15 +209,19 @@ export default function ParentDashboard() {
     if (hour >= 5 && hour < 12) {
       setGreeting("Good Morning");
       setTimeIcon("🌅");
+      setTimeOfDay("morning");
     } else if (hour >= 12 && hour < 17) {
       setGreeting("Good Afternoon");
       setTimeIcon("☀️");
+      setTimeOfDay("afternoon");
     } else if (hour >= 17 && hour < 21) {
       setGreeting("Good Evening");
       setTimeIcon("🌿");
+      setTimeOfDay("evening");
     } else {
       setGreeting("Good Night");
       setTimeIcon("🌌");
+      setTimeOfDay("night");
     }
 
     // 4. Periodic "Not Watched" Popup check (2 minutes interval for demo convenience)
@@ -254,26 +289,18 @@ export default function ParentDashboard() {
   };
 
   // Save Journal Entry
-  const handleSaveJournal = async () => {
+  const handleSaveJournal = () => {
     if (!journalInput.trim()) return;
     setSaveStatus("saving");
-    try {
-      const res = await fetch("/api/journal", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ content: journalInput.trim() }),
-      });
-      if (res.ok) {
-        setJournalInput("");
-        setSaveStatus("saved");
-        refetchDashboardData();
-        setTimeout(() => setSaveStatus(""), 3000);
-      } else {
-        setSaveStatus("error");
-      }
-    } catch (e) {
-      setSaveStatus("error");
-    }
+    setTimeout(() => {
+      setJournalEntries(prev => [
+        { date: "Today", content: journalInput.trim() },
+        ...prev
+      ]);
+      setJournalInput("");
+      setSaveStatus("saved");
+      setTimeout(() => setSaveStatus(""), 3000);
+    }, 800);
   };
 
   // Quick AI Chat Submit
@@ -332,7 +359,10 @@ export default function ParentDashboard() {
         {/* ==================== BACK BUTTON ==================== */}
         <div className="flex items-center justify-between">
           <button 
-            onClick={() => router.push("/")}
+            onClick={async () => {
+              await signOut();
+              window.location.href = "/";
+            }}
             className="flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-surface-variant/20 text-xs font-bold text-primary shadow-sm hover:bg-surface-container active:scale-95 transition-all"
           >
             <span className="material-symbols-outlined text-sm font-black">arrow_back</span>
@@ -364,7 +394,7 @@ export default function ParentDashboard() {
         <motion.div 
           initial={{ opacity: 0, y: -10 }} 
           animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col sm:flex-row sm:items-center sm:justify-between bg-white/60 backdrop-blur-md p-6 rounded-3xl border border-white/60 shadow-soft gap-4"
+          className={`flex flex-col sm:flex-row sm:items-center sm:justify-between p-6 rounded-3xl border backdrop-blur-md gap-4 transition-all duration-500 ${HEADER_THEMES[timeOfDay].cardBg}`}
         >
           <div className="flex items-start gap-4 flex-1">
             {/* Profile Avatar in Left Corner */}
@@ -379,19 +409,21 @@ export default function ParentDashboard() {
             <div className="space-y-2">
               <div className="flex items-center gap-2">
                 <span className="text-xl sm:text-2xl">{timeIcon}</span>
-                <span className="text-xs uppercase tracking-wider font-extrabold text-tertiary">Mindful Parenting Sanctuary</span>
+                <span className={`text-xs uppercase tracking-wider font-extrabold transition-colors duration-500 ${HEADER_THEMES[timeOfDay].textSubtitle}`}>
+                  Mindful Parenting Sanctuary
+                </span>
               </div>
             
             {/* Custom Username Header Display */}
             <div className="flex items-center flex-wrap gap-2">
-              <h1 className="text-2xl sm:text-3xl font-heading font-black text-on-surface flex items-center gap-2">
+              <h1 className={`text-2xl sm:text-3xl font-heading font-black flex items-center gap-2 transition-colors duration-500 ${HEADER_THEMES[timeOfDay].textTitle}`}>
                 {greeting}, {showName ? username : "••••••••"}
               </h1>
               
               {/* Hide/Show Name Toggle */}
               <button 
                 onClick={() => setShowName(!showName)}
-                className="p-1 rounded-full hover:bg-surface-container text-on-surface-variant/85 transition-colors"
+                className={`p-1 rounded-full transition-colors duration-300 ${HEADER_THEMES[timeOfDay].btnHover} ${HEADER_THEMES[timeOfDay].textTitle}`}
                 title={showName ? "Hide Username" : "Show Username"}
               >
                 <span className="material-symbols-outlined text-lg">
@@ -400,8 +432,9 @@ export default function ParentDashboard() {
               </button>
             </div>
 
-            <div className="flex items-center gap-3 text-xs text-on-surface-variant font-semibold">
+            <div className={`flex items-center gap-3 text-xs font-semibold transition-colors duration-500 ${HEADER_THEMES[timeOfDay].textMuted}`}>
               <span>Today is {getFormattedDate()}</span>
+              {email && <span className="opacity-90">• {email}</span>}
               {showPhoneNumber && (
                 <span className="px-2.5 py-0.5 rounded-md bg-peach/20 text-tertiary border border-peach/30 font-bold">
                   📞 {phoneNumber}
@@ -413,9 +446,9 @@ export default function ParentDashboard() {
 
           <div className="flex items-center gap-4 mt-4 sm:mt-0 self-end sm:self-center">
             {/* Notification Icon */}
-            <div className="relative cursor-pointer p-2 rounded-full hover:bg-surface-container transition-colors">
-              <span className="material-symbols-outlined text-on-surface text-2xl">notifications</span>
-              <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-tertiary rounded-full ring-2 ring-white" />
+            <div className={`relative cursor-pointer p-2 rounded-full transition-colors duration-300 ${HEADER_THEMES[timeOfDay].btnHover}`}>
+              <span className={`material-symbols-outlined text-2xl transition-colors duration-500 ${HEADER_THEMES[timeOfDay].bellIcon}`}>notifications</span>
+              <span className={`absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-tertiary rounded-full ring-2 ${timeOfDay === 'night' ? 'ring-slate-900' : 'ring-white'}`} />
             </div>
           </div>
         </motion.div>
@@ -440,16 +473,27 @@ export default function ParentDashboard() {
                 <div className="bg-surface-container-lowest border border-surface-variant/20 rounded-2xl p-4 flex flex-col justify-between min-h-[120px]">
                   <span className="text-[10px] uppercase font-bold text-on-surface-variant">Daily Mood</span>
                   <div className="flex items-center gap-3 my-2">
-                    <span className="text-4xl select-none">{latestCheckIn ? getMoodEmoji(latestCheckIn.mood) : "🌸"}</span>
+                    <span className="text-4xl select-none">{selectedMoodEmoji}</span>
                     <div>
-                      <h4 className="font-heading font-bold text-sm text-on-surface">
-                        {latestCheckIn ? latestCheckIn.mood : "Not Completed"}
-                      </h4>
+                      <h4 className="font-heading font-bold text-sm text-on-surface">{selectedMood}</h4>
                       <p className="text-[10px] text-on-surface-variant font-medium">Logged today</p>
                     </div>
                   </div>
-                  <div className="pt-1 border-t border-dashed border-surface-variant/30 text-[9px] font-bold text-on-surface-variant/80">
-                    {latestCheckIn ? "Completed Check-in" : "Check-in in Progress"}
+                  <div className="flex flex-wrap gap-1.5 pt-1 border-t border-dashed border-surface-variant/30">
+                    {MOODS.map((m) => (
+                      <button
+                        key={m.name}
+                        onClick={() => {
+                          setSelectedMood(m.name);
+                          setSelectedMoodEmoji(m.emoji);
+                        }}
+                        className={`px-2 py-0.5 rounded-full text-[10px] transition-all hover:scale-105 active:scale-95 ${
+                          selectedMood === m.name ? m.color + " ring-1 ring-black/10 font-bold" : "bg-surface-container text-on-surface-variant"
+                        }`}
+                      >
+                        {m.emoji}
+                      </button>
+                    ))}
                   </div>
                 </div>
 
@@ -457,44 +501,25 @@ export default function ParentDashboard() {
                 <div className="bg-surface-container-lowest border border-surface-variant/20 rounded-2xl p-4 flex flex-col justify-between min-h-[120px]">
                   <div className="flex justify-between">
                     <span className="text-[10px] uppercase font-bold text-on-surface-variant">Stress Level</span>
-                    <span className="text-xs font-bold text-tertiary">
-                      {latestCheckIn ? (() => {
-                        const stressStr = (latestCheckIn.stress || "").toLowerCase();
-                        if (stressStr.includes("peace") || stressStr.includes("low")) return 2;
-                        if (stressStr.includes("manage")) return 4;
-                        if (stressStr.includes("little")) return 6;
-                        if (stressStr.includes("stressful")) return 8;
-                        if (stressStr.includes("overwhelming")) return 10;
-                        return 4;
-                      })() : 0}/10
-                    </span>
+                    <span className="text-xs font-bold text-tertiary">{stressLevel}/10</span>
                   </div>
                   <div className="my-2 space-y-1.5">
-                    <div className="w-full bg-surface-container h-2 rounded-full overflow-hidden">
-                      <div 
-                        className="bg-tertiary h-full rounded-full transition-all duration-300"
-                        style={{ 
-                          width: `${latestCheckIn ? (() => {
-                            const stressStr = (latestCheckIn.stress || "").toLowerCase();
-                            if (stressStr.includes("peace") || stressStr.includes("low")) return 20;
-                            if (stressStr.includes("manage")) return 40;
-                            if (stressStr.includes("little")) return 60;
-                            if (stressStr.includes("stressful")) return 80;
-                            if (stressStr.includes("overwhelming")) return 100;
-                            return 40;
-                          })() : 0}%` 
-                        }}
-                      />
+                    <input
+                      type="range"
+                      min="1"
+                      max="10"
+                      value={stressLevel}
+                      onChange={(e) => setStressLevel(Number(e.target.value))}
+                      className="w-full h-1.5 bg-surface-container rounded-lg appearance-none cursor-pointer accent-tertiary"
+                    />
+                    <div className="flex justify-between text-[9px] text-on-surface-variant/75 font-semibold">
+                      <span>Calm (1)</span>
+                      <span>Moderate (5)</span>
+                      <span>Severe (10)</span>
                     </div>
                   </div>
                   <span className="text-[10px] font-bold text-on-surface-variant/80">
-                    Status: {(() => {
-                      if (!latestCheckIn) return "No Check-in logged";
-                      const stressStr = (latestCheckIn.stress || "").toLowerCase();
-                      if (stressStr.includes("peace") || stressStr.includes("low")) return "😊 Peaceful Grounding";
-                      if (stressStr.includes("manage")) return "🍃 Moderate Tension";
-                      return "⚠️ High Overload - Pause!";
-                    })()}
+                    Status: {stressLevel <= 3 ? "😊 Peaceful Grounding" : stressLevel <= 6 ? "🍃 Moderate Tension" : "⚠️ High Overload - Pause!"}
                   </span>
                 </div>
 
@@ -502,16 +527,28 @@ export default function ParentDashboard() {
                 <div className="bg-surface-container-lowest border border-surface-variant/20 rounded-2xl p-4 flex flex-col justify-between min-h-[120px]">
                   <div className="flex justify-between">
                     <span className="text-[10px] uppercase font-bold text-on-surface-variant">Energy Reservoir</span>
-                    <span className="text-xs font-bold text-secondary">
-                      {latestCheckIn ? latestCheckIn.energy_level * 2 : 0}/10
-                    </span>
+                    <span className="text-xs font-bold text-secondary">{energyLevel}/10</span>
                   </div>
                   <div className="my-2 space-y-2">
                     <div className="w-full bg-surface-container h-3 rounded-full overflow-hidden">
                       <div 
                         className="bg-gradient-to-r from-mint to-secondary h-full rounded-full transition-all duration-500" 
-                        style={{ width: `${latestCheckIn ? latestCheckIn.energy_level * 20 : 0}%` }}
+                        style={{ width: `${energyLevel * 10}%` }}
                       />
+                    </div>
+                    <div className="flex justify-center gap-4">
+                      <button 
+                        onClick={() => setEnergyLevel(prev => Math.max(1, prev - 1))}
+                        className="w-6 h-6 rounded-full bg-surface-container text-xs font-bold flex items-center justify-center hover:bg-surface-container-high active:scale-90"
+                      >
+                        -
+                      </button>
+                      <button 
+                        onClick={() => setEnergyLevel(prev => Math.min(10, prev + 1))}
+                        className="w-6 h-6 rounded-full bg-surface-container text-xs font-bold flex items-center justify-center hover:bg-surface-container-high active:scale-90"
+                      >
+                        +
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -520,17 +557,35 @@ export default function ParentDashboard() {
                 <div className="bg-surface-container-lowest border border-surface-variant/20 rounded-2xl p-4 flex flex-col justify-between min-h-[120px]">
                   <div className="flex justify-between">
                     <span className="text-[10px] uppercase font-bold text-on-surface-variant">Sleep Log</span>
-                    <span className="text-xs font-bold text-primary">
-                      {latestCheckIn ? `${latestCheckIn.sleep_quality + 3.0} hours` : "N/A"}
-                    </span>
+                    <span className="text-xs font-bold text-primary">{sleepHours} hours</span>
                   </div>
-                  <div className="my-1 text-center">
-                    <span className="text-xs font-semibold text-on-surface">
-                      {latestCheckIn ? `${latestCheckIn.sleep_quality >= 4 ? "Deep" : latestCheckIn.sleep_quality >= 2 ? "Light" : "Interrupted"} Quality` : "No logs today"}
-                    </span>
+                  <div className="flex items-center justify-between gap-1 my-1">
+                    <button 
+                      onClick={() => setSleepHours(prev => Math.max(0, Number((prev - 0.5).toFixed(1))))}
+                      className="px-2 py-0.5 rounded bg-surface-container text-xs font-bold"
+                    >
+                      -0.5h
+                    </button>
+                    <span className="text-xs font-semibold text-on-surface">{sleepQuality} Quality</span>
+                    <button 
+                      onClick={() => setSleepHours(prev => Math.min(24, Number((prev + 0.5).toFixed(1))))}
+                      className="px-2 py-0.5 rounded bg-surface-container text-xs font-bold"
+                    >
+                      +0.5h
+                    </button>
                   </div>
-                  <div className="pt-1.5 border-t border-dashed border-surface-variant/30 text-[9px] font-bold text-on-surface-variant/80">
-                    Logged: {latestCheckIn ? `Rating: ${latestCheckIn.sleep_quality}/5` : "N/A"}
+                  <div className="flex gap-1 justify-between pt-1.5 border-t border-dashed border-surface-variant/30">
+                    {(["Deep", "Light", "Interrupted"] as const).map((q) => (
+                      <button
+                        key={q}
+                        onClick={() => setSleepQuality(q)}
+                        className={`px-1.5 py-0.5 rounded-full text-[9px] font-bold ${
+                          sleepQuality === q ? "bg-primary text-white" : "bg-surface-container text-on-surface-variant"
+                        }`}
+                      >
+                        {q}
+                      </button>
+                    ))}
                   </div>
                 </div>
 
@@ -805,19 +860,15 @@ export default function ParentDashboard() {
             <div className="mt-4 pt-4 border-t border-dashed border-surface-variant/20 space-y-2">
               <span className="text-[10px] font-black uppercase text-on-surface-variant/60 block">Recent Entries</span>
               <div className="max-h-[100px] overflow-y-auto space-y-2 pr-1">
-                {dbJournalEntries.length > 0 ? (
-                  dbJournalEntries.map((entry: any, idx: number) => (
-                    <div key={idx} className="bg-surface-container-low p-2 rounded-lg text-[10px] leading-relaxed text-on-surface">
-                      <div className="flex justify-between font-bold text-on-surface-variant mb-0.5">
-                        <span>Reflections</span>
-                        <span>{new Date(entry.created_at || entry.createdAt).toLocaleDateString([], { month: "short", day: "numeric" })}</span>
-                      </div>
-                      <p className="italic text-on-surface-variant">"{entry.content}"</p>
+                {journalEntries.map((entry, idx) => (
+                  <div key={idx} className="bg-surface-container-low p-2 rounded-lg text-[10px] leading-relaxed text-on-surface">
+                    <div className="flex justify-between font-bold text-on-surface-variant mb-0.5">
+                      <span>Reflections</span>
+                      <span>{entry.date}</span>
                     </div>
-                  ))
-                ) : (
-                  <p className="text-[10px] text-on-surface-variant/70 italic text-center py-2">No entries logged yet.</p>
-                )}
+                    <p className="italic text-on-surface-variant">"{entry.content}"</p>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
@@ -941,135 +992,49 @@ export default function ParentDashboard() {
                 Weekly Progress
               </h3>
               <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black bg-pale-yellow text-amber-800">
-                🔥 {currentStreak}-Day Streak
+                🔥 4-Day Streak
               </span>
             </div>
- 
+
             <div className="grid grid-cols-3 gap-3">
               
               {/* Mood Chart (Pure CSS/SVG Line wave) */}
-              <div className="p-3 bg-surface-container-low rounded-2xl flex flex-col justify-between items-center text-center h-[140px] relative overflow-hidden">
+              <div className="p-3 bg-surface-container-low rounded-2xl flex flex-col justify-between items-center text-center h-[140px]">
                 <span className="text-[9px] font-bold text-on-surface-variant uppercase">Mood Trend</span>
-                {history.length === 0 ? (
-                  <div className="flex-1 flex flex-col items-center justify-center text-[9px] text-on-surface-variant/70 italic">
-                    <span>🌱 No logs</span>
-                  </div>
-                ) : (
-                  <>
-                    <div className="w-full h-12 flex items-end justify-center">
-                      <svg viewBox="0 0 100 40" className="w-full h-full stroke-primary fill-none" strokeWidth="2.5" strokeLinecap="round">
-                        {(() => {
-                          const recent = history.slice(0, 7).reverse();
-                          const moodMap: Record<string, number> = { Amazing: 5, Happy: 4.5, Calm: 4, Okay: 3, Low: 2, Overwhelmed: 1 };
-                          const coords = recent.map((item: any, idx: number) => {
-                            const divider = Math.max(recent.length - 1, 1);
-                            const x = 5 + idx * (90 / divider);
-                            const val = moodMap[item.mood] || 3;
-                            const y = 35 - (val - 1) * 30 / 4;
-                            return { x, y };
-                          });
-                          
-                          let path = coords.length > 0 ? `M ${coords[0].x} ${coords[0].y}` : "";
-                          for (let i = 0; i < coords.length - 1; i++) {
-                            path += ` L ${coords[i+1].x} ${coords[i+1].y}`;
-                          }
-                          return (
-                            <>
-                              {path && <path d={path} />}
-                              {coords.length > 0 && <circle cx={coords[coords.length - 1].x} cy={coords[coords.length - 1].y} r="3.5" className="fill-primary" />}
-                            </>
-                          );
-                        })()}
-                      </svg>
-                    </div>
-                    <span className="text-[10px] font-extrabold text-on-surface">
-                      {latestCheckIn ? latestCheckIn.mood : "Active"}
-                    </span>
-                  </>
-                )}
+                <div className="w-full h-12 flex items-end justify-center">
+                  <svg viewBox="0 0 100 40" className="w-full h-full stroke-primary fill-none" strokeWidth="2.5" strokeLinecap="round">
+                    <path d="M 0 30 Q 15 15, 30 25 T 60 10 T 90 28" />
+                    <circle cx="90" cy="28" r="3.5" className="fill-primary" />
+                  </svg>
+                </div>
+                <span className="text-[10px] font-extrabold text-on-surface">Steady & Calm</span>
               </div>
- 
-              {/* Stress Curve */}
-              <div className="p-3 bg-surface-container-low rounded-2xl flex flex-col justify-between items-center text-center h-[140px] relative overflow-hidden">
-                <span className="text-[9px] font-bold text-on-surface-variant uppercase">Stress Log</span>
-                {history.length === 0 ? (
-                  <div className="flex-1 flex flex-col items-center justify-center text-[9px] text-on-surface-variant/70 italic">
-                    <span>🌱 No logs</span>
-                  </div>
-                ) : (
-                  <>
-                    <div className="w-full h-12 flex items-end justify-center">
-                      <svg viewBox="0 0 100 40" className="w-full h-full stroke-tertiary fill-none" strokeWidth="2.5" strokeLinecap="round">
-                        {(() => {
-                          const recent = history.slice(0, 7).reverse();
-                          const coords = recent.map((item: any, idx: number) => {
-                            const divider = Math.max(recent.length - 1, 1);
-                            const x = 5 + idx * (90 / divider);
-                            const stressStr = (item.stress || "").toLowerCase();
-                            let val = 2;
-                            if (stressStr.includes("peace") || stressStr.includes("low")) val = 1;
-                            else if (stressStr.includes("manage")) val = 2;
-                            else if (stressStr.includes("little")) val = 3;
-                            else if (stressStr.includes("stressful")) val = 4;
-                            else if (stressStr.includes("overwhelming")) val = 5;
-                            const y = 35 - (val - 1) * 30 / 4;
-                            return { x, y };
-                          });
 
-                          let path = coords.length > 0 ? `M ${coords[0].x} ${coords[0].y}` : "";
-                          for (let i = 0; i < coords.length - 1; i++) {
-                            path += ` L ${coords[i+1].x} ${coords[i+1].y}`;
-                          }
-                          return (
-                            <>
-                              {path && <path d={path} />}
-                              {coords.length > 0 && <circle cx={coords[coords.length - 1].x} cy={coords[coords.length - 1].y} r="3.5" className="fill-tertiary" />}
-                            </>
-                          );
-                        })()}
-                      </svg>
-                    </div>
-                    <span className="text-[10px] font-extrabold text-on-surface">
-                      {latestCheckIn ? latestCheckIn.stress : "Active"}
-                    </span>
-                  </>
-                )}
+              {/* Stress Curve */}
+              <div className="p-3 bg-surface-container-low rounded-2xl flex flex-col justify-between items-center text-center h-[140px]">
+                <span className="text-[9px] font-bold text-on-surface-variant uppercase">Stress Log</span>
+                <div className="w-full h-12 flex items-end justify-center">
+                  <svg viewBox="0 0 100 40" className="w-full h-full stroke-tertiary fill-none" strokeWidth="2.5">
+                    <path d="M 0 12 Q 25 22, 50 18 T 100 35" />
+                    <circle cx="100" cy="35" r="3" className="fill-tertiary" />
+                  </svg>
+                </div>
+                <span className="text-[10px] font-extrabold text-on-surface">Declining 📉</span>
               </div>
- 
+
               {/* Sleep Hours Log */}
-              <div className="p-3 bg-surface-container-low rounded-2xl flex flex-col justify-between items-center text-center h-[140px] relative overflow-hidden">
+              <div className="p-3 bg-surface-container-low rounded-2xl flex flex-col justify-between items-center text-center h-[140px]">
                 <span className="text-[9px] font-bold text-on-surface-variant uppercase">Sleep (h)</span>
-                {history.length === 0 ? (
-                  <div className="flex-1 flex flex-col items-center justify-center text-[9px] text-on-surface-variant/70 italic">
-                    <span>🌱 No logs</span>
-                  </div>
-                ) : (
-                  <>
-                    <div className="flex items-end justify-between w-full px-2 h-12">
-                      {history.slice(0, 5).reverse().map((item: any, idx: number) => {
-                        const sleepVal = item.sleep_quality || 3;
-                        const height = (sleepVal / 5) * 40;
-                        return (
-                          <div 
-                            key={idx} 
-                            className="w-2.5 bg-primary/80 hover:bg-primary rounded-t transition-all" 
-                            style={{ height: `${height}px` }} 
-                            title={`Sleep: ${sleepVal}/5`}
-                          />
-                        );
-                      })}
-                    </div>
-                    <span className="text-[10px] font-extrabold text-on-surface">
-                      Avg: {(() => {
-                        const slice = history.slice(0, 7);
-                        const avg = slice.reduce((sum: number, item: any) => sum + (item.sleep_quality || 3) + 3, 0) / Math.max(slice.length, 1);
-                        return avg.toFixed(1);
-                      })()} hrs
-                    </span>
-                  </>
-                )}
+                <div className="flex items-end justify-between w-full px-2 h-12">
+                  <div className="w-2.5 bg-primary/40 h-8 rounded-t" />
+                  <div className="w-2.5 bg-primary/40 h-6 rounded-t" />
+                  <div className="w-2.5 bg-primary/40 h-10 rounded-t" />
+                  <div className="w-2.5 bg-primary h-[28px] rounded-t" />
+                  <div className="w-2.5 bg-primary h-[32px] rounded-t" />
+                </div>
+                <span className="text-[10px] font-extrabold text-on-surface">Avg: 7.2 hours</span>
               </div>
- 
+
             </div>
 
             {/* Streak & Activity Info */}

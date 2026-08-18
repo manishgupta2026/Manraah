@@ -23,15 +23,70 @@ if (fs.existsSync(envPath)) {
 const DATABASE_URL = process.env.DATABASE_URL;
 const sql = DATABASE_URL ? neon(DATABASE_URL) : null;
 
+// Explicitly allowed origins for production and local development
+const allowedOrigins = [
+  "https://manraah-webfirst.onrender.com",
+  "http://localhost:3000",
+  "http://127.0.0.1:3000",
+  "http://localhost:3005",
+  "http://127.0.0.1:3005",
+];
+
+if (process.env.FRONTEND_URL) {
+  allowedOrigins.push(process.env.FRONTEND_URL.replace(/\/$/, ""));
+}
+if (process.env.CLIENT_ORIGIN) {
+  allowedOrigins.push(process.env.CLIENT_ORIGIN.replace(/\/$/, ""));
+}
+
 const server = http.createServer((req, res) => {
+  const origin = req.headers.origin;
+  if (origin) {
+    const isAllowed =
+      allowedOrigins.includes(origin.replace(/\/$/, "")) ||
+      origin.endsWith(".onrender.com") ||
+      origin.startsWith("http://localhost:") ||
+      origin.startsWith("http://127.0.0.1:");
+    if (isAllowed) {
+      res.setHeader("Access-Control-Allow-Origin", origin);
+      res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+      res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+      res.setHeader("Access-Control-Allow-Credentials", "true");
+    }
+  }
+
+  if (req.method === "OPTIONS") {
+    res.writeHead(204);
+    res.end();
+    return;
+  }
+
   res.writeHead(200, { "Content-Type": "text/plain" });
   res.end("Manraah Real-Time WebSocket & WebRTC Signaling Server Active\n");
 });
 
 const io = new Server(server, {
   cors: {
-    origin: "*",
+    origin: (origin, callback) => {
+      // Allow requests with no origin (e.g. mobile apps, curl, server-to-server)
+      if (!origin) return callback(null, true);
+
+      const normalized = origin.replace(/\/$/, "");
+      if (
+        allowedOrigins.includes(normalized) ||
+        normalized.endsWith(".onrender.com") ||
+        normalized.startsWith("http://localhost:") ||
+        normalized.startsWith("http://127.0.0.1:")
+      ) {
+        return callback(null, true);
+      }
+
+      // Allow with warning if from unexpected origin
+      console.warn(`[Socket CORS] Connection from origin: ${origin}`);
+      return callback(null, true);
+    },
     methods: ["GET", "POST"],
+    credentials: true,
   },
   pingTimeout: 60000,
   pingInterval: 25000,
@@ -186,7 +241,7 @@ io.on("connection", (socket) => {
   });
 });
 
-const PORT = process.env.SOCKET_PORT || 3005;
-server.listen(PORT, () => {
-  console.log(`🚀 Manraah Socket.IO Server running on http://localhost:${PORT}`);
+const PORT = process.env.PORT || 3005;
+server.listen(PORT, "0.0.0.0", () => {
+  console.log(`🚀 Manraah Socket.IO Server running on port ${PORT}`);
 });

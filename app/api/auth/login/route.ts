@@ -58,6 +58,9 @@ export async function POST(request: Request) {
       `;
     }
 
+    const rawCategory = user.selected_category || "student";
+    const mappedCategory = rawCategory === "couples" || rawCategory === "couple" ? "couples" : (rawCategory === "parents" || rawCategory === "parent" ? "parents" : rawCategory);
+
     const userProfile = {
       id: user.id,
       name: sanctuaryName,
@@ -67,22 +70,21 @@ export async function POST(request: Request) {
       streakDays: user.streak_days || 1,
       mindfulnessMinutes: user.mindfulness_minutes || 0,
       currentMood: user.current_mood || "Sanctuary Member",
-      selectedCategory: user.selected_category || "student",
+      selectedCategory: mappedCategory,
     };
 
-    // 3. Save assessment if provided
-    if (answers && Array.isArray(answers) && answers.length > 0) {
-      const userCategory = category || user.selected_category || "student";
-      // Update selected_category in users table ONLY if not already set (respect category immutability)
-      if (!user.selected_category) {
-        await sql`
-          UPDATE users SET selected_category = ${userCategory} WHERE id = ${user.id}
-        `;
-        userProfile.selectedCategory = userCategory;
-      } else {
-        userProfile.selectedCategory = user.selected_category;
+    if (category) {
+      const incomingCategory = category === "couples" || category === "couple" ? "couples" : (category === "parents" || category === "parent" ? "parents" : category);
+      if (incomingCategory !== userProfile.selectedCategory) {
+        console.log("[Login API] [POINT 3 — after login] Updating selectedCategory in DB:", incomingCategory);
+        await sql`UPDATE users SET selected_category = ${incomingCategory} WHERE id = ${user.id}`;
+        userProfile.selectedCategory = incomingCategory;
       }
+    }
 
+    // 4. Save assessment answers if provided
+    if (answers && Array.isArray(answers) && answers.length > 0) {
+      const userCategory = category || userProfile.selectedCategory;
       await saveUserAssessment(
         user.id,
         userCategory,
@@ -99,9 +101,16 @@ export async function POST(request: Request) {
       isAuthenticated: true,
     };
 
-    // 3. Set session cookie
+    // Set session cookie
     const response = NextResponse.json(sessionData);
     response.cookies.set("manraah_session", JSON.stringify(sessionData), {
+      httpOnly: false,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 60 * 60 * 24 * 30, // 30 days
+      path: "/",
+    });
+    response.cookies.set("userType", userProfile.selectedCategory, {
       httpOnly: false,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",

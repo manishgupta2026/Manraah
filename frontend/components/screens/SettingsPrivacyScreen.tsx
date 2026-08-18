@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { getClientSession, signOut } from "@/backend/auth/client";
 import { AuthSession } from "@/backend/types";
 import { getInitials, getPastelBgColor, getPastelTextColor } from "@/frontend/lib/avatar-helper";
-import { getCategoryJourneyBadge } from "@/frontend/lib/constants";
 import ScreenHeader from "@/frontend/components/ui/ScreenHeader";
 
 const MOCK_TAKEN_USERNAMES = ["elena", "parent", "mama", "papa", "user", "admin", "mom", "dad", "parent123", "kartik"];
@@ -41,9 +40,38 @@ export default function SettingsPrivacyScreen() {
       setSanctuaryName(s.user.sanctuaryName || s.user.name || "");
       setCategory(s.user.selectedCategory || "student");
       setAvatar(s.user.avatar || "");
+
+      // Dynamic database fetch to ensure Settings UI reflects exact login/signup values
+      fetch(`/api/profile?userId=${s.user.id}`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (data && !data.error) {
+            setSanctuaryName(data.sanctuaryName || data.name || "");
+            setCategory(data.category || "student");
+            setAvatar(data.avatar || "");
+
+            // Sync updated profile state back to local storage session
+            const updated = {
+              ...s,
+              user: {
+                ...s.user,
+                name: data.sanctuaryName || data.name,
+                sanctuaryName: data.sanctuaryName || data.name,
+                selectedCategory: data.category,
+                avatar: data.avatar,
+              },
+            } as AuthSession;
+            localStorage.setItem("manraah_auth_session", JSON.stringify(updated));
+            setSession(updated);
+          }
+        })
+        .catch((err) => console.error("Error loading user profile:", err));
     }
 
-    const storedUsername = localStorage.getItem("parent_username") || "CalmParent-3804";
+    const isCoupleVal = (s?.user?.selectedCategory === "couple" || s?.user?.selectedCategory === "couples");
+    const key = isCoupleVal ? "couple_username" : "parent_username";
+    const defaultVal = isCoupleVal ? "RomanticSparrow" : "CalmParent-3804";
+    const storedUsername = localStorage.getItem(key) || defaultVal;
     setUsername(storedUsername);
     setTempUsername(storedUsername);
 
@@ -159,11 +187,16 @@ export default function SettingsPrivacyScreen() {
     }
   };
 
+  const getUsernameKey = () => {
+    const isCouple = category === "couple" || category === "couples";
+    return isCouple ? "couple_username" : "parent_username";
+  };
+
   const saveCustomUsername = () => {
     if (usernameStatus !== "available" || !tempUsername.trim()) return;
     const newName = tempUsername.trim();
     setUsername(newName);
-    localStorage.setItem("parent_username", newName);
+    localStorage.setItem(getUsernameKey(), newName);
     setUsernameStatus("idle");
     alert("✅ Username updated successfully!");
   };
@@ -322,18 +355,25 @@ export default function SettingsPrivacyScreen() {
                 </p>
               </div>
 
-              <div className="space-y-2 md:col-span-2">
-                <label className="block text-xs font-heading font-bold text-on-surface">Sanctuary Journey (Immutable)</label>
-                <div className="flex items-center justify-between p-3.5 rounded-2xl bg-surface-container-low/50 border border-surface-variant/30 text-sm">
-                  <span className="font-heading font-bold text-primary flex items-center gap-2">
-                    {getCategoryJourneyBadge(category)}
-                  </span>
-                  <span className="text-[10px] font-bold text-on-surface-variant/70 bg-primary/10 px-2.5 py-1 rounded-full uppercase tracking-wider">
-                    Read-only
-                  </span>
-                </div>
-                <p className="text-[10px] text-on-surface-variant/65 leading-relaxed">
-                  Your journey category was selected during onboarding and cannot be changed.
+              <div className="space-y-1.5 md:col-span-2">
+                <label className="block text-xs font-heading font-bold text-on-surface">Sanctuary Category</label>
+                <select
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                  className="w-full p-3.5 rounded-2xl bg-surface-container-low border border-surface-variant/40 text-sm font-semibold text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/40"
+                >
+                  <option value="student">Student (Academic stress reduction)</option>
+                  <option value="young_pro">Young Professional (Career building & balance)</option>
+                  <option value="working_professional">Working Professional (Work-life harmony)</option>
+                  <option value="parent">Parent (Mindful parenting & patience)</option>
+                  <option value="couple">Couple (Nurturing shared life)</option>
+                  <option value="family">Family (Household well-being)</option>
+                  <option value="women">Women (Demographic-focused wellness)</option>
+                  <option value="men">Men (Focused mental health sanctuary)</option>
+                  <option value="senior_citizen">Senior Citizen (Gentle vitality & calm)</option>
+                </select>
+                <p className="text-[10px] text-on-surface-variant/65 leading-relaxed mt-1">
+                  Modify your sanctuary journey style. Saving updates your active dashboard instantly.
                 </p>
               </div>
             </div>

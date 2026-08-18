@@ -1,5 +1,6 @@
-import WelcomeFlow from "@/frontend/components/screens/WelcomeFlow";
+import React from "react";
+import MarketingLandingPage from "@/frontend/components/screens/MarketingLandingPage";
 
 export default function Home() {
-  return <WelcomeFlow />;
+  return <MarketingLandingPage />;
 }

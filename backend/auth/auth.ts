@@ -16,5 +16,6 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
   },
+  baseURL: process.env.BETTER_AUTH_URL || process.env.NEXT_PUBLIC_APP_URL || (process.env.NODE_ENV === "production" ? "https://manraah-webfirst.onrender.com" : undefined),
   secret: process.env.BETTER_AUTH_SECRET || "manraah-wellness-sanctuary-secret-key-998877",
 });

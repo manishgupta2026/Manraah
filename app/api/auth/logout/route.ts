@@ -7,5 +7,10 @@ export async function POST() {
     maxAge: 0,
     path: "/",
   });
+  response.cookies.set("userType", "", {
+    httpOnly: false,
+    maxAge: 0,
+    path: "/",
+  });
   return response;
 }

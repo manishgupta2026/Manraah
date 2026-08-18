@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { sql } from "@/backend/db/client";
 import { generateUniqueSanctuaryName } from "@/backend/auth/sanctuary";
+import { saveUserAssessment } from "@/backend/queries/assessment";
 
 export const dynamic = "force-dynamic";
 
@@ -41,7 +42,7 @@ export async function GET(request: Request) {
       sanctuaryName: sanctuaryName,
       email: user.email,
       avatar: user.avatar,
-      category: user.category,
+      category: user.category === "couples" || user.category === "couple" ? "couples" : (user.category === "parents" || user.category === "parent" ? "parents" : user.category),
       streakDays: user.streak_days,
       mindfulnessMinutes: user.mindfulness_minutes,
       currentMood: user.current_mood
@@ -96,6 +97,28 @@ export async function PUT(request: Request) {
     }
 
 
+
+    // 3. Update category if provided
+    if (category) {
+      const targetCategory = category === "couples" || category === "couple" ? "couples" : (category === "parents" || category === "parent" ? "parents" : category);
+      await sql`
+        UPDATE users SET selected_category = ${targetCategory} WHERE id = ${userId}
+      `;
+    }
+
+    // Save assessment if provided in PUT payload (e.g. when retaking assessment on active session)
+    const { answers, computedScore, percentage, wellnessLevel } = body;
+    if (answers && Array.isArray(answers) && answers.length > 0) {
+      const targetCategory = category === "couples" || category === "couple" ? "couples" : (category === "parents" || category === "parent" ? "parents" : category || "student");
+      await saveUserAssessment(
+        userId,
+        targetCategory,
+        answers,
+        typeof computedScore === "number" ? computedScore : 50,
+        typeof percentage === "number" ? percentage : 50,
+        wellnessLevel || "Balanced"
+      );
+    }
 
     // 4. Update avatar if provided
     if (avatar) {

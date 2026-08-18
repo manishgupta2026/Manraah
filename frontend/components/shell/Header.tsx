@@ -49,17 +49,24 @@ export default function Header({ onOpenMenu }: HeaderProps) {
       {/* Right Quick Actions */}
       <div className="flex items-center gap-3">
         {/* Notification bell */}
-        <div className="relative w-8 h-8 rounded-full bg-white border border-surface-variant/30 flex items-center justify-center text-on-surface-variant cursor-pointer hover:bg-primary-container/20 hover:text-primary transition-all shadow-soft-xs">
+        <div className="relative w-8 h-8 rounded-full bg-white border border-surface-variant/40 flex items-center justify-center text-on-surface-variant cursor-pointer hover:bg-purple-50 hover:text-[#5F4EA5] transition-all shadow-2xs">
           <span className="material-symbols-outlined text-base">notifications</span>
-          <span className="absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-error flex items-center justify-center text-[6px] font-black text-white border border-white">3</span>
+          <span className="absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-red-500 flex items-center justify-center text-[6px] font-black text-white border border-white">0</span>
+        </div>
+
+        {/* Day / Night Toggle Pill */}
+        <div className="hidden sm:flex items-center gap-1 px-2.5 py-1 rounded-full bg-purple-50/80 border border-purple-200/60 shadow-2xs">
+          <span className="text-xs">☀️</span>
+          <span className="w-2.5 h-2.5 rounded-full bg-[#5F4EA5] shadow-xs" />
+          <span className="text-xs">🌙</span>
         </div>
 
         {/* Crisis Help rounded pill */}
         <Link
           href="/crisis-support"
-          className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-red-50 text-red-600 text-xs font-bold hover:bg-red-100/80 transition-colors shadow-soft-xs border border-red-200/40"
+          className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white text-red-600 text-xs font-heading font-bold hover:bg-red-50 transition-colors shadow-2xs border border-red-200/80"
         >
-          <span className="material-symbols-outlined text-sm">emergency</span>
+          <span className="material-symbols-outlined text-sm text-red-500">emergency</span>
           <span>Crisis Help</span>
         </Link>
 

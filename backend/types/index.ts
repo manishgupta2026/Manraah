@@ -24,6 +24,10 @@ export interface UserProfile {
   sanctuaryName?: string;
   avatar: string;
   email: string;
+  phone?: string;
+  dob?: string;
+  country?: string;
+  gender?: string;
   streakDays: number;
   mindfulnessMinutes: number;
   currentMood: string;

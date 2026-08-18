@@ -6,34 +6,29 @@ const PROTECTED_USER_ROUTES = [
   "/ai-chat",
   "/checkin",
   "/journal",
-  "/mood",
-  "/mood-checkin",
-  "/mood-tracking",
   "/meditation",
   "/sleep",
   "/community",
   "/resources",
+  "/professional-care",
+  "/journey",
   "/reports",
   "/profile",
   "/settings",
-  "/professional-care",
-  "/journey",
   "/crisis-support",
   "/call",
 ];
 
 const AUTH_ROUTES = ["/login", "/signup"];
-const ONBOARDING_ROUTES = ["/", "/category-selection", "/assessment", "/wellness-score"];
+const ONBOARDING_ROUTES = ["/", "/category-selection", "/assessment", "/wellness-score", "/onboarding"];
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Skip internal Next.js system routes, api & static assets
+  // Skip internal Next.js system routes
   if (
     pathname.startsWith("/_next") ||
     pathname.startsWith("/api") ||
-    pathname.startsWith("/_document") ||
-    pathname.startsWith("/_error") ||
     pathname === "/favicon.ico"
   ) {
     return NextResponse.next();
@@ -145,6 +140,6 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/((?!api|_next/static|_next/image|_next|_document|_error|favicon.ico|images).*)",
   ],
 };

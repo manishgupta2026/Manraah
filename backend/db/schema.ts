@@ -12,6 +12,14 @@ export const users = pgTable("users", {
   streakDays: integer("streak_days").default(1),
   mindfulnessMinutes: integer("mindfulness_minutes").default(0),
   currentMood: text("current_mood").default("Sanctuary Member"),
+  age: integer("age"),
+  profession: text("profession"),
+  industry: text("industry"),
+  workSchedule: text("work_schedule"),
+  workingHours: text("working_hours"),
+  workSituation: text("work_situation"),
+  wellnessGoals: jsonb("wellness_goals").default([]),
+  onboardingCompleted: boolean("onboarding_completed").default(false),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
@@ -118,6 +126,9 @@ export const dailyCheckins = pgTable("daily_checkins", {
   mood: text("mood").notNull(),
   energyLevel: integer("energy_level").notNull(),
   sleepQuality: integer("sleep_quality").notNull(),
+  stress: text("stress").default("Manageable"),
+  workLifeBalance: integer("work_life_balance").default(3),
+  note: text("note"),
   gratitudeReflection: text("gratitude_reflection"),
   dailyIntention: text("daily_intention"),
   createdAt: timestamp("created_at").defaultNow(),
@@ -139,10 +150,22 @@ export const moodEntries = pgTable("mood_entries", {
   mood: text("mood").notNull(),
   energy: integer("energy").notNull(),
   stress: text("stress").notNull(),
+  sleepQuality: integer("sleep_quality").default(3),
+  workLifeBalance: integer("work_life_balance").default(3),
   reflection: text("reflection"),
   factors: text("factors"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const activitySessions = pgTable("activity_sessions", {
+  id: serial("id").primaryKey(),
+  userId: text("user_id").references(() => users.id, { onDelete: "cascade" }),
+  type: text("type").notNull().default("decompression"),
+  duration: integer("duration").notNull().default(120),
+  completed: boolean("completed").notNull().default(true),
+  metadata: jsonb("metadata").default({}),
+  createdAt: timestamp("created_at").defaultNow(),
 });
 
 export const moodInsights = pgTable("mood_insights", {

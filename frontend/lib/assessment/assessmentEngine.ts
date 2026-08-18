@@ -5,8 +5,7 @@ export class AssessmentEngine {
   private cache: Record<string, AssessmentQuestion[]> = {};
 
   /**
-   * Loads the 5 common questions and 10 category-specific questions,
-   * merging them into a total of 15 questions.
+   * Loads the 10 category-specific questions for the given category.
    */
   getQuestionsForCategory(category: string | null): AssessmentQuestion[] {
     const key = category || "student";
@@ -14,18 +13,13 @@ export class AssessmentEngine {
       return this.cache[key];
     }
 
-    const common = COMMON_QUESTIONS.map(q => ({
-      ...q,
-      type: "common" as const
-    }));
-
     const categoryQuestions = getCategoryQuestions(category).map(q => ({
       ...q,
       type: "category" as const,
       category: category || "student"
     }));
 
-    this.cache[key] = [...common, ...categoryQuestions];
+    this.cache[key] = categoryQuestions;
     return this.cache[key];
   }
 

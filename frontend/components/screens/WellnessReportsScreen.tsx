@@ -1,10 +1,17 @@
 "use client";
 
 import React from "react";
-import { MOCK_USER } from "@/frontend/lib/mock-data";
+import { MOCK_USER, getCategoryPersonalization } from "@/frontend/lib/mock-data";
 import ScreenHeader from "@/frontend/components/ui/ScreenHeader";
+import { useCategory } from "@/frontend/lib/context/CategoryContext";
+import { getClientSession } from "@/backend/auth/client";
 
 export default function WellnessReportsScreen() {
+  const { category } = useCategory();
+  const session = getClientSession();
+  const resolvedCategory = session?.user?.selectedCategory || category;
+  const p = getCategoryPersonalization(resolvedCategory);
+
   const handleExport = () => {
     alert("Exporting PDF report...");
   };
@@ -24,8 +31,10 @@ export default function WellnessReportsScreen() {
             <span className="px-4 py-1.5 rounded-full bg-primary-container/20 text-primary text-xs font-semibold uppercase tracking-wider">
               Clinical Wellness Insights
             </span>
-            <h1 className="text-3xl font-heading font-bold text-on-surface mt-2">Monthly Serenity & Mood Report</h1>
-            <p className="text-sm text-on-surface-variant">Generated for {MOCK_USER.name} • August 2026</p>
+            <h1 className="text-3xl font-heading font-bold text-on-surface mt-2">
+              {p.reportTitle}
+            </h1>
+            <p className="text-sm text-on-surface-variant">Generated for {session?.user?.sanctuaryName || session?.user?.name || "Sanctuary Member"} • August 2026</p>
           </div>
         </div>
       </div>
@@ -36,9 +45,11 @@ export default function WellnessReportsScreen() {
           <div className="w-12 h-12 rounded-2xl bg-mint/20 text-secondary flex items-center justify-center">
             <span className="material-symbols-outlined text-2xl">analytics</span>
           </div>
-          <h3 className="font-heading font-bold text-lg text-on-surface">Emotional Stability Index</h3>
+          <h3 className="font-heading font-bold text-lg text-on-surface">
+            {p.report1Heading}
+          </h3>
           <p className="text-sm text-on-surface-variant leading-relaxed">
-            Your mood variance decreased by 18% over the past 30 days, indicating sustained emotional regulation and improved stress recovery times.
+            {p.report1Body}
           </p>
         </div>
 
@@ -46,9 +57,11 @@ export default function WellnessReportsScreen() {
           <div className="w-12 h-12 rounded-2xl bg-peach/30 text-tertiary flex items-center justify-center">
             <span className="material-symbols-outlined text-2xl">psychology_alt</span>
           </div>
-          <h3 className="font-heading font-bold text-lg text-on-surface">AI Companion Interaction Insights</h3>
+          <h3 className="font-heading font-bold text-lg text-on-surface">
+            {p.report2Heading}
+          </h3>
           <p className="text-sm text-on-surface-variant leading-relaxed">
-            Top themes discussed during chat sessions included academic exam prep, sleep routine adjustments, and daily breathing exercises.
+            {p.report2Body}
           </p>
         </div>
       </div>

@@ -2,17 +2,45 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { MOCK_THERAPISTS } from "@/frontend/lib/mock-data";
+import { MOCK_THERAPISTS, getCategoryPersonalization } from "@/frontend/lib/mock-data";
 import ScreenHeader from "@/frontend/components/ui/ScreenHeader";
+import { useCategory } from "@/frontend/lib/context/CategoryContext";
+import { getClientSession } from "@/backend/auth/client";
 
 export default function ProfessionalCareScreen() {
-  const [selectedSpecialty, setSelectedSpecialty] = useState<string>("All");
+  const { category } = useCategory();
+  const session = getClientSession();
+  const resolvedCategory = session?.user?.selectedCategory || category;
+  const p = getCategoryPersonalization(resolvedCategory);
 
-  const specialties = ["All", "Anxiety & Stress", "CBT", "Mindfulness", "Burnout Prevention", "Student Mental Health"];
+  const [selectedSpecialty, setSelectedSpecialty] = useState<string>(
+    p.pinnedSpecialty
+  );
+
+  const specialties = p.specialtyList;
+
+  const [therapistsList, setTherapistsList] = useState<any[]>(MOCK_THERAPISTS);
+
+  React.useEffect(() => {
+    async function loadTherapists() {
+      try {
+        const res = await fetch("/api/therapists");
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data) && data.length > 0) {
+            setTherapistsList(data);
+          }
+        }
+      } catch (e) {
+        console.error("Failed to load therapists:", e);
+      }
+    }
+    loadTherapists();
+  }, []);
 
   const filteredTherapists = selectedSpecialty === "All"
-    ? MOCK_THERAPISTS
-    : MOCK_THERAPISTS.filter((t) => t.specialties.includes(selectedSpecialty));
+    ? therapistsList
+    : therapistsList.filter((t) => t.specialties && t.specialties.includes(selectedSpecialty));
 
   return (
     <div className="space-y-8">
@@ -66,7 +94,7 @@ export default function ProfessionalCareScreen() {
                 </div>
                 <p className="text-xs text-on-surface-variant mb-2">{therapist.title}</p>
                 <div className="flex flex-wrap gap-1.5">
-                  {therapist.specialties.map((s) => (
+                  {therapist.specialties && therapist.specialties.map((s: string) => (
                     <span key={s} className="px-2.5 py-0.5 rounded-full bg-surface-container text-[11px] font-medium text-on-surface-variant">
                       {s}
                     </span>
