@@ -358,10 +358,10 @@ export default function StoriesPage() {
             </button>
 
             <Link
-              href="/retreat"
+              href="/features"
               className="px-8 py-4 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white font-heading font-semibold text-sm transition-all"
             >
-              Try Daily Retreat
+              Explore Features
             </Link>
           </div>
         </div>

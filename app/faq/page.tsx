@@ -325,10 +325,10 @@ export default function FAQPage() {
             </Link>
 
             <Link
-              href="/retreat"
+              href="/features"
               className="px-7 py-3.5 rounded-full bg-surface-container-lowest hover:bg-surface-container text-on-surface border border-surface-variant/50 text-xs sm:text-sm font-heading font-semibold transition-all"
             >
-              Experience Daily Retreat
+              Explore All Features
             </Link>
           </div>
         </div>

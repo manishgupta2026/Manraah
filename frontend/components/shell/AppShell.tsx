@@ -19,8 +19,6 @@ const STANDALONE_ROUTES = [
   "/",
   "/how-it-works",
   "/features",
-  "/retreat",
-  "/sanctuary",
   "/stories",
   "/faq",
   "/about",
@@ -42,8 +40,6 @@ export default function AppShell({ children }: { children: ReactNode }) {
     STANDALONE_ROUTES.includes(pathname) ||
     pathname.startsWith("/how-it-works") ||
     pathname.startsWith("/features") ||
-    pathname.startsWith("/retreat") ||
-    pathname.startsWith("/sanctuary") ||
     pathname.startsWith("/stories") ||
     pathname.startsWith("/faq") ||
     pathname.startsWith("/about") ||
