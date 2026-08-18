@@ -207,7 +207,7 @@ const TESTIMONIALS_ROW_2 = [
     badgeStyle: "bg-[#7C6BC4]/15 text-[#5F4EA5] border border-[#7C6BC4]/30",
     initial: "T",
     avatarBg: "bg-[#7C6BC4]/20 text-[#5F4EA5]",
-    quote: "Navigating a major life transition felt isolating. Having an anonymous, private sanctuary where I can journal and process uncertainty has been deeply grounding.",
+    quote: "Navigating a major life transition felt isolating. Having an anonymous, private retreat where I can journal and process uncertainty has been deeply grounding.",
     reflection: "🕊️ Grounded support during life changes",
   },
   {

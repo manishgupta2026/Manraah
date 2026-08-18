@@ -106,7 +106,7 @@ const ALL_STORIES: Story[] = [
     avatarBg: "bg-[#7C6BC4]/20 text-[#5F4EA5]",
     location: "Chennai",
     timeWithManraah: "3 months",
-    quote: "Navigating a major life transition felt isolating. Having an anonymous, private sanctuary where I can journal and process uncertainty has been deeply grounding.",
+    quote: "Navigating a major life transition felt isolating. Having an anonymous, private retreat where I can journal and process uncertainty has been deeply grounding.",
     reflection: "🕊️ Grounded support during life changes",
     favoriteTool: "Encrypted Voice Journaling",
   },

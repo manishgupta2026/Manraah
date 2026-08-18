@@ -338,7 +338,7 @@ export default function FAQPage() {
       <section className="py-20 md:py-28 bg-gradient-to-br from-[#4A388E] via-[#5F4EA5] to-[#3B2C78] text-white px-6 text-center relative overflow-hidden">
         <div className="max-w-3xl mx-auto space-y-7 relative z-10">
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-heading font-black tracking-tight leading-tight">
-            Your Sanctuary for Mind is Ready
+            Your Retreat for Mind is Ready
           </h2>
 
           <p className="text-sm sm:text-base text-white/90 max-w-xl mx-auto leading-relaxed font-normal">
