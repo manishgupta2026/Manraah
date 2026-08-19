@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { sql } from "@/backend/db/client";
 import { saveUserAssessment } from "@/backend/queries/assessment";
 import { generateUniqueSanctuaryName } from "@/backend/auth/sanctuary";
+import { getUserByEmail, getUserBySanctuaryName, createUser } from "@/backend/queries/users";
 import crypto from "crypto";
 
 // Allowed sanctuary categories
@@ -84,9 +85,7 @@ export async function POST(request: Request) {
     const cleanEmail = email.trim().toLowerCase();
 
     // 3. Check if user already exists
-    const existing = await sql`
-      SELECT id FROM users WHERE LOWER(email) = ${cleanEmail} LIMIT 1
-    `;
+    const existing = await getUserByEmail(cleanEmail);
 
     if (existing.length > 0) {
       return NextResponse.json(
@@ -105,9 +104,7 @@ export async function POST(request: Request) {
         );
       }
       
-      const existingName = await sql`
-        SELECT id FROM users WHERE LOWER(sanctuary_name) = LOWER(${finalSanctuaryName}) LIMIT 1
-      `;
+      const existingName = await getUserBySanctuaryName(finalSanctuaryName);
       if (existingName.length > 0) {
         return NextResponse.json(
           { error: "This Sanctuary Name is already taken. Please choose another one or leave it blank to auto-generate." },
@@ -143,10 +140,19 @@ export async function POST(request: Request) {
     }
 
     // 6. Insert user into Neon PostgreSQL with permanent category & details
-    await sql`
-      INSERT INTO users (id, name, email, password_hash, sanctuary_name, selected_category, phone, dob, country, gender, streak_days, mindfulness_minutes, current_mood, initial_answers_json)
-      VALUES (${userId}, ${fullName}, ${cleanEmail}, ${passwordHash}, ${finalSanctuaryName}, ${validatedCategory}, ${cleanPhone}, ${cleanDob}, ${cleanCountry}, ${cleanGender}, 1, 0, 'Sanctuary Member', ${initialJson}::jsonb)
-    `;
+    await createUser(
+      userId,
+      fullName,
+      cleanEmail,
+      passwordHash,
+      finalSanctuaryName,
+      validatedCategory,
+      cleanPhone,
+      cleanDob,
+      cleanCountry,
+      cleanGender,
+      initialJson
+    );
 
     // 7. Save assessment if provided
     if (answers && Array.isArray(answers) && answers.length > 0) {

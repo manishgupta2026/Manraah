@@ -8,9 +8,11 @@ import { FormInput } from "@/frontend/components/ui/FormInput";
 import { motion } from "framer-motion";
 import Logo from "@/frontend/components/ui/Logo";
 import { getCategoryDashboardRoute } from "@/frontend/lib/category-routes";
+import { useAssessment } from "@/frontend/lib/context/AssessmentContext";
 
 export default function LoginScreen() {
   const router = useRouter();
+  const { selectedCategory, detailedAnswers, computedScore, assessmentResult } = useAssessment();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -23,7 +25,15 @@ export default function LoginScreen() {
     setLoading(true);
     setError(null);
     try {
-      const session = await signIn(email, password, "", [], 0, 0, "");
+      const session = await signIn(
+        email,
+        password,
+        selectedCategory || "",
+        detailedAnswers || [],
+        computedScore || 0,
+        assessmentResult?.percentage || computedScore || 0,
+        assessmentResult?.wellnessLevel || ""
+      );
 
       // Clear userType temporary cookies
       document.cookie = "userType=; path=/; max-age=0";

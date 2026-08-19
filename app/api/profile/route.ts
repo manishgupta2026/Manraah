@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import { sql } from "@/backend/db/client";
 import { generateUniqueSanctuaryName } from "@/backend/auth/sanctuary";
 import { saveUserAssessment } from "@/backend/queries/assessment";
+import { getUserById, updateUserSanctuaryName, checkSanctuaryNameDuplicate, updateUserCategory, updateUserAvatar, updateUserDashboardState } from "@/backend/queries/users";
 
 export const dynamic = "force-dynamic";
 
@@ -14,12 +14,7 @@ export async function GET(request: Request) {
   }
 
   try {
-    const users = await sql`
-      SELECT id, name, email, sanctuary_name, avatar, selected_category as category, streak_days, mindfulness_minutes, current_mood
-      FROM users
-      WHERE id = ${userId}
-      LIMIT 1
-    `;
+    const users = await getUserById(userId);
 
     if (users.length === 0) {
       return NextResponse.json({ category: "student" });
@@ -31,9 +26,7 @@ export async function GET(request: Request) {
     let sanctuaryName = user.sanctuary_name;
     if (!sanctuaryName) {
       sanctuaryName = await generateUniqueSanctuaryName();
-      await sql`
-        UPDATE users SET sanctuary_name = ${sanctuaryName}, name = ${sanctuaryName} WHERE id = ${user.id}
-      `;
+      await updateUserSanctuaryName(user.id, sanctuaryName);
     }
 
     return NextResponse.json({
@@ -56,16 +49,14 @@ export async function GET(request: Request) {
 export async function PUT(request: Request) {
   try {
     const body = await request.json();
-    const { userId, sanctuaryName, category, avatar } = body;
+    const { userId, sanctuaryName, category, avatar, dashboardState } = body;
 
     if (!userId) {
       return NextResponse.json({ error: "userId is required" }, { status: 400 });
     }
 
     // 1. Verify user exists
-    const existingUsers = await sql`
-      SELECT id, sanctuary_name FROM users WHERE id = ${userId} LIMIT 1
-    `;
+    const existingUsers = await getUserById(userId);
     if (existingUsers.length === 0) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
@@ -81,9 +72,7 @@ export async function PUT(request: Request) {
         );
       }
 
-      const duplicate = await sql`
-        SELECT id FROM users WHERE LOWER(sanctuary_name) = LOWER(${trimmedName}) AND id <> ${userId} LIMIT 1
-      `;
+      const duplicate = await checkSanctuaryNameDuplicate(trimmedName, userId);
       if (duplicate.length > 0) {
         return NextResponse.json(
           { error: "This Sanctuary Name is already taken." },
@@ -91,9 +80,7 @@ export async function PUT(request: Request) {
         );
       }
 
-      await sql`
-        UPDATE users SET sanctuary_name = ${trimmedName}, name = ${trimmedName} WHERE id = ${userId}
-      `;
+      await updateUserSanctuaryName(userId, trimmedName);
     }
 
 
@@ -101,9 +88,7 @@ export async function PUT(request: Request) {
     // 3. Update category if provided
     if (category) {
       const targetCategory = category === "couples" || category === "couple" ? "couples" : (category === "parents" || category === "parent" ? "parents" : category);
-      await sql`
-        UPDATE users SET selected_category = ${targetCategory} WHERE id = ${userId}
-      `;
+      await updateUserCategory(userId, targetCategory);
     }
 
     // Save assessment if provided in PUT payload (e.g. when retaking assessment on active session)
@@ -122,16 +107,16 @@ export async function PUT(request: Request) {
 
     // 4. Update avatar if provided
     if (avatar) {
-      await sql`
-        UPDATE users SET avatar = ${avatar} WHERE id = ${userId}
-      `;
+      await updateUserAvatar(userId, avatar);
+    }
+
+    // Update dashboardState if provided
+    if (dashboardState) {
+      await updateUserDashboardState(userId, dashboardState);
     }
 
     // 5. Fetch updated user details
-    const updatedUsers = await sql`
-      SELECT id, name, email, sanctuary_name, avatar, selected_category as category, streak_days, mindfulness_minutes, current_mood
-      FROM users WHERE id = ${userId} LIMIT 1
-    `;
+    const updatedUsers = await getUserById(userId);
     const updatedUser = updatedUsers[0];
 
     return NextResponse.json({
@@ -142,10 +127,11 @@ export async function PUT(request: Request) {
         sanctuaryName: updatedUser.sanctuary_name || updatedUser.name,
         email: updatedUser.email,
         avatar: updatedUser.avatar,
-        selectedCategory: updatedUser.category,
+        selectedCategory: updatedUser.selected_category,
         streakDays: updatedUser.streak_days,
         mindfulnessMinutes: updatedUser.mindfulness_minutes,
         currentMood: updatedUser.current_mood,
+        dashboardState: updatedUser.dashboard_state || null,
       }
     });
 

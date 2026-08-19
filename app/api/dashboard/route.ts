@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
 import { getAuthSessionFromRequest } from "@/backend/auth/session";
-import { sql } from "@/backend/db/client";
 import { getMoodHistory, getWeeklySummary, getMoodInsights, getMonthlySummary } from "@/backend/queries/mood";
 import { getUserStreak, getUserProfile } from "@/backend/queries/assessment";
 import { generateUniqueSanctuaryName } from "@/backend/auth/sanctuary";
+import { getUserById, createDefaultUser, updateUserSanctuaryName } from "@/backend/queries/users";
 
 export const dynamic = "force-dynamic";
 
@@ -13,21 +13,13 @@ export async function GET(req: Request) {
 
   try {
     // 1. Fetch user & profile info
-    let userResult = await sql`
-      SELECT id, name, email, sanctuary_name, avatar, selected_category, streak_days, mindfulness_minutes, current_mood FROM users WHERE id = ${userId} LIMIT 1
-    `;
+    let userResult = await getUserById(userId);
     if (userResult.length === 0) {
       const defaultName = userId === "demo-user" ? "Demo Member" : "Sanctuary Member";
       const defaultEmail = userId === "demo-user" ? "demo@manraah.com" : `${userId}@manraah.com`;
       const defaultCategory = "student"; // safe default; real category comes from assessment
-      await sql`
-        INSERT INTO users (id, name, email, selected_category, streak_days, mindfulness_minutes, current_mood)
-        VALUES (${userId}, ${defaultName}, ${defaultEmail}, ${defaultCategory}, 1, 0, 'Sanctuary Member')
-        ON CONFLICT (id) DO NOTHING
-      `;
-      userResult = await sql`
-        SELECT id, name, email, sanctuary_name, avatar, selected_category, streak_days, mindfulness_minutes, current_mood FROM users WHERE id = ${userId} LIMIT 1
-      `;
+      await createDefaultUser(userId, defaultName, defaultEmail, defaultCategory);
+      userResult = await getUserById(userId);
       if (userResult.length === 0) {
         return NextResponse.json({ error: "User profile not found" }, { status: 404 });
       }
@@ -38,9 +30,7 @@ export async function GET(req: Request) {
     let sanctuaryName = user.sanctuary_name;
     if (!sanctuaryName) {
       sanctuaryName = await generateUniqueSanctuaryName();
-      await sql`
-        UPDATE users SET sanctuary_name = ${sanctuaryName}, name = ${sanctuaryName} WHERE id = ${user.id}
-      `;
+      await updateUserSanctuaryName(user.id, sanctuaryName);
     }
 
     // 2. Fetch all child dashboard data in parallel
@@ -96,6 +86,7 @@ export async function GET(req: Request) {
         assessmentScore: userProfile?.total_score || null,
         assessmentPercentage: userProfile?.percentage || null,
         wellnessLevel: userProfile?.wellness_level || null,
+        dashboardState: user.dashboard_state || null,
       },
       todayMood: finalTodayMood,
       history,

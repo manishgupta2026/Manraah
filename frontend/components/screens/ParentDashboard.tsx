@@ -109,6 +109,7 @@ export default function ParentDashboard() {
 
   // Periodic Privacy "Not Watched" Popup State
   const [showSecurityPopup, setShowSecurityPopup] = useState(false);
+  const [showAssessmentModal, setShowAssessmentModal] = useState(false);
   const [showProgressModal, setShowProgressModal] = useState(false);
 
   // Set greeting, username and security popup times
@@ -185,6 +186,22 @@ export default function ParentDashboard() {
           // Calculate wellness score as per the assessment completion percentage
           if (data.user.assessmentPercentage !== null && data.user.assessmentPercentage !== undefined) {
             setFamilyScore(data.user.assessmentPercentage);
+          } else {
+            setShowSecurityPopup(true);
+          }
+
+          // Restore persisted dashboard details from database if they exist!
+          const ds = data.user.dashboardState;
+          if (ds && typeof ds === "object") {
+            if (ds.selectedMood) setSelectedMood(ds.selectedMood);
+            if (ds.selectedMoodEmoji) setSelectedMoodEmoji(ds.selectedMoodEmoji);
+            if (ds.stressLevel !== undefined) setStressLevel(ds.stressLevel);
+            if (ds.energyLevel !== undefined) setEnergyLevel(ds.energyLevel);
+            if (ds.sleepHours !== undefined) setSleepHours(ds.sleepHours);
+            if (ds.sleepQuality) setSleepQuality(ds.sleepQuality);
+            if (ds.waterGlasses !== undefined) setWaterGlasses(ds.waterGlasses);
+            if (ds.tasks && Array.isArray(ds.tasks)) setTasks(ds.tasks);
+            if (ds.journalEntries && Array.isArray(ds.journalEntries)) setJournalEntries(ds.journalEntries);
           }
         }
         setLoadingData(false);
@@ -232,31 +249,82 @@ export default function ParentDashboard() {
   const completedCount = tasks.filter(t => t.completed).length;
   const progressPercent = tasks.length > 0 ? Math.round((completedCount / tasks.length) * 100) : 0;
 
+  // Helper to persist updated states in the database
+  const saveDashboardStateToDB = async (updatedFields: any) => {
+    const session = getClientSession();
+    if (!session || !session.isAuthenticated || !session.user?.id) return;
+
+    const mergedState = {
+      selectedMood,
+      selectedMoodEmoji,
+      stressLevel,
+      energyLevel,
+      sleepHours,
+      sleepQuality,
+      waterGlasses,
+      tasks,
+      journalEntries,
+      ...updatedFields
+    };
+
+    try {
+      await fetch("/api/profile", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: session.user.id,
+          dashboardState: mergedState
+        })
+      });
+      
+      // Update local cache state
+      setDashboardData((prev: any) => {
+        if (!prev || !prev.user) return prev;
+        return {
+          ...prev,
+          user: {
+            ...prev.user,
+            dashboardState: mergedState
+          }
+        };
+      });
+    } catch (err) {
+      console.error("Failed to save dashboard state:", err);
+    }
+  };
+
   // Toggle Task Completion
   const toggleTask = (id: number) => {
-    setTasks(prev => prev.map(t => t.id === id ? { ...t, completed: !t.completed } : t));
+    const nextTasks = tasks.map(t => t.id === id ? { ...t, completed: !t.completed } : t);
+    setTasks(nextTasks);
+    saveDashboardStateToDB({ tasks: nextTasks });
   };
 
   // Add Water Glass
   const toggleWaterGlass = (index: number) => {
+    let nextGlasses = index + 1;
     if (index + 1 === waterGlasses) {
-      setWaterGlasses(index); 
-    } else {
-      setWaterGlasses(index + 1);
+      nextGlasses = index; 
     }
+    setWaterGlasses(nextGlasses);
+    saveDashboardStateToDB({ waterGlasses: nextGlasses });
   };
 
   // Save Journal Entry
   const handleSaveJournal = () => {
     if (!journalInput.trim()) return;
     setSaveStatus("saving");
+    
+    const nextEntries = [
+      { date: "Today", content: journalInput.trim() },
+      ...journalEntries
+    ];
+
     setTimeout(() => {
-      setJournalEntries(prev => [
-        { date: "Today", content: journalInput.trim() },
-        ...prev
-      ]);
+      setJournalEntries(nextEntries);
       setJournalInput("");
       setSaveStatus("saved");
+      saveDashboardStateToDB({ journalEntries: nextEntries });
       setTimeout(() => setSaveStatus(""), 3000);
     }, 800);
   };
@@ -1184,10 +1252,56 @@ export default function ParentDashboard() {
               </p>
 
               <button 
-                onClick={() => setShowSecurityPopup(false)}
+                onClick={() => {
+                  const hasCompleted = dashboardData?.user?.assessmentPercentage !== null && dashboardData?.user?.assessmentPercentage !== undefined;
+                  setShowSecurityPopup(false);
+                  if (!hasCompleted) {
+                    setShowAssessmentModal(true);
+                  }
+                }}
                 className="w-full py-3.5 bg-[#7C6BC4] hover:bg-[#6B5BB3] text-white rounded-full font-bold text-xs shadow-sm transition-transform active:scale-95"
               >
                 I Feel Secure
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ==================== COMPLETE ASSESSMENT BLURRED MODAL ==================== */}
+      <AnimatePresence>
+        {showAssessmentModal && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-[#2E2A3D]/80 backdrop-blur-xl flex items-center justify-center p-4"
+          >
+            <motion.div 
+              initial={{ scale: 0.95 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.95 }}
+              className="bg-white max-w-sm w-full p-8 rounded-[36px] text-center space-y-6 shadow-2xl relative border border-[#EAEAFF]"
+            >
+              <div className="w-16 h-16 rounded-full bg-[#E37A47]/10 text-[#E37A47] flex items-center justify-center mx-auto border border-[#E37A47]/20">
+                <span className="material-symbols-outlined text-3xl font-black">assignment</span>
+              </div>
+
+              <div className="space-y-1 font-heading">
+                <span className="text-[10px] uppercase font-black tracking-widest text-[#E37A47]">Onboarding Sanctuary</span>
+                <h3 className="text-xl font-heading font-black text-slate-800">Complete Assessment</h3>
+              </div>
+
+              <p className="text-[11px] text-slate-400 font-bold leading-relaxed px-2">
+                To unlock your personalized Parent Dashboard, custom goals checklist, and weekly wellness tracking, please complete your initial assessment.
+              </p>
+
+              <button 
+                onClick={() => router.push("/assessment")}
+                className="w-full py-3.5 bg-[#E37A47] hover:bg-[#D36A37] text-white rounded-full font-bold text-xs shadow-sm transition-transform active:scale-95 flex items-center justify-center gap-1.5"
+              >
+                <span className="material-symbols-outlined text-sm font-black">play_arrow</span>
+                Start Assessment
               </button>
             </motion.div>
           </motion.div>

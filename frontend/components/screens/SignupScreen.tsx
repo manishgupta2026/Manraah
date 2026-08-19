@@ -33,7 +33,7 @@ const COUNTRY_OPTIONS: CustomSelectOption[] = [
 
 export default function SignupScreen() {
   const router = useRouter();
-  const { selectedCategory } = useAssessment();
+  const { selectedCategory, detailedAnswers, computedScore, assessmentResult } = useAssessment();
 
   const [resolvedCategory, setResolvedCategory] = useState<string>("");
   const [sanctuaryName, setSanctuaryName] = useState("");
@@ -77,11 +77,11 @@ export default function SignupScreen() {
         email,
         password,
         resolvedCategory,
-        [],
-        [],
-        0,
-        0,
-        "",
+        detailedAnswers || [],
+        detailedAnswers || [],
+        computedScore || 0,
+        assessmentResult?.percentage || computedScore || 0,
+        assessmentResult?.wellnessLevel || "",
         phone,
         dob,
         country,

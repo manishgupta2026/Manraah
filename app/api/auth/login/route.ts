@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server";
-import { sql } from "@/backend/db/client";
 import { saveUserAssessment } from "@/backend/queries/assessment";
 import { generateUniqueSanctuaryName } from "@/backend/auth/sanctuary";
+import { getUserByEmail, updateUserSanctuaryName, updateUserCategory } from "@/backend/queries/users";
 import crypto from "crypto";
 
-function verifyPassword(password: string, storedHash: string): boolean {
+function verifyPassword(password: string, storedHash: string | null): boolean {
+  if (!storedHash) return false;
   const [salt, originalHash] = storedHash.split(":");
   if (!salt || !originalHash) return false;
   const hash = crypto.scryptSync(password, salt, 64).toString("hex");
@@ -24,12 +25,7 @@ export async function POST(request: Request) {
     }
 
     // 1. Fetch user from Neon PostgreSQL
-    const users = await sql`
-      SELECT id, name, email, password_hash, sanctuary_name, avatar, selected_category, streak_days, mindfulness_minutes, current_mood
-      FROM users
-      WHERE LOWER(email) = LOWER(${email})
-      LIMIT 1
-    `;
+    const users = await getUserByEmail(email);
 
     if (users.length === 0) {
       return NextResponse.json(
@@ -53,9 +49,7 @@ export async function POST(request: Request) {
     let sanctuaryName = user.sanctuary_name;
     if (!sanctuaryName) {
       sanctuaryName = await generateUniqueSanctuaryName();
-      await sql`
-        UPDATE users SET sanctuary_name = ${sanctuaryName}, name = ${sanctuaryName} WHERE id = ${user.id}
-      `;
+      await updateUserSanctuaryName(user.id, sanctuaryName);
     }
 
     const rawCategory = user.selected_category || "student";
@@ -77,7 +71,7 @@ export async function POST(request: Request) {
       const incomingCategory = category === "couples" || category === "couple" ? "couples" : (category === "parents" || category === "parent" ? "parents" : category);
       if (incomingCategory !== userProfile.selectedCategory) {
         console.log("[Login API] [POINT 3 — after login] Updating selectedCategory in DB:", incomingCategory);
-        await sql`UPDATE users SET selected_category = ${incomingCategory} WHERE id = ${user.id}`;
+        await updateUserCategory(user.id, incomingCategory);
         userProfile.selectedCategory = incomingCategory;
       }
     }
