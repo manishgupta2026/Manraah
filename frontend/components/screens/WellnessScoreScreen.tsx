@@ -18,7 +18,7 @@ export default function WellnessScoreScreen() {
 
   // Guard: Do NOT allow direct access without assessment
   useEffect(() => {
-    if (!selectedCategory || !detailedAnswers || detailedAnswers.length < 15) {
+    if (!selectedCategory || !detailedAnswers || detailedAnswers.length < 10) {
       router.push("/");
     }
   }, [selectedCategory, detailedAnswers, router]);
