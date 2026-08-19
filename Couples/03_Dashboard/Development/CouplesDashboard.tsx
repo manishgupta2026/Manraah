@@ -124,12 +124,17 @@ export default function CouplesDashboard() {
 
   useEffect(() => {
     const session = getClientSession();
-    if (session && session.isAuthenticated && session.user) {
+    const storedUsername = localStorage.getItem("couple_username");
+    if (storedUsername) {
+      setUserName(storedUsername);
+      if (session && session.isAuthenticated && session.user) {
+        setEmail(session.user.email || "");
+      }
+    } else if (session && session.isAuthenticated && session.user) {
       setUserName(session.user.sanctuaryName || session.user.name || "Harmony Partner");
       setEmail(session.user.email || "");
     } else {
-      const storedUsername = localStorage.getItem("couple_username") || "RomanticSparrow";
-      setUserName(storedUsername);
+      setUserName("RomanticSparrow");
     }
 
     const storedPartner = localStorage.getItem("couple_partner_name") || "Elena";

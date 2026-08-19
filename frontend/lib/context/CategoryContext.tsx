@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { UserCategory } from "@/backend/types";
 import { getClientSession } from "@/backend/auth/client";
+import { usePathname } from "next/navigation";
 
 export interface CategoryInfo {
   id: UserCategory;
@@ -104,6 +105,7 @@ const CategoryContext = createContext<CategoryContextType | undefined>(undefined
 
 export function CategoryProvider({ children }: { children: ReactNode }) {
   const [category, setCategory] = useState<UserCategory>("student");
+  const pathname = usePathname();
 
   // Sync category with user session on mount
   useEffect(() => {
@@ -114,6 +116,60 @@ export function CategoryProvider({ children }: { children: ReactNode }) {
       }
     }
   }, []);
+
+  // Sync category with viewed dashboard path dynamically on routing
+  useEffect(() => {
+    if (typeof window !== "undefined" && pathname) {
+      let detectedCategory: UserCategory | null = null;
+      if (pathname.startsWith("/dashboard/parents") || pathname.startsWith("/dashboard/parent")) {
+        detectedCategory = "parents";
+      } else if (pathname.startsWith("/dashboard/couples") || pathname.startsWith("/dashboard/couple")) {
+        detectedCategory = "couples";
+      } else if (pathname.startsWith("/dashboard/student")) {
+        detectedCategory = "student";
+      }
+
+      if (detectedCategory) {
+        const session = getClientSession();
+        if (session && session.user) {
+          const currentSessionCat = session.user.selectedCategory;
+          if (currentSessionCat !== detectedCategory) {
+            console.log("[CategoryContext] Syncing session, cookies, and DB to match path:", detectedCategory);
+            
+            // Update context state
+            setCategory(detectedCategory);
+
+            // Update local storage session
+            const updatedSession = {
+              ...session,
+              user: {
+                ...session.user,
+                selectedCategory: detectedCategory
+              }
+            };
+            localStorage.setItem("manraah_auth_session", JSON.stringify(updatedSession));
+            
+            // Update cookies
+            document.cookie = `manraah_session=${JSON.stringify(updatedSession)}; path=/; max-age=2592000`;
+            document.cookie = `userType=${detectedCategory}; path=/; max-age=2592000`;
+
+            // Update database silently in the background
+            fetch("/api/profile", {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                userId: session.user.id,
+                category: detectedCategory
+              })
+            }).catch((err) => console.error("Failed to sync category in DB:", err));
+          }
+        } else {
+          // If no session but we detected category from path, update context
+          setCategory(detectedCategory);
+        }
+      }
+    }
+  }, [pathname]);
 
   const categoryDetails = CATEGORIES[category] || DEFAULT_CATEGORY;
 

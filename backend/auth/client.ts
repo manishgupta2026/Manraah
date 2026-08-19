@@ -98,6 +98,7 @@ export async function signOut(): Promise<void> {
 
   if (typeof window !== "undefined") {
     localStorage.removeItem(SESSION_KEY);
+    localStorage.removeItem("manraah_dashboard_cache");
     document.cookie = "manraah_session=; path=/; max-age=0";
     document.cookie = "userType=; path=/; max-age=0";
     document.cookie = "manraah_userType=; path=/; max-age=0";

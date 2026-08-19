@@ -92,7 +92,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
                 <DesktopSidebar />
 
                 {/* Main Content Area */}
-                <div className="flex-1 flex flex-col min-w-0 md:ml-[80px] lg:ml-[260px] h-screen overflow-y-auto pb-16 md:pb-6">
+                <div className="flex-1 flex flex-col min-w-0 md:ml-[76px] lg:ml-[76px] h-screen overflow-y-auto pb-16 md:pb-6">
                   <Header onOpenMenu={() => setIsMobileDrawerOpen(true)} />
                   <main className="flex-1 px-3 md:px-6 py-4 max-w-7xl mx-auto w-full">
                     {children}

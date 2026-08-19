@@ -192,12 +192,43 @@ export default function SettingsPrivacyScreen() {
     return isCouple ? "couple_username" : "parent_username";
   };
 
-  const saveCustomUsername = () => {
+  const saveCustomUsername = async () => {
     if (usernameStatus !== "available" || !tempUsername.trim()) return;
     const newName = tempUsername.trim();
     setUsername(newName);
     localStorage.setItem(getUsernameKey(), newName);
     setUsernameStatus("idle");
+
+    // Sync to active session and database profile if logged in
+    if (session && session.user) {
+      const updatedSession = {
+        ...session,
+        user: {
+          ...session.user,
+          name: newName,
+          sanctuaryName: newName,
+        }
+      };
+      localStorage.setItem("manraah_auth_session", JSON.stringify(updatedSession));
+      document.cookie = `manraah_session=${JSON.stringify(updatedSession)}; path=/; max-age=2592000`;
+      setSession(updatedSession);
+
+      try {
+        await fetch("/api/profile", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            userId: session.user.id,
+            sanctuaryName: newName,
+            category: session.user.selectedCategory || category,
+            avatar: session.user.avatar || avatar
+          })
+        });
+      } catch (err) {
+        console.error("[Confidential Username DB Sync Error]:", err);
+      }
+    }
+
     alert("✅ Username updated successfully!");
   };
 

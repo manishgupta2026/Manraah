@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import { MAIN_NAV_ITEMS } from "@/frontend/lib/constants";
 import { getClientSession } from "@/backend/auth/client";
 import { getInitials, getPastelBgColor, getPastelTextColor } from "@/frontend/lib/avatar-helper";
+import { useCategory } from "@/frontend/lib/context/CategoryContext";
 import Logo from "@/frontend/components/ui/Logo";
 
 interface MobileDrawerProps {
@@ -16,6 +17,7 @@ interface MobileDrawerProps {
 
 export default function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
   const pathname = usePathname();
+  const { category } = useCategory();
   const [user, setUser] = useState<{ name?: string; sanctuaryName?: string; avatar?: string } | null>(null);
 
   useEffect(() => {
@@ -63,11 +65,12 @@ export default function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
           {/* Navigation Items */}
           <nav className="space-y-2">
             {MAIN_NAV_ITEMS.map((item) => {
-              const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
+              const targetHref = item.href === "/dashboard" ? `/dashboard/${category}` : item.href;
+              const isActive = pathname === targetHref || (targetHref !== "/" && pathname.startsWith(targetHref));
               return (
                 <Link
                   key={item.href}
-                  href={item.href}
+                  href={targetHref}
                   onClick={onClose}
                   className={`flex items-center gap-3.5 px-4 py-3 rounded-full text-sm font-medium transition-all duration-200 ${
                     isActive

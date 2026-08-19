@@ -5,44 +5,13 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { getClientSession, signOut } from "@/backend/auth/client";
 
-// Core Parent Themes & Colors from Design.md
-// Parent accent is Peach (#F5C99B) and Primary is Lavender/Purple (#7C6BC4)
+// Core Parent Themes & Colors
 const MOODS = [
   { emoji: "😊", name: "Joyful", color: "bg-amber-100 text-amber-800" },
   { emoji: "😌", name: "Calm", color: "bg-emerald-100 text-emerald-800" },
   { emoji: "🥱", name: "Tired", color: "bg-blue-100 text-blue-800" },
   { emoji: "🤯", name: "Overwhelmed", color: "bg-rose-100 text-rose-800" },
   { emoji: "😔", name: "Anxious", color: "bg-purple-100 text-purple-800" },
-];
-
-const RESOURCE_LIBRARY = [
-  {
-    type: "article",
-    title: "Navigating Toddler Tantrums with Mindful Presence",
-    duration: "5 min read",
-    author: "Dr. Sarah Jenkins",
-    icon: "article",
-    bg: "bg-peach/10",
-    color: "text-tertiary",
-  },
-  {
-    type: "video",
-    title: "3-Minute De-escalation for Parents",
-    duration: "3 min watch",
-    author: "Marcus Vance",
-    icon: "play_circle",
-    bg: "bg-mint/10",
-    color: "text-secondary",
-  },
-  {
-    type: "podcast",
-    title: "Mindful Parenting in a Digital Age",
-    duration: "18 min listen",
-    author: "The Sanctuary Podcast",
-    icon: "mic",
-    bg: "bg-primary-fixed/30",
-    color: "text-primary",
-  },
 ];
 
 const ADVICE_SCENARIOS = {
@@ -71,47 +40,6 @@ const COMMUNICATION_TIPS = [
   "Praise the effort, not the outcome: 'I noticed how hard you worked on cleaning up.'",
   "Pause for 3 seconds before responding to a stressful question."
 ];
-
-const MOCK_TAKEN_USERNAMES = ["elena", "parent", "mama", "papa", "user", "admin", "mom", "dad", "parent123"];
-
-const HEADER_THEMES = {
-  morning: {
-    cardBg: "bg-gradient-to-r from-[#FFFDF2]/90 via-[#FFF3EB]/90 to-[#ECE5F5]/90 border-amber-200/50 shadow-soft",
-    textTitle: "text-slate-800",
-    textSubtitle: "text-tertiary",
-    textMuted: "text-slate-600",
-    btnHover: "hover:bg-black/5",
-    bellIcon: "text-slate-700",
-    bellHover: "hover:bg-slate-800/10",
-  },
-  afternoon: {
-    cardBg: "bg-gradient-to-r from-[#F2F4FD]/90 via-[#ECE6F6]/90 to-[#FCE6EC]/90 border-primary/20 shadow-soft",
-    textTitle: "text-slate-800",
-    textSubtitle: "text-primary",
-    textMuted: "text-slate-600",
-    btnHover: "hover:bg-black/5",
-    bellIcon: "text-slate-700",
-    bellHover: "hover:bg-slate-800/10",
-  },
-  evening: {
-    cardBg: "bg-gradient-to-r from-[#FFF4E4]/95 via-[#FDE4EB]/95 to-[#ECE7F6]/95 border-orange-200/60 shadow-soft",
-    textTitle: "text-slate-800",
-    textSubtitle: "text-tertiary font-black",
-    textMuted: "text-slate-600 font-semibold",
-    btnHover: "hover:bg-black/5",
-    bellIcon: "text-slate-700",
-    bellHover: "hover:bg-slate-800/10",
-  },
-  night: {
-    cardBg: "bg-gradient-to-r from-[#0C0F1A]/95 via-[#141B2E]/95 to-[#2A2045]/95 border-[#2A2045]/60 shadow-dark-soft",
-    textTitle: "text-white",
-    textSubtitle: "text-pink/90 font-black",
-    textMuted: "text-slate-300 font-semibold",
-    btnHover: "hover:bg-white/10",
-    bellIcon: "text-slate-200",
-    bellHover: "hover:bg-white/10",
-  }
-};
 
 export default function ParentDashboard() {
   const router = useRouter();
@@ -148,6 +76,9 @@ export default function ParentDashboard() {
 
   // Family Wellness
   const [familyScore, setFamilyScore] = useState(82);
+  const [selectedDay, setSelectedDay] = useState(6);
+  const [dashboardData, setDashboardData] = useState<any>(null);
+  const [loadingData, setLoadingData] = useState(true);
   const [familyTime, setFamilyTime] = useState(40); // in minutes
   const [activeTipIdx, setActiveTipIdx] = useState(0);
 
@@ -178,24 +109,26 @@ export default function ParentDashboard() {
 
   // Periodic Privacy "Not Watched" Popup State
   const [showSecurityPopup, setShowSecurityPopup] = useState(false);
+  const [showProgressModal, setShowProgressModal] = useState(false);
 
   // Set greeting, username and security popup times
   useEffect(() => {
     // 1. Initial Load Username
     const session = getClientSession();
-    if (session && session.isAuthenticated && session.user) {
+    const storedUsername = localStorage.getItem("parent_username");
+    if (storedUsername) {
+      setUsername(storedUsername);
+      if (session && session.isAuthenticated && session.user) {
+        setEmail(session.user.email || "");
+      }
+    } else if (session && session.isAuthenticated && session.user) {
       setUsername(session.user.sanctuaryName || session.user.name || "Mindful Parent");
       setEmail(session.user.email || "");
     } else {
-      const storedUsername = localStorage.getItem("parent_username");
-      if (storedUsername) {
-        setUsername(storedUsername);
-      } else {
-        const randomNum = Math.floor(1000 + Math.random() * 9000);
-        const initialName = `CalmParent-${randomNum}`;
-        setUsername(initialName);
-        localStorage.setItem("parent_username", initialName);
-      }
+      const randomNum = Math.floor(1000 + Math.random() * 9000);
+      const initialName = `CalmParent-${randomNum}`;
+      setUsername(initialName);
+      localStorage.setItem("parent_username", initialName);
     }
 
     // 2. Load ShowPhone Setting
@@ -235,6 +168,33 @@ export default function ParentDashboard() {
     }
   }, []);
 
+  // Fetch live dashboard & assessment details on mount
+  useEffect(() => {
+    fetch("/api/dashboard")
+      .then((res) => {
+        if (res.ok) return res.json();
+        throw new Error("Failed to load dashboard data");
+      })
+      .then((data) => {
+        setDashboardData(data);
+        if (data.user) {
+          // Sync real sanctuary name
+          if (data.user.sanctuaryName || data.user.name) {
+            setUsername(data.user.sanctuaryName || data.user.name);
+          }
+          // Calculate wellness score as per the assessment completion percentage
+          if (data.user.assessmentPercentage !== null && data.user.assessmentPercentage !== undefined) {
+            setFamilyScore(data.user.assessmentPercentage);
+          }
+        }
+        setLoadingData(false);
+      })
+      .catch((err) => {
+        console.error("Dashboard fetch error:", err);
+        setLoadingData(false);
+      });
+  }, []);
+
   // Tip rotator timer
   useEffect(() => {
     const interval = setInterval(() => {
@@ -267,8 +227,6 @@ export default function ParentDashboard() {
     }
     return () => clearInterval(timer);
   }, [breathingActive, breathingPhase]);
-
-  // Note: Username settings & phone number visibility controls moved to Settings & Privacy profile screen.
 
   // Tasks progress calculations
   const completedCount = tasks.filter(t => t.completed).length;
@@ -345,710 +303,661 @@ export default function ParentDashboard() {
     return new Date().toLocaleDateString("en-US", options);
   };
 
+  // State for right panel tabs (Monthly vs Daily)
+  const [activeTab, setActiveTab] = useState<"monthly" | "daily">("monthly");
+
+  // Mood Overview segments calculation from weekly mood checkins
+  const getWeeklyMoodDistribution = () => {
+    const defaultDistribution = { amazing: 30, good: 25, neutral: 20, notGood: 15, bad: 10 };
+    if (!dashboardData || !dashboardData.history) return defaultDistribution;
+    
+    // Filter history to last 7 days
+    const now = new Date();
+    const startOfWeek = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    const weeklyEntries = dashboardData.history.filter((e: any) => new Date(e.created_at || e.createdAt) >= startOfWeek);
+    
+    if (weeklyEntries.length === 0) return defaultDistribution;
+    
+    let amazing = 0, good = 0, neutral = 0, notGood = 0, bad = 0;
+    
+    weeklyEntries.forEach((e: any) => {
+      const m = (e.mood || "").toLowerCase();
+      if (m === "amazing" || m === "happy" || m === "joyful") {
+        amazing++;
+      } else if (m === "calm" || m === "good") {
+        good++;
+      } else if (m === "neutral") {
+        neutral++;
+      } else if (m === "low" || m === "sad" || m === "frustrated" || m === "exhausted" || m === "tired") {
+        notGood++;
+      } else if (m === "anxious" || m === "overwhelmed") {
+        bad++;
+      } else {
+        good++; // default fallback
+      }
+    });
+    
+    const total = amazing + good + neutral + notGood + bad;
+    if (total === 0) return defaultDistribution;
+    
+    const amazingPct = Math.round((amazing / total) * 100);
+    const goodPct = Math.round((good / total) * 100);
+    const neutralPct = Math.round((neutral / total) * 100);
+    const notGoodPct = Math.round((notGood / total) * 100);
+    const badPct = 100 - amazingPct - goodPct - neutralPct - notGoodPct;
+    
+    return { amazing: amazingPct, good: goodPct, neutral: neutralPct, notGood: notGoodPct, bad: badPct };
+  };
+
+  const distribution = getWeeklyMoodDistribution();
+
+  const amazingVal = distribution.amazing / 100;
+  const notGoodVal = distribution.notGood / 100;
+  const badVal = distribution.bad / 100;
+  const neutralVal = distribution.neutral / 100;
+  const goodVal = distribution.good / 100;
+
+  // Slices
+  const amazingStart = 0;
+  const amazingEnd = amazingVal;
+  
+  const notGoodStart = amazingEnd;
+  const notGoodEnd = notGoodStart + notGoodVal;
+  
+  const badStart = notGoodEnd;
+  const badEnd = badStart + badVal;
+  
+  const neutralStart = badEnd;
+  const neutralEnd = neutralStart + neutralVal;
+  
+  const goodStart = neutralEnd;
+  const goodEnd = 1.0;
+
+  const getCoordinatesForPercent = (percent: number) => {
+    const angle = 2 * Math.PI * (percent - 0.25);
+    const x = Math.cos(angle);
+    const y = Math.sin(angle);
+    return [x, y];
+  };
+
+  const makePieSlicePath = (startPercent: number, endPercent: number) => {
+    if (endPercent - startPercent <= 0) return "";
+    if (endPercent - startPercent >= 0.999) {
+      return "M 50 50 m -50 0 a 50 50 0 1 0 100 0 a 50 50 0 1 0 -100 0";
+    }
+    const [startX, startY] = getCoordinatesForPercent(startPercent);
+    const [endX, endY] = getCoordinatesForPercent(endPercent);
+    const largeArcFlag = endPercent - startPercent > 0.5 ? 1 : 0;
+    
+    const x1 = 50 + 50 * startX;
+    const y1 = 50 + 50 * startY;
+    const x2 = 50 + 50 * endX;
+    const y2 = 50 + 50 * endY;
+    
+    return `M 50 50 L ${x1.toFixed(2)} ${y1.toFixed(2)} A 50 50 0 ${largeArcFlag} 1 ${x2.toFixed(2)} ${y2.toFixed(2)} Z`;
+  };
+
+  const getLabelCoordinates = (startPercent: number, endPercent: number) => {
+    const midPercent = startPercent + (endPercent - startPercent) / 2;
+    const angle = 2 * Math.PI * (midPercent - 0.25);
+    const x = 50 + 32 * Math.cos(angle);
+    const y = 50 + 32 * Math.sin(angle) + 2.5;
+    return { x: x.toFixed(1), y: y.toFixed(1) };
+  };
+
   return (
-    <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 space-y-8 relative select-none animate-fadeIn bg-[#fdf7ff]">
+    <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 relative select-none animate-fadeIn bg-[#F8F9FD] min-h-screen">
       
-      {/* Ambient background glow - Peach & Purple */}
+      {/* Ambient background glows */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-0 right-1/4 w-96 h-96 rounded-full blur-[110px] opacity-25 bg-[#F5C99B]" />
-        <div className="absolute bottom-1/4 left-1/4 w-[450px] h-[450px] rounded-full blur-[130px] opacity-20 bg-[#7C6BC4]" />
+        <div className="absolute top-0 right-1/4 w-96 h-96 rounded-full blur-[120px] opacity-[0.02] bg-[#F5C99B]" />
+        <div className="absolute bottom-1/4 left-1/4 w-[450px] h-[450px] rounded-full blur-[140px] opacity-[0.02] bg-[#7C6BC4]" />
       </div>
 
       <div className="z-10 relative space-y-6">
         
-        {/* ==================== BACK BUTTON ==================== */}
+        {/* ==================== TOP NAVIGATION ROW ==================== */}
         <div className="flex items-center justify-between">
           <button 
             onClick={async () => {
-              await signOut();
               window.location.href = "/";
             }}
-            className="flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-surface-variant/20 text-xs font-bold text-primary shadow-sm hover:bg-surface-container active:scale-95 transition-all"
+            className="flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-[#EAEAFF] text-xs font-bold text-[#7C6BC4] shadow-sm hover:bg-[#F2F4FD] active:scale-95 transition-all"
           >
             <span className="material-symbols-outlined text-sm font-black">arrow_back</span>
             Back to home
           </button>
+
+          <span className="px-3.5 py-1 rounded-full bg-emerald-50 text-[#006B56] text-[10px] font-black uppercase tracking-wider border border-emerald-100/50">
+            🔒 Private Sanctuary Connection
+          </span>
         </div>
 
-        {/* ==================== CATCHY DISCLAIMER BANNER ==================== */}
-        <motion.div 
-          initial={{ opacity: 0, y: -5 }} 
-          animate={{ opacity: 1, y: 0 }}
-          className="bg-gradient-to-r from-primary/10 to-peach/10 border border-primary/20 rounded-2xl p-4 flex items-center justify-between gap-4"
-        >
-          <div className="flex items-center gap-3">
-            <span className="text-2xl">🤫</span>
-            <div>
-              <h4 className="font-heading font-black text-xs text-on-surface">Under Lock & Key</h4>
-              <p className="text-[10px] text-on-surface-variant font-semibold">
-                We are not revealing your identity. Everything you log, write, or ask here remains 100% private to your device.
-              </p>
-            </div>
-          </div>
-          <span className="px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 text-[9px] font-black uppercase tracking-wider">
-            Private Connection
-          </span>
-        </motion.div>
-
-        {/* ==================== 1. HEADER ==================== */}
-        <motion.div 
-          initial={{ opacity: 0, y: -10 }} 
-          animate={{ opacity: 1, y: 0 }}
-          className={`flex flex-col sm:flex-row sm:items-center sm:justify-between p-6 rounded-3xl border backdrop-blur-md gap-4 transition-all duration-500 ${HEADER_THEMES[timeOfDay].cardBg}`}
-        >
-          <div className="flex items-start gap-4 flex-1">
-            {/* Profile Avatar in Left Corner */}
-            <div 
-              onClick={() => router.push("/profile")} 
-              className="w-14 h-14 rounded-full border-2 border-primary/20 bg-peach/40 flex items-center justify-center cursor-pointer shadow-sm hover:scale-105 transition-transform flex-shrink-0"
-              title="View Profile"
-            >
-              <span className="text-2xl">👩‍👦</span>
-            </div>
-
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <span className="text-xl sm:text-2xl">{timeIcon}</span>
-                <span className={`text-xs uppercase tracking-wider font-extrabold transition-colors duration-500 ${HEADER_THEMES[timeOfDay].textSubtitle}`}>
-                  Mindful Parenting Sanctuary
-                </span>
-              </div>
-            
-            {/* Custom Username Header Display */}
-            <div className="flex items-center flex-wrap gap-2">
-              <h1 className={`text-2xl sm:text-3xl font-heading font-black flex items-center gap-2 transition-colors duration-500 ${HEADER_THEMES[timeOfDay].textTitle}`}>
-                {greeting}, {showName ? username : "••••••••"}
-              </h1>
+        {/* ==================== THREE-COLUMN LAYOUT GRID ==================== */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+          
+          {/* ────────────────────────────────────────────────────────────
+              COLUMN 1: MINT SIDEBAR (col-span-3)
+              ──────────────────────────────────────────────────────────── */}
+          <div className="lg:col-span-3 space-y-4">
+            <div className="bg-[#E6F4F0] rounded-[32px] p-6 border border-[#CBECE2] shadow-[0_10px_35px_rgba(0,107,86,0.03)] text-center space-y-6 flex flex-col justify-between min-h-[480px]">
               
-              {/* Hide/Show Name Toggle */}
+              {/* Profile details */}
+              <div className="space-y-4">
+                <div className="relative w-20 h-20 mx-auto">
+                  <div className="w-full h-full rounded-full border-4 border-white bg-[#F5C99B]/40 flex items-center justify-center shadow-sm">
+                    <span className="text-4xl">👩‍👦</span>
+                  </div>
+                  <span className="absolute bottom-0 right-0 w-5 h-5 bg-[#006B56] border-2 border-white rounded-full flex items-center justify-center text-[10px] text-white">✓</span>
+                </div>
+
+                <div className="space-y-1">
+                  <h4 className="font-heading font-black text-slate-800 text-sm">Check your condition</h4>
+                  <p className="text-[10px] text-slate-500 font-bold leading-relaxed">
+                    Check your every situation, stress factors, and parenting activities.
+                  </p>
+                </div>
+              </div>
+
+              {/* Action Button */}
               <button 
-                onClick={() => setShowName(!showName)}
-                className={`p-1 rounded-full transition-colors duration-300 ${HEADER_THEMES[timeOfDay].btnHover} ${HEADER_THEMES[timeOfDay].textTitle}`}
-                title={showName ? "Hide Username" : "Show Username"}
+                onClick={() => router.push("/checkin")}
+                className="w-full py-3 rounded-2xl bg-[#006B56] hover:bg-[#005B48] text-white font-bold text-xs shadow-md transition-transform active:scale-95"
               >
-                <span className="material-symbols-outlined text-lg">
-                  {showName ? "visibility_off" : "visibility"}
-                </span>
-              </button>
-            </div>
-
-            <div className={`flex items-center gap-3 text-xs font-semibold transition-colors duration-500 ${HEADER_THEMES[timeOfDay].textMuted}`}>
-              <span>Today is {getFormattedDate()}</span>
-              {email && <span className="opacity-90">• {email}</span>}
-              {showPhoneNumber && (
-                <span className="px-2.5 py-0.5 rounded-md bg-peach/20 text-tertiary border border-peach/30 font-bold">
-                  📞 {phoneNumber}
-                </span>
-              )}
-            </div>
-          </div>
-          </div>
-
-          <div className="flex items-center gap-4 mt-4 sm:mt-0 self-end sm:self-center">
-            {/* Notification Icon */}
-            <div className={`relative cursor-pointer p-2 rounded-full transition-colors duration-300 ${HEADER_THEMES[timeOfDay].btnHover}`}>
-              <span className={`material-symbols-outlined text-2xl transition-colors duration-500 ${HEADER_THEMES[timeOfDay].bellIcon}`}>notifications</span>
-              <span className={`absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-tertiary rounded-full ring-2 ${timeOfDay === 'night' ? 'ring-slate-900' : 'ring-white'}`} />
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Bento Grid Content */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
-
-          {/* ==================== 2. DAILY WELLNESS SUMMARY (col-span-8) ==================== */}
-          <div className="md:col-span-8 bg-white p-6 rounded-3xl border border-surface-variant/15 shadow-soft flex flex-col justify-between space-y-6">
-            <div>
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-heading font-extrabold text-on-surface flex items-center gap-2">
-                  <span className="material-symbols-outlined text-tertiary">spa</span>
-                  Daily Wellness Summary
-                </h3>
-                <span className="text-[10px] uppercase tracking-wider font-bold text-on-surface-variant/60">Updated Live</span>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                
-                {/* Mood Card */}
-                <div className="bg-surface-container-lowest border border-surface-variant/20 rounded-2xl p-4 flex flex-col justify-between min-h-[120px]">
-                  <span className="text-[10px] uppercase font-bold text-on-surface-variant">Daily Mood</span>
-                  <div className="flex items-center gap-3 my-2">
-                    <span className="text-4xl select-none">{selectedMoodEmoji}</span>
-                    <div>
-                      <h4 className="font-heading font-bold text-sm text-on-surface">{selectedMood}</h4>
-                      <p className="text-[10px] text-on-surface-variant font-medium">Logged today</p>
-                    </div>
-                  </div>
-                  <div className="flex flex-wrap gap-1.5 pt-1 border-t border-dashed border-surface-variant/30">
-                    {MOODS.map((m) => (
-                      <button
-                        key={m.name}
-                        onClick={() => {
-                          setSelectedMood(m.name);
-                          setSelectedMoodEmoji(m.emoji);
-                        }}
-                        className={`px-2 py-0.5 rounded-full text-[10px] transition-all hover:scale-105 active:scale-95 ${
-                          selectedMood === m.name ? m.color + " ring-1 ring-black/10 font-bold" : "bg-surface-container text-on-surface-variant"
-                        }`}
-                      >
-                        {m.emoji}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Stress Level Card */}
-                <div className="bg-surface-container-lowest border border-surface-variant/20 rounded-2xl p-4 flex flex-col justify-between min-h-[120px]">
-                  <div className="flex justify-between">
-                    <span className="text-[10px] uppercase font-bold text-on-surface-variant">Stress Level</span>
-                    <span className="text-xs font-bold text-tertiary">{stressLevel}/10</span>
-                  </div>
-                  <div className="my-2 space-y-1.5">
-                    <input
-                      type="range"
-                      min="1"
-                      max="10"
-                      value={stressLevel}
-                      onChange={(e) => setStressLevel(Number(e.target.value))}
-                      className="w-full h-1.5 bg-surface-container rounded-lg appearance-none cursor-pointer accent-tertiary"
-                    />
-                    <div className="flex justify-between text-[9px] text-on-surface-variant/75 font-semibold">
-                      <span>Calm (1)</span>
-                      <span>Moderate (5)</span>
-                      <span>Severe (10)</span>
-                    </div>
-                  </div>
-                  <span className="text-[10px] font-bold text-on-surface-variant/80">
-                    Status: {stressLevel <= 3 ? "😊 Peaceful Grounding" : stressLevel <= 6 ? "🍃 Moderate Tension" : "⚠️ High Overload - Pause!"}
-                  </span>
-                </div>
-
-                {/* Energy Level Card */}
-                <div className="bg-surface-container-lowest border border-surface-variant/20 rounded-2xl p-4 flex flex-col justify-between min-h-[120px]">
-                  <div className="flex justify-between">
-                    <span className="text-[10px] uppercase font-bold text-on-surface-variant">Energy Reservoir</span>
-                    <span className="text-xs font-bold text-secondary">{energyLevel}/10</span>
-                  </div>
-                  <div className="my-2 space-y-2">
-                    <div className="w-full bg-surface-container h-3 rounded-full overflow-hidden">
-                      <div 
-                        className="bg-gradient-to-r from-mint to-secondary h-full rounded-full transition-all duration-500" 
-                        style={{ width: `${energyLevel * 10}%` }}
-                      />
-                    </div>
-                    <div className="flex justify-center gap-4">
-                      <button 
-                        onClick={() => setEnergyLevel(prev => Math.max(1, prev - 1))}
-                        className="w-6 h-6 rounded-full bg-surface-container text-xs font-bold flex items-center justify-center hover:bg-surface-container-high active:scale-90"
-                      >
-                        -
-                      </button>
-                      <button 
-                        onClick={() => setEnergyLevel(prev => Math.min(10, prev + 1))}
-                        className="w-6 h-6 rounded-full bg-surface-container text-xs font-bold flex items-center justify-center hover:bg-surface-container-high active:scale-90"
-                      >
-                        +
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Sleep Summary Card */}
-                <div className="bg-surface-container-lowest border border-surface-variant/20 rounded-2xl p-4 flex flex-col justify-between min-h-[120px]">
-                  <div className="flex justify-between">
-                    <span className="text-[10px] uppercase font-bold text-on-surface-variant">Sleep Log</span>
-                    <span className="text-xs font-bold text-primary">{sleepHours} hours</span>
-                  </div>
-                  <div className="flex items-center justify-between gap-1 my-1">
-                    <button 
-                      onClick={() => setSleepHours(prev => Math.max(0, Number((prev - 0.5).toFixed(1))))}
-                      className="px-2 py-0.5 rounded bg-surface-container text-xs font-bold"
-                    >
-                      -0.5h
-                    </button>
-                    <span className="text-xs font-semibold text-on-surface">{sleepQuality} Quality</span>
-                    <button 
-                      onClick={() => setSleepHours(prev => Math.min(24, Number((prev + 0.5).toFixed(1))))}
-                      className="px-2 py-0.5 rounded bg-surface-container text-xs font-bold"
-                    >
-                      +0.5h
-                    </button>
-                  </div>
-                  <div className="flex gap-1 justify-between pt-1.5 border-t border-dashed border-surface-variant/30">
-                    {(["Deep", "Light", "Interrupted"] as const).map((q) => (
-                      <button
-                        key={q}
-                        onClick={() => setSleepQuality(q)}
-                        className={`px-1.5 py-0.5 rounded-full text-[9px] font-bold ${
-                          sleepQuality === q ? "bg-primary text-white" : "bg-surface-container text-on-surface-variant"
-                        }`}
-                      >
-                        {q}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-              </div>
-            </div>
-          </div>
-
-          {/* ==================== 3. TODAY'S FOCUS (col-span-4) ==================== */}
-          <div className="md:col-span-4 bg-white p-6 rounded-3xl border border-surface-variant/15 shadow-soft flex flex-col justify-between min-h-[300px]">
-            <div className="space-y-4">
-              <h3 className="text-lg font-heading font-extrabold text-on-surface flex items-center gap-2">
-                <span className="material-symbols-outlined text-primary">emoji_objects</span>
-                Today's Focus
-              </h3>
-              
-              {/* AI Recommended Goal */}
-              <div className="bg-peach/10 border border-peach/30 rounded-2xl p-3 text-xs text-on-surface">
-                <span className="font-bold text-tertiary block mb-1">💡 AI Recommended Goal</span>
-                "Breathe out when entering the house. Pause at the door for two breaths to shift parent modes."
-              </div>
-
-              {/* Task list with emojis in questions */}
-              <div className="space-y-2">
-                {tasks.map((task) => (
-                  <div 
-                    key={task.id} 
-                    onClick={() => toggleTask(task.id)}
-                    className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-surface-container-low cursor-pointer transition-colors"
-                  >
-                    <span className={`material-symbols-outlined text-lg ${task.completed ? "text-secondary font-black" : "text-outline"}`}>
-                      {task.completed ? "check_circle" : "radio_button_unchecked"}
-                    </span>
-                    <span className={`text-xs font-semibold leading-snug ${task.completed ? "line-through text-on-surface-variant/50" : "text-on-surface"}`}>
-                      {task.text}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Circular Progress Indicator */}
-            <div className="pt-4 border-t border-surface-container flex items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <div className="relative w-12 h-12 flex items-center justify-center">
-                  <svg className="absolute w-full h-full transform -rotate-90">
-                    <circle cx="24" cy="24" r="20" className="stroke-surface-container" strokeWidth="4" fill="none" />
-                    <circle cx="24" cy="24" r="20" className="stroke-secondary transition-all duration-300" strokeWidth="4" fill="none" strokeDasharray="125" strokeDashoffset={125 - (125 * progressPercent) / 100} />
-                  </svg>
-                  <span className="text-[10px] font-black text-on-surface">{progressPercent}%</span>
-                </div>
-                <div>
-                  <h4 className="font-heading font-bold text-xs text-on-surface">Daily Checkoff</h4>
-                  <p className="text-[9px] text-on-surface-variant font-medium">{completedCount} of {tasks.length} tasks completed</p>
-                </div>
-              </div>
-
-              <button
-                disabled={progressPercent < 100}
-                onClick={() => alert("🎉 Beautiful job dedicating time to parenting mindfulness today!")}
-                className="px-4 py-2 rounded-full font-bold text-[10px] text-white bg-primary hover:bg-primary-purple disabled:opacity-40 disabled:cursor-not-allowed transition-all scale-102 hover:scale-105 active:scale-95"
-              >
-                Complete
-              </button>
-            </div>
-          </div>
-
-          {/* ==================== 4. FAMILY WELLNESS (col-span-6) ==================== */}
-          <div className="md:col-span-6 bg-white p-6 rounded-3xl border border-surface-variant/15 shadow-soft space-y-4">
-            <h3 className="text-lg font-heading font-extrabold text-on-surface flex items-center gap-2">
-              <span className="material-symbols-outlined text-secondary">family_home</span>
-              Family Wellness
-            </h3>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              
-              {/* Family Wellness Score */}
-              <div className="p-4 bg-gradient-to-tr from-mint/10 to-[#88F7D6]/20 border border-mint/20 rounded-2xl flex flex-col items-center justify-center text-center space-y-1">
-                <span className="text-[10px] font-black text-secondary uppercase tracking-wider">Family Wellness Score</span>
-                <span className="text-4xl font-heading font-black text-secondary">{familyScore}</span>
-                <span className="text-[9px] text-on-surface-variant font-medium">Strong Harmony • Top 15%</span>
-                <button 
-                  onClick={() => setFamilyScore(prev => Math.min(100, prev + 1))}
-                  className="mt-2 text-[9px] font-black bg-white/80 hover:bg-white text-secondary py-1 px-3 rounded-full border border-secondary/20 transition-transform active:scale-95"
-                >
-                  Boost Score +
-                </button>
-              </div>
-
-              {/* Family Time Progress */}
-              <div className="p-4 bg-surface-container-low border border-surface-variant/20 rounded-2xl flex flex-col justify-between">
-                <div>
-                  <span className="text-[10px] uppercase font-bold text-on-surface-variant">Family Connection Time</span>
-                  <div className="flex items-baseline gap-1 my-1">
-                    <span className="text-2xl font-black text-on-surface">{familyTime}</span>
-                    <span className="text-xs text-on-surface-variant font-medium">/ 60 mins</span>
-                  </div>
-                  <div className="w-full bg-white h-2 rounded-full overflow-hidden border border-surface-variant/10">
-                    <div 
-                      className="bg-secondary h-full rounded-full transition-all duration-300"
-                      style={{ width: `${Math.min(100, (familyTime / 60) * 100)}%` }}
-                    />
-                  </div>
-                </div>
-                <div className="flex gap-2 mt-2">
-                  <button 
-                    onClick={() => setFamilyTime(prev => Math.max(0, prev - 10))}
-                    className="flex-1 bg-white hover:bg-surface-container text-[10px] font-extrabold py-1 rounded-md border border-surface-variant/20 active:scale-95 transition-transform"
-                  >
-                    -10m
-                  </button>
-                  <button 
-                    onClick={() => setFamilyTime(prev => prev + 10)}
-                    className="flex-1 bg-white hover:bg-surface-container text-[10px] font-extrabold py-1 rounded-md border border-surface-variant/20 active:scale-95 transition-transform"
-                  >
-                    +10m
-                  </button>
-                </div>
-              </div>
-
-            </div>
-
-            {/* Weekly Family Goal */}
-            <div className="p-4 bg-surface-container-lowest border border-surface-variant/20 rounded-2xl flex items-start gap-3">
-              <span className="text-2xl mt-0.5">🏡</span>
-              <div className="space-y-1">
-                <span className="text-[10px] uppercase tracking-wider font-extrabold text-tertiary">Weekly Family Challenge</span>
-                <h4 className="font-heading font-extrabold text-sm text-on-surface">Device-Free Dinner Challenge</h4>
-                <p className="text-[10px] text-on-surface-variant font-medium leading-relaxed">
-                  Put all family phones in a basket during dinner. Eat, laugh, and ask: "What was the best part of your day?"
-                </p>
-              </div>
-            </div>
-
-            {/* Rotating Healthy Communication Reminder */}
-            <div className="bg-surface p-3.5 rounded-xl border border-surface-variant/15 text-center min-h-[60px] flex items-center justify-center transition-all duration-500">
-              <p className="text-[11px] font-medium italic text-on-surface-variant/90 leading-normal">
-                💬 "{COMMUNICATION_TIPS[activeTipIdx]}"
-              </p>
-            </div>
-          </div>
-
-          {/* ==================== 5. PERSONAL CARE (col-span-6) ==================== */}
-          <div className="md:col-span-6 bg-white p-6 rounded-3xl border border-surface-variant/15 shadow-soft space-y-4">
-            <h3 className="text-lg font-heading font-extrabold text-on-surface flex items-center gap-2">
-              <span className="material-symbols-outlined text-tertiary">self_care</span>
-              Personal Care
-            </h3>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              
-              {/* Personal Time Tracker */}
-              <div className="p-4 bg-surface-container-low border border-surface-variant/20 rounded-2xl flex flex-col justify-between">
-                <div>
-                  <span className="text-[10px] uppercase font-bold text-on-surface-variant">Daily Me-Time Log</span>
-                  <div className="flex items-baseline gap-1 my-1">
-                    <span className="text-2xl font-black text-on-surface">{meTimeMinutes}</span>
-                    <span className="text-xs text-on-surface-variant font-medium">/ 30 mins</span>
-                  </div>
-                  <div className="w-full bg-white h-2 rounded-full overflow-hidden border border-surface-variant/10">
-                    <div 
-                      className="bg-tertiary h-full rounded-full transition-all duration-300"
-                      style={{ width: `${Math.min(100, (meTimeMinutes / 30) * 100)}%` }}
-                    />
-                  </div>
-                </div>
-                <div className="flex gap-1.5 mt-3">
-                  <button 
-                    onClick={() => setMeTimeMinutes(prev => prev + 5)}
-                    className="flex-1 bg-white hover:bg-surface text-[9px] font-black py-1 rounded-md border border-surface-variant/25 active:scale-95"
-                  >
-                    +5m
-                  </button>
-                  <button 
-                    onClick={() => setMeTimeMinutes(prev => prev + 15)}
-                    className="flex-1 bg-white hover:bg-surface text-[9px] font-black py-1 rounded-md border border-surface-variant/25 active:scale-95"
-                  >
-                    +15m
-                  </button>
-                </div>
-              </div>
-
-              {/* Water Intake */}
-              <div className="p-4 bg-surface-container-low border border-surface-variant/20 rounded-2xl flex flex-col justify-between">
-                <div>
-                  <span className="text-[10px] uppercase font-bold text-on-surface-variant">Water Intake ({waterGlasses}/8)</span>
-                  <div className="grid grid-cols-4 gap-2 my-2.5">
-                    {Array.from({ length: 8 }).map((_, i) => (
-                      <button
-                        key={i}
-                        onClick={() => toggleWaterGlass(i)}
-                        className={`text-xl transition-all hover:scale-110 active:scale-90 ${
-                          i < waterGlasses ? "opacity-100 filter drop-shadow-sm scale-105" : "opacity-30 hover:opacity-50"
-                        }`}
-                      >
-                        💧
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                <span className="text-[9px] font-bold text-secondary">
-                  {waterGlasses >= 8 ? "🏆 Daily Hydration Achieved!" : "Keep drinking to nurture your body"}
-                </span>
-              </div>
-
-            </div>
-
-            {/* Breathing Exercise & Meditation Shortcuts */}
-            <div className="grid grid-cols-2 gap-4">
-              <button 
-                onClick={() => {
-                  setBreathingActive(true);
-                  setBreathingPhase("Inhale");
-                  setBreathingSeconds(4);
-                }}
-                className="p-3.5 bg-gradient-to-tr from-primary to-primary-purple text-white rounded-2xl font-bold text-xs flex items-center justify-center gap-2 hover:opacity-95 active:scale-95 transition-all shadow-md"
-              >
-                <span className="material-symbols-outlined text-lg">nature_people</span>
-                Breathing Guide
+                Check It Now
               </button>
 
-              <button 
-                onClick={() => router.push("/meditation")}
-                className="p-3.5 bg-gradient-to-tr from-[#F5C99B] to-[#F4A6B8] text-tertiary rounded-2xl font-bold text-xs flex items-center justify-center gap-2 hover:opacity-95 active:scale-95 transition-all shadow-md"
-              >
-                <span className="material-symbols-outlined text-lg text-tertiary">mindfulness</span>
-                Meditation
-              </button>
-            </div>
-
-          </div>
-
-          {/* ==================== 6. JOURNAL (col-span-5) ==================== */}
-          <div className="md:col-span-5 bg-white p-6 rounded-3xl border border-surface-variant/15 shadow-soft flex flex-col justify-between min-h-[360px]">
-            <div className="space-y-3">
-              <h3 className="text-lg font-heading font-extrabold text-on-surface flex items-center gap-2">
-                <span className="material-symbols-outlined text-tertiary">edit_note</span>
-                Parenting Journal
-              </h3>
-              
-              {/* Daily Prompt */}
-              <div className="bg-pale-yellow/20 border border-pale-yellow/60 rounded-xl p-3 text-[11px] text-on-surface leading-relaxed">
-                <span className="font-bold text-on-surface-variant block mb-0.5">📝 Today's Reflection Prompt</span>
-                "What is one parenting moment that made you smile, laugh, or feel proud today?"
-              </div>
-
-              {/* Inline Editor */}
-              <textarea
-                value={journalInput}
-                onChange={(e) => setJournalInput(e.target.value)}
-                placeholder="Log your parenting reflections here..."
-                rows={3}
-                className="w-full text-xs p-3 rounded-xl border border-surface-variant/20 bg-surface focus:outline-none focus:ring-1 focus:ring-primary/40 resize-none"
-              />
-
-              <div className="flex items-center justify-between">
-                <button
-                  onClick={handleSaveJournal}
-                  disabled={!journalInput.trim() || saveStatus === "saving"}
-                  className="bg-primary text-white px-4 py-2 rounded-full font-bold text-[10px] hover:bg-primary-purple disabled:opacity-40 transition-all active:scale-95"
-                >
-                  {saveStatus === "saving" ? "Saving..." : "Save Entry"}
-                </button>
-                {saveStatus === "saved" && (
-                  <span className="text-[10px] text-secondary font-black flex items-center gap-1">
-                    <span className="material-symbols-outlined text-sm font-black">check</span> Saved!
-                  </span>
-                )}
-              </div>
-            </div>
-
-            {/* Previous Entries */}
-            <div className="mt-4 pt-4 border-t border-dashed border-surface-variant/20 space-y-2">
-              <span className="text-[10px] font-black uppercase text-on-surface-variant/60 block">Recent Entries</span>
-              <div className="max-h-[100px] overflow-y-auto space-y-2 pr-1">
-                {journalEntries.map((entry, idx) => (
-                  <div key={idx} className="bg-surface-container-low p-2 rounded-lg text-[10px] leading-relaxed text-on-surface">
-                    <div className="flex justify-between font-bold text-on-surface-variant mb-0.5">
-                      <span>Reflections</span>
-                      <span>{entry.date}</span>
-                    </div>
-                    <p className="italic text-on-surface-variant">"{entry.content}"</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* ==================== 7. AI COMPANION (col-span-7) ==================== */}
-          <div className="md:col-span-7 bg-white p-6 rounded-3xl border border-surface-variant/15 shadow-soft flex flex-col justify-between min-h-[360px] space-y-4">
-            
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-heading font-extrabold text-on-surface flex items-center gap-2">
-                <span className="material-symbols-outlined text-primary">forum</span>
-                Parenting AI Companion
-              </h3>
-              
-              <button 
-                onClick={launchOverwhelmedMode}
-                className="bg-rose-500 hover:bg-rose-600 text-white font-bold text-[9px] uppercase tracking-wider py-1.5 px-3.5 rounded-full shadow-[0_4px_12px_rgba(244,63,94,0.3)] transition-all animate-pulse"
-              >
-                🚨 Feeling Overwhelmed?
-              </button>
-            </div>
-
-            {/* Quick Parenting Advice scenario buttons with Emojis in Questions */}
-            <div className="space-y-1.5">
-              <span className="text-[10px] uppercase font-bold text-on-surface-variant/60">Common Scenario Questions</span>
-              <div className="flex flex-wrap gap-1.5">
-                {Object.entries(ADVICE_SCENARIOS).map(([key, item]) => (
-                  <button
-                    key={key}
-                    onClick={() => {
-                      setAiChatLogs(prev => [
-                        ...prev, 
-                        { sender: "user", text: `How can I handle a ${item.title.toLowerCase()} right now?` },
-                        { sender: "ai", text: item.advice }
-                      ]);
-                    }}
-                    className="px-2.5 py-1.5 rounded-xl text-[10px] font-bold bg-peach/20 hover:bg-peach/30 text-tertiary transition-transform active:scale-95 text-left border border-peach/10"
-                  >
-                    {item.title}?
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Chat Box */}
-            <div className="flex-1 bg-surface-container-lowest border border-surface-variant/25 rounded-2xl p-3 flex flex-col justify-between h-[160px]">
-              <div className="overflow-y-auto space-y-2 max-h-[110px] text-[11px] pr-1">
-                {aiChatLogs.map((log, idx) => (
-                  <div key={idx} className={`flex ${log.sender === "user" ? "justify-end" : "justify-start"}`}>
-                    <div className={`max-w-[85%] p-2 rounded-xl leading-relaxed ${
-                      log.sender === "user" 
-                        ? "bg-primary text-white rounded-br-none" 
-                        : "bg-surface-container-low text-on-surface rounded-bl-none border border-surface-variant/15"
-                    }`}>
-                      {log.text}
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Chat Input */}
-              <form onSubmit={handleAiChatSubmit} className="flex gap-2 pt-2 border-t border-surface-container mt-2">
-                <input
-                  type="text"
-                  value={aiChatInput}
-                  onChange={(e) => setAiChatInput(e.target.value)}
-                  placeholder="Ask for parenting advice..."
-                  className="flex-1 text-[11px] px-3 py-1.5 bg-surface border border-surface-variant/20 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary/30"
+              {/* Vector Artwork/Illustration placeholder */}
+              <div className="pt-4 border-t border-[#D0EDE4] flex justify-center overflow-hidden rounded-2xl">
+                <img 
+                  src="/images/pediatrician_consult.jpg" 
+                  alt="Pediatrician Consult" 
+                  className="w-full h-auto object-cover max-h-[140px] hover:scale-105 transition-transform duration-500 rounded-xl"
                 />
-                <button 
-                  type="submit" 
-                  className="p-1.5 bg-primary text-white rounded-lg flex items-center justify-center hover:bg-primary-purple active:scale-95"
-                >
-                  <span className="material-symbols-outlined text-sm">send</span>
-                </button>
-              </form>
+              </div>
+
             </div>
 
+            {/* Extra safety assurances */}
+            <div className="bg-white rounded-[24px] border border-[#EAEAFF] p-4 flex items-center gap-3">
+              <span className="text-xl">🤫</span>
+              <div>
+                <h5 className="text-[11px] font-heading font-black text-slate-800">100% Confidential</h5>
+                <p className="text-[9px] text-slate-400 font-semibold leading-tight">No data ever leaves this device.</p>
+              </div>
+            </div>
           </div>
 
-          {/* ==================== 8. RESOURCES (col-span-6) ==================== */}
-          <div className="md:col-span-6 bg-white p-6 rounded-3xl border border-surface-variant/15 shadow-soft space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-heading font-extrabold text-on-surface flex items-center gap-2">
-                <span className="material-symbols-outlined text-secondary">library_books</span>
-                Recommended Resources
-              </h3>
-              <button 
-                onClick={() => router.push("/resources")} 
-                className="text-[10px] font-extrabold text-primary hover:underline uppercase tracking-wider"
-              >
-                View Library
-              </button>
+          {/* ────────────────────────────────────────────────────────────
+              COLUMN 2: MAIN PANEL (col-span-6)
+              ──────────────────────────────────────────────────────────── */}
+          <div className="lg:col-span-6 space-y-4">
+            
+            {/* Header / Greet */}
+            <div>
+              <span className="text-[10px] uppercase font-black tracking-widest text-[#7C6BC4] block mb-0.5 font-heading">
+                Welcome back
+              </span>
+              <h1 className="text-2xl sm:text-3xl font-heading font-black text-slate-800 flex items-center gap-2">
+                Hi, {showName ? username : "••••••••"}
+              </h1>
+              <p className="text-xs text-slate-400 font-bold">Let's track your health & parenting wellness daily!</p>
             </div>
 
-            <div className="space-y-3">
-              {RESOURCE_LIBRARY.map((item, idx) => (
-                <div 
-                  key={idx}
-                  className="flex items-center justify-between p-3 rounded-2xl bg-surface-container-low border border-surface-variant/10 hover:shadow-sm cursor-pointer transition-shadow"
+            {/* Upcoming Appointment Card */}
+            <div className="bg-white rounded-[32px] border border-[#EAEAFF] shadow-[0_10px_35px_rgba(95,78,165,0.02)] p-6 space-y-4">
+              <h3 className="font-heading font-black text-xs text-slate-800 uppercase tracking-wider">Upcoming appointment</h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
+                {/* Left Card: Hospital details */}
+                <div className="space-y-2 flex flex-col justify-between">
+                  <div className="rounded-2xl overflow-hidden relative aspect-video bg-sky-100 flex items-center justify-center border border-[#EAEAFF] min-h-[120px]">
+                    <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: "url('/images/clinic_card_bg.jpg')" }} />
+                  </div>
+                  <div>
+                    <h4 className="font-heading font-black text-xs text-slate-800">Manggis ST Hospital</h4>
+                    <p className="text-[9px] text-slate-400 font-bold">New York, USA</p>
+                  </div>
+                </div>
+
+                {/* Right Card: Doctor Details & Action */}
+                <div className="bg-[#F8F9FD] border border-[#EAEAFF] rounded-2xl p-4 flex flex-col justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-[#006B56]/10 flex items-center justify-center text-lg flex-shrink-0 border border-white shadow-sm overflow-hidden">
+                      <img 
+                        src="/images/therapist_sarah.jpg" 
+                        alt="Doctor Avatar" 
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          (e.target as HTMLElement).style.display = 'none';
+                        }}
+                      />
+                      <span className="material-symbols-outlined text-base text-[#006B56] font-black">person</span>
+                    </div>
+                    <div>
+                      <h4 className="font-heading font-black text-xs text-slate-800">Dr. Sarah Jenkins</h4>
+                      <p className="text-[9px] text-slate-400 font-bold">Child Psychology</p>
+                    </div>
+                  </div>
+
+                  <div className="flex justify-between items-center pt-2 border-t border-[#EAEAFF]/70">
+                    <span className="text-[9px] text-slate-400 font-black uppercase tracking-wider">Sanctuary Consultant</span>
+                    <button 
+                      onClick={() => router.push("/call")}
+                      className="px-4 py-1.5 rounded-full bg-[#006B56] hover:bg-[#005B48] text-white font-bold text-[9px] uppercase tracking-wider transition-all shadow-sm flex items-center gap-1"
+                    >
+                      <span className="material-symbols-outlined text-[10px] font-black">videocam</span>
+                      Video call
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Scheduled slots row below both cards */}
+              <div className="grid grid-cols-2 gap-4 pt-2 border-t border-[#EAEAFF]/50">
+                <div className="p-3 bg-[#F8F9FD] border border-[#EAEAFF] rounded-2xl flex items-center gap-2 text-[10px] text-slate-500 font-semibold shadow-2xs">
+                  <span className="material-symbols-outlined text-xs text-[#006B56] font-black">calendar_today</span>
+                  <span>14 June 2026</span>
+                </div>
+
+                <div className="p-3 bg-[#F8F9FD] border border-[#EAEAFF] rounded-2xl flex items-center gap-2 text-[10px] text-slate-500 font-semibold shadow-2xs">
+                  <span className="material-symbols-outlined text-xs text-[#006B56] font-black">schedule</span>
+                  <span>09.00 pm</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Activities & Progress Row */}
+            <div className="grid grid-cols-1 sm:grid-cols-12 gap-6">
+              
+              {/* Left card: Patient activities (Stress levels/activity trends) */}
+              <div className="sm:col-span-7 bg-white rounded-[32px] border border-[#EAEAFF] shadow-[0_10px_35px_rgba(95,78,165,0.02)] p-5 flex flex-col justify-between space-y-4">
+                <div className="flex justify-between items-center">
+                  <div>
+                    <h4 className="font-heading font-black text-xs text-slate-800">Parent Activities</h4>
+                    <p className="text-[9px] text-slate-400 font-bold mt-0.5">Stress level & engagement trends</p>
+                  </div>
+                  
+                  <span className="text-[9px] font-black text-[#7C6BC4] bg-[#7C6BC4]/10 py-1 px-2.5 rounded-full">Weekly</span>
+                </div>
+
+                {/* Pure CSS Bar Chart */}
+                <div className="h-32 flex items-end justify-between px-2 pt-2">
+                  {[
+                    { val: 65, label: "Mon" },
+                    { val: 80, label: "Tue" },
+                    { val: 45, label: "Wed" },
+                    { val: 70, label: "Thu" },
+                    { val: 85, label: "Fri" },
+                    { val: 90, label: "Sat" },
+                    { val: 50, label: "Sun" }
+                  ].map((bar, idx) => (
+                    <div key={idx} className="flex flex-col items-center gap-1.5 flex-1">
+                      <div className="w-3.5 bg-[#E6F4F0] rounded-full h-24 relative overflow-hidden">
+                        <div 
+                          className="bg-[#006B56] w-full rounded-full absolute bottom-0 transition-all duration-500" 
+                          style={{ height: `${bar.val}%` }}
+                        />
+                      </div>
+                      <span className="text-[9px] text-slate-400 font-bold">{bar.label}</span>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Status Indicator (Restyled to match mockup) */}
+                <button 
+                  onClick={() => router.push("/journey")}
+                  className="w-full p-3 bg-white border border-[#EAEAFF] hover:border-[#7C6BC4]/20 hover:bg-[#F8F9FD] rounded-2xl flex items-center justify-between text-[10px] transition-all shadow-2xs"
                 >
                   <div className="flex items-center gap-3">
-                    <div className={`w-10 h-10 rounded-xl ${item.bg} ${item.color} flex items-center justify-center`}>
-                      <span className="material-symbols-outlined text-lg">{item.icon}</span>
-                    </div>
-                    <div>
-                      <h4 className="font-heading font-extrabold text-xs text-on-surface leading-tight">{item.title}</h4>
-                      <p className="text-[10px] text-on-surface-variant/80 mt-0.5">{item.author} • {item.duration}</p>
+                    <div className="w-8 h-8 rounded-full bg-[#E0F2FE] text-[#0284C7] flex items-center justify-center text-sm shadow-2xs flex-shrink-0">💙</div>
+                    <div className="text-left">
+                      <span className="font-heading font-black text-slate-800 block">Good conditions</span>
+                      <span className="text-[9px] text-slate-400 font-bold">Anxiety & wellness stable</span>
                     </div>
                   </div>
-                  <span className="material-symbols-outlined text-on-surface-variant/40 hover:text-primary">arrow_forward_ios</span>
+                  <span className="material-symbols-outlined text-xs text-slate-400">arrow_forward_ios</span>
+                </button>
+              </div>
+
+              {/* Right card: Daily progress ring (Soft-green theme matching mockup) */}
+              <div 
+                onClick={() => setShowProgressModal(true)}
+                className="sm:col-span-5 bg-[#EAF6F2] rounded-[32px] border border-[#CBECE2] shadow-[0_10px_35px_rgba(0,107,86,0.01)] p-5 text-center flex flex-col justify-between min-h-[220px] cursor-pointer hover:shadow-[0_12px_40px_rgba(0,107,86,0.05)] hover:border-[#006B56]/30 hover:scale-[1.01] active:scale-[0.99] transition-all duration-300"
+              >
+                <div className="space-y-1">
+                  <h4 className="font-heading font-black text-xs text-[#004D3D] flex items-center justify-center gap-1.5">
+                    Daily progress
+                    <span className="material-symbols-outlined text-[10px] text-[#006B56]">open_in_new</span>
+                  </h4>
+                  <p className="text-[9px] text-[#006B56]/60 font-bold">Keep improving the quality of your health</p>
                 </div>
-              ))}
+
+                {/* Radial progress ring */}
+                <div className="relative w-28 h-28 mx-auto flex items-center justify-center">
+                  <svg className="absolute w-full h-full transform -rotate-90">
+                    <circle cx="56" cy="56" r="44" className="stroke-white" strokeWidth="7.5" fill="none" />
+                    <circle cx="56" cy="56" r="44" className="stroke-[#006B56] transition-all duration-300" strokeWidth="7.5" fill="none" strokeDasharray="276.4" strokeDashoffset={276.4 - (276.4 * progressPercent) / 100} strokeLinecap="round" />
+                  </svg>
+                  <div className="flex flex-col items-center">
+                    <span className="text-lg font-heading font-black text-[#004D3D]">{progressPercent}%</span>
+                    <span className="text-[8px] text-[#006B56]/70 font-bold">Complete</span>
+                  </div>
+                </div>
+
+                <span className="text-[9px] font-bold text-[#006B56] bg-white py-1 px-3.5 rounded-full inline-block mx-auto hover:bg-[#006B56]/10 transition-colors shadow-2xs border border-[#CBECE2]/50">
+                  Tap to Log Goals
+                </span>
+              </div>
+
             </div>
+
+            {/* Mood Overview Card */}
+            <div className="bg-white rounded-[32px] border border-[#EAEAFF] shadow-[0_10px_35px_rgba(95,78,165,0.02)] p-6 space-y-4">
+              <div>
+                <h3 className="font-heading font-black text-xs text-slate-800">Mood Overview</h3>
+                <p className="text-[9px] text-slate-400 font-bold">Track your mood over time for deeper insights.</p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+                {/* Left Side: SVG Pie Chart */}
+                <div className="md:col-span-6 flex justify-center items-center py-2">
+                  <div className="relative w-36 h-36">
+                    <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-sm">
+                      {/* 1. Amazing (Blue) */}
+                      {distribution.amazing > 0 && (
+                        <path d={makePieSlicePath(amazingStart, amazingEnd)} fill="#4A99D3" />
+                      )}
+                      
+                      {/* 2. Not Good (Orange) */}
+                      {distribution.notGood > 0 && (
+                        <path d={makePieSlicePath(notGoodStart, notGoodEnd)} fill="#E37A47" />
+                      )}
+                      
+                      {/* 3. Bad (Red) */}
+                      {distribution.bad > 0 && (
+                        <path d={makePieSlicePath(badStart, badEnd)} fill="#D64E4D" />
+                      )}
+                      
+                      {/* 4. Neutral (Yellow) */}
+                      {distribution.neutral > 0 && (
+                        <path d={makePieSlicePath(neutralStart, neutralEnd)} fill="#ECB22E" />
+                      )}
+                      
+                      {/* 5. Good (Green) */}
+                      {distribution.good > 0 && (
+                        <path d={makePieSlicePath(goodStart, goodEnd)} fill="#5FBA5A" />
+                      )}
+                      
+                      {/* Inner cutout for donut chart style (makes it feel premium) */}
+                      <circle cx="50" cy="50" r="18" fill="white" className="shadow-sm" />
+                      <text x="50" y="52.5" fill="#7C6BC4" fontSize="5px" fontWeight="900" textAnchor="middle" letterSpacing="0.2">MOODS</text>
+
+                      {/* Percentage labels centered inside each slice */}
+                      {distribution.amazing > 0 && (
+                        <text x={getLabelCoordinates(amazingStart, amazingEnd).x} y={getLabelCoordinates(amazingStart, amazingEnd).y} fill="white" fontSize="5.5px" fontWeight="900" textAnchor="middle">{distribution.amazing}%</text>
+                      )}
+                      {distribution.notGood > 0 && (
+                        <text x={getLabelCoordinates(notGoodStart, notGoodEnd).x} y={getLabelCoordinates(notGoodStart, notGoodEnd).y} fill="white" fontSize="5.5px" fontWeight="900" textAnchor="middle">{distribution.notGood}%</text>
+                      )}
+                      {distribution.bad > 0 && (
+                        <text x={getLabelCoordinates(badStart, badEnd).x} y={getLabelCoordinates(badStart, badEnd).y} fill="white" fontSize="5.5px" fontWeight="900" textAnchor="middle">{distribution.bad}%</text>
+                      )}
+                      {distribution.neutral > 0 && (
+                        <text x={getLabelCoordinates(neutralStart, neutralEnd).x} y={getLabelCoordinates(neutralStart, neutralEnd).y} fill="white" fontSize="5.5px" fontWeight="900" textAnchor="middle">{distribution.neutral}%</text>
+                      )}
+                      {distribution.good > 0 && (
+                        <text x={getLabelCoordinates(goodStart, goodEnd).x} y={getLabelCoordinates(goodStart, goodEnd).y} fill="white" fontSize="5.5px" fontWeight="900" textAnchor="middle">{distribution.good}%</text>
+                      )}
+                    </svg>
+                  </div>
+                </div>
+
+                {/* Right Side: Legends & Summarize */}
+                <div className="md:col-span-6 space-y-4">
+                  {/* Legend Grid */}
+                  <div className="grid grid-cols-2 gap-2 text-[9px] font-bold text-slate-600">
+                    <div className="flex items-center gap-1.5">
+                      <span className="w-3.5 h-2 bg-[#D64E4D] rounded-sm" />
+                      <span>Bad</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <span className="w-3.5 h-2 bg-[#ECB22E] rounded-sm" />
+                      <span>Neutral</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <span className="w-3.5 h-2 bg-[#E37A47] rounded-sm" />
+                      <span>Not Good</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <span className="w-3.5 h-2 bg-[#5FBA5A] rounded-sm" />
+                      <span>Good</span>
+                    </div>
+                    <div className="flex items-center gap-1.5 md:col-span-2">
+                      <span className="w-3.5 h-2 bg-[#4A99D3] rounded-sm" />
+                      <span>Amazing</span>
+                    </div>
+                  </div>
+
+                  {/* Summarize Text Box */}
+                  <div className="space-y-1.5 pt-2.5 border-t border-[#EAEAFF]">
+                    <h5 className="text-[9px] uppercase font-black tracking-wider text-slate-700 font-heading">Summarize</h5>
+                    <p className="text-[9px] text-slate-400 font-semibold leading-relaxed">
+                      You experienced a range of moods this week. To stay balanced, try journaling, light exercise, talking to someone you trust, or taking rest and reflect regularly.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+
           </div>
 
-          {/* ==================== 9. WEEKLY PROGRESS (col-span-6) ==================== */}
-          <div className="md:col-span-6 bg-white p-6 rounded-3xl border border-surface-variant/15 shadow-soft space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-heading font-extrabold text-on-surface flex items-center gap-2">
-                <span className="material-symbols-outlined text-primary">monitoring</span>
-                Weekly Progress
-              </h3>
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black bg-pale-yellow text-amber-800">
-                🔥 4-Day Streak
-              </span>
-            </div>
-
-            <div className="grid grid-cols-3 gap-3">
+          {/* ────────────────────────────────────────────────────────────
+              COLUMN 3: RIGHT PANEL (col-span-3)
+              ──────────────────────────────────────────────────────────── */}
+          <div className="lg:col-span-3 space-y-4 flex flex-col gap-4 space-y-0">
+            
+            {/* List of Appointments card */}
+            <div className="bg-white rounded-[32px] border border-[#EAEAFF] shadow-[0_10px_35px_rgba(95,78,165,0.02)] p-5 space-y-4">
+              <h3 className="font-heading font-black text-xs text-slate-800">List of appointments</h3>
               
-              {/* Mood Chart (Pure CSS/SVG Line wave) */}
-              <div className="p-3 bg-surface-container-low rounded-2xl flex flex-col justify-between items-center text-center h-[140px]">
-                <span className="text-[9px] font-bold text-on-surface-variant uppercase">Mood Trend</span>
-                <div className="w-full h-12 flex items-end justify-center">
-                  <svg viewBox="0 0 100 40" className="w-full h-full stroke-primary fill-none" strokeWidth="2.5" strokeLinecap="round">
-                    <path d="M 0 30 Q 15 15, 30 25 T 60 10 T 90 28" />
-                    <circle cx="90" cy="28" r="3.5" className="fill-primary" />
-                  </svg>
-                </div>
-                <span className="text-[10px] font-extrabold text-on-surface">Steady & Calm</span>
+              {/* Aligned Tabs Switcher */}
+              <div className="flex border-b border-[#EAEAFF] w-full">
+                <button
+                  onClick={() => setActiveTab("monthly")}
+                  className={`flex-1 pb-2 text-[10px] font-black uppercase tracking-wider text-center border-b-2 transition-all ${
+                    activeTab === "monthly" 
+                      ? "border-[#006B56] text-[#006B56]" 
+                      : "border-transparent text-slate-400 hover:text-slate-600"
+                  }`}
+                >
+                  Monthly
+                </button>
+                <button
+                  onClick={() => setActiveTab("daily")}
+                  className={`flex-1 pb-2 text-[10px] font-black uppercase tracking-wider text-center border-b-2 transition-all ${
+                    activeTab === "daily" 
+                      ? "border-[#006B56] text-[#006B56]" 
+                      : "border-transparent text-slate-400 hover:text-slate-600"
+                  }`}
+                >
+                  Daily Focus
+                </button>
               </div>
 
-              {/* Stress Curve */}
-              <div className="p-3 bg-surface-container-low rounded-2xl flex flex-col justify-between items-center text-center h-[140px]">
-                <span className="text-[9px] font-bold text-on-surface-variant uppercase">Stress Log</span>
-                <div className="w-full h-12 flex items-end justify-center">
-                  <svg viewBox="0 0 100 40" className="w-full h-full stroke-tertiary fill-none" strokeWidth="2.5">
-                    <path d="M 0 12 Q 25 22, 50 18 T 100 35" />
-                    <circle cx="100" cy="35" r="3" className="fill-tertiary" />
-                  </svg>
-                </div>
-                <span className="text-[10px] font-extrabold text-on-surface">Declining 📉</span>
-              </div>
+              {/* Tab 1 content: Monthly Calendar view */}
+              {activeTab === "monthly" && (
+                <div className="space-y-4 pt-2">
+                  <div className="flex justify-between items-center text-[10px] text-slate-600 font-extrabold px-1 font-heading">
+                    <span>October 2026</span>
+                    <div className="flex gap-1.5">
+                      <button className="w-5 h-5 rounded bg-[#F8F9FD] border border-[#EAEAFF] flex items-center justify-center hover:bg-slate-50 text-[10px]">‹</button>
+                      <button className="w-5 h-5 rounded bg-[#F8F9FD] border border-[#EAEAFF] flex items-center justify-center hover:bg-slate-50 text-[10px]">›</button>
+                    </div>
+                  </div>
 
-              {/* Sleep Hours Log */}
-              <div className="p-3 bg-surface-container-low rounded-2xl flex flex-col justify-between items-center text-center h-[140px]">
-                <span className="text-[9px] font-bold text-on-surface-variant uppercase">Sleep (h)</span>
-                <div className="flex items-end justify-between w-full px-2 h-12">
-                  <div className="w-2.5 bg-primary/40 h-8 rounded-t" />
-                  <div className="w-2.5 bg-primary/40 h-6 rounded-t" />
-                  <div className="w-2.5 bg-primary/40 h-10 rounded-t" />
-                  <div className="w-2.5 bg-primary h-[28px] rounded-t" />
-                  <div className="w-2.5 bg-primary h-[32px] rounded-t" />
+                  {/* Calendar Grid */}
+                  <div className="grid grid-cols-7 gap-1 text-center text-[8px] font-bold">
+                    {["S", "M", "T", "W", "T", "F", "S"].map((d, i) => (
+                      <span key={i} className="text-slate-400 uppercase font-black pb-1">{d}</span>
+                    ))}
+                    {Array.from({ length: 31 }).map((_, idx) => {
+                      const day = idx + 1;
+                      const isSelected = day === selectedDay;
+                      return (
+                        <button
+                          key={idx}
+                          onClick={() => setSelectedDay(day)}
+                          className={`w-6 h-6 rounded-full flex items-center justify-center transition-all text-[8px] ${
+                            isSelected 
+                              ? "bg-[#E37A47] text-white font-black shadow-sm scale-110" 
+                              : "text-slate-700 hover:bg-[#F8F9FD]"
+                          }`}
+                        >
+                          {day}
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
-                <span className="text-[10px] font-extrabold text-on-surface">Avg: 7.2 hours</span>
-              </div>
+              )}
 
+              {/* Tab 2 content: Daily Focus checklist */}
+              {activeTab === "daily" && (
+                <div className="space-y-3 pt-2">
+                  {tasks.map((task) => (
+                    <div 
+                      key={task.id} 
+                      onClick={() => toggleTask(task.id)}
+                      className="flex items-center gap-3 p-2 rounded-xl hover:bg-[#F8F9FD] cursor-pointer transition-colors"
+                    >
+                      <span className={`material-symbols-outlined text-base ${task.completed ? "text-[#006B56] font-black" : "text-slate-300"}`}>
+                        {task.completed ? "check_circle" : "radio_button_unchecked"}
+                      </span>
+                      <span className={`text-[10px] font-semibold leading-snug ${task.completed ? "line-through text-slate-400" : "text-slate-700"}`}>
+                        {task.text}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
-            {/* Streak & Activity Info */}
-            <div className="flex items-center justify-between p-3 bg-[#fdf7ff] rounded-xl border border-surface-variant/15 text-[10px] text-on-surface-variant">
-              <span>🎯 Weekly Target: 5 mindfulness tasks</span>
-              <span className="font-bold text-secondary">4 / 5 Complete</span>
+            {/* Scheduled slots detail boxes */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between px-1">
+                <span className="text-[10px] uppercase font-black tracking-wider text-slate-500 font-heading">
+                  Schedule for Oct {selectedDay}
+                </span>
+                <span className="w-1.5 h-1.5 rounded-full bg-[#006B56] animate-pulse" />
+              </div>
+
+              {selectedDay % 2 === 0 ? (
+                <>
+                  {/* Slot 1 */}
+                  <button 
+                    onClick={() => {
+                      setBreathingActive(true);
+                      setBreathingPhase("Inhale");
+                      setBreathingSeconds(4);
+                    }}
+                    className="w-full p-4 bg-white border border-[#EAEAFF] hover:border-[#7C6BC4]/20 hover:shadow-xs transition-all rounded-[24px] text-left flex items-center justify-between shadow-2xs"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-[#E6F4F0] border border-[#CBECE2] flex items-center justify-center text-sm shadow-2xs">🧘</div>
+                      <div>
+                        <h5 className="text-[11px] font-heading font-black text-slate-800">Manage Stress Space</h5>
+                        <p className="text-[9px] text-slate-400 font-bold mt-0.5">10:00 pm - 10:30 pm</p>
+                      </div>
+                    </div>
+                    <span className="material-symbols-outlined text-xs text-slate-400">arrow_forward_ios</span>
+                  </button>
+
+                  {/* Slot 2 */}
+                  <button 
+                    onClick={() => router.push("/meditation")}
+                    className="w-full p-4 bg-white border border-[#EAEAFF] hover:border-[#7C6BC4]/20 hover:shadow-xs transition-all rounded-[24px] text-left flex items-center justify-between shadow-2xs"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-[#ECE5F5] border border-[#D5C2EB] flex items-center justify-center text-sm shadow-2xs">🌸</div>
+                      <div>
+                        <h5 className="text-[11px] font-heading font-black text-slate-800">Mindfulness Breathing</h5>
+                        <p className="text-[9px] text-slate-400 font-bold mt-0.5">09:00 am - 10:00 am</p>
+                      </div>
+                    </div>
+                    <span className="material-symbols-outlined text-xs text-slate-400">arrow_forward_ios</span>
+                  </button>
+                </>
+              ) : (
+                <>
+                  {/* Slot 3 */}
+                  <button 
+                    onClick={() => router.push("/journey")}
+                    className="w-full p-4 bg-white border border-[#EAEAFF] hover:border-[#7C6BC4]/20 hover:shadow-xs transition-all rounded-[24px] text-left flex items-center justify-between shadow-2xs"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-[#FFF6EB] border border-[#FFE1C2] flex items-center justify-center text-sm shadow-2xs">🧸</div>
+                      <div>
+                        <h5 className="text-[11px] font-heading font-black text-slate-800">Play Time with Kids</h5>
+                        <p className="text-[9px] text-slate-400 font-bold mt-0.5">04:00 pm - 05:00 pm</p>
+                      </div>
+                    </div>
+                    <span className="material-symbols-outlined text-xs text-slate-400">arrow_forward_ios</span>
+                  </button>
+
+                  {/* Slot 4 */}
+                  <button 
+                    onClick={() => router.push("/journey")}
+                    className="w-full p-4 bg-white border border-[#EAEAFF] hover:border-[#7C6BC4]/20 hover:shadow-xs transition-all rounded-[24px] text-left flex items-center justify-between shadow-2xs"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-[#ECE5F5] border border-[#D5C2EB] flex items-center justify-center text-sm shadow-2xs">🏡</div>
+                      <div>
+                        <h5 className="text-[11px] font-heading font-black text-slate-800">Family Harmony Check-in</h5>
+                        <p className="text-[9px] text-slate-400 font-bold mt-0.5">07:00 pm - 07:30 pm</p>
+                      </div>
+                    </div>
+                    <span className="material-symbols-outlined text-xs text-slate-400">arrow_forward_ios</span>
+                  </button>
+                </>
+              )}
+              
+              {/* See More Link */}
+              <button 
+                onClick={() => router.push("/journey")}
+                className="w-full text-center py-2.5 text-[#006B56] hover:underline text-[10px] font-black uppercase tracking-wider flex items-center justify-center gap-1.5"
+              >
+                <span>See More Schedule</span>
+                <span className="material-symbols-outlined text-sm font-black">arrow_forward</span>
+              </button>
             </div>
+
+            {/* Family Wellness Summary Block */}
+            <div className="bg-white rounded-[32px] border border-[#EAEAFF] shadow-[0_10px_35px_rgba(95,78,165,0.02)] p-5 space-y-4">
+              <h4 className="font-heading font-black text-xs text-slate-800 flex items-center gap-2">
+                <span className="material-symbols-outlined text-[#006B56] font-black text-base">family_home</span>
+                Family Alignment
+              </h4>
+
+              {/* Mini display */}
+              <div className="flex items-center justify-between bg-[#F8F9FD] p-3 rounded-xl border border-[#EAEAFF]">
+                <span className="text-[10px] text-slate-500 font-semibold">Wellness Score:</span>
+                <span className="text-sm font-heading font-black text-[#006B56]">{familyScore}/100</span>
+              </div>
+
+              {/* Challenge text */}
+              <p className="text-[9px] text-slate-400 font-semibold leading-relaxed">
+                🏡 **Today's Challenge:** Keep devices in a basket during family dinner. Ask children about their best moments today.
+              </p>
+            </div>
+
           </div>
 
         </div>
 
       </div>
-
-      {/* Bottom Navigation Removed */}
 
       {/* ==================== BREATHING GUIDE DIALOG ==================== */}
       <AnimatePresence>
@@ -1063,18 +972,18 @@ export default function ParentDashboard() {
               initial={{ scale: 0.95 }}
               animate={{ scale: 1 }}
               exit={{ scale: 0.95 }}
-              className="bg-white max-w-sm w-full p-8 rounded-[36px] text-center space-y-6 shadow-2xl relative"
+              className="bg-white max-w-sm w-full p-8 rounded-[36px] text-center space-y-6 shadow-2xl relative border border-[#EAEAFF]"
             >
               <button 
                 onClick={() => setBreathingActive(false)}
-                className="absolute top-4 right-4 w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high active:scale-95"
+                className="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 hover:bg-slate-200 active:scale-95"
               >
                 <span className="material-symbols-outlined text-sm font-bold">close</span>
               </button>
 
               <div className="space-y-1">
-                <span className="text-[10px] uppercase font-black tracking-widest text-secondary">Breathing Space</span>
-                <h3 className="text-xl font-heading font-black text-on-surface">Relax & Re-center</h3>
+                <span className="text-[10px] uppercase font-black tracking-widest text-[#7C6BC4]">Breathing Space</span>
+                <h3 className="text-lg font-heading font-black text-slate-800">Relax & Re-center</h3>
               </div>
 
               {/* Dynamic Breathing Ring */}
@@ -1089,17 +998,17 @@ export default function ParentDashboard() {
                     repeat: Infinity
                   }}
                   className={`w-24 h-24 rounded-full flex items-center justify-center absolute shadow-inner transition-colors duration-500 ${
-                    breathingPhase === "Inhale" ? "bg-mint/45" : breathingPhase === "Hold" ? "bg-peach/45" : "bg-primary/35"
+                    breathingPhase === "Inhale" ? "bg-emerald-500/20" : breathingPhase === "Hold" ? "bg-[#F5C99B]/35" : "bg-[#7C6BC4]/20"
                   }`}
                 />
                 
-                <div className="z-10 bg-white w-20 h-20 rounded-full flex flex-col items-center justify-center border border-surface-variant/15 shadow-md">
-                  <span className="text-xs font-black text-on-surface">{breathingPhase}</span>
-                  <span className="text-sm font-bold text-on-surface-variant mt-0.5">{breathingSeconds}s</span>
+                <div className="z-10 bg-white w-20 h-20 rounded-full flex flex-col items-center justify-center border border-[#EAEAFF] shadow-sm">
+                  <span className="text-[10px] font-black text-slate-700">{breathingPhase}</span>
+                  <span className="text-xs font-bold text-slate-400 mt-0.5">{breathingSeconds}s</span>
                 </div>
               </div>
 
-              <p className="text-[11px] text-on-surface-variant leading-relaxed px-4">
+              <p className="text-[11px] text-slate-500 font-medium leading-relaxed px-4">
                 {breathingPhase === "Inhale" 
                   ? "Breathe in slowly through your nose, expanding your belly." 
                   : breathingPhase === "Hold" 
@@ -1109,7 +1018,7 @@ export default function ParentDashboard() {
 
               <button 
                 onClick={() => setBreathingActive(false)}
-                className="w-full py-3 bg-gradient-to-tr from-mint to-secondary text-white rounded-full font-bold text-xs shadow-md"
+                className="w-full py-3 bg-[#7C6BC4] hover:bg-[#6B5BB3] text-white rounded-full font-bold text-xs shadow-sm transition-transform active:scale-95"
               >
                 End Exercise
               </button>
@@ -1131,31 +1040,31 @@ export default function ParentDashboard() {
               initial={{ y: 20 }}
               animate={{ y: 0 }}
               exit={{ y: 20 }}
-              className="bg-[#fdf7ff] max-w-md w-full p-8 rounded-[40px] border border-white/50 shadow-2xl space-y-6 relative"
+              className="bg-white max-w-md w-full p-8 rounded-[36px] border border-[#EAEAFF] shadow-2xl space-y-6 relative"
             >
               <button 
                 onClick={() => setOverwhelmedMode(false)}
-                className="absolute top-4 right-4 w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant"
+                className="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-400"
               >
                 <span className="material-symbols-outlined text-sm font-bold">close</span>
               </button>
 
-              <div className="text-center space-y-1">
-                <span className="px-3 py-1 rounded-full bg-rose-100 text-rose-800 text-[10px] font-black uppercase tracking-wider">
+              <div className="text-center space-y-1 font-heading">
+                <span className="px-3.5 py-1 rounded-full bg-rose-50 text-rose-700 text-[9px] font-black uppercase tracking-wider border border-rose-100">
                   Emergency Calm Zone
                 </span>
-                <h3 className="text-2xl font-heading font-black text-on-surface pt-2">Grounding Exercise</h3>
-                <p className="text-[11px] text-on-surface-variant font-medium">Let's calm your nervous system together step-by-step.</p>
+                <h3 className="text-xl font-heading font-black text-slate-800 pt-2">Grounding Exercise</h3>
+                <p className="text-[10px] text-slate-400 font-bold">Let's calm your nervous system together step-by-step.</p>
               </div>
 
               {/* Grounding Content based on steps */}
-              <div className="bg-white border border-surface-variant/20 p-5 rounded-3xl min-h-[180px] flex flex-col justify-between">
+              <div className="bg-slate-50 border border-[#EAEAFF] p-5 rounded-3xl min-h-[180px] flex flex-col justify-between">
                 
                 {groundingStep === 1 && (
                   <div className="space-y-2">
                     <span className="text-2xl">👀 Step 1 of 5</span>
-                    <h4 className="font-heading font-black text-sm text-on-surface">Find 5 things you can see</h4>
-                    <p className="text-xs text-on-surface-variant leading-relaxed">
+                    <h4 className="font-heading font-black text-xs text-slate-800">Find 5 things you can see</h4>
+                    <p className="text-[11px] text-slate-500 font-medium leading-relaxed">
                       Look around your current room or environment. Name five things in your mind: a picture on the wall, a cup, a shoe, a door, a plant.
                     </p>
                   </div>
@@ -1164,8 +1073,8 @@ export default function ParentDashboard() {
                 {groundingStep === 2 && (
                   <div className="space-y-2">
                     <span className="text-2xl">🖐️ Step 2 of 5</span>
-                    <h4 className="font-heading font-black text-sm text-on-surface">Notice 4 things you can feel</h4>
-                    <p className="text-xs text-on-surface-variant leading-relaxed">
+                    <h4 className="font-heading font-black text-xs text-slate-800">Notice 4 things you can feel</h4>
+                    <p className="text-[11px] text-slate-500 font-medium leading-relaxed">
                       Pay attention to your body. Identify four sensations: the weight of your feet on the ground, the texture of your shirt, the backrest of your chair, the cool air on your skin.
                     </p>
                   </div>
@@ -1174,8 +1083,8 @@ export default function ParentDashboard() {
                 {groundingStep === 3 && (
                   <div className="space-y-2">
                     <span className="text-2xl">👂 Step 3 of 5</span>
-                    <h4 className="font-heading font-black text-sm text-on-surface">Identify 3 things you can hear</h4>
-                    <p className="text-xs text-on-surface-variant leading-relaxed">
+                    <h4 className="font-heading font-black text-xs text-slate-800">Identify 3 things you can hear</h4>
+                    <p className="text-[11px] text-slate-500 font-medium leading-relaxed">
                       Listen to the sounds around you. Listen carefully: a car passing by outside, the buzz of a refrigerator, a bird chirping, your own breathing.
                     </p>
                   </div>
@@ -1184,8 +1093,8 @@ export default function ParentDashboard() {
                 {groundingStep === 4 && (
                   <div className="space-y-2">
                     <span className="text-2xl">👃 Step 4 of 5</span>
-                    <h4 className="font-heading font-black text-sm text-on-surface">Acknowledge 2 things you can smell</h4>
-                    <p className="text-xs text-on-surface-variant leading-relaxed">
+                    <h4 className="font-heading font-black text-xs text-slate-800">Acknowledge 2 things you can smell</h4>
+                    <p className="text-[11px] text-slate-500 font-medium leading-relaxed">
                       Take a gentle breath in. Can you smell the soap on your hands, the scent of wood, the aroma of a candle, or even just fresh air?
                     </p>
                   </div>
@@ -1194,9 +1103,9 @@ export default function ParentDashboard() {
                 {groundingStep === 5 && (
                   <div className="space-y-2">
                     <span className="text-2xl">👅 Step 5 of 5</span>
-                    <h4 className="font-heading font-black text-sm text-on-surface">Acknowledge 1 thing you can taste</h4>
-                    <p className="text-xs text-on-surface-variant leading-relaxed">
-                      Become aware of your mouth. Notice if there's a lingering taste of coffee, toothpaste, mint, or simply the neutral taste of cool water.
+                    <h4 className="font-heading font-black text-xs text-slate-800">Acknowledge 1 thing you can taste</h4>
+                    <p className="text-[11px] text-slate-500 font-medium leading-relaxed">
+                      Become aware of your mouth. Notice if there's a lingering taste of coffee, toothpaste, mint, or simply the taste of cool water.
                     </p>
                   </div>
                 )}
@@ -1206,8 +1115,8 @@ export default function ParentDashboard() {
                   {Array.from({ length: 5 }).map((_, i) => (
                     <div 
                       key={i} 
-                      className={`h-1.5 rounded-full transition-all duration-300 ${
-                        i + 1 === groundingStep ? "w-6 bg-rose-500" : "w-1.5 bg-surface-container"
+                      className={`h-1 rounded-full transition-all duration-300 ${
+                        i + 1 === groundingStep ? "w-6 bg-rose-500" : "w-1.5 bg-slate-200"
                       }`}
                     />
                   ))}
@@ -1219,7 +1128,7 @@ export default function ParentDashboard() {
                 {groundingStep > 1 && (
                   <button 
                     onClick={() => setGroundingStep(prev => prev - 1)}
-                    className="flex-1 py-3 bg-surface-container text-on-surface rounded-full font-bold text-xs hover:bg-surface-container-high transition-transform active:scale-95"
+                    className="flex-1 py-3 bg-slate-100 text-slate-700 rounded-full font-bold text-xs hover:bg-slate-200 transition-transform active:scale-95"
                   >
                     Back
                   </button>
@@ -1228,14 +1137,14 @@ export default function ParentDashboard() {
                 {groundingStep < 5 ? (
                   <button 
                     onClick={() => setGroundingStep(prev => prev + 1)}
-                    className="flex-1 py-3 bg-rose-500 hover:bg-rose-600 text-white rounded-full font-bold text-xs shadow-md transition-transform active:scale-95"
+                    className="flex-1 py-3 bg-rose-500 hover:bg-rose-600 text-white rounded-full font-bold text-xs shadow-sm transition-transform active:scale-95"
                   >
                     Next Step
                   </button>
                 ) : (
                   <button 
                     onClick={() => setOverwhelmedMode(false)}
-                    className="flex-1 py-3 bg-gradient-to-tr from-mint to-secondary text-white rounded-full font-bold text-xs shadow-md transition-transform active:scale-95 animate-bounce"
+                    className="flex-1 py-3 bg-[#7C6BC4] hover:bg-[#6B5BB3] text-white rounded-full font-bold text-xs shadow-sm transition-transform active:scale-95 animate-bounce"
                   >
                     I Feel Calmer Now
                   </button>
@@ -1259,28 +1168,102 @@ export default function ParentDashboard() {
               initial={{ scale: 0.95 }}
               animate={{ scale: 1 }}
               exit={{ scale: 0.95 }}
-              className="bg-white max-w-sm w-full p-8 rounded-[36px] text-center space-y-6 shadow-2xl relative border border-surface-variant/20"
+              className="bg-white max-w-sm w-full p-8 rounded-[36px] text-center space-y-6 shadow-2xl relative border border-[#EAEAFF]"
             >
-              <div className="w-16 h-16 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto shadow-sm">
+              <div className="w-16 h-16 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto border border-emerald-100 animate-pulse">
                 <span className="material-symbols-outlined text-3xl font-black">lock_open</span>
               </div>
 
-              <div className="space-y-1">
-                <span className="text-[10px] uppercase font-black tracking-widest text-secondary">Sanctuary Guard</span>
-                <h3 className="text-xl font-heading font-black text-on-surface">You Are Safe Here</h3>
+              <div className="space-y-1 font-heading">
+                <span className="text-[10px] uppercase font-black tracking-widest text-[#7C6BC4]">Sanctuary Guard</span>
+                <h3 className="text-xl font-heading font-black text-slate-800">You Are Safe Here</h3>
               </div>
 
-              <p className="text-xs text-on-surface-variant leading-relaxed px-2 font-medium">
-                🛡️ **We assure you that you are not being watched.**
-                <br /><br />
-                Your reflections, journal logs, and custom wellness data are completely encrypted and stored securely. We do not track or sell your emotional state.
+              <p className="text-[11px] text-slate-400 font-bold leading-relaxed px-2">
+                Your parenting reflections, journal entries, and custom wellness metrics are fully protected. We do not track or share your logs.
               </p>
 
               <button 
                 onClick={() => setShowSecurityPopup(false)}
-                className="w-full py-3.5 bg-gradient-to-tr from-primary to-primary-purple text-white rounded-full font-bold text-xs shadow-md transition-transform active:scale-95"
+                className="w-full py-3.5 bg-[#7C6BC4] hover:bg-[#6B5BB3] text-white rounded-full font-bold text-xs shadow-sm transition-transform active:scale-95"
               >
                 I Feel Secure
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ==================== DAILY PROGRESS CHECKLIST MODAL ==================== */}
+      <AnimatePresence>
+        {showProgressModal && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-[#2E2A3D]/70 backdrop-blur-md flex items-center justify-center p-4"
+          >
+            <motion.div 
+              initial={{ scale: 0.95, y: 15 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.95, y: 15 }}
+              className="bg-white max-w-md w-full p-6 sm:p-8 rounded-[36px] space-y-6 shadow-2xl relative border border-[#EAEAFF]"
+            >
+              <button 
+                onClick={() => setShowProgressModal(false)}
+                className="absolute top-4 right-4 w-7 h-7 rounded-full bg-[#F8F9FD] border border-[#EAEAFF] hover:bg-[#F2F4FD] flex items-center justify-center text-slate-400 hover:text-slate-600 transition-colors"
+              >
+                <span className="material-symbols-outlined text-sm font-black">close</span>
+              </button>
+
+              <div className="text-center space-y-1">
+                <span className="text-[10px] uppercase font-black tracking-widest text-[#7C6BC4]">Daily Focus Checklist</span>
+                <h3 className="text-lg font-heading font-black text-slate-800">Complete Daily Goals</h3>
+                <p className="text-[10px] text-slate-400 font-bold">Check off completed goals to improve your wellness score</p>
+              </div>
+
+              {/* Progress visual inside modal */}
+              <div className="flex items-center gap-4 bg-[#F8F9FD] border border-[#EAEAFF] p-4 rounded-[24px]">
+                <div className="relative w-16 h-16 flex items-center justify-center flex-shrink-0">
+                  <svg className="absolute w-full h-full transform -rotate-90">
+                    <circle cx="32" cy="32" r="26" className="stroke-[#EAEAFF]" strokeWidth="4.5" fill="none" />
+                    <circle cx="32" cy="32" r="26" className="stroke-[#006B56] transition-all duration-300" strokeWidth="4.5" fill="none" strokeDasharray="163.3" strokeDashoffset={163.3 - (163.3 * progressPercent) / 100} strokeLinecap="round" />
+                  </svg>
+                  <span className="text-xs font-heading font-black text-slate-800">{progressPercent}%</span>
+                </div>
+                <div className="text-left">
+                  <span className="text-[11px] font-heading font-black text-slate-700 block">
+                    {completedCount} of {tasks.length} Completed
+                  </span>
+                  <span className="text-[9px] text-slate-400 font-bold">
+                    Keep going! Every milestone improves family alignment.
+                  </span>
+                </div>
+              </div>
+
+              {/* Checklist Group */}
+              <div className="space-y-2.5 max-h-[220px] overflow-y-auto pr-1">
+                {tasks.map((task) => (
+                  <div 
+                    key={task.id} 
+                    onClick={() => toggleTask(task.id)}
+                    className="flex items-center gap-3 p-3.5 rounded-2xl hover:bg-[#F8F9FD] border border-[#EAEAFF] hover:border-[#7C6BC4]/20 cursor-pointer transition-all active:scale-[0.99] bg-white text-left"
+                  >
+                    <span className={`material-symbols-outlined text-lg ${task.completed ? "text-[#006B56] font-black" : "text-slate-300"}`}>
+                      {task.completed ? "check_circle" : "radio_button_unchecked"}
+                    </span>
+                    <span className={`text-[11px] font-semibold leading-relaxed ${task.completed ? "line-through text-slate-400" : "text-slate-700"}`}>
+                      {task.text}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              <button 
+                onClick={() => setShowProgressModal(false)}
+                className="w-full py-3.5 bg-[#7C6BC4] hover:bg-[#6B5BB3] text-white rounded-full font-bold text-xs shadow-sm transition-transform active:scale-95"
+              >
+                Close & Save Goals
               </button>
             </motion.div>
           </motion.div>

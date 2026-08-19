@@ -143,13 +143,54 @@ export default function DashboardScreen() {
   // 2. DB value from dashboardData (authoritative after API loads)
   // 3. Session cookie selectedCategory (immediate, written by login API)
   // 4. React context clientCategory (onboarding flow)
-  const { category: clientCategory } = useCategory();
+  const { category: clientCategory, setCategory } = useCategory();
   const session = getClientSession();
   const sessionCategory = session?.user?.selectedCategory;
 
   const category = (urlCategory && urlCategory !== "" && urlCategory !== "dashboard")
     ? urlCategory
     : (sessionCategory || dashboardData?.user?.selectedCategory || clientCategory || "student");
+
+  // Sync the user session and DB category to match the currently viewed dashboard dynamically
+  useEffect(() => {
+    const activeSession = getClientSession();
+    if (activeSession && activeSession.user && category) {
+      const normalizedCategory = category === "parent" || category === "parents" ? "parents" : (category === "couple" || category === "couples" ? "couples" : category);
+      const currentSessionCat = activeSession.user.selectedCategory;
+      if (currentSessionCat !== normalizedCategory) {
+        console.log("[DashboardScreen] Syncing session and DB category to viewed dashboard:", normalizedCategory);
+        
+        // 1. Update React context
+        if (setCategory) {
+          setCategory(normalizedCategory as any);
+        }
+
+        // 2. Update local storage session
+        const updatedSession = {
+          ...activeSession,
+          user: {
+            ...activeSession.user,
+            selectedCategory: normalizedCategory
+          }
+        };
+        localStorage.setItem("manraah_auth_session", JSON.stringify(updatedSession));
+        
+        // 3. Update cookies
+        document.cookie = `manraah_session=${JSON.stringify(updatedSession)}; path=/; max-age=2592000`;
+        document.cookie = `userType=${normalizedCategory}; path=/; max-age=2592000`;
+
+        // 4. Silently update category in DB in background
+        fetch("/api/profile", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            userId: activeSession.user.id,
+            category: normalizedCategory
+          })
+        }).catch((err) => console.error("Failed to sync category in DB:", err));
+      }
+    }
+  }, [category, sessionCategory, setCategory]);
 
   console.log("[Dashboard] [POINT 3 — after login] DB:", dashboardData?.user?.selectedCategory, "| session cookie:", sessionCategory, "| resolved:", category);
   const streakDays = typeof streak === "number" 
