@@ -60,10 +60,20 @@ export default function PublicNavbar() {
           >
             Stories
           </Link>
-          <Link href="/#categories" className="hover:text-primary transition-colors">
+          <Link
+            href="/for-you"
+            className={`transition-colors hover:text-primary ${
+              pathname === "/for-you" ? "text-primary font-bold" : ""
+            }`}
+          >
             For You
           </Link>
-          <Link href="/#trust" className="hover:text-primary transition-colors">
+          <Link
+            href="/privacy-and-trust"
+            className={`transition-colors hover:text-primary ${
+              pathname === "/privacy-and-trust" ? "text-primary font-bold" : ""
+            }`}
+          >
             Privacy &amp; Trust
           </Link>
           <Link
@@ -159,16 +169,20 @@ export default function PublicNavbar() {
                 Stories
               </Link>
               <Link
-                href="/#categories"
+                href="/for-you"
                 onClick={() => setMobileMenuOpen(false)}
-                className="py-2 border-b border-surface-variant/20 hover:text-primary"
+                className={`py-2 border-b border-surface-variant/20 hover:text-primary ${
+                  pathname === "/for-you" ? "text-primary font-bold" : ""
+                }`}
               >
-                For You (Categories)
+                For You (Pathways)
               </Link>
               <Link
-                href="/#trust"
+                href="/privacy-and-trust"
                 onClick={() => setMobileMenuOpen(false)}
-                className="py-2 border-b border-surface-variant/20 hover:text-primary"
+                className={`py-2 border-b border-surface-variant/20 hover:text-primary ${
+                  pathname === "/privacy-and-trust" ? "text-primary font-bold" : ""
+                }`}
               >
                 Privacy &amp; Trust
               </Link>

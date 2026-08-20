@@ -21,6 +21,8 @@ const STANDALONE_ROUTES = [
   "/features",
   "/stories",
   "/faq",
+  "/for-you",
+  "/privacy-and-trust",
   "/about",
   "/category-selection",
   "/assessment",
@@ -42,6 +44,8 @@ export default function AppShell({ children }: { children: ReactNode }) {
     pathname.startsWith("/features") ||
     pathname.startsWith("/stories") ||
     pathname.startsWith("/faq") ||
+    pathname.startsWith("/for-you") ||
+    pathname.startsWith("/privacy-and-trust") ||
     pathname.startsWith("/about") ||
     pathname.startsWith("/onboarding") ||
     pathname.startsWith("/category-selection") ||

@@ -103,10 +103,11 @@ export default function PublicFooter() {
           <div className="space-y-3 text-left">
             <h4 className="font-heading font-bold text-white text-xs uppercase tracking-wider">Categories</h4>
             <ul className="space-y-2 text-xs text-white/70">
-              <li><Link href="/#categories" className="hover:text-white transition-colors">Students</Link></li>
-              <li><Link href="/#categories" className="hover:text-white transition-colors">Working Professionals</Link></li>
-              <li><Link href="/#categories" className="hover:text-white transition-colors">Parents</Link></li>
-              <li><Link href="/#categories" className="hover:text-white transition-colors">Couples</Link></li>
+              <li><Link href="/for-you" className="hover:text-white transition-colors">Pathways Overview (/for-you)</Link></li>
+              <li><Link href="/for-you?selected=student" className="hover:text-white transition-colors">Students &amp; Academics</Link></li>
+              <li><Link href="/for-you?selected=working_professional" className="hover:text-white transition-colors">Working Professionals</Link></li>
+              <li><Link href="/for-you?selected=parent" className="hover:text-white transition-colors">Parents &amp; Families</Link></li>
+              <li><Link href="/for-you?selected=couple" className="hover:text-white transition-colors">Couples &amp; Relationships</Link></li>
               <li><Link href="/category-selection" className="hover:text-white transition-colors">All Life Categories →</Link></li>
             </ul>
           </div>
@@ -116,8 +117,8 @@ export default function PublicFooter() {
             <h4 className="font-heading font-bold text-white text-xs uppercase tracking-wider">Trust &amp; Legal</h4>
             <ul className="space-y-2 text-xs text-white/70">
               <li><Link href="/about" className="hover:text-white transition-colors">About Us</Link></li>
+              <li><Link href="/privacy-and-trust" className="hover:text-white transition-colors">Privacy &amp; Trust Center</Link></li>
               <li><Link href="/faq" className="hover:text-white transition-colors">Frequently Asked Questions (FAQ)</Link></li>
-              <li><Link href="/privacy" className="hover:text-white transition-colors">Privacy &amp; Encryption</Link></li>
               <li><Link href="/security" className="hover:text-white transition-colors">Security Standards</Link></li>
               <li><Link href="/terms" className="hover:text-white transition-colors">Terms of Service</Link></li>
               <li><Link href="/contact" className="hover:text-white transition-colors">Contact Support</Link></li>

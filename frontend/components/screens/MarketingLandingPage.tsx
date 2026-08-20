@@ -325,12 +325,12 @@ export default function MarketingLandingPage() {
   const categoryCarouselRef = useRef<HTMLDivElement>(null);
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
 
-  // Auto-advance hero carousel every 5.5 seconds (pausing when hovered)
+  // Auto-advance hero carousel every 3.2 seconds (pausing when hovered)
   useEffect(() => {
     if (isHeroCarouselHovered) return;
     const interval = setInterval(() => {
       setActiveHeroSlide((prev) => (prev + 1) % HERO_CAROUSEL_IMAGES.length);
-    }, 5500);
+    }, 3200);
     return () => clearInterval(interval);
   }, [isHeroCarouselHovered]);
 
@@ -814,247 +814,127 @@ export default function MarketingLandingPage() {
       </section>
 
       {/* ==================== 6. BUILT FOR YOU (CATEGORY CAROUSEL SHOWCASE) ==================== */}
-      <section id="categories" className="py-20 md:py-28 px-6 max-w-7xl mx-auto space-y-12">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-          <div className="max-w-2xl space-y-4 text-left">
-            <p className="text-xs font-heading font-bold text-[#9E5D28] tracking-widest uppercase">
-              Category Personalization
-            </p>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-heading font-extrabold text-on-surface">
-              Tailored Support for Every Stage of Life
-            </h2>
-            <p className="text-base sm:text-lg text-on-surface-variant leading-relaxed font-normal">
-              Manraah isn&apos;t one-size-fits-all. Select your category to unlock personalized conversation styles, tools, and reflection prompts.
-            </p>
+      <section id="categories" className="py-12 md:py-16 bg-[#F2EBFF]/60 border-y border-surface-variant/20 px-6">
+        <div className="max-w-7xl mx-auto space-y-8">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div className="max-w-2xl space-y-3 text-left">
+              <p className="text-xs font-heading font-bold text-[#9E5D28] tracking-widest uppercase">
+                Category Personalization
+              </p>
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-heading font-extrabold text-on-surface">
+                Tailored Support for Every Stage of Life
+              </h2>
+              <p className="text-base text-on-surface-variant leading-relaxed font-normal">
+                Manraah isn&apos;t one-size-fits-all. Select your category to unlock personalized conversation styles, tools, and reflection prompts.
+              </p>
+            </div>
+
+            {/* Desktop Carousel Navigation Controls */}
+            <div className="hidden sm:flex items-center gap-3 shrink-0">
+              <button
+                onClick={() => scrollCategoryCarousel("left")}
+                className="w-11 h-11 rounded-full bg-surface-container border border-surface-variant/40 text-on-surface hover:bg-primary hover:text-white transition-all flex items-center justify-center shadow-xs cursor-pointer"
+                aria-label="Scroll left"
+              >
+                <span className="material-symbols-outlined text-xl">chevron_left</span>
+              </button>
+              <button
+                onClick={() => scrollCategoryCarousel("right")}
+                className="w-11 h-11 rounded-full bg-surface-container border border-surface-variant/40 text-on-surface hover:bg-primary hover:text-white transition-all flex items-center justify-center shadow-xs cursor-pointer"
+                aria-label="Scroll right"
+              >
+                <span className="material-symbols-outlined text-xl">chevron_right</span>
+              </button>
+              <Link
+                href="/category-selection"
+                className="px-5 py-2.5 rounded-full text-xs font-heading font-bold bg-primary/10 text-primary border border-primary/20 hover:bg-primary hover:text-white transition-all ml-2"
+              >
+                View All Categories →
+              </Link>
+            </div>
           </div>
 
-          {/* Desktop Carousel Navigation Controls */}
-          <div className="hidden sm:flex items-center gap-3 shrink-0">
-            <button
-              onClick={() => scrollCategoryCarousel("left")}
-              className="w-12 h-12 rounded-full bg-surface-container border border-surface-variant/40 text-on-surface hover:bg-primary hover:text-white transition-all flex items-center justify-center shadow-xs cursor-pointer"
-              aria-label="Scroll left"
-            >
-              <span className="material-symbols-outlined text-xl">chevron_left</span>
-            </button>
-            <button
-              onClick={() => scrollCategoryCarousel("right")}
-              className="w-12 h-12 rounded-full bg-surface-container border border-surface-variant/40 text-on-surface hover:bg-primary hover:text-white transition-all flex items-center justify-center shadow-xs cursor-pointer"
-              aria-label="Scroll right"
-            >
-              <span className="material-symbols-outlined text-xl">chevron_right</span>
-            </button>
+          {/* Horizontal Gradient Card Carousel */}
+          <div
+            ref={categoryCarouselRef}
+            className="flex gap-6 overflow-x-auto snap-x snap-mandatory py-2 px-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+          >
+            {USER_CATEGORIES.map((cat) => {
+              const style = USER_CATEGORY_GRADIENTS[cat.id] || {
+                bg: "bg-gradient-to-br from-[#5F4EA5] via-[#7C6BC4] to-[#5FCFB0]",
+                badge: "🌿 Wellness Journey",
+              };
+
+              return (
+                <div
+                  key={cat.id}
+                  onClick={() => handleSelectCategory(cat.id)}
+                  className={`snap-start shrink-0 w-[270px] sm:w-[310px] h-[340px] sm:h-[380px] rounded-[32px] p-7 relative overflow-hidden flex flex-col justify-between shadow-card-lift hover:-translate-y-2 hover:shadow-2xl transition-all duration-300 group cursor-pointer border border-white/20`}
+                >
+                  {/* Full-Bleed Background Image */}
+                  {cat.image ? (
+                    <img
+                      src={cat.image}
+                      alt={cat.name}
+                      className="absolute inset-0 w-full h-full object-cover scale-110 group-hover:scale-115 transition-transform duration-700 pointer-events-none z-0"
+                    />
+                  ) : (
+                    <div className={`absolute inset-0 ${style.bg} z-0`} />
+                  )}
+
+                  {/* Dark Gradient Legibility Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/20 pointer-events-none z-10" />
+
+                  {/* Glossy Header: Emoji Badge + Descriptor Badge */}
+                  <div className="flex items-start justify-between relative z-20">
+                    <div className="w-11 h-11 rounded-2xl bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center text-xl shadow-md group-hover:scale-110 transition-transform">
+                      {cat.emoji}
+                    </div>
+                    <span className="px-3.5 py-1 rounded-full text-[10px] font-heading font-extrabold bg-white/20 backdrop-blur-md border border-white/30 text-white shadow-xs">
+                      {style.badge}
+                    </span>
+                  </div>
+
+                  {/* Bottom Card Content */}
+                  <div className="relative z-20 space-y-2 text-left">
+                    <h3 className="font-heading font-black text-xl sm:text-2xl text-white tracking-tight flex items-center justify-between">
+                      <span>{cat.name}</span>
+                      <span className="material-symbols-outlined text-xl text-white/90 group-hover:translate-x-1 transition-transform">
+                        arrow_forward
+                      </span>
+                    </h3>
+                    <p className="text-xs text-white/90 leading-relaxed font-normal">
+                      {cat.desc}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Explore All Pathways CTA Button */}
+          <div className="text-center pt-4">
             <Link
-              href="/category-selection"
-              className="px-5 py-3 rounded-full text-xs font-heading font-bold bg-primary/10 text-primary border border-primary/20 hover:bg-primary hover:text-white transition-all ml-2"
+              href="/for-you"
+              className="inline-flex items-center gap-2 px-7 py-3 rounded-full bg-surface-container-lowest hover:bg-primary/10 text-primary border border-primary/30 font-heading font-bold text-xs sm:text-sm shadow-xs hover:shadow-md transition-all hover:scale-105 cursor-pointer"
             >
-              View All Categories →
+              <span>Explore All Dedicated Life Stage Pathways</span>
+              <span className="material-symbols-outlined text-base">arrow_forward</span>
             </Link>
           </div>
         </div>
-
-        {/* Horizontal Gradient Card Carousel */}
-        <div
-          ref={categoryCarouselRef}
-          className="flex gap-6 overflow-x-auto snap-x snap-mandatory py-4 px-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
-        >
-          {USER_CATEGORIES.map((cat) => {
-            const style = USER_CATEGORY_GRADIENTS[cat.id] || {
-              bg: "bg-gradient-to-br from-[#5F4EA5] via-[#7C6BC4] to-[#5FCFB0]",
-              badge: "🌿 Wellness Journey",
-            };
-
-            return (
-              <div
-                key={cat.id}
-                onClick={() => handleSelectCategory(cat.id)}
-                className={`snap-start shrink-0 w-[270px] sm:w-[310px] h-[360px] sm:h-[400px] rounded-[32px] p-7 relative overflow-hidden flex flex-col justify-between shadow-card-lift hover:-translate-y-2 hover:shadow-2xl transition-all duration-300 group cursor-pointer border border-white/20`}
-              >
-                {/* Full-Bleed Background Image */}
-                {cat.image ? (
-                  <img
-                    src={cat.image}
-                    alt={cat.name}
-                    className="absolute inset-0 w-full h-full object-cover scale-110 group-hover:scale-115 transition-transform duration-700 pointer-events-none z-0"
-                  />
-                ) : (
-                  <div className={`absolute inset-0 ${style.bg} z-0`} />
-                )}
-
-                {/* Dark Gradient Legibility Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/20 pointer-events-none z-10" />
-
-                {/* Glossy Header: Emoji Badge + Descriptor Badge */}
-                <div className="flex items-start justify-between relative z-20">
-                  <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center text-2xl shadow-md group-hover:scale-110 transition-transform">
-                    {cat.emoji}
-                  </div>
-                  <span className="px-3.5 py-1.5 rounded-full text-[10px] font-heading font-extrabold bg-white/20 backdrop-blur-md border border-white/30 text-white shadow-xs">
-                    {style.badge}
-                  </span>
-                </div>
-
-                {/* Bottom Card Content */}
-                <div className="relative z-20 space-y-2 text-left">
-                  <h3 className="font-heading font-black text-xl sm:text-2xl text-white tracking-tight flex items-center justify-between">
-                    <span>{cat.name}</span>
-                    <span className="material-symbols-outlined text-xl text-white/90 group-hover:translate-x-1 transition-transform">
-                      arrow_forward
-                    </span>
-                  </h3>
-                  <p className="text-xs text-white/90 leading-relaxed font-normal">
-                    {cat.desc}
-                  </p>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Mobile View All Button */}
-        <div className="sm:hidden text-center pt-2">
-          <Link
-            href="/category-selection"
-            className="inline-flex items-center gap-1.5 px-6 py-3 rounded-full text-xs font-heading font-bold bg-primary text-white shadow-xs"
-          >
-            <span>Explore All Categories</span>
-            <span className="material-symbols-outlined text-base">arrow_forward</span>
-          </Link>
-        </div>
       </section>
 
-      {/* ==================== 7. PRIVACY & TRUST SECTION (ASYMMETRIC BENTO GRID) ==================== */}
-      <section id="trust" className="py-20 md:py-28 bg-[#F2EBFF]/60 border-y border-surface-variant/20 px-6">
-        <div className="max-w-7xl mx-auto space-y-16">
-          <div className="text-center max-w-3xl mx-auto space-y-4">
-            <p className="text-xs font-heading font-bold text-[#006B56] tracking-widest uppercase">
-              Uncompromising Safety
-            </p>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-heading font-extrabold text-on-surface">
-              Built on Absolute Privacy & Clinical Integrity
-            </h2>
-            <p className="text-base sm:text-lg text-on-surface-variant">
-              Your mental retreat is protected by enterprise-grade security and evidence-based psychological frameworks.
-            </p>
-          </div>
-
-          {/* Asymmetric Bento Grid Layout */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-6">
-            
-            {/* 1. Large Anchor Visual Centerpiece Tile */}
-            <div className="md:col-span-2 lg:col-span-5 rounded-[32px] bg-gradient-to-br from-[#006B56]/15 via-primary/10 to-surface-container-lowest border border-[#006B56]/30 shadow-card-lift p-8 sm:p-10 flex flex-col justify-between relative overflow-hidden space-y-8">
-              {/* Subtle Glowing Background Rings */}
-              <div className="absolute -top-16 -right-16 w-64 h-64 bg-mint/20 rounded-full blur-3xl pointer-events-none" />
-              <div className="absolute -bottom-16 -left-16 w-64 h-64 bg-primary/20 rounded-full blur-3xl pointer-events-none" />
-
-              {/* Calm Pulsing Shield / Lock Badge Illustration */}
-              <div className="relative z-10 flex flex-col items-center text-center space-y-6 pt-4">
-                <div className="relative flex items-center justify-center">
-                  {/* Outer Pulsing Aura */}
-                  <motion.div
-                    animate={{ scale: [1, 1.08, 1], opacity: [0.3, 0.6, 0.3] }}
-                    transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                    className="absolute w-24 h-24 rounded-full bg-gradient-to-r from-mint via-primary to-pink blur-md"
-                  />
-                  {/* Shield Badge Container */}
-                  <div className="relative w-20 h-20 rounded-3xl bg-surface-container-lowest border border-white/60 shadow-xl flex items-center justify-center text-[#006B56]">
-                    <span className="material-symbols-outlined text-4xl font-extrabold">verified_user</span>
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <span className="px-3 py-1 rounded-full text-[10px] font-heading font-extrabold bg-[#006B56]/15 text-[#006B56] border border-[#006B56]/30 uppercase tracking-wider">
-                    Core Security Pledge
-                  </span>
-                  <p className="text-sm sm:text-base font-heading font-extrabold text-on-surface leading-snug">
-                    Privacy isn&apos;t an added feature at Manraah — it&apos;s the sacred foundation every line of code is built upon.
-                  </p>
-                </div>
-              </div>
-
-              {/* Trust Badges Bar */}
-              <div className="relative z-10 grid grid-cols-3 gap-2 text-center pt-6 border-t border-surface-variant/20">
-                <div className="p-2 rounded-2xl bg-surface-container-lowest/80 border border-surface-variant/30 text-[10px] font-heading font-bold text-on-surface">
-                  🔒 256-Bit SSL
-                </div>
-                <div className="p-2 rounded-2xl bg-surface-container-lowest/80 border border-surface-variant/30 text-[10px] font-heading font-bold text-on-surface">
-                  🛡️ HIPAA Standard
-                </div>
-                <div className="p-2 rounded-2xl bg-surface-container-lowest/80 border border-surface-variant/30 text-[10px] font-heading font-bold text-on-surface">
-                  👁️ Zero Ad Tracking
-                </div>
-              </div>
-            </div>
-
-            {/* 2. Right Column Stack: Zero-Knowledge Encryption & Complete Anonymity */}
-            <div className="md:col-span-2 lg:col-span-7 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-6">
-              
-              {/* Tile 1: Zero-Knowledge Encryption */}
-              <div className="p-8 rounded-[32px] bg-surface-container-lowest border border-surface-variant/30 shadow-card-lift hover:-translate-y-1.5 hover:shadow-xl transition-all duration-300 space-y-4 flex flex-col justify-between">
-                <div className="w-12 h-12 rounded-2xl bg-mint/20 text-[#006B56] flex items-center justify-center shrink-0">
-                  <span className="material-symbols-outlined text-2xl font-bold">lock</span>
-                </div>
-                <div className="space-y-2">
-                  <h3 className="font-heading font-extrabold text-xl text-on-surface">Zero-Knowledge Encryption</h3>
-                  <p className="text-sm text-on-surface-variant leading-relaxed font-normal">
-                    All personal reflections, journal entries, and chat logs are encrypted end-to-end. Your private thoughts belong only to you — never sold or used for advertising.
-                  </p>
-                </div>
-              </div>
-
-              {/* Tile 2: Complete Anonymity */}
-              <div className="p-8 rounded-[32px] bg-surface-container-lowest border border-surface-variant/30 shadow-card-lift hover:-translate-y-1.5 hover:shadow-xl transition-all duration-300 space-y-4 flex flex-col justify-between">
-                <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
-                  <span className="material-symbols-outlined text-2xl font-bold">visibility_off</span>
-                </div>
-                <div className="space-y-2">
-                  <h3 className="font-heading font-extrabold text-xl text-on-surface">Complete Anonymity</h3>
-                  <p className="text-sm text-on-surface-variant leading-relaxed font-normal">
-                    Participate in community groups, peer chats, and AI sessions with an avatar and nickname. No real name or intrusive personal details required.
-                  </p>
-                </div>
-              </div>
-
-            </div>
-
-            {/* 3. Full-Width Grounding Banner Tile (Evidence-Based Frameworks) */}
-            <div className="md:col-span-2 lg:col-span-12 p-8 sm:p-10 rounded-[32px] bg-surface-container-lowest border border-pink/30 shadow-card-lift hover:-translate-y-1.5 hover:shadow-xl transition-all duration-300 flex flex-col md:flex-row md:items-center justify-between gap-6">
-              <div className="flex items-start sm:items-center gap-5">
-                <div className="w-14 h-14 rounded-2xl bg-pink/20 text-[#874959] flex items-center justify-center shrink-0">
-                  <span className="material-symbols-outlined text-3xl font-bold">psychology</span>
-                </div>
-                <div className="space-y-1.5 max-w-3xl">
-                  <h3 className="font-heading font-extrabold text-xl sm:text-2xl text-on-surface">
-                    Evidence-Based Frameworks
-                  </h3>
-                  <p className="text-sm sm:text-base text-on-surface-variant leading-relaxed font-normal">
-                    Our guided exercises and AI prompts integrate Cognitive Behavioral Therapy (CBT), Mindfulness-Based Stress Reduction (MBSR), and positive psychology principles.
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2 shrink-0 pt-2 md:pt-0">
-                <span className="px-3.5 py-1.5 rounded-full text-xs font-heading font-extrabold bg-pink/15 text-[#874959] border border-pink/30">
-                  CBT • MBSR • Positive Psych
-                </span>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </section>
-
-
-      {/* ==================== TESTIMONIALS SECTION (SINGLE CONTINUOUS MARQUEE LINE) ==================== */}
-      <section id="testimonials" className="py-20 md:py-28 overflow-hidden border-t border-surface-variant/20">
-        <div className="text-center max-w-3xl mx-auto mb-12 px-6 space-y-4">
+      {/* ==================== 7. TESTIMONIALS SECTION (SINGLE CONTINUOUS MARQUEE LINE) ==================== */}
+      <section id="testimonials" className="py-12 md:py-16 bg-surface overflow-hidden">
+        <div className="text-center max-w-3xl mx-auto mb-8 px-6 space-y-3">
           <p className="text-xs font-heading font-bold text-[#006B56] tracking-widest uppercase">
             Real Perspectives &amp; Reflections
           </p>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-heading font-extrabold text-on-surface">
             Built With Real People In Mind
           </h2>
-          <p className="text-base sm:text-lg text-on-surface-variant max-w-2xl mx-auto">
+          <p className="text-base text-on-surface-variant max-w-2xl mx-auto">
             How individuals across students, parents, couples, and working professionals find daily moments of calm and emotional grounding with Manraah.
           </p>
         </div>
@@ -1105,10 +985,10 @@ export default function MarketingLandingPage() {
         </div>
 
         {/* Read More Stories CTA Button */}
-        <div className="text-center pt-10 px-6">
+        <div className="text-center pt-6 px-6">
           <Link
             href="/stories"
-            className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-surface-container-lowest hover:bg-primary/10 text-primary border border-primary/30 font-heading font-bold text-sm shadow-xs hover:shadow-md transition-all hover:scale-105 cursor-pointer"
+            className="inline-flex items-center gap-2 px-7 py-3 rounded-full bg-surface-container-lowest hover:bg-primary/10 text-primary border border-primary/30 font-heading font-bold text-xs sm:text-sm shadow-xs hover:shadow-md transition-all hover:scale-105 cursor-pointer"
           >
             <span>Explore All Member Stories &amp; Journeys</span>
             <span className="material-symbols-outlined text-base">arrow_forward</span>
