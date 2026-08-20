@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { saveUserAssessment } from "@/backend/queries/assessment";
 import { generateUniqueSanctuaryName } from "@/backend/auth/sanctuary";
 import { getUserByEmail, updateUserSanctuaryName, updateUserCategory } from "@/backend/queries/users";
+import { recordUserLogin } from "@/backend/queries/streak";
 import crypto from "crypto";
 
 function verifyPassword(password: string, storedHash: string | null): boolean {
@@ -52,6 +53,9 @@ export async function POST(request: Request) {
       await updateUserSanctuaryName(user.id, sanctuaryName);
     }
 
+    // Record login streak activity
+    const streakInfo = await recordUserLogin(user.id);
+
     const rawCategory = user.selected_category || "student";
     const mappedCategory = rawCategory === "couples" || rawCategory === "couple" ? "couples" : (rawCategory === "parents" || rawCategory === "parent" ? "parents" : rawCategory);
 
@@ -61,7 +65,7 @@ export async function POST(request: Request) {
       sanctuaryName: sanctuaryName,
       email: user.email,
       avatar: user.avatar || "/images/user_avatar.jpg",
-      streakDays: user.streak_days || 1,
+      streakDays: streakInfo.currentStreak,
       mindfulnessMinutes: user.mindfulness_minutes || 0,
       currentMood: user.current_mood || "Sanctuary Member",
       selectedCategory: mappedCategory,
@@ -93,6 +97,10 @@ export async function POST(request: Request) {
       user: userProfile,
       token: "m_token_" + user.id,
       isAuthenticated: true,
+      category: userProfile.selectedCategory,
+      currentStreak: streakInfo.currentStreak,
+      longestStreak: streakInfo.longestStreak,
+      lastLoginAt: streakInfo.lastLoginAt,
     };
 
     // Set session cookie

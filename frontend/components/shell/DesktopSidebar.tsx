@@ -73,10 +73,7 @@ export default function DesktopSidebar() {
 
       {/* User Profile Card */}
       <div className="p-3 border-t border-[#2C2A30] bg-[#1A1A1A] shrink-0">
-        <Link
-          href="/profile"
-          className="flex items-center justify-center group-hover:justify-start gap-3 p-2 rounded-[20px] hover:bg-white/5 transition-colors cursor-pointer"
-        >
+        <div className="flex items-center justify-center group-hover:justify-start gap-3 p-2 rounded-[20px] hover:bg-white/5 transition-colors">
           {avatar && avatar.startsWith("data:image/") ? (
             <img
               src={avatar}
@@ -93,10 +90,31 @@ export default function DesktopSidebar() {
           )}
           <div className="hidden group-hover:block flex-1 min-w-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 overflow-hidden whitespace-nowrap text-left">
             <p className="text-xs font-extrabold text-white truncate leading-tight">{userName}</p>
-            <p className="text-[9px] text-slate-400 truncate leading-tight mt-0.5">Settings & Profile</p>
+            <Link href="/profile" className="text-[9px] text-slate-400 hover:text-white font-bold block mt-0.5">
+              View Profile
+            </Link>
           </div>
-          <span className="material-symbols-outlined text-lg text-slate-400 hidden group-hover:block shrink-0">settings</span>
-        </Link>
+        </div>
+
+        {/* Settings & Logout (only when sidebar expanded) */}
+        <div className="hidden group-hover:flex items-center justify-between mt-2 px-2 text-xs pt-1 border-t border-white/5">
+          <Link href="/profile" className="flex items-center gap-1 text-slate-400 hover:text-white" title="Settings">
+            <span className="material-symbols-outlined text-sm">settings</span>
+            <span>Settings</span>
+          </Link>
+          <button
+            onClick={async () => {
+              const { signOut } = await import("@/backend/auth/client");
+              await signOut();
+              window.location.href = "/login";
+            }}
+            className="flex items-center gap-1 text-red-400 hover:text-red-300 cursor-pointer"
+            title="Logout"
+          >
+            <span className="material-symbols-outlined text-sm">logout</span>
+            <span>Logout</span>
+          </button>
+        </div>
       </div>
     </aside>
   );

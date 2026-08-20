@@ -12,15 +12,16 @@ export const MAIN_NAV_ITEMS: NavItem[] = [
   { label: "Dashboard", href: "/dashboard", icon: "grid_view" },
   { label: "AI Companion", href: "/ai-chat", icon: "smart_toy" },
   { label: "Daily Check-in", href: "/checkin", icon: "mood" },
+  { label: "Focus Timer", href: "/meditation", icon: "schedule" },
+  { label: "Study Planner", href: "/journey", icon: "assignment" },
+  { label: "Exams", href: "/dashboard/student#exam-tracker", icon: "school" },
+  { label: "Analytics", href: "/reports", icon: "analytics" },
+  { label: "Wellness", href: "/wellness-score", icon: "spa" },
   { label: "Journal", href: "/journal", icon: "auto_stories" },
-  { label: "Meditation", href: "/meditation", icon: "self_improvement" },
-  { label: "Sleep Support", href: "/sleep", icon: "bedtime" },
-  { label: "Community", href: "/community", icon: "groups" },
+  { label: "Sleep", href: "/sleep", icon: "bedtime" },
   { label: "Resources", href: "/resources", icon: "menu_book" },
-  { label: "My Journey", href: "/journey", icon: "insights" },
-  { label: "Wellness Reports", href: "/reports", icon: "analytics" },
+  { label: "Community", href: "/community", icon: "groups" },
   { label: "Professional Care", href: "/professional-care", icon: "medical_services" },
-  { label: "Human Companion", href: "/human-companion", icon: "record_voice_over" },
 ];
 
 export const MOBILE_TAB_ITEMS: NavItem[] = [

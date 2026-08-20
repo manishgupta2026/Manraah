@@ -1,5 +1,5 @@
-import DashboardScreen from "@/frontend/components/screens/DashboardScreen";
+import StudentDashboard from "@/frontend/components/screens/StudentDashboard";
 
 export default function StudentDashboardPage() {
-  return <DashboardScreen />;
+  return <StudentDashboard />;
 }

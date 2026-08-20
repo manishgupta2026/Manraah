@@ -15,6 +15,8 @@ import PublicNavbar from "./PublicNavbar";
 import PublicFooter from "./PublicFooter";
 import AdminHeader from "../admin/shell/AdminHeader";
 
+import { ThemeProvider } from "@/frontend/lib/context/ThemeContext";
+
 const STANDALONE_ROUTES = [
   "/",
   "/how-it-works",
@@ -70,10 +72,11 @@ export default function AppShell({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <CategoryProvider>
-      <AssessmentProvider>
-        <WellnessProvider>
-          <HeaderProvider>
+    <ThemeProvider>
+      <CategoryProvider>
+        <AssessmentProvider>
+          <WellnessProvider>
+            <HeaderProvider>
             {isStandalone ? (
               /* Standalone Onboarding / Auth / Public Layout with Global Public Header & Footer */
               <div className="min-h-screen bg-background text-on-background font-sans antialiased flex flex-col justify-between">
@@ -88,6 +91,11 @@ export default function AppShell({ children }: { children: ReactNode }) {
                 <main className="flex-1 px-4 md:px-8 py-6 max-w-7xl mx-auto w-full">
                   {children}
                 </main>
+              </div>
+            ) : pathname.startsWith("/dashboard/student") ? (
+              /* Dedicated Student Dashboard Custom Layout (Exact Match with Reference Image) */
+              <div className="min-h-screen w-full bg-[#F5FAFB] dark:bg-[#0D1F2D] text-slate-800 dark:text-slate-100 font-sans antialiased flex overflow-hidden">
+                {children}
               </div>
             ) : (
               /* Main Regular User Application Shell with Sidebar & Header */
@@ -121,5 +129,6 @@ export default function AppShell({ children }: { children: ReactNode }) {
         </WellnessProvider>
       </AssessmentProvider>
     </CategoryProvider>
+  </ThemeProvider>
   );
 }

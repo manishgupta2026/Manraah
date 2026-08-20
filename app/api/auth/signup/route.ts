@@ -3,6 +3,7 @@ import { sql } from "@/backend/db/client";
 import { saveUserAssessment } from "@/backend/queries/assessment";
 import { generateUniqueSanctuaryName } from "@/backend/auth/sanctuary";
 import { getUserByEmail, getUserBySanctuaryName, createUser } from "@/backend/queries/users";
+import { recordUserLogin } from "@/backend/queries/streak";
 import crypto from "crypto";
 
 // Allowed sanctuary categories
@@ -74,13 +75,7 @@ export async function POST(request: Request) {
     }
 
     // 2. Validate category against allowed Manraah categories
-    const validatedCategory = normalizeCategory(category);
-    if (!validatedCategory) {
-      return NextResponse.json(
-        { error: "Invalid sanctuary journey category. Please select a valid category." },
-        { status: 400 }
-      );
-    }
+    const validatedCategory = normalizeCategory(category) || "student";
 
     const cleanEmail = email.trim().toLowerCase();
 
@@ -120,11 +115,11 @@ export async function POST(request: Request) {
     const cleanDob = dob && typeof dob === "string" ? dob.trim() : null;
     const cleanCountry = country && typeof country === "string" ? country.trim() : null;
     const cleanGender = gender && typeof gender === "string" ? gender.trim() : null;
+    const initialJson = initialAnswers ? JSON.stringify(initialAnswers) : "{}";
 
     // 5. Create user ID & hash password
     const userId = "usr_" + Date.now() + "_" + Math.random().toString(36).substring(2, 7);
     const passwordHash = hashPassword(password);
-    const initialJson = initialAnswers ? JSON.stringify(initialAnswers) : "{}";
 
     // Ensure table has optional columns if not present
     try {
@@ -166,6 +161,9 @@ export async function POST(request: Request) {
       );
     }
 
+    // Record login streak activity
+    const streakInfo = await recordUserLogin(userId);
+
     const userProfile = {
       id: userId,
       name: fullName,
@@ -176,7 +174,7 @@ export async function POST(request: Request) {
       country: cleanCountry || undefined,
       gender: cleanGender || undefined,
       avatar: "/images/user_avatar.jpg",
-      streakDays: 1,
+      streakDays: streakInfo.currentStreak,
       mindfulnessMinutes: 0,
       currentMood: "Sanctuary Member",
       selectedCategory: validatedCategory,
@@ -186,6 +184,10 @@ export async function POST(request: Request) {
       user: userProfile,
       token: "m_token_" + userId,
       isAuthenticated: true,
+      category: userProfile.selectedCategory,
+      currentStreak: streakInfo.currentStreak,
+      longestStreak: streakInfo.longestStreak,
+      lastLoginAt: streakInfo.lastLoginAt,
     };
 
     // 8. Create HTTP session cookies

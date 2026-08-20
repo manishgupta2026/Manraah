@@ -1,16 +1,18 @@
 import { NextResponse } from "next/server";
+import { getAuthSessionFromRequest } from "@/backend/auth/session";
 import { generateUniqueSanctuaryName } from "@/backend/auth/sanctuary";
 import { saveUserAssessment } from "@/backend/queries/assessment";
 import { getUserById, updateUserSanctuaryName, checkSanctuaryNameDuplicate, updateUserCategory, updateUserAvatar, updateUserDashboardState } from "@/backend/queries/users";
+import { sql } from "@/backend/db/client";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url);
-  const userId = searchParams.get("userId");
+  const session = getAuthSessionFromRequest();
+  const userId = session.user?.id;
 
   if (!userId) {
-    return NextResponse.json({ error: "userId is required" }, { status: 400 });
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   try {
@@ -35,7 +37,7 @@ export async function GET(request: Request) {
       sanctuaryName: sanctuaryName,
       email: user.email,
       avatar: user.avatar,
-      category: user.category === "couples" || user.category === "couple" ? "couples" : (user.category === "parents" || user.category === "parent" ? "parents" : user.category),
+      category: user.selected_category === "couples" || user.selected_category === "couple" ? "couples" : (user.selected_category === "parents" || user.selected_category === "parent" ? "parents" : user.selected_category || "student"),
       streakDays: user.streak_days,
       mindfulnessMinutes: user.mindfulness_minutes,
       currentMood: user.current_mood
@@ -47,13 +49,16 @@ export async function GET(request: Request) {
 }
 
 export async function PUT(request: Request) {
+  const session = getAuthSessionFromRequest();
+  const userId = session.user?.id;
+
+  if (!userId) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   try {
     const body = await request.json();
-    const { userId, sanctuaryName, category, avatar, dashboardState } = body;
-
-    if (!userId) {
-      return NextResponse.json({ error: "userId is required" }, { status: 400 });
-    }
+    const { sanctuaryName, category, avatar, dashboardState } = body;
 
     // 1. Verify user exists
     const existingUsers = await getUserById(userId);
@@ -82,8 +87,6 @@ export async function PUT(request: Request) {
 
       await updateUserSanctuaryName(userId, trimmedName);
     }
-
-
 
     // 3. Update category if provided
     if (category) {

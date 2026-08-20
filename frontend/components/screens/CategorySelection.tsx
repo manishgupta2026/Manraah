@@ -7,6 +7,7 @@ import { useAssessment } from "@/frontend/lib/context/AssessmentContext";
 import { UserCategory } from "@/backend/types";
 import { USER_CATEGORIES } from "@/frontend/lib/constants";
 import ScreenHeader from "@/frontend/components/ui/ScreenHeader";
+import { getClientSession } from "@/backend/auth/client";
 
 export default function CategorySelection() {
   const router = useRouter();
@@ -25,7 +26,7 @@ export default function CategorySelection() {
     }
   }, [setCategory, setSelectedCategory]);
 
-  const handleSelect = (id: string) => {
+  const handleSelect = async (id: string) => {
     const targetType = id;
     setSelectedCategory(targetType as UserCategory);
     setCategory(targetType);
@@ -33,6 +34,53 @@ export default function CategorySelection() {
     // Save full category id to cookie so login/signup can read it after navigation
     document.cookie = `userType=${targetType}; path=/; max-age=86400`;
     console.log("[CategorySelection] [POINT 1 — after category selection] userType selected:", targetType);
+
+    // Check if user is already authenticated
+    const session = getClientSession();
+    if (session && session.isAuthenticated && session.user) {
+      try {
+        // Persist category to DB immediately
+        const res = await fetch("/api/profile", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            userId: session.user.id,
+            category: targetType,
+          }),
+        });
+
+        if (res.ok) {
+          const resJson = await res.json();
+          // Update cookie session details in client
+          if (resJson.user) {
+            const updatedSession = { ...session, user: resJson.user };
+            document.cookie = `manraah_session=${JSON.stringify(updatedSession)}; path=/; max-age=86400`;
+          }
+        }
+      } catch (err) {
+        console.error("Failed to update profile category on selection click:", err);
+      }
+
+      // If student, go to student dashboard. Otherwise keep their existing routing.
+      if (targetType === "student") {
+        router.push("/dashboard/student");
+        return;
+      } else if (targetType === "working_professional" || targetType === "working-professional") {
+        router.push("/onboarding/working-professional");
+        return;
+      } else {
+        // Redirection based on normalizeCategory mapping
+        const normalized = targetType.replace(/-/g, "_");
+        if (normalized === "couple" || normalized === "couples") {
+          router.push("/dashboard/couples");
+        } else if (normalized === "parent" || normalized === "parents") {
+          router.push("/dashboard/parents");
+        } else {
+          router.push(`/dashboard/${targetType.replace(/_/g, "-")}`);
+        }
+        return;
+      }
+    }
 
     if (targetType === "working_professional" || targetType === "working-professional") {
       router.push("/onboarding/working-professional");
