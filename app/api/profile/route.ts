@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getAuthSessionFromRequest } from "@/backend/auth/session";
 import { generateUniqueSanctuaryName } from "@/backend/auth/sanctuary";
 import { saveUserAssessment } from "@/backend/queries/assessment";
-import { getUserById, updateUserSanctuaryName, checkSanctuaryNameDuplicate, updateUserCategory, updateUserAvatar, updateUserDashboardState } from "@/backend/queries/users";
+import { getUserById, updateUserSanctuaryName, checkSanctuaryNameDuplicate, updateUserCategory, updateUserAvatar, updateUserDashboardState, updateUserStreak } from "@/backend/queries/users";
 import { sql } from "@/backend/db/client";
 
 export const dynamic = "force-dynamic";
@@ -95,7 +95,7 @@ export async function PUT(request: Request) {
     }
 
     // Save assessment if provided in PUT payload (e.g. when retaking assessment on active session)
-    const { answers, computedScore, percentage, wellnessLevel } = body;
+    const { answers, computedScore, percentage, wellnessLevel, maxScore } = body;
     if (answers && Array.isArray(answers) && answers.length > 0) {
       const targetCategory = category === "couples" || category === "couple" ? "couples" : (category === "parents" || category === "parent" ? "parents" : category || "student");
       await saveUserAssessment(
@@ -104,7 +104,8 @@ export async function PUT(request: Request) {
         answers,
         typeof computedScore === "number" ? computedScore : 50,
         typeof percentage === "number" ? percentage : 50,
-        wellnessLevel || "Balanced"
+        wellnessLevel || "Balanced",
+        typeof maxScore === "number" ? maxScore : 50
       );
     }
 
@@ -116,6 +117,8 @@ export async function PUT(request: Request) {
     // Update dashboardState if provided
     if (dashboardState) {
       await updateUserDashboardState(userId, dashboardState);
+      // Increment user streak days dynamically upon dashboard activity updates
+      await updateUserStreak(userId);
     }
 
     // 5. Fetch updated user details

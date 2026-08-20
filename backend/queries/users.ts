@@ -101,3 +101,65 @@ export async function updateUserDashboardState(userId: string, dashboardState: a
     UPDATE users SET dashboard_state = ${jsonStr}::jsonb WHERE id = ${userId}
   `;
 }
+
+export async function updateUserStreak(userId: string) {
+  const now = new Date();
+  const streakResult = await sql`
+    SELECT * FROM user_streaks WHERE user_id = ${userId} LIMIT 1
+  `;
+
+  let currentStreak = 1;
+  let longestStreak = 1;
+
+  if (streakResult.length === 0) {
+    const streakId = `streak-${Date.now()}`;
+    await sql`
+      INSERT INTO user_streaks (id, user_id, current_streak, longest_streak, last_checkin_date)
+      VALUES (${streakId}, ${userId}, 1, 1, ${now})
+    `;
+  } else {
+    const streakRecord = streakResult[0];
+    if (!streakRecord.last_checkin_date) {
+      await sql`
+        UPDATE user_streaks
+        SET current_streak = 1,
+            longest_streak = GREATEST(longest_streak, 1),
+            last_checkin_date = ${now},
+            updated_at = CURRENT_TIMESTAMP
+        WHERE user_id = ${userId}
+      `;
+    } else {
+      const lastCheckIn = new Date(streakRecord.last_checkin_date);
+      const lastDate = new Date(lastCheckIn.getFullYear(), lastCheckIn.getMonth(), lastCheckIn.getDate());
+      const nowDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const diffTime = Math.abs(nowDate.getTime() - lastDate.getTime());
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+      if (diffDays === 1) {
+        currentStreak = streakRecord.current_streak + 1;
+        longestStreak = Math.max(currentStreak, streakRecord.longest_streak);
+      } else if (diffDays === 0) {
+        currentStreak = streakRecord.current_streak;
+        longestStreak = streakRecord.longest_streak;
+      } else {
+        currentStreak = 1;
+        longestStreak = streakRecord.longest_streak;
+      }
+
+      await sql`
+        UPDATE user_streaks
+        SET current_streak = ${currentStreak},
+            longest_streak = ${longestStreak},
+            last_checkin_date = ${now},
+            updated_at = CURRENT_TIMESTAMP
+        WHERE user_id = ${userId}
+      `;
+    }
+  }
+
+  await sql`
+    UPDATE users SET streak_days = ${currentStreak} WHERE id = ${userId}
+  `;
+  
+  return currentStreak;
+}

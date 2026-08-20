@@ -14,7 +14,7 @@ import { AuthSession } from "@/backend/types";
 export default function WellnessScoreScreen() {
   const router = useRouter();
   const { categoryDetails } = useCategory();
-  const { assessmentResult, detailedAnswers, computedScore, selectedCategory } = useAssessment();
+  const { assessmentResult, detailedAnswers, selectedCategory, totalScore, percentage, wellnessLevel, maxScore } = useAssessment();
 
   // Guard: Do NOT allow direct access without assessment
   useEffect(() => {
@@ -41,9 +41,10 @@ export default function WellnessScoreScreen() {
           userId: session.user.id,
           category: selectedCategory,
           answers: detailedAnswers,
-          computedScore,
-          percentage: finalResult.percentage,
-          wellnessLevel: finalResult.wellnessLevel
+          computedScore: totalScore,
+          percentage: percentage,
+          wellnessLevel: wellnessLevel,
+          maxScore: maxScore
         })
       });
       
@@ -90,13 +91,13 @@ export default function WellnessScoreScreen() {
     router.push(targetPath);
   };
 
-  // Handle fallback if the user navigated directly or refreshed
-  const finalResult = assessmentResult || {
-    totalScore: Math.round((computedScore / 100) * 75) || 45,
-    maxScore: 75,
-    percentage: computedScore || 60,
-    wellnessLevel: getWellnessLevel(Math.round((computedScore / 100) * 75) || 45, 75),
-    message: getWellnessMessage(getWellnessLevel(Math.round((computedScore / 100) * 75) || 45, 75)),
+  // Map assessment details for display
+  const finalResult = {
+    totalScore: totalScore,
+    maxScore: maxScore || 50,
+    percentage: percentage,
+    wellnessLevel: wellnessLevel,
+    message: getWellnessMessage(wellnessLevel),
   };
 
   // Helper to format keys like "academic_pressure" to "Academic Pressure"

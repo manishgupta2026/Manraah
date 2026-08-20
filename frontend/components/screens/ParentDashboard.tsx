@@ -76,6 +76,7 @@ export default function ParentDashboard() {
 
   // Family Wellness
   const [familyScore, setFamilyScore] = useState(82);
+  const [streakDays, setStreakDays] = useState(1);
   const [selectedDay, setSelectedDay] = useState(6);
   const [dashboardData, setDashboardData] = useState<any>(null);
   const [loadingData, setLoadingData] = useState(true);
@@ -157,16 +158,6 @@ export default function ParentDashboard() {
       setTimeIcon("🌌");
       setTimeOfDay("night");
     }
-
-    // 4. Periodic "Not Watched" Popup check (2 minutes interval for demo convenience)
-    const lastPopupTime = localStorage.getItem("parent_last_security_popup");
-    const now = Date.now();
-    
-    if (!lastPopupTime || now - parseInt(lastPopupTime) > 120000) {
-      // Show popup
-      setShowSecurityPopup(true);
-      localStorage.setItem("parent_last_security_popup", now.toString());
-    }
   }, []);
 
   // Fetch live dashboard & assessment details on mount
@@ -186,9 +177,20 @@ export default function ParentDashboard() {
           // Calculate wellness score as per the assessment completion percentage
           if (data.user.assessmentPercentage !== null && data.user.assessmentPercentage !== undefined) {
             setFamilyScore(data.user.assessmentPercentage);
+            
+            const lastPopupTime = localStorage.getItem("parent_last_security_popup");
+            const now = Date.now();
+            if (!lastPopupTime || now - parseInt(lastPopupTime) > 120000) {
+              setShowSecurityPopup(true);
+              localStorage.setItem("parent_last_security_popup", now.toString());
+            }
           } else {
-            setShowSecurityPopup(true);
+            setShowAssessmentModal(true);
           }
+
+          // Restore streak days from database
+          const backendStreak = data.streak?.currentStreak || data.user.streakDays || 1;
+          setStreakDays(backendStreak);
 
           // Restore persisted dashboard details from database if they exist!
           const ds = data.user.dashboardState;
@@ -268,7 +270,7 @@ export default function ParentDashboard() {
     };
 
     try {
-      await fetch("/api/profile", {
+      const res = await fetch("/api/profile", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -277,6 +279,13 @@ export default function ParentDashboard() {
         })
       });
       
+      const resData = await res.json();
+      if (res.ok && resData.user) {
+        if (resData.user.streakDays !== undefined) {
+          setStreakDays(resData.user.streakDays);
+        }
+      }
+
       // Update local cache state
       setDashboardData((prev: any) => {
         if (!prev || !prev.user) return prev;
@@ -562,14 +571,21 @@ export default function ParentDashboard() {
           <div className="lg:col-span-6 space-y-4">
             
             {/* Header / Greet */}
-            <div>
-              <span className="text-[10px] uppercase font-black tracking-widest text-[#7C6BC4] block mb-0.5 font-heading">
-                Welcome back
-              </span>
-              <h1 className="text-2xl sm:text-3xl font-heading font-black text-slate-800 flex items-center gap-2">
-                Hi, {showName ? username : "••••••••"}
-              </h1>
-              <p className="text-xs text-slate-400 font-bold">Let's track your health & parenting wellness daily!</p>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div>
+                <span className="text-[10px] uppercase font-black tracking-widest text-[#7C6BC4] block mb-0.5 font-heading">
+                  Welcome back
+                </span>
+                <h1 className="text-2xl sm:text-3xl font-heading font-black text-slate-800 flex items-center gap-2">
+                  Hi, {showName ? username : "••••••••"}
+                </h1>
+                <p className="text-xs text-slate-400 font-bold">Let's track your health & parenting wellness daily!</p>
+              </div>
+              
+              <div className="flex-shrink-0 flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-orange-50 to-amber-50 text-orange-600 border border-orange-100 rounded-2xl shadow-2xs font-bold text-xs select-none">
+                <span className="material-symbols-outlined text-sm font-black text-orange-500 animate-pulse">local_fire_department</span>
+                <span>Day {streakDays} Streak</span>
+              </div>
             </div>
 
             {/* Upcoming Appointment Card */}
@@ -1021,6 +1037,46 @@ export default function ParentDashboard() {
               </p>
             </div>
 
+            {/* Parenting Reflection Journal Card */}
+            <div className="bg-white rounded-[32px] border border-[#EAEAFF] shadow-[0_10px_35px_rgba(95,78,165,0.02)] p-5 space-y-4 text-left">
+              <h4 className="font-heading font-black text-xs text-slate-800 flex items-center gap-2">
+                <span className="material-symbols-outlined text-[#7C6BC4] font-black text-base">edit_note</span>
+                Parenting Journal
+              </h4>
+              
+              <div className="space-y-3">
+                <textarea
+                  value={journalInput}
+                  onChange={(e) => setJournalInput(e.target.value)}
+                  placeholder="How was your parenting journey today? Note down any reflections or highlights..."
+                  className="w-full p-3 text-[10px] font-semibold text-slate-700 bg-[#F8F9FD] border border-[#EAEAFF] rounded-2xl placeholder-slate-400 focus:outline-none focus:border-[#7C6BC4]/50 resize-none h-20"
+                />
+                
+                <button
+                  onClick={handleSaveJournal}
+                  disabled={saveStatus === "saving" || !journalInput.trim()}
+                  className="w-full py-2.5 bg-[#7C6BC4] hover:bg-[#6B5BB3] text-white font-bold text-[10px] uppercase tracking-wider rounded-xl transition-all shadow-sm active:scale-95 disabled:opacity-50 disabled:pointer-events-none"
+                >
+                  {saveStatus === "saving" ? "Saving..." : saveStatus === "saved" ? "Saved! ✓" : "Save Reflection"}
+                </button>
+              </div>
+
+              {/* Journal Entries List */}
+              {journalEntries.length > 0 && (
+                <div className="pt-2 border-t border-[#EAEAFF]/70 space-y-2.5 max-h-[140px] overflow-y-auto pr-1">
+                  {journalEntries.map((entry, idx) => (
+                    <div key={idx} className="bg-[#F8F9FD] border border-[#EAEAFF] p-2.5 rounded-xl space-y-1">
+                      <div className="flex justify-between items-center">
+                        <span className="text-[8px] font-black uppercase text-[#7C6BC4] tracking-wider">{entry.date}</span>
+                        <span className="material-symbols-outlined text-[10px] text-slate-300">calendar_today</span>
+                      </div>
+                      <p className="text-[9px] text-slate-600 font-semibold leading-relaxed break-words">{entry.content}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
           </div>
 
         </div>
@@ -1253,11 +1309,7 @@ export default function ParentDashboard() {
 
               <button 
                 onClick={() => {
-                  const hasCompleted = dashboardData?.user?.assessmentPercentage !== null && dashboardData?.user?.assessmentPercentage !== undefined;
                   setShowSecurityPopup(false);
-                  if (!hasCompleted) {
-                    setShowAssessmentModal(true);
-                  }
                 }}
                 className="w-full py-3.5 bg-[#7C6BC4] hover:bg-[#6B5BB3] text-white rounded-full font-bold text-xs shadow-sm transition-transform active:scale-95"
               >
