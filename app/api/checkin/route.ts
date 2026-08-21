@@ -35,29 +35,21 @@ export async function POST(req: Request) {
       WHERE user_id = ${userId} AND created_at >= ${startOfToday} AND created_at <= ${endOfToday}
       LIMIT 1
     `;
-    const existingMood = await sql`
-      SELECT id FROM mood_entries 
-      WHERE user_id = ${userId} AND created_at >= ${startOfToday} AND created_at <= ${endOfToday}
-      LIMIT 1
-    `;
 
-    // 3. Save / Update check-in in daily_checkins
     if (existingCheckin.length > 0) {
-      await sql`
-        UPDATE daily_checkins
-        SET mood = ${mood}, energy_level = ${energyVal}, stress = ${stress}, sleep_quality = ${sleepVal},
-            gratitude_reflection = ${gratitudeText}, daily_intention = ${reflectionText},
-            reflection = ${reflectionText}, updated_at = CURRENT_TIMESTAMP
-        WHERE id = ${existingCheckin[0].id}
-      `;
-    } else {
-      await sql`
-        INSERT INTO daily_checkins (user_id, mood, energy_level, stress, sleep_quality, gratitude_reflection, daily_intention, reflection, created_at, updated_at)
-        VALUES (${userId}, ${mood}, ${energyVal}, ${stress}, ${sleepVal}, ${gratitudeText}, ${reflectionText}, ${reflectionText}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-      `;
+      return NextResponse.json(
+        { error: "You have already completed your daily check-in for today." },
+        { status: 400 }
+      );
     }
 
-    // 4. Save / Update entry in mood_entries
+    // 3. Save check-in in daily_checkins
+    await sql`
+      INSERT INTO daily_checkins (user_id, mood, energy_level, stress, sleep_quality, gratitude_reflection, daily_intention, reflection, created_at, updated_at)
+      VALUES (${userId}, ${mood}, ${energyVal}, ${stress}, ${sleepVal}, ${gratitudeText}, ${reflectionText}, ${reflectionText}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+    `;
+
+    // 4. Save entry in mood_entries
     const moodScoreMap: Record<string, number> = {
       Amazing: 5,
       Happy: 4,
@@ -68,21 +60,11 @@ export async function POST(req: Request) {
     };
     const computedScore = Math.round((moodScoreMap[mood] || 3) * 2);
 
-    if (existingMood.length > 0) {
-      await sql`
-        UPDATE mood_entries
-        SET mood = ${mood}, energy = ${energyVal}, stress = ${stress}, score = ${computedScore},
-            reflection = ${reflectionText}, factors = ${gratitudeText},
-            updated_at = CURRENT_TIMESTAMP
-        WHERE id = ${existingMood[0].id}
-      `;
-    } else {
-      const moodId = `mood-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
-      await sql`
-        INSERT INTO mood_entries (id, user_id, mood, score, energy, stress, reflection, factors, created_at, updated_at)
-        VALUES (${moodId}, ${userId}, ${mood}, ${computedScore}, ${energyVal}, ${stress}, ${reflectionText}, ${gratitudeText}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-      `;
-    }
+    const moodId = `mood-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
+    await sql`
+      INSERT INTO mood_entries (id, user_id, mood, score, energy, stress, reflection, factors, created_at, updated_at)
+      VALUES (${moodId}, ${userId}, ${mood}, ${computedScore}, ${energyVal}, ${stress}, ${reflectionText}, ${gratitudeText}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+    `;
 
     // 5. Update user streaks
     const streakResult = await sql`

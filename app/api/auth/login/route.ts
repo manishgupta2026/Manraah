@@ -69,6 +69,7 @@ export async function POST(request: Request) {
       mindfulnessMinutes: user.mindfulness_minutes || 0,
       currentMood: user.current_mood || "Sanctuary Member",
       selectedCategory: mappedCategory,
+      onboardingCompleted: !!user.onboarding_completed,
     };
 
     if (category) {

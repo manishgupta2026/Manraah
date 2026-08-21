@@ -178,6 +178,7 @@ export async function POST(request: Request) {
       mindfulnessMinutes: 0,
       currentMood: "Sanctuary Member",
       selectedCategory: validatedCategory,
+      onboardingCompleted: false,
     };
 
     const sessionData = {

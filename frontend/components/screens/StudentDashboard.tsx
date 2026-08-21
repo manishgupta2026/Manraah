@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { getClientSession } from "@/backend/auth/client";
 import MobileDrawer from "@/frontend/components/shell/MobileDrawer";
+import { getCategoryDashboardRoute } from "@/frontend/lib/category-routes";
 
 // --- Colors Palette Custom Mappings ---
 // Background: #F5FAFB
@@ -15,6 +16,111 @@ import MobileDrawer from "@/frontend/components/shell/MobileDrawer";
 // Positive: #5FAF8A
 // Warning: #E7A95F
 // Critical: #D96C6C
+
+
+
+const ONBOARDING_QUESTIONS = [
+  {
+    id: "workload",
+    question: "How has your academic workload been feeling lately?",
+    options: [
+      { text: "Very manageable", val: "Very manageable" },
+      { text: "Mostly manageable", val: "Mostly manageable" },
+      { text: "A little heavy", val: "A little heavy" },
+      { text: "Very overwhelming", val: "Very overwhelming" }
+    ]
+  },
+  {
+    id: "stress",
+    question: "How would you describe your academic stress levels today?",
+    options: [
+      { text: "Calm & relaxed", val: "Calm & relaxed" },
+      { text: "Manageable", val: "Manageable" },
+      { text: "Elevated", val: "Elevated" },
+      { text: "Overwhelming", val: "Overwhelming" }
+    ]
+  },
+  {
+    id: "sleep",
+    question: "How many hours of quality sleep are you getting per night?",
+    options: [
+      { text: "8+ hours", val: "8+ hours" },
+      { text: "6 to 8 hours", val: "6 to 8 hours" },
+      { text: "4 to 6 hours", val: "4 to 6 hours" },
+      { text: "Under 4 hours", val: "Under 4 hours" }
+    ]
+  },
+  {
+    id: "focus",
+    question: "How easy is it for you to maintain focus during study sessions?",
+    options: [
+      { text: "Very easy", val: "Very easy" },
+      { text: "Mostly easy", val: "Mostly easy" },
+      { text: "Easily distracted", val: "Easily distracted" },
+      { text: "Extremely difficult", val: "Extremely difficult" }
+    ]
+  },
+  {
+    id: "routine",
+    question: "How consistent is your study routine?",
+    options: [
+      { text: "Highly disciplined", val: "Highly disciplined" },
+      { text: "Moderately regular", val: "Moderately regular" },
+      { text: "Mostly cramming", val: "Mostly cramming" },
+      { text: "Very chaotic", val: "Very chaotic" }
+    ]
+  },
+  {
+    id: "examPressure",
+    question: "How do you feel about your upcoming exams?",
+    options: [
+      { text: "Confident & prepared", val: "Confident & prepared" },
+      { text: "Mildly anxious", val: "Mildly anxious" },
+      { text: "Quite stressed", val: "Quite stressed" },
+      { text: "Panicked / Unprepared", val: "Panicked / Unprepared" }
+    ]
+  },
+  {
+    id: "motivation",
+    question: "How is your motivation to complete academic tasks today?",
+    options: [
+      { text: "High & inspired", val: "High & inspired" },
+      { text: "Moderate", val: "Moderate" },
+      { text: "Low", val: "Low" },
+      { text: "Completely drained", val: "Completely drained" }
+    ]
+  },
+  {
+    id: "balance",
+    question: "How well are you balancing study time with your social/personal life?",
+    options: [
+      { text: "Excellent balance", val: "Excellent balance" },
+      { text: "Good balance", val: "Good balance" },
+      { text: "Study takes over", val: "Study takes over" },
+      { text: "No personal time", val: "No personal time" }
+    ]
+  },
+  {
+    id: "mood",
+    question: "How is your general mood baseline this week?",
+    options: [
+      { text: "Good / Happy", val: "Good / Happy" },
+      { text: "Okay / Neutral", val: "Okay / Neutral" },
+      { text: "Stressed / Anxious", val: "Stressed / Anxious" },
+      { text: "Down / Sad", val: "Down / Sad" }
+    ]
+  },
+  {
+    id: "supportPreference",
+    question: "What kind of support is most important for you right now?",
+    options: [
+      { text: "Stress & anxiety relief", val: "Stress & anxiety relief" },
+      { text: "Focus & study planning", val: "Focus & study planning" },
+      { text: "Sleep & rest optimization", val: "Sleep & rest optimization" },
+      { text: "AI companion conversations", val: "AI companion conversations" }
+    ]
+  }
+];
 
 export default function StudentDashboard() {
   const router = useRouter();
@@ -27,6 +133,14 @@ export default function StudentDashboard() {
   const [data, setData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // --- Student Onboarding States ---
+  const [onboardingStep, setOnboardingStep] = useState<number>(1);
+  const [onboardingAnswers, setOnboardingAnswers] = useState<any[]>([]);
+  const [isOnboardingSubmitting, setIsOnboardingSubmitting] = useState<boolean>(false);
+  const [onboardingSubmitError, setOnboardingSubmitError] = useState<string | null>(null);
+  const [onboardingValidationError, setOnboardingValidationError] = useState<string | null>(null);
+  const [showPersonalizingState, setShowPersonalizingState] = useState<boolean>(false);
 
   // App Theme State
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -91,9 +205,11 @@ export default function StudentDashboard() {
   const [timeLeft, setTimeLeft] = useState(25 * 60);
   const [timerRunning, setTimerRunning] = useState(false);
 
-  // Calendar selected date (October 6, 2026 default to match image)
-  const [calendarDate, setCalendarDate] = useState(new Date(2026, 9, 1));
-  const [selectedDateStr, setSelectedDateStr] = useState(new Date(2026, 9, 6).toDateString());
+  // Calendar selected date (initialize to current date dynamically)
+  const [calendarDate, setCalendarDate] = useState(new Date());
+  const [selectedDateStr, setSelectedDateStr] = useState(new Date().toDateString());
+
+
 
   // Show Toast helper
   const triggerToast = (msg: string) => {
@@ -157,12 +273,89 @@ export default function StudentDashboard() {
     }
   };
 
+  // --- Student Onboarding Submit ---
+  const handleOnboardingSubmit = async () => {
+    const answersToSubmit = onboardingAnswers;
+    if (answersToSubmit.length < 10 || answersToSubmit.some((a) => !a)) {
+      setOnboardingSubmitError("Please answer all questions before submitting.");
+      return;
+    }
+
+    setIsOnboardingSubmitting(true);
+    setOnboardingSubmitError(null);
+
+    try {
+      const res = await fetch("/api/onboarding/student", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ answers: answersToSubmit }),
+      });
+
+      const resJson = await res.json();
+
+      if (!res.ok) {
+        throw new Error(resJson.error || "We couldn't save your responses. Please try again.");
+      }
+
+      // Show personalizing screen briefly
+      setShowPersonalizingState(true);
+
+      // Sync onboardingCompleted in client session
+      const activeSession = getClientSession();
+      if (activeSession) {
+        const updatedSession = {
+          ...activeSession,
+          user: {
+            ...activeSession.user,
+            onboardingCompleted: true
+          }
+        };
+        localStorage.setItem("manraah_auth_session", JSON.stringify(updatedSession));
+        document.cookie = `manraah_session=${encodeURIComponent(JSON.stringify(updatedSession))}; path=/; max-age=2592000`;
+      }
+
+      // Wait 1.5 seconds for personalization message, then close modal
+      setTimeout(async () => {
+        // Update user state so overlay fades out
+        setData((prev: any) => ({
+          ...prev,
+          user: {
+            ...prev.user,
+            onboardingCompleted: true
+          }
+        }));
+        setShowPersonalizingState(false);
+        // Refresh data to load the personalized wellness sanctuary recommendations
+        await fetchAllData();
+      }, 1500);
+
+    } catch (err: any) {
+      console.error("[Student Dashboard Onboarding submit error]:", err);
+      setOnboardingSubmitError(err.message || "We couldn't save your responses. Please try again.");
+      setIsOnboardingSubmitting(false);
+    }
+  };
+
   // --- Initial Data Load ---
   const fetchAllData = async () => {
     try {
       const res = await fetch("/api/dashboard/student");
-      if (!res.ok) throw new Error("Failed to load Student Dashboard payload.");
       const json = await res.json();
+
+      if (res.status === 401) {
+        router.replace("/login");
+        return;
+      }
+
+      if (res.status === 403 || json.redirect) {
+        const targetRoute = json.redirect || getCategoryDashboardRoute(json.category);
+        router.replace(targetRoute);
+        return;
+      }
+
+      if (!res.ok) {
+        throw new Error(json.error || "Failed to load Student Dashboard payload.");
+      }
       
       setData(json);
       setTasks(json.tasks || []);
@@ -549,15 +742,14 @@ export default function StudentDashboard() {
       triggerToast(err.message);
     }
   };
-
   // Rendering Helpers
   const renderCircularProgress = (pct: number, radius = 38, stroke = 8) => {
     const circ = 2 * Math.PI * radius;
     const offset = circ - (Math.min(100, Math.max(0, pct)) / 100) * circ;
     return (
-      <svg className="w-full h-full transform -rotate-90 select-none">
+      <svg viewBox="0 0 100 100" className="w-full h-full transform -rotate-90 select-none">
         <circle cx="50" cy="50" r={radius} fill="none" stroke="#F0EEFC" strokeWidth={stroke} className="dark:stroke-slate-800" />
-        <circle
+        <motion.circle
           cx="50"
           cy="50"
           r={radius}
@@ -566,8 +758,9 @@ export default function StudentDashboard() {
           strokeWidth={stroke}
           strokeLinecap="round"
           strokeDasharray={circ}
-          strokeDashoffset={offset}
-          className="transition-all duration-1000 ease-out"
+          initial={{ strokeDashoffset: circ }}
+          animate={{ strokeDashoffset: offset }}
+          transition={{ duration: 1.2, ease: "easeOut" }}
         />
       </svg>
     );
@@ -586,21 +779,28 @@ export default function StudentDashboard() {
     
     for (let d = 1; d <= totalDays; d++) {
       const dateObj = new Date(year, month, d);
-      const isTargetDate = d === 6; // October 6
+      const isToday = dateObj.toDateString() === new Date().toDateString();
       const isSelected = dateObj.toDateString() === selectedDateStr;
+      
+      const hasEvent = exams.some((ex: any) => new Date(ex.date).toDateString() === dateObj.toDateString()) ||
+                        tasks.some((t: any) => new Date(t.date).toDateString() === dateObj.toDateString()) ||
+                        (upcomingAppointment && new Date(upcomingAppointment.date).toDateString() === dateObj.toDateString()) ||
+                        data?.history?.some((ch: any) => new Date(ch.created_at).toDateString() === dateObj.toDateString());
       
       days.push(
         <button
           key={`day-${d}`}
           onClick={() => setSelectedDateStr(dateObj.toDateString())}
           className={`w-8 h-8 rounded-full text-xs font-black relative flex items-center justify-center transition-all ${
-            isSelected || isTargetDate
+            isSelected
               ? "bg-[#5F4EA5] text-white shadow-md font-extrabold"
+              : isToday
+              ? "border border-[#5F4EA5] text-[#5F4EA5] dark:text-purple-300 font-extrabold"
               : "text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
           }`}
         >
           <span>{d}</span>
-          {(d === 14 || d === 2 || d === 8) && (
+          {hasEvent && (
             <span className="absolute bottom-1 w-1 h-1 rounded-full bg-[#E7A95F]" />
           )}
         </button>
@@ -642,30 +842,99 @@ export default function StudentDashboard() {
   };
 
   const renderScheduleItems = () => {
-    // Show static scheduled activities as matches the reference design
-    const items = [
-      {
-        title: "Manage Stress Space",
-        time: "10:00 am - 10:30 am",
-        icon: "🧘",
-        color: "bg-[#F5F3FC] dark:bg-[#1C1635]/40 border-[#5F4EA5]/15 text-[#5F4EA5]",
-        action: () => router.push("/meditation"),
-      },
-      {
-        title: "Mindfulness Breathing",
-        time: "09:00 am - 10:00 am",
-        icon: "🌬️",
-        color: "bg-pink-50/50 dark:bg-pink-950/10 border-pink-200/30 text-pink-600",
-        action: () => router.push("/meditation"),
-      },
-      {
-        title: "Study Focus Session",
-        time: "11:00 am - 12:00 pm",
-        icon: "🎯",
-        color: "bg-emerald-50 dark:bg-[#132E3F]/40 border-emerald-200/20 text-[#5FAF8A]",
-        action: () => handleStartFocusTimer(25),
-      },
-    ];
+    const items: any[] = [];
+    
+    // 1. Appointments on selected day
+    if (upcomingAppointment) {
+      const apptDateStr = new Date(upcomingAppointment.date).toDateString();
+      if (apptDateStr === selectedDateStr) {
+        items.push({
+          title: `Consult: ${upcomingAppointment.name}`,
+          time: upcomingAppointment.time,
+          icon: "👩‍⚕️",
+          color: "bg-[#F5F3FC] dark:bg-[#1C1635]/40 border-[#5F4EA5]/15 text-[#5F4EA5]",
+          action: () => setActiveModal("consult"),
+        });
+      }
+    }
+
+    // 2. Exams on selected day
+    exams.forEach((ex: any) => {
+      const examDateStr = new Date(ex.date).toDateString();
+      if (examDateStr === selectedDateStr) {
+        items.push({
+          title: `Exam: ${ex.name} (${ex.subject})`,
+          time: ex.time || "09:00 AM",
+          icon: "📝",
+          color: "bg-pink-50/50 dark:bg-pink-950/10 border-pink-200/30 text-pink-600",
+          action: () => {
+            setEditingExamId(ex.id);
+            setExamName(ex.name);
+            setExamSubject(ex.subject);
+            setExamDate(ex.date.split("T")[0]);
+            setExamTime(ex.time || "09:00 AM");
+            setExamPriority(ex.priority || "Medium");
+            setExamProgress(ex.progress || 50);
+            setActiveModal("exam");
+          },
+        });
+      }
+    });
+
+    // 3. Tasks (Study Planner) on selected day
+    tasks.forEach((t: any) => {
+      const taskDateStr = new Date(t.date).toDateString();
+      if (taskDateStr === selectedDateStr) {
+        items.push({
+          title: `${t.title} (${t.subject})`,
+          time: `${t.duration} min duration`,
+          icon: "🎯",
+          color: t.completed
+            ? "bg-slate-100 dark:bg-slate-800/40 border-slate-200 dark:border-slate-700 text-slate-400 dark:text-slate-500 line-through"
+            : "bg-emerald-50 dark:bg-[#132E3F]/40 border-emerald-200/20 text-[#5FAF8A]",
+          action: () => {
+            setEditingTaskId(t.id);
+            setTaskSubject(t.subject);
+            setTaskTitle(t.title);
+            setTaskDate(t.date.split("T")[0]);
+            setTaskDuration(t.duration);
+            setTaskPriority(t.priority);
+            setActiveModal("task");
+          },
+        });
+      }
+    });
+    // 4. Completed Check-ins on selected day
+    if (data?.history) {
+      data.history.forEach((ch: any) => {
+        const checkinDateStr = new Date(ch.created_at).toDateString();
+        if (checkinDateStr === selectedDateStr) {
+          items.push({
+            title: `Check-in: Feeling ${ch.mood}`,
+            time: `Logged at ${new Date(ch.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`,
+            icon: ch.mood.toLowerCase() === "good" || ch.mood.toLowerCase() === "happy" || ch.mood.toLowerCase() === "amazing" ? "😊" :
+                  ch.mood.toLowerCase() === "okay" || ch.mood.toLowerCase() === "calm" ? "😐" :
+                  ch.mood.toLowerCase() === "stressed" || ch.mood.toLowerCase() === "low" || ch.mood.toLowerCase() === "anxious" ? "😰" : "😫",
+            color: "bg-emerald-50/50 dark:bg-emerald-950/10 border-emerald-250/20 text-[#5FAF8A]",
+            action: () => {
+              setActiveModal("checkin");
+            },
+          });
+        }
+      });
+    }
+
+    // If it's today and empty, show default/recommended things
+    if (items.length === 0) {
+      return (
+        <div className="py-8 text-center flex flex-col items-center justify-center space-y-2">
+          <span className="material-symbols-outlined text-2xl text-slate-350 dark:text-slate-700">event_busy</span>
+          <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 leading-normal px-4">
+            No academic or wellness events scheduled for this day.
+          </p>
+        </div>
+      );
+    }
 
     return (
       <div className="space-y-3 pr-1">
@@ -688,7 +957,6 @@ export default function StudentDashboard() {
       </div>
     );
   };
-
   if (isLoading || !data) {
     return (
       <div className="max-w-7xl mx-auto py-4 px-4 space-y-8 animate-pulse select-none bg-[#F5FAFB] dark:bg-[#0D1F2D] min-h-screen">
@@ -700,23 +968,59 @@ export default function StudentDashboard() {
     );
   }
 
-  const { user, streak, todayMood, wellnessScore, recommendation } = data;
+  const { user, streak, todayMood, wellnessScore, recommendation, weeklyFocus, weeklyMoods } = data;
 
-  // Calculate dynamic progress percentage
+  // 3b. Scale Study Focus sessions bar heights
+  const weeklyFocusData = weeklyFocus || [0, 0, 0, 0, 0, 0, 0];
+  const maxWeeklyFocus = Math.max(1, ...weeklyFocusData);
+  const focusBarHeights = weeklyFocusData.map((mins: number) => {
+    return Math.max(0, Math.round((mins / maxWeeklyFocus) * 100));
+  });
+  const totalWeeklyFocusMinutes = weeklyFocusData.reduce((a: number, b: number) => a + b, 0);
+  const formattedWeeklyFocusTotal = totalWeeklyFocusMinutes > 0
+    ? `${Math.floor(totalWeeklyFocusMinutes / 60)}h ${totalWeeklyFocusMinutes % 60}m`
+    : "0h";
+
+  // 2b. Scale Mood Overview coordinates
+  const weeklyMoodData = weeklyMoods || [4, 4, 4, 4, 4, 4, 4];
+  const moodPoints = weeklyMoodData.map((val: number, i: number) => {
+    const x = 5 + i * 15;
+    // Map: 5 (Good) -> y = 6
+    //      4 (Okay) -> y = 14
+    //      3 (Stressed) -> y = 22
+    //      2 (Overwhelmed/Drained) -> y = 28
+    const y = val === 5 ? 6 : val === 4 ? 14 : val === 3 ? 22 : 28;
+    return { x, y };
+  });
+
+  const pathD = `M ${moodPoints[0].x} ${moodPoints[0].y} ` + moodPoints.slice(1).map((pt: any) => `L ${pt.x} ${pt.y}`).join(" ");
+
+  // Calculate dynamic progress percentage based on check-ins, focus sessions, and tasks
   let completedActivities = 0;
-  let totalActivities = 3;
-  if (todayMood) completedActivities += 1;
-  if (focusSession.completed >= focusSession.total) completedActivities += 1;
+  let totalActivities = 0;
   
+  // 1. Daily Check-in
+  totalActivities += 1;
+  if (todayMood) completedActivities += 1;
+
+  // 2. Focus Sessions (target of 3)
+  totalActivities += 3;
+  completedActivities += Math.min(3, focusSession?.completed || 0);
+
+  // 3. Study Tasks
   const totalTasksCount = tasks.length;
   const completedTasksCount = tasks.filter((t: any) => t.completed).length;
   if (totalTasksCount > 0) {
-    totalActivities += 1;
-    if (completedTasksCount === totalTasksCount) completedActivities += 1;
+    totalActivities += totalTasksCount;
+    completedActivities += completedTasksCount;
   }
-  const progressPercent = 62; // Hardcode default to match reference layout 100%
+
+  const progressPercent = totalActivities > 0 ? Math.round((completedActivities / totalActivities) * 100) : 0;
+  const showOnboarding = data && !data.user?.onboardingCompleted;
+
   return (
-    <div className="min-h-screen w-full bg-[#F5FAFB] dark:bg-[#0D1F2D] text-slate-800 dark:text-slate-100 flex overflow-hidden">
+    <div className="relative min-h-screen w-full">
+      <div className={`min-h-screen w-full bg-[#F5FAFB] dark:bg-[#0D1F2D] text-slate-800 dark:text-slate-100 flex overflow-hidden transition-all duration-500 ${showOnboarding ? "filter blur-[4px] pointer-events-none select-none" : ""}`}>
       <style>{`
         @keyframes floatSlow {
           0% { transform: translateY(0px) scale(0.8); opacity: 0; }
@@ -887,7 +1191,7 @@ export default function StudentDashboard() {
       </aside>
 
       {/* ==================== MAIN CONTENT CONTAINER ==================== */}
-      <div className="flex-1 flex flex-col h-screen overflow-y-auto pb-6">
+      <div className="flex-1 flex flex-col h-screen overflow-y-auto overflow-x-hidden pb-8">
         
         {/* Toast Notifier */}
         <AnimatePresence>
@@ -905,7 +1209,7 @@ export default function StudentDashboard() {
         </AnimatePresence>
 
         {/* ==================== TOP NAVIGATION HEADER ==================== */}
-        <header className="px-6 py-4 flex items-center justify-between border-b border-slate-100 dark:border-slate-800 bg-[#F5FAFB] dark:bg-[#0D1F2D] shrink-0">
+        <header className="px-[28px] lg:px-[32px] py-4 flex items-center justify-between border-b border-slate-100 dark:border-slate-800 bg-[#F5FAFB] dark:bg-[#0D1F2D] shrink-0">
           
           {/* Search box with mobile trigger */}
           <div className="flex items-center gap-3">
@@ -965,13 +1269,13 @@ export default function StudentDashboard() {
         </header>
 
         {/* ==================== CONTENT GRID ==================== */}
-        <main className="flex-1 p-6 grid grid-cols-1 xl:grid-cols-12 gap-6 max-w-7xl mx-auto w-full items-start">
+        <main className="flex-1 p-[28px] lg:p-[32px] grid grid-cols-1 md:grid-cols-2 xl:grid-cols-12 gap-[22px] lg:gap-6 max-w-[1600px] mx-auto w-full items-start">
           
           {/* ==================== LEFT COLUMN (xl-col-span-3) ==================== */}
-          <div className="col-span-1 xl:col-span-3 space-y-6">
+          <div className="col-span-1 md:col-start-1 md:row-start-1 md:col-span-1 xl:col-span-3 xl:col-start-1 xl:row-start-1 xl:row-span-1 space-y-[22px] lg:space-y-6 order-2 xl:order-none">
             
             {/* Daily Check-in Card */}
-            <div className="p-6 rounded-[28px] bg-white dark:bg-[#132E3F] border border-slate-200/50 dark:border-slate-800 shadow-2xs flex flex-col justify-between min-h-[300px] relative overflow-hidden">
+            <div className="p-5 lg:p-6 rounded-[28px] bg-white dark:bg-[#132E3F] border border-slate-200/60 dark:border-slate-800 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between min-h-[290px] relative overflow-hidden">
               {todayMood && todayMood.toLowerCase() === "good" && (
                 <div className="absolute inset-0 pointer-events-none opacity-40 select-none">
                   <span className="absolute bottom-4 left-6 w-2 h-2 rounded-full bg-emerald-400 animate-float-slow" style={{ animationDelay: '0s' }} />
@@ -1054,7 +1358,7 @@ export default function StudentDashboard() {
             </div>
 
             {/* Student Writing Desk Illustration */}
-            <div className="rounded-[28px] overflow-hidden shadow-2xs bg-white dark:bg-[#132E3F] border border-slate-200/50 dark:border-slate-800 group relative">
+            <div className="rounded-[28px] overflow-hidden shadow-[0_2px_12px_rgba(0,0,0,0.03)] bg-white dark:bg-[#132E3F] border border-slate-200/60 dark:border-slate-800 group relative">
               <img
                 src="/images/student_studying.jpg"
                 alt="Student studying at desk"
@@ -1064,7 +1368,7 @@ export default function StudentDashboard() {
             </div>
 
             {/* 100% Confidential card */}
-            <div className="p-5.5 rounded-[28px] bg-white dark:bg-[#132E3F] border border-slate-200/50 dark:border-slate-800 shadow-2xs flex items-start gap-4 text-left">
+            <div className="p-5 lg:p-6 rounded-[28px] bg-white dark:bg-[#132E3F] border border-slate-200/60 dark:border-slate-800 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex items-start gap-4 text-left">
               <div className="w-10 h-10 rounded-xl bg-[#F5F3FC] dark:bg-slate-800 flex items-center justify-center shrink-0">
                 <span className="material-symbols-outlined text-lg text-[#5F4EA5]">lock</span>
               </div>
@@ -1077,16 +1381,16 @@ export default function StudentDashboard() {
             </div>
 
             {/* Today's Motivation quote card */}
-            <div className="rounded-[28px] overflow-hidden shadow-2xs relative min-h-[170px] border border-slate-200/50 dark:border-slate-800 bg-white group">
+            <div className="rounded-[28px] overflow-hidden shadow-[0_2px_12px_rgba(0,0,0,0.03)] relative min-h-[160px] border border-slate-200/60 dark:border-slate-800 bg-white group">
               <img
                 src="/images/motivation_bg.png"
                 alt="Motivation background"
-                className="absolute inset-0 w-full h-full object-cover select-none transition-transform duration-700 group-hover:scale-[1.03]"
+                className="absolute inset-0 w-full h-full object-cover object-bottom select-none transition-transform duration-700 group-hover:scale-[1.03]"
               />
-              <div className="absolute inset-0 p-6 flex flex-col justify-between text-left z-10">
+              <div className="absolute inset-0 p-5 lg:p-6 flex flex-col justify-between text-left z-10">
                 <h6 className="text-[9px] font-black text-[#5F4EA5] uppercase tracking-wider">Today's Motivation</h6>
                 <p className="text-xs font-heading font-black text-[#100E26] leading-relaxed pr-8 pt-4">
-                  "Small progress today, big change tomorrow."
+                  "{data?.motivation || "Your sanctuary is here to support you at every step."}"
                 </p>
                 <div />
               </div>
@@ -1095,7 +1399,7 @@ export default function StudentDashboard() {
           </div>
 
           {/* ==================== MIDDLE COLUMN (xl-col-span-6) ==================== */}
-          <div className="col-span-1 xl:col-span-6 space-y-6">
+          <div className="col-span-1 md:col-start-2 md:row-start-1 md:row-span-2 md:col-span-1 xl:col-span-6 xl:col-start-4 xl:row-start-1 xl:row-span-1 space-y-[22px] lg:space-y-6 order-1 xl:order-none">
             
             {/* Welcome back header */}
             <div className="text-left">
@@ -1109,27 +1413,27 @@ export default function StudentDashboard() {
 
               {/* Badges */}
               <div className="flex flex-wrap gap-2.5 mt-3">
-                <span className="px-3.5 py-1.5 rounded-full text-[9px] font-black bg-white dark:bg-[#132E3F] border border-slate-200/50 dark:border-slate-800 text-[#5F4EA5] flex items-center gap-1.5 shadow-2xs">
+                <span className="px-3.5 py-1.5 rounded-full text-[9px] font-black bg-white dark:bg-[#132E3F] border border-slate-200/60 dark:border-slate-800 text-[#5F4EA5] flex items-center gap-1.5 shadow-[0_2px_12px_rgba(0,0,0,0.03)]">
                   🎓 Student
                 </span>
-                <span className="px-3.5 py-1.5 rounded-full text-[9px] font-black bg-white dark:bg-[#132E3F] border border-slate-200/50 dark:border-slate-800 text-[#E7A95F] flex items-center gap-1.5 shadow-2xs">
+                <span className="px-3.5 py-1.5 rounded-full text-[9px] font-black bg-white dark:bg-[#132E3F] border border-slate-200/60 dark:border-slate-800 text-[#E7A95F] flex items-center gap-1.5 shadow-[0_2px_12px_rgba(0,0,0,0.03)]">
                   🔥 {data?.user?.streakDays ?? 7} Day Streak
                 </span>
-                <span className="px-3.5 py-1.5 rounded-full text-[9px] font-black bg-white dark:bg-[#132E3F] border border-slate-200/50 dark:border-slate-800 text-[#5FAF8A] flex items-center gap-1.5 shadow-2xs">
+                <span className="px-3.5 py-1.5 rounded-full text-[9px] font-black bg-white dark:bg-[#132E3F] border border-slate-200/60 dark:border-slate-800 text-[#5FAF8A] flex items-center gap-1.5 shadow-[0_2px_12px_rgba(0,0,0,0.03)]">
                   😊 Feeling: {data?.user?.currentMood ?? "Good"}
                 </span>
               </div>
             </div>
 
             {/* Upcoming Appointment */}
-            <div className="p-6 rounded-[28px] bg-white dark:bg-[#132E3F] border border-slate-200/50 dark:border-slate-800 shadow-2xs space-y-4">
+            <div className="p-5 lg:p-6 rounded-[28px] bg-white dark:bg-[#132E3F] border border-slate-200/60 dark:border-slate-800 shadow-[0_2px_12px_rgba(0,0,0,0.03)] space-y-4">
               <h4 className="font-heading font-black text-xs text-[#100E26] dark:text-slate-100 uppercase tracking-widest text-left">
                 Upcoming Appointment
               </h4>
 
               {data?.upcomingAppointment ? (
                 <div className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5 items-stretch">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 items-stretch">
                     {/* Left Hospital Card */}
                     <div className="rounded-2xl overflow-hidden border border-slate-100 dark:border-slate-800 bg-[#FBFBFF] dark:bg-[#0D1F2D] shadow-3xs flex flex-col justify-between">
                       <img
@@ -1201,16 +1505,16 @@ export default function StudentDashboard() {
             </div>
 
             {/* Wellness Score & Daily Progress Row */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-[22px] lg:gap-6">
               
               {/* Wellness Score */}
-              <div className="p-6 rounded-[28px] bg-white dark:bg-[#132E3F] border border-slate-200/50 dark:border-slate-800 shadow-2xs space-y-4">
+              <div className="p-5 lg:p-6 rounded-[28px] bg-white dark:bg-[#132E3F] border border-slate-200/60 dark:border-slate-800 shadow-[0_2px_12px_rgba(0,0,0,0.03)] space-y-4">
                 <div className="text-left">
                   <h4 className="font-heading font-black text-xs text-[#100E26] dark:text-slate-100 uppercase tracking-widest">Wellness Score</h4>
                   <p className="text-[8px] text-slate-400 font-bold mt-0.5">Your overall wellness today</p>
                 </div>
 
-                {(!data?.history || data.history.length === 0) ? (
+                {(!data?.wellnessScore || !data?.history || data.history.length === 0) ? (
                   <div className="py-8 text-center flex flex-col items-center justify-center space-y-2">
                     <span className="material-symbols-outlined text-2xl text-[#5F4EA5]">insights</span>
                     <p className="text-[10px] font-bold text-slate-500 dark:text-slate-400 leading-normal px-4">
@@ -1222,7 +1526,7 @@ export default function StudentDashboard() {
                     <div className="flex items-center gap-4">
                       <div className="w-16 h-16 shrink-0 relative flex items-center justify-center">
                         {renderCircularProgress(data?.wellnessScore?.score ?? 78, 38, 7)}
-                        <div className="absolute flex flex-col items-center">
+                        <div className="absolute inset-0 flex flex-col items-center justify-center">
                           <span className="text-base font-black text-slate-800 dark:text-slate-100">{data?.wellnessScore?.score ?? 78}</span>
                           <span className="text-[6px] font-bold text-slate-400 uppercase tracking-widest leading-none">/ 100</span>
                         </div>
@@ -1258,23 +1562,23 @@ export default function StudentDashboard() {
               </div>
 
               {/* Daily Progress */}
-              <div className="p-6 rounded-[28px] bg-white dark:bg-[#132E3F] border border-slate-200/50 dark:border-slate-800 shadow-2xs flex flex-col justify-between min-h-[190px]">
+              <div className="p-5 lg:p-6 rounded-[28px] bg-white dark:bg-[#132E3F] border border-slate-200/60 dark:border-slate-800 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between min-h-[190px]">
                 <div className="text-left">
                   <h4 className="font-heading font-black text-xs text-[#100E26] dark:text-slate-100 uppercase tracking-widest">Daily Progress</h4>
                   <p className="text-[8px] text-slate-400 font-bold mt-0.5">Keep improving yourself every day!</p>
                 </div>
 
-                <div className="w-20 h-20 relative flex items-center justify-center mx-auto my-2">
+                <div className="w-24 h-24 relative flex items-center justify-center mx-auto my-2 shrink-0">
                   {renderCircularProgress(progressPercent, 38, 7)}
-                  <div className="absolute flex flex-col items-center">
-                    <span className="text-sm font-black text-slate-800 dark:text-slate-100">{progressPercent}%</span>
-                    <span className="text-[6px] font-bold text-slate-400 uppercase tracking-widest leading-none">Complete</span>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center">
+                    <span className="text-sm font-black text-slate-800 dark:text-slate-100 leading-none">{progressPercent}%</span>
+                    <span className="text-[6px] font-bold text-slate-400 uppercase tracking-widest leading-none mt-1">Complete</span>
                   </div>
                 </div>
 
                 <button
                   onClick={() => router.push("/journey")}
-                  className="w-full py-2.5 rounded-xl border border-[#F0EEFC] text-[9px] font-black text-[#5F4EA5] uppercase tracking-widest hover:bg-slate-50 dark:hover:bg-slate-800 transition-all"
+                  className="w-full py-2.5 rounded-xl border border-[#F0EEFC] dark:border-slate-800 text-[9px] font-black text-[#5F4EA5] dark:text-purple-300 uppercase tracking-widest hover:bg-slate-50 dark:hover:bg-slate-800 transition-all"
                 >
                   View Goals
                 </button>
@@ -1282,11 +1586,11 @@ export default function StudentDashboard() {
 
             </div>
 
-            {/* Study Focus, Study Analytics, Exam Tracker, Mood Overview Row */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {/* Study Focus, Study Analytics, Exam Tracker Row */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-[22px] lg:gap-6">
               
               {/* Study Focus */}
-              <div className="p-4 rounded-[24px] bg-white dark:bg-[#132E3F] border border-slate-200/50 dark:border-slate-800 shadow-2xs flex flex-col justify-between min-h-[180px] text-left">
+              <div className="p-5 lg:p-6 rounded-[28px] bg-white dark:bg-[#132E3F] border border-slate-200/60 dark:border-slate-800 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between min-h-[180px] text-left">
                 <div className="space-y-1">
                   <h5 className="text-[9px] font-black text-[#100E26] dark:text-slate-100 uppercase tracking-widest">Study Focus</h5>
                   <p className="text-[8px] text-slate-400 font-bold">Today's Focus Session</p>
@@ -1330,23 +1634,25 @@ export default function StudentDashboard() {
               </div>
 
               {/* Study Analytics */}
-              <div className="p-4 rounded-[24px] bg-white dark:bg-[#132E3F] border border-slate-200/50 dark:border-slate-800 shadow-2xs flex flex-col justify-between min-h-[180px] text-left">
+              <div className="p-5 lg:p-6 rounded-[28px] bg-white dark:bg-[#132E3F] border border-slate-200/60 dark:border-slate-800 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between min-h-[180px] text-left">
                 <div className="space-y-0.5">
                   <h5 className="text-[9px] font-black text-[#100E26] dark:text-slate-100 uppercase tracking-widest">Study Analytics</h5>
                   <div className="flex justify-between items-baseline">
                     <span className="text-[8px] text-[#5F4EA5] font-bold uppercase">This Week</span>
-                    <span className="text-[8px] text-slate-400 font-bold">8h 30m <span className="opacity-60">Total</span></span>
+                    <span className="text-[8px] text-slate-400 font-bold">{formattedWeeklyFocusTotal} <span className="opacity-65">Total</span></span>
                   </div>
                 </div>
 
                 {/* SVG Bar Chart */}
                 <div className="h-16 flex items-end justify-between px-1 pt-2 select-none">
-                  {[20, 45, 30, 60, 50, 80, 40].map((h, i) => (
+                  {focusBarHeights.map((h: number, i: number) => (
                     <div key={i} className="flex flex-col items-center flex-1 mx-0.5">
                       <div className="w-2.5 bg-[#EBE7FC] dark:bg-slate-800 rounded-t-sm h-12 relative overflow-hidden">
-                        <div
+                        <motion.div
                           className="absolute bottom-0 left-0 right-0 bg-[#5F4EA5] rounded-t-sm"
-                          style={{ height: `${h}%` }}
+                          initial={{ height: 0 }}
+                          animate={{ height: `${h}%` }}
+                          transition={{ duration: 1.0, ease: "easeOut", delay: i * 0.05 }}
                         />
                       </div>
                       <span className="text-[7px] font-black text-slate-400 mt-1 uppercase">
@@ -1359,7 +1665,7 @@ export default function StudentDashboard() {
               </div>
 
               {/* Exam Tracker */}
-              <div className="p-4 rounded-[24px] bg-white dark:bg-[#132E3F] border border-slate-200/50 dark:border-slate-800 shadow-2xs flex flex-col justify-between min-h-[180px] text-left">
+              <div className="p-5 lg:p-6 rounded-[28px] bg-white dark:bg-[#132E3F] border border-slate-200/60 dark:border-slate-800 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between min-h-[180px] text-left">
                 <div className="space-y-0.5">
                   <h5 className="text-[9px] font-black text-[#100E26] dark:text-slate-100 uppercase tracking-widest">Exam Tracker</h5>
                   <p className="text-[8px] text-slate-400 font-bold">Upcoming Exams</p>
@@ -1391,65 +1697,23 @@ export default function StudentDashboard() {
                 </button>
               </div>
 
-              {/* Mood Overview */}
-              <div className="p-4 rounded-[24px] bg-white dark:bg-[#132E3F] border border-slate-200/50 dark:border-slate-800 shadow-2xs flex flex-col justify-between min-h-[180px] text-left">
-                <div className="space-y-0.5">
-                  <h5 className="text-[9px] font-black text-[#100E26] dark:text-slate-100 uppercase tracking-widest">Mood Overview</h5>
-                  <p className="text-[8px] text-[#5F4EA5] font-bold uppercase">This Week</p>
-                </div>
-
-                {/* Line Chart */}
-                <div className="h-16 relative flex items-end pt-2 select-none">
-                  {/* Grid Lines */}
-                  <div className="absolute inset-x-0 top-2 border-t border-slate-100 dark:border-slate-800/40" />
-                  <div className="absolute inset-x-0 top-8 border-t border-[#F0EEFC]/50 dark:border-slate-800/40" />
-                  
-                  {/* SVG line */}
-                  <svg className="w-full h-full" viewBox="0 0 100 40">
-                    <path
-                      d="M 5 22 Q 20 5 35 15 T 65 25 T 95 12"
-                      fill="none"
-                      stroke="#5F4EA5"
-                      strokeWidth="2"
-                    />
-                    {[
-                      { x: 5, y: 22 },
-                      { x: 20, y: 8 },
-                      { x: 35, y: 15 },
-                      { x: 50, y: 20 },
-                      { x: 65, y: 25 },
-                      { x: 80, y: 32 },
-                      { x: 95, y: 12 }
-                    ].map((pt, i) => (
-                      <circle key={i} cx={pt.x} cy={pt.y} r="2.5" fill="#FFFFFF" stroke="#5F4EA5" strokeWidth="1.5" />
-                    ))}
-                  </svg>
-                </div>
-
-                <div className="flex justify-between text-[7px] font-black text-slate-400 uppercase tracking-widest">
-                  {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((d) => (
-                    <span key={d}>{d}</span>
-                  ))}
-                </div>
-              </div>
-
             </div>
 
           </div>
 
           {/* ==================== RIGHT COLUMN (xl-col-span-3) ==================== */}
-          <div className="col-span-1 xl:col-span-3 space-y-6">
+          <div className="col-span-1 md:col-start-1 md:row-start-2 md:col-span-1 xl:col-span-3 xl:col-start-10 xl:row-start-1 xl:row-span-1 space-y-[22px] lg:space-y-6 order-3 xl:order-none">
             
             {/* Calendar Card */}
-            <div className="p-6 rounded-[28px] bg-white dark:bg-[#132E3F] border border-slate-200/50 dark:border-slate-800 shadow-2xs">
+            <div className="p-5 lg:p-6 rounded-[28px] bg-white dark:bg-[#132E3F] border border-slate-200/60 dark:border-slate-800 shadow-[0_2px_12px_rgba(0,0,0,0.03)]">
               {renderCalendarDays()}
             </div>
 
             {/* Schedule Events List */}
-            <div className="p-6 rounded-[28px] bg-white dark:bg-[#132E3F] border border-slate-200/50 dark:border-slate-800 shadow-2xs space-y-4">
+            <div className="p-5 lg:p-6 rounded-[28px] bg-white dark:bg-[#132E3F] border border-slate-200/60 dark:border-slate-800 shadow-[0_2px_12px_rgba(0,0,0,0.03)] space-y-4">
               <div className="flex justify-between items-center pb-2 border-b border-slate-100 dark:border-slate-800">
                 <h4 className="font-heading font-black text-xs text-[#100E26] dark:text-slate-100 uppercase tracking-widest text-left">
-                  Schedule for Oct 6
+                  Schedule for {new Date(selectedDateStr).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
                 </h4>
                 <span className="w-2.5 h-2.5 rounded-full bg-[#5F4EA5]" />
               </div>
@@ -1464,15 +1728,52 @@ export default function StudentDashboard() {
               </button>
             </div>
 
+            {/* Mood Overview Card */}
+            <div className="p-5 lg:p-6 rounded-[28px] bg-white dark:bg-[#132E3F] border border-slate-200/60 dark:border-slate-800 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between min-h-[180px] text-left">
+              <div className="space-y-0.5">
+                <h5 className="text-[9px] font-black text-[#100E26] dark:text-slate-100 uppercase tracking-widest">Mood Overview</h5>
+                <p className="text-[8px] text-[#5F4EA5] font-bold uppercase">This Week</p>
+              </div>
+
+              {/* Line Chart */}
+              <div className="h-16 relative flex items-end pt-2 select-none">
+                {/* Grid Lines */}
+                <div className="absolute inset-x-0 top-2 border-t border-slate-100 dark:border-slate-800/40" />
+                <div className="absolute inset-x-0 top-8 border-t border-[#F0EEFC]/50 dark:border-slate-800/40" />
+                
+                {/* SVG line */}
+                <svg className="w-full h-full" viewBox="0 0 100 40">
+                  <motion.path
+                    d={pathD}
+                    fill="none"
+                    stroke="#5F4EA5"
+                    strokeWidth="1.5"
+                    initial={{ pathLength: 0 }}
+                    animate={{ pathLength: 1 }}
+                    transition={{ duration: 1.5, ease: "easeInOut" }}
+                  />
+                  {moodPoints.map((pt: any, i: number) => (
+                    <circle key={i} cx={pt.x} cy={pt.y} r="2" fill="#FFFFFF" stroke="#5F4EA5" strokeWidth="1" />
+                  ))}
+                </svg>
+              </div>
+
+              <div className="flex justify-between text-[7px] font-black text-slate-400 uppercase tracking-widest">
+                {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((d) => (
+                  <span key={d}>{d}</span>
+                ))}
+              </div>
+            </div>
+
           </div>
 
         </main>
 
         {/* ==================== BOTTOM FULL-WIDTH TRAY ==================== */}
-        <div className="px-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start max-w-7xl mx-auto w-full mt-4">
+        <div className="px-[28px] lg:px-[32px] grid grid-cols-1 lg:grid-cols-12 gap-[22px] lg:gap-6 items-start max-w-[1600px] mx-auto w-full mt-7 lg:mt-8">
           
           {/* AI Recommendation */}
-          <div className="col-span-1 lg:col-span-6 rounded-[32px] overflow-hidden min-h-[140px] shadow-2xs border border-slate-250/20 bg-[#F5F3FC] dark:bg-[#1C1635] flex items-center relative text-left">
+          <div className="col-span-1 lg:col-span-6 rounded-[28px] overflow-hidden min-h-[140px] shadow-[0_2px_12px_rgba(0,0,0,0.03)] border border-purple-200/40 bg-[#F5F3FC] dark:bg-[#1C1635] flex items-center relative text-left">
             <div className="absolute top-0 left-0 w-24 h-24 rounded-full bg-[#5F4EA5]/10 blur-xl pointer-events-none" />
             <div className="absolute bottom-0 right-0 w-36 h-36 rounded-full bg-pink-500/5 blur-2xl pointer-events-none" />
 
@@ -1503,7 +1804,7 @@ export default function StudentDashboard() {
           </div>
 
           {/* Quick Tools */}
-          <div className="col-span-1 lg:col-span-6 p-5 rounded-[32px] bg-white dark:bg-[#132E3F] border border-slate-200/50 dark:border-slate-800 shadow-2xs flex flex-col justify-between min-h-[140px] text-left">
+          <div className="col-span-1 lg:col-span-6 p-5 lg:p-6 rounded-[28px] bg-white dark:bg-[#132E3F] border border-slate-200/60 dark:border-slate-800 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between min-h-[140px] text-left">
             <h4 className="font-heading font-black text-xs text-[#100E26] dark:text-slate-100 uppercase tracking-widest mb-3">
               Quick Tools
             </h4>
@@ -2165,16 +2466,12 @@ export default function StudentDashboard() {
 
                 <div className="space-y-1">
                   <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest block">Category</label>
-                  <select
-                    value={profileCategory}
-                    onChange={(e) => setProfileCategory(e.target.value)}
-                    className="w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 text-xs focus:outline-none focus:ring-1 focus:ring-[#5F4EA5] text-slate-800 dark:text-slate-200 font-bold"
-                  >
-                    <option value="student">Student</option>
-                    <option value="working_professional">Working Professional</option>
-                    <option value="parent">Parent</option>
-                    <option value="couple">Couple</option>
-                  </select>
+                  <input
+                    type="text"
+                    disabled
+                    value="Student"
+                    className="w-full px-4 py-3 rounded-2xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-xs text-slate-400 dark:text-slate-500 font-bold cursor-not-allowed"
+                  />
                 </div>
 
                 <button
@@ -2186,6 +2483,176 @@ export default function StudentDashboard() {
               </form>
             </motion.div>
           </div>
+        )}
+      </AnimatePresence>
+
+      </div> {/* Closes blurred dashboard container */}
+
+      {/* Student Onboarding Assessment Modal Overlay */}
+      <AnimatePresence>
+        {showOnboarding && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.4 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/35 backdrop-blur-[2px] p-4 overflow-y-auto"
+          >
+            <motion.div
+              initial={{ scale: 0.96, opacity: 0, y: 15 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.96, opacity: 0, y: 10 }}
+              transition={{ duration: 0.4, ease: "easeOut" }}
+              className="w-full max-w-[520px] bg-white dark:bg-[#132E3F] border border-slate-200/60 dark:border-slate-800 rounded-[32px] p-8 space-y-6 shadow-2xl relative text-left"
+            >
+              {showPersonalizingState ? (
+                <div className="flex flex-col items-center justify-center py-12 space-y-4">
+                  <div className="w-12 h-12 rounded-full border-4 border-t-[#5F4EA5] border-purple-200 animate-spin" />
+                  <h3 className="text-lg font-heading font-black text-[#100E26] dark:text-slate-100">
+                    Personalizing your sanctuary...
+                  </h3>
+                </div>
+              ) : (
+                <>
+                  {/* Question Index */}
+                  <div className="flex justify-between items-center text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">
+                    <span>Student Assessment</span>
+                    <span>Question {onboardingStep} of 10</span>
+                  </div>
+
+                  {/* Progress Bar */}
+                  <div className="w-full h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                    <div 
+                      className="h-full bg-[#5F4EA5] transition-all duration-300"
+                      style={{ width: `${(onboardingStep / 10) * 100}%` }}
+                    />
+                  </div>
+
+                  {/* Question Transition Wrapper */}
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={onboardingStep}
+                      initial={{ opacity: 0, x: 15 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -15 }}
+                      transition={{ duration: 0.25 }}
+                      className="space-y-6"
+                    >
+                      {/* Question Text */}
+                      <h4 className="text-sm md:text-base font-heading font-black text-[#100E26] dark:text-slate-100 leading-snug">
+                        {ONBOARDING_QUESTIONS[onboardingStep - 1].question}
+                      </h4>
+
+                      {/* Options list */}
+                      <div className="space-y-2">
+                        {ONBOARDING_QUESTIONS[onboardingStep - 1].options.map((opt) => {
+                          const isSelected = onboardingAnswers[onboardingStep - 1]?.answer === opt.val;
+                          return (
+                            <button
+                              key={opt.val}
+                              type="button"
+                              onClick={() => {
+                                const newAnswers = [...onboardingAnswers];
+                                newAnswers[onboardingStep - 1] = {
+                                  questionId: ONBOARDING_QUESTIONS[onboardingStep - 1].id,
+                                  question: ONBOARDING_QUESTIONS[onboardingStep - 1].question,
+                                  answer: opt.val
+                                };
+                                setOnboardingAnswers(newAnswers);
+                                setOnboardingValidationError(null);
+                                setOnboardingSubmitError(null);
+                              }}
+                              className={`w-full p-4 rounded-2xl border text-left text-xs transition-all flex items-center justify-between ${
+                                isSelected
+                                  ? "bg-[#F5F3FC] dark:bg-[#1C1635]/60 border-[#5F4EA5] text-[#5F4EA5] dark:text-purple-300 font-extrabold"
+                                  : "bg-slate-50 dark:bg-slate-800/50 border-slate-100 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                              }`}
+                            >
+                              <span>{opt.text}</span>
+                              {isSelected && (
+                                <span className="material-symbols-outlined text-sm font-black text-[#5F4EA5] dark:text-purple-300">check_circle</span>
+                              )}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </motion.div>
+                  </AnimatePresence>
+
+                  {/* Error block */}
+                  {onboardingSubmitError && (
+                    <div className="p-3.5 rounded-2xl bg-red-50 dark:bg-red-950/20 text-red-500 text-xs font-bold border border-red-200/20">
+                      ⚠️ {onboardingSubmitError}
+                    </div>
+                  )}
+
+                  {/* Validation Error block */}
+                  {onboardingValidationError && (
+                    <div className="p-3.5 rounded-2xl bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400 text-xs font-bold border border-amber-200/20">
+                      ⚠️ {onboardingValidationError}
+                    </div>
+                  )}
+
+                  {/* Bottom Nav Bar */}
+                  <div className="flex justify-between items-center pt-4 border-t border-slate-100 dark:border-slate-800">
+                    <button
+                      type="button"
+                      disabled={onboardingStep === 1}
+                      onClick={() => {
+                        setOnboardingStep(onboardingStep - 1);
+                        setOnboardingValidationError(null);
+                      }}
+                      className={`text-[10px] font-black uppercase tracking-wider flex items-center gap-1 transition-all ${
+                        onboardingStep === 1
+                          ? "text-slate-300 dark:text-slate-700 cursor-not-allowed"
+                          : "text-slate-500 hover:text-slate-800 dark:hover:text-slate-100"
+                      }`}
+                    >
+                      <span className="material-symbols-outlined text-xs font-black">arrow_back</span>
+                      Back
+                    </button>
+
+                    {onboardingStep < 10 ? (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (!onboardingAnswers[onboardingStep - 1]) {
+                            setOnboardingValidationError("Please select an option to continue.");
+                            return;
+                          }
+                          setOnboardingValidationError(null);
+                          setOnboardingStep(onboardingStep + 1);
+                        }}
+                        className="py-3 px-6 rounded-xl text-[10px] font-black uppercase tracking-wider flex items-center gap-1 transition-all bg-[#5F4EA5] hover:bg-[#100E26] text-white"
+                      >
+                        Next
+                        <span className="material-symbols-outlined text-xs font-black">arrow_forward</span>
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        disabled={isOnboardingSubmitting}
+                        onClick={() => {
+                          if (!onboardingAnswers[onboardingStep - 1]) {
+                            setOnboardingValidationError("Please select an option to continue.");
+                            return;
+                          }
+                          setOnboardingValidationError(null);
+                          handleOnboardingSubmit();
+                        }}
+                        className={`py-3 px-6 rounded-xl text-[10px] font-black uppercase tracking-wider flex items-center gap-1 transition-all bg-[#5FAF8A] hover:bg-[#4d9774] text-white ${
+                          isOnboardingSubmitting ? "opacity-75 cursor-not-allowed" : ""
+                        }`}
+                      >
+                        {isOnboardingSubmitting ? "Personalizing..." : "Complete"}
+                        <span className="material-symbols-outlined text-xs font-black">done_all</span>
+                      </button>
+                    )}
+                  </div>
+                </>
+              )}
+            </motion.div>
+          </motion.div>
         )}
       </AnimatePresence>
 

@@ -16,6 +16,7 @@ const PROTECTED_ROUTES = [
   "/profile",
   "/crisis-support",
   "/call",
+  "/onboarding",
 ];
 
 const AUTH_ROUTES = ["/login", "/signup"];
@@ -37,9 +38,12 @@ export function middleware(request: NextRequest) {
   const manraahSessionCookie = request.cookies.get("manraah_session")?.value;
   if (manraahSessionCookie) {
     try {
-      // Decode and parse the session cookie
-      const parsed = JSON.parse(decodeURIComponent(manraahSessionCookie));
-      if (parsed && parsed.isAuthenticated && parsed.user && parsed.user.id) {
+      let raw = manraahSessionCookie;
+      try {
+        raw = decodeURIComponent(raw);
+      } catch (e) {}
+      const parsed = JSON.parse(raw);
+      if (parsed && (parsed.isAuthenticated || parsed.user?.id) && parsed.user && parsed.user.id) {
         hasSession = true;
       }
     } catch (err) {
@@ -53,8 +57,7 @@ export function middleware(request: NextRequest) {
   );
 
   if (isProtected && !hasSession) {
-    const userTypeCookie = request.cookies.get("userType")?.value || "student";
-    const loginUrl = new URL(`/login?redirectTo=/dashboard/${userTypeCookie}&userType=${userTypeCookie}`, request.url);
+    const loginUrl = new URL("/login", request.url);
     return NextResponse.redirect(loginUrl);
   }
 

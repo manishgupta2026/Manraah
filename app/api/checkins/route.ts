@@ -68,59 +68,36 @@ export async function POST(req: Request) {
     const existingCheckin = await sql`
       SELECT id, created_at FROM daily_checkins
       WHERE user_id = ${userId}
-        AND created_at >= CURRENT_DATE
       ORDER BY created_at DESC
       LIMIT 1
     `;
 
-    let savedId: number;
-
     if (existingCheckin.length > 0) {
-      // Update today's existing checkin
-      savedId = existingCheckin[0].id;
-      await sql`
-        UPDATE daily_checkins SET
-          mood = ${mood},
-          energy_level = ${energyVal},
-          sleep_quality = ${sleepVal},
-          stress = ${stressVal},
-          work_life_balance = ${balanceVal},
-          note = ${note || null}
-        WHERE id = ${savedId}
-      `;
-
-      // Also update latest mood entry
-      await sql`
-        UPDATE mood_entries SET
-          mood = ${mood},
-          energy = ${energyVal},
-          sleep_quality = ${sleepVal},
-          stress = ${stressVal},
-          work_life_balance = ${balanceVal},
-          reflection = ${note || null},
-          updated_at = CURRENT_TIMESTAMP
-        WHERE user_id = ${userId}
-          AND created_at >= CURRENT_DATE
-      `;
-    } else {
-      // Insert new checkin
-      const insertRes = await sql`
-        INSERT INTO daily_checkins (
-          user_id, mood, energy_level, sleep_quality, stress, work_life_balance, note
-        ) VALUES (
-          ${userId}, ${mood}, ${energyVal}, ${sleepVal}, ${stressVal}, ${balanceVal}, ${note || null}
-        ) RETURNING id
-      `;
-      savedId = insertRes[0]?.id;
-
-      await sql`
-        INSERT INTO mood_entries (
-          user_id, mood, energy, stress, sleep_quality, work_life_balance, reflection
-        ) VALUES (
-          ${userId}, ${mood}, ${energyVal}, ${stressVal}, ${sleepVal}, ${balanceVal}, ${note || null}
-        )
-      `;
+      const isToday = new Date(existingCheckin[0].created_at).toDateString() === new Date().toDateString();
+      if (isToday) {
+        return NextResponse.json(
+          { error: "You have already completed your daily check-in for today." },
+          { status: 400 }
+        );
+      }
     }
+
+    // Insert new checkin
+    const insertRes = await sql`
+      INSERT INTO daily_checkins (
+        user_id, mood, energy_level, sleep_quality, stress, work_life_balance, note
+      ) VALUES (
+        ${userId}, ${mood}, ${energyVal}, ${sleepVal}, ${stressVal}, ${balanceVal}, ${note || null}
+      ) RETURNING id
+    `;
+    const savedId = insertRes[0]?.id;
+    await sql`
+      INSERT INTO mood_entries (
+        user_id, mood, energy, stress, sleep_quality, work_life_balance, reflection
+      ) VALUES (
+        ${userId}, ${mood}, ${energyVal}, ${stressVal}, ${sleepVal}, ${balanceVal}, ${note || null}
+      )
+    `;
 
     // 2. Calculate updated wellness score
     const scoreResult = calculateWellnessScore({
@@ -138,11 +115,19 @@ export async function POST(req: Request) {
       WHERE id = ${userId}
     `;
 
+    let userCategory = "student";
+    if (userId) {
+      const uRes = await sql`SELECT selected_category FROM users WHERE id = ${userId} LIMIT 1`;
+      if (uRes.length > 0) {
+        userCategory = uRes[0].selected_category;
+      }
+    }
+
     await sql`
       INSERT INTO assessments (
         user_id, category, total_score, max_score, percentage, wellness_level
       ) VALUES (
-        ${userId}, 'working-professional', ${scoreResult.score}, 100, ${scoreResult.score}, ${scoreResult.level}
+        ${userId}, ${userCategory}, ${scoreResult.score}, 100, ${scoreResult.score}, ${scoreResult.level}
       )
     `;
 

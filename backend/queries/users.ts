@@ -11,7 +11,7 @@ export async function getUserByEmail(email: string) {
   } catch {}
 
   const results = await sql`
-    SELECT id, name, email, password_hash, sanctuary_name, avatar, selected_category, streak_days, mindfulness_minutes, current_mood, dashboard_state
+    SELECT id, name, email, password_hash, sanctuary_name, avatar, selected_category, streak_days, mindfulness_minutes, current_mood, dashboard_state, onboarding_completed
     FROM users
     WHERE LOWER(email) = ${cleanEmail}
     LIMIT 1
@@ -25,7 +25,7 @@ export async function getUserById(id: string) {
   } catch {}
 
   const results = await sql`
-    SELECT id, name, email, sanctuary_name, avatar, selected_category, streak_days, mindfulness_minutes, current_mood, dashboard_state
+    SELECT id, name, email, sanctuary_name, avatar, selected_category, streak_days, mindfulness_minutes, current_mood, dashboard_state, onboarding_completed
     FROM users
     WHERE id = ${id}
     LIMIT 1

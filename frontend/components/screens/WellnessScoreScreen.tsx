@@ -10,6 +10,7 @@ import { motion } from "framer-motion";
 import ScreenHeader from "@/frontend/components/ui/ScreenHeader";
 import { getClientSession, signOut } from "@/backend/auth/client";
 import { AuthSession } from "@/backend/types";
+import { getCategoryDashboardRoute } from "@/frontend/lib/category-routes";
 
 export default function WellnessScoreScreen() {
   const router = useRouter();
@@ -54,7 +55,7 @@ export default function WellnessScoreScreen() {
       }
 
       // Sync local storage session category
-      const targetCategory = selectedCategory === "couples" || selectedCategory === "couple" ? "couples" : (selectedCategory === "parents" || selectedCategory === "parent" ? "parents" : selectedCategory || "student");
+      const targetCategory = selectedCategory || "student";
       const updatedSession = {
         ...session,
         user: {
@@ -66,14 +67,10 @@ export default function WellnessScoreScreen() {
       document.cookie = `manraah_session=${JSON.stringify(updatedSession)}; path=/; max-age=2592000`;
       document.cookie = `userType=${targetCategory}; path=/; max-age=2592000`;
 
-      const c = (targetCategory || "").toLowerCase();
-      const targetSubpath = c === "couples" || c === "couple" ? "couples" : (c === "parents" || c === "parent" ? "parents" : "student");
-      router.push(`/dashboard/${targetSubpath}`);
+      router.push(getCategoryDashboardRoute(targetCategory));
     } catch (err) {
       console.error("[Assessment Save Error]:", err);
-      const c = (selectedCategory || "").toLowerCase();
-      const fallbackSubpath = c === "couples" || c === "couple" ? "couples" : (c === "parents" || c === "parent" ? "parents" : "student");
-      router.push(`/dashboard/${fallbackSubpath}`);
+      router.push(getCategoryDashboardRoute(selectedCategory));
     } finally {
       setSaving(false);
     }

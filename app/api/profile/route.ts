@@ -90,6 +90,9 @@ export async function PUT(request: Request) {
 
     // 3. Update category if provided
     if (category) {
+      if (currentUser.selected_category === "student" && category !== "student") {
+        return NextResponse.json({ error: "Category is locked and cannot be changed." }, { status: 400 });
+      }
       const targetCategory = category === "couples" || category === "couple" ? "couples" : (category === "parents" || category === "parent" ? "parents" : category);
       await updateUserCategory(userId, targetCategory);
     }
@@ -125,22 +128,47 @@ export async function PUT(request: Request) {
     const updatedUsers = await getUserById(userId);
     const updatedUser = updatedUsers[0];
 
-    return NextResponse.json({
+    const userProfile = {
+      id: updatedUser.id,
+      name: updatedUser.sanctuary_name || updatedUser.name,
+      sanctuaryName: updatedUser.sanctuary_name || updatedUser.name,
+      email: updatedUser.email,
+      avatar: updatedUser.avatar,
+      selectedCategory: updatedUser.selected_category || "student",
+      streakDays: updatedUser.streak_days,
+      mindfulnessMinutes: updatedUser.mindfulness_minutes,
+      currentMood: updatedUser.current_mood,
+      dashboardState: updatedUser.dashboard_state || null,
+    };
+
+    const sessionData = {
+      user: userProfile,
+      token: "m_token_" + updatedUser.id,
+      isAuthenticated: true,
+      category: userProfile.selectedCategory,
+    };
+
+    const response = NextResponse.json({
       success: true,
-      user: {
-        id: updatedUser.id,
-        name: updatedUser.sanctuary_name || updatedUser.name,
-        sanctuaryName: updatedUser.sanctuary_name || updatedUser.name,
-        email: updatedUser.email,
-        avatar: updatedUser.avatar,
-        selectedCategory: updatedUser.selected_category,
-        streakDays: updatedUser.streak_days,
-        mindfulnessMinutes: updatedUser.mindfulness_minutes,
-        currentMood: updatedUser.current_mood,
-        dashboardState: updatedUser.dashboard_state || null,
-      }
+      user: userProfile,
     });
 
+    response.cookies.set("manraah_session", JSON.stringify(sessionData), {
+      httpOnly: false,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 60 * 60 * 24 * 30,
+      path: "/",
+    });
+    response.cookies.set("userType", userProfile.selectedCategory, {
+      httpOnly: false,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 60 * 60 * 24 * 30,
+      path: "/",
+    });
+
+    return response;
   } catch (err: any) {
     console.error("[API PUT /api/profile error]:", err);
     return NextResponse.json({ error: err.message || "Failed to update profile." }, { status: 500 });

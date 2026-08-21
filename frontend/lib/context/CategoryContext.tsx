@@ -117,7 +117,7 @@ export function CategoryProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  // Sync category with viewed dashboard path dynamically on routing
+  // Sync category with viewed dashboard path dynamically on routing (UI context only)
   useEffect(() => {
     if (typeof window !== "undefined" && pathname) {
       let detectedCategory: UserCategory | null = null;
@@ -127,46 +127,12 @@ export function CategoryProvider({ children }: { children: ReactNode }) {
         detectedCategory = "couples";
       } else if (pathname.startsWith("/dashboard/student")) {
         detectedCategory = "student";
+      } else if (pathname.startsWith("/dashboard/working-professional")) {
+        detectedCategory = "working_professional";
       }
 
       if (detectedCategory) {
-        const session = getClientSession();
-        if (session && session.user) {
-          const currentSessionCat = session.user.selectedCategory;
-          if (currentSessionCat !== detectedCategory) {
-            console.log("[CategoryContext] Syncing session, cookies, and DB to match path:", detectedCategory);
-            
-            // Update context state
-            setCategory(detectedCategory);
-
-            // Update local storage session
-            const updatedSession = {
-              ...session,
-              user: {
-                ...session.user,
-                selectedCategory: detectedCategory
-              }
-            };
-            localStorage.setItem("manraah_auth_session", JSON.stringify(updatedSession));
-            
-            // Update cookies
-            document.cookie = `manraah_session=${JSON.stringify(updatedSession)}; path=/; max-age=2592000`;
-            document.cookie = `userType=${detectedCategory}; path=/; max-age=2592000`;
-
-            // Update database silently in the background
-            fetch("/api/profile", {
-              method: "PUT",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                userId: session.user.id,
-                category: detectedCategory
-              })
-            }).catch((err) => console.error("Failed to sync category in DB:", err));
-          }
-        } else {
-          // If no session but we detected category from path, update context
-          setCategory(detectedCategory);
-        }
+        setCategory(detectedCategory);
       }
     }
   }, [pathname]);

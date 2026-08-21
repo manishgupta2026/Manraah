@@ -9,14 +9,32 @@ export default function DashboardPage() {
   const router = useRouter();
 
   useEffect(() => {
-    const session = getClientSession();
-    if (session && session.isAuthenticated && session.user) {
-      const category = session.user.selectedCategory || "student";
-      const target = getCategoryDashboardRoute(category);
-      router.replace(target);
-    } else {
-      router.replace("/login");
-    }
+    const checkAndRedirect = async () => {
+      try {
+        const res = await fetch("/api/profile");
+        if (res.ok) {
+          const profile = await res.json();
+          if (profile && profile.category) {
+            const target = getCategoryDashboardRoute(profile.category);
+            router.replace(target);
+            return;
+          }
+        }
+      } catch (e) {
+        console.error("Dashboard router profile fetch error:", e);
+      }
+
+      const session = getClientSession();
+      if (session && session.isAuthenticated && session.user) {
+        const category = session.user.selectedCategory || "student";
+        const target = getCategoryDashboardRoute(category);
+        router.replace(target);
+      } else {
+        router.replace("/login");
+      }
+    };
+
+    checkAndRedirect();
   }, [router]);
 
   return (

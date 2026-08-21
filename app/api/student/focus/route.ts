@@ -16,11 +16,16 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Missing duration" }, { status: 400 });
     }
 
+    const durationMins = Number(duration);
+    const endTime = new Date();
+    const startTime = new Date(endTime.getTime() - durationMins * 60 * 1000);
+    const status = 'COMPLETED';
+
     // Insert focus session log
     const inserted = await sql`
-      INSERT INTO student_focus_sessions (user_id, duration_minutes)
-      VALUES (${userId}, ${Number(duration)})
-      RETURNING id, duration_minutes, created_at
+      INSERT INTO student_focus_sessions (user_id, duration_minutes, start_time, end_time, status)
+      VALUES (${userId}, ${durationMins}, ${startTime.toISOString()}, ${endTime.toISOString()}, ${status})
+      RETURNING id, duration_minutes, start_time, end_time, status, created_at
     `;
 
     // Increment user profile total study focus minutes

@@ -44,9 +44,17 @@ async function ensureStudentTablesExist() {
         id SERIAL PRIMARY KEY,
         user_id VARCHAR(100) NOT NULL,
         duration_minutes INT NOT NULL,
+        start_time TIMESTAMP WITH TIME ZONE,
+        end_time TIMESTAMP WITH TIME ZONE,
+        status VARCHAR(50) DEFAULT 'COMPLETED',
         created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
       )
     `;
+    try {
+      await sql`ALTER TABLE student_focus_sessions ADD COLUMN IF NOT EXISTS start_time TIMESTAMP WITH TIME ZONE`;
+      await sql`ALTER TABLE student_focus_sessions ADD COLUMN IF NOT EXISTS end_time TIMESTAMP WITH TIME ZONE`;
+      await sql`ALTER TABLE student_focus_sessions ADD COLUMN IF NOT EXISTS status VARCHAR(50) DEFAULT 'COMPLETED'`;
+    } catch (e) {}
 
     // 4. student_sleep_records (Sleep Quality)
     await sql`
@@ -97,9 +105,6 @@ export async function GET(req: Request) {
     // Ensure all tables are created
     await ensureStudentTablesExist();
 
-    // Record login streak activity
-    const streakInfo = await recordUserLogin(userId);
-
     // 1. Fetch User Profile
     let userResult = await sql`
       SELECT id, name, email, sanctuary_name, avatar, selected_category, streak_days, mindfulness_minutes, current_mood, onboarding_completed, created_at
@@ -111,6 +116,32 @@ export async function GET(req: Request) {
     }
 
     const user = userResult[0];
+    const userCategory = (user.selected_category || "student").toLowerCase().trim();
+
+    // Verification: If authenticated user is not a student, return 403 mismatch with their target route
+    if (userCategory !== "student") {
+      let redirectRoute = "/dashboard/student";
+      if (userCategory.includes("working") || userCategory.includes("prof") || userCategory.includes("young")) {
+        redirectRoute = "/dashboard/working-professional";
+      } else if (userCategory === "parent" || userCategory === "parents") {
+        redirectRoute = "/dashboard/parents";
+      } else if (userCategory === "couple" || userCategory === "couples") {
+        redirectRoute = "/dashboard/couples";
+      } else if (userCategory === "senior_citizen" || userCategory === "seniorcitizen") {
+        redirectRoute = "/dashboard/senior_citizen";
+      }
+
+      return NextResponse.json(
+        {
+          error: "Category mismatch",
+          redirect: redirectRoute,
+          category: userCategory,
+        },
+        { status: 403 }
+      );
+    }
+    // Record login streak activity
+    const streakInfo = await recordUserLogin(userId);
     const preferredName = user.name || user.sanctuary_name || "Student Sanctuary Member";
 
     // 2. Fetch Checkins
@@ -226,25 +257,6 @@ export async function GET(req: Request) {
       LIMIT 1
     `;
 
-    if (appointments.length === 0) {
-      // Seed default appointment with Dr. Sarah Jenkins
-      const apptDate = new Date();
-      apptDate.setDate(apptDate.getDate() + 3);
-      apptDate.setHours(21, 0, 0, 0); // 09:00 PM
-
-      await sql`
-        INSERT INTO student_appointments (user_id, doctor_name, doctor_title, doctor_avatar, appointment_date, appointment_time, status, video_call_url)
-        VALUES (${user.id}, 'Dr. Sarah Jenkins', 'Child Psychology', '/images/therapist_sarah.jpg', ${apptDate.toISOString()}, '09:00 PM', 'ACTIVE', 'https://video.manraah.com/room/sarah-jenkins')
-      `;
-      appointments = await sql`
-        SELECT id, doctor_name as name, doctor_title as title, doctor_avatar as avatar, appointment_date as date, appointment_time as time, status, video_call_url
-        FROM student_appointments
-        WHERE user_id = ${user.id} AND status = 'ACTIVE'
-        ORDER BY appointment_date ASC
-        LIMIT 1
-      `;
-    }
-
     // 7. Seed default/fetch sleep records
     let sleepResult = await sql`
       SELECT id, sleep_time, wake_time, duration_minutes as duration, quality_score as score
@@ -277,10 +289,7 @@ export async function GET(req: Request) {
     const sleepRecord = sleepResult[0];
 
     // 8. Dynamic Wellness Score calculation
-    let currentScore = 78;
-    let scoreLevel = "Good";
-    // Breakdown out of 100
-    let scoreBreakdown = { mood: 82, stress: 64, sleep: 71, focus: 86 };
+    let wellnessScoreObj = null;
 
     if (history.length > 0) {
       const activeEntry = todayCheckin || history[0];
@@ -298,29 +307,105 @@ export async function GET(req: Request) {
       const sleepVal = Number(sleepRecord?.score) || 75; // sleep
       const focusVal = Math.min(100, Math.max(30, 50 + (completedSessionsCount * 10))); // focus
 
-      currentScore = Math.round((moodVal + stressVal + sleepVal + focusVal) / 4);
-      scoreLevel = currentScore >= 85 ? "Thriving" : currentScore >= 70 ? "Good" : currentScore >= 50 ? "Stable" : "Needs Care";
-      scoreBreakdown = {
-        mood: moodVal,
-        stress: stressVal,
-        sleep: sleepVal,
-        focus: focusVal,
+      const currentScore = Math.round((moodVal + stressVal + sleepVal + focusVal) / 4);
+      const scoreLevel = currentScore >= 85 ? "Thriving" : currentScore >= 70 ? "Good" : currentScore >= 50 ? "Stable" : "Needs Care";
+      wellnessScoreObj = {
+        score: currentScore,
+        level: scoreLevel,
+        breakdown: {
+          mood: moodVal,
+          stress: stressVal,
+          sleep: sleepVal,
+          focus: focusVal,
+        },
       };
     }
 
-    // 9. Generate AI recommendation dynamically
+    // 9. Generate AI recommendation and motivation Quote dynamically
     let recommendation = "Your stress has been slightly elevated recently. Try a short breathing session before your next study block.";
+    let motivation = "Your sanctuary is here to support you at every step.";
+
     if (todayCheckin) {
       const moodLower = todayCheckin.mood.toLowerCase();
       if (moodLower === "stressed" || moodLower === "overwhelmed") {
         recommendation = "Your stress has been elevated recently. Try a short breathing session in the Quick Tools tray before your next study block.";
+        motivation = "Take a breath. You don't need to solve everything at once.";
       } else if (moodLower === "drained") {
         recommendation = "Your energy levels are lower today. Consider scaling back study tasks and taking recovery breaks.";
-      } else if (sleepRecord?.score < 70) {
+        motivation = "Rest is not laziness; it is a vital part of your academic growth.";
+      } else if (sleepRecord && sleepRecord.score < 70) {
         recommendation = "Your recent sleep duration has been lower. Consider winding down a little earlier tonight using Sleep Support.";
+        motivation = "A good night's sleep is the best preparation for tomorrow's challenges.";
       } else {
         recommendation = "You have been studying consistently. A short 5-minute recovery walk or deep breath could keep you balanced.";
+        motivation = "Stay curious, stay calm. Every effort brings you closer to your dreams.";
       }
+    } else if (user.initial_answers_json && Array.isArray(user.initial_answers_json) && user.initial_answers_json.length > 0) {
+      // Base on onboarding answers if available
+      const supportAnswer = String(user.initial_answers_json[9]?.answer || "");
+      if (supportAnswer.includes("Stress")) {
+        motivation = "You are stronger than any academic challenge. Take it one task at a time.";
+      } else if (supportAnswer.includes("Focus")) {
+        motivation = "Focus is a muscle. Train it gently and celebrate the focused moments.";
+      }
+    }
+
+    // 3b. Weekly study focus analytics (last 7 days)
+    const focusWeek = await sql`
+      SELECT duration_minutes, created_at
+      FROM student_focus_sessions
+      WHERE user_id = ${user.id} AND created_at >= CURRENT_DATE - INTERVAL '7 days'
+    `;
+
+    const weeklyFocus = [0, 0, 0, 0, 0, 0, 0];
+    focusWeek.forEach((session: any) => {
+      const day = new Date(session.created_at).getDay(); // 0 = Sun, 1 = Mon, ..., 6 = Sat
+      const idx = day === 0 ? 6 : day - 1; // Map to 0-6 (Mon-Sun)
+      weeklyFocus[idx] += session.duration_minutes;
+    });
+
+    // 2b. Weekly mood stats (last 7 days checkins)
+    const checkinWeek = await sql`
+      SELECT mood, created_at
+      FROM daily_checkins
+      WHERE user_id = ${user.id} AND created_at >= CURRENT_DATE - INTERVAL '7 days'
+      ORDER BY created_at ASC
+    `;
+
+    const weeklyMoods = [4, 4, 4, 4, 4, 4, 4]; // Default to 4 (Okay)
+    const checkinDaysSeen: { [key: number]: boolean } = {};
+    checkinWeek.forEach((ch: any) => {
+      const day = new Date(ch.created_at).getDay();
+      const idx = day === 0 ? 6 : day - 1;
+      if (!checkinDaysSeen[idx]) {
+        checkinDaysSeen[idx] = true;
+        const m = (ch.mood || "").toLowerCase().trim();
+        if (m === "good" || m === "joyful" || m === "happy" || m === "amazing") weeklyMoods[idx] = 5;
+        else if (m === "okay" || m === "calm") weeklyMoods[idx] = 4;
+        else if (m === "stressed" || m === "anxious" || m === "low") weeklyMoods[idx] = 3;
+        else if (m === "overwhelmed" || m === "drained") weeklyMoods[idx] = 2;
+      }
+    });
+
+    if (checkinWeek.length === 0) {
+      const moodWeek = await sql`
+        SELECT mood, created_at
+        FROM mood_entries
+        WHERE user_id = ${user.id} AND created_at >= CURRENT_DATE - INTERVAL '7 days'
+        ORDER BY created_at ASC
+      `;
+      moodWeek.forEach((ch: any) => {
+        const day = new Date(ch.created_at).getDay();
+        const idx = day === 0 ? 6 : day - 1;
+        if (!checkinDaysSeen[idx]) {
+          checkinDaysSeen[idx] = true;
+          const m = (ch.mood || "").toLowerCase().trim();
+          if (m === "good" || m === "joyful" || m === "happy" || m === "amazing") weeklyMoods[idx] = 5;
+          else if (m === "okay" || m === "calm") weeklyMoods[idx] = 4;
+          else if (m === "stressed" || m === "anxious" || m === "low") weeklyMoods[idx] = 3;
+          else if (m === "overwhelmed" || m === "drained") weeklyMoods[idx] = 2;
+        }
+      });
     }
 
     // 10. Compile results
@@ -334,9 +419,12 @@ export async function GET(req: Request) {
         streakDays: user.streak_days || 1,
         mindfulnessMinutes: user.mindfulness_minutes || totalDurationToday,
         currentMood: todayCheckin?.mood || user.current_mood || "Good",
-        wellnessLevel: scoreLevel,
-        wellnessScore: currentScore,
+        wellnessLevel: wellnessScoreObj ? wellnessScoreObj.level : "Good",
+        wellnessScore: wellnessScoreObj ? wellnessScoreObj.score : 78,
+        onboardingCompleted: user.onboarding_completed,
       },
+      weeklyFocus,
+      weeklyMoods,
       todayMood: todayCheckin?.mood || null,
       todayCheckin: todayCheckin ? {
         id: todayCheckin.id,
@@ -346,11 +434,7 @@ export async function GET(req: Request) {
         note: todayCheckin.note,
       } : null,
       history: history.slice(0, 7),
-      wellnessScore: {
-        score: currentScore,
-        level: scoreLevel,
-        breakdown: scoreBreakdown,
-      },
+      wellnessScore: wellnessScoreObj,
       upcomingAppointment: appointments[0] || null,
       exams,
       tasks,
@@ -361,6 +445,7 @@ export async function GET(req: Request) {
         score: sleepRecord.score,
       } : null,
       recommendation,
+      motivation,
     });
   } catch (err: any) {
     console.error("GET /api/dashboard/student error:", err);

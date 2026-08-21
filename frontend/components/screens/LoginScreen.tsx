@@ -40,7 +40,7 @@ export default function LoginScreen() {
       document.cookie = "manraah_userType=; path=/; max-age=0";
 
       const categoryRaw = session.user?.selectedCategory || "";
-      const targetRoute = getCategoryDashboardRoute(categoryRaw);
+      let targetRoute = getCategoryDashboardRoute(categoryRaw);
 
       router.push(targetRoute);
     } catch (err: any) {

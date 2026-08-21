@@ -31,6 +31,7 @@ export interface UserProfile {
   currentMood: string;
   selectedCategory: UserCategory;
   role?: "user" | "admin";
+  onboardingCompleted?: boolean;
 }
 
 export interface AssessmentAnswers {

@@ -92,7 +92,7 @@ export default function SignupScreen() {
       document.cookie = "userType=; path=/; max-age=0";
 
       const categoryRaw = session.user?.selectedCategory || resolvedCategory;
-      const targetRoute = getCategoryDashboardRoute(categoryRaw);
+      let targetRoute = getCategoryDashboardRoute(categoryRaw);
 
       router.push(targetRoute);
     } catch (err: any) {
