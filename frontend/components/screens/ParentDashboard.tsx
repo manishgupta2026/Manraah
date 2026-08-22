@@ -214,7 +214,7 @@ export default function ParentDashboard() {
             const securityPopupShown = localStorage.getItem("parent_security_popup_shown_once") === "true";
             const showImmediately = localStorage.getItem("parent_show_security_immediately") === "true";
 
-            if (showImmediately && !securityPopupShown) {
+            if (showImmediately) {
               setShowSecurityPopup(true);
               localStorage.setItem("parent_security_popup_shown_once", "true");
               localStorage.removeItem("parent_show_security_immediately");
