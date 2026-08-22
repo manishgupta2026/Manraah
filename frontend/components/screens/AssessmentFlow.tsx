@@ -135,7 +135,50 @@ export default function AssessmentFlow() {
       const userType = effectiveCategory || "student";
       document.cookie = `userType=${userType}; path=/; max-age=86400`;
 
-      router.push("/wellness-score");
+      const session = getClientSession();
+      const user = session?.user;
+      if (session && session.isAuthenticated && user && user.id) {
+        const saveAndGo = async () => {
+          try {
+            await fetch("/api/profile", {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                userId: user.id,
+                category: userType,
+                answers: currentAnswers,
+                computedScore: results.totalScore,
+                percentage: results.percentage,
+                wellnessLevel: results.wellnessLevel,
+                maxScore: results.maxScore
+              })
+            });
+            const targetCategory = userType === "couples" || userType === "couple" ? "couples" : (userType === "parents" || userType === "parent" ? "parents" : userType);
+            if (targetCategory === "parents" || targetCategory === "parent") {
+              localStorage.setItem("parent_assessment_completed", "true");
+              localStorage.setItem("parent_show_security_immediately", "true");
+            }
+            const updatedSession = {
+              ...session,
+              user: {
+                ...session.user,
+                selectedCategory: targetCategory,
+              }
+            };
+            localStorage.setItem("manraah_auth_session", JSON.stringify(updatedSession));
+            document.cookie = `manraah_session=${JSON.stringify(updatedSession)}; path=/; max-age=2592000`;
+            document.cookie = `userType=${targetCategory}; path=/; max-age=2592000`;
+            
+            router.push(`/dashboard/${targetCategory}`);
+          } catch (e) {
+            console.error("Failed to auto-save assessment:", e);
+            router.push("/wellness-score");
+          }
+        };
+        saveAndGo();
+      } else {
+        router.push("/wellness-score");
+      }
     }
   };
 

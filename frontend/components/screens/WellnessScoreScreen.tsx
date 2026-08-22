@@ -19,7 +19,8 @@ export default function WellnessScoreScreen() {
 
   // Guard: Do NOT allow direct access without assessment
   useEffect(() => {
-    if (!selectedCategory || !detailedAnswers || detailedAnswers.length < 10) {
+    const stored = typeof window !== "undefined" ? sessionStorage.getItem("manraah_onboarding_assessment") : null;
+    if (!stored && (!selectedCategory || !detailedAnswers || detailedAnswers.length < 10)) {
       router.push("/");
     }
   }, [selectedCategory, detailedAnswers, router]);
