@@ -75,7 +75,7 @@ export default function ParentDashboard() {
   ]);
 
   // Family Wellness
-  const [familyScore, setFamilyScore] = useState(42);
+  const [familyScore, setFamilyScore] = useState(84);
   const [streakDays, setStreakDays] = useState(1);
   const [selectedDay, setSelectedDay] = useState(6);
   const [dashboardData, setDashboardData] = useState<any>(null);
@@ -209,7 +209,7 @@ export default function ParentDashboard() {
                                       (data.user.assessmentCategory === "parents" || data.user.assessmentCategory === "parent")) || localAssessmentCompleted;
           
           if (hasParentAssessment || assessmentModalDismissed) {
-            setFamilyScore(data.user.assessmentScore || 42);
+            setFamilyScore(data.user.assessmentPercentage || 84);
             
             const securityPopupShown = localStorage.getItem("parent_security_popup_shown_once") === "true";
             const showImmediately = localStorage.getItem("parent_show_security_immediately") === "true";
@@ -425,23 +425,23 @@ export default function ParentDashboard() {
 
   // Wellness Score Helpers
   const getWellnessColor = (score: number) => {
-    if (score >= 45) return "#5FBA5A"; // Flourishing - Green
-    if (score >= 35) return "#7C6BC4"; // Stable - Purple/Lavender
-    if (score >= 30) return "#ECB22E"; // Needs Attention - Yellow
+    if (score >= 84) return "#5FBA5A"; // Flourishing - Green
+    if (score >= 64) return "#7C6BC4"; // Stable - Purple/Lavender
+    if (score >= 44) return "#ECB22E"; // Needs Attention - Yellow
     return "#D64E4D"; // At Risk - Red
   };
 
   const getWellnessLevelText = (score: number) => {
-    if (score >= 45) return "Flourishing";
-    if (score >= 35) return "Stable";
-    if (score >= 30) return "Needs Attention";
+    if (score >= 84) return "Flourishing";
+    if (score >= 64) return "Stable";
+    if (score >= 44) return "Needs Attention";
     return "At Risk";
   };
 
   const getWellnessFeedback = (score: number) => {
-    if (score >= 45) return "Your family wellness is flourishing! Continue practicing mindfulness, daily gratitude, and deep family connection activities.";
-    if (score >= 35) return "Your family wellness is stable. Keep prioritizing parent self-care, maintaining daily routines, and logging reflections.";
-    if (score >= 30) return "Your family wellness needs attention. Take some time for yourself today, practice a breathing exercise, or write in your journal.";
+    if (score >= 84) return "Your family wellness is flourishing! Continue practicing mindfulness, daily gratitude, and deep family connection activities.";
+    if (score >= 64) return "Your family wellness is stable. Keep prioritizing parent self-care, maintaining daily routines, and logging reflections.";
+    if (score >= 44) return "Your family wellness needs attention. Take some time for yourself today, practice a breathing exercise, or write in your journal.";
     return "Your family wellness is at risk. We recommend taking regular mindful breaks, focusing on stress relief, and reaching out to a support partner.";
   };
 
@@ -449,7 +449,7 @@ export default function ParentDashboard() {
   const [activeTab, setActiveTab] = useState<"monthly" | "daily">("monthly");
 
   const getPieBreakdown = (score: number) => {
-    const s = Math.min(50, Math.max(10, score));
+    const s = Math.min(50, Math.max(10, score / 2));
     let great = 0, good = 0, normal = 0, notGood = 0, bad = 0;
     
     if (s >= 40) {
@@ -1123,7 +1123,7 @@ export default function ParentDashboard() {
               {/* Mini display */}
               <div className="flex items-center justify-between bg-[#F8F9FD] dark:bg-[#0D1F2D] p-3 rounded-xl border border-[#EAEAFF] dark:border-slate-800">
                 <span className="text-[10px] text-slate-500 dark:text-slate-450 font-semibold">Wellness Score:</span>
-                <span className="text-sm font-heading font-black text-[#006B56] dark:text-[#5FAF8A]">{familyScore}</span>
+                <span className="text-sm font-heading font-black text-[#006B56] dark:text-[#5FAF8A]">{familyScore}%</span>
               </div>
 
               {/* Challenge text */}

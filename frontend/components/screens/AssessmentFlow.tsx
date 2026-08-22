@@ -237,7 +237,7 @@ export default function AssessmentFlow() {
                 </h2>
 
                 {/* Option Cards Grid (No emoji, left aligned, bg light gray capsule) */}
-                <div className="space-y-3 relative z-20 overflow-y-auto max-h-[32vh] pr-1" role="radiogroup" aria-label={question.text}>
+                <div className="space-y-3 relative z-20" role="radiogroup" aria-label={question.text}>
                   {question.options.map((opt) => {
                     const isSelected = selectedOptionId === opt.id;
                     return (
