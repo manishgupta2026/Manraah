@@ -1389,26 +1389,33 @@ export default function ParentDashboard() {
               exit={{ scale: 0.95 }}
               className="bg-white dark:bg-[#132E3F] max-w-sm w-full p-8 rounded-[36px] text-center space-y-6 shadow-2xl relative border border-[#EAEAFF] dark:border-slate-800"
             >
-              <div className="w-16 h-16 rounded-full bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mx-auto border border-emerald-100 dark:border-emerald-900/30 animate-pulse">
-                <span className="material-symbols-outlined text-3xl font-black">lock_open</span>
+              <div className="w-16 h-16 rounded-[20px] bg-[#EAE8F8] dark:bg-[#202E4E] flex items-center justify-center mx-auto border border-[#E1DEFB] dark:border-[#2D3F66]">
+                <span className="material-symbols-outlined text-2xl text-[#7C6BC4] dark:text-[#AFA4EC]">filter_vintage</span>
               </div>
 
               <div className="space-y-1 font-heading">
-                <span className="text-[10px] uppercase font-black tracking-widest text-[#7C6BC4] dark:text-purple-300">Sanctuary Guard</span>
-                <h3 className="text-xl font-heading font-black text-slate-800 dark:text-slate-100">You Are Safe Here</h3>
+                <h3 className="text-xl font-heading font-black text-slate-800 dark:text-slate-100 flex items-center justify-center gap-2">
+                  <span>🌿</span> Your Retreat is Private
+                </h3>
               </div>
 
-              <p className="text-[11px] text-slate-400 dark:text-slate-400 font-bold leading-relaxed px-2">
-                Your parenting reflections, journal entries, and custom wellness metrics are fully protected. We do not track or share your logs.
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 font-bold leading-relaxed px-2">
+                Everything you write, journal, and share inside Manraah remains private. This is your personal space to reflect honestly and safely.
               </p>
+
+              <div className="flex justify-center">
+                <span className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#EAE8F8] dark:bg-[#202E4E] border border-[#E1DEFB] dark:border-[#2D3F66] rounded-full text-[10px] font-black text-[#7C6BC4] dark:text-[#AFA4EC]">
+                  <span>🔒</span> Your wellbeing belongs to you.
+                </span>
+              </div>
 
               <button 
                 onClick={() => {
                   setShowSecurityPopup(false);
                 }}
-                className="w-full py-3.5 bg-[#7C6BC4] hover:bg-[#6B5BB3] text-white rounded-full font-bold text-xs shadow-sm transition-transform active:scale-95"
+                className="w-full py-4 bg-[#5F4BB6] hover:bg-[#4E3CA3] text-white rounded-full font-bold text-sm shadow-md transition-transform active:scale-95 cursor-pointer flex items-center justify-center gap-1.5"
               >
-                I Feel Secure
+                I Understand 💜
               </button>
             </motion.div>
           </motion.div>

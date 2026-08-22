@@ -256,6 +256,7 @@ export default function AssessmentFlow() {
                             : "bg-[#F4F5F9] dark:bg-[#1E3E52] text-slate-700 dark:text-slate-200 hover:bg-slate-200/60 dark:hover:bg-slate-700 font-semibold"
                         }`}
                       >
+                        <span className="mr-2 select-none">{getOptionEmoji(opt.score)}</span>
                         {opt.text}
                       </motion.button>
                     );
