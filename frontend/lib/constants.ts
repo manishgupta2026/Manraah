@@ -13,8 +13,6 @@ export const MAIN_NAV_ITEMS: NavItem[] = [
   { label: "AI Companion", href: "/ai-chat", icon: "smart_toy" },
   { label: "Daily Check-in", href: "/checkin", icon: "mood" },
   { label: "Focus Timer", href: "/meditation", icon: "schedule" },
-  { label: "Study Planner", href: "/journey", icon: "assignment" },
-  { label: "Exams", href: "/dashboard/student#exam-tracker", icon: "school" },
   { label: "Analytics", href: "/reports", icon: "analytics" },
   { label: "Wellness", href: "/wellness-score", icon: "spa" },
   { label: "Journal", href: "/journal", icon: "auto_stories" },

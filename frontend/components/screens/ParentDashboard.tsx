@@ -599,16 +599,7 @@ export default function ParentDashboard() {
               Retake Assessment
             </button>
 
-            {/* Theme Toggle Button */}
-            <button 
-              onClick={toggleTheme}
-              className="w-10 h-10 rounded-full bg-white dark:bg-[#132E3F] border border-[#EAEAFF] dark:border-slate-800 flex items-center justify-center hover:bg-[#F2F4FD] dark:hover:bg-slate-800 transition-all shadow-sm text-slate-600 dark:text-slate-300"
-              title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
-            >
-              <span className="material-symbols-outlined text-lg">
-                {isDarkMode ? "light_mode" : "dark_mode"}
-              </span>
-            </button>
+
 
             <span className="px-3.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/20 text-[#006B56] dark:text-[#5FAF8A] text-[10px] font-black uppercase tracking-wider border border-emerald-100/50 dark:border-emerald-900/30">
               🔒 Private Sanctuary Connection
