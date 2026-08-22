@@ -203,11 +203,12 @@ export default function ParentDashboard() {
           }
           // Calculate wellness score as per the assessment completion percentage
           const localAssessmentCompleted = localStorage.getItem("parent_assessment_completed") === "true";
+          const assessmentModalDismissed = localStorage.getItem("parent_assessment_modal_dismissed") === "true";
           const hasParentAssessment = (data.user.assessmentPercentage !== null && 
                                       data.user.assessmentPercentage !== undefined && 
                                       (data.user.assessmentCategory === "parents" || data.user.assessmentCategory === "parent")) || localAssessmentCompleted;
           
-          if (hasParentAssessment) {
+          if (hasParentAssessment || assessmentModalDismissed) {
             setFamilyScore(data.user.assessmentScore || 42);
             
             const securityPopupShown = localStorage.getItem("parent_security_popup_shown_once") === "true";
@@ -1423,6 +1424,17 @@ export default function ParentDashboard() {
               exit={{ scale: 0.95 }}
               className="bg-white dark:bg-[#132E3F] max-w-sm w-full p-8 rounded-[36px] text-center space-y-6 shadow-2xl relative border border-[#EAEAFF] dark:border-slate-800"
             >
+              {/* Close Button on Top Right */}
+              <button 
+                onClick={() => {
+                  setShowAssessmentModal(false);
+                  localStorage.setItem("parent_assessment_modal_dismissed", "true");
+                }}
+                className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
+              >
+                <span className="material-symbols-outlined font-black text-lg">close</span>
+              </button>
+
               <div className="w-16 h-16 rounded-full bg-[#E37A47]/10 text-[#E37A47] flex items-center justify-center mx-auto border border-[#E37A47]/20">
                 <span className="material-symbols-outlined text-3xl font-black">assignment</span>
               </div>
@@ -1436,13 +1448,24 @@ export default function ParentDashboard() {
                 To unlock your personalized Parent Dashboard, custom goals checklist, and weekly wellness tracking, please complete your initial assessment.
               </p>
 
-              <button 
-                onClick={() => router.push("/assessment")}
-                className="w-full py-3.5 bg-[#E37A47] hover:bg-[#D36A37] text-white rounded-full font-bold text-xs shadow-sm transition-transform active:scale-95 flex items-center justify-center gap-1.5"
-              >
-                <span className="material-symbols-outlined text-sm font-black">play_arrow</span>
-                Start Assessment
-              </button>
+              <div className="space-y-2">
+                <button 
+                  onClick={() => router.push("/assessment")}
+                  className="w-full py-3.5 bg-[#E37A47] hover:bg-[#D36A37] text-white rounded-full font-bold text-xs shadow-sm transition-transform active:scale-95 flex items-center justify-center gap-1.5"
+                >
+                  <span className="material-symbols-outlined text-sm font-black">play_arrow</span>
+                  Start Assessment
+                </button>
+                <button 
+                  onClick={() => {
+                    setShowAssessmentModal(false);
+                    localStorage.setItem("parent_assessment_modal_dismissed", "true");
+                  }}
+                  className="w-full py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-350 rounded-full font-bold text-xs shadow-xs transition-transform active:scale-95"
+                >
+                  Skip for Now
+                </button>
+              </div>
             </motion.div>
           </motion.div>
         )}
