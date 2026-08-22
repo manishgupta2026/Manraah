@@ -106,7 +106,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
                 {/* Main Content Area */}
                 <div className="flex-1 flex flex-col min-w-0 md:ml-[76px] lg:ml-[76px] h-screen overflow-y-auto pb-16 md:pb-6 bg-background dark:bg-[#0D1F2D]">
                   <Header onOpenMenu={() => setIsMobileDrawerOpen(true)} />
-                  <main className="flex-1 px-3 md:px-6 py-4 max-w-7xl mx-auto w-full">
+                  <main className={`flex-1 w-full ${pathname.startsWith("/dashboard/working-professional") ? "max-w-none px-[28px] lg:px-[36px] py-[24px] lg:py-[32px]" : "px-3 md:px-6 py-4 max-w-7xl mx-auto"}`}>
                     {children}
                   </main>
                 </div>

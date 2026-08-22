@@ -5,6 +5,25 @@ import { calculateWellnessScore } from "@/backend/lib/wellness-scoring";
 
 export const dynamic = "force-dynamic";
 
+async function ensureCheckinSchema() {
+  try {
+    await sql`ALTER TABLE daily_checkins ADD COLUMN IF NOT EXISTS checkin_date DATE DEFAULT CURRENT_DATE`;
+    await sql`ALTER TABLE daily_checkins ADD CONSTRAINT unique_user_daily_checkin_date UNIQUE (user_id, checkin_date)`;
+  } catch (e) {
+    // Constraint may already exist or table alteration done
+  }
+}
+
+function getCalendarDayString(date: Date | string) {
+  const formatter = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Kolkata",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+  return formatter.format(new Date(date));
+}
+
 export async function GET(req: Request) {
   const session = getAuthSessionFromRequest();
   const userId = session.user?.id;
@@ -13,89 +32,103 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const url = new URL(req.url);
+  const localDate = url.searchParams.get("localDate") || getCalendarDayString(new Date());
+
   try {
+    await ensureCheckinSchema();
     const checkins = await sql`
-      SELECT id, user_id, mood, energy_level as energy, sleep_quality, stress, work_life_balance, note, created_at
+      SELECT id, user_id, mood, energy_level as energy, sleep_quality, stress, note, created_at, checkin_date, reflection
       FROM daily_checkins
       WHERE user_id = ${userId}
       ORDER BY created_at DESC
       LIMIT 14
     `;
 
-    const latest = checkins.length > 0 ? checkins[0] : null;
-    const isToday = latest
-      ? new Date(latest.created_at).toDateString() === new Date().toDateString()
-      : false;
+    const todayCheckin = checkins.find((c: any) => {
+      if (c.checkin_date) {
+        const dateStr = getCalendarDayString(c.checkin_date);
+        return dateStr === localDate;
+      }
+      return false;
+    }) || null;
 
     return NextResponse.json({
-      todayCheckin: isToday ? latest : null,
+      todayCheckin,
       history: checkins,
     });
   } catch (err: any) {
     console.error("GET /api/checkins error:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return NextResponse.json({ error: "Unable to retrieve check-ins." }, { status: 500 });
   }
 }
 
 export async function POST(req: Request) {
   const session = getAuthSessionFromRequest();
-  let userId = session.user?.id;
+  const userId = session.user?.id;
+
+  if (!userId) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  let userCategory = "student";
+  const uRes = await sql`SELECT selected_category FROM users WHERE id = ${userId} LIMIT 1`;
+  if (uRes.length > 0) {
+    userCategory = uRes[0].selected_category;
+  }
+
+  // Category verification: student or working professional only
+  if (userCategory !== "student" && userCategory !== "working_professional" && userCategory !== "working-professional") {
+    return NextResponse.json({ error: "Category access denied" }, { status: 403 });
+  }
 
   try {
+    await ensureCheckinSchema();
     const body = await req.json();
-    const { mood, stress, energy, sleep, sleepQuality, workLifeBalance, note } = body;
+    const { mood, stressLevel, energyLevel, reflection } = body;
+
+    const todayDateStr = getCalendarDayString(new Date());
 
     if (!mood) {
       return NextResponse.json({ error: "Mood is required" }, { status: 400 });
     }
 
-    const energyVal = Math.min(5, Math.max(1, Number(energy) || 3));
-    const sleepVal = Math.min(5, Math.max(1, Number(sleepQuality || sleep) || 3));
-    const balanceVal = Math.min(5, Math.max(1, Number(workLifeBalance) || 3));
-    const stressVal = typeof stress === "string" ? stress : "Manageable";
-
-    if (!userId) {
-      // Find latest working professional user
-      const users = await sql`
-        SELECT id FROM users 
-        WHERE selected_category IN ('working-professional', 'working_professional')
-        ORDER BY created_at DESC LIMIT 1
-      `;
-      userId = users.length > 0 ? users[0].id : "demo-wp-user";
-    }
+    const energyVal = Math.min(5, Math.max(1, Number(energyLevel) || 3));
+    const stressVal = typeof stressLevel === "string" ? stressLevel : "Manageable";
 
     // 1. Check if user already checked in today
     const existingCheckin = await sql`
-      SELECT id, created_at FROM daily_checkins
-      WHERE user_id = ${userId}
-      ORDER BY created_at DESC
+      SELECT id, mood, energy_level, sleep_quality, stress, note, created_at, checkin_date
+      FROM daily_checkins
+      WHERE user_id = ${userId} AND checkin_date = ${todayDateStr}
       LIMIT 1
     `;
 
     if (existingCheckin.length > 0) {
-      const isToday = new Date(existingCheckin[0].created_at).toDateString() === new Date().toDateString();
-      if (isToday) {
-        return NextResponse.json(
-          { error: "You have already completed your daily check-in for today." },
-          { status: 400 }
-        );
-      }
+      return NextResponse.json({
+        success: false,
+        message: "You have already completed today's check-in."
+      }, { status: 409 });
     }
 
     // Insert new checkin
     const insertRes = await sql`
       INSERT INTO daily_checkins (
-        user_id, mood, energy_level, sleep_quality, stress, work_life_balance, note
+        user_id, mood, energy_level, sleep_quality, stress, work_life_balance, note, checkin_date, reflection
       ) VALUES (
-        ${userId}, ${mood}, ${energyVal}, ${sleepVal}, ${stressVal}, ${balanceVal}, ${note || null}
-      ) RETURNING id
+        ${userId}, ${mood}, ${energyVal}, 3, ${stressVal}, 3, ${reflection || null}, ${todayDateStr}, ${reflection || null}
+      ) RETURNING id, created_at, mood, energy_level, sleep_quality, stress, note, checkin_date, reflection
     `;
-    const savedId = insertRes[0]?.id;
+    
+    const savedRecord = insertRes[0];
+    const savedId = savedRecord?.id;
+    const createdAt = savedRecord?.created_at;
+
     await sql`
       INSERT INTO mood_entries (
         user_id, mood, energy, stress, sleep_quality, work_life_balance, reflection
       ) VALUES (
-        ${userId}, ${mood}, ${energyVal}, ${stressVal}, ${sleepVal}, ${balanceVal}, ${note || null}
+        ${userId}, ${mood}, ${energyVal}, ${stressVal}, 3, 3, ${reflection || null}
       )
     `;
 
@@ -104,24 +137,16 @@ export async function POST(req: Request) {
       mood,
       stress: stressVal,
       energy: energyVal,
-      sleep: sleepVal,
-      workLifeBalance: balanceVal,
+      sleep: 3,
+      workLifeBalance: 3,
     });
 
-    // 3. Update user current mood and assessment score
+    // 3. Update user current mood
     await sql`
       UPDATE users SET
         current_mood = ${mood}
       WHERE id = ${userId}
     `;
-
-    let userCategory = "student";
-    if (userId) {
-      const uRes = await sql`SELECT selected_category FROM users WHERE id = ${userId} LIMIT 1`;
-      if (uRes.length > 0) {
-        userCategory = uRes[0].selected_category;
-      }
-    }
 
     await sql`
       INSERT INTO assessments (
@@ -143,25 +168,21 @@ export async function POST(req: Request) {
 
     return NextResponse.json({
       success: true,
-      message: "Check-in saved successfully",
-      checkinId: savedId,
-      score: scoreResult.score,
-      level: scoreResult.level,
-      breakdown: scoreResult.breakdown,
-      checkin: {
+      checkIn: {
         id: savedId,
-        mood,
-        stress: stressVal,
-        energy: energyVal,
-        sleepQuality: sleepVal,
-        workLifeBalance: balanceVal,
-        note,
-      },
+        user_id: userId,
+        checkin_date: todayDateStr,
+        mood: mood,
+        stress_level: stressVal,
+        energy_level: energyVal,
+        reflection: reflection || null,
+        created_at: createdAt
+      }
     });
   } catch (err: any) {
     console.error("POST /api/checkins error:", err);
     return NextResponse.json(
-      { error: err.message || "Failed to save check-in" },
+      { error: "Unable to save your check-in. Please try again." },
       { status: 500 }
     );
   }

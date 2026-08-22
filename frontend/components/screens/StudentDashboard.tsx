@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { getClientSession } from "@/backend/auth/client";
 import MobileDrawer from "@/frontend/components/shell/MobileDrawer";
@@ -124,6 +124,7 @@ const ONBOARDING_QUESTIONS = [
 
 export default function StudentDashboard() {
   const router = useRouter();
+  const pathname = usePathname();
 
   // Sidebar hover/expand and mobile drawer states
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
@@ -195,6 +196,15 @@ export default function StudentDashboard() {
   const [checkinStress, setCheckinStress] = useState("Manageable");
   const [checkinEnergy, setCheckinEnergy] = useState(3);
   const [checkinNote, setCheckinNote] = useState("");
+  const [isSubmittingCheckin, setIsSubmittingCheckin] = useState(false);
+
+  const getLocalDateString = () => {
+    const d = new Date();
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
 
   const [journalTitle, setJournalTitle] = useState("");
   const [journalContent, setJournalContent] = useState("");
@@ -339,7 +349,8 @@ export default function StudentDashboard() {
   // --- Initial Data Load ---
   const fetchAllData = async () => {
     try {
-      const res = await fetch("/api/dashboard/student");
+      const localDate = getLocalDateString();
+      const res = await fetch(`/api/dashboard/student?localDate=${localDate}`);
       const json = await res.json();
 
       if (res.status === 401) {
@@ -443,25 +454,55 @@ export default function StudentDashboard() {
       energyLvl = 1;
     }
 
+    if (isSubmittingCheckin) return;
+    setIsSubmittingCheckin(true);
+
     try {
       const res = await fetch("/api/checkins", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           mood: mood === "Good" ? "Happy" : mood === "Okay" ? "Calm" : mood === "Drained" ? "Okay" : mood === "Stressed" ? "Low" : "Overwhelmed",
-          stress: stressStr,
-          energy: energyLvl,
-          sleepQuality: sleepRecord?.score || 4,
-          workLifeBalance: 4,
-          note: checkinNote || "Logged check-in",
+          stressLevel: stressStr,
+          energyLevel: energyLvl,
+          reflection: "Logged check-in",
         }),
       });
 
-      if (!res.ok) throw new Error("Daily check-in could not be saved.");
+      const json = await res.json();
+      if (!res.ok) {
+        if (res.status === 409) {
+          throw new Error("Today's check-in is already completed.");
+        } else {
+          throw new Error("Unable to save your check-in. Please try again.");
+        }
+      }
+
       triggerToast("Daily check-in saved! Score updated. 🌿");
+      
+      if (json.checkIn) {
+        setData((prev: any) => {
+          if (!prev) return prev;
+          return {
+            ...prev,
+            todayMood: json.checkIn.mood,
+            todayCheckin: {
+              id: json.checkIn.id,
+              mood: json.checkIn.mood,
+              stress: json.checkIn.stress_level,
+              energy: json.checkIn.energy_level,
+              note: json.checkIn.reflection,
+              created_at: json.checkIn.created_at,
+            }
+          };
+        });
+      }
+
       fetchAllData();
     } catch (err: any) {
       triggerToast(err.message);
+    } finally {
+      setIsSubmittingCheckin(false);
     }
   };
 
@@ -471,6 +512,9 @@ export default function StudentDashboard() {
       triggerToast("Please select your mood.");
       return;
     }
+    if (isSubmittingCheckin) return;
+
+    setIsSubmittingCheckin(true);
 
     try {
       const res = await fetch("/api/checkins", {
@@ -478,20 +522,52 @@ export default function StudentDashboard() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           mood: checkinMood,
-          stress: checkinStress,
-          energy: checkinEnergy,
-          sleepQuality: sleepRecord?.score || 4,
-          workLifeBalance: 4,
-          note: checkinNote || "Logged check-in",
+          stressLevel: checkinStress,
+          energyLevel: checkinEnergy,
+          reflection: checkinNote || "",
         }),
       });
 
-      if (!res.ok) throw new Error("Daily check-in could not be saved.");
+      const json = await res.json();
+      if (!res.ok) {
+        if (res.status === 409) {
+          throw new Error("Today's check-in is already completed.");
+        } else {
+          throw new Error("Unable to save your check-in. Please try again.");
+        }
+      }
+
       triggerToast("Daily check-in saved! Score updated. 🌿");
       setActiveModal(null);
+      // Clear form
+      setCheckinMood(null);
+      setCheckinStress("Manageable");
+      setCheckinEnergy(3);
+      setCheckinNote("");
+
+      if (json.checkIn) {
+        setData((prev: any) => {
+          if (!prev) return prev;
+          return {
+            ...prev,
+            todayMood: json.checkIn.mood,
+            todayCheckin: {
+              id: json.checkIn.id,
+              mood: json.checkIn.mood,
+              stress: json.checkIn.stress_level,
+              energy: json.checkIn.energy_level,
+              note: json.checkIn.reflection,
+              created_at: json.checkIn.created_at,
+            }
+          };
+        });
+      }
+
       fetchAllData();
     } catch (err: any) {
       triggerToast(err.message);
+    } finally {
+      setIsSubmittingCheckin(false);
     }
   };
 
@@ -968,7 +1044,7 @@ export default function StudentDashboard() {
     );
   }
 
-  const { user, streak, todayMood, wellnessScore, recommendation, weeklyFocus, weeklyMoods } = data;
+  const { user, streak, todayMood, todayCheckin, wellnessScore, recommendation, weeklyFocus, weeklyMoods } = data;
 
   // 3b. Scale Study Focus sessions bar heights
   const weeklyFocusData = weeklyFocus || [0, 0, 0, 0, 0, 0, 0];
@@ -1053,141 +1129,171 @@ export default function StudentDashboard() {
       
       {/* ==================== LEFT SIDEBAR ==================== */}
       <aside
-        onMouseEnter={() => setIsSidebarExpanded(true)}
-        onMouseLeave={() => setIsSidebarExpanded(false)}
-        onFocus={() => setIsSidebarExpanded(true)}
-        onBlur={() => setIsSidebarExpanded(false)}
-        className={`hidden md:flex h-screen bg-[#100E26] text-slate-300 z-40 select-none flex-col justify-between transition-all duration-300 ease-out shadow-lg shrink-0 ${
-          isSidebarExpanded ? "w-[250px]" : "w-[72px]"
-        }`}
+        className="hidden md:flex sticky top-0 h-screen bg-[#100E26] text-slate-350 z-40 select-none flex-col justify-between shadow-lg shrink-0 w-[200px] lg:w-[230px] xl:w-[240px] border-r border-white/5"
       >
         <div className="flex-1 flex flex-col min-h-0">
           
           {/* Logo Brand Header */}
-          <div className="p-5 flex items-center gap-3 shrink-0">
-            <div className="w-10 h-10 rounded-2xl bg-[#5F4EA5] flex items-center justify-center text-white shadow-md shrink-0">
-              <span className="material-symbols-outlined text-2xl font-black">spa</span>
+          <div className="px-5 py-4 flex items-center gap-3 shrink-0 mb-7">
+            <div className="w-9 h-9 rounded-xl bg-[#5F4EA5] flex items-center justify-center text-white shadow-md shrink-0">
+              <span className="material-symbols-outlined text-xl font-black select-none">spa</span>
             </div>
-            <div className={`text-left transition-opacity duration-300 ${
-              isSidebarExpanded ? "opacity-100" : "opacity-0 w-0 h-0 overflow-hidden"
-            }`}>
-              <h1 className="font-heading font-black text-sm text-white leading-tight">Manraah</h1>
-              <p className="text-[9px] text-[#8E8A9F] font-bold uppercase tracking-wider">Sanctuary for Mind</p>
+            <div className="text-left flex flex-col justify-center">
+              <h1 className="font-heading font-black text-sm text-white leading-none">Manraah</h1>
+              <p className="text-[9px] text-[#8E8A9F] font-bold uppercase tracking-wider mt-1 leading-none">Sanctuary for Mind</p>
             </div>
           </div>
 
           {/* Navigation Links */}
           <nav className="flex-1 px-3 py-4 space-y-1.5 overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
             {[
-              { label: "DASHBOARD", icon: "dashboard", href: "/dashboard/student", active: true },
-              { label: "AI COMPANION", icon: "smart_toy", href: "/ai-chat" },
-              { label: "CHECK-IN", icon: "mood", href: "/checkin" },
-              { label: "FOCUS TIMER", icon: "timer", href: "#", action: () => handleStartFocusTimer(25) },
-              { label: "STUDY PLANNER", icon: "assignment", href: "#", action: () => setActiveModal("task") },
-              { label: "EXAMS", icon: "school", href: "#", action: () => setActiveModal("exam") },
-              { label: "ANALYTICS", icon: "bar_chart", href: "#" },
-              { label: "WELLNESS", icon: "spa", href: "#" },
-              { label: "JOURNAL", icon: "auto_stories", href: "#", action: () => setActiveModal("journal") },
-              { label: "SLEEP", icon: "bedtime", href: "#", action: () => setActiveModal("sleep") },
-              { label: "RESOURCES", icon: "library_books", href: "/resources" },
-              { label: "COMMUNITY", icon: "forum", href: "/community" },
-              { label: "PROFESSIONAL CARE", icon: "medical_services", href: "#", action: () => setActiveModal("consult") },
-            ].map((item, idx) => (
-              <button
-                key={idx}
-                onClick={item.action || (() => router.push(item.href))}
-                aria-label={item.label}
-                className={`w-full flex items-center rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all relative group/item ${
-                  isSidebarExpanded ? "px-4.5 py-3 gap-3.5 justify-start" : "p-3.5 justify-center"
-                } ${
-                  item.active
-                    ? "bg-[#5F4EA5] text-white shadow-[0_4px_20px_rgba(95,78,165,0.4)]"
-                    : "text-[#8E8A9F] hover:bg-white/5 hover:text-white"
-                }`}
-              >
-                <span className="material-symbols-outlined text-base shrink-0">{item.icon}</span>
-                <span className={`transition-all duration-300 whitespace-nowrap ${
-                  isSidebarExpanded ? "opacity-100 translate-x-0" : "opacity-0 w-0 overflow-hidden translate-x-2"
-                }`}>
-                  {item.label}
-                </span>
+              { label: "Dashboard", icon: "dashboard", href: "/dashboard/student" },
+              { label: "AI Companion", icon: "smart_toy", href: "/ai-chat" },
+              { label: "Check-in", icon: "mood", href: "/checkin" },
+              { label: "Focus Timer", icon: "timer", href: "#", action: () => handleStartFocusTimer(25) },
+              { label: "Study Planner", icon: "assignment", href: "#", action: () => setActiveModal("task") },
+              { label: "Exams", icon: "school", href: "#", action: () => setActiveModal("exam") },
+              { label: "Analytics", icon: "bar_chart", href: "#" },
+              { label: "Wellness", icon: "spa", href: "#" },
+              { label: "Journal", icon: "auto_stories", href: "#", action: () => setActiveModal("journal") },
+              { label: "Sleep", icon: "bedtime", href: "#", action: () => setActiveModal("sleep") },
+              { label: "Resources", icon: "library_books", href: "/resources" },
+              { label: "Community", icon: "forum", href: "/community" },
+              { label: "Professional Care", icon: "medical_services", href: "#", action: () => setActiveModal("consult") },
+            ].map((item, idx) => {
+              // Determine active state dynamically
+              const isActive = (() => {
+                if (!pathname) return false;
+                const path = pathname.toLowerCase();
+                const label = item.label.toLowerCase();
+                
+                if (label === "dashboard") {
+                  return path === "/dashboard/student";
+                }
+                if (label === "ai companion") {
+                  return path === "/ai-chat" || path === "/ai-companion";
+                }
+                if (label === "check-in") {
+                  return path === "/checkin" || path === "/check-in";
+                }
+                if (label === "focus timer") {
+                  return path === "/meditation" || path === "/focus-timer";
+                }
+                if (label === "study planner") {
+                  return path === "/journey" || path === "/study-planner";
+                }
+                if (label === "exams") {
+                  return path === "/exams";
+                }
+                if (label === "analytics") {
+                  return path === "/reports" || path === "/analytics";
+                }
+                if (label === "wellness") {
+                  return path === "/wellness" || path === "/wellness-score";
+                }
+                if (item.href && item.href !== "#") {
+                  return path === item.href.toLowerCase() || path.startsWith(item.href.toLowerCase() + "/");
+                }
+                return false;
+              })();
 
-                {/* Tooltip for Collapsed State */}
-                {!isSidebarExpanded && (
-                  <div className="absolute left-16 bg-[#1F1A3A] border border-white/10 text-white px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-wider opacity-0 group-hover/item:opacity-100 transition-opacity pointer-events-none z-50 whitespace-nowrap shadow-md">
-                    {item.label}
+              return (
+                <button
+                  key={idx}
+                  onClick={item.action || (() => router.push(item.href))}
+                  aria-label={item.label}
+                  className={`w-full flex items-center h-[42px] px-4 gap-3 rounded-xl transition-all duration-200 group/item relative select-none ${
+                    isActive
+                      ? "bg-[#5F4EA5] text-white shadow-[0_4px_12px_rgba(95,78,165,0.25)] font-bold"
+                      : "text-[#8E8A9F] hover:bg-white/[0.06] hover:text-white"
+                  }`}
+                >
+                  <div className="w-6 h-6 flex items-center justify-center shrink-0">
+                    <span className="material-symbols-outlined text-[20px] transition-transform duration-200 group-hover/item:translate-x-0.5 select-none">
+                      {item.icon}
+                    </span>
                   </div>
-                )}
-              </button>
-            ))}
+                  <span className="text-[13px] font-medium leading-none tracking-normal whitespace-nowrap">
+                    {item.label}
+                  </span>
+                </button>
+              );
+            })}
           </nav>
         </div>
 
         {/* Profile Footer Panel */}
-        <div className="p-3 border-t border-white/5 shrink-0 bg-[#0A091A]">
-          <div
-            onClick={() => setActiveModal("profile")}
-            className={`flex items-center rounded-2xl hover:bg-white/5 transition-colors cursor-pointer ${
-              isSidebarExpanded ? "p-2 justify-between" : "p-1.5 justify-center"
-            }`}
-          >
-            <div className="flex items-center gap-3">
-              <img
-                src={user?.avatar || "/images/user_avatar.jpg"}
-                alt={user?.name || "Profile"}
-                className="w-10 h-10 rounded-2xl object-cover border border-white/10 shrink-0"
-              />
-              <div className={`text-left transition-opacity duration-300 ${
-                isSidebarExpanded ? "opacity-100" : "opacity-0 w-0 h-0 overflow-hidden"
-              }`}>
-                <p className="text-xs font-black text-white leading-tight">{user?.name || "Member"}</p>
-                <span className="text-[9px] text-[#8E8A9F] font-bold block mt-0.5">View Profile</span>
+        {(() => {
+          const getCategoryDisplayName = (cat: string) => {
+            if (!cat) return "Student";
+            return cat
+              .split(/[_-]/)
+              .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+              .join(" ");
+          };
+          return (
+            <div className="p-3 border-t border-white/5 shrink-0 bg-[#0A091A]">
+              <div
+                onClick={() => setActiveModal("profile")}
+                className="flex items-center justify-between p-2 rounded-xl hover:bg-white/5 transition-colors cursor-pointer"
+              >
+                <div className="flex items-center gap-3">
+                  <img
+                    src={user?.avatar || "/images/user_avatar.jpg"}
+                    alt={user?.name || "Profile"}
+                    className="w-9 h-9 rounded-full object-cover border border-white/10 shrink-0"
+                  />
+                  <div className="text-left flex flex-col justify-center">
+                    <p className="text-xs font-semibold text-white leading-tight truncate max-w-[110px] lg:max-w-[130px] xl:max-w-[140px]">
+                      {user?.name || "Member"}
+                    </p>
+                    <span className="text-[10px] text-[#8E8A9F] font-medium block mt-0.5 leading-none">
+                      {getCategoryDisplayName(user?.selectedCategory || "student")}
+                    </span>
+                  </div>
+                </div>
+                <span className="material-symbols-outlined text-[18px] text-[#8E8A9F] select-none">expand_more</span>
+              </div>
+
+              {/* Settings & Logout */}
+              <div className="border-t border-white/5 mt-3 pt-3 flex flex-col gap-1">
+                <button
+                  onClick={() => setActiveModal("journal")}
+                  aria-label="Settings"
+                  className="w-full flex items-center h-[42px] px-4 gap-3 rounded-xl text-[#8E8A9F] hover:bg-white/[0.06] hover:text-white transition-all duration-200 group/settings"
+                >
+                  <div className="w-6 h-6 flex items-center justify-center shrink-0">
+                    <span className="material-symbols-outlined text-[20px] transition-transform duration-200 group-hover/settings:translate-x-0.5 select-none">
+                      settings
+                    </span>
+                  </div>
+                  <span className="text-[13px] font-medium leading-none tracking-normal">
+                    Settings
+                  </span>
+                </button>
+
+                <button
+                  onClick={async () => {
+                    const { signOut } = await import("@/backend/auth/client");
+                    await signOut();
+                    window.location.href = "/login";
+                  }}
+                  aria-label="Logout"
+                  className="w-full flex items-center h-[42px] px-4 gap-3 rounded-xl text-red-400/80 hover:bg-red-500/10 hover:text-red-300 transition-all duration-200 group/logout"
+                >
+                  <div className="w-6 h-6 flex items-center justify-center shrink-0">
+                    <span className="material-symbols-outlined text-[20px] transition-transform duration-200 group-hover/logout:translate-x-0.5 select-none">
+                      logout
+                    </span>
+                  </div>
+                  <span className="text-[13px] font-medium leading-none tracking-normal">
+                    Logout
+                  </span>
+                </button>
               </div>
             </div>
-            {isSidebarExpanded && (
-              <span className="material-symbols-outlined text-xs text-[#8E8A9F]">expand_more</span>
-            )}
-          </div>
-
-          <div className={`flex border-t border-white/5 mt-3 pt-2 ${
-            isSidebarExpanded ? "flex-row justify-between px-2 text-[10px]" : "flex-col items-center gap-3"
-          }`}>
-            <button
-              onClick={() => setActiveModal("journal")}
-              aria-label="Settings"
-              className="relative group/settings flex items-center gap-1 text-[#8E8A9F] hover:text-white"
-            >
-              <span className="material-symbols-outlined text-base">settings</span>
-              {isSidebarExpanded && <span>Settings</span>}
-
-              {/* Tooltip */}
-              {!isSidebarExpanded && (
-                <div className="absolute left-16 bg-[#1F1A3A] border border-white/10 text-white px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-wider opacity-0 group-hover/settings:opacity-100 transition-opacity pointer-events-none z-50 whitespace-nowrap shadow-md">
-                  Settings
-                </div>
-              )}
-            </button>
-            <button
-              onClick={async () => {
-                const { signOut } = await import("@/backend/auth/client");
-                await signOut();
-                window.location.href = "/login";
-              }}
-              aria-label="Logout"
-              className="relative group/logout flex items-center gap-1 text-red-400 hover:text-red-300 font-bold"
-            >
-              <span className="material-symbols-outlined text-base">logout</span>
-              {isSidebarExpanded && <span>Logout</span>}
-
-              {/* Tooltip */}
-              {!isSidebarExpanded && (
-                <div className="absolute left-16 bg-[#1F1A3A] border border-white/10 text-white px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-wider opacity-0 group-hover/logout:opacity-100 transition-opacity pointer-events-none z-50 whitespace-nowrap shadow-md">
-                  Logout
-                </div>
-              )}
-            </button>
-          </div>
-        </div>
+          );
+        })()}
       </aside>
 
       {/* ==================== MAIN CONTENT CONTAINER ==================== */}
@@ -1276,7 +1382,7 @@ export default function StudentDashboard() {
             
             {/* Daily Check-in Card */}
             <div className="p-5 lg:p-6 rounded-[28px] bg-white dark:bg-[#132E3F] border border-slate-200/60 dark:border-slate-800 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between min-h-[290px] relative overflow-hidden">
-              {todayMood && todayMood.toLowerCase() === "good" && (
+              {todayCheckin && (
                 <div className="absolute inset-0 pointer-events-none opacity-40 select-none">
                   <span className="absolute bottom-4 left-6 w-2 h-2 rounded-full bg-emerald-400 animate-float-slow" style={{ animationDelay: '0s' }} />
                   <span className="absolute bottom-8 left-16 w-1.5 h-1.5 rounded-full bg-emerald-300 animate-float-slow" style={{ animationDelay: '1.5s' }} />
@@ -1286,46 +1392,54 @@ export default function StudentDashboard() {
 
               <div className="space-y-4 z-10">
                 {/* smiley avatar */}
-                <div className="w-full flex justify-center py-2">
-                  <div className={`w-16 h-16 rounded-full flex items-center justify-center relative shadow-inner ${
-                    todayMood ? (
-                      todayMood.toLowerCase() === "okay" ? "bg-amber-50 dark:bg-amber-950/20 animate-pulse-slow" :
-                      todayMood.toLowerCase() === "stressed" ? "bg-red-50 dark:bg-red-950/20 animate-glow-slow shadow-[0_0_15px_rgba(239,68,68,0.2)]" :
-                      todayMood.toLowerCase() === "overwhelmed" ? "bg-purple-50 dark:bg-purple-950/20 animate-orbit-slow" :
+                <div className="w-full flex justify-center py-1">
+                  <div className={`w-14 h-14 rounded-full flex items-center justify-center relative shadow-inner ${
+                    todayCheckin ? (
+                      todayCheckin.mood.toLowerCase() === "okay" ? "bg-amber-50 dark:bg-amber-950/20 animate-pulse-slow" :
+                      todayCheckin.mood.toLowerCase() === "stressed" ? "bg-red-50 dark:bg-red-950/20 animate-glow-slow shadow-[0_0_15px_rgba(239,68,68,0.2)]" :
+                      todayCheckin.mood.toLowerCase() === "overwhelmed" ? "bg-purple-50 dark:bg-purple-950/20 animate-orbit-slow" :
                       "bg-emerald-50 dark:bg-emerald-950/20"
                     ) : "bg-[#EBE7FC] dark:bg-slate-850"
                   }`}>
-                    <span className="text-3xl select-none">
-                      {todayMood ? (
-                        todayMood.toLowerCase() === "good" ? "😊" :
-                        todayMood.toLowerCase() === "okay" ? "😐" :
-                        todayMood.toLowerCase() === "stressed" ? "😰" :
-                        todayMood.toLowerCase() === "overwhelmed" ? "😫" :
+                    <span className="text-2xl select-none">
+                      {todayCheckin ? (
+                        todayCheckin.mood.toLowerCase() === "good" || todayCheckin.mood.toLowerCase() === "happy" ? "😊" :
+                        todayCheckin.mood.toLowerCase() === "okay" || todayCheckin.mood.toLowerCase() === "calm" ? "😐" :
+                        todayCheckin.mood.toLowerCase() === "stressed" ? "😰" :
+                        todayCheckin.mood.toLowerCase() === "overwhelmed" ? "😫" :
                         "😊"
                       ) : "😊"}
                     </span>
-                    {todayMood && (
-                      <span className="absolute bottom-0 right-0 w-5 h-5 rounded-full bg-[#5F4EA5] border-2 border-white flex items-center justify-center text-white text-[8px] font-bold">
+                    {todayCheckin && (
+                      <span className="absolute bottom-0 right-0 w-4.5 h-4.5 rounded-full bg-[#5F4EA5] border-2 border-white flex items-center justify-center text-white text-[7px] font-black">
                         ✓
                       </span>
                     )}
                   </div>
                 </div>
 
-                <div className="text-center space-y-1 px-2">
+                <div className="text-center space-y-1.5 px-1">
                   <h4 className="text-xs font-black text-[#100E26] dark:text-slate-100">Daily Check-in</h4>
-                  {todayMood ? (
-                    <div className="space-y-2 mt-1">
+                  {todayCheckin ? (
+                    <div className="space-y-2 mt-1 bg-slate-50 dark:bg-slate-800/35 p-3 rounded-2xl text-left text-[10px] font-bold text-slate-500 dark:text-slate-400">
                       <p className="text-[10px] font-black text-[#5F4EA5] dark:text-purple-300 uppercase tracking-widest leading-none">
-                        Today: {todayMood}
+                        Completed today ✓
                       </p>
-                      <p className="text-[9px] text-slate-500 dark:text-slate-400 font-medium leading-relaxed">
-                        {todayMood.toLowerCase() === "good" ? "Excellent! Keep riding this positive momentum today. 🌟" :
-                         todayMood.toLowerCase() === "okay" ? "A steady day is a good day. Take things step by step. 🕊️" :
-                         todayMood.toLowerCase() === "stressed" ? "Take a deep breath. Remember to take study breaks today. 🧘" :
-                         todayMood.toLowerCase() === "overwhelmed" ? "It's okay to feel this way. Consider lowering your task load today. 💜" :
-                         "Your check-in is complete. Have a wonderful day!"}
-                      </p>
+                      <div className="space-y-1 pt-1.5 border-t border-slate-100 dark:border-slate-800/50">
+                        <p>Feeling: <span className="text-[#100E26] dark:text-slate-200 font-extrabold">{todayCheckin.mood}</span></p>
+                        <p>Stress: <span className="text-[#100E26] dark:text-slate-200 font-extrabold">{todayCheckin.stress}</span></p>
+                        <p>Energy: <span className="text-[#100E26] dark:text-slate-200 font-extrabold">{todayCheckin.energy}/5</span></p>
+                        {todayCheckin.created_at && (
+                          <p className="text-[9px] text-[#8E8A9F] font-bold block pt-1.5 leading-none">
+                            Checked in today at {new Date(todayCheckin.created_at).toLocaleTimeString("en-US", {
+                              timeZone: "Asia/Kolkata",
+                              hour: "numeric",
+                              minute: "2-digit",
+                              hour12: true
+                            })}
+                          </p>
+                        )}
+                      </div>
                     </div>
                   ) : (
                     <>
@@ -1340,10 +1454,15 @@ export default function StudentDashboard() {
 
               {/* Checkin button */}
               <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 z-10">
-                {todayMood ? (
-                  <div className="p-2.5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/20 text-[#5FAF8A] text-[9px] font-black uppercase tracking-widest text-center border border-emerald-100/30">
-                    Checked In &bull; Dynamic Score Updated
-                  </div>
+                {todayCheckin ? (
+                  <button
+                    onClick={() => {
+                      setActiveModal("checkin");
+                    }}
+                    className="w-full py-2.5 rounded-2xl bg-emerald-50 hover:bg-emerald-100/50 dark:bg-emerald-950/20 text-[#5FAF8A] text-[9px] font-black uppercase tracking-widest text-center border border-emerald-100/30 transition-colors"
+                  >
+                    View Check-in
+                  </button>
                 ) : (
                   <button
                     onClick={() => {
@@ -2302,101 +2421,164 @@ export default function StudentDashboard() {
                 <span className="material-symbols-outlined text-lg">close</span>
               </button>
 
-              <div className="text-center space-y-1">
-                <span className="text-3xl block">🌿</span>
-                <h4 className="text-lg font-heading font-black text-[#100E26] dark:text-slate-100">Daily Wellness Check-in</h4>
-                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">How are you feeling today?</p>
-              </div>
-
-              <form onSubmit={handleDailyCheckinSubmit} className="space-y-4 text-left">
-                {/* Mood selection */}
-                <div className="space-y-2">
-                  <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest block">Select Mood</label>
-                  <div className="grid grid-cols-4 gap-2">
-                    {[
-                      { label: "Good", emoji: "😊" },
-                      { label: "Okay", emoji: "😐" },
-                      { label: "Stressed", emoji: "😰" },
-                      { label: "Overwhelmed", emoji: "😫" }
-                    ].map((m) => (
-                      <button
-                        key={m.label}
-                        type="button"
-                        onClick={() => setCheckinMood(m.label)}
-                        className={`p-3 rounded-2xl border flex flex-col items-center gap-1.5 transition-all ${
-                          checkinMood === m.label
-                            ? "bg-[#F5F3FC] border-[#5F4EA5] text-[#5F4EA5] font-black scale-105"
-                            : "bg-slate-50 dark:bg-slate-800 border-slate-100 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-100"
-                        }`}
-                      >
-                        <span className="text-2xl select-none">{m.emoji}</span>
-                        <span className="text-[9px] font-bold leading-none">{m.label}</span>
-                      </button>
-                    ))}
+              {todayCheckin ? (
+                // READ-ONLY VIEW
+                <div className="space-y-6 text-left">
+                  <div className="text-center space-y-1">
+                    <span className="text-3xl block">🌿</span>
+                    <h4 className="text-lg font-heading font-black text-[#100E26] dark:text-slate-100">Today's Wellness Check-in</h4>
+                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Completed for today ✓</p>
                   </div>
-                </div>
 
-                {/* Stress Level */}
-                <div className="space-y-2">
-                  <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest block">Stress Level</label>
-                  <div className="grid grid-cols-4 gap-2">
-                    {["Low", "Moderate", "High", "Very High"].map((lvl) => (
-                      <button
-                        key={lvl}
-                        type="button"
-                        onClick={() => setCheckinStress(lvl)}
-                        className={`py-2 px-1 rounded-xl border text-[9px] font-bold text-center transition-all ${
-                          checkinStress === lvl
-                            ? "bg-[#F5F3FC] border-[#5F4EA5] text-[#5F4EA5] font-black"
-                            : "bg-slate-50 dark:bg-slate-800 border-slate-100 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-100"
-                        }`}
-                      >
-                        {lvl}
-                      </button>
-                    ))}
+                  <div className="space-y-4 text-xs font-bold text-slate-755 dark:text-slate-350">
+                    <div className="p-4 bg-slate-50 dark:bg-slate-800/40 rounded-2xl space-y-3">
+                      <div>
+                        <span className="block text-[8px] font-black uppercase tracking-widest text-slate-400">Mood</span>
+                        <span className="text-sm font-black text-[#5F4EA5] dark:text-purple-300">
+                          {todayCheckin.mood}
+                        </span>
+                      </div>
+
+                      <div>
+                        <span className="block text-[8px] font-black uppercase tracking-widest text-slate-400">Stress Level</span>
+                        <span className="text-sm font-black text-slate-800 dark:text-slate-100">{todayCheckin.stress}</span>
+                      </div>
+
+                      <div>
+                        <span className="block text-[8px] font-black uppercase tracking-widest text-slate-400">Energy Level</span>
+                        <span className="text-sm font-black text-slate-800 dark:text-slate-100">{todayCheckin.energy}/5</span>
+                      </div>
+
+                      <div>
+                        <span className="block text-[8px] font-black uppercase tracking-widest text-slate-400">Reflection Note</span>
+                        <span className="text-xs font-medium text-slate-650 dark:text-slate-400 block mt-0.5 whitespace-pre-wrap leading-relaxed">
+                          {todayCheckin.note || "No reflection note added."}
+                        </span>
+                      </div>
+
+                      {todayCheckin.created_at && (
+                        <div>
+                          <span className="block text-[8px] font-black uppercase tracking-widest text-slate-400">Submitted</span>
+                          <span className="text-sm font-black text-slate-800 dark:text-slate-100">
+                            {new Date(todayCheckin.created_at).toLocaleString("en-US", {
+                              timeZone: "Asia/Kolkata",
+                              dateStyle: "medium",
+                              timeStyle: "short"
+                            })}
+                          </span>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
 
-                {/* Energy Level */}
-                <div className="space-y-2">
-                  <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest block">Energy Level (1-5)</label>
-                  <div className="flex gap-2">
-                    {[1, 2, 3, 4, 5].map((val) => (
-                      <button
-                        key={val}
-                        type="button"
-                        onClick={() => setCheckinEnergy(val)}
-                        className={`w-10 h-10 rounded-full border text-xs font-black transition-all flex items-center justify-center ${
-                          checkinEnergy === val
-                            ? "bg-[#5F4EA5] border-[#5F4EA5] text-white font-black scale-110"
-                            : "bg-slate-50 dark:bg-slate-800 border-slate-100 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-100"
-                        }`}
-                      >
-                        {val}
-                      </button>
-                    ))}
+                  <button
+                    onClick={() => setActiveModal(null)}
+                    className="w-full py-3 rounded-full bg-[#5F4EA5] hover:bg-[#100E26] text-white text-xs font-bold shadow-md transition-all text-center block cursor-pointer"
+                  >
+                    Close
+                  </button>
+                </div>
+              ) : (
+                // INPUT CHECK-IN VIEW
+                <>
+                  <div className="text-center space-y-1">
+                    <span className="text-3xl block">🌿</span>
+                    <h4 className="text-lg font-heading font-black text-[#100E26] dark:text-slate-100">Daily Wellness Check-in</h4>
+                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">How are you feeling today?</p>
                   </div>
-                </div>
 
-                {/* Optional Reflection */}
-                <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest block">Reflection Note (Optional)</label>
-                  <textarea
-                    rows={2}
-                    value={checkinNote}
-                    onChange={(e) => setCheckinNote(e.target.value)}
-                    placeholder="How was your day? Write a brief note..."
-                    className="w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 text-xs focus:outline-none focus:ring-1 focus:ring-[#5F4EA5] text-slate-800 dark:text-slate-200 font-bold resize-none"
-                  />
-                </div>
+                  <form onSubmit={handleDailyCheckinSubmit} className="space-y-4 text-left">
+                    {/* Mood selection */}
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest block">Select Mood</label>
+                      <div className="grid grid-cols-4 gap-2">
+                        {[
+                          { label: "Good", emoji: "😊" },
+                          { label: "Okay", emoji: "😐" },
+                          { label: "Stressed", emoji: "😰" },
+                          { label: "Overwhelmed", emoji: "😫" }
+                        ].map((m) => (
+                          <button
+                            key={m.label}
+                            type="button"
+                            onClick={() => setCheckinMood(m.label)}
+                            className={`p-3 rounded-2xl border flex flex-col items-center gap-1.5 transition-all ${
+                              checkinMood === m.label
+                                ? "bg-[#F5F3FC] border-[#5F4EA5] text-[#5F4EA5] font-black scale-105"
+                                : "bg-slate-50 dark:bg-slate-800 border-slate-100 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-100"
+                            }`}
+                          >
+                            <span className="text-2xl select-none">{m.emoji}</span>
+                            <span className="text-[9px] font-bold leading-none">{m.label}</span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
 
-                <button
-                  type="submit"
-                  className="w-full py-3 rounded-full bg-[#5F4EA5] hover:bg-[#100E26] text-white text-xs font-bold shadow-md transition-all text-center block mt-6"
-                >
-                  Submit Check-in
-                </button>
-              </form>
+                    {/* Stress Level */}
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest block">Stress Level</label>
+                      <div className="grid grid-cols-4 gap-2">
+                        {["Low", "Moderate", "High", "Very High"].map((lvl) => (
+                          <button
+                            key={lvl}
+                            type="button"
+                            onClick={() => setCheckinStress(lvl)}
+                            className={`py-2 px-1 rounded-xl border text-[9px] font-bold text-center transition-all ${
+                              checkinStress === lvl
+                                ? "bg-[#F5F3FC] border-[#5F4EA5] text-[#5F4EA5] font-black"
+                                : "bg-slate-50 dark:bg-slate-800 border-slate-100 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-100"
+                            }`}
+                          >
+                            {lvl}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Energy Level */}
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest block">Energy Level (1-5)</label>
+                      <div className="flex gap-2">
+                        {[1, 2, 3, 4, 5].map((val) => (
+                          <button
+                            key={val}
+                            type="button"
+                            onClick={() => setCheckinEnergy(val)}
+                            className={`w-10 h-10 rounded-full border text-xs font-black transition-all flex items-center justify-center ${
+                              checkinEnergy === val
+                                ? "bg-[#5F4EA5] border-[#5F4EA5] text-white font-black scale-110"
+                                : "bg-slate-50 dark:bg-slate-800 border-slate-100 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-100"
+                            }`}
+                          >
+                            {val}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Optional Reflection */}
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest block">Reflection Note (Optional)</label>
+                      <textarea
+                        rows={2}
+                        value={checkinNote}
+                        onChange={(e) => setCheckinNote(e.target.value)}
+                        placeholder="How was your day? Write a brief note..."
+                        className="w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 text-xs focus:outline-none focus:ring-1 focus:ring-[#5F4EA5] text-slate-800 dark:text-slate-200 font-bold resize-none"
+                      />
+                    </div>
+
+                    <button
+                      type="submit"
+                      disabled={isSubmittingCheckin}
+                      className="w-full py-3 rounded-full bg-[#5F4EA5] hover:bg-[#100E26] text-white text-xs font-bold shadow-md transition-all text-center block mt-6 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                    >
+                      {isSubmittingCheckin ? "Submitting..." : "Submit Check-in"}
+                    </button>
+                  </form>
+                </>
+              )}
             </motion.div>
           </div>
         )}

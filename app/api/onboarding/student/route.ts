@@ -4,6 +4,27 @@ import { getAuthSessionFromRequest } from "@/backend/auth/session";
 
 export const dynamic = "force-dynamic";
 
+async function ensureOnboardingSchema() {
+  try {
+    // 1. Ensure onboarding completed timestamp exists
+    await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS onboarding_completed_at TIMESTAMP WITH TIME ZONE`;
+    
+    // 2. Ensure student_onboarding_assessments table exists
+    await sql`
+      CREATE TABLE IF NOT EXISTS student_onboarding_assessments (
+        id SERIAL PRIMARY KEY,
+        user_id VARCHAR(255) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        answers JSONB DEFAULT '[]'::jsonb,
+        completed_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      )
+    `;
+  } catch (err) {
+    console.error("Failed to verify/create onboarding tables:", err);
+  }
+}
+
 export async function POST(req: Request) {
   try {
     const session = getAuthSessionFromRequest();
@@ -13,6 +34,28 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    // Ensure database schema matches
+    await ensureOnboardingSchema();
+
+    // Verify user profile category & status
+    const userCategoryResult = await sql`
+      SELECT selected_category, onboarding_completed FROM users WHERE id = ${userId} LIMIT 1
+    `;
+    if (userCategoryResult.length === 0) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    const userRecord = userCategoryResult[0];
+    const userCategory = (userRecord.selected_category || "student").toLowerCase().trim();
+
+    if (userCategory !== "student") {
+      return NextResponse.json({ error: "Category access denied" }, { status: 403 });
+    }
+
+    if (userRecord.onboarding_completed) {
+      return NextResponse.json({ error: "Onboarding has already been completed." }, { status: 400 });
+    }
+
     const body = await req.json();
     const { answers } = body;
 
@@ -20,8 +63,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Onboarding requires exactly 10 answers." }, { status: 400 });
     }
 
-    // Map answers to database equivalents
-    // Q2: Stress (index 1)
+    // Map answers to database equivalents for profile setup
     const q2Stress = answers[1]?.answer || "Manageable";
     let dbStress = "Manageable";
     if (q2Stress.includes("Calm") || q2Stress.includes("relaxed")) {
@@ -34,51 +76,18 @@ export async function POST(req: Request) {
       dbStress = "Overwhelmed";
     }
 
-    // Q3: Sleep Quality (index 2)
     const q3Sleep = answers[2]?.answer || "6 to 8 hours";
     let dbSleepScore = 75;
-    let dbSleepQualityNum = 4;
     if (q3Sleep.includes("8+")) {
       dbSleepScore = 95;
-      dbSleepQualityNum = 5;
     } else if (q3Sleep.includes("6 to 8")) {
       dbSleepScore = 80;
-      dbSleepQualityNum = 4;
     } else if (q3Sleep.includes("4 to 6")) {
       dbSleepScore = 55;
-      dbSleepQualityNum = 3;
     } else {
       dbSleepScore = 30;
-      dbSleepQualityNum = 2;
     }
 
-    // Q4: Focus (index 3)
-    const q4Focus = answers[3]?.answer || "Mostly easy";
-    let dbFocusNum = 4;
-    if (q4Focus.includes("Very easy")) {
-      dbFocusNum = 5;
-    } else if (q4Focus.includes("Mostly easy")) {
-      dbFocusNum = 4;
-    } else if (q4Focus.includes("distracted")) {
-      dbFocusNum = 3;
-    } else {
-      dbFocusNum = 2;
-    }
-
-    // Q8: Balance (index 7)
-    const q8Balance = answers[7]?.answer || "Good balance";
-    let dbBalanceNum = 4;
-    if (q8Balance.includes("Excellent")) {
-      dbBalanceNum = 5;
-    } else if (q8Balance.includes("Good")) {
-      dbBalanceNum = 4;
-    } else if (q8Balance.includes("takes over")) {
-      dbBalanceNum = 3;
-    } else {
-      dbBalanceNum = 2;
-    }
-
-    // Q9: Mood (index 8)
     const q9Mood = answers[8]?.answer || "Okay / Neutral";
     let dbMood = "Okay";
     if (q9Mood.includes("Good") || q9Mood.includes("Happy")) {
@@ -96,20 +105,21 @@ export async function POST(req: Request) {
       UPDATE users SET
         initial_answers_json = ${JSON.stringify(answers)},
         onboarding_completed = true,
+        onboarding_completed_at = CURRENT_TIMESTAMP,
         current_mood = ${dbMood}
       WHERE id = ${userId}
     `;
 
-    // 2. Seed baseline sleep record so charts and wellness calculation have data
+    // 2. Save onboarding answers into student_onboarding_assessments
+    await sql`
+      INSERT INTO student_onboarding_assessments (user_id, answers)
+      VALUES (${userId}, ${JSON.stringify(answers)})
+    `;
+
+    // 3. Seed baseline sleep record so charts and wellness calculation have data
     await sql`
       INSERT INTO student_sleep_records (user_id, sleep_time, wake_time, duration_minutes, quality_score)
       VALUES (${userId}, (CURRENT_TIMESTAMP - INTERVAL '8 hours'), CURRENT_TIMESTAMP, 480, ${dbSleepScore})
-    `;
-
-    // 3. Seed baseline check-in to database
-    await sql`
-      INSERT INTO daily_checkins (user_id, mood, energy_level, sleep_quality, stress, note)
-      VALUES (${userId}, ${dbMood}, ${dbFocusNum}, ${dbSleepQualityNum}, ${dbStress}, 'Baseline setup from onboarding')
     `;
 
     // 4. Update session cookies to reflect category and onboarding state
@@ -136,7 +146,12 @@ export async function POST(req: Request) {
       isAuthenticated: true,
     };
 
-    const response = NextResponse.json({ success: true });
+    const response = NextResponse.json({
+      success: true,
+      message: "Student onboarding completed successfully",
+      onboardingCompleted: true
+    });
+
     response.cookies.set("manraah_session", JSON.stringify(sessionData), {
       httpOnly: false,
       secure: process.env.NODE_ENV === "production",

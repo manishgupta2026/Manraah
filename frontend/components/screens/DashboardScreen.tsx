@@ -79,60 +79,6 @@ export default function DashboardScreen() {
   const [showReflectionModal, setShowReflectionModal] = useState<boolean>(false);
   const [showScoreModal, setShowScoreModal] = useState<boolean>(false);
 
-  useEffect(() => {
-    const session = getClientSession();
-    if (!session || !session.isAuthenticated || !session.user) {
-      router.push("/login");
-    }
-  }, [router]);
-
-  useEffect(() => {
-    if (dashboardData && dashboardData.assessmentCompleted === false) {
-      try {
-        const dismissed = sessionStorage.getItem("manraah_sanctuary_popup_dismissed") === "true";
-        if (!dismissed) {
-          setShowScoreModal(true);
-        }
-      } catch {
-        setShowScoreModal(true);
-      }
-    } else {
-      setShowScoreModal(false);
-    }
-  }, [dashboardData]);
-
-  useEffect(() => {
-    const hour = new Date().getHours();
-    if (hour >= 5 && hour < 12) setThemeKey("morning");
-    else if (hour >= 12 && hour < 17) setThemeKey("afternoon");
-    else if (hour >= 17 && hour < 21) setThemeKey("evening");
-    else setThemeKey("night");
-
-    const d = new Date();
-    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    setCurrentDateString(`${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`);
-  }, []);
-
-  if (isLoading || !dashboardData) {
-    return (
-      <div className="max-w-7xl mx-auto py-4 px-4 space-y-8 animate-pulse select-none">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
-          <div className="col-span-1 md:col-span-8 h-[260px] rounded-[32px] bg-slate-200/50" />
-          <div className="col-span-1 md:col-span-4 h-[260px] rounded-[32px] bg-slate-200/50" />
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
-          <div className="col-span-1 md:col-span-4 h-[220px] rounded-[32px] bg-slate-200/50" />
-          <div className="col-span-1 md:col-span-4 h-[220px] rounded-[32px] bg-slate-200/50" />
-          <div className="col-span-1 md:col-span-4 h-[220px] rounded-[32px] bg-slate-200/50" />
-        </div>
-      </div>
-    );
-  }
-
-  const { user, todayMood, streak, recommendation, insights } = dashboardData;
-  const history = dashboardData.history || dashboardData.moodHistory || [];
-  const name = user?.sanctuaryName || user?.name || "Ashutosh Sahu";
-
   // Extract explicit category segment from URL path e.g. /dashboard/student -> student
   const urlCategory = pathname?.startsWith("/dashboard/")
     ? pathname.replace("/dashboard/", "").split("/")[0]?.toLowerCase()
@@ -191,6 +137,60 @@ export default function DashboardScreen() {
       }
     }
   }, [category, sessionCategory, setCategory]);
+
+  useEffect(() => {
+    const session = getClientSession();
+    if (!session || !session.isAuthenticated || !session.user) {
+      router.push("/login");
+    }
+  }, [router]);
+
+  useEffect(() => {
+    if (dashboardData && dashboardData.assessmentCompleted === false) {
+      try {
+        const dismissed = sessionStorage.getItem("manraah_sanctuary_popup_dismissed") === "true";
+        if (!dismissed) {
+          setShowScoreModal(true);
+        }
+      } catch {
+        setShowScoreModal(true);
+      }
+    } else {
+      setShowScoreModal(false);
+    }
+  }, [dashboardData]);
+
+  useEffect(() => {
+    const hour = new Date().getHours();
+    if (hour >= 5 && hour < 12) setThemeKey("morning");
+    else if (hour >= 12 && hour < 17) setThemeKey("afternoon");
+    else if (hour >= 17 && hour < 21) setThemeKey("evening");
+    else setThemeKey("night");
+
+    const d = new Date();
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    setCurrentDateString(`${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`);
+  }, []);
+
+  if (isLoading || !dashboardData) {
+    return (
+      <div className="max-w-7xl mx-auto py-4 px-4 space-y-8 animate-pulse select-none">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+          <div className="col-span-1 md:col-span-8 h-[260px] rounded-[32px] bg-slate-200/50" />
+          <div className="col-span-1 md:col-span-4 h-[260px] rounded-[32px] bg-slate-200/50" />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+          <div className="col-span-1 md:col-span-4 h-[220px] rounded-[32px] bg-slate-200/50" />
+          <div className="col-span-1 md:col-span-4 h-[220px] rounded-[32px] bg-slate-200/50" />
+          <div className="col-span-1 md:col-span-4 h-[220px] rounded-[32px] bg-slate-200/50" />
+        </div>
+      </div>
+    );
+  }
+
+  const { user, todayMood, streak, recommendation, insights } = dashboardData;
+  const history = dashboardData.history || dashboardData.moodHistory || [];
+  const name = user?.sanctuaryName || user?.name || "Ashutosh Sahu";
 
   console.log("[Dashboard] [POINT 3 — after login] DB:", dashboardData?.user?.selectedCategory, "| session cookie:", sessionCategory, "| resolved:", category);
   const streakDays = typeof streak === "number" 

@@ -88,6 +88,10 @@ async function ensureStudentTablesExist() {
         created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
       )
     `;
+    try {
+      await sql`ALTER TABLE daily_checkins ADD COLUMN IF NOT EXISTS checkin_date DATE DEFAULT CURRENT_DATE`;
+      await sql`ALTER TABLE daily_checkins ADD CONSTRAINT unique_user_daily_checkin_date UNIQUE (user_id, checkin_date)`;
+    } catch (e) {}
   } catch (err) {
     console.error("Failed to verify/create student tables:", err);
   }
@@ -144,9 +148,22 @@ export async function GET(req: Request) {
     const streakInfo = await recordUserLogin(userId);
     const preferredName = user.name || user.sanctuary_name || "Student Sanctuary Member";
 
+    const getCalendarDayString = (date: Date | string) => {
+      const formatter = new Intl.DateTimeFormat("en-CA", {
+        timeZone: "Asia/Kolkata",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      });
+      return formatter.format(new Date(date));
+    };
+
+    const url = new URL(req.url);
+    const localDate = url.searchParams.get("localDate") || getCalendarDayString(new Date());
+
     // 2. Fetch Checkins
     const rawCheckins = await sql`
-      SELECT id, user_id, mood, energy_level as energy, sleep_quality, stress, note, created_at
+      SELECT id, user_id, mood, energy_level as energy, sleep_quality, stress, note, created_at, checkin_date
       FROM daily_checkins
       WHERE user_id = ${user.id}
       ORDER BY created_at DESC
@@ -165,11 +182,14 @@ export async function GET(req: Request) {
       history = moodHistory;
     }
 
-    const latestCheckin = history.length > 0 ? history[0] : null;
-    const isToday = latestCheckin
-      ? new Date(latestCheckin.created_at).toDateString() === new Date().toDateString()
-      : false;
-    const todayCheckin = isToday ? latestCheckin : null;
+    const todayCheckin = history.find((c: any) => {
+      const checkinDateVal = c.checkin_date || c.check_in_date;
+      if (checkinDateVal) {
+        const dateStr = getCalendarDayString(checkinDateVal);
+        return dateStr === localDate;
+      }
+      return false;
+    }) || null;
 
     // 3. Focus sessions statistics for today
     const focusSessionsToday = await sql`
@@ -432,6 +452,7 @@ export async function GET(req: Request) {
         stress: todayCheckin.stress,
         energy: todayCheckin.energy,
         note: todayCheckin.note,
+        created_at: todayCheckin.created_at,
       } : null,
       history: history.slice(0, 7),
       wellnessScore: wellnessScoreObj,

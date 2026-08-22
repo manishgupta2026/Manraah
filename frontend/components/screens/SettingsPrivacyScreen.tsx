@@ -391,7 +391,8 @@ export default function SettingsPrivacyScreen() {
                 <select
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
-                  className="w-full p-3.5 rounded-2xl bg-surface-container-low border border-surface-variant/40 text-sm font-semibold text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/40"
+                  disabled
+                  className="w-full p-3.5 rounded-2xl bg-surface-container-low/50 border border-surface-variant/20 text-sm font-semibold text-on-surface/60 focus:outline-none cursor-not-allowed"
                 >
                   <option value="student">Student (Academic stress reduction)</option>
                   <option value="young_pro">Young Professional (Career building & balance)</option>
