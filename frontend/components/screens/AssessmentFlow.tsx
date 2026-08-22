@@ -197,7 +197,7 @@ export default function AssessmentFlow() {
   return (
     <div className="bg-[#EAEAF3] dark:bg-[#0D1F2D] h-screen max-h-screen overflow-hidden relative flex flex-col justify-center items-center py-6 px-4 md:px-8 select-none">
       {/* Immersive Mockup Card */}
-      <div className="max-w-2xl w-full rounded-[40px] bg-white dark:bg-[#132E3F] border border-slate-100 dark:border-slate-800 shadow-xl p-8 md:p-10 flex flex-col justify-between h-[85vh] max-h-[640px] overflow-hidden relative">
+      <div className="max-w-2xl w-full rounded-[40px] bg-white dark:bg-[#132E3F] border border-slate-100 dark:border-slate-800 shadow-xl px-8 py-6 md:px-10 md:py-8 flex flex-col justify-between h-[85vh] max-h-[700px] overflow-hidden relative">
         
         {/* Top Header inside Card */}
         <div className="space-y-4">
@@ -218,7 +218,7 @@ export default function AssessmentFlow() {
         </div>
 
         {/* Animated Question Content inside Card */}
-        <div className="flex-1 flex flex-col justify-center py-6 overflow-hidden">
+        <div className="flex-1 flex flex-col justify-center py-2 overflow-hidden">
           <AnimatePresence mode="wait" custom={direction}>
             {question && (
               <motion.div
@@ -229,7 +229,7 @@ export default function AssessmentFlow() {
                 animate="center"
                 exit="exit"
                 transition={transitionSettings}
-                className="space-y-6 flex flex-col justify-between overflow-hidden"
+                className="space-y-5 flex flex-col justify-between overflow-hidden"
               >
                 {/* Question text (No emoji, bold text) */}
                 <h2 className="text-xl md:text-2xl font-sans font-extrabold text-slate-800 dark:text-slate-100 leading-snug tracking-tight">
@@ -237,7 +237,7 @@ export default function AssessmentFlow() {
                 </h2>
 
                 {/* Option Cards Grid (No emoji, left aligned, bg light gray capsule) */}
-                <div className="space-y-3 relative z-20" role="radiogroup" aria-label={question.text}>
+                <div className="space-y-2.5 relative z-20" role="radiogroup" aria-label={question.text}>
                   {question.options.map((opt) => {
                     const isSelected = selectedOptionId === opt.id;
                     return (
@@ -250,7 +250,7 @@ export default function AssessmentFlow() {
                         whileHover={{ scale: 1.01 }}
                         whileTap={{ scale: 0.99 }}
                         transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                        className={`w-full py-4 px-6 rounded-[20px] text-left cursor-pointer transition-all duration-200 font-sans font-bold text-sm ${
+                        className={`w-full py-3 px-6 rounded-[20px] text-left cursor-pointer transition-all duration-200 font-sans font-bold text-sm ${
                           isSelected
                             ? "bg-[#5F4BB6] text-white shadow-md font-extrabold"
                             : "bg-[#F4F5F9] dark:bg-[#1E3E52] text-slate-700 dark:text-slate-200 hover:bg-slate-200/60 dark:hover:bg-slate-700 font-semibold"
