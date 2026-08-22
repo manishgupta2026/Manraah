@@ -79,10 +79,10 @@ export default function AppShell({ children }: { children: ReactNode }) {
             <HeaderProvider>
             {isStandalone ? (
               /* Standalone Onboarding / Auth / Public Layout with Global Public Header & Footer */
-              <div className="min-h-screen bg-background text-on-background font-sans antialiased flex flex-col justify-between">
-                <PublicNavbar />
-                <div className="flex-1">{children}</div>
-                <PublicFooter />
+              <div className="min-h-screen bg-background text-on-background font-sans antialiased flex flex-col justify-between overflow-hidden">
+                {!["/assessment", "/wellness-score", "/category-selection"].includes(pathname) && <PublicNavbar />}
+                <div className="flex-1 h-full w-full overflow-hidden">{children}</div>
+                {!["/assessment", "/wellness-score", "/category-selection"].includes(pathname) && <PublicFooter />}
               </div>
             ) : isAdminRoute ? (
               /* Dedicated Admin Listener Portal Shell - Isolated from Regular User Navigation */

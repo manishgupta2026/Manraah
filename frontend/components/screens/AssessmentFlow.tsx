@@ -191,25 +191,25 @@ export default function AssessmentFlow() {
       />
 
       {/* Main Container */}
-      <div className="max-w-2xl mx-auto w-full flex-1 flex flex-col justify-between gap-4 z-10 my-1 overflow-hidden">
+      <div className="max-w-2xl mx-auto w-full flex-1 flex flex-col justify-between gap-6 z-10 my-2 overflow-hidden">
         {/* Progress Area */}
-        <div className="space-y-3">
-          <div className="flex flex-col md:flex-row md:justify-between md:items-end gap-1">
+        <div className="space-y-4">
+          <div className="flex flex-col md:flex-row md:justify-between md:items-end gap-2">
             <div>
-              <span className="text-xs font-bold text-primary uppercase tracking-wider flex items-center gap-1.5 justify-center md:justify-start">
+              <span className="text-xs md:text-sm font-bold text-primary uppercase tracking-wider flex items-center gap-1.5 justify-center md:justify-start">
                 🌸 Let's get to know you
               </span>
               <span className="text-[10px] font-bold uppercase tracking-widest block text-center md:text-left mt-0.5 text-on-surface-variant/70">
                 Focus: {categoryDetails.name}
               </span>
             </div>
-            <span className="font-bold text-xs text-primary tracking-wide text-center md:text-right block">
+            <span className="font-bold text-xs md:text-sm text-primary tracking-wide text-center md:text-right block">
               Question {safeIndex + 1} of {totalQuestions}
             </span>
           </div>
 
           {/* Progress Bar */}
-          <div className="w-full bg-surface-container-high h-2 rounded-full overflow-hidden shadow-inner border border-surface-variant/30">
+          <div className="w-full bg-surface-container-high h-2.5 rounded-full overflow-hidden shadow-inner border border-surface-variant/30">
             <motion.div
               className="h-full bg-gradient-to-r from-primary to-primary-purple rounded-full"
               initial={{ width: `${(safeIndex / (totalQuestions || 15)) * 100}%` }}
@@ -220,7 +220,7 @@ export default function AssessmentFlow() {
         </div>
 
         {/* Animated Question Content */}
-        <div className="flex-1 flex flex-col justify-center py-1 overflow-hidden">
+        <div className="flex-1 flex flex-col justify-center py-2 overflow-hidden">
           <AnimatePresence mode="wait" custom={direction}>
             {question && (
               <motion.div
@@ -231,12 +231,12 @@ export default function AssessmentFlow() {
                 animate="center"
                 exit="exit"
                 transition={transitionSettings}
-                className="rounded-[32px] bg-surface-container-lowest border border-surface-variant/30 shadow-soft p-5 md:p-8 space-y-4 relative z-20 flex flex-col justify-between overflow-hidden"
+                className="rounded-[36px] bg-surface-container-lowest border border-surface-variant/30 shadow-soft p-6 md:p-10 space-y-6 relative z-20 flex flex-col justify-between overflow-hidden"
               >
                 {/* Question block */}
-                <div className="space-y-2 text-center md:text-left">
-                  <h2 className="text-lg md:text-xl font-heading font-extrabold text-on-surface leading-snug tracking-tight flex flex-col md:flex-row items-center gap-2">
-                    <span className="text-2xl filter drop-shadow-sm shrink-0 mb-1 md:mb-0">
+                <div className="space-y-4 text-center md:text-left">
+                  <h2 className="text-xl md:text-2xl font-heading font-extrabold text-on-surface leading-relaxed tracking-tight flex flex-col md:flex-row items-center gap-3">
+                    <span className="text-3xl filter drop-shadow-sm shrink-0 mb-1.5 md:mb-0">
                       {getQuestionEmoji(question.text)}
                     </span>
                     <span className="flex-1">{question.text}</span>
@@ -247,7 +247,7 @@ export default function AssessmentFlow() {
                 </div>
 
                 {/* Option Cards Grid */}
-                <div className="space-y-2 relative z-20" role="radiogroup" aria-label={question.text}>
+                <div className="space-y-3.5 relative z-20 overflow-y-auto max-h-[42vh] pr-1" role="radiogroup" aria-label={question.text}>
                   {question.options.map((opt) => {
                     const isSelected = selectedOptionId === opt.id;
                     return (
@@ -261,13 +261,13 @@ export default function AssessmentFlow() {
                         whileTap={{ scale: 0.985 }}
                         animate={isSelected ? { y: -2, scale: 1.015 } : { y: 0, scale: 1 }}
                         transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                        className={`w-full flex items-center justify-between py-2.5 px-4 rounded-[20px] border text-left cursor-pointer transition-all duration-200 ${
+                        className={`w-full flex items-center justify-between p-5 rounded-[24px] border text-left cursor-pointer transition-all duration-200 ${
                           isSelected
                             ? "bg-primary-container/10 border-primary text-primary font-bold shadow-md ring-2 ring-primary/20"
                             : "bg-surface-container-low border-surface-variant/30 text-on-surface-variant hover:bg-surface-container-high hover:border-primary/20"
                         }`}
                       >
-                        <div className="flex items-center gap-3 select-none pointer-events-none">
+                        <div className="flex items-center gap-3.5 select-none pointer-events-none">
                           <span className="text-xl shrink-0 filter drop-shadow-sm">{getOptionEmoji(opt.score)}</span>
                           <span className="text-sm md:text-base font-semibold leading-normal">{opt.text}</span>
                         </div>
