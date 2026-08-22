@@ -98,6 +98,19 @@ export default function AssessmentFlow() {
     setDetailedAnswers(updatedAnswers);
   };
 
+  // Reset assessment flow if retake flag is set
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const shouldReset = localStorage.getItem("parent_reset_assessment_flow") === "true";
+      if (shouldReset) {
+        localStorage.removeItem("parent_reset_assessment_flow");
+        sessionStorage.removeItem("manraah_onboarding_assessment");
+        setCurrentQuestionIndex(0);
+        setDetailedAnswers([]);
+      }
+    }
+  }, [setCurrentQuestionIndex, setDetailedAnswers]);
+
   const handleNext = () => {
     if (!question || !selectedOptionId) return;
 
@@ -182,45 +195,30 @@ export default function AssessmentFlow() {
   const onBackAction = safeIndex > 0 ? handleBack : () => router.push("/category-selection");
 
   return (
-    <div className="bg-surface text-on-surface h-screen max-h-screen overflow-hidden relative flex flex-col justify-between py-6 px-4 md:px-8 select-none">
-      <ScreenHeader
-        title="📋 Assessment"
-        showBackButton={true}
-        onBack={onBackAction}
-        action={{ label: "Skip", onClick: handleSkip }}
-      />
-
-      {/* Main Container */}
-      <div className="max-w-2xl mx-auto w-full flex-1 flex flex-col justify-between gap-6 z-10 my-2 overflow-hidden">
-        {/* Progress Area */}
+    <div className="bg-[#EAEAF3] dark:bg-[#0D1F2D] h-screen max-h-screen overflow-hidden relative flex flex-col justify-center items-center py-6 px-4 md:px-8 select-none">
+      {/* Immersive Mockup Card */}
+      <div className="max-w-2xl w-full rounded-[40px] bg-white dark:bg-[#132E3F] border border-slate-100 dark:border-slate-800 shadow-xl p-8 md:p-10 flex flex-col justify-between h-[85vh] max-h-[640px] overflow-hidden relative">
+        
+        {/* Top Header inside Card */}
         <div className="space-y-4">
-          <div className="flex flex-col md:flex-row md:justify-between md:items-end gap-2">
-            <div>
-              <span className="text-xs md:text-sm font-bold text-primary uppercase tracking-wider flex items-center gap-1.5 justify-center md:justify-start">
-                🌸 Let's get to know you
-              </span>
-              <span className="text-[10px] font-bold uppercase tracking-widest block text-center md:text-left mt-0.5 text-on-surface-variant/70">
-                Focus: {categoryDetails.name}
-              </span>
-            </div>
-            <span className="font-bold text-xs md:text-sm text-primary tracking-wide text-center md:text-right block">
-              Question {safeIndex + 1} of {totalQuestions}
-            </span>
+          <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-[#B2B0BD]">
+            <span>{effectiveCategory.replace(/_/g, " ")} assessment</span>
+            <span>Question {safeIndex + 1} of {totalQuestions}</span>
           </div>
 
-          {/* Progress Bar */}
-          <div className="w-full bg-surface-container-high h-2.5 rounded-full overflow-hidden shadow-inner border border-surface-variant/30">
+          {/* Progress Bar inside Card */}
+          <div className="w-full bg-[#EAEAF3] dark:bg-slate-800 h-2 rounded-full overflow-hidden">
             <motion.div
-              className="h-full bg-gradient-to-r from-primary to-primary-purple rounded-full"
-              initial={{ width: `${(safeIndex / (totalQuestions || 15)) * 100}%` }}
+              className="h-full bg-[#5F4BB6] rounded-full"
+              initial={{ width: `${(safeIndex / (totalQuestions || 10)) * 100}%` }}
               animate={{ width: `${progressPercentage}%` }}
               transition={{ duration: 0.55, ease: "easeOut" }}
             />
           </div>
         </div>
 
-        {/* Animated Question Content */}
-        <div className="flex-1 flex flex-col justify-center py-2 overflow-hidden">
+        {/* Animated Question Content inside Card */}
+        <div className="flex-1 flex flex-col justify-center py-6 overflow-hidden">
           <AnimatePresence mode="wait" custom={direction}>
             {question && (
               <motion.div
@@ -231,23 +229,15 @@ export default function AssessmentFlow() {
                 animate="center"
                 exit="exit"
                 transition={transitionSettings}
-                className="rounded-[36px] bg-surface-container-lowest border border-surface-variant/30 shadow-soft p-6 md:p-10 space-y-6 relative z-20 flex flex-col justify-between overflow-hidden"
+                className="space-y-6 flex flex-col justify-between overflow-hidden"
               >
-                {/* Question block */}
-                <div className="space-y-4 text-center md:text-left">
-                  <h2 className="text-xl md:text-2xl font-heading font-extrabold text-on-surface leading-relaxed tracking-tight flex flex-col md:flex-row items-center gap-3">
-                    <span className="text-3xl filter drop-shadow-sm shrink-0 mb-1.5 md:mb-0">
-                      {getQuestionEmoji(question.text)}
-                    </span>
-                    <span className="flex-1">{question.text}</span>
-                  </h2>
-                  <p className="text-xs md:text-sm font-semibold italic max-w-lg mx-auto md:mx-0 text-on-surface-variant/75">
-                    "There are no right or wrong answers. Answer honestly so we can better support you."
-                  </p>
-                </div>
+                {/* Question text (No emoji, bold text) */}
+                <h2 className="text-xl md:text-2xl font-sans font-extrabold text-slate-800 dark:text-slate-100 leading-snug tracking-tight">
+                  {question.text}
+                </h2>
 
-                {/* Option Cards Grid */}
-                <div className="space-y-3.5 relative z-20 overflow-y-auto max-h-[42vh] pr-1" role="radiogroup" aria-label={question.text}>
+                {/* Option Cards Grid (No emoji, left aligned, bg light gray capsule) */}
+                <div className="space-y-3 relative z-20 overflow-y-auto max-h-[32vh] pr-1" role="radiogroup" aria-label={question.text}>
                   {question.options.map((opt) => {
                     const isSelected = selectedOptionId === opt.id;
                     return (
@@ -257,38 +247,16 @@ export default function AssessmentFlow() {
                         role="radio"
                         aria-checked={isSelected}
                         onClick={() => handleSelectOption(opt.id)}
-                        whileHover={{ scale: 1.015 }}
-                        whileTap={{ scale: 0.985 }}
-                        animate={isSelected ? { y: -2, scale: 1.015 } : { y: 0, scale: 1 }}
+                        whileHover={{ scale: 1.01 }}
+                        whileTap={{ scale: 0.99 }}
                         transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                        className={`w-full flex items-center justify-between p-5 rounded-[24px] border text-left cursor-pointer transition-all duration-200 ${
+                        className={`w-full py-4 px-6 rounded-[20px] text-left cursor-pointer transition-all duration-200 font-sans font-bold text-sm ${
                           isSelected
-                            ? "bg-primary-container/10 border-primary text-primary font-bold shadow-md ring-2 ring-primary/20"
-                            : "bg-surface-container-low border-surface-variant/30 text-on-surface-variant hover:bg-surface-container-high hover:border-primary/20"
+                            ? "bg-[#5F4BB6] text-white shadow-md font-extrabold"
+                            : "bg-[#F4F5F9] dark:bg-[#1E3E52] text-slate-700 dark:text-slate-200 hover:bg-slate-200/60 dark:hover:bg-slate-700 font-semibold"
                         }`}
                       >
-                        <div className="flex items-center gap-3.5 select-none pointer-events-none">
-                          <span className="text-xl shrink-0 filter drop-shadow-sm">{getOptionEmoji(opt.score)}</span>
-                          <span className="text-sm md:text-base font-semibold leading-normal">{opt.text}</span>
-                        </div>
-                        <div
-                          className={`w-6 h-6 rounded-full border flex items-center justify-center transition-all pointer-events-none ${
-                            isSelected
-                              ? "border-primary bg-primary text-white"
-                              : "border-outline-variant bg-surface-container"
-                          }`}
-                        >
-                          {isSelected && (
-                            <motion.span
-                              initial={{ scale: 0, rotate: -45 }}
-                              animate={{ scale: 1, rotate: 0 }}
-                              transition={{ type: "spring", stiffness: 500, damping: 22 }}
-                              className="material-symbols-outlined text-white text-[12px] font-extrabold"
-                            >
-                              check
-                            </motion.span>
-                          )}
-                        </div>
+                        {opt.text}
                       </motion.button>
                     );
                   })}
@@ -298,24 +266,24 @@ export default function AssessmentFlow() {
           </AnimatePresence>
         </div>
 
-        {/* Action Controls */}
-        <div className="flex justify-between items-center border-t border-surface-variant/20 pt-6">
+        {/* Action Controls inside Card */}
+        <div className="flex justify-between items-center border-t border-slate-100 dark:border-slate-800 pt-6 mt-2">
           {safeIndex > 0 ? (
             <button
               onClick={handleBack}
               type="button"
-              className="px-6 py-3.5 rounded-full font-bold text-sm bg-surface-container border border-surface-variant/30 text-on-surface hover:bg-surface-container-high transition-all flex items-center gap-2 shadow-sm cursor-pointer"
+              className="flex items-center gap-1 font-bold text-xs uppercase text-[#B2B0BD] hover:text-[#5F4BB6] transition-all cursor-pointer select-none"
             >
-              <span className="material-symbols-outlined text-base">arrow_back</span>
-              Previous
+              <span className="material-symbols-outlined text-sm font-black">arrow_back</span>
+              Back
             </button>
           ) : (
             <button
               onClick={() => router.push("/category-selection")}
               type="button"
-              className="px-6 py-3.5 rounded-full font-bold text-sm bg-surface-container border border-surface-variant/30 text-on-surface hover:bg-surface-container-high transition-all flex items-center gap-2 shadow-sm cursor-pointer"
+              className="flex items-center gap-1 font-bold text-xs uppercase text-[#B2B0BD] hover:text-[#5F4BB6] transition-all cursor-pointer select-none"
             >
-              <span className="material-symbols-outlined text-base">arrow_back</span>
+              <span className="material-symbols-outlined text-sm font-black">arrow_back</span>
               Categories
             </button>
           )}
@@ -325,22 +293,23 @@ export default function AssessmentFlow() {
               onClick={handleNext}
               disabled={!selectedOptionId}
               type="button"
-              className="px-8 py-3.5 rounded-full font-bold text-sm bg-primary text-white hover:bg-primary-purple transition-all flex items-center gap-2 shadow-md hover:scale-105 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+              className="px-8 py-3.5 rounded-full font-bold text-xs uppercase bg-[#5F4BB6] text-white hover:bg-[#4E3CA3] transition-all flex items-center gap-2 shadow-md hover:scale-105 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
             >
-              Next Question
-              <span className="material-symbols-outlined text-base">arrow_forward</span>
+              Next
+              <span className="material-symbols-outlined text-sm font-black">arrow_forward</span>
             </button>
           ) : (
             <button
               onClick={handleNext}
               disabled={!selectedOptionId}
               type="button"
-              className="px-8 py-3.5 rounded-full font-bold text-sm bg-primary text-white hover:bg-primary-purple transition-all flex items-center gap-2 shadow-md hover:scale-105 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+              className="px-8 py-3.5 rounded-full font-bold text-xs uppercase bg-[#5F4BB6] text-white hover:bg-[#4E3CA3] transition-all flex items-center gap-2 shadow-md hover:scale-105 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
             >
-              Complete Assessment ✨
+              Complete ✨
             </button>
           )}
         </div>
+
       </div>
     </div>
   );
