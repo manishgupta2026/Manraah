@@ -10,6 +10,7 @@ export interface NavItem {
 
 export const MAIN_NAV_ITEMS: NavItem[] = [
   { label: "Dashboard", href: "/dashboard", icon: "grid_view" },
+  { label: "Human Companion", href: "/human-companion", icon: "diversity_1" },
   { label: "AI Companion", href: "/ai-chat", icon: "smart_toy" },
   { label: "Daily Check-in", href: "/checkin", icon: "mood" },
   { label: "Focus Timer", href: "/meditation", icon: "schedule" },
