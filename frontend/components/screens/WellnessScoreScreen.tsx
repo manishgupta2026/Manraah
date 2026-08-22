@@ -55,7 +55,15 @@ export default function WellnessScoreScreen() {
       }
 
       // Sync local storage session category
+<<<<<<< Updated upstream
       const targetCategory = selectedCategory || "student";
+=======
+      const targetCategory = selectedCategory === "couples" || selectedCategory === "couple" ? "couples" : (selectedCategory === "parents" || selectedCategory === "parent" ? "parents" : selectedCategory || "student");
+      if (targetCategory === "parents" || targetCategory === "parent") {
+        localStorage.setItem("parent_assessment_completed", "true");
+        localStorage.setItem("parent_show_security_immediately", "true");
+      }
+>>>>>>> Stashed changes
       const updatedSession = {
         ...session,
         user: {

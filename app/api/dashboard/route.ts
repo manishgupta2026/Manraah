@@ -85,6 +85,7 @@ export async function GET(req: Request) {
         currentMood: user.current_mood || "Sanctuary Member",
         assessmentScore: userProfile?.total_score || null,
         assessmentPercentage: userProfile?.percentage || null,
+        assessmentCategory: userProfile?.category || null,
         wellnessLevel: userProfile?.wellness_level || null,
         dashboardState: user.dashboard_state || null,
       },

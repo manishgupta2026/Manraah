@@ -22,7 +22,7 @@ export default function Header({ onOpenMenu }: HeaderProps) {
   }, []);
 
   return (
-    <header className="sticky top-0 z-20 bg-surface-container-lowest/90 backdrop-blur-md border-b border-surface-variant/30 px-4 md:px-6 py-2.5 flex items-center justify-between shadow-xs shrink-0">
+    <header className="sticky top-0 z-20 bg-surface-container-lowest/90 dark:bg-[#0D1F2D]/90 backdrop-blur-md border-b border-surface-variant/30 dark:border-slate-800/80 px-4 md:px-6 py-2.5 flex items-center justify-between shadow-xs shrink-0">
       {/* Mobile Brand Title with Menu Trigger */}
       <div className="flex items-center gap-2 md:hidden">
         <button
@@ -39,21 +39,21 @@ export default function Header({ onOpenMenu }: HeaderProps) {
         <span className="font-heading font-bold text-base text-primary">Manraah</span>
       </div>
 
-      <div className="hidden md:flex items-center gap-2 relative bg-surface-container-low/40 border border-surface-variant/20 rounded-full px-3.5 py-1.5 w-72 shadow-soft-xs">
-        <span className="material-symbols-outlined text-sm text-outline">search</span>
+      <div className="hidden md:flex items-center gap-2 relative bg-surface-container-low/40 dark:bg-[#132E3F]/40 border border-surface-variant/20 dark:border-slate-800 rounded-full px-3.5 py-1.5 w-72 shadow-soft-xs">
+        <span className="material-symbols-outlined text-sm text-outline dark:text-slate-400">search</span>
         <input 
           type="text" 
           placeholder="Search Manraah..." 
-          className="bg-transparent text-xs text-on-surface-variant border-none outline-none focus:ring-0 placeholder:text-outline/75 w-full font-bold"
+          className="bg-transparent text-xs text-on-surface-variant dark:text-slate-200 border-none outline-none focus:ring-0 placeholder:text-outline/75 dark:placeholder:text-slate-500 w-full font-bold"
         />
       </div>
 
       {/* Right Quick Actions */}
       <div className="flex items-center gap-3">
         {/* Notification bell */}
-        <div className="relative w-8 h-8 rounded-full bg-white border border-surface-variant/40 flex items-center justify-center text-on-surface-variant cursor-pointer hover:bg-purple-50 hover:text-[#5F4EA5] transition-all shadow-2xs">
+        <div className="relative w-8 h-8 rounded-full bg-white dark:bg-[#132E3F] border border-surface-variant/40 dark:border-slate-800 flex items-center justify-center text-on-surface-variant dark:text-slate-300 cursor-pointer hover:bg-purple-50 dark:hover:bg-slate-800 hover:text-[#5F4EA5] dark:hover:text-purple-300 transition-all shadow-2xs">
           <span className="material-symbols-outlined text-base">notifications</span>
-          <span className="absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-red-500 flex items-center justify-center text-[6px] font-black text-white border border-white">3</span>
+          <span className="absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-red-500 flex items-center justify-center text-[6px] font-black text-white border border-white dark:border-slate-800">3</span>
         </div>
 
         {/* Day / Night Toggle Pill */}
@@ -62,7 +62,7 @@ export default function Header({ onOpenMenu }: HeaderProps) {
         {/* Crisis Help rounded pill */}
         <Link
           href="/crisis-support"
-          className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white text-red-600 text-xs font-heading font-bold hover:bg-red-50 transition-colors shadow-2xs border border-red-200/80"
+          className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white dark:bg-[#132E3F] text-red-600 dark:text-red-400 text-xs font-heading font-bold hover:bg-red-50 dark:hover:bg-slate-800 transition-colors shadow-2xs border border-red-200/80 dark:border-red-950/40"
         >
           <span className="material-symbols-outlined text-sm text-red-500">emergency</span>
           <span>Crisis Help</span>

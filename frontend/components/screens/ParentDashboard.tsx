@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { getClientSession, signOut } from "@/backend/auth/client";
@@ -75,7 +75,7 @@ export default function ParentDashboard() {
   ]);
 
   // Family Wellness
-  const [familyScore, setFamilyScore] = useState(82);
+  const [familyScore, setFamilyScore] = useState(42);
   const [streakDays, setStreakDays] = useState(1);
   const [selectedDay, setSelectedDay] = useState(6);
   const [dashboardData, setDashboardData] = useState<any>(null);
@@ -112,6 +112,33 @@ export default function ParentDashboard() {
   const [showSecurityPopup, setShowSecurityPopup] = useState(false);
   const [showAssessmentModal, setShowAssessmentModal] = useState(false);
   const [showProgressModal, setShowProgressModal] = useState(false);
+  const [showDisconnectModal, setShowDisconnectModal] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  // Sync theme with local storage on mount
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("manraah-theme") || "light";
+      const isDark = saved === "dark";
+      setIsDarkMode(isDark);
+      if (isDark) {
+        document.documentElement.classList.add("dark");
+      } else {
+        document.documentElement.classList.remove("dark");
+      }
+    }
+  }, []);
+
+  const toggleTheme = () => {
+    const nextDark = !isDarkMode;
+    setIsDarkMode(nextDark);
+    localStorage.setItem("manraah-theme", nextDark ? "dark" : "light");
+    if (nextDark) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  };
 
   // Set greeting, username and security popup times
   useEffect(() => {
@@ -175,14 +202,24 @@ export default function ParentDashboard() {
             setUsername(data.user.sanctuaryName || data.user.name);
           }
           // Calculate wellness score as per the assessment completion percentage
-          if (data.user.assessmentPercentage !== null && data.user.assessmentPercentage !== undefined) {
-            setFamilyScore(data.user.assessmentPercentage);
+          const localAssessmentCompleted = localStorage.getItem("parent_assessment_completed") === "true";
+          const hasParentAssessment = (data.user.assessmentPercentage !== null && 
+                                      data.user.assessmentPercentage !== undefined && 
+                                      (data.user.assessmentCategory === "parents" || data.user.assessmentCategory === "parent")) || localAssessmentCompleted;
+          
+          if (hasParentAssessment) {
+            setFamilyScore(data.user.assessmentScore || 42);
             
-            const lastPopupTime = localStorage.getItem("parent_last_security_popup");
-            const now = Date.now();
-            if (!lastPopupTime || now - parseInt(lastPopupTime) > 120000) {
+            const securityPopupShown = localStorage.getItem("parent_security_popup_shown_once") === "true";
+            const showImmediately = localStorage.getItem("parent_show_security_immediately") === "true";
+
+            if (showImmediately && !securityPopupShown) {
               setShowSecurityPopup(true);
-              localStorage.setItem("parent_last_security_popup", now.toString());
+              localStorage.setItem("parent_security_popup_shown_once", "true");
+              localStorage.removeItem("parent_show_security_immediately");
+            } else if (!securityPopupShown) {
+              setShowSecurityPopup(true);
+              localStorage.setItem("parent_security_popup_shown_once", "true");
             }
           } else {
             setShowAssessmentModal(true);
@@ -247,9 +284,14 @@ export default function ParentDashboard() {
     return () => clearInterval(timer);
   }, [breathingActive, breathingPhase]);
 
-  // Tasks progress calculations
-  const completedCount = tasks.filter(t => t.completed).length;
-  const progressPercent = tasks.length > 0 ? Math.round((completedCount / tasks.length) * 100) : 0;
+  // Tasks progress calculations (memoized to avoid redundant recalculation on breathing timer ticks)
+  const progressDetails = useMemo(() => {
+    const completed = tasks.filter(t => t.completed).length;
+    const percent = tasks.length > 0 ? Math.round((completed / tasks.length) * 100) : 0;
+    return { completedCount: completed, progressPercent: percent };
+  }, [tasks]);
+
+  const { completedCount, progressPercent } = progressDetails;
 
   // Helper to persist updated states in the database
   const saveDashboardStateToDB = async (updatedFields: any) => {
@@ -380,75 +422,111 @@ export default function ParentDashboard() {
     return new Date().toLocaleDateString("en-US", options);
   };
 
+  // Wellness Score Helpers
+  const getWellnessColor = (score: number) => {
+    if (score >= 45) return "#5FBA5A"; // Flourishing - Green
+    if (score >= 35) return "#7C6BC4"; // Stable - Purple/Lavender
+    if (score >= 30) return "#ECB22E"; // Needs Attention - Yellow
+    return "#D64E4D"; // At Risk - Red
+  };
+
+  const getWellnessLevelText = (score: number) => {
+    if (score >= 45) return "Flourishing";
+    if (score >= 35) return "Stable";
+    if (score >= 30) return "Needs Attention";
+    return "At Risk";
+  };
+
+  const getWellnessFeedback = (score: number) => {
+    if (score >= 45) return "Your family wellness is flourishing! Continue practicing mindfulness, daily gratitude, and deep family connection activities.";
+    if (score >= 35) return "Your family wellness is stable. Keep prioritizing parent self-care, maintaining daily routines, and logging reflections.";
+    if (score >= 30) return "Your family wellness needs attention. Take some time for yourself today, practice a breathing exercise, or write in your journal.";
+    return "Your family wellness is at risk. We recommend taking regular mindful breaks, focusing on stress relief, and reaching out to a support partner.";
+  };
+
   // State for right panel tabs (Monthly vs Daily)
   const [activeTab, setActiveTab] = useState<"monthly" | "daily">("monthly");
 
-  // Mood Overview segments calculation from weekly mood checkins
-  const getWeeklyMoodDistribution = () => {
-    const defaultDistribution = { amazing: 30, good: 25, neutral: 20, notGood: 15, bad: 10 };
-    if (!dashboardData || !dashboardData.history) return defaultDistribution;
+  const getPieBreakdown = (score: number) => {
+    const s = Math.min(50, Math.max(10, score));
+    let great = 0, good = 0, normal = 0, notGood = 0, bad = 0;
     
-    // Filter history to last 7 days
-    const now = new Date();
-    const startOfWeek = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-    const weeklyEntries = dashboardData.history.filter((e: any) => new Date(e.created_at || e.createdAt) >= startOfWeek);
-    
-    if (weeklyEntries.length === 0) return defaultDistribution;
-    
-    let amazing = 0, good = 0, neutral = 0, notGood = 0, bad = 0;
-    
-    weeklyEntries.forEach((e: any) => {
-      const m = (e.mood || "").toLowerCase();
-      if (m === "amazing" || m === "happy" || m === "joyful") {
-        amazing++;
-      } else if (m === "calm" || m === "good") {
-        good++;
-      } else if (m === "neutral") {
-        neutral++;
-      } else if (m === "low" || m === "sad" || m === "frustrated" || m === "exhausted" || m === "tired") {
-        notGood++;
-      } else if (m === "anxious" || m === "overwhelmed") {
-        bad++;
-      } else {
-        good++; // default fallback
-      }
-    });
-    
-    const total = amazing + good + neutral + notGood + bad;
-    if (total === 0) return defaultDistribution;
-    
-    const amazingPct = Math.round((amazing / total) * 100);
-    const goodPct = Math.round((good / total) * 100);
-    const neutralPct = Math.round((neutral / total) * 100);
-    const notGoodPct = Math.round((notGood / total) * 100);
-    const badPct = 100 - amazingPct - goodPct - neutralPct - notGoodPct;
-    
-    return { amazing: amazingPct, good: goodPct, neutral: neutralPct, notGood: notGoodPct, bad: badPct };
+    if (s >= 40) {
+      const ratio = (s - 40) / 10;
+      great = Math.round(30 + ratio * 70);
+      good = Math.round(35 - ratio * 35);
+      normal = Math.round(20 - ratio * 20);
+      notGood = Math.round(10 - ratio * 10);
+      bad = 100 - (great + good + normal + notGood);
+    } else if (s >= 30) {
+      const ratio = (s - 30) / 10;
+      great = Math.round(10 + ratio * 20);
+      good = Math.round(25 + ratio * 10);
+      normal = Math.round(35 - ratio * 15);
+      notGood = Math.round(20 - ratio * 10);
+      bad = 100 - (great + good + normal + notGood);
+    } else if (s >= 20) {
+      const ratio = (s - 20) / 10;
+      great = Math.round(5 + ratio * 5);
+      good = Math.round(15 + ratio * 10);
+      normal = Math.round(30 + ratio * 5);
+      notGood = Math.round(35 - ratio * 15);
+      bad = 100 - (great + good + normal + notGood);
+    } else {
+      const ratio = (s - 10) / 10;
+      great = Math.round(ratio * 5);
+      good = Math.round(ratio * 15);
+      normal = Math.round(10 + ratio * 20);
+      notGood = Math.round(20 + ratio * 15);
+      bad = 100 - (great + good + normal + notGood);
+    }
+    return { great, good, normal, notGood, bad };
   };
 
-  const distribution = getWeeklyMoodDistribution();
+  // Calculate wellness score categories distribution
+  const distribution = useMemo(() => {
+    return getPieBreakdown(familyScore);
+  }, [familyScore]);
 
-  const amazingVal = distribution.amazing / 100;
-  const notGoodVal = distribution.notGood / 100;
-  const badVal = distribution.bad / 100;
-  const neutralVal = distribution.neutral / 100;
-  const goodVal = distribution.good / 100;
+  // Slices coordinates memoized to avoid redundant calculation
+  const pieSlices = useMemo(() => {
+    const greatVal = distribution.great / 100;
+    const goodVal = distribution.good / 100;
+    const normalVal = distribution.normal / 100;
+    const notGoodVal = distribution.notGood / 100;
+    const badVal = distribution.bad / 100;
 
-  // Slices
-  const amazingStart = 0;
-  const amazingEnd = amazingVal;
-  
-  const notGoodStart = amazingEnd;
-  const notGoodEnd = notGoodStart + notGoodVal;
-  
-  const badStart = notGoodEnd;
-  const badEnd = badStart + badVal;
-  
-  const neutralStart = badEnd;
-  const neutralEnd = neutralStart + neutralVal;
-  
-  const goodStart = neutralEnd;
-  const goodEnd = 1.0;
+    const greatStart = 0;
+    const greatEnd = greatVal;
+    
+    const goodStart = greatEnd;
+    const goodEnd = goodStart + goodVal;
+    
+    const normalStart = goodEnd;
+    const normalEnd = normalStart + normalVal;
+    
+    const notGoodStart = normalEnd;
+    const notGoodEnd = notGoodStart + notGoodVal;
+    
+    const badStart = notGoodEnd;
+    const badEnd = 1.0;
+
+    return {
+      greatStart, greatEnd,
+      goodStart, goodEnd,
+      normalStart, normalEnd,
+      notGoodStart, notGoodEnd,
+      badStart, badEnd
+    };
+  }, [distribution]);
+
+  const {
+    greatStart, greatEnd,
+    goodStart, goodEnd,
+    normalStart, normalEnd,
+    notGoodStart, notGoodEnd,
+    badStart, badEnd
+  } = pieSlices;
 
   const getCoordinatesForPercent = (percent: number) => {
     const angle = 2 * Math.PI * (percent - 0.25);
@@ -483,7 +561,7 @@ export default function ParentDashboard() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 relative select-none animate-fadeIn bg-[#F8F9FD] min-h-screen">
+    <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 relative select-none animate-fadeIn bg-[#F8F9FD] dark:bg-[#0D1F2D] text-slate-800 dark:text-slate-100 min-h-screen">
       
       {/* Ambient background glows */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
@@ -496,18 +574,31 @@ export default function ParentDashboard() {
         {/* ==================== TOP NAVIGATION ROW ==================== */}
         <div className="flex items-center justify-between">
           <button 
-            onClick={async () => {
-              window.location.href = "/";
+            onClick={() => {
+              setShowDisconnectModal(true);
             }}
-            className="flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-[#EAEAFF] text-xs font-bold text-[#7C6BC4] shadow-sm hover:bg-[#F2F4FD] active:scale-95 transition-all"
+            className="flex items-center gap-2 px-4 py-2 rounded-full bg-white dark:bg-[#132E3F] border border-[#EAEAFF] dark:border-slate-800 text-xs font-bold text-[#7C6BC4] dark:text-purple-300 shadow-sm hover:bg-[#F2F4FD] dark:hover:bg-slate-800 active:scale-95 transition-all"
           >
             <span className="material-symbols-outlined text-sm font-black">arrow_back</span>
             Back to home
           </button>
 
-          <span className="px-3.5 py-1 rounded-full bg-emerald-50 text-[#006B56] text-[10px] font-black uppercase tracking-wider border border-emerald-100/50">
-            🔒 Private Sanctuary Connection
-          </span>
+          <div className="flex items-center gap-3">
+            {/* Theme Toggle Button */}
+            <button 
+              onClick={toggleTheme}
+              className="w-10 h-10 rounded-full bg-white dark:bg-[#132E3F] border border-[#EAEAFF] dark:border-slate-800 flex items-center justify-center hover:bg-[#F2F4FD] dark:hover:bg-slate-800 transition-all shadow-sm text-slate-600 dark:text-slate-300"
+              title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+            >
+              <span className="material-symbols-outlined text-lg">
+                {isDarkMode ? "light_mode" : "dark_mode"}
+              </span>
+            </button>
+
+            <span className="px-3.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/20 text-[#006B56] dark:text-[#5FAF8A] text-[10px] font-black uppercase tracking-wider border border-emerald-100/50 dark:border-emerald-900/30">
+              🔒 Private Sanctuary Connection
+            </span>
+          </div>
         </div>
 
         {/* ==================== THREE-COLUMN LAYOUT GRID ==================== */}
@@ -517,20 +608,20 @@ export default function ParentDashboard() {
               COLUMN 1: MINT SIDEBAR (col-span-3)
               ──────────────────────────────────────────────────────────── */}
           <div className="lg:col-span-3 space-y-4">
-            <div className="bg-[#E6F4F0] rounded-[32px] p-6 border border-[#CBECE2] shadow-[0_10px_35px_rgba(0,107,86,0.03)] text-center space-y-6 flex flex-col justify-between min-h-[480px]">
+            <div className="bg-[#E6F4F0] dark:bg-[#112F28] rounded-[32px] p-6 border border-[#CBECE2] dark:border-[#1C463C] shadow-[0_10px_35px_rgba(0,107,86,0.03)] text-center space-y-6 flex flex-col justify-between min-h-[480px]">
               
               {/* Profile details */}
               <div className="space-y-4">
                 <div className="relative w-20 h-20 mx-auto">
-                  <div className="w-full h-full rounded-full border-4 border-white bg-[#F5C99B]/40 flex items-center justify-center shadow-sm">
+                  <div className="w-full h-full rounded-full border-4 border-white dark:border-slate-800 bg-[#F5C99B]/40 flex items-center justify-center shadow-sm">
                     <span className="text-4xl">👩‍👦</span>
                   </div>
-                  <span className="absolute bottom-0 right-0 w-5 h-5 bg-[#006B56] border-2 border-white rounded-full flex items-center justify-center text-[10px] text-white">✓</span>
+                  <span className="absolute bottom-0 right-0 w-5 h-5 bg-[#006B56] border-2 border-white dark:border-slate-800 rounded-full flex items-center justify-center text-[10px] text-white">✓</span>
                 </div>
 
                 <div className="space-y-1">
-                  <h4 className="font-heading font-black text-slate-800 text-sm">Check your condition</h4>
-                  <p className="text-[10px] text-slate-500 font-bold leading-relaxed">
+                  <h4 className="font-heading font-black text-slate-800 dark:text-slate-100 text-sm">Check your condition</h4>
+                  <p className="text-[10px] text-slate-500 dark:text-slate-400 font-bold leading-relaxed">
                     Check your every situation, stress factors, and parenting activities.
                   </p>
                 </div>
@@ -545,7 +636,7 @@ export default function ParentDashboard() {
               </button>
 
               {/* Vector Artwork/Illustration placeholder */}
-              <div className="pt-4 border-t border-[#D0EDE4] flex justify-center overflow-hidden rounded-2xl">
+              <div className="pt-4 border-t border-[#D0EDE4] dark:border-[#1C463C] flex justify-center overflow-hidden rounded-2xl">
                 <img 
                   src="/images/pediatrician_consult.jpg" 
                   alt="Pediatrician Consult" 
@@ -556,11 +647,11 @@ export default function ParentDashboard() {
             </div>
 
             {/* Extra safety assurances */}
-            <div className="bg-white rounded-[24px] border border-[#EAEAFF] p-4 flex items-center gap-3">
+            <div className="bg-white dark:bg-[#132E3F] rounded-[24px] border border-[#EAEAFF] dark:border-slate-800 p-4 flex items-center gap-3">
               <span className="text-xl">🤫</span>
               <div>
-                <h5 className="text-[11px] font-heading font-black text-slate-800">100% Confidential</h5>
-                <p className="text-[9px] text-slate-400 font-semibold leading-tight">No data ever leaves this device.</p>
+                <h5 className="text-[11px] font-heading font-black text-slate-800 dark:text-slate-200">100% Confidential</h5>
+                <p className="text-[9px] text-slate-400 dark:text-slate-500 font-semibold leading-tight">No data ever leaves this device.</p>
               </div>
             </div>
           </div>
@@ -576,38 +667,38 @@ export default function ParentDashboard() {
                 <span className="text-[10px] uppercase font-black tracking-widest text-[#7C6BC4] block mb-0.5 font-heading">
                   Welcome back
                 </span>
-                <h1 className="text-2xl sm:text-3xl font-heading font-black text-slate-800 flex items-center gap-2">
+                <h1 className="text-2xl sm:text-3xl font-heading font-black text-slate-800 dark:text-slate-100 flex items-center gap-2">
                   Hi, {showName ? username : "••••••••"}
                 </h1>
-                <p className="text-xs text-slate-400 font-bold">Let's track your health & parenting wellness daily!</p>
+                <p className="text-xs text-slate-400 dark:text-slate-400 font-bold">Let's track your health & parenting wellness daily!</p>
               </div>
               
-              <div className="flex-shrink-0 flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-orange-50 to-amber-50 text-orange-600 border border-orange-100 rounded-2xl shadow-2xs font-bold text-xs select-none">
+              <div className="flex-shrink-0 flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-950/20 dark:to-amber-950/20 text-orange-600 dark:text-orange-400 border border-orange-100 dark:border-orange-900/30 rounded-2xl shadow-2xs font-bold text-xs select-none">
                 <span className="material-symbols-outlined text-sm font-black text-orange-500 animate-pulse">local_fire_department</span>
                 <span>Day {streakDays} Streak</span>
               </div>
             </div>
 
             {/* Upcoming Appointment Card */}
-            <div className="bg-white rounded-[32px] border border-[#EAEAFF] shadow-[0_10px_35px_rgba(95,78,165,0.02)] p-6 space-y-4">
-              <h3 className="font-heading font-black text-xs text-slate-800 uppercase tracking-wider">Upcoming appointment</h3>
+            <div className="bg-white dark:bg-[#132E3F] rounded-[32px] border border-[#EAEAFF] dark:border-slate-800 shadow-[0_10px_35px_rgba(95,78,165,0.02)] p-6 space-y-4">
+              <h3 className="font-heading font-black text-xs text-slate-800 dark:text-slate-100 uppercase tracking-wider">Upcoming appointment</h3>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
                 {/* Left Card: Hospital details */}
                 <div className="space-y-2 flex flex-col justify-between">
-                  <div className="rounded-2xl overflow-hidden relative aspect-video bg-sky-100 flex items-center justify-center border border-[#EAEAFF] min-h-[120px]">
+                  <div className="rounded-2xl overflow-hidden relative aspect-video bg-sky-100 dark:bg-sky-950/20 flex items-center justify-center border border-[#EAEAFF] dark:border-slate-800 min-h-[120px]">
                     <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: "url('/images/clinic_card_bg.jpg')" }} />
                   </div>
                   <div>
-                    <h4 className="font-heading font-black text-xs text-slate-800">Manggis ST Hospital</h4>
-                    <p className="text-[9px] text-slate-400 font-bold">New York, USA</p>
+                    <h4 className="font-heading font-black text-xs text-slate-800 dark:text-slate-100">Manggis ST Hospital</h4>
+                    <p className="text-[9px] text-slate-400 dark:text-slate-500 font-bold">New York, USA</p>
                   </div>
                 </div>
 
                 {/* Right Card: Doctor Details & Action */}
-                <div className="bg-[#F8F9FD] border border-[#EAEAFF] rounded-2xl p-4 flex flex-col justify-between gap-3">
+                <div className="bg-[#F8F9FD] dark:bg-[#0D1F2D] border border-[#EAEAFF] dark:border-slate-800 rounded-2xl p-4 flex flex-col justify-between gap-3">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-[#006B56]/10 flex items-center justify-center text-lg flex-shrink-0 border border-white shadow-sm overflow-hidden">
+                    <div className="w-10 h-10 rounded-full bg-[#006B56]/10 flex items-center justify-center text-lg flex-shrink-0 border border-white dark:border-slate-700 shadow-sm overflow-hidden">
                       <img 
                         src="/images/therapist_sarah.jpg" 
                         alt="Doctor Avatar" 
@@ -616,16 +707,16 @@ export default function ParentDashboard() {
                           (e.target as HTMLElement).style.display = 'none';
                         }}
                       />
-                      <span className="material-symbols-outlined text-base text-[#006B56] font-black">person</span>
+                      <span className="material-symbols-outlined text-base text-[#006B56] dark:text-[#5FAF8A] font-black">person</span>
                     </div>
                     <div>
-                      <h4 className="font-heading font-black text-xs text-slate-800">Dr. Sarah Jenkins</h4>
-                      <p className="text-[9px] text-slate-400 font-bold">Child Psychology</p>
+                      <h4 className="font-heading font-black text-xs text-slate-800 dark:text-slate-100">Dr. Sarah Jenkins</h4>
+                      <p className="text-[9px] text-slate-400 dark:text-slate-500 font-bold">Child Psychology</p>
                     </div>
                   </div>
 
-                  <div className="flex justify-between items-center pt-2 border-t border-[#EAEAFF]/70">
-                    <span className="text-[9px] text-slate-400 font-black uppercase tracking-wider">Sanctuary Consultant</span>
+                  <div className="flex justify-between items-center pt-2 border-t border-[#EAEAFF]/70 dark:border-slate-800/70">
+                    <span className="text-[9px] text-slate-400 dark:text-slate-500 font-black uppercase tracking-wider">Sanctuary Consultant</span>
                     <button 
                       onClick={() => router.push("/call")}
                       className="px-4 py-1.5 rounded-full bg-[#006B56] hover:bg-[#005B48] text-white font-bold text-[9px] uppercase tracking-wider transition-all shadow-sm flex items-center gap-1"
@@ -638,14 +729,14 @@ export default function ParentDashboard() {
               </div>
 
               {/* Scheduled slots row below both cards */}
-              <div className="grid grid-cols-2 gap-4 pt-2 border-t border-[#EAEAFF]/50">
-                <div className="p-3 bg-[#F8F9FD] border border-[#EAEAFF] rounded-2xl flex items-center gap-2 text-[10px] text-slate-500 font-semibold shadow-2xs">
-                  <span className="material-symbols-outlined text-xs text-[#006B56] font-black">calendar_today</span>
+              <div className="grid grid-cols-2 gap-4 pt-2 border-t border-[#EAEAFF]/50 dark:border-slate-800/50">
+                <div className="p-3 bg-[#F8F9FD] dark:bg-[#0D1F2D] border border-[#EAEAFF] dark:border-slate-800 rounded-2xl flex items-center gap-2 text-[10px] text-slate-500 dark:text-slate-400 font-semibold shadow-2xs">
+                  <span className="material-symbols-outlined text-xs text-[#006B56] dark:text-[#5FAF8A] font-black">calendar_today</span>
                   <span>14 June 2026</span>
                 </div>
 
-                <div className="p-3 bg-[#F8F9FD] border border-[#EAEAFF] rounded-2xl flex items-center gap-2 text-[10px] text-slate-500 font-semibold shadow-2xs">
-                  <span className="material-symbols-outlined text-xs text-[#006B56] font-black">schedule</span>
+                <div className="p-3 bg-[#F8F9FD] dark:bg-[#0D1F2D] border border-[#EAEAFF] dark:border-slate-800 rounded-2xl flex items-center gap-2 text-[10px] text-slate-500 dark:text-slate-400 font-semibold shadow-2xs">
+                  <span className="material-symbols-outlined text-xs text-[#006B56] dark:text-[#5FAF8A] font-black">schedule</span>
                   <span>09.00 pm</span>
                 </div>
               </div>
@@ -655,11 +746,11 @@ export default function ParentDashboard() {
             <div className="grid grid-cols-1 sm:grid-cols-12 gap-6">
               
               {/* Left card: Patient activities (Stress levels/activity trends) */}
-              <div className="sm:col-span-7 bg-white rounded-[32px] border border-[#EAEAFF] shadow-[0_10px_35px_rgba(95,78,165,0.02)] p-5 flex flex-col justify-between space-y-4">
+              <div className="sm:col-span-7 bg-white dark:bg-[#132E3F] rounded-[32px] border border-[#EAEAFF] dark:border-slate-800 shadow-[0_10px_35px_rgba(95,78,165,0.02)] p-5 flex flex-col justify-between space-y-4">
                 <div className="flex justify-between items-center">
                   <div>
-                    <h4 className="font-heading font-black text-xs text-slate-800">Parent Activities</h4>
-                    <p className="text-[9px] text-slate-400 font-bold mt-0.5">Stress level & engagement trends</p>
+                    <h4 className="font-heading font-black text-xs text-slate-800 dark:text-slate-100">Parent Activities</h4>
+                    <p className="text-[9px] text-slate-400 dark:text-slate-400 font-bold mt-0.5">Stress level & engagement trends</p>
                   </div>
                   
                   <span className="text-[9px] font-black text-[#7C6BC4] bg-[#7C6BC4]/10 py-1 px-2.5 rounded-full">Weekly</span>
@@ -677,13 +768,13 @@ export default function ParentDashboard() {
                     { val: 50, label: "Sun" }
                   ].map((bar, idx) => (
                     <div key={idx} className="flex flex-col items-center gap-1.5 flex-1">
-                      <div className="w-3.5 bg-[#E6F4F0] rounded-full h-24 relative overflow-hidden">
+                      <div className="w-3.5 bg-[#E6F4F0] dark:bg-[#0D1F2D] rounded-full h-24 relative overflow-hidden">
                         <div 
-                          className="bg-[#006B56] w-full rounded-full absolute bottom-0 transition-all duration-500" 
+                          className="bg-[#006B56] dark:bg-[#5FAF8A] w-full rounded-full absolute bottom-0 transition-all duration-500" 
                           style={{ height: `${bar.val}%` }}
                         />
                       </div>
-                      <span className="text-[9px] text-slate-400 font-bold">{bar.label}</span>
+                      <span className="text-[9px] text-slate-400 dark:text-slate-500 font-bold">{bar.label}</span>
                     </div>
                   ))}
                 </div>
@@ -691,13 +782,13 @@ export default function ParentDashboard() {
                 {/* Status Indicator (Restyled to match mockup) */}
                 <button 
                   onClick={() => router.push("/journey")}
-                  className="w-full p-3 bg-white border border-[#EAEAFF] hover:border-[#7C6BC4]/20 hover:bg-[#F8F9FD] rounded-2xl flex items-center justify-between text-[10px] transition-all shadow-2xs"
+                  className="w-full p-3 bg-white dark:bg-[#132E3F] border border-[#EAEAFF] dark:border-slate-800 hover:border-[#7C6BC4]/20 hover:bg-[#F8F9FD] dark:hover:bg-slate-800 rounded-2xl flex items-center justify-between text-[10px] transition-all shadow-2xs"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-[#E0F2FE] text-[#0284C7] flex items-center justify-center text-sm shadow-2xs flex-shrink-0">💙</div>
+                    <div className="w-8 h-8 rounded-full bg-[#E0F2FE] dark:bg-sky-950/30 text-[#0284C7] flex items-center justify-center text-sm shadow-2xs flex-shrink-0">💙</div>
                     <div className="text-left">
-                      <span className="font-heading font-black text-slate-800 block">Good conditions</span>
-                      <span className="text-[9px] text-slate-400 font-bold">Anxiety & wellness stable</span>
+                      <span className="font-heading font-black text-slate-800 dark:text-slate-100 block">Good conditions</span>
+                      <span className="text-[9px] text-slate-400 dark:text-slate-500 font-bold">Anxiety & wellness stable</span>
                     </div>
                   </div>
                   <span className="material-symbols-outlined text-xs text-slate-400">arrow_forward_ios</span>
@@ -707,25 +798,25 @@ export default function ParentDashboard() {
               {/* Right card: Daily progress ring (Soft-green theme matching mockup) */}
               <div 
                 onClick={() => setShowProgressModal(true)}
-                className="sm:col-span-5 bg-[#EAF6F2] rounded-[32px] border border-[#CBECE2] shadow-[0_10px_35px_rgba(0,107,86,0.01)] p-5 text-center flex flex-col justify-between min-h-[220px] cursor-pointer hover:shadow-[0_12px_40px_rgba(0,107,86,0.05)] hover:border-[#006B56]/30 hover:scale-[1.01] active:scale-[0.99] transition-all duration-300"
+                className="sm:col-span-5 bg-[#EAF6F2] dark:bg-[#112F28] rounded-[32px] border border-[#CBECE2] dark:border-[#1C463C] shadow-[0_10px_35px_rgba(0,107,86,0.01)] p-5 text-center flex flex-col justify-between min-h-[220px] cursor-pointer hover:shadow-[0_12px_40px_rgba(0,107,86,0.05)] hover:border-[#006B56]/30 hover:scale-[1.01] active:scale-[0.99] transition-all duration-300"
               >
                 <div className="space-y-1">
-                  <h4 className="font-heading font-black text-xs text-[#004D3D] flex items-center justify-center gap-1.5">
+                  <h4 className="font-heading font-black text-xs text-[#004D3D] dark:text-[#5FAF8A] flex items-center justify-center gap-1.5">
                     Daily progress
-                    <span className="material-symbols-outlined text-[10px] text-[#006B56]">open_in_new</span>
+                    <span className="material-symbols-outlined text-[10px] text-[#006B56] dark:text-[#5FAF8A]">open_in_new</span>
                   </h4>
-                  <p className="text-[9px] text-[#006B56]/60 font-bold">Keep improving the quality of your health</p>
+                  <p className="text-[9px] text-[#006B56]/60 dark:text-[#5FAF8A]/60 font-bold">Keep improving the quality of your health</p>
                 </div>
 
                 {/* Radial progress ring */}
                 <div className="relative w-28 h-28 mx-auto flex items-center justify-center">
                   <svg className="absolute w-full h-full transform -rotate-90">
-                    <circle cx="56" cy="56" r="44" className="stroke-white" strokeWidth="7.5" fill="none" />
-                    <circle cx="56" cy="56" r="44" className="stroke-[#006B56] transition-all duration-300" strokeWidth="7.5" fill="none" strokeDasharray="276.4" strokeDashoffset={276.4 - (276.4 * progressPercent) / 100} strokeLinecap="round" />
+                    <circle cx="56" cy="56" r="44" className="stroke-white dark:stroke-[#0D1F2D]" strokeWidth="7.5" fill="none" />
+                    <circle cx="56" cy="56" r="44" className="stroke-[#006B56] dark:stroke-[#5FAF8A] transition-all duration-300" strokeWidth="7.5" fill="none" strokeDasharray="276.4" strokeDashoffset={276.4 - (276.4 * progressPercent) / 100} strokeLinecap="round" />
                   </svg>
                   <div className="flex flex-col items-center">
-                    <span className="text-lg font-heading font-black text-[#004D3D]">{progressPercent}%</span>
-                    <span className="text-[8px] text-[#006B56]/70 font-bold">Complete</span>
+                    <span className="text-lg font-heading font-black text-[#004D3D] dark:text-slate-100">{progressPercent}%</span>
+                    <span className="text-[8px] text-[#006B56]/70 dark:text-[#5FAF8A]/70 font-bold">Complete</span>
                   </div>
                 </div>
 
@@ -737,62 +828,59 @@ export default function ParentDashboard() {
             </div>
 
             {/* Mood Overview Card */}
-            <div className="bg-white rounded-[32px] border border-[#EAEAFF] shadow-[0_10px_35px_rgba(95,78,165,0.02)] p-6 space-y-4">
+            <div className="bg-white dark:bg-[#132E3F] rounded-[32px] border border-[#EAEAFF] dark:border-slate-800 shadow-[0_10px_35px_rgba(95,78,165,0.02)] p-6 space-y-4">
               <div>
-                <h3 className="font-heading font-black text-xs text-slate-800">Mood Overview</h3>
-                <p className="text-[9px] text-slate-400 font-bold">Track your mood over time for deeper insights.</p>
+                <h3 className="font-heading font-black text-xs text-slate-800 dark:text-slate-100">Mood Overview</h3>
+                <p className="text-[9px] text-slate-400 dark:text-slate-500 font-bold">Track your mood over time for deeper insights.</p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
-                {/* Left Side: SVG Pie Chart */}
+                {/* Left Side: SVG Wellness Pie Chart */}
                 <div className="md:col-span-6 flex justify-center items-center py-2">
-                  <div className="relative w-36 h-36">
+                  <div className="relative w-40 h-40">
                     <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-sm">
-                      {/* 1. Amazing (Blue) */}
-                      {distribution.amazing > 0 && (
-                        <path d={makePieSlicePath(amazingStart, amazingEnd)} fill="#4A99D3" />
+                      {/* Great slice (Blue) */}
+                      {distribution.great > 0 && (
+                        <path d={makePieSlicePath(greatStart, greatEnd)} fill="#3a86c8" />
                       )}
-                      
-                      {/* 2. Not Good (Orange) */}
-                      {distribution.notGood > 0 && (
-                        <path d={makePieSlicePath(notGoodStart, notGoodEnd)} fill="#E37A47" />
-                      )}
-                      
-                      {/* 3. Bad (Red) */}
-                      {distribution.bad > 0 && (
-                        <path d={makePieSlicePath(badStart, badEnd)} fill="#D64E4D" />
-                      )}
-                      
-                      {/* 4. Neutral (Yellow) */}
-                      {distribution.neutral > 0 && (
-                        <path d={makePieSlicePath(neutralStart, neutralEnd)} fill="#ECB22E" />
-                      )}
-                      
-                      {/* 5. Good (Green) */}
+                      {/* Good slice (Green) */}
                       {distribution.good > 0 && (
-                        <path d={makePieSlicePath(goodStart, goodEnd)} fill="#5FBA5A" />
+                        <path d={makePieSlicePath(goodStart, goodEnd)} fill="#5fba5a" />
                       )}
-                      
-                      {/* Inner cutout for donut chart style (makes it feel premium) */}
-                      <circle cx="50" cy="50" r="18" fill="white" className="shadow-sm" />
-                      <text x="50" y="52.5" fill="#7C6BC4" fontSize="5px" fontWeight="900" textAnchor="middle" letterSpacing="0.2">MOODS</text>
+                      {/* Normal slice (Yellow) */}
+                      {distribution.normal > 0 && (
+                        <path d={makePieSlicePath(normalStart, normalEnd)} fill="#ecb22e" />
+                      )}
+                      {/* Not Good slice (Orange) */}
+                      {distribution.notGood > 0 && (
+                        <path d={makePieSlicePath(notGoodStart, notGoodEnd)} fill="#f37021" />
+                      )}
+                      {/* Bad slice (Red) */}
+                      {distribution.bad > 0 && (
+                        <path d={makePieSlicePath(badStart, badEnd)} fill="#d64e4d" />
+                      )}
 
-                      {/* Percentage labels centered inside each slice */}
-                      {distribution.amazing > 0 && (
-                        <text x={getLabelCoordinates(amazingStart, amazingEnd).x} y={getLabelCoordinates(amazingStart, amazingEnd).y} fill="white" fontSize="5.5px" fontWeight="900" textAnchor="middle">{distribution.amazing}%</text>
-                      )}
-                      {distribution.notGood > 0 && (
-                        <text x={getLabelCoordinates(notGoodStart, notGoodEnd).x} y={getLabelCoordinates(notGoodStart, notGoodEnd).y} fill="white" fontSize="5.5px" fontWeight="900" textAnchor="middle">{distribution.notGood}%</text>
-                      )}
-                      {distribution.bad > 0 && (
-                        <text x={getLabelCoordinates(badStart, badEnd).x} y={getLabelCoordinates(badStart, badEnd).y} fill="white" fontSize="5.5px" fontWeight="900" textAnchor="middle">{distribution.bad}%</text>
-                      )}
-                      {distribution.neutral > 0 && (
-                        <text x={getLabelCoordinates(neutralStart, neutralEnd).x} y={getLabelCoordinates(neutralStart, neutralEnd).y} fill="white" fontSize="5.5px" fontWeight="900" textAnchor="middle">{distribution.neutral}%</text>
-                      )}
-                      {distribution.good > 0 && (
-                        <text x={getLabelCoordinates(goodStart, goodEnd).x} y={getLabelCoordinates(goodStart, goodEnd).y} fill="white" fontSize="5.5px" fontWeight="900" textAnchor="middle">{distribution.good}%</text>
-                      )}
+                      {/* Percentage Labels inside slices */}
+                      {distribution.great >= 5 && (() => {
+                        const coords = getLabelCoordinates(greatStart, greatEnd);
+                        return <text x={coords.x} y={coords.y} fill="#FFFFFF" fontSize="6px" fontWeight="900" textAnchor="middle">{distribution.great}%</text>;
+                      })()}
+                      {distribution.good >= 5 && (() => {
+                        const coords = getLabelCoordinates(goodStart, goodEnd);
+                        return <text x={coords.x} y={coords.y} fill="#FFFFFF" fontSize="6px" fontWeight="900" textAnchor="middle">{distribution.good}%</text>;
+                      })()}
+                      {distribution.normal >= 5 && (() => {
+                        const coords = getLabelCoordinates(normalStart, normalEnd);
+                        return <text x={coords.x} y={coords.y} fill="#FFFFFF" fontSize="6px" fontWeight="900" textAnchor="middle">{distribution.normal}%</text>;
+                      })()}
+                      {distribution.notGood >= 5 && (() => {
+                        const coords = getLabelCoordinates(notGoodStart, notGoodEnd);
+                        return <text x={coords.x} y={coords.y} fill="#FFFFFF" fontSize="6px" fontWeight="900" textAnchor="middle">{distribution.notGood}%</text>;
+                      })()}
+                      {distribution.bad >= 5 && (() => {
+                        const coords = getLabelCoordinates(badStart, badEnd);
+                        return <text x={coords.x} y={coords.y} fill="#FFFFFF" fontSize="6px" fontWeight="900" textAnchor="middle">{distribution.bad}%</text>;
+                      })()}
                     </svg>
                   </div>
                 </div>
@@ -800,34 +888,34 @@ export default function ParentDashboard() {
                 {/* Right Side: Legends & Summarize */}
                 <div className="md:col-span-6 space-y-4">
                   {/* Legend Grid */}
-                  <div className="grid grid-cols-2 gap-2 text-[9px] font-bold text-slate-600">
-                    <div className="flex items-center gap-1.5">
-                      <span className="w-3.5 h-2 bg-[#D64E4D] rounded-sm" />
+                  <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-[10px] font-bold text-slate-650 dark:text-slate-400">
+                    <div className="flex items-center gap-2">
+                      <span className="w-3.5 h-2.5 bg-[#d64e4d] rounded-sm" />
                       <span>Bad</span>
                     </div>
-                    <div className="flex items-center gap-1.5">
-                      <span className="w-3.5 h-2 bg-[#ECB22E] rounded-sm" />
-                      <span>Neutral</span>
+                    <div className="flex items-center gap-2">
+                      <span className="w-3.5 h-2.5 bg-[#ecb22e] rounded-sm" />
+                      <span>Normal</span>
                     </div>
-                    <div className="flex items-center gap-1.5">
-                      <span className="w-3.5 h-2 bg-[#E37A47] rounded-sm" />
+                    <div className="flex items-center gap-2">
+                      <span className="w-3.5 h-2.5 bg-[#f37021] rounded-sm" />
                       <span>Not Good</span>
                     </div>
-                    <div className="flex items-center gap-1.5">
-                      <span className="w-3.5 h-2 bg-[#5FBA5A] rounded-sm" />
+                    <div className="flex items-center gap-2">
+                      <span className="w-3.5 h-2.5 bg-[#5fba5a] rounded-sm" />
                       <span>Good</span>
                     </div>
-                    <div className="flex items-center gap-1.5 md:col-span-2">
-                      <span className="w-3.5 h-2 bg-[#4A99D3] rounded-sm" />
-                      <span>Amazing</span>
+                    <div className="flex items-center gap-2">
+                      <span className="w-3.5 h-2.5 bg-[#3a86c8] rounded-sm" />
+                      <span>Great</span>
                     </div>
                   </div>
 
                   {/* Summarize Text Box */}
-                  <div className="space-y-1.5 pt-2.5 border-t border-[#EAEAFF]">
-                    <h5 className="text-[9px] uppercase font-black tracking-wider text-slate-700 font-heading">Summarize</h5>
-                    <p className="text-[9px] text-slate-400 font-semibold leading-relaxed">
-                      You experienced a range of moods this week. To stay balanced, try journaling, light exercise, talking to someone you trust, or taking rest and reflect regularly.
+                  <div className="space-y-1.5 pt-3.5 border-t border-[#EAEAFF] dark:border-slate-800">
+                    <h5 className="text-[10px] uppercase font-black tracking-wider text-slate-700 dark:text-slate-350 font-heading">Summarize</h5>
+                    <p className="text-[10px] text-slate-450 dark:text-slate-400 font-semibold leading-relaxed">
+                      {getWellnessFeedback(familyScore)}
                     </p>
                   </div>
                 </div>
@@ -844,17 +932,17 @@ export default function ParentDashboard() {
           <div className="lg:col-span-3 space-y-4 flex flex-col gap-4 space-y-0">
             
             {/* List of Appointments card */}
-            <div className="bg-white rounded-[32px] border border-[#EAEAFF] shadow-[0_10px_35px_rgba(95,78,165,0.02)] p-5 space-y-4">
-              <h3 className="font-heading font-black text-xs text-slate-800">List of appointments</h3>
+            <div className="bg-white dark:bg-[#132E3F] rounded-[32px] border border-[#EAEAFF] dark:border-slate-800 shadow-[0_10px_35px_rgba(95,78,165,0.02)] p-5 space-y-4">
+              <h3 className="font-heading font-black text-xs text-slate-800 dark:text-slate-100">List of appointments</h3>
               
               {/* Aligned Tabs Switcher */}
-              <div className="flex border-b border-[#EAEAFF] w-full">
+              <div className="flex border-b border-[#EAEAFF] dark:border-slate-800 w-full">
                 <button
                   onClick={() => setActiveTab("monthly")}
                   className={`flex-1 pb-2 text-[10px] font-black uppercase tracking-wider text-center border-b-2 transition-all ${
                     activeTab === "monthly" 
-                      ? "border-[#006B56] text-[#006B56]" 
-                      : "border-transparent text-slate-400 hover:text-slate-600"
+                      ? "border-[#006B56] text-[#006B56] dark:text-[#5FAF8A]" 
+                      : "border-transparent text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
                   }`}
                 >
                   Monthly
@@ -863,8 +951,8 @@ export default function ParentDashboard() {
                   onClick={() => setActiveTab("daily")}
                   className={`flex-1 pb-2 text-[10px] font-black uppercase tracking-wider text-center border-b-2 transition-all ${
                     activeTab === "daily" 
-                      ? "border-[#006B56] text-[#006B56]" 
-                      : "border-transparent text-slate-400 hover:text-slate-600"
+                      ? "border-[#006B56] text-[#006B56] dark:text-[#5FAF8A]" 
+                      : "border-transparent text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
                   }`}
                 >
                   Daily Focus
@@ -874,18 +962,18 @@ export default function ParentDashboard() {
               {/* Tab 1 content: Monthly Calendar view */}
               {activeTab === "monthly" && (
                 <div className="space-y-4 pt-2">
-                  <div className="flex justify-between items-center text-[10px] text-slate-600 font-extrabold px-1 font-heading">
+                  <div className="flex justify-between items-center text-[10px] text-slate-600 dark:text-slate-350 font-extrabold px-1 font-heading">
                     <span>October 2026</span>
                     <div className="flex gap-1.5">
-                      <button className="w-5 h-5 rounded bg-[#F8F9FD] border border-[#EAEAFF] flex items-center justify-center hover:bg-slate-50 text-[10px]">‹</button>
-                      <button className="w-5 h-5 rounded bg-[#F8F9FD] border border-[#EAEAFF] flex items-center justify-center hover:bg-slate-50 text-[10px]">›</button>
+                      <button className="w-5 h-5 rounded bg-[#F8F9FD] dark:bg-[#0D1F2D] border border-[#EAEAFF] dark:border-slate-800 flex items-center justify-center hover:bg-slate-50 dark:hover:bg-slate-800 text-[10px]">‹</button>
+                      <button className="w-5 h-5 rounded bg-[#F8F9FD] dark:bg-[#0D1F2D] border border-[#EAEAFF] dark:border-slate-800 flex items-center justify-center hover:bg-slate-50 dark:hover:bg-slate-800 text-[10px]">›</button>
                     </div>
                   </div>
 
                   {/* Calendar Grid */}
                   <div className="grid grid-cols-7 gap-1 text-center text-[8px] font-bold">
                     {["S", "M", "T", "W", "T", "F", "S"].map((d, i) => (
-                      <span key={i} className="text-slate-400 uppercase font-black pb-1">{d}</span>
+                      <span key={i} className="text-slate-400 dark:text-slate-500 uppercase font-black pb-1">{d}</span>
                     ))}
                     {Array.from({ length: 31 }).map((_, idx) => {
                       const day = idx + 1;
@@ -897,7 +985,7 @@ export default function ParentDashboard() {
                           className={`w-6 h-6 rounded-full flex items-center justify-center transition-all text-[8px] ${
                             isSelected 
                               ? "bg-[#E37A47] text-white font-black shadow-sm scale-110" 
-                              : "text-slate-700 hover:bg-[#F8F9FD]"
+                              : "text-slate-700 dark:text-slate-350 hover:bg-[#F8F9FD] dark:hover:bg-slate-800"
                           }`}
                         >
                           {day}
@@ -915,12 +1003,12 @@ export default function ParentDashboard() {
                     <div 
                       key={task.id} 
                       onClick={() => toggleTask(task.id)}
-                      className="flex items-center gap-3 p-2 rounded-xl hover:bg-[#F8F9FD] cursor-pointer transition-colors"
+                      className="flex items-center gap-3 p-2 rounded-xl hover:bg-[#F8F9FD] dark:hover:bg-slate-800 cursor-pointer transition-colors"
                     >
-                      <span className={`material-symbols-outlined text-base ${task.completed ? "text-[#006B56] font-black" : "text-slate-300"}`}>
+                      <span className={`material-symbols-outlined text-base ${task.completed ? "text-[#006B56] dark:text-[#5FAF8A] font-black" : "text-slate-300 dark:text-slate-600"}`}>
                         {task.completed ? "check_circle" : "radio_button_unchecked"}
                       </span>
-                      <span className={`text-[10px] font-semibold leading-snug ${task.completed ? "line-through text-slate-400" : "text-slate-700"}`}>
+                      <span className={`text-[10px] font-semibold leading-snug ${task.completed ? "line-through text-slate-450" : "text-slate-700 dark:text-slate-300"}`}>
                         {task.text}
                       </span>
                     </div>
@@ -947,13 +1035,13 @@ export default function ParentDashboard() {
                       setBreathingPhase("Inhale");
                       setBreathingSeconds(4);
                     }}
-                    className="w-full p-4 bg-white border border-[#EAEAFF] hover:border-[#7C6BC4]/20 hover:shadow-xs transition-all rounded-[24px] text-left flex items-center justify-between shadow-2xs"
+                    className="w-full p-4 bg-white dark:bg-[#132E3F] border border-[#EAEAFF] dark:border-slate-800 hover:border-[#7C6BC4]/20 hover:shadow-xs transition-all rounded-[24px] text-left flex items-center justify-between shadow-2xs"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-[#E6F4F0] border border-[#CBECE2] flex items-center justify-center text-sm shadow-2xs">🧘</div>
+                      <div className="w-8 h-8 rounded-full bg-[#E6F4F0] dark:bg-emerald-950/20 border border-[#CBECE2] dark:border-emerald-900/30 flex items-center justify-center text-sm shadow-2xs">🧘</div>
                       <div>
-                        <h5 className="text-[11px] font-heading font-black text-slate-800">Manage Stress Space</h5>
-                        <p className="text-[9px] text-slate-400 font-bold mt-0.5">10:00 pm - 10:30 pm</p>
+                        <h5 className="text-[11px] font-heading font-black text-slate-800 dark:text-slate-100">Manage Stress Space</h5>
+                        <p className="text-[9px] text-slate-400 dark:text-slate-500 font-bold mt-0.5">10:00 pm - 10:30 pm</p>
                       </div>
                     </div>
                     <span className="material-symbols-outlined text-xs text-slate-400">arrow_forward_ios</span>
@@ -962,13 +1050,13 @@ export default function ParentDashboard() {
                   {/* Slot 2 */}
                   <button 
                     onClick={() => router.push("/meditation")}
-                    className="w-full p-4 bg-white border border-[#EAEAFF] hover:border-[#7C6BC4]/20 hover:shadow-xs transition-all rounded-[24px] text-left flex items-center justify-between shadow-2xs"
+                    className="w-full p-4 bg-white dark:bg-[#132E3F] border border-[#EAEAFF] dark:border-slate-800 hover:border-[#7C6BC4]/20 hover:shadow-xs transition-all rounded-[24px] text-left flex items-center justify-between shadow-2xs"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-[#ECE5F5] border border-[#D5C2EB] flex items-center justify-center text-sm shadow-2xs">🌸</div>
+                      <div className="w-8 h-8 rounded-full bg-[#ECE5F5] dark:bg-purple-950/20 border border-[#D5C2EB] dark:border-purple-900/30 flex items-center justify-center text-sm shadow-2xs">🌸</div>
                       <div>
-                        <h5 className="text-[11px] font-heading font-black text-slate-800">Mindfulness Breathing</h5>
-                        <p className="text-[9px] text-slate-400 font-bold mt-0.5">09:00 am - 10:00 am</p>
+                        <h5 className="text-[11px] font-heading font-black text-slate-800 dark:text-slate-100">Mindfulness Breathing</h5>
+                        <p className="text-[9px] text-slate-400 dark:text-slate-500 font-bold mt-0.5">09:00 am - 10:00 am</p>
                       </div>
                     </div>
                     <span className="material-symbols-outlined text-xs text-slate-400">arrow_forward_ios</span>
@@ -979,13 +1067,13 @@ export default function ParentDashboard() {
                   {/* Slot 3 */}
                   <button 
                     onClick={() => router.push("/journey")}
-                    className="w-full p-4 bg-white border border-[#EAEAFF] hover:border-[#7C6BC4]/20 hover:shadow-xs transition-all rounded-[24px] text-left flex items-center justify-between shadow-2xs"
+                    className="w-full p-4 bg-white dark:bg-[#132E3F] border border-[#EAEAFF] dark:border-slate-800 hover:border-[#7C6BC4]/20 hover:shadow-xs transition-all rounded-[24px] text-left flex items-center justify-between shadow-2xs"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-[#FFF6EB] border border-[#FFE1C2] flex items-center justify-center text-sm shadow-2xs">🧸</div>
+                      <div className="w-8 h-8 rounded-full bg-[#FFF6EB] dark:bg-amber-950/20 border border-[#FFE1C2] dark:border-amber-900/30 flex items-center justify-center text-sm shadow-2xs">🧸</div>
                       <div>
-                        <h5 className="text-[11px] font-heading font-black text-slate-800">Play Time with Kids</h5>
-                        <p className="text-[9px] text-slate-400 font-bold mt-0.5">04:00 pm - 05:00 pm</p>
+                        <h5 className="text-[11px] font-heading font-black text-slate-800 dark:text-slate-100">Play Time with Kids</h5>
+                        <p className="text-[9px] text-slate-400 dark:text-slate-500 font-bold mt-0.5">04:00 pm - 05:00 pm</p>
                       </div>
                     </div>
                     <span className="material-symbols-outlined text-xs text-slate-400">arrow_forward_ios</span>
@@ -994,13 +1082,13 @@ export default function ParentDashboard() {
                   {/* Slot 4 */}
                   <button 
                     onClick={() => router.push("/journey")}
-                    className="w-full p-4 bg-white border border-[#EAEAFF] hover:border-[#7C6BC4]/20 hover:shadow-xs transition-all rounded-[24px] text-left flex items-center justify-between shadow-2xs"
+                    className="w-full p-4 bg-white dark:bg-[#132E3F] border border-[#EAEAFF] dark:border-slate-800 hover:border-[#7C6BC4]/20 hover:shadow-xs transition-all rounded-[24px] text-left flex items-center justify-between shadow-2xs"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-[#ECE5F5] border border-[#D5C2EB] flex items-center justify-center text-sm shadow-2xs">🏡</div>
+                      <div className="w-8 h-8 rounded-full bg-[#ECE5F5] dark:bg-purple-950/20 border border-[#D5C2EB] dark:border-purple-900/30 flex items-center justify-center text-sm shadow-2xs">🏡</div>
                       <div>
-                        <h5 className="text-[11px] font-heading font-black text-slate-800">Family Harmony Check-in</h5>
-                        <p className="text-[9px] text-slate-400 font-bold mt-0.5">07:00 pm - 07:30 pm</p>
+                        <h5 className="text-[11px] font-heading font-black text-slate-800 dark:text-slate-100">Family Harmony Check-in</h5>
+                        <p className="text-[9px] text-slate-400 dark:text-slate-500 font-bold mt-0.5">07:00 pm - 07:30 pm</p>
                       </div>
                     </div>
                     <span className="material-symbols-outlined text-xs text-slate-400">arrow_forward_ios</span>
@@ -1011,7 +1099,7 @@ export default function ParentDashboard() {
               {/* See More Link */}
               <button 
                 onClick={() => router.push("/journey")}
-                className="w-full text-center py-2.5 text-[#006B56] hover:underline text-[10px] font-black uppercase tracking-wider flex items-center justify-center gap-1.5"
+                className="w-full text-center py-2.5 text-[#006B56] dark:text-[#5FAF8A] hover:underline text-[10px] font-black uppercase tracking-wider flex items-center justify-center gap-1.5"
               >
                 <span>See More Schedule</span>
                 <span className="material-symbols-outlined text-sm font-black">arrow_forward</span>
@@ -1019,28 +1107,28 @@ export default function ParentDashboard() {
             </div>
 
             {/* Family Wellness Summary Block */}
-            <div className="bg-white rounded-[32px] border border-[#EAEAFF] shadow-[0_10px_35px_rgba(95,78,165,0.02)] p-5 space-y-4">
-              <h4 className="font-heading font-black text-xs text-slate-800 flex items-center gap-2">
-                <span className="material-symbols-outlined text-[#006B56] font-black text-base">family_home</span>
+            <div className="bg-white dark:bg-[#132E3F] rounded-[32px] border border-[#EAEAFF] dark:border-slate-800 shadow-[0_10px_35px_rgba(95,78,165,0.02)] p-5 space-y-4">
+              <h4 className="font-heading font-black text-xs text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                <span className="material-symbols-outlined text-[#006B56] dark:text-[#5FAF8A] font-black text-base">family_home</span>
                 Family Alignment
               </h4>
 
               {/* Mini display */}
-              <div className="flex items-center justify-between bg-[#F8F9FD] p-3 rounded-xl border border-[#EAEAFF]">
-                <span className="text-[10px] text-slate-500 font-semibold">Wellness Score:</span>
-                <span className="text-sm font-heading font-black text-[#006B56]">{familyScore}/100</span>
+              <div className="flex items-center justify-between bg-[#F8F9FD] dark:bg-[#0D1F2D] p-3 rounded-xl border border-[#EAEAFF] dark:border-slate-800">
+                <span className="text-[10px] text-slate-500 dark:text-slate-450 font-semibold">Wellness Score:</span>
+                <span className="text-sm font-heading font-black text-[#006B56] dark:text-[#5FAF8A]">{familyScore}</span>
               </div>
 
               {/* Challenge text */}
-              <p className="text-[9px] text-slate-400 font-semibold leading-relaxed">
+              <p className="text-[9px] text-slate-400 dark:text-slate-450 font-semibold leading-relaxed">
                 🏡 **Today's Challenge:** Keep devices in a basket during family dinner. Ask children about their best moments today.
               </p>
             </div>
 
             {/* Parenting Reflection Journal Card */}
-            <div className="bg-white rounded-[32px] border border-[#EAEAFF] shadow-[0_10px_35px_rgba(95,78,165,0.02)] p-5 space-y-4 text-left">
-              <h4 className="font-heading font-black text-xs text-slate-800 flex items-center gap-2">
-                <span className="material-symbols-outlined text-[#7C6BC4] font-black text-base">edit_note</span>
+            <div className="bg-white dark:bg-[#132E3F] rounded-[32px] border border-[#EAEAFF] dark:border-slate-800 shadow-[0_10px_35px_rgba(95,78,165,0.02)] p-5 space-y-4 text-left">
+              <h4 className="font-heading font-black text-xs text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                <span className="material-symbols-outlined text-[#7C6BC4] dark:text-purple-300 font-black text-base">edit_note</span>
                 Parenting Journal
               </h4>
               
@@ -1049,7 +1137,7 @@ export default function ParentDashboard() {
                   value={journalInput}
                   onChange={(e) => setJournalInput(e.target.value)}
                   placeholder="How was your parenting journey today? Note down any reflections or highlights..."
-                  className="w-full p-3 text-[10px] font-semibold text-slate-700 bg-[#F8F9FD] border border-[#EAEAFF] rounded-2xl placeholder-slate-400 focus:outline-none focus:border-[#7C6BC4]/50 resize-none h-20"
+                  className="w-full p-3 text-[10px] font-semibold text-slate-700 dark:text-slate-200 bg-[#F8F9FD] dark:bg-[#0D1F2D] border border-[#EAEAFF] dark:border-slate-800 rounded-2xl placeholder-slate-400 focus:outline-none focus:border-[#7C6BC4]/50 resize-none h-20"
                 />
                 
                 <button
@@ -1063,14 +1151,14 @@ export default function ParentDashboard() {
 
               {/* Journal Entries List */}
               {journalEntries.length > 0 && (
-                <div className="pt-2 border-t border-[#EAEAFF]/70 space-y-2.5 max-h-[140px] overflow-y-auto pr-1">
+                <div className="pt-2 border-t border-[#EAEAFF]/70 dark:border-slate-800 space-y-2.5 max-h-[140px] overflow-y-auto pr-1">
                   {journalEntries.map((entry, idx) => (
-                    <div key={idx} className="bg-[#F8F9FD] border border-[#EAEAFF] p-2.5 rounded-xl space-y-1">
+                    <div key={idx} className="bg-[#F8F9FD] dark:bg-[#0D1F2D] border border-[#EAEAFF] dark:border-slate-800 p-2.5 rounded-xl space-y-1">
                       <div className="flex justify-between items-center">
                         <span className="text-[8px] font-black uppercase text-[#7C6BC4] tracking-wider">{entry.date}</span>
                         <span className="material-symbols-outlined text-[10px] text-slate-300">calendar_today</span>
                       </div>
-                      <p className="text-[9px] text-slate-600 font-semibold leading-relaxed break-words">{entry.content}</p>
+                      <p className="text-[9px] text-slate-600 dark:text-slate-300 font-semibold leading-relaxed break-words">{entry.content}</p>
                     </div>
                   ))}
                 </div>
@@ -1096,18 +1184,18 @@ export default function ParentDashboard() {
               initial={{ scale: 0.95 }}
               animate={{ scale: 1 }}
               exit={{ scale: 0.95 }}
-              className="bg-white max-w-sm w-full p-8 rounded-[36px] text-center space-y-6 shadow-2xl relative border border-[#EAEAFF]"
+              className="bg-white dark:bg-[#132E3F] max-w-sm w-full p-8 rounded-[36px] text-center space-y-6 shadow-2xl relative border border-[#EAEAFF] dark:border-slate-800"
             >
               <button 
                 onClick={() => setBreathingActive(false)}
-                className="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 hover:bg-slate-200 active:scale-95"
+                className="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 dark:bg-[#0D1F2D] flex items-center justify-center text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 active:scale-95"
               >
                 <span className="material-symbols-outlined text-sm font-bold">close</span>
               </button>
 
               <div className="space-y-1">
-                <span className="text-[10px] uppercase font-black tracking-widest text-[#7C6BC4]">Breathing Space</span>
-                <h3 className="text-lg font-heading font-black text-slate-800">Relax & Re-center</h3>
+                <span className="text-[10px] uppercase font-black tracking-widest text-[#7C6BC4] dark:text-purple-300">Breathing Space</span>
+                <h3 className="text-lg font-heading font-black text-slate-800 dark:text-slate-100">Relax & Re-center</h3>
               </div>
 
               {/* Dynamic Breathing Ring */}
@@ -1126,13 +1214,13 @@ export default function ParentDashboard() {
                   }`}
                 />
                 
-                <div className="z-10 bg-white w-20 h-20 rounded-full flex flex-col items-center justify-center border border-[#EAEAFF] shadow-sm">
-                  <span className="text-[10px] font-black text-slate-700">{breathingPhase}</span>
+                <div className="z-10 bg-white dark:bg-[#0D1F2D] w-20 h-20 rounded-full flex flex-col items-center justify-center border border-[#EAEAFF] dark:border-slate-800 shadow-sm">
+                  <span className="text-[10px] font-black text-slate-700 dark:text-slate-350">{breathingPhase}</span>
                   <span className="text-xs font-bold text-slate-400 mt-0.5">{breathingSeconds}s</span>
                 </div>
               </div>
 
-              <p className="text-[11px] text-slate-500 font-medium leading-relaxed px-4">
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium leading-relaxed px-4">
                 {breathingPhase === "Inhale" 
                   ? "Breathe in slowly through your nose, expanding your belly." 
                   : breathingPhase === "Hold" 
@@ -1164,7 +1252,7 @@ export default function ParentDashboard() {
               initial={{ y: 20 }}
               animate={{ y: 0 }}
               exit={{ y: 20 }}
-              className="bg-white max-w-md w-full p-8 rounded-[36px] border border-[#EAEAFF] shadow-2xl space-y-6 relative"
+              className="bg-white dark:bg-[#132E3F] max-w-md w-full p-8 rounded-[36px] border border-[#EAEAFF] dark:border-slate-800 shadow-2xl space-y-6 relative text-center"
             >
               <button 
                 onClick={() => setOverwhelmedMode(false)}
@@ -1292,18 +1380,18 @@ export default function ParentDashboard() {
               initial={{ scale: 0.95 }}
               animate={{ scale: 1 }}
               exit={{ scale: 0.95 }}
-              className="bg-white max-w-sm w-full p-8 rounded-[36px] text-center space-y-6 shadow-2xl relative border border-[#EAEAFF]"
+              className="bg-white dark:bg-[#132E3F] max-w-sm w-full p-8 rounded-[36px] text-center space-y-6 shadow-2xl relative border border-[#EAEAFF] dark:border-slate-800"
             >
-              <div className="w-16 h-16 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto border border-emerald-100 animate-pulse">
+              <div className="w-16 h-16 rounded-full bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mx-auto border border-emerald-100 dark:border-emerald-900/30 animate-pulse">
                 <span className="material-symbols-outlined text-3xl font-black">lock_open</span>
               </div>
 
               <div className="space-y-1 font-heading">
-                <span className="text-[10px] uppercase font-black tracking-widest text-[#7C6BC4]">Sanctuary Guard</span>
-                <h3 className="text-xl font-heading font-black text-slate-800">You Are Safe Here</h3>
+                <span className="text-[10px] uppercase font-black tracking-widest text-[#7C6BC4] dark:text-purple-300">Sanctuary Guard</span>
+                <h3 className="text-xl font-heading font-black text-slate-800 dark:text-slate-100">You Are Safe Here</h3>
               </div>
 
-              <p className="text-[11px] text-slate-400 font-bold leading-relaxed px-2">
+              <p className="text-[11px] text-slate-400 dark:text-slate-400 font-bold leading-relaxed px-2">
                 Your parenting reflections, journal entries, and custom wellness metrics are fully protected. We do not track or share your logs.
               </p>
 
@@ -1333,7 +1421,7 @@ export default function ParentDashboard() {
               initial={{ scale: 0.95 }}
               animate={{ scale: 1 }}
               exit={{ scale: 0.95 }}
-              className="bg-white max-w-sm w-full p-8 rounded-[36px] text-center space-y-6 shadow-2xl relative border border-[#EAEAFF]"
+              className="bg-white dark:bg-[#132E3F] max-w-sm w-full p-8 rounded-[36px] text-center space-y-6 shadow-2xl relative border border-[#EAEAFF] dark:border-slate-800"
             >
               <div className="w-16 h-16 rounded-full bg-[#E37A47]/10 text-[#E37A47] flex items-center justify-center mx-auto border border-[#E37A47]/20">
                 <span className="material-symbols-outlined text-3xl font-black">assignment</span>
@@ -1341,10 +1429,10 @@ export default function ParentDashboard() {
 
               <div className="space-y-1 font-heading">
                 <span className="text-[10px] uppercase font-black tracking-widest text-[#E37A47]">Onboarding Sanctuary</span>
-                <h3 className="text-xl font-heading font-black text-slate-800">Complete Assessment</h3>
+                <h3 className="text-xl font-heading font-black text-slate-800 dark:text-slate-100">Complete Assessment</h3>
               </div>
 
-              <p className="text-[11px] text-slate-400 font-bold leading-relaxed px-2">
+              <p className="text-[11px] text-slate-400 dark:text-slate-400 font-bold leading-relaxed px-2">
                 To unlock your personalized Parent Dashboard, custom goals checklist, and weekly wellness tracking, please complete your initial assessment.
               </p>
 
@@ -1373,35 +1461,35 @@ export default function ParentDashboard() {
               initial={{ scale: 0.95, y: 15 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.95, y: 15 }}
-              className="bg-white max-w-md w-full p-6 sm:p-8 rounded-[36px] space-y-6 shadow-2xl relative border border-[#EAEAFF]"
+              className="bg-white dark:bg-[#132E3F] max-w-md w-full p-6 sm:p-8 rounded-[36px] space-y-6 shadow-2xl relative border border-[#EAEAFF] dark:border-slate-800"
             >
               <button 
                 onClick={() => setShowProgressModal(false)}
-                className="absolute top-4 right-4 w-7 h-7 rounded-full bg-[#F8F9FD] border border-[#EAEAFF] hover:bg-[#F2F4FD] flex items-center justify-center text-slate-400 hover:text-slate-600 transition-colors"
+                className="absolute top-4 right-4 w-7 h-7 rounded-full bg-[#F8F9FD] dark:bg-[#0D1F2D] border border-[#EAEAFF] dark:border-slate-800 hover:bg-[#F2F4FD] dark:hover:bg-slate-800 flex items-center justify-center text-slate-400 hover:text-slate-600 transition-colors"
               >
                 <span className="material-symbols-outlined text-sm font-black">close</span>
               </button>
 
               <div className="text-center space-y-1">
-                <span className="text-[10px] uppercase font-black tracking-widest text-[#7C6BC4]">Daily Focus Checklist</span>
-                <h3 className="text-lg font-heading font-black text-slate-800">Complete Daily Goals</h3>
-                <p className="text-[10px] text-slate-400 font-bold">Check off completed goals to improve your wellness score</p>
+                <span className="text-[10px] uppercase font-black tracking-widest text-[#7C6BC4] dark:text-purple-300">Daily Focus Checklist</span>
+                <h3 className="text-lg font-heading font-black text-slate-800 dark:text-slate-100">Complete Daily Goals</h3>
+                <p className="text-[10px] text-slate-400 dark:text-slate-400 font-bold">Check off completed goals to improve your wellness score</p>
               </div>
 
               {/* Progress visual inside modal */}
-              <div className="flex items-center gap-4 bg-[#F8F9FD] border border-[#EAEAFF] p-4 rounded-[24px]">
+              <div className="flex items-center gap-4 bg-[#F8F9FD] dark:bg-[#0D1F2D] border border-[#EAEAFF] dark:border-slate-800 p-4 rounded-[24px]">
                 <div className="relative w-16 h-16 flex items-center justify-center flex-shrink-0">
                   <svg className="absolute w-full h-full transform -rotate-90">
-                    <circle cx="32" cy="32" r="26" className="stroke-[#EAEAFF]" strokeWidth="4.5" fill="none" />
-                    <circle cx="32" cy="32" r="26" className="stroke-[#006B56] transition-all duration-300" strokeWidth="4.5" fill="none" strokeDasharray="163.3" strokeDashoffset={163.3 - (163.3 * progressPercent) / 100} strokeLinecap="round" />
+                    <circle cx="32" cy="32" r="26" className="stroke-[#EAEAFF] dark:stroke-slate-800" strokeWidth="4.5" fill="none" />
+                    <circle cx="32" cy="32" r="26" className="stroke-[#006B56] dark:stroke-[#5FAF8A] transition-all duration-300" strokeWidth="4.5" fill="none" strokeDasharray="163.3" strokeDashoffset={163.3 - (163.3 * progressPercent) / 100} strokeLinecap="round" />
                   </svg>
-                  <span className="text-xs font-heading font-black text-slate-800">{progressPercent}%</span>
+                  <span className="text-xs font-heading font-black text-slate-800 dark:text-slate-100">{progressPercent}%</span>
                 </div>
                 <div className="text-left">
-                  <span className="text-[11px] font-heading font-black text-slate-700 block">
+                  <span className="text-[11px] font-heading font-black text-slate-700 dark:text-slate-350 block">
                     {completedCount} of {tasks.length} Completed
                   </span>
-                  <span className="text-[9px] text-slate-400 font-bold">
+                  <span className="text-[9px] text-slate-400 dark:text-slate-500 font-bold">
                     Keep going! Every milestone improves family alignment.
                   </span>
                 </div>
@@ -1413,12 +1501,12 @@ export default function ParentDashboard() {
                   <div 
                     key={task.id} 
                     onClick={() => toggleTask(task.id)}
-                    className="flex items-center gap-3 p-3.5 rounded-2xl hover:bg-[#F8F9FD] border border-[#EAEAFF] hover:border-[#7C6BC4]/20 cursor-pointer transition-all active:scale-[0.99] bg-white text-left"
+                    className="flex items-center gap-3 p-3.5 rounded-2xl hover:bg-[#F8F9FD] dark:hover:bg-slate-800 border border-[#EAEAFF] dark:border-slate-800 hover:border-[#7C6BC4]/20 cursor-pointer transition-all active:scale-[0.99] bg-white dark:bg-[#132E3F] text-left"
                   >
-                    <span className={`material-symbols-outlined text-lg ${task.completed ? "text-[#006B56] font-black" : "text-slate-300"}`}>
+                    <span className={`material-symbols-outlined text-lg ${task.completed ? "text-[#006B56] dark:text-[#5FAF8A] font-black" : "text-slate-300 dark:text-slate-600"}`}>
                       {task.completed ? "check_circle" : "radio_button_unchecked"}
                     </span>
-                    <span className={`text-[11px] font-semibold leading-relaxed ${task.completed ? "line-through text-slate-400" : "text-slate-700"}`}>
+                    <span className={`text-[11px] font-semibold leading-relaxed ${task.completed ? "line-through text-slate-450" : "text-slate-700 dark:text-slate-300"}`}>
                       {task.text}
                     </span>
                   </div>
@@ -1431,6 +1519,56 @@ export default function ParentDashboard() {
               >
                 Close & Save Goals
               </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ==================== DISCONNECT SESSION MODAL ==================== */}
+      <AnimatePresence>
+        {showDisconnectModal && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-[#2E2A3D]/70 backdrop-blur-md flex items-center justify-center p-4 text-center"
+          >
+            <motion.div 
+              initial={{ scale: 0.95, y: 15 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.95, y: 15 }}
+              className="bg-white dark:bg-[#132E3F] max-w-sm w-full p-8 rounded-[36px] space-y-6 shadow-2xl relative border border-[#EAEAFF] dark:border-slate-800"
+            >
+              <div className="w-16 h-16 rounded-full bg-rose-50 dark:bg-rose-950/20 text-rose-600 dark:text-rose-450 flex items-center justify-center mx-auto border border-rose-100 dark:border-rose-900/30">
+                <span className="material-symbols-outlined text-3xl font-black">logout</span>
+              </div>
+
+              <div className="space-y-1 font-heading">
+                <span className="text-[10px] uppercase font-black tracking-widest text-[#7C6BC4] dark:text-purple-300">Session Warning</span>
+                <h3 className="text-xl font-heading font-black text-slate-800 dark:text-slate-100">Disconnect Session?</h3>
+              </div>
+
+              <p className="text-[11px] text-slate-400 dark:text-slate-400 font-bold leading-relaxed px-2">
+                Going back to the landing page will disconnect your active session. You will need to authenticate again to view your dashboard.
+              </p>
+
+              <div className="flex gap-4">
+                <button 
+                  onClick={() => setShowDisconnectModal(false)}
+                  className="flex-1 py-3 bg-slate-100 dark:bg-[#0D1F2D] hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-350 rounded-full font-bold text-xs transition-all active:scale-95"
+                >
+                  Stay
+                </button>
+                <button 
+                  onClick={async () => {
+                    await signOut();
+                    window.location.href = "/";
+                  }}
+                  className="flex-1 py-3 bg-rose-500 hover:bg-rose-600 text-white rounded-full font-bold text-xs shadow-sm transition-all active:scale-95"
+                >
+                  Proceed
+                </button>
+              </div>
             </motion.div>
           </motion.div>
         )}

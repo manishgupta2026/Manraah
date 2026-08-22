@@ -99,12 +99,12 @@ export default function AppShell({ children }: { children: ReactNode }) {
               </div>
             ) : (
               /* Main Regular User Application Shell with Sidebar & Header */
-              <div className="flex min-h-screen bg-background text-on-background font-sans antialiased overflow-hidden">
+              <div className="flex min-h-screen bg-background dark:bg-[#0D1F2D] text-on-background dark:text-slate-100 font-sans antialiased overflow-hidden">
                 {/* Desktop Left Sidebar */}
                 <DesktopSidebar />
 
                 {/* Main Content Area */}
-                <div className="flex-1 flex flex-col min-w-0 md:ml-[76px] lg:ml-[76px] h-screen overflow-y-auto pb-16 md:pb-6">
+                <div className="flex-1 flex flex-col min-w-0 md:ml-[76px] lg:ml-[76px] h-screen overflow-y-auto pb-16 md:pb-6 bg-background dark:bg-[#0D1F2D]">
                   <Header onOpenMenu={() => setIsMobileDrawerOpen(true)} />
                   <main className="flex-1 px-3 md:px-6 py-4 max-w-7xl mx-auto w-full">
                     {children}
