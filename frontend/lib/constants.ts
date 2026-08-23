@@ -21,7 +21,6 @@ export const MAIN_NAV_ITEMS: NavItem[] = [
   { label: "Resources", href: "/resources", icon: "menu_book" },
   { label: "Community", href: "/community", icon: "groups" },
   { label: "Professional Care", href: "/professional-care", icon: "medical_services" },
-  { label: "Settings", href: "/profile", icon: "settings" },
 ];
 
 export const MOBILE_TAB_ITEMS: NavItem[] = [

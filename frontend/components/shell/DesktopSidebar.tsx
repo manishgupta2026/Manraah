@@ -20,7 +20,6 @@ const WP_NAV_ITEMS = [
   { label: "Community", href: "/community", icon: "groups" },
   { label: "Professional Care", href: "/professional-care", icon: "medical_services" },
   { label: "Resources", href: "/resources", icon: "menu_book" },
-  { label: "Settings", href: "/profile", icon: "settings" },
 ];
 
 export default function DesktopSidebar() {
@@ -109,7 +108,18 @@ export default function DesktopSidebar() {
           )}
           <div className="hidden group-hover:block flex-1 min-w-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 overflow-hidden whitespace-nowrap text-left">
             <p className="text-xs font-extrabold text-white truncate leading-tight">{userName.split(" ")[0]}</p>
-            <p className="text-[9px] leading-none truncate mt-0.5 font-bold uppercase text-slate-400">{isWP ? "Working Professional" : "Student"}</p>
+            <p className="text-[9px] leading-none truncate mt-0.5 font-bold uppercase text-slate-400">
+              {(() => {
+                if (!category) return "Student";
+                const cat = category.toLowerCase().replace(/[^a-z0-9_]/g, "");
+                if (cat === "student") return "Student";
+                if (cat === "working_professional" || cat === "workingprofessional" || cat === "young_pro" || cat === "youngprofessional") return "Working Professional";
+                if (cat === "parent" || cat === "parents") return "Parent";
+                if (cat === "couple" || cat === "couples") return "Couple";
+                if (cat === "senior_citizen" || cat === "seniorcitizen") return "Senior Citizen";
+                return category;
+              })()}
+            </p>
           </div>
         </div>
 
@@ -125,17 +135,26 @@ export default function DesktopSidebar() {
         </div>
 
         {/* Settings & Logout (only when sidebar expanded) */}
-        <div className="hidden group-hover:flex items-center justify-between text-[10px] pt-1.5 border-t border-white/5">
+        <div className="hidden group-hover:flex items-center justify-between gap-3 text-[10px] pt-2 border-t border-white/5">
+          <Link
+            href="/profile"
+            className="flex items-center gap-1.5 text-slate-400 hover:text-white cursor-pointer font-bold transition-colors select-none"
+            title="Settings"
+          >
+            <span className="material-symbols-outlined text-sm shrink-0">settings</span>
+            <span>Settings</span>
+          </Link>
+
           <button
             onClick={async () => {
               const { signOut } = await import("@/backend/auth/client");
               await signOut();
               window.location.href = "/login";
             }}
-            className="flex items-center gap-1.5 text-slate-400 hover:text-red-400 cursor-pointer w-full text-left font-bold"
+            className="flex items-center gap-1.5 text-slate-400 hover:text-red-400 cursor-pointer font-bold transition-colors select-none"
             title="Logout"
           >
-            <span className="material-symbols-outlined text-sm">logout</span>
+            <span className="material-symbols-outlined text-sm shrink-0">logout</span>
             <span>Log Out</span>
           </button>
         </div>
