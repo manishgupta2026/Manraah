@@ -198,7 +198,7 @@ export default function ParentDashboard() {
       .then((data) => {
         setDashboardData(data);
         if (data.user) {
-          // Sync real sanctuary name
+          // Sync real retreat name
           if (data.user.sanctuaryName || data.user.name) {
             setUsername(data.user.sanctuaryName || data.user.name);
           }
@@ -616,7 +616,7 @@ export default function ParentDashboard() {
 
 
             <span className="px-3.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/20 text-[#006B56] dark:text-[#5FAF8A] text-[10px] font-black uppercase tracking-wider border border-emerald-100/50 dark:border-emerald-900/30">
-              🔒 Private Sanctuary Connection
+              🔒 Private Retreat Connection
             </span>
           </div>
         </div>
@@ -756,7 +756,7 @@ export default function ParentDashboard() {
                   </div>
 
                   <div className="flex justify-between items-center pt-2 border-t border-[#EAEAFF]/70 dark:border-slate-800/70">
-                    <span className="text-[9px] text-slate-400 dark:text-slate-500 font-black uppercase tracking-wider">Sanctuary Consultant</span>
+                    <span className="text-[9px] text-slate-400 dark:text-slate-500 font-black uppercase tracking-wider">Retreat Consultant</span>
                     <button 
                       onClick={() => router.push("/call")}
                       className="px-4 py-1.5 rounded-full bg-[#006B56] hover:bg-[#005B48] text-white font-bold text-[9px] uppercase tracking-wider transition-all shadow-sm flex items-center gap-1"
@@ -1475,7 +1475,7 @@ export default function ParentDashboard() {
               </div>
 
               <div className="space-y-1 font-heading">
-                <span className="text-[10px] uppercase font-black tracking-widest text-[#E37A47]">Onboarding Sanctuary</span>
+                <span className="text-[10px] uppercase font-black tracking-widest text-[#E37A47]">Onboarding Retreat</span>
                 <h3 className="text-xl font-heading font-black text-slate-800 dark:text-slate-100">Complete Assessment</h3>
               </div>
 

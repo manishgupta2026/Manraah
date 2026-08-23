@@ -17,20 +17,46 @@ export default function WellnessScoreScreen() {
   const { categoryDetails } = useCategory();
   const { assessmentResult, detailedAnswers, selectedCategory, totalScore, percentage, wellnessLevel, maxScore } = useAssessment();
 
-  // Guard: Do NOT allow direct access without assessment
-  useEffect(() => {
-    const stored = typeof window !== "undefined" ? sessionStorage.getItem("manraah_onboarding_assessment") : null;
-    if (!stored && (!selectedCategory || !detailedAnswers || detailedAnswers.length < 10)) {
-      router.push("/");
-    }
-  }, [selectedCategory, detailedAnswers, router]);
-
+  const [dbAssessment, setDbAssessment] = useState<any>(null);
+  const [loadingDb, setLoadingDb] = useState(true);
   const [session, setSession] = useState<AuthSession | null>(null);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    setSession(getClientSession());
+    const activeSession = getClientSession();
+    setSession(activeSession);
+
+    if (activeSession && activeSession.isAuthenticated) {
+      fetch("/api/assessment")
+        .then((res) => {
+          if (res.ok) return res.json();
+          throw new Error("Failed to fetch assessment");
+        })
+        .then((data) => {
+          if (data.latestAssessment) {
+            setDbAssessment(data.latestAssessment);
+          }
+          setLoadingDb(false);
+        })
+        .catch(() => {
+          setLoadingDb(false);
+        });
+    } else {
+      setLoadingDb(false);
+    }
   }, []);
+
+  // Guard: Do NOT allow direct access without assessment
+  useEffect(() => {
+    if (loadingDb) return;
+
+    const stored = typeof window !== "undefined" ? sessionStorage.getItem("manraah_onboarding_assessment") : null;
+    const hasDbResult = !!dbAssessment;
+
+    if (!stored && !hasDbResult && (!selectedCategory || !detailedAnswers || detailedAnswers.length < 10)) {
+      router.push("/");
+    }
+  }, [selectedCategory, detailedAnswers, dbAssessment, loadingDb, router]);
 
   const handleSaveAndGoToDashboard = async () => {
     if (!session || !session.user) return;
@@ -41,8 +67,8 @@ export default function WellnessScoreScreen() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           userId: session.user.id,
-          category: selectedCategory,
-          answers: detailedAnswers,
+          category: selectedCategory || (dbAssessment ? dbAssessment.category : "student"),
+          answers: detailedAnswers.length > 0 ? detailedAnswers : (dbAssessment ? dbAssessment.answers : []),
           computedScore: totalScore,
           percentage: percentage,
           wellnessLevel: wellnessLevel,
@@ -94,12 +120,23 @@ export default function WellnessScoreScreen() {
 
   // Map assessment details for display
   const finalResult = {
-    totalScore: totalScore,
-    maxScore: maxScore || 50,
-    percentage: percentage,
-    wellnessLevel: wellnessLevel,
-    message: getWellnessMessage(wellnessLevel),
+    totalScore: dbAssessment ? dbAssessment.total_score : totalScore,
+    maxScore: dbAssessment ? dbAssessment.max_score : (maxScore || 50),
+    percentage: dbAssessment ? dbAssessment.percentage : percentage,
+    wellnessLevel: dbAssessment ? dbAssessment.wellness_level : wellnessLevel,
+    message: getWellnessMessage(dbAssessment ? dbAssessment.wellness_level : wellnessLevel),
   };
+
+  const finalDetailedAnswers = dbAssessment && Array.isArray(dbAssessment.answers)
+    ? dbAssessment.answers.map((ans: any) => ({
+        questionId: ans.question_id,
+        questionKey: ans.question_key || "",
+        questionType: ans.question_type || "common",
+        selectedOption: ans.selected_option,
+        selectedText: ans.selected_text,
+        score: ans.score,
+      }))
+    : detailedAnswers;
 
   // Helper to format keys like "academic_pressure" to "Academic Pressure"
   const formatKeyToLabel = (key: string): string => {
@@ -251,8 +288,8 @@ export default function WellnessScoreScreen() {
           </div>
           
           <div className="space-y-4">
-            {detailedAnswers.length > 0 ? (
-              detailedAnswers.map((ans) => {
+            {finalDetailedAnswers.length > 0 ? (
+              finalDetailedAnswers.map((ans: any) => {
                 const label = formatKeyToLabel(ans.questionKey);
                 return (
                   <div key={ans.questionId} className="space-y-1.5 text-left border-b border-surface-variant/10 pb-3 last:border-0 last:pb-0">
