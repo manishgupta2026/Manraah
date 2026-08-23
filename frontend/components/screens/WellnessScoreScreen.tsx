@@ -50,6 +50,12 @@ export default function WellnessScoreScreen() {
   useEffect(() => {
     if (loadingDb) return;
 
+    const activeSession = getClientSession();
+    if (activeSession && activeSession.isAuthenticated) {
+      // Authenticated users should never be forced to "/"
+      return;
+    }
+
     const stored = typeof window !== "undefined" ? sessionStorage.getItem("manraah_onboarding_assessment") : null;
     const hasDbResult = !!dbAssessment;
 

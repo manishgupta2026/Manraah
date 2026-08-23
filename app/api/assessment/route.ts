@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getAuthSessionFromRequest } from "@/backend/auth/session";
-import { saveUserAssessment, getUserAssessment } from "@/backend/queries/assessment";
+import { saveUserAssessment, getUserAssessment, getUserProfile } from "@/backend/queries/assessment";
 import { getCategoryQuestions } from "@/frontend/lib/assessment/questions";
 import { getWellnessLevel, getWellnessMessage } from "@/frontend/lib/assessment/wellness";
 import { calculateSanctuaryScore } from "@/frontend/lib/assessment/scoring";
@@ -27,12 +27,26 @@ export async function GET(req: Request) {
     const category = userResult[0].selected_category || "student";
     const questions = getCategoryQuestions(category);
     const latestAssessment = await getUserAssessment(userId);
+    let finalAssessment = latestAssessment;
+
+    if (!finalAssessment) {
+      const profile = await getUserProfile(userId);
+      if (profile && profile.percentage !== null) {
+        finalAssessment = {
+          total_score: profile.total_score || Math.round((profile.percentage / 100) * 50),
+          max_score: 50,
+          percentage: profile.percentage,
+          wellness_level: profile.wellness_level || "Stable",
+          answers: [],
+        };
+      }
+    }
 
     return NextResponse.json({
       category,
       questions,
-      assessmentCompleted: !!latestAssessment,
-      latestAssessment: latestAssessment || null,
+      assessmentCompleted: !!finalAssessment,
+      latestAssessment: finalAssessment || null,
     });
   } catch (err: any) {
     console.error("[API GET /api/assessment Error]:", err);
