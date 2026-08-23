@@ -106,7 +106,19 @@ export async function initDatabase() {
     try {
       await sql`ALTER TABLE daily_checkins ADD COLUMN IF NOT EXISTS reflection TEXT`;
     } catch (err) {
-      console.warn("Could not alter table daily_checkins:", err);
+      console.warn("Could not alter table daily_checkins to add reflection:", err);
+    }
+
+    try {
+      await sql`ALTER TABLE daily_checkins ADD COLUMN IF NOT EXISTS stress VARCHAR(255) DEFAULT 'Manageable'`;
+    } catch (err) {
+      console.warn("Could not alter table daily_checkins to add stress:", err);
+    }
+
+    try {
+      await sql`ALTER TABLE daily_checkins ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP`;
+    } catch (err) {
+      console.warn("Could not alter table daily_checkins to add updated_at:", err);
     }
 
     // 6. Create user_streaks table
@@ -483,16 +495,17 @@ export async function getDailyCheckInSummary(userId: string): Promise<any> {
   }
 }
 
-export async function getUserStreak(userId: string): Promise<{ currentStreak: number; longestStreak: number }> {
+export async function getUserStreak(userId: string): Promise<{ currentStreak: number; longestStreak: number; lastCheckinDate?: string }> {
   await initDatabase();
   try {
     const results = await sql`
-      SELECT current_streak, longest_streak FROM user_streaks WHERE user_id = ${userId} LIMIT 1
+      SELECT current_streak, longest_streak, last_checkin_date FROM user_streaks WHERE user_id = ${userId} LIMIT 1
     `;
     if (results.length > 0) {
       return {
         currentStreak: results[0].current_streak,
         longestStreak: results[0].longest_streak,
+        lastCheckinDate: results[0].last_checkin_date ? new Date(results[0].last_checkin_date).toISOString() : undefined,
       };
     }
     return { currentStreak: 0, longestStreak: 0 };

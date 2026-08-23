@@ -97,6 +97,7 @@ export async function GET(req: Request) {
       streak: {
         currentStreak: streak.currentStreak || 1,
         longestStreak: streak.longestStreak || 1,
+        lastCheckinDate: streak.lastCheckinDate || null,
       },
       recommendation,
     };

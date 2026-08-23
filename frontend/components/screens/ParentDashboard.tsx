@@ -80,6 +80,7 @@ export default function ParentDashboard() {
   const [selectedDay, setSelectedDay] = useState(6);
   const [dashboardData, setDashboardData] = useState<any>(null);
   const [loadingData, setLoadingData] = useState(true);
+  const [streakBroken, setStreakBroken] = useState(false);
   const [familyTime, setFamilyTime] = useState(40); // in minutes
   const [activeTipIdx, setActiveTipIdx] = useState(0);
 
@@ -229,6 +230,18 @@ export default function ParentDashboard() {
           // Restore streak days from database
           const backendStreak = data.streak?.currentStreak || data.user.streakDays || 1;
           setStreakDays(backendStreak);
+
+          // Check if streak is broken (diffDays > 1 since last check-in)
+          if (data.streak?.lastCheckinDate) {
+            const lastCheck = new Date(data.streak.lastCheckinDate);
+            const lastDate = new Date(lastCheck.getFullYear(), lastCheck.getMonth(), lastCheck.getDate());
+            const todayDate = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
+            const diffTime = Math.abs(todayDate.getTime() - lastDate.getTime());
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            if (diffDays > 1) {
+              setStreakBroken(true);
+            }
+          }
 
           // Restore persisted dashboard details from database if they exist!
           const ds = data.user.dashboardState;
@@ -685,6 +698,26 @@ export default function ParentDashboard() {
                 <span>Day {streakDays} Streak</span>
               </div>
             </div>
+
+            {streakBroken && (
+              <div className="bg-[#FFF5F5] dark:bg-[#2C1A1A] border border-[#FFD0D0] dark:border-[#521C1C] rounded-[24px] p-4 flex items-center justify-between gap-3 text-left">
+                <div className="flex items-center gap-3">
+                  <span className="text-2xl select-none">🚨</span>
+                  <div>
+                    <h5 className="font-heading font-black text-xs text-[#D64E4D] dark:text-[#EF6A6A]">You broke your streak!</h5>
+                    <p className="text-[10px] text-slate-550 dark:text-slate-400 font-medium">
+                      Don't worry, wellness is a continuous journey. Check in today to start a fresh streak! 🌱
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setStreakBroken(false)}
+                  className="w-7 h-7 rounded-full bg-slate-200/50 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 flex items-center justify-center text-slate-500 hover:text-slate-700 cursor-pointer"
+                >
+                  <span className="material-symbols-outlined text-sm font-black">close</span>
+                </button>
+              </div>
+            )}
 
             {/* Upcoming Appointment Card */}
             <div className="bg-white dark:bg-[#132E3F] rounded-[32px] border border-[#EAEAFF] dark:border-slate-800 shadow-[0_10px_35px_rgba(95,78,165,0.02)] p-6 space-y-4">
