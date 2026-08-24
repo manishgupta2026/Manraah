@@ -227,11 +227,8 @@ export default function ParentDashboard() {
             setShowAssessmentModal(true);
           }
 
-          // Restore streak days from database
-          const backendStreak = data.streak?.currentStreak || data.user.streakDays || 1;
-          setStreakDays(backendStreak);
-
           // Check if streak is broken (diffDays > 1 since last check-in)
+          let isBroken = false;
           if (data.streak?.lastCheckinDate) {
             const lastCheck = new Date(data.streak.lastCheckinDate);
             const lastDate = new Date(lastCheck.getFullYear(), lastCheck.getMonth(), lastCheck.getDate());
@@ -239,9 +236,18 @@ export default function ParentDashboard() {
             const diffTime = Math.abs(todayDate.getTime() - lastDate.getTime());
             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
             if (diffDays > 1) {
+              isBroken = true;
               setStreakBroken(true);
+            } else {
+              setStreakBroken(false);
             }
+          } else {
+            setStreakBroken(false);
           }
+
+          // Restore streak days from database (0 if broken)
+          const backendStreak = isBroken ? 0 : (data.streak?.currentStreak || data.user.streakDays || 0);
+          setStreakDays(backendStreak);
 
           // Restore persisted dashboard details from database if they exist!
           const ds = data.user.dashboardState;
@@ -339,6 +345,7 @@ export default function ParentDashboard() {
       if (res.ok && resData.user) {
         if (resData.user.streakDays !== undefined) {
           setStreakDays(resData.user.streakDays);
+          setStreakBroken(false);
         }
       }
 
