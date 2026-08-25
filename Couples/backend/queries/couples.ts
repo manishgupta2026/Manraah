@@ -133,7 +133,25 @@ export async function getCouplesDashboardData(userId: string) {
     `;
   }
 
-  // 4. Return complete dataset with activity trends (monthly bars matching the image: Jul, Aug, Sep, Oct, Nov, Oct)
+  // 4. Get userProfile from user_profiles table for assessment validation checks
+  const userProfiles = await sql`
+    SELECT * FROM user_profiles WHERE user_id = ${userId} LIMIT 1
+  `;
+  const userProfile = userProfiles.length > 0 ? userProfiles[0] : null;
+
+  // 5. Get streak from user_streaks table
+  const streakResults = await sql`
+    SELECT current_streak, last_checkin_date FROM user_streaks WHERE user_id = ${userId} LIMIT 1
+  `;
+  const streak = streakResults.length > 0 ? {
+    currentStreak: streakResults[0].current_streak,
+    lastCheckinDate: streakResults[0].last_checkin_date ? new Date(streakResults[0].last_checkin_date).toISOString() : null
+  } : {
+    currentStreak: 0,
+    lastCheckinDate: null
+  };
+
+  // 6. Return complete dataset with activity trends (monthly bars matching the image: Jul, Aug, Sep, Oct, Nov, Oct)
   const monthlyActivity = [
     { month: "Jul", value: 65 },
     { month: "Aug", value: 50 },
@@ -156,7 +174,9 @@ export async function getCouplesDashboardData(userId: string) {
       date: a.date,
       time: a.time
     })),
-    monthlyActivity
+    monthlyActivity,
+    userProfile,
+    streak
   };
 }
 

@@ -1,11 +1,11 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { getClientSession } from "@/backend/auth/client";
 
-// Tailored relationship idea options
+// Tailored relationship ideas
 const DATE_NIGHT_IDEAS = [
   { category: "Cozy 🏡", title: "Indoor Fort & Movie", desc: "Build a classic living-room blanket fort, make homemade popcorn, and watch a nostalgic movie." },
   { category: "Creative 🎨", title: "Double-Sided Canvas Painting", desc: "Buy two canvases. Set up opposite each other and paint a portrait of the other person!" },
@@ -17,14 +17,14 @@ const DATE_NIGHT_IDEAS = [
 export default function CouplesDashboard() {
   const router = useRouter();
   
-  // Base state fields
+  // Base states
   const [userName, setUserName] = useState("Kartik");
   const [partnerName, setPartnerName] = useState("Elena");
   const [email, setEmail] = useState("");
   const [isEditingPartner, setIsEditingPartner] = useState(false);
   const [tempPartnerName, setTempPartnerName] = useState("");
   
-  // Database status and metrics
+  // Dashboard & Metrics data
   const [harmonyScore, setHarmonyScore] = useState(90);
   const [stressLevel, setStressLevel] = useState(3);
   const [energyLevel, setEnergyLevel] = useState(7);
@@ -34,22 +34,28 @@ export default function CouplesDashboard() {
   const [monthlyActivity, setMonthlyActivity] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Layout switcher and spinner states
+  // Forced Onboarding & Gating popups
+  const [showAssessmentModal, setShowAssessmentModal] = useState(false);
+  const [showSecurityPopup, setShowSecurityPopup] = useState(false);
+  const [streakBroken, setStreakBroken] = useState(false);
+  const [streakDays, setStreakDays] = useState(0);
+
+  // Layout selection and interactive helpers
   const [activeTab, setActiveTab] = useState<"Monthly" | "Daily">("Monthly");
   const [currentDateIdea, setCurrentDateIdea] = useState(DATE_NIGHT_IDEAS[0]);
   const [isSpinning, setIsSpinning] = useState(false);
   
-  // Empathy Pause Modal details
+  // Empathy Calm modal states
   const [calmZoneActive, setCalmZoneActive] = useState(false);
   const [calmStep, setCalmStep] = useState(1);
   const [breathingActive, setBreathingActive] = useState(false);
   const [breathingPhase, setBreathingPhase] = useState<"Inhale" | "Hold" | "Exhale">("Inhale");
   const [breathingSeconds, setBreathingSeconds] = useState(4);
 
-  // Calendar Day details
+  // Calendar selected day
   const [selectedDay, setSelectedDay] = useState(6);
 
-  // Breathing Visualizer Loop
+  // Synchronized breathing timer loop
   useEffect(() => {
     let timer: NodeJS.Timeout;
     if (breathingActive) {
@@ -74,7 +80,7 @@ export default function CouplesDashboard() {
     return () => clearInterval(timer);
   }, [breathingActive, breathingPhase]);
 
-  // Load backend couples data on mount
+  // Load backend couples metrics on mount
   useEffect(() => {
     const session = getClientSession();
     if (session && session.isAuthenticated && session.user) {
@@ -99,6 +105,46 @@ export default function CouplesDashboard() {
         if (data.tasks) setTasks(data.tasks);
         if (data.appointments) setAppointments(data.appointments);
         if (data.monthlyActivity) setMonthlyActivity(data.monthlyActivity);
+
+        // Calculate if streak is broken (diffDays > 1)
+        let isBroken = false;
+        if (data.streak?.lastCheckinDate) {
+          const lastCheck = new Date(data.streak.lastCheckinDate);
+          const lastDate = new Date(lastCheck.getFullYear(), lastCheck.getMonth(), lastCheck.getDate());
+          const todayDate = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
+          const diffTime = Math.abs(todayDate.getTime() - lastDate.getTime());
+          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+          if (diffDays > 1) {
+            isBroken = true;
+            setStreakBroken(true);
+          } else {
+            setStreakBroken(false);
+          }
+        } else {
+          setStreakBroken(false);
+        }
+        setStreakDays(isBroken ? 0 : (data.streak?.currentStreak || 0));
+
+        // Evaluate Forced Onboarding assessment gate
+        const localAssessmentCompleted = localStorage.getItem("parent_assessment_completed") === "true";
+        const hasCoupleAssessment = (data.userProfile && data.userProfile.percentage !== null) || localAssessmentCompleted;
+
+        if (hasCoupleAssessment) {
+          const securityPopupShown = localStorage.getItem("couple_security_popup_shown_once") === "true";
+          const showImmediately = localStorage.getItem("couple_show_security_immediately") === "true";
+
+          if (showImmediately) {
+            setShowSecurityPopup(true);
+            localStorage.setItem("couple_security_popup_shown_once", "true");
+            localStorage.removeItem("couple_show_security_immediately");
+          } else if (!securityPopupShown) {
+            setShowSecurityPopup(true);
+            localStorage.setItem("couple_security_popup_shown_once", "true");
+          }
+        } else {
+          setShowAssessmentModal(true);
+        }
+
         setLoading(false);
       })
       .catch((err) => {
@@ -107,7 +153,7 @@ export default function CouplesDashboard() {
       });
   }, []);
 
-  // Update Partner Name
+  // Update partner name in database
   const savePartnerName = async () => {
     if (!tempPartnerName.trim()) return;
     try {
@@ -180,14 +226,89 @@ export default function CouplesDashboard() {
   const completedTasksCount = tasks.filter(t => t.completed).length;
   const progressPercent = tasks.length > 0 ? Math.round((completedTasksCount / tasks.length) * 100) : 80;
 
-  // Calendar setup properties
+  // Solid SVG Pie Chart details mathematically calculated from harmonyScore
+  const pieBreakdown = useMemo(() => {
+    const score = harmonyScore / 2; // scale out of 50
+    let great = 0, good = 0, normal = 0, notGood = 0, bad = 0;
+
+    if (score >= 45) { great = 60; good = 25; normal = 10; notGood = 4; bad = 1; }
+    else if (score >= 40) { great = 40; good = 35; normal = 15; notGood = 8; bad = 2; }
+    else if (score >= 35) { great = 20; good = 45; normal = 20; notGood = 10; bad = 5; }
+    else if (score >= 30) { great = 10; good = 30; normal = 40; notGood = 15; bad = 5; }
+    else if (score >= 25) { great = 5; good = 20; normal = 45; notGood = 20; bad = 10; }
+    else if (score >= 20) { great = 2; good = 15; normal = 30; notGood = 35; bad = 18; }
+    else if (score >= 15) { great = 1; good = 5; normal = 20; notGood = 45; bad = 29; }
+    else { great = 0; good = 2; normal = 10; notGood = 30; bad = 58; }
+
+    return [
+      { label: "Great", value: great, color: "#006B56" },
+      { label: "Good", value: good, color: "#85B581" },
+      { label: "Normal", value: normal, color: "#F5C99B" },
+      { label: "Not Good", value: notGood, color: "#E37A47" },
+      { label: "Bad", value: bad, color: "#D64E4D" }
+    ];
+  }, [harmonyScore]);
+
+  // SVG drawing math
+  let cumulativeAngle = 0;
+  const pieSlices = pieBreakdown.map((slice) => {
+    const angle = (slice.value / 100) * 360;
+    const startAngle = cumulativeAngle;
+    const endAngle = cumulativeAngle + angle;
+    cumulativeAngle = endAngle;
+
+    const radStart = (startAngle - 90) * (Math.PI / 180);
+    const radEnd = (endAngle - 90) * (Math.PI / 180);
+
+    const x1 = 50 + 40 * Math.cos(radStart);
+    const y1 = 50 + 40 * Math.sin(radStart);
+    const x2 = 50 + 40 * Math.cos(radEnd);
+    const y2 = 50 + 40 * Math.sin(radEnd);
+
+    const largeArcFlag = angle > 180 ? 1 : 0;
+    const pathData = `M 50 50 L ${x1} ${y1} A 40 40 0 ${largeArcFlag} 1 ${x2} ${y2} Z`;
+
+    const midAngle = startAngle + angle / 2;
+    const radMid = (midAngle - 90) * (Math.PI / 180);
+    const lx = 50 + 24 * Math.cos(radMid);
+    const ly = 50 + 24 * Math.sin(radMid);
+
+    return { ...slice, pathData, labelX: lx, labelY: ly };
+  });
+
+  // Calendar Padding
   const calendarDays = Array.from({ length: 31 }, (_, i) => i + 1);
   const calendarPadding = Array.from({ length: 4 });
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto pb-12">
+    <div className="space-y-6 max-w-7xl mx-auto pb-12 w-full">
       
-      {/* Disclaimer / Top Control row */}
+      {/* 1. DISMISSABLE STREAK BROKEN BANNER */}
+      {streakBroken && (
+        <motion.div 
+          initial={{ opacity: 0, y: -10 }} 
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-rose-50 dark:bg-rose-950/20 border border-rose-100 dark:border-rose-900/30 rounded-3xl p-5 flex items-center justify-between gap-4 shadow-sm"
+        >
+          <div className="flex items-center gap-3">
+            <span className="text-2xl">🌱</span>
+            <div>
+              <h5 className="font-heading font-black text-xs text-[#D64E4D] dark:text-[#EF6A6A]">You broke your streak!</h5>
+              <p className="text-[10px] text-slate-500 dark:text-slate-400 font-bold leading-relaxed">
+                Don't worry, wellness is a continuous journey. Check in today to start a fresh streak! 🌱
+              </p>
+            </div>
+          </div>
+          <button 
+            onClick={() => setStreakBroken(false)}
+            className="w-6 h-6 rounded-full bg-rose-100/50 flex items-center justify-center text-[#D64E4D]"
+          >
+            ×
+          </button>
+        </motion.div>
+      )}
+
+      {/* Connection Header row */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <button 
           onClick={() => router.push("/")}
@@ -248,6 +369,15 @@ export default function CouplesDashboard() {
               >
                 Check It Now
               </button>
+
+              {/* Photo of the couple matching Parent pediatrics consult illustration panel */}
+              <div className="pt-4 border-t border-[#CBECE2] dark:border-[#1C463C] flex justify-center overflow-hidden rounded-2xl">
+                <img 
+                  src="/category/couple.png" 
+                  alt="Couple Connection" 
+                  className="w-full h-auto object-cover max-h-[140px] hover:scale-105 transition-transform duration-500 rounded-xl"
+                />
+              </div>
 
               {/* Metrics Slider check-in tools */}
               <div className="space-y-4 pt-4 border-t border-[#CBECE2] dark:border-[#1C463C] text-left">
@@ -347,6 +477,12 @@ export default function CouplesDashboard() {
                   </button>
                 )}
               </div>
+
+              {/* Day Streak indicator badge */}
+              <div className="flex justify-between items-center text-[11px] font-bold text-slate-500 pt-1">
+                <span>Streak Progress</span>
+                <span className="text-[#E67E22]">Day {streakDays} Streak 🔥</span>
+              </div>
             </div>
 
             {/* Upcoming Appointment */}
@@ -419,6 +555,61 @@ export default function CouplesDashboard() {
               </div>
             </div>
 
+            {/* Mood Overview Solid Pie Chart replicated from Parent Dashboard */}
+            <div className="bg-white dark:bg-[#132E3F] rounded-[32px] border border-[#EAEAFF] dark:border-slate-800 p-6 shadow-[0_8px_30px_rgba(0,0,0,0.015)] space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <span className="text-[9px] uppercase font-black tracking-widest text-[#006B56] dark:text-[#5FAF8A]">Overall Metrics</span>
+                  <h3 className="text-base font-heading font-black text-slate-800 dark:text-slate-100">Harmony Overview</h3>
+                </div>
+                <span className="text-xl">📊</span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center pt-2">
+                {/* SVG solid pie container */}
+                <div className="relative w-36 h-36 mx-auto flex items-center justify-center">
+                  <svg viewBox="0 0 100 100" className="w-full h-full transform -rotate-90 select-none">
+                    {pieSlices.map((slice, idx) => (
+                      <path 
+                        key={idx}
+                        d={slice.pathData}
+                        fill={slice.color}
+                        className="transition-all duration-500 hover:opacity-90 cursor-pointer"
+                      />
+                    ))}
+                  </svg>
+                  <div className="absolute inset-0 flex items-center justify-center select-none pointer-events-none">
+                    {pieSlices.map((slice, idx) => {
+                      if (slice.value < 5) return null;
+                      return (
+                        <span 
+                          key={`label-${idx}`}
+                          className="absolute text-[8px] font-black text-white"
+                          style={{
+                            left: `${slice.labelX}%`,
+                            top: `${slice.labelY}%`,
+                            transform: "translate(-50%, -50%)"
+                          }}
+                        >
+                          {slice.value}%
+                        </span>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Legends */}
+                <div className="grid grid-cols-2 gap-x-2 gap-y-1.5 text-[9px] font-bold text-slate-500 dark:text-slate-400">
+                  {pieBreakdown.map((slice, idx) => (
+                    <div key={idx} className="flex items-center gap-1.5">
+                      <span className="w-2.5 h-2.5 rounded-sm flex-shrink-0" style={{ backgroundColor: slice.color }} />
+                      <span className="truncate">{slice.label}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
           </div>
 
           {/* ────────────────────────────────────────────────────────────
@@ -434,21 +625,21 @@ export default function CouplesDashboard() {
               <div className="grid grid-cols-2 p-1 bg-[#F5F8F6] dark:bg-slate-800/60 rounded-xl border border-slate-200/40 dark:border-slate-700/30">
                 <button 
                   onClick={() => setActiveTab("Monthly")}
-                  className={`py-1.5 text-center rounded-lg text-[10px] font-black uppercase tracking-wider transition-all ${
-                    activeTab === "Monthly" 
-                      ? "bg-[#006B56] text-white shadow-sm" 
-                      : "text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
-                  }`}
+                  className="py-1.5 text-center rounded-lg text-[10px] font-black uppercase tracking-wider transition-all"
+                  style={{
+                    backgroundColor: activeTab === "Monthly" ? "#006B56" : "transparent",
+                    color: activeTab === "Monthly" ? "#white" : "#94A3B8"
+                  }}
                 >
                   Monthly
                 </button>
                 <button 
                   onClick={() => setActiveTab("Daily")}
-                  className={`py-1.5 text-center rounded-lg text-[10px] font-black uppercase tracking-wider transition-all ${
-                    activeTab === "Daily" 
-                      ? "bg-[#006B56] text-white shadow-sm" 
-                      : "text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
-                  }`}
+                  className="py-1.5 text-center rounded-lg text-[10px] font-black uppercase tracking-wider transition-all"
+                  style={{
+                    backgroundColor: activeTab === "Daily" ? "#006B56" : "transparent",
+                    color: activeTab === "Daily" ? "#white" : "#94A3B8"
+                  }}
                 >
                   Daily
                 </button>
@@ -718,6 +909,94 @@ export default function CouplesDashboard() {
                 )}
               </div>
 
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ==================== 2. PERIODIC SECURITY PRIVACY POPUP ==================== */}
+      <AnimatePresence>
+        {showSecurityPopup && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-[#2E2A3D]/70 backdrop-blur-md flex items-center justify-center p-4"
+          >
+            <motion.div 
+              initial={{ scale: 0.95 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.95 }}
+              className="bg-white dark:bg-[#132E3F] max-w-sm w-full p-8 rounded-[36px] text-center space-y-6 shadow-2xl relative border border-[#EAEAFF] dark:border-slate-800"
+            >
+              <div className="w-16 h-16 rounded-[20px] bg-[#EAE8F8] dark:bg-[#202E4E] flex items-center justify-center mx-auto border border-[#E1DEFB] dark:border-[#2D3F66]">
+                <span className="material-symbols-outlined text-2xl text-[#7C6BC4] dark:text-[#AFA4EC]">filter_vintage</span>
+              </div>
+
+              <div className="space-y-1 font-heading">
+                <h3 className="text-xl font-heading font-black text-slate-800 dark:text-slate-100 flex items-center justify-center gap-2">
+                  <span>🌿</span> Your Retreat is Private
+                </h3>
+              </div>
+
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 font-bold leading-relaxed px-2">
+                Everything you write, journal, and share inside Manraah remains private. This is your personal space to reflect honestly and safely.
+              </p>
+
+              <div className="flex justify-center">
+                <span className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#EAE8F8] dark:bg-[#202E4E] border border-[#E1DEFB] dark:border-[#2D3F66] rounded-full text-[10px] font-black text-[#7C6BC4] dark:text-[#AFA4EC]">
+                  <span>🔒</span> Your wellbeing belongs to you.
+                </span>
+              </div>
+
+              <button 
+                onClick={() => {
+                  setShowSecurityPopup(false);
+                }}
+                className="w-full py-4 bg-[#5F4BB6] hover:bg-[#4E3CA3] text-white rounded-full font-bold text-sm shadow-md transition-transform active:scale-95 cursor-pointer flex items-center justify-center gap-1.5"
+              >
+                I Understand 💜
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ==================== 3. COMPLETE ASSESSMENT FORCED GATED MODAL ==================== */}
+      <AnimatePresence>
+        {showAssessmentModal && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="fixed inset-0 z-50 bg-[#0F1E19]/80 backdrop-blur-md flex items-center justify-center p-4"
+          >
+            <motion.div 
+              initial={{ scale: 0.95 }}
+              animate={{ scale: 1 }}
+              className="bg-white dark:bg-[#132E3F] max-w-sm w-full p-8 rounded-[36px] text-center space-y-6 shadow-2xl relative border border-[#EAEAFF] dark:border-slate-800"
+            >
+              <div className="w-16 h-16 rounded-full bg-[#E37A47]/10 text-[#E37A47] flex items-center justify-center mx-auto border border-[#E37A47]/20">
+                <span className="material-symbols-outlined text-3xl font-black">assignment</span>
+              </div>
+
+              <div className="space-y-1 font-heading">
+                <span className="text-[10px] uppercase font-black tracking-widest text-[#E37A47]">Onboarding Retreat</span>
+                <h3 className="text-xl font-heading font-black text-slate-800 dark:text-slate-100">Complete Assessment</h3>
+              </div>
+
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 font-bold leading-relaxed px-2">
+                To unlock your personalized Couples Dashboard, habit challenges, and wellness schedule, please complete your initial assessment.
+              </p>
+
+              <button 
+                onClick={() => {
+                  localStorage.setItem("parent_reset_assessment_flow", "true");
+                  router.push("/assessment");
+                }}
+                className="w-full py-4 bg-[#E37A47] hover:bg-[#D26936] text-white rounded-full font-bold text-sm shadow-md transition-transform active:scale-95 cursor-pointer flex items-center justify-center gap-1.5"
+              >
+                Start Assessment
+              </button>
             </motion.div>
           </motion.div>
         )}
