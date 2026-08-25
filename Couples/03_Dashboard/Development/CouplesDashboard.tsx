@@ -803,31 +803,18 @@ export default function CouplesDashboard() {
                           required
                         />
                       </div>
-                      <div className="grid grid-cols-2 gap-2">
-                        <div className="space-y-1">
-                          <label className="text-[8px] font-black uppercase text-slate-400">Time Range</label>
-                          <input 
-                            type="text" 
-                            placeholder="e.g. 05:00 pm - 06:00 pm"
-                            value={apptTime}
-                            onChange={(e) => setApptTime(e.target.value)}
-                            className="w-full px-2.5 py-1.5 text-xs bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#006B56]"
-                            required
-                          />
-                        </div>
-                        <div className="space-y-1">
-                          <label className="text-[8px] font-black uppercase text-slate-400">Retreat/Venue</label>
-                          <input 
-                            type="text" 
-                            placeholder="e.g. Spa Center"
-                            value={apptVenue}
-                            onChange={(e) => setApptVenue(e.target.value)}
-                            className="w-full px-2.5 py-1.5 text-xs bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#006B56]"
-                            required
-                          />
-                        </div>
+                      <div className="space-y-1">
+                        <label className="text-[8px] font-black uppercase text-slate-400">Retreat/Venue</label>
+                        <input 
+                          type="text" 
+                          placeholder="e.g. Cozy Retreat Lounge"
+                          value={apptVenue}
+                          onChange={(e) => setApptVenue(e.target.value)}
+                          className="w-full px-2.5 py-1.5 text-xs bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#006B56]"
+                          required
+                        />
                       </div>
-                      <div className="flex gap-2 pt-1">
+                      <div className="flex gap-2 pt-2">
                         <button type="submit" className="flex-1 py-1.5 bg-[#006B56] hover:bg-[#005B48] text-white font-bold text-[9px] uppercase tracking-wider rounded-lg">Save</button>
                         <button type="button" onClick={() => setShowAddAppt(false)} className="flex-1 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold text-[9px] uppercase tracking-wider rounded-lg">Cancel</button>
                       </div>
@@ -848,7 +835,7 @@ export default function CouplesDashboard() {
               
               {/* SVG circle */}
               <div className="relative w-16 h-16 flex items-center justify-center flex-shrink-0">
-                <svg className="w-full h-full transform -rotate-90">
+                <svg viewBox="0 0 64 64" className="w-full h-full transform -rotate-90">
                   <circle cx="32" cy="32" r="26" stroke="#CBECE2" strokeWidth="4.5" fill="transparent" />
                   <circle cx="32" cy="32" r="26" stroke="#006B56" strokeWidth="4.5" fill="transparent"
                     strokeDasharray="163.3"
@@ -879,7 +866,7 @@ export default function CouplesDashboard() {
                     </div>
                     <div>
                       <h5 className={`font-heading font-black text-xs text-slate-800 dark:text-slate-100 ${task.completed ? "line-through text-slate-400" : ""}`}>
-                        {task.text.split(" ").slice(1, 4).join(" ")}
+                        {task.text.replace(/^[\p{Emoji}\s]+/u, "")}
                       </h5>
                       <p className="text-[9px] text-slate-400 font-bold">Active Habit</p>
                     </div>
