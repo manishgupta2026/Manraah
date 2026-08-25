@@ -93,6 +93,12 @@ export async function getCouplesDashboardData(userId: string) {
     SELECT * FROM couple_appointments WHERE user_id = ${userId} ORDER BY id ASC
   `;
   if (appointments.length === 0) {
+    const today = new Date();
+    const futureDate = new Date(today);
+    futureDate.setDate(today.getDate() + 2);
+    const dateStr = futureDate.toLocaleDateString("en-US", { day: "numeric", month: "short", year: "numeric" });
+    const todayStr = today.toLocaleDateString("en-US", { day: "numeric", month: "short", year: "numeric" });
+
     const defaultAppts = [
       {
         title: "Physiotherapy",
@@ -100,26 +106,26 @@ export async function getCouplesDashboardData(userId: string) {
         doctor_name: "Dr. Emilia Winson",
         hospital_name: "Manggis ST Hospital",
         location: "New York, USA",
-        date: "14 Mar 2022",
+        date: dateStr,
         time: "09.00 pm"
       },
       {
         title: "Manage stress",
         category: "Stress Management",
         doctor_name: "Self-guide",
-        hospital_name: "Home Sanctuary",
+        hospital_name: "Home Retreat",
         location: "Cozy Room",
-        date: "Daily",
-        time: "10:00pm - 12:00 pm"
+        date: todayStr,
+        time: "10:00 pm - 12:00 pm"
       },
       {
         title: "Physiotherapy Session",
         category: "Physiotherapy",
         doctor_name: "Dr. Emilia Winson",
-        hospital_name: "Home Sanctuary",
+        hospital_name: "Home Retreat",
         location: "Cozy Room",
-        date: "Daily",
-        time: "09:00am - 10:00 am"
+        date: todayStr,
+        time: "09:00 am - 10:00 am"
       }
     ];
     for (const app of defaultAppts) {

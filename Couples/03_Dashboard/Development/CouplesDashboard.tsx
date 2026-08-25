@@ -54,7 +54,7 @@ export default function CouplesDashboard() {
   const [breathingSeconds, setBreathingSeconds] = useState(4);
 
   // Calendar selected day
-  const [selectedDay, setSelectedDay] = useState(6);
+  const [selectedDay, setSelectedDay] = useState(new Date().getDate());
 
   // Add Appointment Form states
   const [showAddAppt, setShowAddAppt] = useState(false);
@@ -572,44 +572,51 @@ export default function CouplesDashboard() {
             <div className="bg-white dark:bg-[#132E3F] rounded-[32px] border border-[#EAEAFF] dark:border-slate-800 p-6 shadow-[0_8px_30px_rgba(0,0,0,0.015)] space-y-4">
               <h3 className="font-heading font-black text-slate-800 dark:text-slate-100 text-xs uppercase tracking-wider text-slate-400">Upcoming appointment</h3>
               
-              <div className="space-y-4">
-                <div className="flex items-center gap-4">
-                  <div className="w-16 h-12 rounded-xl bg-[#E6F4F0] dark:bg-slate-800 flex items-center justify-center text-xl flex-shrink-0">
-                    🏥
-                  </div>
-                  <div>
-                    <h4 className="font-heading font-black text-sm text-slate-800 dark:text-slate-100">Manggis ST Hospital</h4>
-                    <p className="text-[10px] text-slate-400 font-bold">New York, USA</p>
-                  </div>
-                </div>
+              {appointments.length > 0 ? (() => {
+                const nextAppt = appointments[0];
+                return (
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-4">
+                      <div className="w-16 h-12 rounded-xl bg-[#E6F4F0] dark:bg-slate-800 flex items-center justify-center text-xl flex-shrink-0">
+                        🏥
+                      </div>
+                      <div>
+                        <h4 className="font-heading font-black text-sm text-slate-800 dark:text-slate-100">{nextAppt.hospital_name || nextAppt.location}</h4>
+                        <p className="text-[10px] text-slate-400 font-bold">{nextAppt.location || "Cozy Room"}</p>
+                      </div>
+                    </div>
 
-                <div className="flex items-center justify-between bg-[#F5FBF9] dark:bg-slate-800/40 border border-[#E4EFE9]/40 dark:border-slate-700/40 px-4 py-3 rounded-2xl gap-3">
-                  <div className="flex items-center gap-3">
-                    <span className="text-lg">👩‍⚕️</span>
-                    <div>
-                      <h5 className="font-heading font-black text-xs text-slate-800 dark:text-slate-100">Dr. Emilia Winson</h5>
-                      <p className="text-[9px] text-[#006B56] dark:text-[#5FAF8A] font-black uppercase tracking-wider">Physiotherapy</p>
+                    <div className="flex items-center justify-between bg-[#F5FBF9] dark:bg-slate-800/40 border border-[#E4EFE9]/40 dark:border-slate-700/40 px-4 py-3 rounded-2xl gap-3">
+                      <div className="flex items-center gap-3">
+                        <span className="text-lg">👩‍⚕️</span>
+                        <div>
+                          <h5 className="font-heading font-black text-xs text-slate-800 dark:text-slate-100">{nextAppt.doctor_name || partnerName}</h5>
+                          <p className="text-[9px] text-[#006B56] dark:text-[#5FAF8A] font-black uppercase tracking-wider">{nextAppt.category || "General Sync"}</p>
+                        </div>
+                      </div>
+                      <button 
+                        onClick={() => router.push("/call")}
+                        className="px-4 py-1.5 rounded-full bg-[#006B56] hover:bg-[#005B48] text-white font-bold text-[10px] uppercase tracking-wider shadow-sm transition-all active:scale-95"
+                      >
+                        Video call
+                      </button>
+                    </div>
+
+                    <div className="flex justify-between items-center text-[10px] font-bold text-slate-500 pt-1">
+                      <span className="flex items-center gap-1">
+                        <span className="material-symbols-outlined text-xs">calendar_today</span>
+                        {nextAppt.date}
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <span className="material-symbols-outlined text-xs">alarm</span>
+                        {nextAppt.time}
+                      </span>
                     </div>
                   </div>
-                  <button 
-                    onClick={() => router.push("/call")}
-                    className="px-4 py-1.5 rounded-full bg-[#006B56] hover:bg-[#005B48] text-white font-bold text-[10px] uppercase tracking-wider shadow-sm transition-all active:scale-95"
-                  >
-                    Video call
-                  </button>
-                </div>
-
-                <div className="flex justify-between items-center text-[10px] font-bold text-slate-500 pt-1">
-                  <span className="flex items-center gap-1">
-                    <span className="material-symbols-outlined text-xs">calendar_today</span>
-                    14 Mar 2022
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <span className="material-symbols-outlined text-xs">alarm</span>
-                    09.00 pm
-                  </span>
-                </div>
-              </div>
+                );
+              })() : (
+                <p className="text-xs text-slate-400 font-bold text-center py-4">No upcoming appointments scheduled.</p>
+              )}
             </div>
 
             {/* Patient Activities chart and Generator */}
@@ -618,7 +625,9 @@ export default function CouplesDashboard() {
                 <h3 className="font-heading font-black text-slate-800 dark:text-slate-100 text-xs uppercase tracking-wider text-slate-400">Patient activities</h3>
                 <span className="text-[10px] font-bold text-slate-400">Month ▾</span>
               </div>
-              <p className="text-[10px] text-slate-400 font-bold">Today, 5 October 2022</p>
+              <p className="text-[10px] text-slate-400 font-bold">
+                Today, {new Date().toLocaleDateString("en-US", { day: "numeric", month: "long", year: "numeric" })}
+              </p>
 
               {/* Bar chart */}
               <div className="h-32 flex items-end justify-between gap-2.5 px-1 pt-2">
@@ -736,7 +745,7 @@ export default function CouplesDashboard() {
                 /* Monthly calendar display */
                 <div className="space-y-3 pt-1">
                   <div className="flex justify-between items-center text-xs font-black text-slate-700 dark:text-slate-200">
-                    <span>October 2022</span>
+                    <span>{new Date().toLocaleDateString("en-US", { month: "long", year: "numeric" })}</span>
                     <div className="flex gap-2 text-slate-400">
                       <span className="material-symbols-outlined text-xs cursor-pointer">chevron_left</span>
                       <span className="material-symbols-outlined text-xs">chevron_right</span>
