@@ -32,6 +32,7 @@ export default function CouplesDashboard() {
   const [tasks, setTasks] = useState<any[]>([]);
   const [appointments, setAppointments] = useState<any[]>([]);
   const [monthlyActivity, setMonthlyActivity] = useState<any[]>([]);
+  const [userProfile, setUserProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   // Forced Onboarding & Gating popups
@@ -54,6 +55,12 @@ export default function CouplesDashboard() {
 
   // Calendar selected day
   const [selectedDay, setSelectedDay] = useState(6);
+
+  // Add Appointment Form states
+  const [showAddAppt, setShowAddAppt] = useState(false);
+  const [apptTitle, setApptTitle] = useState("");
+  const [apptTime, setApptTime] = useState("");
+  const [apptVenue, setApptVenue] = useState("");
 
   // Synchronized breathing timer loop
   useEffect(() => {
@@ -105,6 +112,7 @@ export default function CouplesDashboard() {
         if (data.tasks) setTasks(data.tasks);
         if (data.appointments) setAppointments(data.appointments);
         if (data.monthlyActivity) setMonthlyActivity(data.monthlyActivity);
+        if (data.userProfile) setUserProfile(data.userProfile);
 
         // Calculate if streak is broken (diffDays > 1)
         let isBroken = false;
@@ -205,6 +213,49 @@ export default function CouplesDashboard() {
       });
     } catch (err) {
       console.error("[Toggle Task Error]:", err);
+    }
+  };
+
+  // Add a new Appointment/Schedule
+  const handleAddAppointment = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!apptTitle.trim() || !apptTime.trim() || !apptVenue.trim()) return;
+
+    try {
+      const res = await fetch("/api/couples/dashboard", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "addAppointment",
+          title: apptTitle.trim(),
+          category: "General Sync",
+          doctor_name: partnerName,
+          hospital_name: apptVenue.trim(),
+          location: apptVenue.trim(),
+          date: "Daily",
+          time: apptTime.trim()
+        })
+      });
+
+      if (res.ok) {
+        const newAppt = {
+          id: Date.now(),
+          title: apptTitle.trim(),
+          time: apptTime.trim(),
+          hospital_name: apptVenue.trim(),
+          category: "General Sync",
+          doctor_name: partnerName,
+          location: apptVenue.trim(),
+          date: "Daily"
+        };
+        setAppointments(prev => [...prev, newAppt]);
+        setApptTitle("");
+        setApptTime("");
+        setApptVenue("");
+        setShowAddAppt(false);
+      }
+    } catch (err) {
+      console.error("[Add Appointment Error]:", err);
     }
   };
 
@@ -460,8 +511,8 @@ export default function CouplesDashboard() {
               ──────────────────────────────────────────────────────────── */}
           <div className="lg:col-span-5 space-y-6">
             
-            {/* Header Block and Title */}
-            <div className="bg-white dark:bg-[#132E3F] rounded-[32px] border border-[#EAEAFF] dark:border-slate-800 p-6 shadow-[0_8px_30px_rgba(0,0,0,0.015)] space-y-4">
+            {/* Header Block with Wellness Score & Streak indicators */}
+            <div className="bg-white dark:bg-[#132E3F] rounded-[32px] border border-[#EAEAFF] dark:border-slate-800 p-6 shadow-[0_8px_30px_rgba(0,0,0,0.015)] space-y-5">
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
                   <h1 className="text-xl font-heading font-black text-slate-800 dark:text-slate-100 flex items-center gap-2">
@@ -493,10 +544,27 @@ export default function CouplesDashboard() {
                 )}
               </div>
 
-              {/* Day Streak indicator badge */}
-              <div className="flex justify-between items-center text-[11px] font-bold text-slate-500 pt-1">
-                <span>Streak Progress</span>
-                <span className="text-[#E67E22]">Day {streakDays} Streak 🔥</span>
+              {/* Dynamic Wellness Score and Streak display widgets */}
+              <div className="grid grid-cols-2 gap-4 pt-3 border-t border-slate-100 dark:border-slate-800/80">
+                <div className="p-3 bg-[#E6F4F0] dark:bg-[#112F28] rounded-2xl text-center space-y-1 border border-[#CBECE2]/30">
+                  <span className="text-[9px] uppercase font-black tracking-widest text-[#006B56] dark:text-[#5FAF8A]">Wellness Score</span>
+                  <h4 className="text-lg font-heading font-black text-[#006B56] dark:text-emerald-400">
+                    {userProfile?.percentage || 75}%
+                  </h4>
+                  <p className="text-[8px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wide">
+                    Level: {userProfile?.wellness_level || "Stable"}
+                  </p>
+                </div>
+
+                <div className="p-3 bg-amber-50 dark:bg-amber-950/20 rounded-2xl text-center space-y-1 border border-amber-100/30">
+                  <span className="text-[9px] uppercase font-black tracking-widest text-amber-750 dark:text-amber-400">Current Streak</span>
+                  <h4 className="text-lg font-heading font-black text-amber-700 dark:text-amber-400">
+                    Day {streakDays} 🔥
+                  </h4>
+                  <p className="text-[8px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wide">
+                    Daily check-in
+                  </p>
+                </div>
               </div>
             </div>
 
@@ -570,7 +638,7 @@ export default function CouplesDashboard() {
               </div>
             </div>
 
-            {/* Mood Overview Solid Pie Chart replicated from Parent Dashboard */}
+            {/* Mood Overview Solid Pie Chart */}
             <div className="bg-white dark:bg-[#132E3F] rounded-[32px] border border-[#EAEAFF] dark:border-slate-800 p-6 shadow-[0_8px_30px_rgba(0,0,0,0.015)] space-y-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -632,18 +700,21 @@ export default function CouplesDashboard() {
               ──────────────────────────────────────────────────────────── */}
           <div className="lg:col-span-4 space-y-6">
             
-            {/* Appointments switcher & Calendar */}
+            {/* Appointments switcher & Calendar / Daily Schedules */}
             <div className="bg-white dark:bg-[#132E3F] rounded-[32px] border border-[#EAEAFF] dark:border-slate-800 p-6 shadow-[0_8px_30px_rgba(0,0,0,0.015)] space-y-5">
               <h3 className="font-heading font-black text-slate-800 dark:text-slate-100 text-xs uppercase tracking-wider text-slate-400">List of appointments</h3>
               
               {/* Tab Selector */}
               <div className="grid grid-cols-2 p-1 bg-[#F5F8F6] dark:bg-slate-800/60 rounded-xl border border-slate-200/40 dark:border-slate-700/30">
                 <button 
-                  onClick={() => setActiveTab("Monthly")}
+                  onClick={() => {
+                    setActiveTab("Monthly");
+                    setShowAddAppt(false);
+                  }}
                   className="py-1.5 text-center rounded-lg text-[10px] font-black uppercase tracking-wider transition-all"
                   style={{
                     backgroundColor: activeTab === "Monthly" ? "#006B56" : "transparent",
-                    color: activeTab === "Monthly" ? "#white" : "#94A3B8"
+                    color: activeTab === "Monthly" ? "white" : "#94A3B8"
                   }}
                 >
                   Monthly
@@ -653,43 +724,117 @@ export default function CouplesDashboard() {
                   className="py-1.5 text-center rounded-lg text-[10px] font-black uppercase tracking-wider transition-all"
                   style={{
                     backgroundColor: activeTab === "Daily" ? "#006B56" : "transparent",
-                    color: activeTab === "Daily" ? "#white" : "#94A3B8"
+                    color: activeTab === "Daily" ? "white" : "#94A3B8"
                   }}
                 >
                   Daily
                 </button>
               </div>
 
-              {/* Monthly calendar display */}
-              <div className="space-y-3 pt-1">
-                <div className="flex justify-between items-center text-xs font-black text-slate-700 dark:text-slate-200">
-                  <span>October 2022</span>
-                  <div className="flex gap-2 text-slate-400">
-                    <span className="material-symbols-outlined text-xs cursor-pointer">chevron_left</span>
-                    <span className="material-symbols-outlined text-xs">chevron_right</span>
+              {/* SWITCHABLE DISPLAY FOR MONTHLY / DAILY */}
+              {activeTab === "Monthly" ? (
+                /* Monthly calendar display */
+                <div className="space-y-3 pt-1">
+                  <div className="flex justify-between items-center text-xs font-black text-slate-700 dark:text-slate-200">
+                    <span>October 2022</span>
+                    <div className="flex gap-2 text-slate-400">
+                      <span className="material-symbols-outlined text-xs cursor-pointer">chevron_left</span>
+                      <span className="material-symbols-outlined text-xs">chevron_right</span>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-7 gap-1 text-center text-[10px] font-bold text-slate-500">
+                    <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
+                    
+                    {calendarPadding.map((_, i) => <span key={`pad-${i}`} />)}
+
+                    {calendarDays.map((day) => (
+                      <button
+                        key={day}
+                        onClick={() => setSelectedDay(day)}
+                        className={`w-6 h-6 rounded-full mx-auto flex items-center justify-center transition-all ${
+                          selectedDay === day 
+                            ? "bg-[#E67E22] text-white font-black" 
+                            : "hover:bg-slate-200/50"
+                        }`}
+                      >
+                        {day}
+                      </button>
+                    ))}
                   </div>
                 </div>
+              ) : (
+                /* Fully functional Daily appointments list with scheduler */
+                <div className="space-y-4 pt-1">
+                  <div className="space-y-2.5 max-h-[220px] overflow-y-auto pr-1">
+                    {appointments.length > 0 ? (
+                      appointments.map((appt) => (
+                        <div key={appt.id} className="p-3 bg-[#F5FBF9] dark:bg-slate-800/40 border border-[#E4EFE9]/40 dark:border-slate-700/40 rounded-2xl flex items-center justify-between text-xs transition-colors">
+                          <div className="space-y-0.5 text-left">
+                            <h4 className="font-heading font-black text-slate-800 dark:text-slate-100">{appt.title}</h4>
+                            <p className="text-[9px] text-[#006B56] dark:text-[#5FAF8A] font-black uppercase tracking-wider">{appt.time}</p>
+                          </div>
+                          <span className="text-[10px] text-slate-400 font-bold">{appt.hospital_name || appt.location}</span>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="text-[10px] text-slate-400 font-bold text-center py-4">No appointments for today.</p>
+                    )}
+                  </div>
 
-                <div className="grid grid-cols-7 gap-1 text-center text-[10px] font-bold text-slate-500">
-                  <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
-                  
-                  {calendarPadding.map((_, i) => <span key={`pad-${i}`} />)}
-
-                  {calendarDays.map((day) => (
-                    <button
-                      key={day}
-                      onClick={() => setSelectedDay(day)}
-                      className={`w-6 h-6 rounded-full mx-auto flex items-center justify-center transition-all ${
-                        selectedDay === day 
-                          ? "bg-[#E67E22] text-white font-black" 
-                          : "hover:bg-slate-200/50"
-                      }`}
+                  {/* Add Appointment form toggler */}
+                  {!showAddAppt ? (
+                    <button 
+                      onClick={() => setShowAddAppt(true)}
+                      className="w-full py-2 bg-[#006B56] hover:bg-[#005B48] text-white rounded-full font-bold text-[9px] uppercase tracking-wider transition-all"
                     >
-                      {day}
+                      + Schedule Appt
                     </button>
-                  ))}
+                  ) : (
+                    <form onSubmit={handleAddAppointment} className="p-3 bg-[#F5FBF9] dark:bg-slate-800/20 border border-slate-200/40 rounded-2xl space-y-2.5 text-left">
+                      <div className="space-y-1">
+                        <label className="text-[8px] font-black uppercase text-slate-400">Appointment Title</label>
+                        <input 
+                          type="text" 
+                          placeholder="e.g. Couples Massage"
+                          value={apptTitle}
+                          onChange={(e) => setApptTitle(e.target.value)}
+                          className="w-full px-2.5 py-1.5 text-xs bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#006B56]"
+                          required
+                        />
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <div className="space-y-1">
+                          <label className="text-[8px] font-black uppercase text-slate-400">Time Range</label>
+                          <input 
+                            type="text" 
+                            placeholder="e.g. 05:00 pm - 06:00 pm"
+                            value={apptTime}
+                            onChange={(e) => setApptTime(e.target.value)}
+                            className="w-full px-2.5 py-1.5 text-xs bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#006B56]"
+                            required
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <label className="text-[8px] font-black uppercase text-slate-400">Retreat/Venue</label>
+                          <input 
+                            type="text" 
+                            placeholder="e.g. Spa Center"
+                            value={apptVenue}
+                            onChange={(e) => setApptVenue(e.target.value)}
+                            className="w-full px-2.5 py-1.5 text-xs bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#006B56]"
+                            required
+                          />
+                        </div>
+                      </div>
+                      <div className="flex gap-2 pt-1">
+                        <button type="submit" className="flex-1 py-1.5 bg-[#006B56] hover:bg-[#005B48] text-white font-bold text-[9px] uppercase tracking-wider rounded-lg">Save</button>
+                        <button type="button" onClick={() => setShowAddAppt(false)} className="flex-1 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold text-[9px] uppercase tracking-wider rounded-lg">Cancel</button>
+                      </div>
+                    </form>
+                  )}
                 </div>
-              </div>
+              )}
             </div>
 
             {/* Daily progress circular ring */}
