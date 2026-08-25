@@ -319,6 +319,21 @@ export default function CouplesDashboard() {
         </button>
 
         <div className="flex items-center gap-3">
+          {/* Retake Assessment Button */}
+          <button 
+            onClick={() => {
+              localStorage.removeItem("parent_assessment_completed");
+              localStorage.removeItem("parent_assessment_modal_dismissed");
+              localStorage.setItem("parent_reset_assessment_flow", "true");
+              router.push("/assessment");
+            }}
+            className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-white dark:bg-[#132E3F] border border-[#EAEAFF] dark:border-slate-800 text-xs font-bold text-[#E37A47] dark:text-[#F38A57] shadow-sm hover:bg-[#FFF6F2] dark:hover:bg-slate-800 active:scale-95 transition-all"
+            title="Retake initial couples wellness assessment"
+          >
+            <span className="material-symbols-outlined text-sm font-black">assignment</span>
+            Retake Assessment
+          </button>
+
           <button 
             onClick={() => setCalmZoneActive(true)}
             className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-white dark:bg-[#132E3F] border border-[#EAEAFF] dark:border-slate-800 text-xs font-bold text-rose-500 dark:text-rose-400 shadow-sm hover:bg-rose-50/50 dark:hover:bg-slate-800 active:scale-95 transition-all"
