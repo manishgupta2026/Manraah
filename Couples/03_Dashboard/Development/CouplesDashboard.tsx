@@ -1,68 +1,96 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
-import { getClientSession } from "@/backend/auth/client";
+import { getClientSession, signOut } from "@/backend/auth/client";
 
-// Tailored relationship ideas
-const DATE_NIGHT_IDEAS = [
-  { category: "Cozy 🏡", title: "Indoor Fort & Movie", desc: "Build a classic living-room blanket fort, make homemade popcorn, and watch a nostalgic movie." },
-  { category: "Creative 🎨", title: "Double-Sided Canvas Painting", desc: "Buy two canvases. Set up opposite each other and paint a portrait of the other person!" },
-  { category: "Culinary 🍳", title: "Mystery Ingredient Cook-off", desc: "Assign each other 2 secret ingredients and cook a dinner utilizing them." },
-  { category: "Adventure 🌌", title: "Midnight Stargazing & Picnic", desc: "Pack a thermos of hot cocoa, a heavy blanket, and drive to an open field to watch the stars." },
-  { category: "Active 🚶", title: "Memory Walk & Photo Hunt", desc: "Walk through a neighborhood that has meaning to your relationship." }
+// Calendar helper details
+const WEEKDAYS = ["S", "M", "T", "W", "T", "F", "S"];
+const MONTH_NAMES = [
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December"
+];
+
+// Initial Tasks/Habits checklist
+const INITIAL_HABITS = [
+  { id: 1, text: "Share one genuine appreciation with your partner today", category: "Active Habit", completed: false },
+  { id: 2, text: "Complete a 3-minute synchronized breathing pause together", category: "Active Habit", completed: false },
+  { id: 3, text: "Set devices to 'Do Not Disturb' for at least 1 hour of quality time", category: "Active Habit", completed: false }
 ];
 
 export default function CouplesDashboard() {
   const router = useRouter();
-  
-  // Base states
-  const [userName, setUserName] = useState("Kartik");
+
+  // Core Authentication & Session States
+  const [session, setSession] = useState<any>(null);
+  const [userName, setUserName] = useState("Bloo");
   const [partnerName, setPartnerName] = useState("Elena");
-  const [email, setEmail] = useState("");
   const [isEditingPartner, setIsEditingPartner] = useState(false);
-  const [tempPartnerName, setTempPartnerName] = useState("");
-  
-  // Dashboard & Metrics data
-  const [harmonyScore, setHarmonyScore] = useState(90);
-  const [stressLevel, setStressLevel] = useState(3);
-  const [energyLevel, setEnergyLevel] = useState(7);
-  const [communicationScore, setCommunicationScore] = useState(8);
-  const [tasks, setTasks] = useState<any[]>([]);
-  const [appointments, setAppointments] = useState<any[]>([]);
-  const [monthlyActivity, setMonthlyActivity] = useState<any[]>([]);
-  const [userProfile, setUserProfile] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const [tempPartnerName, setTempPartnerName] = useState("Elena");
+  const [dashboardData, setDashboardData] = useState<any>(null);
 
-  // Forced Onboarding & Gating popups
+  // Gating & Onboarding Modals
   const [showAssessmentModal, setShowAssessmentModal] = useState(false);
+  const [showCheckinModal, setShowCheckinModal] = useState(false);
   const [showSecurityPopup, setShowSecurityPopup] = useState(false);
-  const [streakBroken, setStreakBroken] = useState(false);
-  const [streakDays, setStreakDays] = useState(0);
 
-  // Layout selection and interactive helpers
-  const [activeTab, setActiveTab] = useState<"Monthly" | "Daily">("Monthly");
-  const [currentDateIdea, setCurrentDateIdea] = useState(DATE_NIGHT_IDEAS[0]);
-  const [isSpinning, setIsSpinning] = useState(false);
+  // Streak & Harmony Metrics
+  const [streakDays, setStreakDays] = useState(1);
+  const [streakBroken, setStreakBroken] = useState(false);
+  const [harmonyScore, setHarmonyScore] = useState(90);
+
+  // Sliders metrics
+  const [conversationScore, setConversationScore] = useState(8);
+  const [sharedEnergyScore, setSharedEnergyScore] = useState(7);
+  const [mutualTrustScore, setMutualTrustScore] = useState(8);
+
+  // Checklist of Relationship Habits
+  const [habits, setHabits] = useState(INITIAL_HABITS);
+
+  // Calendar & Appointments State
+  const [activeTab, setActiveTab] = useState<"monthly" | "daily">("monthly");
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date(2022, 9, 6)); // Default to October 6, 2022
+  const [currentYear, setCurrentYear] = useState(2022);
+  const [currentMonth, setCurrentMonth] = useState(9); // October is index 9
+  const [showAddAppointment, setShowAddAppointment] = useState(false);
   
-  // Empathy Calm modal states
+  // Custom interactive appointments list
+  const [appointments, setAppointments] = useState<any[]>([
+    { id: 1, date: "2022-10-14", title: "Manggis ST Hospital", desc: "New York, USA", doctor: "Dr. Emilia Winson", time: "09.00 pm", type: "medical", videoCall: true },
+    { id: 2, date: "2022-10-06", title: "Blanket Fort Movie Night", desc: "Cozy Living Room", doctor: "Elena & Bloo", time: "08.30 pm", type: "date", videoCall: false },
+    { id: 3, date: "2022-10-22", title: "Canvas Painting Date", desc: "Artistic Studio", doctor: "Art Instructor", time: "07.00 pm", type: "class", videoCall: false }
+  ]);
+
+  // Add Appointment form input states
+  const [newTitle, setNewTitle] = useState("");
+  const [newDesc, setNewDesc] = useState("");
+  const [newTime, setNewTime] = useState("08.00 pm");
+  const [newType, setNewType] = useState("date");
+
+  // Conflict Calm Zone modal states
   const [calmZoneActive, setCalmZoneActive] = useState(false);
   const [calmStep, setCalmStep] = useState(1);
   const [breathingActive, setBreathingActive] = useState(false);
   const [breathingPhase, setBreathingPhase] = useState<"Inhale" | "Hold" | "Exhale">("Inhale");
   const [breathingSeconds, setBreathingSeconds] = useState(4);
 
-  // Calendar selected day
-  const [selectedDay, setSelectedDay] = useState(new Date().getDate());
+  // Daily Connection Check-in Modal inputs
+  const [selectedMood, setSelectedMood] = useState("Good");
+  const [checkedActivities, setCheckedActivities] = useState<string[]>([]);
+  const [reflectionText, setReflectionText] = useState("");
+  const [savingCheckin, setSavingCheckin] = useState(false);
 
-  // Add Appointment Form states
-  const [showAddAppt, setShowAddAppt] = useState(false);
-  const [apptTitle, setApptTitle] = useState("");
-  const [apptTime, setApptTime] = useState("");
-  const [apptVenue, setApptVenue] = useState("");
+  // Activities list for check-in form
+  const checkinActivitiesList = [
+    "Had a quality heart-to-heart conversation",
+    "Spent focused screen-free time together",
+    "Synchronized breathing or meditation pause",
+    "Exchanged a sincere compliment/appreciation",
+    "Resolved a disagreement with mutual empathy"
+  ];
 
-  // Synchronized breathing timer loop
+  // Synchronized breathing timer loop inside Calm Zone
   useEffect(() => {
     let timer: NodeJS.Timeout;
     if (breathingActive) {
@@ -87,833 +115,997 @@ export default function CouplesDashboard() {
     return () => clearInterval(timer);
   }, [breathingActive, breathingPhase]);
 
-  // Load backend couples metrics on mount
+  // Fetch initial dashboard state & check assessment completion status on mount
   useEffect(() => {
-    const session = getClientSession();
-    if (session && session.isAuthenticated && session.user) {
-      setUserName(session.user.sanctuaryName || session.user.name || "Harmony Partner");
-      setEmail(session.user.email || "");
-    }
+    const activeSession = getClientSession();
+    setSession(activeSession);
 
-    fetch("/api/couples/dashboard")
+    fetch("/api/dashboard")
       .then((res) => {
-        if (!res.ok) throw new Error("Failed to fetch dashboard data");
-        return res.json();
+        if (res.ok) return res.json();
+        throw new Error("Failed to load dashboard data");
       })
       .then((data) => {
-        if (data.profile) {
-          setPartnerName(data.profile.partner_name);
-          setTempPartnerName(data.profile.partner_name);
-          setHarmonyScore(data.profile.harmony_score);
-          setStressLevel(data.profile.stress_level);
-          setEnergyLevel(data.profile.energy_level);
-          setCommunicationScore(data.profile.communication_score);
-        }
-        if (data.tasks) setTasks(data.tasks);
-        if (data.appointments) setAppointments(data.appointments);
-        if (data.monthlyActivity) setMonthlyActivity(data.monthlyActivity);
-        if (data.userProfile) setUserProfile(data.userProfile);
+        setDashboardData(data);
+        if (data.user) {
+          // Sync real username & partner name
+          if (data.user.sanctuaryName || data.user.name) {
+            setUserName(data.user.sanctuaryName || data.user.name);
+          }
 
-        // Calculate if streak is broken (diffDays > 1)
-        let isBroken = false;
-        if (data.streak?.lastCheckinDate) {
-          const lastCheck = new Date(data.streak.lastCheckinDate);
-          const lastDate = new Date(lastCheck.getFullYear(), lastCheck.getMonth(), lastCheck.getDate());
-          const todayDate = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
-          const diffTime = Math.abs(todayDate.getTime() - lastDate.getTime());
-          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-          if (diffDays > 1) {
-            isBroken = true;
-            setStreakBroken(true);
+          // Check if assessment completed
+          const localAssessmentCompleted = localStorage.getItem("couple_assessment_completed") === "true";
+          const assessmentModalDismissed = localStorage.getItem("couple_assessment_modal_dismissed") === "true";
+          const hasCoupleAssessment = (data.user.assessmentPercentage !== null && 
+                                       data.user.assessmentPercentage !== undefined && 
+                                       (data.user.assessmentCategory === "couples" || data.user.assessmentCategory === "couple")) || localAssessmentCompleted;
+
+          if (hasCoupleAssessment || assessmentModalDismissed) {
+            setHarmonyScore(data.user.assessmentPercentage || 90);
+          } else {
+            setShowAssessmentModal(true);
+          }
+
+          // Check if streak is broken (diffDays > 1 since last check-in)
+          let isBroken = false;
+          if (data.streak?.lastCheckinDate) {
+            const lastCheck = new Date(data.streak.lastCheckinDate);
+            const lastDate = new Date(lastCheck.getFullYear(), lastCheck.getMonth(), lastCheck.getDate());
+            const todayDate = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
+            const diffTime = Math.abs(todayDate.getTime() - lastDate.getTime());
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            if (diffDays > 1) {
+              isBroken = true;
+              setStreakBroken(true);
+            } else {
+              setStreakBroken(false);
+            }
           } else {
             setStreakBroken(false);
           }
-        } else {
-          setStreakBroken(false);
-        }
-        setStreakDays(isBroken ? 0 : (data.streak?.currentStreak || 0));
 
-        // Evaluate Forced Onboarding assessment gate
-        const localAssessmentCompleted = localStorage.getItem("parent_assessment_completed") === "true";
-        const hasCoupleAssessment = (data.userProfile && data.userProfile.percentage !== null) || localAssessmentCompleted;
+          // Restore streak days (0 if broken)
+          const backendStreak = isBroken ? 0 : (data.streak?.currentStreak || data.user.streakDays || 1);
+          setStreakDays(backendStreak);
 
-        if (hasCoupleAssessment) {
-          const securityPopupShown = localStorage.getItem("couple_security_popup_shown_once") === "true";
-          const showImmediately = localStorage.getItem("couple_show_security_immediately") === "true";
-
-          if (showImmediately) {
-            setShowSecurityPopup(true);
-            localStorage.setItem("couple_security_popup_shown_once", "true");
-            localStorage.removeItem("couple_show_security_immediately");
-          } else if (!securityPopupShown) {
-            setShowSecurityPopup(true);
-            localStorage.setItem("couple_security_popup_shown_once", "true");
+          // Restore persisted dashboard states from database
+          const ds = data.user.dashboardState;
+          if (ds && typeof ds === "object") {
+            if (ds.selectedMood) setSelectedMood(ds.selectedMood);
+            if (ds.conversationScore !== undefined) setConversationScore(ds.conversationScore);
+            if (ds.sharedEnergyScore !== undefined) setSharedEnergyScore(ds.sharedEnergyScore);
+            if (ds.mutualTrustScore !== undefined) setMutualTrustScore(ds.mutualTrustScore);
+            if (ds.checkedActivities) setCheckedActivities(ds.checkedActivities);
+            if (ds.reflectionText) setReflectionText(ds.reflectionText);
+            if (ds.habits && Array.isArray(ds.habits)) {
+              setHabits(ds.habits);
+            }
+            if (ds.appointments && Array.isArray(ds.appointments)) {
+              setAppointments(ds.appointments);
+            }
           }
-        } else {
-          setShowAssessmentModal(true);
         }
-
-        setLoading(false);
       })
       .catch((err) => {
         console.error("[Dashboard Fetch Error]:", err);
-        setLoading(false);
       });
+
+    const storedPartner = localStorage.getItem("couple_partner_name") || "Elena";
+    setPartnerName(storedPartner);
+    setTempPartnerName(storedPartner);
   }, []);
 
-  // Update partner name in database
-  const savePartnerName = async () => {
+  // Save Link Partner Name
+  const savePartnerName = () => {
     if (!tempPartnerName.trim()) return;
-    try {
-      const res = await fetch("/api/couples/dashboard", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "updatePartner", partnerName: tempPartnerName.trim() })
-      });
-      if (res.ok) {
-        setPartnerName(tempPartnerName.trim());
-        setIsEditingPartner(false);
-      }
-    } catch (err) {
-      console.error("[Save Partner Error]:", err);
-    }
+    setPartnerName(tempPartnerName.trim());
+    localStorage.setItem("couple_partner_name", tempPartnerName.trim());
+    setIsEditingPartner(false);
   };
 
-  // Sync metrics update and calculate balance score
-  const syncHarmonyMetrics = async (newStress: number, newEnergy: number, newComm: number) => {
+  // Toggle Habit completion
+  const toggleHabit = (id: number) => {
+    const updated = habits.map(h => h.id === id ? { ...h, completed: !h.completed } : h);
+    setHabits(updated);
+    saveDashboardStateToDb({ habits: updated });
+  };
+
+  // Save checklist/sliders state back to server
+  const saveDashboardStateToDb = async (updatedFields: any) => {
+    if (!session?.user?.id) return;
+    const previousState = dashboardData?.user?.dashboardState || {};
+    const mergedState = {
+      ...previousState,
+      selectedMood,
+      conversationScore,
+      sharedEnergyScore,
+      mutualTrustScore,
+      checkedActivities,
+      reflectionText,
+      habits,
+      appointments,
+      ...updatedFields
+    };
+
     try {
-      const res = await fetch("/api/couples/dashboard", {
-        method: "POST",
+      const res = await fetch("/api/profile", {
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          action: "updateMetrics",
-          stressLevel: newStress,
-          energyLevel: newEnergy,
-          communicationScore: newComm
-        })
-      });
-      const data = await res.json();
-      if (res.ok && data.harmonyScore !== undefined) {
-        setHarmonyScore(data.harmonyScore);
-      }
-    } catch (err) {
-      console.error("[Sync Metrics Error]:", err);
-    }
-  };
-
-  // Toggle tasks checkin status
-  const handleToggleTask = async (taskId: number, currentStatus: boolean) => {
-    const nextStatus = !currentStatus;
-    setTasks(prev => prev.map(t => t.id === taskId ? { ...t, completed: nextStatus } : t));
-    try {
-      await fetch("/api/couples/dashboard", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "toggleTask", taskId, completed: nextStatus })
-      });
-    } catch (err) {
-      console.error("[Toggle Task Error]:", err);
-    }
-  };
-
-  // Add a new Appointment/Schedule
-  const handleAddAppointment = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!apptTitle.trim() || !apptTime.trim() || !apptVenue.trim()) return;
-
-    try {
-      const res = await fetch("/api/couples/dashboard", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          action: "addAppointment",
-          title: apptTitle.trim(),
-          category: "General Sync",
-          doctor_name: partnerName,
-          hospital_name: apptVenue.trim(),
-          location: apptVenue.trim(),
-          date: "Daily",
-          time: apptTime.trim()
+          userId: session.user.id,
+          dashboardState: mergedState
         })
       });
 
-      if (res.ok) {
-        const newAppt = {
-          id: Date.now(),
-          title: apptTitle.trim(),
-          time: apptTime.trim(),
-          hospital_name: apptVenue.trim(),
-          category: "General Sync",
-          doctor_name: partnerName,
-          location: apptVenue.trim(),
-          date: "Daily"
+      const resData = await res.json();
+      if (res.ok && resData.user) {
+        if (resData.user.streakDays !== undefined) {
+          setStreakDays(resData.user.streakDays);
+          setStreakBroken(false);
+        }
+      }
+
+      setDashboardData((prev: any) => {
+        if (!prev || !prev.user) return prev;
+        return {
+          ...prev,
+          user: {
+            ...prev.user,
+            dashboardState: mergedState
+          }
         };
-        setAppointments(prev => [...prev, newAppt]);
-        setApptTitle("");
-        setApptTime("");
-        setApptVenue("");
-        setShowAddAppt(false);
-      }
+      });
     } catch (err) {
-      console.error("[Add Appointment Error]:", err);
+      console.error("[Failed to sync dashboardState]:", err);
     }
   };
 
-  // Draw random date night ideas
-  const handleGenerateDate = () => {
-    setIsSpinning(true);
-    let count = 0;
-    const interval = setInterval(() => {
-      const randomIdx = Math.floor(Math.random() * DATE_NIGHT_IDEAS.length);
-      setCurrentDateIdea(DATE_NIGHT_IDEAS[randomIdx]);
-      count++;
-      if (count > 8) {
-        clearInterval(interval);
-        setIsSpinning(false);
+  // Log Daily Check-in Form submission
+  const handleCheckinSubmit = async () => {
+    if (!session?.user?.id) return;
+    setSavingCheckin(true);
+
+    try {
+      const moodRes = await fetch("/api/mood", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: session.user.id,
+          score: selectedMood === "Great" ? 5 : selectedMood === "Good" ? 4 : selectedMood === "Normal" ? 3 : selectedMood === "Not Good" ? 2 : 1,
+          notes: `[Mood Checkin]: ${selectedMood}. Connection Activities: ${checkedActivities.join(", ") || "None"}. Reflections: ${reflectionText}`
+        })
+      });
+
+      const checkinRes = await fetch("/api/checkin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: session.user.id,
+          mood: selectedMood,
+          stress: 10 - conversationScore,
+          activities: checkedActivities,
+          notes: reflectionText
+        })
+      });
+
+      if (moodRes.ok && checkinRes.ok) {
+        localStorage.setItem("couple_assessment_completed", "true");
+        await saveDashboardStateToDb({
+          selectedMood,
+          checkedActivities,
+          reflectionText
+        });
+        setShowCheckinModal(false);
       }
-    }, 120);
+    } catch (err) {
+      console.error("[Check-in save error]:", err);
+    } finally {
+      setSavingCheckin(false);
+    }
   };
 
-  const completedTasksCount = tasks.filter(t => t.completed).length;
-  const progressPercent = tasks.length > 0 ? Math.round((completedTasksCount / tasks.length) * 100) : 80;
+  // Add a new appointment to calendar
+  const handleAddAppointmentSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newTitle.trim()) return;
 
-  // Solid SVG Pie Chart details mathematically calculated from harmonyScore
-  const pieBreakdown = useMemo(() => {
-    const score = harmonyScore / 2; // scale out of 50
-    let great = 0, good = 0, normal = 0, notGood = 0, bad = 0;
+    const dateString = `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, "0")}-${String(selectedDate.getDate()).padStart(2, "0")}`;
+    const newEntry = {
+      id: Date.now(),
+      date: dateString,
+      title: newTitle.trim(),
+      desc: newDesc.trim(),
+      doctor: newType === "medical" ? "Medical Care Team" : `${userName} & ${partnerName}`,
+      time: newTime,
+      type: newType,
+      videoCall: newType === "medical"
+    };
 
-    if (score >= 45) { great = 60; good = 25; normal = 10; notGood = 4; bad = 1; }
-    else if (score >= 40) { great = 40; good = 35; normal = 15; notGood = 8; bad = 2; }
-    else if (score >= 35) { great = 20; good = 45; normal = 20; notGood = 10; bad = 5; }
-    else if (score >= 30) { great = 10; good = 30; normal = 40; notGood = 15; bad = 5; }
-    else if (score >= 25) { great = 5; good = 20; normal = 45; notGood = 20; bad = 10; }
-    else if (score >= 20) { great = 2; good = 15; normal = 30; notGood = 35; bad = 18; }
-    else if (score >= 15) { great = 1; good = 5; normal = 20; notGood = 45; bad = 29; }
-    else { great = 0; good = 2; normal = 10; notGood = 30; bad = 58; }
+    const updatedAppointments = [...appointments, newEntry];
+    setAppointments(updatedAppointments);
+    saveDashboardStateToDb({ appointments: updatedAppointments });
 
-    return [
-      { label: "Great", value: great, color: "#006B56" },
-      { label: "Good", value: good, color: "#85B581" },
-      { label: "Normal", value: normal, color: "#F5C99B" },
-      { label: "Not Good", value: notGood, color: "#E37A47" },
-      { label: "Bad", value: bad, color: "#D64E4D" }
-    ];
-  }, [harmonyScore]);
+    // Reset inputs
+    setNewTitle("");
+    setNewDesc("");
+    setNewTime("08.00 pm");
+    setNewType("date");
+    setShowAddAppointment(false);
+  };
 
-  // SVG drawing math
-  let cumulativeAngle = 0;
-  const pieSlices = pieBreakdown.map((slice) => {
-    const angle = (slice.value / 100) * 360;
-    const startAngle = cumulativeAngle;
-    const endAngle = cumulativeAngle + angle;
-    cumulativeAngle = endAngle;
+  // Helper: Find appointments for specific date
+  const getAppointmentsForDate = (date: Date) => {
+    const formattedStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+    return appointments.filter(app => app.date === formattedStr);
+  };
 
-    const radStart = (startAngle - 90) * (Math.PI / 180);
-    const radEnd = (endAngle - 90) * (Math.PI / 180);
+  // Find the closest upcoming chronological appointment to show in middle column
+  const getUpcomingAppointment = () => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
-    const x1 = 50 + 40 * Math.cos(radStart);
-    const y1 = 50 + 40 * Math.sin(radStart);
-    const x2 = 50 + 40 * Math.cos(radEnd);
-    const y2 = 50 + 40 * Math.sin(radEnd);
+    const futureApps = appointments
+      .map(app => ({ ...app, dateObj: new Date(app.date) }))
+      .filter(app => app.dateObj >= today)
+      .sort((a, b) => a.dateObj.getTime() - b.dateObj.getTime());
 
-    const largeArcFlag = angle > 180 ? 1 : 0;
-    const pathData = `M 50 50 L ${x1} ${y1} A 40 40 0 ${largeArcFlag} 1 ${x2} ${y2} Z`;
+    return futureApps.length > 0 ? futureApps[0] : null;
+  };
 
-    const midAngle = startAngle + angle / 2;
-    const radMid = (midAngle - 90) * (Math.PI / 180);
-    const lx = 50 + 24 * Math.cos(radMid);
-    const ly = 50 + 24 * Math.sin(radMid);
+  const upcomingApp = getUpcomingAppointment();
 
-    return { ...slice, pathData, labelX: lx, labelY: ly };
-  });
+  // Calculations for connection progress
+  const completedHabitsCount = habits.filter(h => h.completed).length;
+  const habitsProgressPercent = habits.length > 0 ? Math.round((completedHabitsCount / habits.length) * 100) : 0;
 
-  // Calendar Padding
-  const calendarDays = Array.from({ length: 31 }, (_, i) => i + 1);
-  const calendarPadding = Array.from({ length: 4 });
+  // Calendar grid construction logic
+  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+  const firstDayIndex = new Date(currentYear, currentMonth, 1).getDay();
+
+  const handlePrevMonth = () => {
+    if (currentMonth === 0) {
+      setCurrentMonth(11);
+      setCurrentYear(prev => prev - 1);
+    } else {
+      setCurrentMonth(prev => prev - 1);
+    }
+  };
+
+  const handleNextMonth = () => {
+    if (currentMonth === 11) {
+      setCurrentMonth(0);
+      setCurrentYear(prev => prev + 1);
+    } else {
+      setCurrentMonth(prev => prev + 1);
+    }
+  };
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto pb-12 w-full">
+    <div className="min-h-screen bg-[#FCF8FB] p-3 md:p-6 text-slate-800 font-sans relative">
       
-      {/* 1. DISMISSABLE STREAK BROKEN BANNER */}
-      {streakBroken && (
-        <motion.div 
-          initial={{ opacity: 0, y: -10 }} 
-          animate={{ opacity: 1, y: 0 }}
-          className="bg-rose-50 dark:bg-rose-950/20 border border-rose-100 dark:border-rose-900/30 rounded-3xl p-5 flex items-center justify-between gap-4 shadow-sm"
-        >
-          <div className="flex items-center gap-3">
-            <span className="text-2xl">🌱</span>
-            <div>
-              <h5 className="font-heading font-black text-xs text-[#D64E4D] dark:text-[#EF6A6A]">You broke your streak!</h5>
-              <p className="text-[10px] text-slate-500 dark:text-slate-400 font-bold leading-relaxed">
-                Don't worry, wellness is a continuous journey. Check in today to start a fresh streak! 🌱
-              </p>
-            </div>
+      <div className="z-10 relative space-y-6 max-w-7xl mx-auto">
+        
+        {/* ==================== TOP NAVIGATION CONTROLS ==================== */}
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          
+          <button 
+            onClick={() => router.push("/")}
+            className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-white text-xs font-extrabold text-[#7C6BC4] border border-[#ECE5F5] shadow-sm hover:bg-slate-50 transition-all cursor-pointer w-fit"
+          >
+            <span className="material-symbols-outlined text-xs font-black">arrow_back</span>
+            Back to home
+          </button>
+
+          <div className="flex flex-wrap items-center gap-3">
+            <button 
+              onClick={() => {
+                localStorage.setItem("couple_reset_assessment_flow", "true");
+                router.push("/assessment");
+              }}
+              className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-white text-xs font-extrabold text-[#D66B60] border border-[#FADCD9] hover:bg-rose-50/50 transition-all cursor-pointer"
+            >
+              <span className="material-symbols-outlined text-xs font-black">assignment</span>
+              Retake Assessment
+            </button>
+
+            <button 
+              onClick={() => {
+                setCalmStep(1);
+                setCalmZoneActive(true);
+                setBreathingActive(false);
+              }}
+              className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-white text-xs font-extrabold text-[#9A6293] border border-[#F2D7EE] hover:bg-[#F2D7EE]/20 transition-all cursor-pointer"
+            >
+              <span className="material-symbols-outlined text-xs font-black">security</span>
+              Empathy calm zone
+            </button>
+
+            <span className="px-4 py-2 rounded-full bg-[#E5F9F4] text-[#006B56] text-[10px] font-black uppercase tracking-wider border border-[#BFF3E7] flex items-center gap-1">
+              <span>🔒 PRIVATE RETREAT CONNECTION</span>
+            </span>
           </div>
-          <button 
-            onClick={() => setStreakBroken(false)}
-            className="w-6 h-6 rounded-full bg-rose-100/50 flex items-center justify-center text-[#D64E4D]"
-          >
-            ×
-          </button>
-        </motion.div>
-      )}
 
-      {/* Connection Header row */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <button 
-          onClick={() => router.push("/")}
-          className="flex items-center gap-2 px-4 py-2 rounded-full bg-white dark:bg-[#132E3F] border border-[#EAEAFF] dark:border-slate-800 text-xs font-bold text-[#7C6BC4] dark:text-purple-300 shadow-sm hover:bg-[#F2F4FD] dark:hover:bg-slate-800 active:scale-95 transition-all"
-        >
-          <span className="material-symbols-outlined text-sm font-black">arrow_back</span>
-          Back to home
-        </button>
-
-        <div className="flex items-center gap-3">
-          {/* Retake Assessment Button */}
-          <button 
-            onClick={() => {
-              localStorage.removeItem("parent_assessment_completed");
-              localStorage.removeItem("parent_assessment_modal_dismissed");
-              localStorage.setItem("parent_reset_assessment_flow", "true");
-              router.push("/assessment");
-            }}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-white dark:bg-[#132E3F] border border-[#EAEAFF] dark:border-slate-800 text-xs font-bold text-[#E37A47] dark:text-[#F38A57] shadow-sm hover:bg-[#FFF6F2] dark:hover:bg-slate-800 active:scale-95 transition-all"
-            title="Retake initial couples wellness assessment"
-          >
-            <span className="material-symbols-outlined text-sm font-black">assignment</span>
-            Retake Assessment
-          </button>
-
-          <button 
-            onClick={() => setCalmZoneActive(true)}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-white dark:bg-[#132E3F] border border-[#EAEAFF] dark:border-slate-800 text-xs font-bold text-rose-500 dark:text-rose-400 shadow-sm hover:bg-rose-50/50 dark:hover:bg-slate-800 active:scale-95 transition-all"
-          >
-            <span className="material-symbols-outlined text-sm font-black">security</span>
-            Empathy calm zone
-          </button>
-          
-          <span className="px-3.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/20 text-[#006B56] dark:text-[#5FAF8A] text-[10px] font-black uppercase tracking-wider border border-emerald-100/50 dark:border-emerald-900/30">
-            🔒 Private Retreat Connection
-          </span>
         </div>
-      </div>
 
-      {loading ? (
-        <div className="flex items-center justify-center py-20 text-xs font-bold text-slate-400">
-          Syncing secure couples dashboard... 🔒
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+        {/* ==================== STREAK BROKEN BANNER ==================== */}
+        {streakBroken && (
+          <motion.div 
+            initial={{ opacity: 0, y: -5 }} 
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-[#FFF2F2] border border-[#FADCD9] rounded-3xl p-4 flex items-center justify-between gap-4 shadow-sm"
+          >
+            <div className="flex items-center gap-3">
+              <span className="text-xl">🌱</span>
+              <div>
+                <h5 className="font-heading font-black text-xs text-[#D64E4D]">You broke your streak!</h5>
+                <p className="text-[10px] text-[#A65B5B] font-bold leading-normal">
+                  Don't worry, wellness is a continuous journey. Check in today to start a fresh streak!
+                </p>
+              </div>
+            </div>
+            <button 
+              onClick={() => setStreakBroken(false)}
+              className="text-[#D64E4D] font-bold text-xs hover:opacity-80"
+            >
+              dismiss
+            </button>
+          </motion.div>
+        )}
+
+        {/* ==================== THREE COLUMN GRID LAYOUT ==================== */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           
-          {/* ────────────────────────────────────────────────────────────
-              COLUMN 1: MINT SIDEBAR PANEL (col-span-3)
-              ──────────────────────────────────────────────────────────── */}
-          <div className="lg:col-span-3 space-y-4">
-            <div className="bg-[#E6F4F0] dark:bg-[#112F28] rounded-[32px] p-6 border border-[#CBECE2] dark:border-[#1C463C] shadow-[0_10px_35px_rgba(0,107,86,0.03)] text-center space-y-6 flex flex-col justify-between min-h-[480px]">
-              
-              {/* Profile details */}
-              <div className="space-y-4">
+          {/* COLUMN 1: LEFT SIDEBAR (MINT DESIGN) - 3/12 */}
+          <div className="lg:col-span-3 bg-[#E5F5F0] rounded-[40px] p-6 border border-[#CDEAE1] flex flex-col justify-between space-y-6 shadow-sm min-h-[680px]">
+            
+            {/* Header / Condition check block */}
+            <div className="space-y-6">
+              <div className="text-center space-y-4">
                 <div className="relative w-20 h-20 mx-auto">
-                  <div className="w-full h-full rounded-full border-4 border-white dark:border-slate-800 bg-[#F5C99B]/40 flex items-center justify-center shadow-sm">
-                    <span className="text-4xl">👩‍❤️‍👨</span>
+                  <div className="w-full h-full rounded-full bg-[#FCE3CF]/80 border-4 border-white flex items-center justify-center text-4xl shadow-sm">
+                    💑
                   </div>
-                  <span className="absolute bottom-0 right-0 w-5 h-5 bg-[#006B56] border-2 border-white dark:border-slate-800 rounded-full flex items-center justify-center text-[10px] text-white">✓</span>
+                  <span className="absolute bottom-0 right-0 w-6 h-6 bg-[#006B56] border-2 border-white rounded-full flex items-center justify-center text-[10px] text-white font-bold">
+                    ✓
+                  </span>
                 </div>
 
                 <div className="space-y-1">
-                  <h4 className="font-heading font-black text-slate-800 dark:text-slate-100 text-sm">Check your harmony</h4>
-                  <p className="text-[10px] text-slate-500 dark:text-slate-400 font-bold leading-relaxed px-1">
+                  <h4 className="font-heading font-black text-slate-800 text-sm">Check your harmony</h4>
+                  <p className="text-[10px] text-slate-600 font-bold leading-relaxed px-1">
                     Check your every situation, stress factors, and relationship activities.
                   </p>
                 </div>
               </div>
 
+              {/* Action check-in button */}
               <button 
-                onClick={() => router.push("/checkin")}
-                className="w-full py-3 rounded-[20px] bg-[#006B56] hover:bg-[#005B48] text-white font-bold text-xs uppercase tracking-wider shadow-md transition-all active:scale-95 text-center"
+                onClick={() => setShowCheckinModal(true)}
+                className="w-full py-3 rounded-2xl bg-[#006B56] hover:bg-[#005B48] text-white font-bold text-xs shadow-md transition-all active:scale-95 cursor-pointer uppercase tracking-wider"
               >
                 Check It Now
               </button>
 
-              {/* Photo of the couple matching Parent pediatrics consult illustration panel */}
-              <div className="pt-4 border-t border-[#CBECE2] dark:border-[#1C463C] flex justify-center overflow-hidden rounded-2xl">
-                <img 
-                  src="/category/couple.png" 
-                  alt="Couple Connection" 
-                  className="w-full h-auto object-cover max-h-[140px] hover:scale-105 transition-transform duration-500 rounded-xl"
+              {/* Mockup Illustration artwork */}
+              <div className="bg-[#FEF6EB] p-4 rounded-3xl border border-[#F7E7D0] flex flex-col items-center justify-center relative overflow-hidden">
+                <img src="/category/couple.png" alt="Couple Illustration" className="h-32 object-contain rounded-2xl" />
+              </div>
+            </div>
+
+            {/* Harmony Metrics sliders */}
+            <div className="space-y-4 pt-4 border-t border-[#CDEAE1]/60">
+              <span className="text-[10px] uppercase font-black tracking-widest text-[#006B56]">Harmony Metrics</span>
+              
+              {/* Slider 1: Conversation */}
+              <div className="space-y-1.5">
+                <div className="flex justify-between text-[11px] font-black text-[#006B56]">
+                  <span className="flex items-center gap-1">💬 Conversation</span>
+                  <span>{conversationScore}/10</span>
+                </div>
+                <input 
+                  type="range" min="1" max="10" 
+                  value={conversationScore}
+                  onChange={(e) => {
+                    const val = parseInt(e.target.value);
+                    setConversationScore(val);
+                    saveDashboardStateToDb({ conversationScore: val });
+                  }}
+                  className="w-full accent-[#006B56] cursor-pointer"
                 />
               </div>
 
-              {/* Metrics Slider check-in tools */}
-              <div className="space-y-4 pt-4 border-t border-[#CBECE2] dark:border-[#1C463C] text-left">
-                <h5 className="text-[9px] uppercase font-black tracking-widest text-[#006B56] dark:text-[#5FAF8A]">Harmony Metrics</h5>
-                
-                {/* Communication Slider */}
-                <div className="space-y-1.5">
-                  <div className="flex justify-between text-[10px] font-bold text-slate-700 dark:text-slate-300">
-                    <span>💬 Conversation</span>
-                    <span className="font-black text-[#006B56] dark:text-[#5FAF8A]">{communicationScore}/10</span>
-                  </div>
-                  <input 
-                    type="range" min="1" max="10" 
-                    value={communicationScore}
-                    onChange={(e) => {
-                      const val = parseInt(e.target.value);
-                      setCommunicationScore(val);
-                      syncHarmonyMetrics(stressLevel, energyLevel, val);
-                    }}
-                    className="w-full accent-[#006B56] dark:accent-[#5FAF8A] h-1 bg-white dark:bg-slate-800 rounded-lg appearance-none cursor-pointer"
-                  />
+              {/* Slider 2: Shared Energy */}
+              <div className="space-y-1.5">
+                <div className="flex justify-between text-[11px] font-black text-[#006B56]">
+                  <span className="flex items-center gap-1">⚡ Shared Energy</span>
+                  <span>{sharedEnergyScore}/10</span>
                 </div>
-
-                {/* Energy Slider */}
-                <div className="space-y-1.5">
-                  <div className="flex justify-between text-[10px] font-bold text-slate-700 dark:text-slate-300">
-                    <span>⚡ Shared Energy</span>
-                    <span className="font-black text-[#006B56] dark:text-[#5FAF8A]">{energyLevel}/10</span>
-                  </div>
-                  <input 
-                    type="range" min="1" max="10" 
-                    value={energyLevel}
-                    onChange={(e) => {
-                      const val = parseInt(e.target.value);
-                      setEnergyLevel(val);
-                      syncHarmonyMetrics(stressLevel, val, communicationScore);
-                    }}
-                    className="w-full accent-[#006B56] dark:accent-[#5FAF8A] h-1 bg-white dark:bg-slate-800 rounded-lg appearance-none cursor-pointer"
-                  />
-                </div>
-
-                {/* Stress Slider */}
-                <div className="space-y-1.5">
-                  <div className="flex justify-between text-[10px] font-bold text-slate-700 dark:text-slate-300">
-                    <span>🧘 Tension Rate</span>
-                    <span className="font-black text-rose-500">{stressLevel}/10</span>
-                  </div>
-                  <input 
-                    type="range" min="1" max="10" 
-                    value={stressLevel}
-                    onChange={(e) => {
-                      const val = parseInt(e.target.value);
-                      setStressLevel(val);
-                      syncHarmonyMetrics(val, energyLevel, communicationScore);
-                    }}
-                    className="w-full accent-rose-400 h-1 bg-white dark:bg-slate-800 rounded-lg appearance-none cursor-pointer"
-                  />
-                </div>
+                <input 
+                  type="range" min="1" max="10" 
+                  value={sharedEnergyScore}
+                  onChange={(e) => {
+                    const val = parseInt(e.target.value);
+                    setSharedEnergyScore(val);
+                    saveDashboardStateToDb({ sharedEnergyScore: val });
+                  }}
+                  className="w-full accent-[#006B56] cursor-pointer"
+                />
               </div>
+
+              {/* Slider 3: Mutual Trust */}
+              <div className="space-y-1.5">
+                <div className="flex justify-between text-[11px] font-black text-[#006B56]">
+                  <span className="flex items-center gap-1">🛡️ Mutual Trust</span>
+                  <span>{mutualTrustScore}/10</span>
+                </div>
+                <input 
+                  type="range" min="1" max="10" 
+                  value={mutualTrustScore}
+                  onChange={(e) => {
+                    const val = parseInt(e.target.value);
+                    setMutualTrustScore(val);
+                    saveDashboardStateToDb({ mutualTrustScore: val });
+                  }}
+                  className="w-full accent-[#006B56] cursor-pointer"
+                />
+              </div>
+
             </div>
+
           </div>
 
-          {/* ────────────────────────────────────────────────────────────
-              COLUMN 2: MAIN DASHBOARD AREA (col-span-5)
-              ──────────────────────────────────────────────────────────── */}
+          {/* COLUMN 2: MIDDLE COLUMN (WELCOME & CLINICAL LOG) - 5/12 */}
           <div className="lg:col-span-5 space-y-6">
             
-            {/* Header Block with Wellness Score & Streak indicators */}
-            <div className="bg-white dark:bg-[#132E3F] rounded-[32px] border border-[#EAEAFF] dark:border-slate-800 p-6 shadow-[0_8px_30px_rgba(0,0,0,0.015)] space-y-5">
-              <div className="flex items-center justify-between">
-                <div className="space-y-1">
-                  <h1 className="text-xl font-heading font-black text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                    Hi, {userName}
-                  </h1>
-                  <p className="text-xs text-slate-400 dark:text-slate-400 font-bold">
-                    Let's track your relationship health daily!
-                  </p>
+            {/* Welcome Greeting block */}
+            <div className="bg-white border border-slate-100 p-6 rounded-[36px] shadow-soft-sm space-y-4">
+              <div className="flex items-start justify-between">
+                <div>
+                  <h2 className="text-xl font-heading font-black text-slate-800">Hi, {userName}</h2>
+                  <p className="text-[11px] text-slate-400 font-bold">Let's track your relationship health daily!</p>
                 </div>
                 
-                {isEditingPartner ? (
-                  <div className="flex items-center gap-1.5">
-                    <input 
-                      type="text" 
-                      value={tempPartnerName}
-                      onChange={(e) => setTempPartnerName(e.target.value)}
-                      className="px-2.5 py-1 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-full text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-[#006B56]"
-                    />
-                    <button onClick={savePartnerName} className="px-3 py-1 bg-[#006B56] text-white rounded-full font-bold text-[10px]">Save</button>
-                    <button onClick={() => setIsEditingPartner(false)} className="text-slate-400 text-[10px]">Cancel</button>
-                  </div>
-                ) : (
-                  <button 
-                    onClick={() => setIsEditingPartner(true)}
-                    className="text-[10px] font-black text-[#006B56] dark:text-[#5FAF8A] hover:underline"
-                  >
-                    Linked: {partnerName} (Edit)
-                  </button>
-                )}
+                {/* Link Partner control */}
+                <div className="text-right">
+                  {isEditingPartner ? (
+                    <div className="flex items-center gap-1">
+                      <input 
+                        type="text" 
+                        value={tempPartnerName}
+                        onChange={(e) => setTempPartnerName(e.target.value)}
+                        className="px-2 py-0.5 bg-slate-50 border border-[#ECE5F5] rounded text-[10px] text-slate-700 font-bold focus:outline-none focus:ring-1 focus:ring-[#7C6BC4] w-20"
+                      />
+                      <button onClick={savePartnerName} className="text-[9px] font-black text-[#7C6BC4] uppercase hover:underline">Save</button>
+                    </div>
+                  ) : (
+                    <div className="text-[10px] text-slate-600 font-bold">
+                      Linked: <span className="text-[#7C6BC4] font-black">{partnerName}</span>{" "}
+                      <button 
+                        onClick={() => {
+                          setTempPartnerName(partnerName);
+                          setIsEditingPartner(true);
+                        }} 
+                        className="text-[#7C6BC4] font-black underline hover:opacity-85"
+                      >
+                        (Edit)
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
 
-              {/* Dynamic Wellness Score and Streak display widgets */}
-              <div className="grid grid-cols-2 gap-4 pt-3 border-t border-slate-100 dark:border-slate-800/80">
-                <div className="p-3 bg-[#E6F4F0] dark:bg-[#112F28] rounded-2xl text-center space-y-1 border border-[#CBECE2]/30">
-                  <span className="text-[9px] uppercase font-black tracking-widest text-[#006B56] dark:text-[#5FAF8A]">Wellness Score</span>
-                  <h4 className="text-lg font-heading font-black text-[#006B56] dark:text-emerald-400">
-                    {userProfile?.percentage || 75}%
-                  </h4>
-                  <p className="text-[8px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wide">
-                    Level: {userProfile?.wellness_level || "Stable"}
-                  </p>
-                </div>
-
-                <div className="p-3 bg-amber-50 dark:bg-amber-950/20 rounded-2xl text-center space-y-1 border border-amber-100/30">
-                  <span className="text-[9px] uppercase font-black tracking-widest text-amber-750 dark:text-amber-400">Current Streak</span>
-                  <h4 className="text-lg font-heading font-black text-amber-700 dark:text-amber-400">
-                    Day {streakDays} 🔥
-                  </h4>
-                  <p className="text-[8px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wide">
-                    Daily check-in
-                  </p>
-                </div>
+              {/* Streak info */}
+              <div className="flex justify-between items-center pt-3 border-t border-slate-50">
+                <span className="text-[10px] uppercase font-black tracking-wider text-slate-400">Streak Progress</span>
+                <span className="px-3 py-1 rounded-full bg-[#FFF2EA] text-[#E37A47] font-black text-[10px] tracking-wide flex items-center gap-1.5">
+                  Day {streakDays} Streak 🔥
+                </span>
               </div>
             </div>
 
-            {/* Upcoming Appointment */}
-            <div className="bg-white dark:bg-[#132E3F] rounded-[32px] border border-[#EAEAFF] dark:border-slate-800 p-6 shadow-[0_8px_30px_rgba(0,0,0,0.015)] space-y-4">
-              <h3 className="font-heading font-black text-slate-800 dark:text-slate-100 text-xs uppercase tracking-wider text-slate-400">Upcoming appointment</h3>
-              
-              {appointments.length > 0 ? (() => {
-                const nextAppt = appointments[0];
-                return (
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-4">
-                      <div className="w-16 h-12 rounded-xl bg-[#E6F4F0] dark:bg-slate-800 flex items-center justify-center text-xl flex-shrink-0">
-                        🏥
-                      </div>
-                      <div>
-                        <h4 className="font-heading font-black text-sm text-slate-800 dark:text-slate-100">{nextAppt.hospital_name || nextAppt.location}</h4>
-                        <p className="text-[10px] text-slate-400 font-bold">{nextAppt.location || "Cozy Room"}</p>
-                      </div>
-                    </div>
+            {/* Upcoming Appointment card */}
+            <div className="bg-white border border-slate-100 p-6 rounded-[36px] shadow-soft-sm space-y-4">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] uppercase font-black tracking-widest text-[#7C6BC4]">Upcoming Appointment</span>
+                <span className="text-xs">📅</span>
+              </div>
 
-                    <div className="flex items-center justify-between bg-[#F5FBF9] dark:bg-slate-800/40 border border-[#E4EFE9]/40 dark:border-slate-700/40 px-4 py-3 rounded-2xl gap-3">
-                      <div className="flex items-center gap-3">
-                        <span className="text-lg">👩‍⚕️</span>
-                        <div>
-                          <h5 className="font-heading font-black text-xs text-slate-800 dark:text-slate-100">{nextAppt.doctor_name || partnerName}</h5>
-                          <p className="text-[9px] text-[#006B56] dark:text-[#5FAF8A] font-black uppercase tracking-wider">{nextAppt.category || "General Sync"}</p>
-                        </div>
-                      </div>
-                      <button 
-                        onClick={() => router.push("/call")}
-                        className="px-4 py-1.5 rounded-full bg-[#006B56] hover:bg-[#005B48] text-white font-bold text-[10px] uppercase tracking-wider shadow-sm transition-all active:scale-95"
-                      >
-                        Video call
-                      </button>
+              {upcomingApp ? (
+                <div className="space-y-4">
+                  <div className="flex items-start gap-4">
+                    <div className="w-10 h-10 rounded-2xl bg-[#EAEAFF] text-[#7C6BC4] flex items-center justify-center font-bold text-lg flex-shrink-0">
+                      🏥
                     </div>
-
-                    <div className="flex justify-between items-center text-[10px] font-bold text-slate-500 pt-1">
-                      <span className="flex items-center gap-1">
-                        <span className="material-symbols-outlined text-xs">calendar_today</span>
-                        {nextAppt.date}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <span className="material-symbols-outlined text-xs">alarm</span>
-                        {nextAppt.time}
-                      </span>
+                    <div className="space-y-1">
+                      <h4 className="font-heading font-black text-sm text-slate-800">{upcomingApp.title}</h4>
+                      <p className="text-[10px] text-slate-400 font-bold">{upcomingApp.desc}</p>
                     </div>
                   </div>
-                );
-              })() : (
-                <p className="text-xs text-slate-400 font-bold text-center py-4">No upcoming appointments scheduled.</p>
+
+                  <div className="flex justify-between items-center bg-[#F9FBFF] p-4 rounded-3xl border border-[#EDF3FF]">
+                    <div className="flex items-center gap-2">
+                      <span className="w-8 h-8 rounded-full bg-[#E5ECFF] text-[10px] flex items-center justify-center">👨‍⚕️</span>
+                      <div>
+                        <p className="text-[10px] font-black text-slate-700">{upcomingApp.doctor}</p>
+                        <p className="text-[9px] text-[#006B56] font-black uppercase tracking-wider">PHYSIOTHERAPY</p>
+                      </div>
+                    </div>
+
+                    {upcomingApp.videoCall && (
+                      <button className="px-4 py-1.5 rounded-full bg-[#006B56] hover:bg-[#005B48] text-white font-bold text-[9px] uppercase tracking-wider shadow-sm transition-all">
+                        Video Call
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Time Footer */}
+                  <div className="flex justify-between items-center text-[10px] text-slate-400 font-bold pt-2 border-t border-slate-50">
+                    <span className="flex items-center gap-1"><span className="material-symbols-outlined text-[12px] font-black">calendar_today</span>{upcomingApp.date}</span>
+                    <span className="flex items-center gap-1"><span className="material-symbols-outlined text-[12px] font-black">schedule</span>{upcomingApp.time}</span>
+                  </div>
+                </div>
+              ) : (
+                <div className="py-6 text-center text-[11px] text-slate-400 font-bold space-y-2">
+                  <p>No upcoming appointments found.</p>
+                  <button 
+                    onClick={() => {
+                      setActiveTab("monthly");
+                      setShowAddAppointment(true);
+                    }}
+                    className="text-[#7C6BC4] hover:underline"
+                  >
+                    + Add New Appointment
+                  </button>
+                </div>
               )}
             </div>
 
-            {/* Patient Activities chart and Generator */}
-            <div className="bg-white dark:bg-[#132E3F] rounded-[32px] border border-[#EAEAFF] dark:border-slate-800 p-6 shadow-[0_8px_30px_rgba(0,0,0,0.015)] space-y-5">
-              <div className="flex justify-between items-center">
-                <h3 className="font-heading font-black text-slate-800 dark:text-slate-100 text-xs uppercase tracking-wider text-slate-400">Patient activities</h3>
-                <span className="text-[10px] font-bold text-slate-400">Month ▾</span>
+            {/* Patient Activities chart widget */}
+            <div className="bg-white border border-slate-100 p-6 rounded-[36px] shadow-soft-sm space-y-4">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] uppercase font-black tracking-widest text-[#7C6BC4]">Patient Activities</span>
+                <span className="text-[9px] text-slate-400 font-bold border border-slate-100 rounded-md px-2 py-0.5 bg-slate-50/50">Month ▾</span>
               </div>
-              <p className="text-[10px] text-slate-400 font-bold">
-                Today, {new Date().toLocaleDateString("en-US", { day: "numeric", month: "long", year: "numeric" })}
-              </p>
 
-              {/* Bar chart */}
-              <div className="h-32 flex items-end justify-between gap-2.5 px-1 pt-2">
-                {monthlyActivity.map((act, index) => (
-                  <div key={index} className="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
-                    <div 
-                      className="w-full bg-[#006B56]/20 dark:bg-emerald-500/10 hover:bg-[#006B56] dark:hover:bg-[#5FAF8A] rounded-t-lg transition-all duration-300 cursor-pointer relative group"
-                      style={{ height: `${act.value}%` }}
-                    >
-                      <div className="absolute -top-7 left-1/2 transform -translate-x-1/2 bg-slate-800 text-white text-[8px] font-bold px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity">
-                        {act.value}%
-                      </div>
+              <div className="space-y-1">
+                <p className="text-[10px] text-slate-400 font-bold">Today, 5 October 2022</p>
+              </div>
+
+              {/* Simple Connection Rating bar chart */}
+              <div className="h-32 flex items-end justify-between gap-2 pt-4 px-2">
+                {[
+                  { day: "Sun", conversation: 6, energy: 5, calm: 7 },
+                  { day: "Mon", conversation: 8, energy: 7, calm: 8 },
+                  { day: "Tue", conversation: 7, energy: 6, calm: 6 },
+                  { day: "Wed", conversation: 9, energy: 8, calm: 9 },
+                  { day: "Thu", conversation: 8, energy: 7, calm: 8 }
+                ].map((d, index) => (
+                  <div key={index} className="flex-1 flex flex-col items-center gap-2">
+                    <div className="w-full flex items-end gap-1 justify-center h-20">
+                      <div className="w-2.5 bg-[#7C6BC4] rounded-t-sm" style={{ height: `${d.conversation * 10}%` }} title={`Conv: ${d.conversation}`} />
+                      <div className="w-2.5 bg-[#006B56] rounded-t-sm" style={{ height: `${d.energy * 10}%` }} title={`Energy: ${d.energy}`} />
+                      <div className="w-2.5 bg-[#FCE3CF] rounded-t-sm" style={{ height: `${d.calm * 10}%` }} title={`Calm: ${d.calm}`} />
                     </div>
-                    <span className="text-[9px] text-slate-400 font-bold">{act.month}</span>
+                    <span className="text-[9px] text-slate-400 font-black">{d.day}</span>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Mood Overview Solid Pie Chart */}
-            <div className="bg-white dark:bg-[#132E3F] rounded-[32px] border border-[#EAEAFF] dark:border-slate-800 p-6 shadow-[0_8px_30px_rgba(0,0,0,0.015)] space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <span className="text-[9px] uppercase font-black tracking-widest text-[#006B56] dark:text-[#5FAF8A]">Overall Metrics</span>
-                  <h3 className="text-base font-heading font-black text-slate-800 dark:text-slate-100">Harmony Overview</h3>
-                </div>
-                <span className="text-xl">📊</span>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center pt-2">
-                {/* SVG solid pie container */}
-                <div className="relative w-36 h-36 mx-auto flex items-center justify-center">
-                  <svg viewBox="0 0 100 100" className="w-full h-full transform -rotate-90 select-none">
-                    {pieSlices.map((slice, idx) => (
-                      <path 
-                        key={idx}
-                        d={slice.pathData}
-                        fill={slice.color}
-                        className="transition-all duration-500 hover:opacity-90 cursor-pointer"
-                      />
-                    ))}
-                  </svg>
-                  <div className="absolute inset-0 flex items-center justify-center select-none pointer-events-none">
-                    {pieSlices.map((slice, idx) => {
-                      if (slice.value < 5) return null;
-                      return (
-                        <span 
-                          key={`label-${idx}`}
-                          className="absolute text-[8px] font-black text-white"
-                          style={{
-                            left: `${slice.labelX}%`,
-                            top: `${slice.labelY}%`,
-                            transform: "translate(-50%, -50%)"
-                          }}
-                        >
-                          {slice.value}%
-                        </span>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* Legends */}
-                <div className="grid grid-cols-2 gap-x-2 gap-y-1.5 text-[9px] font-bold text-slate-500 dark:text-slate-400">
-                  {pieBreakdown.map((slice, idx) => (
-                    <div key={idx} className="flex items-center gap-1.5">
-                      <span className="w-2.5 h-2.5 rounded-sm flex-shrink-0" style={{ backgroundColor: slice.color }} />
-                      <span className="truncate">{slice.label}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
           </div>
 
-          {/* ────────────────────────────────────────────────────────────
-              COLUMN 3: SCHEDULES & HABITS (col-span-4)
-              ──────────────────────────────────────────────────────────── */}
+          {/* COLUMN 3: RIGHT COLUMN (CALENDAR & HABITS) - 4/12 */}
           <div className="lg:col-span-4 space-y-6">
             
-            {/* Appointments switcher & Calendar / Daily Schedules */}
-            <div className="bg-white dark:bg-[#132E3F] rounded-[32px] border border-[#EAEAFF] dark:border-slate-800 p-6 shadow-[0_8px_30px_rgba(0,0,0,0.015)] space-y-5">
-              <h3 className="font-heading font-black text-slate-800 dark:text-slate-100 text-xs uppercase tracking-wider text-slate-400">List of appointments</h3>
-              
-              {/* Tab Selector */}
-              <div className="grid grid-cols-2 p-1 bg-[#F5F8F6] dark:bg-slate-800/60 rounded-xl border border-slate-200/40 dark:border-slate-700/30">
+            {/* List of Appointments Calendar Widget */}
+            <div className="bg-white border border-slate-100 p-5 rounded-[36px] shadow-soft-sm space-y-5">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] uppercase font-black tracking-widest text-[#7C6BC4]">List of Appointments</span>
+              </div>
+
+              {/* Monthly/Daily Tabs */}
+              <div className="bg-slate-100/50 p-1 rounded-2xl flex gap-1 border border-slate-200/20">
                 <button 
-                  onClick={() => {
-                    setActiveTab("Monthly");
-                    setShowAddAppt(false);
-                  }}
-                  className="py-1.5 text-center rounded-lg text-[10px] font-black uppercase tracking-wider transition-all"
-                  style={{
-                    backgroundColor: activeTab === "Monthly" ? "#006B56" : "transparent",
-                    color: activeTab === "Monthly" ? "white" : "#94A3B8"
-                  }}
+                  onClick={() => { setActiveTab("monthly"); setShowAddAppointment(false); }}
+                  className={`flex-1 py-2 text-center rounded-xl text-[9px] font-black uppercase tracking-wider transition-all cursor-pointer ${
+                    activeTab === "monthly" ? "bg-[#006B56] text-white shadow-sm" : "text-slate-400 hover:text-slate-600"
+                  }`}
                 >
                   Monthly
                 </button>
                 <button 
-                  onClick={() => setActiveTab("Daily")}
-                  className="py-1.5 text-center rounded-lg text-[10px] font-black uppercase tracking-wider transition-all"
-                  style={{
-                    backgroundColor: activeTab === "Daily" ? "#006B56" : "transparent",
-                    color: activeTab === "Daily" ? "white" : "#94A3B8"
-                  }}
+                  onClick={() => { setActiveTab("daily"); setShowAddAppointment(false); }}
+                  className={`flex-1 py-2 text-center rounded-xl text-[9px] font-black uppercase tracking-wider transition-all cursor-pointer ${
+                    activeTab === "daily" ? "bg-[#006B56] text-white shadow-sm" : "text-slate-400 hover:text-slate-600"
+                  }`}
                 >
                   Daily
                 </button>
               </div>
 
-              {/* SWITCHABLE DISPLAY FOR MONTHLY / DAILY */}
-              {activeTab === "Monthly" ? (
-                /* Monthly calendar display */
-                <div className="space-y-3 pt-1">
-                  <div className="flex justify-between items-center text-xs font-black text-slate-700 dark:text-slate-200">
-                    <span>{new Date().toLocaleDateString("en-US", { month: "long", year: "numeric" })}</span>
-                    <div className="flex gap-2 text-slate-400">
-                      <span className="material-symbols-outlined text-xs cursor-pointer">chevron_left</span>
-                      <span className="material-symbols-outlined text-xs">chevron_right</span>
+              {/* Tab: Monthly (Show Calendar) */}
+              {activeTab === "monthly" && !showAddAppointment && (
+                <div className="space-y-4">
+                  {/* Calendar Month Header */}
+                  <div className="flex justify-between items-center px-1">
+                    <span className="font-heading font-black text-xs text-slate-800">{MONTH_NAMES[currentMonth]} {currentYear}</span>
+                    <div className="flex items-center gap-1.5">
+                      <button onClick={handlePrevMonth} className="material-symbols-outlined text-sm font-bold text-slate-400 hover:text-slate-700 cursor-pointer select-none">chevron_left</button>
+                      <button onClick={handleNextMonth} className="material-symbols-outlined text-sm font-bold text-slate-400 hover:text-slate-700 cursor-pointer select-none">chevron_right</button>
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-7 gap-1 text-center text-[10px] font-bold text-slate-500">
-                    <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
-                    
-                    {calendarPadding.map((_, i) => <span key={`pad-${i}`} />)}
-
-                    {calendarDays.map((day) => (
-                      <button
-                        key={day}
-                        onClick={() => setSelectedDay(day)}
-                        className={`w-6 h-6 rounded-full mx-auto flex items-center justify-center transition-all ${
-                          selectedDay === day 
-                            ? "bg-[#E67E22] text-white font-black" 
-                            : "hover:bg-slate-200/50"
-                        }`}
-                      >
-                        {day}
-                      </button>
+                  {/* Calendar Grid */}
+                  <div className="grid grid-cols-7 gap-y-2 text-center">
+                    {/* Weekdays */}
+                    {WEEKDAYS.map((w, idx) => (
+                      <span key={idx} className="text-[9px] text-slate-400 font-bold">{w}</span>
                     ))}
+                    
+                    {/* Empty starting padding days */}
+                    {Array.from({ length: firstDayIndex }).map((_, idx) => (
+                      <span key={`empty-${idx}`} />
+                    ))}
+
+                    {/* Active Days */}
+                    {Array.from({ length: daysInMonth }).map((_, idx) => {
+                      const dayNumber = idx + 1;
+                      const dateObj = new Date(currentYear, currentMonth, dayNumber);
+                      const isSelected = selectedDate.getDate() === dayNumber && selectedDate.getMonth() === currentMonth && selectedDate.getFullYear() === currentYear;
+                      
+                      // Highlight dates containing scheduled appointments
+                      const hasAppointments = getAppointmentsForDate(dateObj).length > 0;
+
+                      return (
+                        <div key={dayNumber} className="flex justify-center items-center h-6">
+                          <button 
+                            onClick={() => setSelectedDate(dateObj)}
+                            className={`w-6 h-6 rounded-full flex items-center justify-center text-[9px] font-black cursor-pointer transition-all ${
+                              isSelected 
+                                ? "bg-[#E37A47] text-white font-extrabold shadow-sm" 
+                                : hasAppointments 
+                                  ? "bg-[#E5F5F0] text-[#006B56] border border-[#CDEAE1]/60" 
+                                  : "text-slate-700 hover:bg-slate-50"
+                            }`}
+                          >
+                            {dayNumber}
+                          </button>
+                        </div>
+                      );
+                    })}
                   </div>
-                </div>
-              ) : (
-                /* Fully functional Daily appointments list with scheduler */
-                <div className="space-y-4 pt-1">
-                  <div className="space-y-2.5 max-h-[220px] overflow-y-auto pr-1">
-                    {appointments.length > 0 ? (
-                      appointments.map((appt) => (
-                        <div key={appt.id} className="p-3 bg-[#F5FBF9] dark:bg-slate-800/40 border border-[#E4EFE9]/40 dark:border-slate-700/40 rounded-2xl flex items-center justify-between text-xs transition-colors">
+
+                  {/* Selected Date Appointments List */}
+                  <div className="pt-2 border-t border-slate-50 space-y-2.5">
+                    <div className="flex justify-between items-center text-[10px] font-black text-slate-400 uppercase">
+                      <span>Schedule: {selectedDate.getDate()} {MONTH_NAMES[selectedDate.getMonth()]}</span>
+                      <button 
+                        onClick={() => setShowAddAppointment(true)} 
+                        className="text-[#7C6BC4] hover:underline"
+                      >
+                        + Add
+                      </button>
+                    </div>
+
+                    {getAppointmentsForDate(selectedDate).length > 0 ? (
+                      getAppointmentsForDate(selectedDate).map((app) => (
+                        <div key={app.id} className="p-3 rounded-2xl bg-[#F9FBFF] border border-[#EDF3FF] flex items-center justify-between">
                           <div className="space-y-0.5 text-left">
-                            <h4 className="font-heading font-black text-slate-800 dark:text-slate-100">{appt.title}</h4>
-                            <p className="text-[9px] text-[#006B56] dark:text-[#5FAF8A] font-black uppercase tracking-wider">{appt.time}</p>
+                            <h5 className="text-[10px] font-black text-slate-800">{app.title}</h5>
+                            <p className="text-[9px] text-slate-400 font-bold">{app.desc} ({app.time})</p>
                           </div>
-                          <span className="text-[10px] text-slate-400 font-bold">{appt.hospital_name || appt.location}</span>
+                          <span className="text-[10px]">🥂</span>
                         </div>
                       ))
                     ) : (
-                      <p className="text-[10px] text-slate-400 font-bold text-center py-4">No appointments for today.</p>
+                      <p className="text-[10px] text-slate-400 font-bold py-1">No activities set on this date.</p>
                     )}
                   </div>
+                </div>
+              )}
 
-                  {/* Add Appointment form toggler */}
-                  {!showAddAppt ? (
-                    <button 
-                      onClick={() => setShowAddAppt(true)}
-                      className="w-full py-2 bg-[#006B56] hover:bg-[#005B48] text-white rounded-full font-bold text-[9px] uppercase tracking-wider transition-all"
-                    >
-                      + Schedule Appt
-                    </button>
+              {/* Tab: Daily (Show Today's Schedule Overview) */}
+              {activeTab === "daily" && !showAddAppointment && (
+                <div className="space-y-3 max-h-[300px] overflow-y-auto pr-1">
+                  <div className="flex justify-between items-center text-[10px] font-black text-slate-400 uppercase">
+                    <span>Active Appointments List</span>
+                    <button onClick={() => setShowAddAppointment(true)} className="text-[#7C6BC4] hover:underline">+ Add</button>
+                  </div>
+
+                  {appointments.length > 0 ? (
+                    appointments.map(app => (
+                      <div key={app.id} className="p-3 rounded-2xl border border-slate-100 space-y-1 text-left">
+                        <div className="flex justify-between items-center">
+                          <span className={`px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-wider ${app.type === 'medical' ? 'bg-[#E5F5F0] text-[#006B56]' : 'bg-[#FFF2EA] text-[#E37A47]'}`}>{app.type}</span>
+                          <span className="text-[9px] text-slate-400 font-bold">{app.date}</span>
+                        </div>
+                        <h5 className="text-[10px] font-black text-slate-800">{app.title}</h5>
+                        <p className="text-[9px] text-slate-400 font-bold leading-normal">{app.desc} • {app.time}</p>
+                      </div>
+                    ))
                   ) : (
-                    <form onSubmit={handleAddAppointment} className="p-3 bg-[#F5FBF9] dark:bg-slate-800/20 border border-slate-200/40 rounded-2xl space-y-2.5 text-left">
-                      <div className="space-y-1">
-                        <label className="text-[8px] font-black uppercase text-slate-400">Appointment Title</label>
-                        <input 
-                          type="text" 
-                          placeholder="e.g. Couples Massage"
-                          value={apptTitle}
-                          onChange={(e) => setApptTitle(e.target.value)}
-                          className="w-full px-2.5 py-1.5 text-xs bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#006B56]"
-                          required
-                        />
-                      </div>
-                      <div className="space-y-1">
-                        <label className="text-[8px] font-black uppercase text-slate-400">Retreat/Venue</label>
-                        <input 
-                          type="text" 
-                          placeholder="e.g. Cozy Retreat Lounge"
-                          value={apptVenue}
-                          onChange={(e) => setApptVenue(e.target.value)}
-                          className="w-full px-2.5 py-1.5 text-xs bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#006B56]"
-                          required
-                        />
-                      </div>
-                      <div className="flex gap-2 pt-2">
-                        <button type="submit" className="flex-1 py-1.5 bg-[#006B56] hover:bg-[#005B48] text-white font-bold text-[9px] uppercase tracking-wider rounded-lg">Save</button>
-                        <button type="button" onClick={() => setShowAddAppt(false)} className="flex-1 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold text-[9px] uppercase tracking-wider rounded-lg">Cancel</button>
-                      </div>
-                    </form>
+                    <p className="text-[10px] text-slate-400 font-bold py-4 text-center">No active appointments set.</p>
                   )}
                 </div>
               )}
+
+              {/* Sub-State: Add Appointment Form */}
+              {showAddAppointment && (
+                <form onSubmit={handleAddAppointmentSubmit} className="space-y-3.5 text-left border border-slate-100 p-4 rounded-3xl bg-slate-50/20">
+                  <div className="flex justify-between items-center">
+                    <span className="text-[10px] font-black text-slate-400 uppercase">New Appointment</span>
+                    <button type="button" onClick={() => setShowAddAppointment(false)} className="text-[10px] text-slate-400 hover:text-slate-600 font-bold">Cancel</button>
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-[9px] font-black text-slate-400 uppercase">Title</label>
+                    <input 
+                      type="text" 
+                      placeholder="e.g. Cinema Date Night" 
+                      value={newTitle} 
+                      onChange={e => setNewTitle(e.target.value)}
+                      className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-[11px] focus:outline-none focus:ring-1 focus:ring-[#7C6BC4]"
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-[9px] font-black text-slate-400 uppercase">Location / Description</label>
+                    <input 
+                      type="text" 
+                      placeholder="e.g. Regal Theater, NY" 
+                      value={newDesc} 
+                      onChange={e => setNewDesc(e.target.value)}
+                      className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-[11px] focus:outline-none focus:ring-1 focus:ring-[#7C6BC4]"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="space-y-1">
+                      <label className="text-[9px] font-black text-slate-400 uppercase">Time</label>
+                      <input 
+                        type="text" 
+                        placeholder="e.g. 08.30 pm" 
+                        value={newTime} 
+                        onChange={e => setNewTime(e.target.value)}
+                        className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-[11px] focus:outline-none focus:ring-1 focus:ring-[#7C6BC4]"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[9px] font-black text-slate-400 uppercase">Type</label>
+                      <select 
+                        value={newType} 
+                        onChange={e => setNewType(e.target.value)}
+                        className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-[11px] focus:outline-none focus:ring-1 focus:ring-[#7C6BC4]"
+                      >
+                        <option value="date">Date Night</option>
+                        <option value="medical">Medical / Therapy</option>
+                        <option value="class">Learning Class</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <button 
+                    type="submit"
+                    className="w-full py-2.5 rounded-xl bg-[#006B56] hover:bg-[#005B48] text-white font-bold text-xs transition-all cursor-pointer shadow-sm text-center"
+                  >
+                    Save Appointment
+                  </button>
+                </form>
+              )}
+
             </div>
 
-            {/* Daily progress circular ring */}
-            <div className="bg-[#E6F4F0] dark:bg-[#112F28] border border-[#CBECE2] dark:border-[#1C463C] p-5 rounded-[24px] flex items-center justify-between gap-4 shadow-sm">
-              <div className="space-y-1">
-                <h4 className="font-heading font-black text-xs text-slate-800 dark:text-slate-100">Daily progress</h4>
-                <p className="text-[9px] text-[#006B56] dark:text-[#5FAF8A] font-bold leading-normal">
-                  Keep improving your connection quality
-                </p>
+            {/* Daily Progress circle card */}
+            <div className="bg-[#E5F5F0] border border-[#CDEAE1] p-6 rounded-[36px] shadow-sm flex items-center justify-between gap-4">
+              <div className="space-y-1 text-left">
+                <h4 className="text-sm font-heading font-black text-slate-800">Daily progress</h4>
+                <p className="text-[10px] text-slate-500 font-bold leading-normal">Keep improving your connection quality</p>
               </div>
-              
-              {/* SVG circle */}
+
+              {/* Progress Ring */}
               <div className="relative w-16 h-16 flex items-center justify-center flex-shrink-0">
-                <svg viewBox="0 0 64 64" className="w-full h-full transform -rotate-90">
+                <svg className="w-full h-full transform -rotate-90">
                   <circle cx="32" cy="32" r="26" stroke="#CBECE2" strokeWidth="4.5" fill="transparent" />
-                  <circle cx="32" cy="32" r="26" stroke="#006B56" strokeWidth="4.5" fill="transparent"
-                    strokeDasharray="163.3"
-                    strokeDashoffset={163.3 - (163.3 * progressPercent) / 100}
-                    strokeLinecap="round"
+                  <circle 
+                    cx="32" cy="32" r="26" stroke="#006B56" strokeWidth="4.5" fill="transparent" 
+                    strokeDasharray={163.36}
+                    strokeDashoffset={163.36 - (163.36 * habitsProgressPercent) / 100}
                     className="transition-all duration-500"
                   />
                 </svg>
-                <span className="absolute text-[10px] font-black text-slate-800 dark:text-slate-100">
-                  {progressPercent}%
-                </span>
+                <span className="absolute text-[10px] font-black text-slate-800">{habitsProgressPercent}%</span>
               </div>
             </div>
 
-            {/* Habit schedules checkin logs */}
+            {/* Daily Habits checklist */}
             <div className="space-y-3">
-              {tasks.map((task) => (
+              {habits.map((habit) => (
                 <div 
-                  key={task.id}
-                  onClick={() => handleToggleTask(task.id, task.completed)}
-                  className="p-3.5 rounded-2xl bg-white dark:bg-[#132E3F] border border-[#EAEAFF] dark:border-slate-800 flex items-center justify-between cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-all active:scale-[0.99] select-none shadow-[0_2px_10px_rgba(0,0,0,0.01)]"
+                  key={habit.id}
+                  onClick={() => toggleHabit(habit.id)}
+                  className="flex items-center justify-between p-4 rounded-3xl bg-white border border-slate-100 hover:bg-slate-50 transition-all cursor-pointer shadow-soft-sm select-none"
                 >
                   <div className="flex items-center gap-3">
-                    <div className={`w-4 h-4 rounded-full flex items-center justify-center border transition-all ${
-                      task.completed ? "bg-[#006B56] border-[#006B56] text-white" : "border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800"
+                    <div className={`w-5 h-5 rounded-full flex items-center justify-center border transition-all ${
+                      habit.completed ? "bg-[#006B56] border-[#006B56] text-white" : "border-slate-300 bg-white"
                     }`}>
-                      {task.completed && <span className="material-symbols-outlined text-[9px] font-black">check</span>}
+                      {habit.completed && <span className="material-symbols-outlined text-xs font-bold">check</span>}
                     </div>
-                    <div>
-                      <h5 className={`font-heading font-black text-xs text-slate-800 dark:text-slate-100 ${task.completed ? "line-through text-slate-400" : ""}`}>
-                        {task.text.replace(/^[\p{Emoji}\s]+/u, "")}
+                    <div className="space-y-0.5 text-left">
+                      <h5 className={`text-[10px] font-black leading-relaxed ${habit.completed ? "line-through text-slate-400" : "text-slate-800"}`}>
+                        {habit.text}
                       </h5>
-                      <p className="text-[9px] text-slate-400 font-bold">Active Habit</p>
+                      <p className="text-[8px] text-slate-400 font-bold">{habit.category}</p>
                     </div>
                   </div>
-                  <span className="material-symbols-outlined text-xs text-slate-400">chevron_right</span>
+                  <span className="material-symbols-outlined text-slate-300 text-xs font-bold">chevron_right</span>
                 </div>
               ))}
-            </div>
-
-            {/* Date Generator spark panel */}
-            <div className="bg-gradient-to-br from-[#E6F4F0] to-white dark:from-teal-950/20 dark:to-transparent border border-[#CBECE2] dark:border-slate-800 p-5 rounded-[24px] space-y-4">
-              <div className="text-left space-y-1">
-                <span className="text-[8px] font-black uppercase text-[#006B56] dark:text-[#5FAF8A] tracking-widest">Interactive ideas</span>
-                <h4 className="font-heading font-black text-xs text-slate-800 dark:text-slate-100">Tailored Date Idea 🥂</h4>
-              </div>
-              
-              <div className="bg-white dark:bg-[#132E3F]/40 border border-[#CBECE2]/20 p-4 rounded-xl text-center space-y-1.5">
-                <h5 className="font-heading font-black text-[11px] text-slate-850 dark:text-slate-150 pt-0.5">{currentDateIdea.title}</h5>
-                <p className="text-[9px] text-slate-400 font-bold leading-normal">
-                  {currentDateIdea.desc}
-                </p>
-              </div>
-
-              <button
-                onClick={handleGenerateDate}
-                disabled={isSpinning}
-                className="w-full py-2 bg-[#006B56] hover:bg-[#005B48] text-white rounded-full font-bold text-[9px] uppercase tracking-wider transition-all disabled:opacity-50"
-              >
-                {isSpinning ? "Drawing... 🎲" : "Generate Idea ✨"}
-              </button>
             </div>
 
           </div>
 
         </div>
-      )}
 
-      {/* ==================== CONFLICT CALM ZONE DIALOG ==================== */}
+      </div>
+
+      {/* ==================== COMPLETE ASSESSMENT ONBOARDING MODAL ==================== */}
+      <AnimatePresence>
+        {showAssessmentModal && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-[#2E2A3D]/80 backdrop-blur-xl flex items-center justify-center p-4"
+          >
+            <motion.div 
+              initial={{ scale: 0.95 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.95 }}
+              className="bg-white max-w-sm w-full p-8 rounded-[36px] text-center space-y-6 shadow-2xl relative border border-[#EAEAFF]"
+            >
+              <div className="w-16 h-16 rounded-full bg-[#E37A47]/10 text-[#E37A47] flex items-center justify-center mx-auto border border-[#E37A47]/20">
+                <span className="material-symbols-outlined text-3xl font-black">assignment</span>
+              </div>
+
+              <div className="space-y-1 font-heading">
+                <span className="text-[10px] uppercase font-black tracking-widest text-[#E37A47]">Onboarding Retreat</span>
+                <h3 className="text-xl font-heading font-black text-slate-800">Complete Assessment</h3>
+              </div>
+
+              <p className="text-[11px] text-slate-400 font-bold leading-relaxed px-2">
+                To unlock your personalized Couples Dashboard, custom connection checklist, and relationship health tracking, please complete your initial assessment.
+              </p>
+
+              <div className="space-y-2">
+                <button 
+                  onClick={() => {
+                    localStorage.setItem("couple_reset_assessment_flow", "true");
+                    router.push("/assessment");
+                  }}
+                  className="w-full py-3.5 bg-[#E37A47] hover:bg-[#D36A37] text-white rounded-full font-bold text-xs shadow-sm transition-transform active:scale-95 flex items-center justify-center gap-1.5 cursor-pointer"
+                >
+                  <span className="material-symbols-outlined text-sm font-black">play_arrow</span>
+                  Start Assessment
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ==================== DAILY CHECK-IN MODAL (CHECK IT NOW) ==================== */}
+      <AnimatePresence>
+        {showCheckinModal && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-[#2D283E]/80 backdrop-blur-md flex items-center justify-center p-4"
+          >
+            <motion.div 
+              initial={{ scale: 0.95, y: 15 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.95, y: 15 }}
+              className="bg-white max-w-md w-full p-8 rounded-[40px] border border-slate-100 shadow-2xl space-y-6 relative text-center"
+            >
+              <button 
+                onClick={() => setShowCheckinModal(false)}
+                className="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-slate-100"
+              >
+                <span className="material-symbols-outlined text-sm font-bold">close</span>
+              </button>
+
+              <div className="space-y-1">
+                <span className="px-3.5 py-1 rounded-full bg-[#E5F5F0] text-[#006B56] text-[10px] font-black uppercase tracking-wider border border-[#CDEAE1]">
+                  Daily Connection Check-in
+                </span>
+                <h3 className="text-xl font-heading font-black text-slate-800 pt-2">How is your connection today?</h3>
+              </div>
+
+              {/* Mood options */}
+              <div className="space-y-3 text-left">
+                <label className="text-[10px] font-black uppercase tracking-wider text-slate-400">Current Mood/Vibe</label>
+                <div className="grid grid-cols-5 gap-2">
+                  {[
+                    { key: "Great", label: "😊 Great" },
+                    { key: "Good", label: "🙂 Good" },
+                    { key: "Normal", label: "😐 Okay" },
+                    { key: "Not Good", label: "😕 Down" },
+                    { key: "Bad", label: "😞 Bad" }
+                  ].map((m) => (
+                    <button
+                      key={m.key}
+                      type="button"
+                      onClick={() => setSelectedMood(m.key)}
+                      className={`py-2 px-1 text-center rounded-xl text-[9px] font-black transition-all ${
+                        selectedMood === m.key 
+                          ? "bg-[#006B56] text-white shadow-sm" 
+                          : "bg-slate-50 text-slate-500 hover:bg-slate-100"
+                      }`}
+                    >
+                      {m.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Activities Checklist */}
+              <div className="space-y-3 text-left">
+                <label className="text-[10px] font-black uppercase tracking-wider text-slate-400">Today's Connection Activities</label>
+                <div className="space-y-2">
+                  {checkinActivitiesList.map((activity) => {
+                    const isChecked = checkedActivities.includes(activity);
+                    return (
+                      <div 
+                        key={activity}
+                        onClick={() => {
+                          if (isChecked) {
+                            setCheckedActivities(prev => prev.filter(a => a !== activity));
+                          } else {
+                            setCheckedActivities(prev => [...prev, activity]);
+                          }
+                        }}
+                        className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50/50 hover:bg-slate-50 border border-slate-100 cursor-pointer select-none transition-all"
+                      >
+                        <div className={`w-4 h-4 rounded flex items-center justify-center border transition-all ${
+                          isChecked ? "bg-[#006B56] border-[#006B56] text-white" : "border-slate-300 bg-white"
+                        }`}>
+                          {isChecked && <span className="material-symbols-outlined text-[10px] font-black">check</span>}
+                        </div>
+                        <span className="text-[10px] font-bold text-slate-700">{activity}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Short reflection note */}
+              <div className="space-y-1.5 text-left">
+                <label className="text-[10px] font-black uppercase tracking-wider text-slate-400">Journal Reflections</label>
+                <textarea
+                  value={reflectionText}
+                  onChange={(e) => setReflectionText(e.target.value)}
+                  placeholder="Share a brief private reflection about your relationship today..."
+                  className="w-full px-3.5 py-3 border border-slate-200 rounded-2xl text-[11px] focus:outline-none focus:ring-1 focus:ring-[#006B56] min-h-[70px] bg-slate-50/20"
+                />
+              </div>
+
+              <button
+                onClick={handleCheckinSubmit}
+                disabled={savingCheckin}
+                className="w-full py-3.5 bg-[#006B56] hover:bg-[#005B48] text-white font-bold text-xs rounded-full shadow-md transition-all active:scale-95 disabled:opacity-50"
+              >
+                {savingCheckin ? "Saving Check-in... 💾" : "Save Connection Log"}
+              </button>
+
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ==================== EMPATHY PAUSE / CALM ZONE DIALOG ==================== */}
       <AnimatePresence>
         {calmZoneActive && (
           <motion.div 
@@ -926,32 +1118,35 @@ export default function CouplesDashboard() {
               initial={{ scale: 0.95, y: 15 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.95, y: 15 }}
-              className="bg-[#fdf7ff] dark:bg-[#132E3F] max-w-md w-full p-8 rounded-[40px] border border-white/50 dark:border-slate-800 shadow-2xl space-y-6 relative text-center"
+              className="bg-[#fdf7ff] max-w-md w-full p-8 rounded-[40px] border border-white/50 shadow-2xl space-y-6 relative text-center"
             >
+              {/* Close Button */}
               <button 
                 onClick={() => {
                   setCalmZoneActive(false);
                   setBreathingActive(false);
                 }}
-                className="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 hover:bg-slate-200 transition-colors"
+                className="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-slate-100 transition-colors"
               >
                 <span className="material-symbols-outlined text-sm font-bold">close</span>
               </button>
 
               <div className="space-y-1">
-                <span className="px-3.5 py-1 rounded-full bg-rose-100 dark:bg-rose-950 text-rose-800 dark:text-rose-300 text-[10px] font-black uppercase tracking-wider">
+                <span className="px-3.5 py-1 rounded-full bg-rose-100 text-rose-800 text-[10px] font-black uppercase tracking-wider">
                   Conflict Resolution Portal
                 </span>
-                <h3 className="text-2xl font-heading font-black text-slate-800 dark:text-slate-100 pt-2">Empathy Pause</h3>
+                <h3 className="text-2xl font-heading font-black text-slate-800 pt-2">Empathy Pause</h3>
               </div>
 
-              <div className="bg-white dark:bg-[#1A3A4E] border border-slate-200/40 p-6 rounded-3xl min-h-[220px] flex flex-col justify-between text-left">
+              {/* Steps Area */}
+              <div className="bg-white border border-slate-100 p-6 rounded-3xl min-h-[220px] flex flex-col justify-between text-left">
                 
+                {/* Step 1: Mutual Pause & Breathing */}
                 {calmStep === 1 && (
                   <div className="space-y-4 text-center">
                     <span className="text-3xl">🧘 Step 1: Synced Pause</span>
-                    <h4 className="font-heading font-black text-sm text-slate-800 dark:text-slate-100">Slow down together</h4>
-                    <p className="text-xs text-slate-400 dark:text-slate-300 leading-relaxed">
+                    <h4 className="font-heading font-black text-sm text-slate-800">Slow down together</h4>
+                    <p className="text-xs text-slate-500 leading-relaxed">
                       Sit facing each other. Agree to hold a 1-minute silence. Click below to start the visual breathing guide.
                     </p>
                     
@@ -963,10 +1158,10 @@ export default function CouplesDashboard() {
                           }}
                           transition={{ duration: 4, ease: "easeInOut", repeat: Infinity }}
                           className={`w-16 h-16 rounded-full flex items-center justify-center transition-colors duration-500 ${
-                            breathingPhase === "Inhale" ? "bg-[#006B56]/30" : breathingPhase === "Hold" ? "bg-amber-100/50" : "bg-teal-500/25"
+                            breathingPhase === "Inhale" ? "bg-emerald-200/50" : breathingPhase === "Hold" ? "bg-amber-100" : "bg-purple-200/50"
                           }`}
                         />
-                        <span className="text-xs font-black text-slate-800 dark:text-slate-200">{breathingPhase} ({breathingSeconds}s)</span>
+                        <span className="text-xs font-black text-slate-700">{breathingPhase} ({breathingSeconds}s)</span>
                       </div>
                     ) : (
                       <button 
@@ -975,7 +1170,7 @@ export default function CouplesDashboard() {
                           setBreathingPhase("Inhale");
                           setBreathingSeconds(4);
                         }}
-                        className="px-4 py-2 bg-[#006B56] hover:bg-[#005B48] text-white text-xs font-bold rounded-full shadow-xs active:scale-95"
+                        className="px-4 py-2 bg-[#7C6BC4] hover:bg-[#6A59B2] text-white text-xs font-bold rounded-full shadow-xs active:scale-95 cursor-pointer"
                       >
                         Start Breathing Guide 🌀
                       </button>
@@ -983,11 +1178,12 @@ export default function CouplesDashboard() {
                   </div>
                 )}
 
+                {/* Step 2: "I Feel" Statements */}
                 {calmStep === 2 && (
                   <div className="space-y-2">
                     <span className="text-3xl">🗣️ Step 2: Share Feelings</span>
-                    <h4 className="font-heading font-black text-sm text-slate-800 dark:text-slate-100">Use "I Feel" phrasing</h4>
-                    <p className="text-xs text-slate-400 dark:text-slate-300 leading-relaxed">
+                    <h4 className="font-heading font-black text-sm text-slate-800">Use "I Feel" phrasing</h4>
+                    <p className="text-xs text-slate-500 leading-relaxed">
                       One partner shares their perspective using "I feel" instead of accusing "You did". 
                       <br /><br />
                       <em>Example: "I feel unheard when decisions are made without talking first," instead of "You never include me."</em>
@@ -995,11 +1191,12 @@ export default function CouplesDashboard() {
                   </div>
                 )}
 
+                {/* Step 3: Mirror & Validate */}
                 {calmStep === 3 && (
                   <div className="space-y-2">
                     <span className="text-3xl">🗣️ Step 3: Mirror & Validate</span>
-                    <h4 className="font-heading font-black text-sm text-slate-800 dark:text-slate-100">Repeat back what you heard</h4>
-                    <p className="text-xs text-slate-400 dark:text-slate-300 leading-relaxed">
+                    <h4 className="font-heading font-black text-sm text-slate-800">Repeat back what you heard</h4>
+                    <p className="text-xs text-slate-500 leading-relaxed">
                       Before defending or replying, mirror your partner's feelings to ensure they feel heard.
                       <br /><br />
                       <em>Example: "What I hear you saying is that you felt stressed because you wanted to make that choice together. Is that right?"</em>
@@ -1007,28 +1204,31 @@ export default function CouplesDashboard() {
                   </div>
                 )}
 
+                {/* Step 4: Small Solutions */}
                 {calmStep === 4 && (
                   <div className="space-y-2">
                     <span className="text-3xl">🤝 Step 4: Small Agreement</span>
-                    <h4 className="font-heading font-black text-sm text-slate-800 dark:text-slate-100">Find a shared micro-action</h4>
-                    <p className="text-xs text-slate-400 dark:text-slate-300 leading-relaxed">
+                    <h4 className="font-heading font-black text-sm text-slate-800">Find a shared micro-action</h4>
+                    <p className="text-xs text-slate-500 leading-relaxed">
                       Co-create one small action you can both agree on to ease the situation right now. It doesn't have to fix the whole issue, just resolve the immediate tension.
                     </p>
                   </div>
                 )}
 
+                {/* Progress Indicators */}
                 <div className="flex justify-center gap-1.5 pt-4">
                   {Array.from({ length: 4 }).map((_, i) => (
                     <div 
                       key={i} 
                       className={`h-1.5 rounded-full transition-all duration-300 ${
-                        i + 1 === calmStep ? "w-6 bg-[#006B56]" : "w-1.5 bg-slate-200 dark:bg-slate-700"
+                        i + 1 === calmStep ? "w-6 bg-rose-500" : "w-1.5 bg-slate-100"
                       }`}
                     />
                   ))}
                 </div>
               </div>
 
+              {/* Navigation controls */}
               <div className="flex gap-4">
                 {calmStep > 1 && (
                   <button 
@@ -1036,7 +1236,7 @@ export default function CouplesDashboard() {
                       setCalmStep(prev => prev - 1);
                       setBreathingActive(false);
                     }}
-                    className="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-full font-bold text-xs transition-transform active:scale-95"
+                    className="flex-1 py-3 bg-slate-50 text-slate-600 rounded-full font-bold text-xs hover:bg-slate-100 transition-transform active:scale-95"
                   >
                     Back
                   </button>
@@ -1048,7 +1248,7 @@ export default function CouplesDashboard() {
                       setCalmStep(prev => prev + 1);
                       setBreathingActive(false);
                     }}
-                    className="flex-1 py-2.5 bg-[#006B56] hover:bg-[#005B48] text-white rounded-full font-bold text-xs shadow-md transition-transform active:scale-95"
+                    className="flex-1 py-3 bg-rose-500 hover:bg-rose-600 text-white rounded-full font-bold text-xs shadow-md transition-transform active:scale-95"
                   >
                     Next Step
                   </button>
@@ -1058,101 +1258,13 @@ export default function CouplesDashboard() {
                       setCalmZoneActive(false);
                       setBreathingActive(false);
                     }}
-                    className="flex-1 py-2.5 bg-gradient-to-tr from-[#006B56] to-teal-600 text-white rounded-full font-bold text-xs shadow-md transition-transform active:scale-95 animate-bounce"
+                    className="flex-1 py-3 bg-gradient-to-tr from-rose-400 to-[#7C6BC4] text-white rounded-full font-bold text-xs shadow-md transition-transform active:scale-95 animate-bounce"
                   >
                     We Are Calmer Now 💖
                   </button>
                 )}
               </div>
 
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* ==================== 2. PERIODIC SECURITY PRIVACY POPUP ==================== */}
-      <AnimatePresence>
-        {showSecurityPopup && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-[#2E2A3D]/70 backdrop-blur-md flex items-center justify-center p-4"
-          >
-            <motion.div 
-              initial={{ scale: 0.95 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0.95 }}
-              className="bg-white dark:bg-[#132E3F] max-w-sm w-full p-8 rounded-[36px] text-center space-y-6 shadow-2xl relative border border-[#EAEAFF] dark:border-slate-800"
-            >
-              <div className="w-16 h-16 rounded-[20px] bg-[#EAE8F8] dark:bg-[#202E4E] flex items-center justify-center mx-auto border border-[#E1DEFB] dark:border-[#2D3F66]">
-                <span className="material-symbols-outlined text-2xl text-[#7C6BC4] dark:text-[#AFA4EC]">filter_vintage</span>
-              </div>
-
-              <div className="space-y-1 font-heading">
-                <h3 className="text-xl font-heading font-black text-slate-800 dark:text-slate-100 flex items-center justify-center gap-2">
-                  <span>🌿</span> Your Retreat is Private
-                </h3>
-              </div>
-
-              <p className="text-[11px] text-slate-500 dark:text-slate-400 font-bold leading-relaxed px-2">
-                Everything you write, journal, and share inside Manraah remains private. This is your personal space to reflect honestly and safely.
-              </p>
-
-              <div className="flex justify-center">
-                <span className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#EAE8F8] dark:bg-[#202E4E] border border-[#E1DEFB] dark:border-[#2D3F66] rounded-full text-[10px] font-black text-[#7C6BC4] dark:text-[#AFA4EC]">
-                  <span>🔒</span> Your wellbeing belongs to you.
-                </span>
-              </div>
-
-              <button 
-                onClick={() => {
-                  setShowSecurityPopup(false);
-                }}
-                className="w-full py-4 bg-[#5F4BB6] hover:bg-[#4E3CA3] text-white rounded-full font-bold text-sm shadow-md transition-transform active:scale-95 cursor-pointer flex items-center justify-center gap-1.5"
-              >
-                I Understand 💜
-              </button>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* ==================== 3. COMPLETE ASSESSMENT FORCED GATED MODAL ==================== */}
-      <AnimatePresence>
-        {showAssessmentModal && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="fixed inset-0 z-50 bg-[#0F1E19]/80 backdrop-blur-md flex items-center justify-center p-4"
-          >
-            <motion.div 
-              initial={{ scale: 0.95 }}
-              animate={{ scale: 1 }}
-              className="bg-white dark:bg-[#132E3F] max-w-sm w-full p-8 rounded-[36px] text-center space-y-6 shadow-2xl relative border border-[#EAEAFF] dark:border-slate-800"
-            >
-              <div className="w-16 h-16 rounded-full bg-[#E37A47]/10 text-[#E37A47] flex items-center justify-center mx-auto border border-[#E37A47]/20">
-                <span className="material-symbols-outlined text-3xl font-black">assignment</span>
-              </div>
-
-              <div className="space-y-1 font-heading">
-                <span className="text-[10px] uppercase font-black tracking-widest text-[#E37A47]">Onboarding Retreat</span>
-                <h3 className="text-xl font-heading font-black text-slate-800 dark:text-slate-100">Complete Assessment</h3>
-              </div>
-
-              <p className="text-[11px] text-slate-500 dark:text-slate-400 font-bold leading-relaxed px-2">
-                To unlock your personalized Couples Dashboard, habit challenges, and wellness schedule, please complete your initial assessment.
-              </p>
-
-              <button 
-                onClick={() => {
-                  localStorage.setItem("parent_reset_assessment_flow", "true");
-                  router.push("/assessment");
-                }}
-                className="w-full py-4 bg-[#E37A47] hover:bg-[#D26936] text-white rounded-full font-bold text-sm shadow-md transition-transform active:scale-95 cursor-pointer flex items-center justify-center gap-1.5"
-              >
-                Start Assessment
-              </button>
             </motion.div>
           </motion.div>
         )}
