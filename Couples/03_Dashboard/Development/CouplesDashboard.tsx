@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { getClientSession, signOut } from "@/backend/auth/client";
@@ -16,7 +16,17 @@ const MONTH_NAMES = [
 const INITIAL_HABITS = [
   { id: 1, text: "Share one genuine appreciation with your partner today", category: "Active Habit", completed: false },
   { id: 2, text: "Complete a 3-minute synchronized breathing pause together", category: "Active Habit", completed: false },
-  { id: 3, text: "Set devices to 'Do Not Disturb' for at least 1 hour of quality time", category: "Active Habit", completed: false }
+  { id: 3, text: "Set devices to 'Do Not Disturb' for at least 1 hour of quality time", category: "Active Habit", completed: false },
+  { id: 4, text: "Leave a sweet or supportive note in their physical/digital journal", category: "Active Habit", completed: false }
+];
+
+// Tailored Date ideas
+const DATE_NIGHT_IDEAS = [
+  { category: "Cozy 🏡", title: "Indoor Fort & Movie", desc: "Build a classic living-room blanket fort, make homemade popcorn, and watch a nostalgic movie." },
+  { category: "Creative 🎨", title: "Double-Sided Canvas Painting", desc: "Buy two canvases. Set up opposite each other and paint a portrait of your partner without looking at the canvas!" },
+  { category: "Culinary 🍳", title: "Mystery Ingredient Cook-off", desc: "Assign each other 2 secret ingredients. Work together to cook a 3-course dinner utilizing all of them." },
+  { category: "Adventure 🌌", title: "Midnight Stargazing & Picnic", desc: "Pack a thermos of hot cocoa, a heavy blanket, and drive to a local high point or open field to watch the night sky." },
+  { category: "Active 🚶", title: "Memory Walk & Photo Hunt", desc: "Walk through a neighborhood that has meaning to your relationship, recreating past photos or capturing new ones." }
 ];
 
 export default function CouplesDashboard() {
@@ -34,6 +44,7 @@ export default function CouplesDashboard() {
   const [showAssessmentModal, setShowAssessmentModal] = useState(false);
   const [showCheckinModal, setShowCheckinModal] = useState(false);
   const [showSecurityPopup, setShowSecurityPopup] = useState(false);
+  const [showDisconnectModal, setShowDisconnectModal] = useState(false);
 
   // Streak & Harmony Metrics
   const [streakDays, setStreakDays] = useState(1);
@@ -43,7 +54,7 @@ export default function CouplesDashboard() {
   // Sliders metrics
   const [conversationScore, setConversationScore] = useState(8);
   const [sharedEnergyScore, setSharedEnergyScore] = useState(7);
-  const [mutualTrustScore, setMutualTrustScore] = useState(8);
+  const [tensionRateScore, setTensionRateScore] = useState(3);
 
   // Checklist of Relationship Habits
   const [habits, setHabits] = useState(INITIAL_HABITS);
@@ -67,6 +78,10 @@ export default function CouplesDashboard() {
   const [newDesc, setNewDesc] = useState("");
   const [newTime, setNewTime] = useState("08.00 pm");
   const [newType, setNewType] = useState("date");
+
+  // Date Night Generator states
+  const [currentDateIdea, setCurrentDateIdea] = useState(DATE_NIGHT_IDEAS[0]);
+  const [isSpinning, setIsSpinning] = useState(false);
 
   // Conflict Calm Zone modal states
   const [calmZoneActive, setCalmZoneActive] = useState(false);
@@ -142,6 +157,19 @@ export default function CouplesDashboard() {
 
           if (hasCoupleAssessment || assessmentModalDismissed) {
             setHarmonyScore(data.user.assessmentPercentage || 90);
+            
+            // Show Retreat Privacy popup if not shown before
+            const securityPopupShown = localStorage.getItem("couple_security_popup_shown_once") === "true";
+            const showImmediately = localStorage.getItem("couple_show_security_immediately") === "true";
+
+            if (showImmediately) {
+              setShowSecurityPopup(true);
+              localStorage.setItem("couple_security_popup_shown_once", "true");
+              localStorage.removeItem("couple_show_security_immediately");
+            } else if (!securityPopupShown) {
+              setShowSecurityPopup(true);
+              localStorage.setItem("couple_security_popup_shown_once", "true");
+            }
           } else {
             setShowAssessmentModal(true);
           }
@@ -174,7 +202,7 @@ export default function CouplesDashboard() {
             if (ds.selectedMood) setSelectedMood(ds.selectedMood);
             if (ds.conversationScore !== undefined) setConversationScore(ds.conversationScore);
             if (ds.sharedEnergyScore !== undefined) setSharedEnergyScore(ds.sharedEnergyScore);
-            if (ds.mutualTrustScore !== undefined) setMutualTrustScore(ds.mutualTrustScore);
+            if (ds.tensionRateScore !== undefined) setTensionRateScore(ds.tensionRateScore);
             if (ds.checkedActivities) setCheckedActivities(ds.checkedActivities);
             if (ds.reflectionText) setReflectionText(ds.reflectionText);
             if (ds.habits && Array.isArray(ds.habits)) {
@@ -219,7 +247,7 @@ export default function CouplesDashboard() {
       selectedMood,
       conversationScore,
       sharedEnergyScore,
-      mutualTrustScore,
+      tensionRateScore,
       checkedActivities,
       reflectionText,
       habits,
@@ -282,7 +310,7 @@ export default function CouplesDashboard() {
         body: JSON.stringify({
           userId: session.user.id,
           mood: selectedMood,
-          stress: 10 - conversationScore,
+          stress: tensionRateScore,
           activities: checkedActivities,
           notes: reflectionText
         })
@@ -380,6 +408,133 @@ export default function CouplesDashboard() {
     }
   };
 
+  // Spin/Generate a new tailored date idea
+  const handleGenerateDate = () => {
+    setIsSpinning(true);
+    let count = 0;
+    const interval = setInterval(() => {
+      const randomIdx = Math.floor(Math.random() * DATE_NIGHT_IDEAS.length);
+      setCurrentDateIdea(DATE_NIGHT_IDEAS[randomIdx]);
+      count++;
+      if (count > 8) {
+        clearInterval(interval);
+        setIsSpinning(false);
+      }
+    }, 120);
+  };
+
+  // Solid Pie Chart calculations (Harmony Overview)
+  const getPieBreakdown = (score: number) => {
+    const s = Math.min(50, Math.max(10, score / 2));
+    let great = 0, good = 0, normal = 0, notGood = 0, bad = 0;
+    
+    if (s >= 40) {
+      const ratio = (s - 40) / 10;
+      great = Math.round(30 + ratio * 70);
+      good = Math.round(35 - ratio * 35);
+      normal = Math.round(20 - ratio * 20);
+      notGood = Math.round(10 - ratio * 10);
+      bad = 100 - (great + good + normal + notGood);
+    } else if (s >= 30) {
+      const ratio = (s - 30) / 10;
+      great = Math.round(10 + ratio * 20);
+      good = Math.round(25 + ratio * 10);
+      normal = Math.round(35 - ratio * 15);
+      notGood = Math.round(20 - ratio * 10);
+      bad = 100 - (great + good + normal + notGood);
+    } else if (s >= 20) {
+      const ratio = (s - 20) / 10;
+      great = Math.round(5 + ratio * 5);
+      good = Math.round(15 + ratio * 10);
+      normal = Math.round(30 + ratio * 5);
+      notGood = Math.round(35 - ratio * 15);
+      bad = 100 - (great + good + normal + notGood);
+    } else {
+      const ratio = (s - 10) / 10;
+      great = Math.round(ratio * 5);
+      good = Math.round(ratio * 15);
+      normal = Math.round(10 + ratio * 20);
+      notGood = Math.round(20 + ratio * 15);
+      bad = 100 - (great + good + normal + notGood);
+    }
+    return { great, good, normal, notGood, bad };
+  };
+
+  const distribution = useMemo(() => {
+    return getPieBreakdown(harmonyScore);
+  }, [harmonyScore]);
+
+  const pieSlices = useMemo(() => {
+    const greatVal = distribution.great / 100;
+    const goodVal = distribution.good / 100;
+    const normalVal = distribution.normal / 100;
+    const notGoodVal = distribution.notGood / 100;
+    const badVal = distribution.bad / 100;
+
+    const greatStart = 0;
+    const greatEnd = greatVal;
+    
+    const goodStart = greatEnd;
+    const goodEnd = goodStart + goodVal;
+    
+    const normalStart = goodEnd;
+    const normalEnd = normalStart + normalVal;
+    
+    const notGoodStart = normalEnd;
+    const notGoodEnd = notGoodStart + notGoodVal;
+    
+    const badStart = notGoodEnd;
+    const badEnd = 1.0;
+
+    return {
+      greatStart, greatEnd,
+      goodStart, goodEnd,
+      normalStart, normalEnd,
+      notGoodStart, notGoodEnd,
+      badStart, badEnd
+    };
+  }, [distribution]);
+
+  const {
+    greatStart, greatEnd,
+    goodStart, goodEnd,
+    normalStart, normalEnd,
+    notGoodStart, notGoodEnd,
+    badStart, badEnd
+  } = pieSlices;
+
+  const getCoordinatesForPercent = (percent: number) => {
+    const angle = 2 * Math.PI * (percent - 0.25);
+    const x = Math.cos(angle);
+    const y = Math.sin(angle);
+    return [x, y];
+  };
+
+  const makePieSlicePath = (startPercent: number, endPercent: number) => {
+    if (endPercent - startPercent <= 0) return "";
+    if (endPercent - startPercent >= 0.999) {
+      return "M 50 50 m -50 0 a 50 50 0 1 0 100 0 a 50 50 0 1 0 -100 0";
+    }
+    const [startX, startY] = getCoordinatesForPercent(startPercent);
+    const [endX, endY] = getCoordinatesForPercent(endPercent);
+    const largeArcFlag = endPercent - startPercent > 0.5 ? 1 : 0;
+    
+    const x1 = 50 + 50 * startX;
+    const y1 = 50 + 50 * startY;
+    const x2 = 50 + 50 * endX;
+    const y2 = 50 + 50 * endY;
+    
+    return `M 50 50 L ${x1.toFixed(2)} ${y1.toFixed(2)} A 50 50 0 ${largeArcFlag} 1 ${x2.toFixed(2)} ${y2.toFixed(2)} Z`;
+  };
+
+  const getLabelCoordinates = (startPercent: number, endPercent: number) => {
+    const midPercent = startPercent + (endPercent - startPercent) / 2;
+    const angle = 2 * Math.PI * (midPercent - 0.25);
+    const x = 50 + 32 * Math.cos(angle);
+    const y = 50 + 32 * Math.sin(angle) + 2.5;
+    return { x: x.toFixed(1), y: y.toFixed(1) };
+  };
+
   return (
     <div className="min-h-screen bg-[#FCF8FB] p-3 md:p-6 text-slate-800 font-sans relative">
       
@@ -389,7 +544,7 @@ export default function CouplesDashboard() {
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           
           <button 
-            onClick={() => router.push("/")}
+            onClick={() => setShowDisconnectModal(true)}
             className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-white text-xs font-extrabold text-[#7C6BC4] border border-[#ECE5F5] shadow-sm hover:bg-slate-50 transition-all cursor-pointer w-fit"
           >
             <span className="material-symbols-outlined text-xs font-black">arrow_back</span>
@@ -399,6 +554,8 @@ export default function CouplesDashboard() {
           <div className="flex flex-wrap items-center gap-3">
             <button 
               onClick={() => {
+                localStorage.removeItem("couple_assessment_completed");
+                localStorage.removeItem("couple_assessment_modal_dismissed");
                 localStorage.setItem("couple_reset_assessment_flow", "true");
                 router.push("/assessment");
               }}
@@ -532,21 +689,21 @@ export default function CouplesDashboard() {
                 />
               </div>
 
-              {/* Slider 3: Mutual Trust */}
+              {/* Slider 3: Tension Rate (Reddish/rose accent) */}
               <div className="space-y-1.5">
-                <div className="flex justify-between text-[11px] font-black text-[#006B56]">
-                  <span className="flex items-center gap-1">🛡️ Mutual Trust</span>
-                  <span>{mutualTrustScore}/10</span>
+                <div className="flex justify-between text-[11px] font-black text-[#D64E4D]">
+                  <span className="flex items-center gap-1">⚠️ Tension Rate</span>
+                  <span>{tensionRateScore}/10</span>
                 </div>
                 <input 
                   type="range" min="1" max="10" 
-                  value={mutualTrustScore}
+                  value={tensionRateScore}
                   onChange={(e) => {
                     const val = parseInt(e.target.value);
-                    setMutualTrustScore(val);
-                    saveDashboardStateToDb({ mutualTrustScore: val });
+                    setTensionRateScore(val);
+                    saveDashboardStateToDb({ tensionRateScore: val });
                   }}
-                  className="w-full accent-[#006B56] cursor-pointer"
+                  className="w-full accent-[#D64E4D] cursor-pointer"
                 />
               </div>
 
@@ -554,7 +711,7 @@ export default function CouplesDashboard() {
 
           </div>
 
-          {/* COLUMN 2: MIDDLE COLUMN (WELCOME & CLINICAL LOG) - 5/12 */}
+          {/* COLUMN 2: MIDDLE COLUMN (WELCOME & CLINICAL LOG & OVERALL PIE) - 5/12 */}
           <div className="lg:col-span-5 space-y-6">
             
             {/* Welcome Greeting block */}
@@ -671,20 +828,19 @@ export default function CouplesDashboard() {
                 <p className="text-[10px] text-slate-400 font-bold">Today, 5 October 2022</p>
               </div>
 
-              {/* Simple Connection Rating bar chart */}
+              {/* Connection Rating bar chart */}
               <div className="h-32 flex items-end justify-between gap-2 pt-4 px-2">
                 {[
-                  { day: "Sun", conversation: 6, energy: 5, calm: 7 },
-                  { day: "Mon", conversation: 8, energy: 7, calm: 8 },
-                  { day: "Tue", conversation: 7, energy: 6, calm: 6 },
-                  { day: "Wed", conversation: 9, energy: 8, calm: 9 },
-                  { day: "Thu", conversation: 8, energy: 7, calm: 8 }
+                  { day: "Jul", score: 6 },
+                  { day: "Aug", score: 5 },
+                  { day: "Sep", score: 9 },
+                  { day: "Oct", score: 7 },
+                  { day: "Nov", score: 8 },
+                  { day: "Dec", score: 8 }
                 ].map((d, index) => (
                   <div key={index} className="flex-1 flex flex-col items-center gap-2">
-                    <div className="w-full flex items-end gap-1 justify-center h-20">
-                      <div className="w-2.5 bg-[#7C6BC4] rounded-t-sm" style={{ height: `${d.conversation * 10}%` }} title={`Conv: ${d.conversation}`} />
-                      <div className="w-2.5 bg-[#006B56] rounded-t-sm" style={{ height: `${d.energy * 10}%` }} title={`Energy: ${d.energy}`} />
-                      <div className="w-2.5 bg-[#FCE3CF] rounded-t-sm" style={{ height: `${d.calm * 10}%` }} title={`Calm: ${d.calm}`} />
+                    <div className="w-full flex items-end justify-center h-20">
+                      <div className="w-6 bg-[#CDEAE1] rounded-t-lg transition-all duration-300" style={{ height: `${d.score * 10}%` }} title={`Rating: ${d.score}`} />
                     </div>
                     <span className="text-[9px] text-slate-400 font-black">{d.day}</span>
                   </div>
@@ -692,9 +848,104 @@ export default function CouplesDashboard() {
               </div>
             </div>
 
+            {/* Overall Metrics - Harmony Overview Pie Chart (Mockup Alignment) */}
+            <div className="bg-white border border-slate-100 p-6 rounded-[36px] shadow-soft-sm space-y-4 text-left">
+              <div className="flex items-center justify-between">
+                <div>
+                  <span className="text-[10px] uppercase font-black tracking-widest text-[#006B56]">Overall Metrics</span>
+                  <h3 className="text-sm font-heading font-black text-slate-800">Harmony Overview</h3>
+                </div>
+                <span className="text-xl">📊</span>
+              </div>
+
+              {/* Chart & Legend Grid */}
+              <div className="flex flex-col sm:flex-row items-center gap-8 py-2">
+                
+                {/* SVG Pie Chart */}
+                <div className="relative w-36 h-36 flex items-center justify-center flex-shrink-0">
+                  <svg viewBox="0 0 100 100" className="w-full h-full transform -rotate-90">
+                    {/* Great Slice */}
+                    {distribution.great > 0 && (
+                      <path d={makePieSlicePath(greatStart, greatEnd)} fill="#006B56" />
+                    )}
+                    {/* Good Slice */}
+                    {distribution.good > 0 && (
+                      <path d={makePieSlicePath(goodStart, goodEnd)} fill="#5FCFB0" />
+                    )}
+                    {/* Normal Slice */}
+                    {distribution.normal > 0 && (
+                      <path d={makePieSlicePath(normalStart, normalEnd)} fill="#FCE3CF" />
+                    )}
+                    {/* Not Good Slice */}
+                    {distribution.notGood > 0 && (
+                      <path d={makePieSlicePath(notGoodStart, notGoodEnd)} fill="#E37A47" />
+                    )}
+                    {/* Bad Slice */}
+                    {distribution.bad > 0 && (
+                      <path d={makePieSlicePath(badStart, badEnd)} fill="#D64E4D" />
+                    )}
+                  </svg>
+
+                  {/* Percentage Labels overlay inside slices */}
+                  <div className="absolute inset-0 pointer-events-none text-[8px] font-black text-slate-800">
+                    {distribution.great >= 5 && (
+                      <span className="absolute" style={{ left: `${getLabelCoordinates(greatStart, greatEnd).x}%`, top: `${getLabelCoordinates(greatStart, greatEnd).y}%`, transform: "translate(-50%, -50%)" }}>
+                        {distribution.great}%
+                      </span>
+                    )}
+                    {distribution.good >= 5 && (
+                      <span className="absolute" style={{ left: `${getLabelCoordinates(goodStart, goodEnd).x}%`, top: `${getLabelCoordinates(goodStart, goodEnd).y}%`, transform: "translate(-50%, -50%)" }}>
+                        {distribution.good}%
+                      </span>
+                    )}
+                    {distribution.normal >= 5 && (
+                      <span className="absolute" style={{ left: `${getLabelCoordinates(normalStart, normalEnd).x}%`, top: `${getLabelCoordinates(normalStart, normalEnd).y}%`, transform: "translate(-50%, -50%)" }}>
+                        {distribution.normal}%
+                      </span>
+                    )}
+                    {distribution.notGood >= 5 && (
+                      <span className="absolute text-white" style={{ left: `${getLabelCoordinates(notGoodStart, notGoodEnd).x}%`, top: `${getLabelCoordinates(notGoodStart, notGoodEnd).y}%`, transform: "translate(-50%, -50%)" }}>
+                        {distribution.notGood}%
+                      </span>
+                    )}
+                    {distribution.bad >= 5 && (
+                      <span className="absolute text-white" style={{ left: `${getLabelCoordinates(badStart, badEnd).x}%`, top: `${getLabelCoordinates(badStart, badEnd).y}%`, transform: "translate(-50%, -50%)" }}>
+                        {distribution.bad}%
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Legends */}
+                <div className="grid grid-cols-2 gap-x-6 gap-y-2.5 text-[10px] font-bold text-slate-600">
+                  <div className="flex items-center gap-2">
+                    <span className="w-3 h-3 rounded-sm bg-[#006B56] flex-shrink-0" />
+                    <span>Great</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="w-3 h-3 rounded-sm bg-[#5FCFB0] flex-shrink-0" />
+                    <span>Good</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="w-3 h-3 rounded-sm bg-[#FCE3CF] flex-shrink-0" />
+                    <span>Normal</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="w-3 h-3 rounded-sm bg-[#E37A47] flex-shrink-0" />
+                    <span>Not Good</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="w-3 h-3 rounded-sm bg-[#D64E4D] flex-shrink-0" />
+                    <span>Bad</span>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
           </div>
 
-          {/* COLUMN 3: RIGHT COLUMN (CALENDAR & HABITS) - 4/12 */}
+          {/* COLUMN 3: RIGHT COLUMN (CALENDAR & HABITS & INTERACTIVE IDEAS) - 4/12 */}
           <div className="lg:col-span-4 space-y-6">
             
             {/* List of Appointments Calendar Widget */}
@@ -944,6 +1195,42 @@ export default function CouplesDashboard() {
               ))}
             </div>
 
+            {/* Interactive Ideas - Tailored Date Idea (Mockup Alignment) */}
+            <div className="bg-[#E5F5F0]/65 p-6 rounded-[36px] border border-[#CDEAE1]/60 shadow-sm space-y-5 text-left">
+              <div className="space-y-1">
+                <span className="text-[10px] uppercase font-black tracking-widest text-[#006B56]">Interactive Ideas</span>
+                <h3 className="text-sm font-heading font-black text-slate-800">Tailored Date Idea 🥂</h3>
+              </div>
+
+              <div className="bg-white border border-slate-100 p-5 rounded-3xl min-h-[120px] flex flex-col justify-between shadow-sm relative overflow-hidden">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={currentDateIdea.title}
+                    initial={{ opacity: 0, y: 5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -5 }}
+                    className="space-y-1 text-left"
+                  >
+                    <span className="px-2 py-0.5 rounded-full bg-[#FFF2EA] text-[#E37A47] text-[8px] font-black uppercase tracking-wider">
+                      {currentDateIdea.category}
+                    </span>
+                    <h4 className="font-heading font-black text-xs text-slate-800 pt-1">{currentDateIdea.title}</h4>
+                    <p className="text-[10px] text-slate-400 leading-relaxed font-bold">
+                      {currentDateIdea.desc}
+                    </p>
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+
+              <button
+                onClick={handleGenerateDate}
+                disabled={isSpinning}
+                className="w-full py-3 bg-[#006B56] hover:bg-[#005B48] text-white rounded-2xl font-bold text-xs shadow-md transition-all disabled:opacity-50 uppercase tracking-wider text-center cursor-pointer active:scale-95"
+              >
+                {isSpinning ? "Drawing Date Idea... 🎲" : "Generate Idea ✈"}
+              </button>
+            </div>
+
           </div>
 
         </div>
@@ -995,7 +1282,105 @@ export default function CouplesDashboard() {
         )}
       </AnimatePresence>
 
-      {/* ==================== DAILY CHECK-IN MODAL (CHECK IT NOW) ==================== */}
+      {/* ==================== RETREAT PRIVACY GUARD POPUP ==================== */}
+      <AnimatePresence>
+        {showSecurityPopup && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-[#2E2A3D]/70 backdrop-blur-md flex items-center justify-center p-4"
+          >
+            <motion.div 
+              initial={{ scale: 0.95 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.95 }}
+              className="bg-white max-w-sm w-full p-8 rounded-[36px] text-center space-y-6 shadow-2xl relative border border-[#EAEAFF]"
+            >
+              <div className="w-16 h-16 rounded-[20px] bg-[#EAE8F8] flex items-center justify-center mx-auto border border-[#E1DEFB]">
+                <span className="material-symbols-outlined text-2xl text-[#7C6BC4]">filter_vintage</span>
+              </div>
+
+              <div className="space-y-1 font-heading">
+                <h3 className="text-xl font-heading font-black text-slate-800 flex items-center justify-center gap-2">
+                  <span>🌿</span> Your Retreat is Private
+                </h3>
+              </div>
+
+              <p className="text-[11px] text-slate-500 font-bold leading-relaxed px-2">
+                Everything you write, journal, and share inside Manraah remains private. This is your personal space to reflect honestly and safely.
+              </p>
+
+              <div className="flex justify-center">
+                <span className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#EAE8F8] border border-[#E1DEFB] rounded-full text-[10px] font-black text-[#7C6BC4]">
+                  <span>🔒</span> Your wellbeing belongs to you.
+                </span>
+              </div>
+
+              <button 
+                onClick={() => {
+                  setShowSecurityPopup(false);
+                }}
+                className="w-full py-4 bg-[#5F4BB6] hover:bg-[#4E3CA3] text-white rounded-full font-bold text-sm shadow-md transition-transform active:scale-95 cursor-pointer flex items-center justify-center gap-1.5"
+              >
+                I Understand 💜
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ==================== DISCONNECT SESSION WARNING MODAL ==================== */}
+      <AnimatePresence>
+        {showDisconnectModal && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-[#2E2A3D]/70 backdrop-blur-md flex items-center justify-center p-4 text-center"
+          >
+            <motion.div 
+              initial={{ scale: 0.95, y: 15 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.95, y: 15 }}
+              className="bg-white max-w-sm w-full p-8 rounded-[36px] space-y-6 shadow-2xl relative border border-[#EAEAFF]"
+            >
+              <div className="w-16 h-16 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center mx-auto border border-rose-100">
+                <span className="material-symbols-outlined text-3xl font-black">logout</span>
+              </div>
+
+              <div className="space-y-1 font-heading">
+                <span className="text-[10px] uppercase font-black tracking-widest text-[#7C6BC4]">Session Warning</span>
+                <h3 className="text-xl font-heading font-black text-slate-800">Disconnect Session?</h3>
+              </div>
+
+              <p className="text-[11px] text-slate-400 font-bold leading-relaxed px-2">
+                Going back to the landing page will disconnect your active session. You will need to authenticate again to view your dashboard.
+              </p>
+
+              <div className="flex gap-4">
+                <button 
+                  onClick={() => setShowDisconnectModal(false)}
+                  className="flex-1 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-full font-bold text-xs transition-all active:scale-95 cursor-pointer"
+                >
+                  Stay
+                </button>
+                <button 
+                  onClick={async () => {
+                    await signOut();
+                    window.location.href = "/";
+                  }}
+                  className="flex-1 py-3 bg-rose-500 hover:bg-rose-600 text-white rounded-full font-bold text-xs shadow-sm transition-all active:scale-95 cursor-pointer"
+                >
+                  Proceed
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ==================== DAILY CHECK-IN MODAL ==================== */}
       <AnimatePresence>
         {showCheckinModal && (
           <motion.div 
