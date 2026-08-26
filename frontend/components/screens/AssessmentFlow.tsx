@@ -101,11 +101,9 @@ export default function AssessmentFlow() {
   // Reset assessment flow if retake flag is set
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const shouldResetParent = localStorage.getItem("parent_reset_assessment_flow") === "true";
-      const shouldResetCouple = localStorage.getItem("couple_reset_assessment_flow") === "true";
-      if (shouldResetParent || shouldResetCouple) {
+      const shouldReset = localStorage.getItem("parent_reset_assessment_flow") === "true";
+      if (shouldReset) {
         localStorage.removeItem("parent_reset_assessment_flow");
-        localStorage.removeItem("couple_reset_assessment_flow");
         sessionStorage.removeItem("manraah_onboarding_assessment");
         setCurrentQuestionIndex(0);
         setDetailedAnswers([]);
