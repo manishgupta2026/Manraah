@@ -97,6 +97,7 @@ export default function CouplesDashboard() {
   const [showAssessmentModal, setShowAssessmentModal] = useState(false);
   const [showDisconnectModal, setShowDisconnectModal] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
+  const [showSecurityPopup, setShowSecurityPopup] = useState(false);
 
   // Conflict Calm Zone modal states
   const [calmZoneActive, setCalmZoneActive] = useState(false);
@@ -176,11 +177,24 @@ export default function CouplesDashboard() {
           
           // Check if onboarding assessment is completed
           const localAssessmentCompleted = localStorage.getItem("couple_assessment_completed") === "true";
+          const assessmentModalDismissed = localStorage.getItem("couple_assessment_modal_dismissed") === "true";
           const hasCoupleAssessment = (data.user.assessmentPercentage !== null && 
                                       data.user.assessmentPercentage !== undefined && 
                                       (data.user.assessmentCategory === "couples" || data.user.assessmentCategory === "couple")) || localAssessmentCompleted;
 
-          if (!hasCoupleAssessment) {
+          if (hasCoupleAssessment || assessmentModalDismissed) {
+            const securityPopupShown = localStorage.getItem("couple_security_popup_shown_once") === "true";
+            const showImmediately = localStorage.getItem("couple_show_security_immediately") === "true";
+
+            if (showImmediately) {
+              setShowSecurityPopup(true);
+              localStorage.setItem("couple_security_popup_shown_once", "true");
+              localStorage.removeItem("couple_show_security_immediately");
+            } else if (!securityPopupShown) {
+              setShowSecurityPopup(true);
+              localStorage.setItem("couple_security_popup_shown_once", "true");
+            }
+          } else {
             setShowAssessmentModal(true);
           }
 
@@ -1368,6 +1382,54 @@ export default function CouplesDashboard() {
                   Proceed
                 </button>
               </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ==================== PERIODIC PRIVACY MODAL ==================== */}
+      <AnimatePresence>
+        {showSecurityPopup && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-[#2E2A3D]/70 backdrop-blur-md flex items-center justify-center p-4 select-none"
+          >
+            <motion.div 
+              initial={{ scale: 0.95 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.95 }}
+              className="bg-white dark:bg-[#132E3F] max-w-sm w-full p-8 rounded-[36px] text-center space-y-6 shadow-2xl relative border border-slate-100 dark:border-slate-800"
+            >
+              <div className="w-16 h-16 rounded-[20px] bg-[#E3F2EC] dark:bg-[#0E3529]/40 flex items-center justify-center mx-auto border border-[#CDE5DB]/40 dark:border-[#005B48]/20">
+                <span className="material-symbols-outlined text-2xl text-[#005B48] dark:text-[#5FAF8A]">filter_vintage</span>
+              </div>
+
+              <div className="space-y-1 font-heading">
+                <h3 className="text-xl font-heading font-black text-slate-800 dark:text-slate-100 flex items-center justify-center gap-2">
+                  <span>🌿</span> Your Retreat is Private
+                </h3>
+              </div>
+
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 font-bold leading-relaxed px-2">
+                Everything you write, journal, and share inside Manraah remains private. This is your personal space to reflect honestly and safely with your partner.
+              </p>
+
+              <div className="flex justify-center">
+                <span className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#E3F2EC] dark:bg-[#0E3529]/40 border border-[#CDE5DB]/40 dark:border-[#005B48]/20 rounded-full text-[10px] font-black text-[#005B48] dark:text-[#5FAF8A]">
+                  <span>🔒</span> Your wellbeing belongs to you.
+                </span>
+              </div>
+
+              <button 
+                onClick={() => {
+                  setShowSecurityPopup(false);
+                }}
+                className="w-full py-4 bg-[#005B48] hover:bg-[#004738] text-white rounded-full font-bold text-sm shadow-md transition-transform active:scale-95 cursor-pointer flex items-center justify-center gap-1.5"
+              >
+                I Understand 💚
+              </button>
             </motion.div>
           </motion.div>
         )}

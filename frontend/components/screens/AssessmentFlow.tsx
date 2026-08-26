@@ -157,6 +157,9 @@ export default function AssessmentFlow() {
             if (targetCategory === "parents" || targetCategory === "parent") {
               localStorage.setItem("parent_assessment_completed", "true");
               localStorage.setItem("parent_show_security_immediately", "true");
+            } else if (targetCategory === "couples" || targetCategory === "couple") {
+              localStorage.setItem("couple_assessment_completed", "true");
+              localStorage.setItem("couple_show_security_immediately", "true");
             }
             const updatedSession = {
               ...session,
