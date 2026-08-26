@@ -37,7 +37,7 @@ export async function GET(request: Request) {
       sanctuaryName: sanctuaryName,
       email: user.email,
       avatar: user.avatar,
-      category: user.selected_category === "couples" || user.selected_category === "couple" ? "couples" : (user.selected_category === "parents" || user.selected_category === "parent" ? "parents" : user.selected_category || "student"),
+      category: user.selected_category === "couples" || user.selected_category === "couple" ? "couple" : (user.selected_category === "parents" || user.selected_category === "parent" ? "parent" : user.selected_category || "student"),
       streakDays: user.streak_days,
       mindfulnessMinutes: user.mindfulness_minutes,
       currentMood: user.current_mood
@@ -93,14 +93,14 @@ export async function PUT(request: Request) {
       if (currentUser.selected_category === "student" && category !== "student") {
         return NextResponse.json({ error: "Category is locked and cannot be changed." }, { status: 400 });
       }
-      const targetCategory = category === "couples" || category === "couple" ? "couples" : (category === "parents" || category === "parent" ? "parents" : category);
+      const targetCategory = category === "couples" || category === "couple" ? "couple" : (category === "parents" || category === "parent" ? "parent" : category);
       await updateUserCategory(userId, targetCategory);
     }
 
     // Save assessment if provided in PUT payload (e.g. when retaking assessment on active session)
     const { answers, computedScore, percentage, wellnessLevel, maxScore } = body;
     if (answers && Array.isArray(answers) && answers.length > 0) {
-      const targetCategory = category === "couples" || category === "couple" ? "couples" : (category === "parents" || category === "parent" ? "parents" : category || "student");
+      const targetCategory = category === "couples" || category === "couple" ? "couple" : (category === "parents" || category === "parent" ? "parent" : category || "student");
       await saveUserAssessment(
         userId,
         targetCategory,
@@ -174,3 +174,36 @@ export async function PUT(request: Request) {
     return NextResponse.json({ error: err.message || "Failed to update profile." }, { status: 500 });
   }
 }
+
+export async function DELETE(request: Request) {
+  const session = getAuthSessionFromRequest();
+  const userId = session.user?.id;
+
+  if (!userId) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  try {
+    // Delete the user from the users table. Foreign key cascade deletes will remove records.
+    await sql`DELETE FROM users WHERE id = ${userId}`;
+
+    // Clear session cookies
+    const response = NextResponse.json({ success: true, message: "Account deleted successfully." });
+    response.cookies.set("manraah_session", "", {
+      httpOnly: false,
+      maxAge: 0,
+      path: "/",
+    });
+    response.cookies.set("userType", "", {
+      httpOnly: false,
+      maxAge: 0,
+      path: "/",
+    });
+
+    return response;
+  } catch (err: any) {
+    console.error("[API DELETE /api/profile error]:", err);
+    return NextResponse.json({ error: err.message || "Failed to delete account." }, { status: 500 });
+  }
+}
+

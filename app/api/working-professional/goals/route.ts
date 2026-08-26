@@ -27,7 +27,7 @@ export async function POST(req: Request) {
 
   try {
     const body = await req.json();
-    const { id, title, description, completed } = body;
+    const { id, title, description, completed, priority, due_date } = body;
 
     // If ID is provided, toggle/update goal completion
     if (id !== undefined) {
@@ -35,9 +35,13 @@ export async function POST(req: Request) {
       const updated = await sql`
         UPDATE wp_goals
         SET completed = ${isCompleted},
-            completed_at = ${isCompleted ? new Date().toISOString() : null}
+            completed_at = ${isCompleted ? new Date().toISOString() : null},
+            title = COALESCE(${title}, title),
+            description = COALESCE(${description}, description),
+            priority = COALESCE(${priority}, priority),
+            due_date = COALESCE(${due_date}, due_date)
         WHERE id = ${id} AND user_id = ${userId}
-        RETURNING id, title, description, completed, created_at, completed_at
+        RETURNING *
       `;
       return NextResponse.json(updated[0] || { error: "Goal not found" });
     }
@@ -48,9 +52,9 @@ export async function POST(req: Request) {
     }
 
     const inserted = await sql`
-      INSERT INTO wp_goals (user_id, title, description, completed)
-      VALUES (${userId}, ${title}, ${description || null}, false)
-      RETURNING id, title, description, completed, created_at, completed_at
+      INSERT INTO wp_goals (user_id, title, description, priority, due_date, completed)
+      VALUES (${userId}, ${title}, ${description || null}, ${priority || 'Medium'}, ${due_date || null}, false)
+      RETURNING *
     `;
     return NextResponse.json(inserted[0]);
   } catch (err: any) {

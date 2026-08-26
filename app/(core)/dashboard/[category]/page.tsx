@@ -12,10 +12,10 @@ export default function DynamicCategoryDashboardPage() {
   useEffect(() => {
     if (category) {
       const c = category.toLowerCase().trim();
-      if (c === "parent") {
+      if (c === "parent" || c === "parents") {
         router.replace("/dashboard/parents");
-      } else if (c === "couple") {
-        router.replace("/dashboard/couples");
+      } else if (c === "couple" || c === "couples") {
+        router.replace("/dashboard/couple");
       }
     }
   }, [category, router]);

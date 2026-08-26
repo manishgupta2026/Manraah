@@ -75,8 +75,8 @@ export async function GET(req: Request) {
         email: user.email,
         avatar: user.avatar || "/images/user_avatar.jpg",
         selectedCategory: (
-          user.selected_category === "couples" || user.selected_category === "couple" ? "couples" :
-          user.selected_category === "parents" || user.selected_category === "parent" ? "parents" :
+          user.selected_category === "couples" || user.selected_category === "couple" ? "couple" :
+          user.selected_category === "parents" || user.selected_category === "parent" ? "parent" :
           user.selected_category === "working_professional" || user.selected_category === "working-professional" || user.selected_category === "young_pro" || user.selected_category === "youngprofessional" ? "working_professional" :
           user.selected_category || "student"
         ),

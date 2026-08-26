@@ -130,7 +130,7 @@ export async function GET(req: Request) {
       } else if (userCategory === "parent" || userCategory === "parents") {
         redirectRoute = "/dashboard/parents";
       } else if (userCategory === "couple" || userCategory === "couples") {
-        redirectRoute = "/dashboard/couples";
+        redirectRoute = "/dashboard/couple";
       } else if (userCategory === "senior_citizen" || userCategory === "seniorcitizen") {
         redirectRoute = "/dashboard/senior_citizen";
       }
@@ -162,24 +162,33 @@ export async function GET(req: Request) {
     const localDate = url.searchParams.get("localDate") || getCalendarDayString(new Date());
 
     // 2. Fetch Checkins
-    const rawCheckins = await sql`
-      SELECT id, user_id, mood, energy_level as energy, sleep_quality, stress, note, created_at, checkin_date
-      FROM daily_checkins
-      WHERE user_id = ${user.id}
-      ORDER BY created_at DESC
-      LIMIT 14
-    `;
-
-    let history = rawCheckins;
-    if (history.length === 0) {
-      const moodHistory = await sql`
-        SELECT id, user_id, mood, energy, COALESCE(sleep_quality, 3) as sleep_quality, stress, reflection as note, created_at
-        FROM mood_entries
+    let rawCheckins: any[] = [];
+    try {
+      rawCheckins = await sql`
+        SELECT id, user_id, mood, energy_level as energy, sleep_quality, stress, note, created_at, checkin_date
+        FROM daily_checkins
         WHERE user_id = ${user.id}
         ORDER BY created_at DESC
         LIMIT 14
       `;
-      history = moodHistory;
+    } catch (e) {
+      console.error("rawCheckins fetch error:", e);
+    }
+
+    let history = rawCheckins;
+    if (history.length === 0) {
+      try {
+        const moodHistory = await sql`
+          SELECT id, user_id, mood, energy, COALESCE(sleep_quality, 3) as sleep_quality, stress, reflection as note, created_at
+          FROM mood_entries
+          WHERE user_id = ${user.id}
+          ORDER BY created_at DESC
+          LIMIT 14
+        `;
+        history = moodHistory;
+      } catch (e) {
+        console.error("moodHistory fetch error:", e);
+      }
     }
 
     const todayCheckin = history.find((c: any) => {
@@ -192,13 +201,19 @@ export async function GET(req: Request) {
     }) || null;
 
     // 3. Focus sessions statistics for today
-    const focusSessionsToday = await sql`
-      SELECT id, duration_minutes, created_at
-      FROM student_focus_sessions
-      WHERE user_id = ${user.id} AND created_at >= CURRENT_DATE
-    `;
-    const completedSessionsCount = focusSessionsToday.length;
-    const totalDurationToday = focusSessionsToday.reduce((acc: number, curr: any) => acc + curr.duration_minutes, 0);
+    let completedSessionsCount = 0;
+    let totalDurationToday = 0;
+    try {
+      const focusSessionsToday = await sql`
+        SELECT id, duration_minutes, created_at
+        FROM student_focus_sessions
+        WHERE user_id = ${user.id} AND created_at >= CURRENT_DATE
+      `;
+      completedSessionsCount = focusSessionsToday.length;
+      totalDurationToday = focusSessionsToday.reduce((acc: number, curr: any) => acc + curr.duration_minutes, 0);
+    } catch (e) {
+      console.error("focusSessionsToday fetch error:", e);
+    }
 
     const focusSession = {
       completed: completedSessionsCount,
@@ -207,106 +222,134 @@ export async function GET(req: Request) {
     };
 
     // 4. Seed default/fetch study tasks (Planner)
-    let tasks = await sql`
-      SELECT id, subject, task_title as title, priority, due_date as date, estimated_duration as duration, completed
-      FROM student_tasks
-      WHERE user_id = ${user.id}
-      ORDER BY completed ASC, due_date ASC
-    `;
-
-    if (tasks.length === 0) {
-      const today = new Date();
-      await sql`
-        INSERT INTO student_tasks (user_id, subject, task_title, priority, due_date, estimated_duration, completed)
-        VALUES 
-        (${user.id}, 'Physics', 'Read Chapter 4 on Thermodynamics', 'High', ${today.toISOString()}, 45, false),
-        (${user.id}, 'Chemistry', 'Complete Lab Report Draft', 'Medium', ${today.toISOString()}, 60, false),
-        (${user.id}, 'Mathematics', 'Solve Calculus Practice Set 2', 'Low', ${today.toISOString()}, 30, true)
-      `;
+    let tasks: any[] = [];
+    try {
       tasks = await sql`
         SELECT id, subject, task_title as title, priority, due_date as date, estimated_duration as duration, completed
         FROM student_tasks
         WHERE user_id = ${user.id}
         ORDER BY completed ASC, due_date ASC
       `;
+
+      if (tasks.length === 0) {
+        const today = new Date();
+        await sql`
+          INSERT INTO student_tasks (user_id, subject, task_title, priority, due_date, estimated_duration, completed)
+          VALUES 
+          (${user.id}, 'Physics', 'Read Chapter 4 on Thermodynamics', 'High', ${today.toISOString()}, 45, false),
+          (${user.id}, 'Chemistry', 'Complete Lab Report Draft', 'Medium', ${today.toISOString()}, 60, false),
+          (${user.id}, 'Mathematics', 'Solve Calculus Practice Set 2', 'Low', ${today.toISOString()}, 30, true)
+        `;
+        tasks = await sql`
+          SELECT id, subject, task_title as title, priority, due_date as date, estimated_duration as duration, completed
+          FROM student_tasks
+          WHERE user_id = ${user.id}
+          ORDER BY completed ASC, due_date ASC
+        `;
+      }
+      tasks = tasks.map((t: any) => ({
+        ...t,
+        due_date: t.date,
+        duration_minutes: t.duration
+      }));
+    } catch (e) {
+      console.error("tasks fetch/seed error:", e);
     }
 
     // 5. Seed default/fetch exams
-    let exams = await sql`
-      SELECT id, exam_name as name, subject, exam_date as date, exam_time as time, priority, prep_progress as progress
-      FROM student_exams
-      WHERE user_id = ${user.id}
-      ORDER BY exam_date ASC
-    `;
-
-    if (exams.length === 0) {
-      const physicsDate = new Date();
-      physicsDate.setDate(physicsDate.getDate() + 6);
-      const mathDate = new Date();
-      mathDate.setDate(mathDate.getDate() + 2);
-
-      await sql`
-        INSERT INTO student_exams (user_id, exam_name, subject, exam_date, exam_time, priority, prep_progress)
-        VALUES 
-        (${user.id}, 'Physics Midterm', 'Physics', ${physicsDate.toISOString()}, '10:00 AM', 'High', 72),
-        (${user.id}, 'Math Quiz', 'Mathematics', ${mathDate.toISOString()}, '02:00 PM', 'Medium', 40)
-      `;
+    let exams: any[] = [];
+    try {
       exams = await sql`
         SELECT id, exam_name as name, subject, exam_date as date, exam_time as time, priority, prep_progress as progress
         FROM student_exams
         WHERE user_id = ${user.id}
         ORDER BY exam_date ASC
       `;
+
+      if (exams.length === 0) {
+        const physicsDate = new Date();
+        physicsDate.setDate(physicsDate.getDate() + 6);
+        const mathDate = new Date();
+        mathDate.setDate(mathDate.getDate() + 2);
+
+        await sql`
+          INSERT INTO student_exams (user_id, exam_name, subject, exam_date, exam_time, priority, prep_progress)
+          VALUES 
+          (${user.id}, 'Physics Midterm', 'Physics', ${physicsDate.toISOString()}, '10:00 AM', 'High', 72),
+          (${user.id}, 'Math Quiz', 'Mathematics', ${mathDate.toISOString()}, '02:00 PM', 'Medium', 40)
+        `;
+        exams = await sql`
+          SELECT id, exam_name as name, subject, exam_date as date, exam_time as time, priority, prep_progress as progress
+          FROM student_exams
+          WHERE user_id = ${user.id}
+          ORDER BY exam_date ASC
+        `;
+      }
+
+      // Adjust days_left dynamically
+      exams = exams.map((ex: any) => {
+        const diff = Math.ceil((new Date(ex.date).getTime() - new Date().getTime()) / (1000 * 3600 * 24));
+        return {
+          ...ex,
+          exam_name: ex.name,
+          exam_date: ex.date,
+          exam_time: ex.time,
+          progress_percentage: ex.progress,
+          daysLeft: Math.max(0, diff),
+        };
+      });
+    } catch (e) {
+      console.error("exams fetch/seed error:", e);
     }
 
-    // Adjust days_left dynamically
-    exams = exams.map((ex: any) => {
-      const diff = Math.ceil((new Date(ex.date).getTime() - new Date().getTime()) / (1000 * 3600 * 24));
-      return {
-        ...ex,
-        daysLeft: Math.max(0, diff),
-      };
-    });
-
     // 6. Seed default/fetch upcoming appointments
-    let appointments = await sql`
-      SELECT id, doctor_name as name, doctor_title as title, doctor_avatar as avatar, appointment_date as date, appointment_time as time, status, video_call_url
-      FROM student_appointments
-      WHERE user_id = ${user.id} AND status = 'ACTIVE'
-      ORDER BY appointment_date ASC
-      LIMIT 1
-    `;
+    let appointments: any[] = [];
+    try {
+      appointments = await sql`
+        SELECT id, doctor_name as name, doctor_title as title, doctor_avatar as avatar, appointment_date as date, appointment_time as time, status, video_call_url
+        FROM student_appointments
+        WHERE user_id = ${user.id} AND status = 'ACTIVE'
+        ORDER BY appointment_date ASC
+        LIMIT 1
+      `;
+    } catch (e) {
+      console.error("appointments fetch error:", e);
+    }
 
     // 7. Seed default/fetch sleep records
-    let sleepResult = await sql`
-      SELECT id, sleep_time, wake_time, duration_minutes as duration, quality_score as score
-      FROM student_sleep_records
-      WHERE user_id = ${user.id}
-      ORDER BY created_at DESC
-      LIMIT 1
-    `;
-
-    if (sleepResult.length === 0) {
-      const yesterday = new Date();
-      yesterday.setDate(yesterday.getDate() - 1);
-      yesterday.setHours(22, 30, 0, 0); // 10:30 PM
-      const todayWake = new Date();
-      todayWake.setHours(6, 45, 0, 0); // 6:45 AM (8h 15m)
-
-      await sql`
-        INSERT INTO student_sleep_records (user_id, sleep_time, wake_time, duration_minutes, quality_score)
-        VALUES (${user.id}, ${yesterday.toISOString()}, ${todayWake.toISOString()}, 495, 78)
-      `;
-      sleepResult = await sql`
+    let sleepRecord = null;
+    try {
+      let sleepResult = await sql`
         SELECT id, sleep_time, wake_time, duration_minutes as duration, quality_score as score
         FROM student_sleep_records
         WHERE user_id = ${user.id}
         ORDER BY created_at DESC
         LIMIT 1
       `;
-    }
 
-    const sleepRecord = sleepResult[0];
+      if (sleepResult.length === 0) {
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        yesterday.setHours(22, 30, 0, 0); // 10:30 PM
+        const todayWake = new Date();
+        todayWake.setHours(6, 45, 0, 0); // 6:45 AM (8h 15m)
+
+        await sql`
+          INSERT INTO student_sleep_records (user_id, sleep_time, wake_time, duration_minutes, quality_score)
+          VALUES (${user.id}, ${yesterday.toISOString()}, ${todayWake.toISOString()}, 495, 78)
+        `;
+        sleepResult = await sql`
+          SELECT id, sleep_time, wake_time, duration_minutes as duration, quality_score as score
+          FROM student_sleep_records
+          WHERE user_id = ${user.id}
+          ORDER BY created_at DESC
+          LIMIT 1
+        `;
+      }
+      sleepRecord = sleepResult[0] || null;
+    } catch (e) {
+      console.error("sleepRecords fetch/seed error:", e);
+    }
 
     // 8. Dynamic Wellness Score calculation
     let wellnessScoreObj = null;
@@ -371,50 +414,34 @@ export async function GET(req: Request) {
     }
 
     // 3b. Weekly study focus analytics (last 7 days)
-    const focusWeek = await sql`
-      SELECT duration_minutes, created_at
-      FROM student_focus_sessions
-      WHERE user_id = ${user.id} AND created_at >= CURRENT_DATE - INTERVAL '7 days'
-    `;
-
     const weeklyFocus = [0, 0, 0, 0, 0, 0, 0];
-    focusWeek.forEach((session: any) => {
-      const day = new Date(session.created_at).getDay(); // 0 = Sun, 1 = Mon, ..., 6 = Sat
-      const idx = day === 0 ? 6 : day - 1; // Map to 0-6 (Mon-Sun)
-      weeklyFocus[idx] += session.duration_minutes;
-    });
+    try {
+      const focusWeek = await sql`
+        SELECT duration_minutes, created_at
+        FROM student_focus_sessions
+        WHERE user_id = ${user.id} AND created_at >= CURRENT_DATE - INTERVAL '7 days'
+      `;
+      focusWeek.forEach((session: any) => {
+        const day = new Date(session.created_at).getDay(); // 0 = Sun, 1 = Mon, ..., 6 = Sat
+        const idx = day === 0 ? 6 : day - 1; // Map to 0-6 (Mon-Sun)
+        weeklyFocus[idx] += session.duration_minutes;
+      });
+    } catch (e) {
+      console.error("weeklyFocus fetch error:", e);
+    }
 
     // 2b. Weekly mood stats (last 7 days checkins)
-    const checkinWeek = await sql`
-      SELECT mood, created_at
-      FROM daily_checkins
-      WHERE user_id = ${user.id} AND created_at >= CURRENT_DATE - INTERVAL '7 days'
-      ORDER BY created_at ASC
-    `;
-
     const weeklyMoods = [4, 4, 4, 4, 4, 4, 4]; // Default to 4 (Okay)
-    const checkinDaysSeen: { [key: number]: boolean } = {};
-    checkinWeek.forEach((ch: any) => {
-      const day = new Date(ch.created_at).getDay();
-      const idx = day === 0 ? 6 : day - 1;
-      if (!checkinDaysSeen[idx]) {
-        checkinDaysSeen[idx] = true;
-        const m = (ch.mood || "").toLowerCase().trim();
-        if (m === "good" || m === "joyful" || m === "happy" || m === "amazing") weeklyMoods[idx] = 5;
-        else if (m === "okay" || m === "calm") weeklyMoods[idx] = 4;
-        else if (m === "stressed" || m === "anxious" || m === "low") weeklyMoods[idx] = 3;
-        else if (m === "overwhelmed" || m === "drained") weeklyMoods[idx] = 2;
-      }
-    });
-
-    if (checkinWeek.length === 0) {
-      const moodWeek = await sql`
+    try {
+      const checkinWeek = await sql`
         SELECT mood, created_at
-        FROM mood_entries
+        FROM daily_checkins
         WHERE user_id = ${user.id} AND created_at >= CURRENT_DATE - INTERVAL '7 days'
         ORDER BY created_at ASC
       `;
-      moodWeek.forEach((ch: any) => {
+
+      const checkinDaysSeen: { [key: number]: boolean } = {};
+      checkinWeek.forEach((ch: any) => {
         const day = new Date(ch.created_at).getDay();
         const idx = day === 0 ? 6 : day - 1;
         if (!checkinDaysSeen[idx]) {
@@ -426,6 +453,29 @@ export async function GET(req: Request) {
           else if (m === "overwhelmed" || m === "drained") weeklyMoods[idx] = 2;
         }
       });
+
+      if (checkinWeek.length === 0) {
+        const moodWeek = await sql`
+          SELECT mood, created_at
+          FROM mood_entries
+          WHERE user_id = ${user.id} AND created_at >= CURRENT_DATE - INTERVAL '7 days'
+          ORDER BY created_at ASC
+        `;
+        moodWeek.forEach((ch: any) => {
+          const day = new Date(ch.created_at).getDay();
+          const idx = day === 0 ? 6 : day - 1;
+          if (!checkinDaysSeen[idx]) {
+            checkinDaysSeen[idx] = true;
+            const m = (ch.mood || "").toLowerCase().trim();
+            if (m === "good" || m === "joyful" || m === "happy" || m === "amazing") weeklyMoods[idx] = 5;
+            else if (m === "okay" || m === "calm") weeklyMoods[idx] = 4;
+            else if (m === "stressed" || m === "anxious" || m === "low") weeklyMoods[idx] = 3;
+            else if (m === "overwhelmed" || m === "drained") weeklyMoods[idx] = 2;
+          }
+        });
+      }
+    } catch (e) {
+      console.error("weeklyMoods fetch error:", e);
     }
 
     // 10. Compile results

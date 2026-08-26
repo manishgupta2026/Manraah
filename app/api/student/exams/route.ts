@@ -20,6 +20,10 @@ export async function GET(req: Request) {
       const diff = Math.ceil((new Date(ex.date).getTime() - new Date().getTime()) / (1000 * 3600 * 24));
       return {
         ...ex,
+        exam_name: ex.name,
+        exam_date: ex.date,
+        exam_time: ex.time,
+        progress_percentage: ex.progress,
         daysLeft: Math.max(0, diff),
       };
     });
@@ -52,6 +56,10 @@ export async function POST(req: Request) {
     const diff = Math.ceil((new Date(ex.date).getTime() - new Date().getTime()) / (1000 * 3600 * 24));
     const result = {
       ...ex,
+      exam_name: ex.name,
+      exam_date: ex.date,
+      exam_time: ex.time,
+      progress_percentage: ex.progress,
       daysLeft: Math.max(0, diff),
     };
 
@@ -94,6 +102,10 @@ export async function PUT(req: Request) {
     const diff = Math.ceil((new Date(ex.date).getTime() - new Date().getTime()) / (1000 * 3600 * 24));
     const result = {
       ...ex,
+      exam_name: ex.name,
+      exam_date: ex.date,
+      exam_time: ex.time,
+      progress_percentage: ex.progress,
       daysLeft: Math.max(0, diff),
     };
 

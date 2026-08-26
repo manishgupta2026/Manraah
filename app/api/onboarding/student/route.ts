@@ -52,9 +52,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Category access denied" }, { status: 403 });
     }
 
-    if (userRecord.onboarding_completed) {
-      return NextResponse.json({ error: "Onboarding has already been completed." }, { status: 400 });
-    }
+    // Allow completing the assessment multiple times (for retakes)
+
 
     const body = await req.json();
     const { answers } = body;
@@ -116,11 +115,16 @@ export async function POST(req: Request) {
       VALUES (${userId}, ${JSON.stringify(answers)})
     `;
 
-    // 3. Seed baseline sleep record so charts and wellness calculation have data
-    await sql`
-      INSERT INTO student_sleep_records (user_id, sleep_time, wake_time, duration_minutes, quality_score)
-      VALUES (${userId}, (CURRENT_TIMESTAMP - INTERVAL '8 hours'), CURRENT_TIMESTAMP, 480, ${dbSleepScore})
+    // 3. Seed baseline sleep record so charts and wellness calculation have data (only if none exists)
+    const sleepRecordCountResult = await sql`
+      SELECT COUNT(*) FROM student_sleep_records WHERE user_id = ${userId}
     `;
+    if (parseInt(sleepRecordCountResult[0].count) === 0) {
+      await sql`
+        INSERT INTO student_sleep_records (user_id, sleep_time, wake_time, duration_minutes, quality_score)
+        VALUES (${userId}, (CURRENT_TIMESTAMP - INTERVAL '8 hours'), CURRENT_TIMESTAMP, 480, ${dbSleepScore})
+      `;
+    }
 
     // 4. Update session cookies to reflect category and onboarding state
     const userResult = await sql`

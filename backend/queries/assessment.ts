@@ -404,9 +404,10 @@ export async function saveDailyCheckIn(
   await initDatabase();
   try {
     // 1. Save check-in
+    const todayStr = new Date().toISOString().split('T')[0];
     await sql`
-      INSERT INTO daily_checkins (user_id, mood, energy_level, sleep_quality, gratitude_reflection, daily_intention, reflection)
-      VALUES (${userId}, ${data.mood}, ${data.energyLevel}, ${data.sleepQuality}, ${data.gratitudeReflection}, ${data.dailyIntention}, ${data.reflection || null})
+      INSERT INTO daily_checkins (user_id, mood, energy_level, sleep_quality, gratitude_reflection, daily_intention, reflection, checkin_date, check_in_date)
+      VALUES (${userId}, ${data.mood}, ${data.energyLevel}, ${data.sleepQuality}, ${data.gratitudeReflection}, ${data.dailyIntention}, ${data.reflection || null}, ${todayStr}, ${todayStr})
     `;
 
     // 2. Manage user streak

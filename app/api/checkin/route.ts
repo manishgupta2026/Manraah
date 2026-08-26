@@ -43,10 +43,21 @@ export async function POST(req: Request) {
       );
     }
 
+    const getCalendarDayString = (date: Date) => {
+      const formatter = new Intl.DateTimeFormat("en-CA", {
+        timeZone: "Asia/Kolkata",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      });
+      return formatter.format(date);
+    };
+    const todayStr = getCalendarDayString(new Date());
+
     // 3. Save check-in in daily_checkins
     await sql`
-      INSERT INTO daily_checkins (user_id, mood, energy_level, stress, sleep_quality, gratitude_reflection, daily_intention, reflection, created_at, updated_at)
-      VALUES (${userId}, ${mood}, ${energyVal}, ${stress}, ${sleepVal}, ${gratitudeText}, ${reflectionText}, ${reflectionText}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+      INSERT INTO daily_checkins (user_id, mood, energy_level, stress, sleep_quality, gratitude_reflection, daily_intention, reflection, created_at, updated_at, checkin_date)
+      VALUES (${userId}, ${mood}, ${energyVal}, ${stress}, ${sleepVal}, ${gratitudeText}, ${reflectionText}, ${reflectionText}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, ${todayStr})
     `;
 
     // 4. Save entry in mood_entries
@@ -62,8 +73,8 @@ export async function POST(req: Request) {
 
     const moodId = `mood-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
     await sql`
-      INSERT INTO mood_entries (id, user_id, mood, score, energy, stress, reflection, factors, created_at, updated_at)
-      VALUES (${moodId}, ${userId}, ${mood}, ${computedScore}, ${energyVal}, ${stress}, ${reflectionText}, ${gratitudeText}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+      INSERT INTO mood_entries (id, user_id, mood, score, energy, stress, reflection, factors, created_at, updated_at, checkin_date)
+      VALUES (${moodId}, ${userId}, ${mood}, ${computedScore}, ${energyVal}, ${stress}, ${reflectionText}, ${gratitudeText}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, ${todayStr})
     `;
 
     // 5. Update user streaks

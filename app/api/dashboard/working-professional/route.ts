@@ -34,6 +34,8 @@ async function ensureWpTablesExist() {
   `;
   await sql`ALTER TABLE wp_goals ADD COLUMN IF NOT EXISTS description VARCHAR(255)`;
   await sql`ALTER TABLE wp_goals ADD COLUMN IF NOT EXISTS completed_at TIMESTAMP WITH TIME ZONE`;
+  await sql`ALTER TABLE wp_goals ADD COLUMN IF NOT EXISTS priority VARCHAR(50) DEFAULT 'Medium'`;
+  await sql`ALTER TABLE wp_goals ADD COLUMN IF NOT EXISTS due_date VARCHAR(100)`;
 
   // 3. wp_focus_sessions
   await sql`
@@ -152,7 +154,7 @@ export async function GET(req: Request) {
       } else if (userCategory === "parent" || userCategory === "parents") {
         redirectRoute = "/dashboard/parents";
       } else if (userCategory === "couple" || userCategory === "couples") {
-        redirectRoute = "/dashboard/couples";
+        redirectRoute = "/dashboard/couple";
       } else if (userCategory === "senior_citizen" || userCategory === "seniorcitizen") {
         redirectRoute = "/dashboard/senior_citizen";
       }
@@ -192,11 +194,11 @@ export async function GET(req: Request) {
     `;
     if (goalsCheck.length === 0) {
       await sql`
-        INSERT INTO wp_goals (user_id, title, completed) VALUES
-        (${user.id}, 'Take 2 mindful breaks', true),
-        (${user.id}, 'Sleep before 11:30 PM', true),
-        (${user.id}, 'Complete weekly reflection', false),
-        (${user.id}, 'Do a 2-min stress reset', false)
+        INSERT INTO wp_goals (user_id, title, priority, due_date, completed) VALUES
+        (${user.id}, 'Prepare Q2 Business Report', 'High', 'Today, 05:00 PM', false),
+        (${user.id}, 'Team Stand-up & Project Sync', 'Medium', 'Today, 11:00 AM', false),
+        (${user.id}, 'Review Emails & Follow-ups', 'Low', 'Today, 03:30 PM', false),
+        (${user.id}, 'Take 2 mindful breaks', 'Low', 'Today, 06:00 PM', true)
       `;
     }
 
@@ -420,7 +422,7 @@ export async function GET(req: Request) {
 
     // Fetch goals
     const goals = await sql`
-      SELECT id, title, completed, created_at
+      SELECT id, title, priority, due_date, completed, created_at
       FROM wp_goals
       WHERE user_id = ${user.id}
       ORDER BY created_at ASC

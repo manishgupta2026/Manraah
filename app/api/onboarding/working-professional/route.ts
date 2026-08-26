@@ -92,22 +92,33 @@ export async function POST(req: Request) {
       workLifeBalance: Number(workLifeBalance) || 3,
     });
 
+    const getCalendarDayString = (date: Date) => {
+      const formatter = new Intl.DateTimeFormat("en-CA", {
+        timeZone: "Asia/Kolkata",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      });
+      return formatter.format(date);
+    };
+    const todayStr = getCalendarDayString(new Date());
+
     // 3. Save initial check-in to mood_entries & daily_checkins
     await sql`
       INSERT INTO mood_entries (
-        user_id, mood, energy, stress, sleep_quality, work_life_balance, reflection, factors
+        user_id, mood, energy, stress, sleep_quality, work_life_balance, reflection, factors, checkin_date
       ) VALUES (
         ${userId}, ${mood || 'Good'}, ${Number(energy) || 4}, ${typeof stress === 'string' ? stress : 'Manageable'}, 
-        ${Number(sleep) || 4}, ${Number(workLifeBalance) || 3}, 'Initial baseline check-in from onboarding', ${workSituation || 'Working Professional'}
+        ${Number(sleep) || 4}, ${Number(workLifeBalance) || 3}, 'Initial baseline check-in from onboarding', ${workSituation || 'Working Professional'}, ${todayStr}
       )
     `;
 
     await sql`
       INSERT INTO daily_checkins (
-        user_id, mood, energy_level, sleep_quality, stress, work_life_balance, note
+        user_id, mood, energy_level, sleep_quality, stress, work_life_balance, note, checkin_date
       ) VALUES (
         ${userId}, ${mood || 'Good'}, ${Number(energy) || 4}, ${Number(sleep) || 4},
-        ${typeof stress === 'string' ? stress : 'Manageable'}, ${Number(workLifeBalance) || 3}, 'Initial onboarding check-in'
+        ${typeof stress === 'string' ? stress : 'Manageable'}, ${Number(workLifeBalance) || 3}, 'Initial onboarding check-in', ${todayStr}
       )
     `;
 

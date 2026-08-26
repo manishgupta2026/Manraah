@@ -17,6 +17,7 @@ const ALLOWED_CATEGORIES = new Set([
   "women",
   "men",
   "senior_citizen",
+  "other",
 ]);
 
 // Map common frontend variants to canonical DB category IDs
@@ -29,6 +30,7 @@ function normalizeCategory(cat: string | undefined): string | null {
   if (c === "seniorcitizen" || c === "senior-citizen") return "senior_citizen";
   if (c === "parents") return "parent";
   if (c === "couples") return "couple";
+  if (c === "other") return "other";
   return null;
 }
 

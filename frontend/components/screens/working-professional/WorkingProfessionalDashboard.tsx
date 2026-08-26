@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { getClientSession } from "@/backend/auth/client";
 import { getInitials, getPastelBgColor, getPastelTextColor } from "@/frontend/lib/avatar-helper";
+import { useStudentDashboard } from "@/frontend/components/screens/StudentDashboard";
 
 // Framer motion variants
 const containerVariants = {
@@ -60,6 +61,7 @@ export default function WorkingProfessionalDashboard() {
   const [decompressionIntervalId, setDecompressionIntervalId] = useState<any | null>(null);
 
   // Goal States
+  const [togglingGoalId, setTogglingGoalId] = useState<number | null>(null);
   const [newGoalTitle, setNewGoalTitle] = useState<string>( "");
   const [isAddingGoal, setIsAddingGoal] = useState<boolean>(false);
   const [editingGoalId, setEditingGoalId] = useState<number | null>(null);
@@ -211,6 +213,9 @@ export default function WorkingProfessionalDashboard() {
 
   // Goals CRUD handlers
   const handleToggleGoal = async (goalId: number, currentCompleted: boolean) => {
+    if (togglingGoalId === goalId) return;
+    setTogglingGoalId(goalId);
+
     // Optimistic UI updates
     setData((prev: any) => {
       if (!prev) return prev;
@@ -238,8 +243,8 @@ export default function WorkingProfessionalDashboard() {
       } else {
         throw new Error("Failed to toggle goal");
       }
-    } catch (err) {
-      triggerToast("Failed to toggle goal. Reverting...");
+    } catch (err: any) {
+      triggerToast(err.message || "Failed to toggle goal");
       // Revert optimistic update
       setData((prev: any) => {
         if (!prev) return prev;
@@ -742,7 +747,7 @@ export default function WorkingProfessionalDashboard() {
   const getDecompressionInstruction = (timeLeft: number) => {
     const cycleTime = (120 - timeLeft) % 14;
     if (cycleTime < 4) {
-      return { text: "Inhale", duration: 4, scale: 1.4, color: "text-[#0B4F3C]" };
+      return { text: "Inhale", duration: 4, scale: 1.4, color: "text-[#5F4EA5]" };
     } else if (cycleTime < 8) {
       return { text: "Hold", duration: 4, scale: 1.4, color: "text-amber-600" };
     } else {
@@ -761,7 +766,7 @@ export default function WorkingProfessionalDashboard() {
           cy="50"
           r={radius}
           fill="transparent"
-          stroke="#EAF7F1"
+          stroke="#F5F3FC"
           strokeWidth={strokeWidth}
         />
         <circle
@@ -769,7 +774,7 @@ export default function WorkingProfessionalDashboard() {
           cy="50"
           r={radius}
           fill="transparent"
-          stroke="#62B596"
+          stroke="#7C6BC4"
           strokeWidth={strokeWidth}
           strokeDasharray={circ}
           strokeDashoffset={offset}
@@ -808,16 +813,16 @@ export default function WorkingProfessionalDashboard() {
           onClick={() => setSelectedDateStr(dateObj.toDateString())}
           className={`flex flex-col items-center justify-center p-2.5 rounded-xl text-center flex-1 transition-all relative ${
             isSelected
-              ? "bg-[#0B4F3C] text-white shadow-sm font-bold scale-105"
+              ? "bg-[#5F4EA5] text-white shadow-sm font-bold scale-105"
               : isToday
-              ? "bg-[#EAF7F1] text-[#0B4F3C] font-bold"
-              : "text-[#718079] hover:bg-slate-50 dark:hover:bg-slate-800"
+              ? "bg-[#F5F3FC] text-[#5F4EA5] font-bold"
+              : "text-[#8E8A9F] hover:bg-slate-50 dark:hover:bg-slate-800"
           }`}
         >
           <span className="text-[9px] uppercase tracking-wider font-semibold opacity-75">{dayName}</span>
           <span className="text-xs font-black mt-1 leading-none">{dayNum}</span>
           {hasEvent && !isSelected && (
-            <span className="w-1 h-1 rounded-full bg-[#62B596] absolute bottom-1" />
+            <span className="w-1 h-1 rounded-full bg-[#7C6BC4] absolute bottom-1" />
           )}
         </button>
       );
@@ -881,7 +886,7 @@ export default function WorkingProfessionalDashboard() {
             time: `Logged at ${new Date(ch.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`,
             desc: ch.note || "No reflection logged.",
             icon: ch.mood.toLowerCase() === "good" || ch.mood.toLowerCase() === "happy" || ch.mood.toLowerCase() === "joyful" ? "😊" : "😐",
-            color: "bg-[#EAF7F1]/60 border-[#EAF7F1]/30 text-[#0B4F3C]",
+            color: "bg-[#F5F3FC]/60 border-[#F5F3FC]/30 text-[#5F4EA5]",
             action: () => {},
           });
         }
@@ -911,8 +916,8 @@ export default function WorkingProfessionalDashboard() {
               <span className="text-base shrink-0">{item.icon}</span>
               <div className="truncate flex-1">
                 <h5 className="text-[10px] font-black uppercase tracking-wider truncate leading-tight">{item.title}</h5>
-                <p className="text-[9px] text-[#718079] font-bold mt-0.5 truncate">{item.desc}</p>
-                <p className="text-[9px] font-black uppercase text-[#0B4F3C] mt-1 leading-none">{item.time}</p>
+                <p className="text-[9px] text-[#8E8A9F] font-bold mt-0.5 truncate">{item.desc}</p>
+                <p className="text-[9px] font-black uppercase text-[#5F4EA5] mt-1 leading-none">{item.time}</p>
               </div>
             </div>
           </div>
@@ -924,7 +929,7 @@ export default function WorkingProfessionalDashboard() {
   // Loading Skeletons
   if (isLoading) {
     return (
-      <div className="w-full space-y-[32px] animate-pulse py-4 bg-[#F7FAF8] dark:bg-slate-900 min-h-screen p-[28px] lg:p-[36px]">
+      <div className="w-full space-y-[32px] animate-pulse py-4 bg-[#F5FAFB] dark:bg-slate-900 min-h-screen p-[28px] lg:p-[36px]">
         <div className="h-28 bg-white dark:bg-slate-800 rounded-[20px]" />
         <div className="grid grid-cols-1 xl:grid-cols-12 gap-5">
           <div className="xl:col-span-8 space-y-5">
@@ -946,14 +951,14 @@ export default function WorkingProfessionalDashboard() {
   // Connection fail / error
   if (error) {
     return (
-      <div className="min-h-[70vh] flex items-center justify-center p-4 bg-[#F7FAF8] dark:bg-slate-900">
+      <div className="min-h-[70vh] flex items-center justify-center p-4 bg-[#F5FAFB] dark:bg-slate-900">
         <div className="w-full max-w-[400px] bg-white dark:bg-[#132E3F] rounded-[20px] p-8 border border-slate-200/50 text-center space-y-4 shadow-sm">
           <span className="material-symbols-outlined text-4xl text-[#EA5E5E]">warning</span>
-          <h4 className="font-heading font-black text-xs text-[#18322A] dark:text-slate-100 uppercase tracking-wider">Sanctuary Sync Failed</h4>
+          <h4 className="font-heading font-black text-xs text-[#100E26] dark:text-slate-100 uppercase tracking-wider">Sanctuary Sync Failed</h4>
           <p className="text-[11px] font-bold text-slate-400 leading-normal">{error}</p>
           <button
             onClick={loadDashboardData}
-            className="w-full py-3 rounded-xl bg-[#0B4F3C] text-white text-[10px] font-black uppercase tracking-widest hover:bg-[#073C2C] transition-all"
+            className="w-full py-3 rounded-xl bg-[#5F4EA5] text-white text-[10px] font-black uppercase tracking-widest hover:bg-[#4A3C8C] transition-all"
           >
             Retry Connection
           </button>
@@ -965,7 +970,7 @@ export default function WorkingProfessionalDashboard() {
   const moodOrderData = getMoodOverviewData();
 
   return (
-    <div className="w-full space-y-[32px] bg-[#F7FAF8] dark:bg-slate-900 text-[#18322A] dark:text-[#E3EAE5] min-h-screen relative">
+    <div className="w-full space-y-[32px] bg-[#F5FAFB] dark:bg-slate-900 text-[#100E26] dark:text-[#E2E8F0] min-h-screen relative">
       
       {/* Toast Notice */}
       <AnimatePresence>
@@ -974,532 +979,403 @@ export default function WorkingProfessionalDashboard() {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="fixed top-4 left-0 right-0 mx-auto z-50 w-fit max-w-[320px] px-4 py-2.5 bg-[#0B4F3C] text-white text-[10px] font-black uppercase tracking-widest rounded-xl shadow-lg border border-emerald-500/10 text-center"
+            className="fixed top-4 left-0 right-0 mx-auto z-50 w-fit max-w-[320px] px-4 py-2.5 bg-[#5F4EA5] text-white text-[10px] font-black uppercase tracking-widest rounded-xl shadow-lg border border-emerald-500/10 text-center"
           >
             {toastMessage}
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* 1. TOP SECTION GRID */}
-      <div className="grid grid-cols-1 xl:grid-cols-12 gap-5 items-start">
+            {/* 3-COLUMN MAIN DASHBOARD GRID */}
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start animate-fade-in-up">
         
-        {/* LEFT / MAIN COLUMN (col-span-8) */}
-        <div className="xl:col-span-8 space-y-5">
+        {/* COLUMN 1: Daily Check-in & Illustrations */}
+        <div className="space-y-6 lg:col-span-1">
           
-          {/* Welcome Card */}
-          <div className="p-6 rounded-[20px] bg-white dark:bg-[#132E3F] border border-slate-200/40 dark:border-slate-800 shadow-[0_2px_12px_rgba(11,79,60,0.015)] flex flex-col md:flex-row items-center justify-between gap-6 text-left relative overflow-hidden group min-h-[140px]">
-            <div className="space-y-1.5 relative z-10">
-              <p className="text-[11px] font-black text-[#62B596] uppercase tracking-widest leading-none">WELCOME BACK</p>
-              <h2
-                className="font-heading font-black text-2xl lg:text-3xl text-[#18322A] dark:text-slate-100 tracking-tight leading-tight cursor-pointer hover:underline flex items-center gap-2"
-                onClick={() => setShowProfileModal(true)}
+          {/* Daily Check-in Complete */}
+          <div className="p-6 rounded-[24px] bg-white dark:bg-[#132E3F] border border-slate-200/40 dark:border-slate-800 shadow-[0_2px_12px_rgba(0,0,0,0.02)] hover:translate-y-[-2px] transition-all duration-300 flex flex-col items-center text-center space-y-4">
+            <div className="relative">
+              <div className="w-20 h-20 rounded-full bg-[#F5F3FC] dark:bg-purple-950/20 overflow-hidden flex items-center justify-center border-2 border-purple-100 dark:border-purple-900/50">
+                <img src="/images/avatar_placeholder.jpg" alt="Avatar" className="w-full h-full object-cover" onError={(e) => {
+                  e.currentTarget.src = `https://api.dicebear.com/7.x/bottts/svg?seed=${data?.user?.name || 'Sanctuary'}`;
+                }} />
+              </div>
+              {data?.todayCheckin && (
+                <div className="absolute bottom-0 right-0 w-6 h-6 rounded-full bg-emerald-500 border-2 border-white dark:border-[#132E3F] flex items-center justify-center text-white text-xs font-black">
+                  ✓
+                </div>
+              )}
+            </div>
+            
+            {data?.todayCheckin ? (
+              <div className="space-y-1">
+                <h4 className="font-heading font-black text-sm text-[#100E26] dark:text-slate-100">Daily Check-in Complete!</h4>
+                <p className="text-[11px] text-slate-455 font-bold leading-relaxed">
+                  You logged feeling <span className="text-[#5F4EA5] font-extrabold">{data.todayCheckin.mood}</span> today. Keep up the great work!
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-1">
+                <h4 className="font-heading font-black text-sm text-[#100E26] dark:text-slate-100">Daily Check-in</h4>
+                <p className="text-[11px] text-slate-455 font-bold leading-relaxed">
+                  Take a moment to check in with yourself.
+                </p>
+              </div>
+            )}
+
+            {data?.todayCheckin ? (
+              <button
+                onClick={() => {
+                  setCheckinMood(data.todayCheckin.mood);
+                  setCheckinStress(data.todayCheckin.stress);
+                  setCheckinEnergy(data.todayCheckin.energy);
+                  setCheckinSleep(data.todayCheckin.sleepQuality || 3);
+                  setCheckinBalance(data.todayCheckin.workLifeBalance || 3);
+                  setCheckinNote(data.todayCheckin.note || "");
+                  setShowCheckinModal(true);
+                }}
+                className="w-full py-2.5 rounded-xl bg-[#F5F3FC] dark:bg-purple-950/20 text-[#5F4EA5] dark:text-purple-300 text-[10px] font-black uppercase tracking-widest hover:bg-[#5F4EA5]/10 transition-all cursor-pointer text-center"
               >
-                Hi, {data?.user?.name || "Sanctuary Member"}! 👋
-              </h2>
-              <p className="text-[13px] lg:text-[14px] text-[#718079] font-bold leading-normal max-w-xl">
-                Let's make today a little lighter. Small steps matter, especially on busy days.
+                View Check-in
+              </button>
+            ) : (
+              <button
+                onClick={() => {
+                  setCheckinMood("Good");
+                  setCheckinStress("Manageable");
+                  setCheckinEnergy(4);
+                  setCheckinSleep(4);
+                  setCheckinBalance(3);
+                  setCheckinNote("");
+                  setShowCheckinModal(true);
+                }}
+                className="w-full py-2.5 rounded-xl bg-[#5F4EA5] text-white text-[10px] font-black uppercase tracking-widest hover:bg-[#4A3C8C] transition-all cursor-pointer text-center shadow-sm"
+              >
+                Check-in Now
+              </button>
+            )}
+          </div>
+
+          {/* Desk Illustration Card */}
+          <div className="rounded-[24px] overflow-hidden border border-slate-200/30 dark:border-slate-800 shadow-[0_2px_12px_rgba(0,0,0,0.02)] hover:scale-[1.01] transition-transform duration-300">
+            <img src="/images/wp_desk_illustration.jpg" alt="Workspace desk illustration" className="w-full h-auto object-cover" />
+          </div>
+
+          {/* 100% Confidential */}
+          <div className="p-5 rounded-[24px] bg-slate-50/50 dark:bg-slate-800/20 border border-slate-200/30 dark:border-slate-800 flex items-start gap-4 text-left">
+            <div className="w-10 h-10 rounded-xl bg-purple-50 dark:bg-purple-950/30 flex items-center justify-center text-[#5F4EA5] shrink-0">
+              <span className="material-symbols-outlined text-lg leading-none">lock</span>
+            </div>
+            <div className="space-y-0.5">
+              <h5 className="text-[11px] font-black text-[#100E26] dark:text-slate-100 uppercase tracking-wider">100% Confidential</h5>
+              <p className="text-[10px] text-slate-450 font-bold leading-normal">
+                Your privacy is our top priority. Your data is safe and secure.
               </p>
-              
-              <div className="flex flex-wrap gap-2 pt-2">
-                <span className="px-3 py-1 bg-[#EAF7F1] text-[#0B4F3C] text-[10px] font-black uppercase tracking-wider rounded-full">💼 Working Professional</span>
-                <span className="px-3 py-1 bg-[#FFF3EC] text-amber-800 text-[10px] font-black uppercase tracking-wider rounded-full">🔥 {data?.streak?.currentStreak || 1} Day Streak</span>
-                <span className="px-3 py-1 bg-[#F3F0FA] text-[#5F4EA5] text-[10px] font-black uppercase tracking-wider rounded-full">🙂 Feeling {data?.user?.currentMood || "Good"}</span>
-              </div>
             </div>
+          </div>
 
-            <div
-              className="w-48 h-32 shrink-0 relative rounded-2xl overflow-hidden border border-slate-100 dark:border-slate-800 hidden md:block cursor-pointer hover:opacity-90 transition-opacity"
-              onClick={() => setShowProfileModal(true)}
+          {/* Today's Motivation */}
+          <div className="p-6 rounded-[24px] bg-gradient-to-br from-amber-50/60 to-purple-50/40 dark:from-amber-950/10 dark:to-purple-950/10 border border-amber-100/40 dark:border-slate-800 text-left space-y-3 relative overflow-hidden">
+            <div className="absolute right-[-10px] bottom-[-10px] w-24 h-24 rounded-full bg-amber-200/10 filter blur-xl" />
+            <p className="text-[9px] font-black text-[#5F4EA5] dark:text-purple-300 uppercase tracking-widest leading-none">Today's Motivation</p>
+            <blockquote className="text-[12px] font-extrabold text-[#100E26] dark:text-slate-200 leading-relaxed z-10 relative">
+              "Discipline is choosing between what you want now and what you want most."
+            </blockquote>
+          </div>
+
+        </div>
+
+        {/* COLUMN 2: Hero & Performance widgets */}
+        <div className="space-y-6 lg:col-span-2">
+          
+          {/* Welcome Back Hero */}
+          <div className="text-left space-y-2 py-2">
+            <p className="text-[10px] font-black text-[#5F4EA5] uppercase tracking-widest leading-none">Welcome Back</p>
+            <h1 className="font-heading font-black text-3xl text-[#100E26] dark:text-slate-100 tracking-tight leading-none">
+              Hi, <span className="text-[#5F4EA5]">{data?.user?.name || "Working_Pro"}</span>! 👋
+            </h1>
+            <p className="text-xs text-slate-500 font-bold leading-normal">
+              Let's make today a productive and balanced day.
+            </p>
+            <div className="flex flex-wrap gap-2 pt-1.5">
+              <span className="px-3 py-1 bg-purple-50 dark:bg-purple-955/30 text-[#5F4EA5] dark:text-purple-300 text-[9px] font-black uppercase tracking-wider rounded-full border border-purple-100/40 dark:border-purple-900/30">
+                💼 Working Professional
+              </span>
+              <span className="px-3 py-1 bg-amber-50 dark:bg-amber-950/20 text-amber-800 dark:text-amber-300 text-[9px] font-black uppercase tracking-wider rounded-full border border-amber-100/40 dark:border-amber-900/20">
+                {data?.streak?.currentStreak || 5} Day Streak 🔥
+              </span>
+              <span className="px-3 py-1 bg-emerald-50 dark:bg-emerald-950/20 text-emerald-800 dark:text-emerald-300 text-[9px] font-black uppercase tracking-wider rounded-full border border-emerald-100/40 dark:border-emerald-900/20">
+                🟢 Focus Mode: On
+              </span>
+            </div>
+          </div>
+
+          {/* Work Performance Overview */}
+          <div className="p-6 rounded-[24px] bg-white dark:bg-[#132E3F] border border-slate-200/40 dark:border-slate-800 shadow-[0_2px_12px_rgba(0,0,0,0.02)] flex items-center justify-between gap-4 text-left">
+            <div className="space-y-1 flex-1">
+              <h4 className="font-heading font-black text-[10px] text-slate-450 uppercase tracking-widest">WORK PERFORMANCE OVERVIEW</h4>
+              <div className="flex items-center gap-1.5 pt-1 text-emerald-600 dark:text-emerald-400 font-extrabold text-xs">
+                <span>📈 Great Progress!</span>
+              </div>
+              <p className="text-[11px] text-slate-500 font-bold leading-normal">
+                You're completing more tasks and staying consistent.
+              </p>
+            </div>
+            <button
+              onClick={() => router.push("/dashboard/working-professional/analytics")}
+              className="px-4 py-2 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-750 text-[#100E26] dark:text-slate-200 text-[10px] font-black uppercase tracking-widest rounded-full transition-all cursor-pointer border border-slate-200/40 dark:border-slate-700"
             >
-              <img
-                src="/images/wp_welcome_illustration.jpg"
-                alt="Workspace Wellness Illustration"
-                className="w-full h-full object-cover"
-              />
-            </div>
+              View Insights
+            </button>
           </div>
 
-          {/* Row 2: Check-In card + Upcoming Consultation card */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          {/* Today's Priorities */}
+          <div className="p-6 rounded-[24px] bg-white dark:bg-[#132E3F] border border-slate-200/40 dark:border-slate-800 shadow-[0_2px_12px_rgba(0,0,0,0.02)] space-y-4 text-left">
+            <h4 className="font-heading font-black text-[10px] text-slate-450 uppercase tracking-widest">TODAY'S PRIORITIES</h4>
             
-            {/* Daily Check-In */}
-            <div className="p-6 rounded-[20px] bg-white dark:bg-[#132E3F] border border-slate-200/40 dark:border-slate-800 shadow-[0_2px_12px_rgba(11,79,60,0.015)] flex flex-col justify-between min-h-[190px] hover:translate-y-[-2px] hover:shadow-[0_4px_16px_rgba(11,79,60,0.035)] transition-all duration-300 text-left">
-              <div>
-                <h4 className="font-heading font-black text-[11px] text-[#718079] uppercase tracking-widest">DAILY CHECK-IN</h4>
-              </div>
-
-              {data?.todayCheckin ? (
-                <div className="py-2 space-y-2">
-                  <div className="flex items-center gap-1.5 text-[#0B4F3C] dark:text-[#62B596] font-black text-xs">
-                    <span className="material-symbols-outlined text-sm">check_circle</span>
-                    <span>Check-in completed</span>
-                  </div>
-                  <div className="text-[11px] text-[#718079] font-bold space-y-1 bg-slate-50 dark:bg-slate-800/50 p-2.5 rounded-xl">
-                    <p>Feeling: <span className="text-[#18322A] dark:text-slate-100 font-extrabold">{data.todayCheckin.mood}</span></p>
-                    <p>Stress: <span className="text-[#18322A] dark:text-slate-100 font-extrabold">{data.todayCheckin.stress}</span></p>
-                    <p>Energy: <span className="text-[#18322A] dark:text-slate-100 font-extrabold">{getEnergyText(data.todayCheckin.energy)}</span></p>
-                  </div>
-                  <p className="text-[9px] text-[#718079] font-bold">
-                    Completed today at {formatTime(data.todayCheckin.created_at)}
-                  </p>
-                </div>
-              ) : (
-                <div>
-                  <p className="text-[12px] font-black text-[#18322A] dark:text-slate-100 mt-2">How are you feeling today?</p>
-                  <p className="text-[11px] text-[#718079] font-bold mt-1 leading-normal">Your check-in helps personalize your wellness journey.</p>
-                </div>
-              )}
-
-              {data?.todayCheckin ? (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setCheckinMood(data.todayCheckin.mood);
-                    setCheckinStress(data.todayCheckin.stress);
-                    setCheckinEnergy(data.todayCheckin.energy);
-                    setCheckinSleep(data.todayCheckin.sleepQuality || 3);
-                    setCheckinBalance(data.todayCheckin.workLifeBalance || 3);
-                    setCheckinNote(data.todayCheckin.note || "");
-                    setShowCheckinModal(true);
-                  }}
-                  className="w-full py-2.5 rounded-xl border border-[#0B4F3C]/20 hover:bg-[#EAF7F1]/30 text-[#0B4F3C] dark:text-[#62B596] text-[10px] font-black uppercase tracking-widest transition-all"
-                >
-                  View Today's Check-in
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setCheckinMood("Good");
-                    setCheckinStress("Manageable");
-                    setCheckinEnergy(4);
-                    setCheckinSleep(4);
-                    setCheckinBalance(3);
-                    setCheckinNote("");
-                    setShowCheckinModal(true);
-                  }}
-                  className="w-full py-2.5 rounded-xl bg-[#0B4F3C] hover:bg-[#073C2C] text-white text-[10px] font-black uppercase tracking-widest transition-all"
-                >
-                  Check-in Now
-                </button>
-              )}
-            </div>
-
-            {/* Upcoming Consultations */}
-            <div className="p-6 rounded-[20px] bg-white dark:bg-[#132E3F] border border-slate-200/40 dark:border-slate-800 shadow-[0_2px_12px_rgba(11,79,60,0.015)] flex flex-col justify-between min-h-[190px] hover:translate-y-[-2px] hover:shadow-[0_4px_16px_rgba(11,79,60,0.035)] transition-all duration-300 text-left">
-              <div>
-                <h4 className="font-heading font-black text-[11px] text-[#718079] uppercase tracking-widest">UPCOMING APPOINTMENT</h4>
-              </div>
-
-              {data?.upcomingAppointment ? (
-                <div className="space-y-2">
-                  <div className="w-full h-16 rounded-xl overflow-hidden border border-slate-100 dark:border-slate-800">
-                    <img
-                      src="/images/wp_appointment_illustration.jpg"
-                      alt="Consultation Room Illustration"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-[#EAF7F1] flex items-center justify-center shrink-0 text-[#0B4F3C]">
-                      <span className="material-symbols-outlined text-lg leading-none">medical_services</span>
-                    </div>
-                    <div className="truncate flex-1">
-                      <h5 className="text-[12px] font-black text-[#18322A] dark:text-slate-100 uppercase tracking-wider truncate leading-tight">
-                        {data.upcomingAppointment.doctor_name}
-                      </h5>
-                      <p className="text-[11px] text-[#718079] font-bold truncate leading-none mt-0.5">
-                        {data.upcomingAppointment.doctor_title}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex gap-4 text-[11px] font-black text-[#0B4F3C] dark:text-[#62B596]">
-                    <span className="flex items-center gap-1">📅 {new Date(data.upcomingAppointment.appointment_date).toLocaleDateString([], { day: 'numeric', month: 'short' })}</span>
-                    <span className="flex items-center gap-1">🕘 {data.upcomingAppointment.appointment_time}</span>
-                  </div>
-
-                  <div className="flex gap-2">
-                    <button
-                      type="button"
-                      onClick={() => router.push(data.upcomingAppointment.video_call_url || "/call")}
-                      className="flex-1 py-1.5 bg-[#0B4F3C] hover:bg-[#073C2C] text-white text-[9px] font-black uppercase tracking-widest rounded-xl transition-all"
-                    >
-                      Join Call
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleCancelAppointment(data.upcomingAppointment.id)}
-                      className="py-1.5 px-3 rounded-xl border border-red-200 text-red-650 hover:bg-red-50 text-[9px] font-black uppercase tracking-wider transition-all"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <div className="space-y-2">
-                  <div className="w-full h-16 rounded-xl overflow-hidden border border-slate-100 dark:border-slate-800">
-                    <img
-                      src="/images/wp_appointment_illustration.jpg"
-                      alt="Consultation Room Illustration"
-                      className="w-full h-full object-cover opacity-60"
-                    />
-                  </div>
-                  <div className="p-3 border border-dashed border-slate-200 dark:border-slate-700 rounded-xl text-center space-y-2">
-                    <p className="text-[11px] font-bold text-[#718079]">No upcoming appointments.</p>
-                    <button
-                      type="button"
-                      onClick={() => router.push("/professional-care")}
-                      className="py-1.5 px-3 rounded-lg border border-slate-200 dark:border-slate-700 text-[9px] font-black uppercase tracking-wider hover:bg-slate-50 transition-all text-[#0B4F3C]"
-                    >
-                      Find Support
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-
-          </div>
-
-          {/* Row 3: Wellness Score + Daily Progress */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            
-            {/* Wellness Score */}
-            <div className="p-6 rounded-[20px] bg-white dark:bg-[#132E3F] border border-slate-200/40 dark:border-slate-800 shadow-[0_2px_12px_rgba(11,79,60,0.015)] hover:translate-y-[-2px] hover:shadow-[0_4px_16px_rgba(11,79,60,0.035)] transition-all duration-300 space-y-4 text-left min-h-[190px]">
-              <h4 className="font-heading font-black text-[11px] text-[#718079] uppercase tracking-widest">WELLNESS SCORE</h4>
-
-              {!data?.wellnessScore ? (
-                <div className="py-4 text-center flex flex-col items-center justify-center space-y-1">
-                  <span className="material-symbols-outlined text-xl text-[#0B4F3C]">insights</span>
-                  <p className="text-[11px] font-bold text-slate-400 leading-normal px-4">Complete logs to compute your wellness score.</p>
-                </div>
-              ) : (
-                <div className="flex items-center gap-5">
-                  <div className="w-18 h-18 shrink-0 relative flex items-center justify-center">
-                    {renderCircularProgress(data.wellnessScore.score)}
-                    <div className="absolute inset-0 flex flex-col items-center justify-center">
-                      <span className="text-xl font-black text-[#18322A] dark:text-slate-100">{data.wellnessScore.score}</span>
-                      <span className="text-[7px] font-bold text-slate-400 uppercase tracking-widest leading-none">/ 100</span>
-                    </div>
-                  </div>
-
-                  <div className="flex-1 grid grid-cols-2 gap-2 text-left">
-                    {[
-                      { label: "Mind", val: data.wellnessScore.breakdown.mind },
-                      { label: "Stress", val: data.wellnessScore.breakdown.stress },
-                      { label: "Sleep", val: data.wellnessScore.breakdown.sleep },
-                      { label: "Balance", val: data.wellnessScore.breakdown.balance },
-                    ].map((item, idx) => (
-                      <div key={idx} className="space-y-0.5">
-                        <div className="flex justify-between text-[9px] font-bold text-[#718079]">
-                          <span>{item.label}</span>
-                          <span>{item.val}%</span>
-                        </div>
-                        <div className="w-full h-1 rounded-full bg-slate-100 dark:bg-slate-800">
-                          <div className="h-1 rounded-full bg-[#62B596]" style={{ width: `${item.val}%` }} />
-                        </div>
+            {(!data?.goals || data.goals.length === 0) ? (
+              <p className="text-xs text-slate-450 font-bold py-4 text-center">No priorities logged for today.</p>
+            ) : (
+              <div className="space-y-2.5">
+                {data.goals.slice(0, 3).map((task: any) => (
+                  <div
+                    key={task.id}
+                    className={`flex items-center justify-between p-3.5 rounded-2xl border transition-all ${
+                      task.completed
+                        ? "bg-slate-50/50 dark:bg-slate-850/20 border-slate-100 dark:border-slate-800 opacity-60"
+                        : "bg-slate-50/50 dark:bg-slate-850/40 border-slate-200/30 dark:border-slate-850 hover:bg-slate-100/50"
+                    }`}
+                  >
+                    <div className="flex items-center gap-3.5 flex-1 min-w-0">
+                      <input
+                        type="checkbox"
+                        checked={!!task.completed}
+                        disabled={togglingGoalId === task.id}
+                        onChange={() => handleToggleGoal(task.id, task.completed)}
+                        className="w-4 h-4 rounded border-slate-350 text-[#5F4EA5] focus:ring-[#5F4EA5] cursor-pointer shrink-0"
+                      />
+                      <div className="flex items-center gap-2">
+                        <span className={`text-[8px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded-md shrink-0 ${
+                          (task.priority || 'Medium').toLowerCase() === "high" ? "bg-red-50 dark:bg-red-950/30 text-red-600" :
+                          (task.priority || 'Medium').toLowerCase() === "low" ? "bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600" :
+                          "bg-amber-50 dark:bg-amber-950/30 text-amber-600"
+                        }`}>
+                          {task.priority || 'Medium'}
+                        </span>
+                        <p className={`text-xs font-black truncate leading-tight ${task.completed ? "line-through text-slate-400" : "text-[#100E26] dark:text-slate-100"}`}>
+                          {task.title}
+                        </p>
                       </div>
-                    ))}
+                    </div>
+                    {task.due_date && (
+                      <span className="text-[10px] text-slate-400 font-bold shrink-0 ml-2">
+                        Due: {task.due_date}
+                      </span>
+                    )}
                   </div>
-                </div>
-              )}
+                ))}
+              </div>
+            )}
+
+            <button
+              onClick={() => router.push("/dashboard/working-professional/study-planner")}
+              className="w-full py-3 rounded-xl bg-[#5F4EA5] hover:bg-[#4A3C8C] text-white text-[10px] font-black uppercase tracking-widest transition-all cursor-pointer text-center shadow-xs"
+            >
+              Manage Tasks
+            </button>
+          </div>
+
+          {/* Upcoming Appointment */}
+          <div className="p-6 rounded-[24px] bg-white dark:bg-[#132E3F] border border-slate-200/40 dark:border-slate-800 shadow-[0_2px_12px_rgba(0,0,0,0.02)] space-y-4 text-left">
+            <div className="flex justify-between items-center">
+              <h4 className="font-heading font-black text-[10px] text-slate-450 uppercase tracking-widest">UPCOMING APPOINTMENT</h4>
+              <button onClick={() => router.push("/dashboard/working-professional/exams")} className="text-[9px] font-black text-[#5F4EA5] hover:underline uppercase tracking-wider">
+                Manage &rarr;
+              </button>
             </div>
 
-            {/* Daily Progress */}
-            <div className="p-6 rounded-[20px] bg-white dark:bg-[#132E3F] border border-slate-200/40 dark:border-slate-800 shadow-[0_2px_12px_rgba(11,79,60,0.015)] hover:translate-y-[-2px] hover:shadow-[0_4px_16px_rgba(11,79,60,0.035)] transition-all duration-300 flex flex-col justify-between min-h-[190px] text-left">
-              <h4 className="font-heading font-black text-[11px] text-[#718079] uppercase tracking-widest">DAILY PROGRESS</h4>
-
-              <div className="flex items-center gap-5 justify-between py-1">
-                <div className="w-16 h-16 shrink-0 relative flex items-center justify-center">
-                  {renderCircularProgress(progressPercent, 28, 5)}
-                  <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <span className="text-[13px] font-black text-[#18322A] dark:text-slate-100">{progressPercent}%</span>
-                    <span className="text-[6px] font-bold text-slate-400 uppercase tracking-widest leading-none mt-0.5">DONE</span>
+            {data?.upcomingAppointment ? (
+              <div className="p-4 rounded-2xl bg-slate-50/50 dark:bg-slate-850/40 border border-slate-200/30 dark:border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div className="flex items-center gap-4 flex-1">
+                  {/* Date block */}
+                  <div className="w-14 h-14 rounded-2xl bg-[#5F4EA5]/10 flex flex-col items-center justify-center border border-[#5F4EA5]/20 shrink-0 text-[#5F4EA5]">
+                    <span className="text-[8px] font-black uppercase tracking-wider leading-none">
+                      {new Date(data.upcomingAppointment.appointment_date).toLocaleString("en-US", { month: "short" }).toUpperCase()}
+                    </span>
+                    <span className="text-xl font-heading font-black leading-none mt-1">
+                      {new Date(data.upcomingAppointment.appointment_date).getDate()}
+                    </span>
+                    <span className="text-[8px] font-bold uppercase tracking-widest leading-none mt-0.5">
+                      {new Date(data.upcomingAppointment.appointment_date).toLocaleString("en-US", { weekday: "short" }).toUpperCase()}
+                    </span>
+                  </div>
+                  
+                  <div className="space-y-0.5">
+                    <h5 className="text-xs font-black text-[#100E26] dark:text-slate-100">{data.upcomingAppointment.doctor_name || "Project Planning Discussion"}</h5>
+                    <div className="flex items-center gap-1.5 text-[9px] text-slate-500 font-bold">
+                      <span>👥 {data.upcomingAppointment.doctor_title || "Team Sync"}</span>
+                      <span>•</span>
+                      <span>📅 Tomorrow, {new Date(data.upcomingAppointment.appointment_date).toLocaleDateString([], { month: "short", day: "numeric", year: "numeric" })}</span>
+                    </div>
+                    <div className="flex flex-wrap gap-x-3 gap-y-1 text-[9px] text-[#5F4EA5] font-black pt-0.5">
+                      <span>🕘 {data.upcomingAppointment.appointment_time || "10:00 AM - 11:00 AM"}</span>
+                      <span>💻 Google Meet</span>
+                    </div>
                   </div>
                 </div>
 
-                <div className="flex-1 text-left space-y-1">
-                  <p className="text-[11px] font-bold text-[#718079]">
-                    {completedGoalsCount} of {Math.max(1, totalGoalsCount)} daily targets completed
-                  </p>
-                  <p className="text-[10px] text-[#62B596] font-bold">Small actions add up today.</p>
+                <div className="flex items-center gap-3 shrink-0 self-end md:self-center">
+                  {/* Avatars group */}
+                  <div className="flex -space-x-2">
+                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah" className="w-6 h-6 rounded-full border border-white bg-slate-100 shrink-0" />
+                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Michael" className="w-6 h-6 rounded-full border border-white bg-slate-100 shrink-0" />
+                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Anna" className="w-6 h-6 rounded-full border border-white bg-slate-100 shrink-0" />
+                    <div className="w-6 h-6 rounded-full border border-white bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-[7px] font-black text-slate-650 shrink-0">
+                      +2
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => window.open(data.upcomingAppointment.video_call_url || "https://meet.google.com", "_blank")}
+                    className="px-4 py-2 bg-[#F5F3FC] dark:bg-purple-950/20 text-[#5F4EA5] dark:text-purple-300 text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-[#5F4EA5]/10 transition-all cursor-pointer whitespace-nowrap"
+                  >
+                    Join Meeting
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="text-center py-4 space-y-2 border border-dashed border-slate-200/30 dark:border-slate-700 rounded-[24px]">
+                <p className="text-xs text-slate-450 font-bold">No upcoming appointments</p>
+                <button
+                  onClick={() => router.push("/dashboard/working-professional/professional-care")}
+                  className="px-3.5 py-1.5 rounded-xl bg-[#5F4EA5]/15 hover:bg-[#5F4EA5]/25 text-[#5F4EA5] font-black text-[9px] uppercase tracking-wider transition-all cursor-pointer"
+                >
+                  Book Appointment
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Upcoming Meetings */}
+          <div className="p-6 rounded-[24px] bg-white dark:bg-[#132E3F] border border-slate-200/40 dark:border-slate-800 shadow-[0_2px_12px_rgba(0,0,0,0.02)] space-y-4 text-left">
+            <div className="flex justify-between items-center">
+              <h4 className="font-heading font-black text-[10px] text-slate-450 uppercase tracking-widest">UPCOMING MEETINGS</h4>
+              <button onClick={() => router.push("/dashboard/working-professional/exams")} className="text-[9px] font-black text-[#5F4EA5] hover:underline uppercase tracking-wider">
+                Manage &rarr;
+              </button>
+            </div>
+
+            <div className="space-y-3">
+              <div className="flex items-center justify-between p-3 rounded-2xl bg-slate-50/50 dark:bg-slate-850/30 border border-slate-200/30 dark:border-slate-800">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-xl bg-[#5F4EA5]/10 flex items-center justify-center text-[#5F4EA5] shrink-0">
+                    <span className="material-symbols-outlined text-base">calendar_today</span>
+                  </div>
+                  <div>
+                    <h5 className="text-[11px] font-black text-[#100E26] dark:text-slate-100 leading-tight">Project Planning Discussion</h5>
+                    <p className="text-[9px] text-slate-450 font-bold mt-0.5">Team Sync</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className="text-[10px] font-extrabold text-[#100E26] dark:text-slate-200">Tomorrow</p>
+                  <p className="text-[9px] text-[#5F4EA5] font-black mt-0.5">10:00 AM</p>
                 </div>
               </div>
 
-              <button
-                type="button"
-                onClick={() => router.push("/journey")}
-                className="w-full py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-[10px] font-black text-[#0B4F3C] dark:text-[#62B596] uppercase tracking-widest hover:bg-slate-50 dark:hover:bg-slate-800 transition-all text-center"
-              >
-                View Goals
-              </button>
-            </div>
-
-          </div>
-
-        </div>
-
-        {/* RIGHT COLUMN (col-span-4) - CALENDAR & SCHEDULE */}
-        <div className="xl:col-span-4 space-y-5">
-          
-          {/* Calendar Box */}
-          <div className="p-6 rounded-[20px] bg-white dark:bg-[#132E3F] border border-slate-200/40 dark:border-slate-800 shadow-[0_2px_12px_rgba(11,79,60,0.015)] hover:translate-y-[-2px] hover:shadow-[0_4px_16px_rgba(11,79,60,0.035)] transition-all duration-300 space-y-4 text-left min-h-[280px]">
-            <div className="flex justify-between items-center">
-              <div>
-                <h4 className="font-heading font-black text-[11px] text-[#718079] uppercase tracking-widest">CALENDAR</h4>
-                <p className="text-[12px] font-black text-[#18322A] dark:text-slate-100 mt-0.5">
-                  {new Date().toLocaleString("en-US", { month: "long", year: "numeric" })}
-                </p>
+              <div className="flex items-center justify-between p-3 rounded-2xl bg-slate-50/50 dark:bg-slate-850/30 border border-slate-200/30 dark:border-slate-800">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-xl bg-[#5F4EA5]/10 flex items-center justify-center text-[#5F4EA5] shrink-0">
+                    <span className="material-symbols-outlined text-base">calendar_today</span>
+                  </div>
+                  <div>
+                    <h5 className="text-[11px] font-black text-[#100E26] dark:text-slate-100 leading-tight">Client Review Meeting</h5>
+                    <p className="text-[9px] text-slate-450 font-bold mt-0.5">External Call</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className="text-[10px] font-extrabold text-[#100E26] dark:text-slate-200">Fri, Aug 29</p>
+                  <p className="text-[9px] text-[#5F4EA5] font-black mt-0.5">04:00 PM</p>
+                </div>
               </div>
             </div>
-
-            {/* Calendar weekly selector */}
-            <div className="flex justify-between gap-1 pb-1">
-              {renderCalendarDays()}
-            </div>
-
-            {/* Selected Date schedule events */}
-            <div className="border-t border-slate-100 dark:border-slate-800 pt-3">
-              <h5 className="text-[10px] font-black text-[#718079] uppercase tracking-widest mb-2.5">
-                SCHEDULE FOR {new Date(selectedDateStr).toLocaleDateString([], { month: "short", day: "numeric" }).toUpperCase()}
-              </h5>
-              {buildDailyItems()}
-            </div>
-          </div>
-
-          {/* Quick Tools Tray */}
-          <div className="p-6 rounded-[20px] bg-white dark:bg-[#132E3F] border border-slate-200/40 dark:border-slate-800 shadow-[0_2px_12px_rgba(11,79,60,0.015)] hover:translate-y-[-2px] hover:shadow-[0_4px_16px_rgba(11,79,60,0.035)] transition-all duration-300 space-y-4 text-left">
-            <h4 className="font-heading font-black text-[11px] text-[#718079] uppercase tracking-widest">QUICK TOOLS</h4>
-            <div className="grid grid-cols-2 gap-2 text-[10px] font-black uppercase tracking-wider text-center">
-              <button
-                type="button"
-                onClick={() => setShowDecompressionModal(true)}
-                className="p-3 bg-[#EAF7F1] rounded-xl hover:scale-[1.02] border border-[#62B596]/15 text-[#0B4F3C] flex items-center justify-center gap-1.5 cursor-pointer"
-              >
-                🧘 stress reset
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setSleepBedtime(data?.sleep?.bedtime || "11:30 PM");
-                  setSleepWakeTime(data?.sleep?.wakeTime || "07:30 AM");
-                  setSleepDurationMins(data?.sleep?.duration || 480);
-                  setSleepQuality(data?.sleep?.score || 75);
-                  setShowSleepModal(true);
-                }}
-                className="p-3 bg-[#F3F0FA] rounded-xl hover:scale-[1.02] border border-[#5F4EA5]/15 text-[#5F4EA5] flex items-center justify-center gap-1.5 cursor-pointer"
-              >
-                🌙 sleep reset
-              </button>
-              <button
-                type="button"
-                onClick={() => setShowFocusModal(true)}
-                className="p-3 bg-[#FFF3EC] rounded-xl hover:scale-[1.02] border border-amber-500/15 text-amber-800 flex items-center justify-center gap-1.5 cursor-pointer"
-              >
-                ⏱ focus log
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setJournalTitle("");
-                  setJournalContent("");
-                  setEditingJournalId(null);
-                  setShowJournalModal(true);
-                }}
-                className="p-3 bg-purple-50 dark:bg-purple-950/20 rounded-xl hover:scale-[1.02] border border-purple-250/20 text-purple-800 flex items-center justify-center gap-1.5 cursor-pointer"
-              >
-                📖 journal
-              </button>
-            </div>
           </div>
 
         </div>
 
-      </div>
-
-      {/* 2. WORK WELLNESS & ANALYTICS SECTION */}
-      <section className="space-y-6 pt-8 border-t border-slate-200/50 dark:border-slate-800 text-left" id="work-wellness">
-        
-        <div>
-          <h3 className="font-heading font-black text-lg uppercase tracking-widest text-[#0B4F3C] dark:text-[#62B596]">Work Wellness & Analytics</h3>
-          <p className="text-[13px] text-[#718079] font-bold mt-1">Understand your workload, recovery and work-life balance over time.</p>
-        </div>
-
-        {/* 3-COLUMN CARD GRID */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        {/* COLUMN 3: Focus, Score & reflection */}
+        <div className="space-y-6 lg:col-span-1">
           
-          {/* Work-Life Balance Scales */}
-          <div className="p-6 rounded-[20px] bg-white dark:bg-[#132E3F] border border-slate-200/40 dark:border-slate-800 shadow-[0_2px_12px_rgba(11,79,60,0.015)] hover:translate-y-[-2px] hover:shadow-[0_4px_16px_rgba(11,79,60,0.035)] transition-all duration-300 space-y-4 flex flex-col justify-between min-h-[220px]">
-            <div className="flex justify-between items-center">
-              <h4 className="font-heading font-black text-[11px] text-[#718079] uppercase tracking-widest">WORK-LIFE BALANCE</h4>
-              <button
-                type="button"
-                onClick={() => {
-                  setWorkVal(data?.workLife?.work || 70);
-                  setPersonalVal(data?.workLife?.personal || 80);
-                  setRecoveryVal(data?.workLife?.recovery || 60);
-                  setShowWorkLifeModal(true);
-                }}
-                className="text-[9px] font-black text-[#0B4F3C] hover:underline uppercase tracking-wider"
-              >
-                Edit
-              </button>
-            </div>
-
-            <div className="space-y-2">
-              {[
-                { label: "Work", val: data?.workLife?.work || 70, color: "bg-[#0B4F3C]" },
-                { label: "Personal", val: data?.workLife?.personal || 80, color: "bg-[#62B596]" },
-                { label: "Recovery", val: data?.workLife?.recovery || 60, color: "bg-[#5FAF8A]" },
-              ].map((item, idx) => (
-                <div key={idx} className="space-y-0.5">
-                  <div className="flex justify-between text-[10px] font-bold text-[#718079]">
-                    <span>{item.label}</span>
-                    <span>{item.val}%</span>
-                  </div>
-                  <div className="w-full h-1.5 rounded-full bg-slate-100 dark:bg-slate-800">
-                    <div className={`h-1.5 rounded-full ${item.color}`} style={{ width: `${item.val}%` }} />
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="flex justify-between items-center pt-2.5 border-t border-slate-100 dark:border-slate-800">
-              <span className="text-[10px] font-black text-[#718079] uppercase tracking-wider">Balance Score</span>
-              <span className="text-xs font-black text-[#0B4F3C]">{data?.workLife?.balanceScore || 72} / 100</span>
-            </div>
-          </div>
-
-          {/* Stress Tracker Graph */}
-          <div className="p-6 rounded-[20px] bg-white dark:bg-[#132E3F] border border-slate-200/40 dark:border-slate-800 shadow-[0_2px_12px_rgba(11,79,60,0.015)] hover:translate-y-[-2px] hover:shadow-[0_4px_16px_rgba(11,79,60,0.035)] transition-all duration-300 space-y-4 min-h-[220px]">
-            <div className="flex justify-between items-center">
-              <h4 className="font-heading font-black text-[11px] text-[#718079] uppercase tracking-widest">STRESS TRACKER</h4>
-              <span className="text-[9px] font-bold text-[#718079] uppercase tracking-wider">This week</span>
-            </div>
-
-            {/* Stress Tracker dynamic bars */}
-            <div className="h-28 w-full flex items-end justify-between px-2">
-              {getStressChartData().map((item, idx) => (
-                <div key={idx} className="flex flex-col items-center gap-1.5 flex-1">
-                  <div className="w-2 rounded-full bg-slate-100 dark:bg-slate-800 h-20 flex items-end">
-                    <div
-                      className="w-full rounded-full bg-[#EA5E5E]"
-                      style={{ height: `${item.val}%` }}
-                    />
-                  </div>
-                  <span className="text-[8px] font-black text-slate-400 uppercase tracking-wider">{item.day}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Focus Sessions Analytics */}
-          <div className="p-6 rounded-[20px] bg-white dark:bg-[#132E3F] border border-slate-200/40 dark:border-slate-800 shadow-[0_2px_12px_rgba(11,79,60,0.015)] hover:translate-y-[-2px] hover:shadow-[0_4px_16px_rgba(11,79,60,0.035)] transition-all duration-300 flex flex-col justify-between min-h-[220px]">
+          {/* Focus Time */}
+          <div className="p-6 rounded-[24px] bg-white dark:bg-[#132E3F] border border-slate-200/40 dark:border-slate-800 shadow-[0_2px_12px_rgba(0,0,0,0.02)] space-y-4 text-left flex flex-col justify-between min-h-[190px]">
             <div>
-              <h4 className="font-heading font-black text-[11px] text-[#718079] uppercase tracking-widest">FOCUS SESSIONS</h4>
+              <h4 className="font-heading font-black text-[10px] text-slate-450 uppercase tracking-widest">FOCUS TIME</h4>
+              <p className="text-[9px] text-slate-400 font-bold mt-0.5 uppercase tracking-wider">Today's Progress</p>
             </div>
-
-            <div className="flex items-center gap-4 py-1">
-              <div className="w-10 h-10 rounded-xl bg-[#EAF7F1] flex items-center justify-center shrink-0 text-[#0B4F3C]">
-                <span className="material-symbols-outlined text-lg leading-none">timer</span>
-              </div>
-              <div>
-                <p className="text-2xl font-black text-[#0B4F3C] leading-none">
-                  {formatFocusTime(data?.focus?.weeklyMinutes || 0)}
-                </p>
-                <p className="text-[10px] font-bold text-[#718079] mt-0.5 leading-none">Weekly focused time</p>
-                <p className="text-[8px] font-bold text-slate-400 leading-none mt-1">Sessions today: {data?.focus?.todaySessionsCount || 0}</p>
-              </div>
-            </div>
-
-            {/* Weekly Analytics Bar Chart */}
-            <div className="grid grid-cols-7 gap-1 h-14 items-end px-1 border-t border-slate-50 dark:border-slate-800 pt-2">
-              {getFocusAnalyticsData().map((item, idx) => (
-                <div key={idx} className="flex flex-col items-center gap-1 group relative flex-1">
-                  <div className="w-1.5 bg-slate-100 dark:bg-slate-800 rounded-full h-8 flex items-end">
-                    <div
-                      className="w-full rounded-full bg-[#0B4F3C] group-hover:bg-[#62B596] transition-all"
-                      style={{ height: `${item.pct}%` }}
-                    />
-                  </div>
-                  <span className="text-[7px] font-black text-slate-400 uppercase">{item.day}</span>
-                  <span className="absolute bottom-6 bg-slate-800 text-white text-[7px] px-1 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
-                    {item.minutes}m
-                  </span>
-                </div>
-              ))}
+            
+            <div className="py-1">
+              <span className="text-3xl font-heading font-black text-[#100E26] dark:text-slate-100 tracking-tight">
+                {data?.focus?.todayMinutes || 120}
+              </span>
+              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1.5">MINS</span>
             </div>
 
             <button
-              type="button"
-              onClick={() => setShowFocusModal(true)}
-              className="w-full py-2 rounded-xl bg-[#0B4F3C] hover:bg-[#073C2C] text-white text-[9px] font-black uppercase tracking-widest transition-all mt-2 cursor-pointer"
+              onClick={() => router.push("/dashboard/working-professional/focus")}
+              className="w-full py-2.5 rounded-xl bg-[#F5F3FC] dark:bg-purple-950/20 text-[#5F4EA5] dark:text-purple-300 text-[10px] font-black uppercase tracking-widest hover:bg-[#5F4EA5]/10 transition-all cursor-pointer text-center"
             >
               Start Focus Session
             </button>
           </div>
 
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          
-          {/* Sleep and Recovery */}
-          <div className="p-6 rounded-[20px] bg-white dark:bg-[#132E3F] border border-slate-200/40 dark:border-slate-800 shadow-[0_2px_12px_rgba(11,79,60,0.015)] hover:translate-y-[-2px] hover:shadow-[0_4px_16px_rgba(11,79,60,0.035)] transition-all duration-300 flex flex-col justify-between min-h-[220px]">
+          {/* Productivity Score */}
+          <div className="p-6 rounded-[24px] bg-white dark:bg-[#132E3F] border border-slate-200/40 dark:border-slate-800 shadow-[0_2px_12px_rgba(0,0,0,0.02)] space-y-4 text-left">
             <div>
-              <h4 className="font-heading font-black text-[11px] text-[#718079] uppercase tracking-widest">SLEEP & RECOVERY</h4>
+              <h4 className="font-heading font-black text-[10px] text-slate-450 uppercase tracking-widest">PRODUCTIVITY SCORE</h4>
+              <p className="text-[9px] text-slate-400 font-bold mt-0.5 uppercase tracking-wider">This Week</p>
             </div>
 
-            <div className="space-y-3 py-1">
-              <div className="flex items-center gap-3">
-                <span className="material-symbols-outlined text-lg text-[#0B4F3C] shrink-0 leading-none">bedtime</span>
-                <div className="truncate flex-1">
-                  <p className="text-[12px] font-black text-[#18322A] dark:text-slate-100 leading-tight">
-                    {data?.sleep ? `${Math.floor(data.sleep.duration / 60)}h ${data.sleep.duration % 60}m` : "No sleep recorded"}
-                  </p>
-                  <p className="text-[9px] font-bold text-[#718079] leading-none mt-0.5">Sleep duration</p>
+            <div className="flex items-center gap-4.5">
+              <div className="w-16 h-16 shrink-0 relative flex items-center justify-center">
+                {renderCircularProgress(82, 28, 5)}
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <span className="text-[13px] font-black text-[#100E26] dark:text-slate-100">82%</span>
                 </div>
               </div>
-
-              <div className="flex items-center gap-3">
-                <span className="material-symbols-outlined text-lg text-[#0B4F3C] shrink-0 leading-none">battery_charging_80</span>
-                <div className="truncate flex-1">
-                  <p className="text-[12px] font-black text-[#18322A] dark:text-slate-100 leading-tight">
-                    {data?.sleep ? `${data.sleep.score}%` : "0%"}
-                  </p>
-                  <p className="text-[9px] font-bold text-[#718079] leading-none mt-0.5">Recovery score</p>
-                </div>
+              <div className="space-y-0.5">
+                <h5 className="text-[11px] font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">Excellent</h5>
+                <p className="text-[10px] text-slate-500 font-bold leading-normal">
+                  You're more productive than 82% of professionals.
+                </p>
               </div>
             </div>
+          </div>
 
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={() => {
-                  setSleepBedtime(data?.sleep?.bedtime || "11:30 PM");
-                  setSleepWakeTime(data?.sleep?.wakeTime || "07:30 AM");
-                  setSleepDurationMins(data?.sleep?.duration || 480);
-                  setSleepQuality(data?.sleep?.score || 75);
-                  setShowSleepModal(true);
-                }}
-                className="flex-1 py-2.5 rounded-xl bg-[#0B4F3C] hover:bg-[#073C2C] text-white text-[9px] font-black uppercase tracking-widest transition-all cursor-pointer"
-              >
-                Log Sleep
-              </button>
-              <button
-                type="button"
-                onClick={() => router.push("/sleep")}
-                className="py-2.5 px-3 rounded-xl border border-slate-200 dark:border-slate-700 text-[9px] font-black text-[#0B4F3C] dark:text-[#62B596] uppercase tracking-widest hover:bg-slate-50 dark:hover:bg-slate-800 transition-all cursor-pointer"
-              >
-                View Sleep Support
-              </button>
+          {/* Weekly Reflection */}
+          <div className="p-6 rounded-[24px] bg-white dark:bg-[#132E3F] border border-slate-200/40 dark:border-slate-800 shadow-[0_2px_12px_rgba(0,0,0,0.02)] space-y-4 text-left">
+            <h4 className="font-heading font-black text-[10px] text-slate-450 uppercase tracking-widest">WEEKLY REFLECTION</h4>
+
+            <div className="space-y-2.5 pt-1">
+              {[
+                { label: "Daily Check-in done", done: true },
+                { label: "Focus sessions completed (2/2)", done: true },
+                { label: "Tasks completed (6/8)", done: false },
+                { label: "Weekly review pending", done: false },
+              ].map((item, idx) => (
+                <div key={idx} className="flex items-center gap-2.5 text-[10px] font-extrabold text-slate-650 dark:text-slate-350">
+                  <span className={`material-symbols-outlined text-[15px] shrink-0 leading-none ${item.done ? "text-emerald-500" : "text-slate-300"}`}>
+                    {item.done ? "check_circle" : "radio_button_unchecked"}
+                  </span>
+                  <span className={item.done ? "text-slate-450" : ""}>{item.label}</span>
+                </div>
+              ))}
             </div>
           </div>
 
           {/* Mood Overview Chart */}
-          <div className="p-6 rounded-[20px] bg-white dark:bg-[#132E3F] border border-slate-200/40 dark:border-slate-800 shadow-[0_2px_12px_rgba(11,79,60,0.015)] hover:translate-y-[-2px] hover:shadow-[0_4px_16px_rgba(11,79,60,0.035)] transition-all duration-300 space-y-4 min-h-[220px]">
+          <div className="p-6 rounded-[24px] bg-white dark:bg-[#132E3F] border border-slate-200/40 dark:border-slate-800 shadow-[0_2px_12px_rgba(0,0,0,0.02)] hover:translate-y-[-2px] transition-all duration-300 space-y-4 min-h-[220px] text-left">
             <div>
-              <h4 className="font-heading font-black text-[11px] text-[#718079] uppercase tracking-widest">MOOD OVERVIEW</h4>
+              <h4 className="font-heading font-black text-[10px] text-slate-450 uppercase tracking-widest">MOOD OVERVIEW</h4>
+              <p className="text-[9px] text-slate-400 font-bold mt-0.5 uppercase tracking-wider">This Week</p>
             </div>
 
             {/* Interactive Mood SVG chart */}
@@ -1507,8 +1383,8 @@ export default function WorkingProfessionalDashboard() {
               <svg className="w-full h-full overflow-visible" viewBox="0 0 140 40">
                 <defs>
                   <linearGradient id="wpMoodLineGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#62B596" stopOpacity="0.2"/>
-                    <stop offset="100%" stopColor="#62B596" stopOpacity="0"/>
+                    <stop offset="0%" stopColor="#7C6BC4" stopOpacity="0.2"/>
+                    <stop offset="100%" stopColor="#7C6BC4" stopOpacity="0"/>
                   </linearGradient>
                 </defs>
                 
@@ -1534,14 +1410,14 @@ export default function WorkingProfessionalDashboard() {
                   return (
                     <>
                       <path d={fillPath} fill="url(#wpMoodLineGrad)" />
-                      <path d={path} fill="none" stroke="#62B596" strokeWidth="1.5" strokeLinecap="round" />
+                      <path d={path} fill="none" stroke="#7C6BC4" strokeWidth="1.5" strokeLinecap="round" />
                       {points.map((pt, idx) => (
                         <circle
                           key={idx}
                           cx={pt.x}
                           cy={pt.y}
                           r={selectedMoodPoint?.day === pt.pt.day ? "3.5" : "2"}
-                          fill={selectedMoodPoint?.day === pt.pt.day ? "#0B4F3C" : "#62B596"}
+                          fill={selectedMoodPoint?.day === pt.pt.day ? "#5F4EA5" : "#7C6BC4"}
                           className="cursor-pointer hover:r-4 transition-all"
                           onClick={() => setSelectedMoodPoint(pt.pt)}
                         />
@@ -1550,15 +1426,15 @@ export default function WorkingProfessionalDashboard() {
                   );
                 })()}
               </svg>
-              <div className="flex justify-between px-1 text-[8px] font-black text-slate-400 uppercase tracking-wider mt-1 select-none">
+              <div className="flex justify-between px-1 text-[8px] font-black text-slate-450 uppercase tracking-wider mt-1 select-none">
                 {moodOrderData.map(d => <span key={d.day}>{d.day}</span>)}
               </div>
             </div>
 
             {selectedMoodPoint && (
-              <div className="p-3 bg-[#EAF7F1] border border-[#62B596]/20 rounded-xl mt-3 text-[10px] font-bold text-[#0B4F3C] space-y-1 relative">
+              <div className="p-3 bg-[#F5F3FC] border border-[#7C6BC4]/20 rounded-xl mt-3 text-[10px] font-bold text-[#5F4EA5] space-y-1 relative">
                 <button type="button" className="absolute top-1 right-2 text-xs font-black text-slate-400" onClick={() => setSelectedMoodPoint(null)}>×</button>
-                <p className="font-heading font-black uppercase text-[8px] tracking-widest text-[#0B4F3C]">{selectedMoodPoint.day}</p>
+                <p className="font-heading font-black uppercase text-[8px] tracking-widest text-[#5F4EA5]">{selectedMoodPoint.day}</p>
                 {selectedMoodPoint.checkin ? (
                   <>
                     <p>Mood: {selectedMoodPoint.checkin.mood}</p>
@@ -1572,175 +1448,76 @@ export default function WorkingProfessionalDashboard() {
             )}
           </div>
 
-          {/* Workload Risk */}
-          <div className="p-6 rounded-[20px] bg-white dark:bg-[#132E3F] border border-slate-200/40 dark:border-slate-800 shadow-[0_2px_12px_rgba(11,79,60,0.015)] hover:translate-y-[-2px] hover:shadow-[0_4px_16px_rgba(11,79,60,0.035)] transition-all duration-300 flex flex-col justify-between min-h-[220px]">
-            <div>
-              <h4 className="font-heading font-black text-[11px] text-[#718079] uppercase tracking-widest">WORKLOAD CHECK</h4>
-            </div>
-
-            <div className="py-2 text-center">
-              <span className={`px-5 py-2 text-xs font-black uppercase tracking-widest rounded-full inline-block leading-none ${
-                data?.burnoutRisk === "HIGH" ? "bg-red-50 text-red-600 border border-red-200" :
-                data?.burnoutRisk === "MEDIUM" ? "bg-amber-50 text-amber-600 border border-amber-200" :
-                "bg-[#EAF7F1] text-[#0B4F3C] border border-[#62B596]/20"
-              }`}>
-                {data?.burnoutRisk === "HIGH" ? "HIGH RISK" : data?.burnoutRisk === "MEDIUM" ? "MODERATE" : "LOW RISK"}
-              </span>
-              <p className="text-[11px] text-[#718079] mt-3 font-bold leading-normal">
-                {data?.burnoutRisk === "HIGH" ? "High stress detected. Please consider scaling back tasks and scheduling a wellness consult." :
-                 data?.burnoutRisk === "MEDIUM" ? "Moderate workload stress. Take regular breathing breaks and monitor sleep." :
-                 "Your current workload appears manageable."}
-              </p>
-            </div>
-
-            <button
-              type="button"
-              onClick={() => router.push("/reports")}
-              className="w-full py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-[9px] font-black text-[#0B4F3C] dark:text-[#62B596] uppercase tracking-widest hover:bg-slate-50 dark:hover:bg-slate-800 transition-all cursor-pointer"
-            >
-              View Insights
-            </button>
-          </div>
-
         </div>
 
-      </section>
+      </div>
 
-      {/* 3. BOTTOM SECTION: GOALS + DECOMPRESSION */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 text-left">
+      {/* BOTTOM SECTION: AI Recommendation & Quick Tools */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 pt-6 border-t border-slate-200/50 dark:border-slate-800 animate-fade-in-up">
         
-        {/* Goals checklist */}
-        <div className="lg:col-span-2 p-6 rounded-[20px] bg-white dark:bg-[#132E3F] border border-slate-200/40 dark:border-slate-800 shadow-[0_2px_12px_rgba(11,79,60,0.015)] hover:translate-y-[-2px] hover:shadow-[0_4px_16px_rgba(11,79,60,0.035)] transition-all duration-300 space-y-4">
-          <div className="flex justify-between items-center">
-            <div>
-              <h4 className="font-heading font-black text-[11px] text-[#718079] uppercase tracking-widest">MY WELLNESS GOALS</h4>
-              <p className="text-[10px] text-slate-400 font-bold mt-0.5">Custom goals checklist</p>
-            </div>
-            <button type="button" onClick={() => router.push("/journey")} className="text-[10px] font-black text-[#0B4F3C] hover:underline uppercase tracking-wider">View all →</button>
-          </div>
-
-          <form onSubmit={handleAddGoal} className="flex gap-2">
-            <input
-              type="text"
-              required
-              value={newGoalTitle}
-              onChange={(e) => setNewGoalTitle(e.target.value)}
-              placeholder="Add goal target..."
-              className="flex-1 px-4 py-2 text-[11px] font-bold rounded-xl bg-slate-50 dark:bg-slate-850 border border-slate-100 dark:border-slate-700 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-[#0B4F3C]"
-            />
+        {/* AI Recommendation Banner */}
+        <div className="lg:col-span-2 p-6 rounded-[24px] bg-[#F5F3FC] dark:bg-[#132D4E]/30 border border-[#5F4EA5]/15 text-left flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
+          <div className="space-y-3 flex-1">
+            <h4 className="font-heading font-black text-[10px] text-[#5F4EA5] uppercase tracking-widest">AI RECOMMENDATION FOR YOU</h4>
+            <p className="text-[12px] text-slate-700 dark:text-slate-300 font-extrabold leading-relaxed max-w-md">
+              You've been working on reports for long hours. Take a 10-min mindfulness break to recharge.
+            </p>
             <button
-              type="submit"
-              disabled={isAddingGoal}
-              className="px-4 py-2 bg-[#0B4F3C] hover:bg-[#073C2C] text-white text-[9px] font-black uppercase tracking-widest rounded-xl transition-all cursor-pointer"
+              onClick={() => {
+                setDecompressionTimeLeft(120);
+                setShowDecompressionModal(true);
+              }}
+              className="px-4 py-2.5 bg-white dark:bg-purple-950/40 text-[#5F4EA5] dark:text-purple-300 text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-[#F5F3FC] transition-all cursor-pointer shadow-xs whitespace-nowrap"
             >
-              + Add Goal
+              Start Now
             </button>
-          </form>
+          </div>
+          <div className="w-32 h-32 shrink-0 overflow-hidden relative">
+            <img src="/images/wp_yoga_illustration.jpg" alt="Yoga meditation" className="w-full h-full object-contain" />
+          </div>
+        </div>
 
-          <div className="space-y-2 pt-1 max-h-[220px] overflow-y-auto pr-1">
-            {data?.goals?.map((g: any) => (
-              <div
-                key={g.id}
-                className="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700/50 hover:bg-slate-100 transition-all"
+        {/* Quick Tools section */}
+        <div className="lg:col-span-1 p-6 rounded-[24px] bg-white dark:bg-[#132E3F] border border-slate-200/40 dark:border-slate-800 shadow-[0_2px_12px_rgba(0,0,0,0.02)] space-y-4 text-left">
+          <h4 className="font-heading font-black text-[10px] text-slate-450 uppercase tracking-widest">QUICK TOOLS</h4>
+          <div className="grid grid-cols-3 gap-3 text-center">
+            {[
+              { name: "Focus Timer", icon: "timer", bg: "bg-amber-50 dark:bg-amber-950/20", text: "text-amber-600 dark:text-amber-400", path: "/dashboard/working-professional/focus" },
+              { name: "Task Manager", icon: "check_box", bg: "bg-purple-50 dark:bg-purple-950/20", text: "text-[#5F4EA5] dark:text-purple-350", path: "/dashboard/working-professional/study-planner" },
+              { name: "Calendar", icon: "calendar_today", bg: "bg-blue-50 dark:bg-blue-950/20", text: "text-blue-600 dark:text-blue-400", path: "/dashboard/working-professional/exams" },
+              { name: "Notes", icon: "note_alt", bg: "bg-amber-50 dark:bg-amber-950/20", text: "text-amber-700 dark:text-amber-400", action: "journal" },
+              { name: "Pomodoro", icon: "hourglass_empty", bg: "bg-red-50 dark:bg-red-950/20", text: "text-red-650 dark:text-red-400", path: "/dashboard/working-professional/focus" },
+              { name: "Breathing", icon: "self_improvement", bg: "bg-sky-50 dark:bg-sky-950/20", text: "text-sky-655 dark:text-sky-400", action: "breathing" },
+            ].map((tool, idx) => (
+              <button
+                key={idx}
+                onClick={() => {
+                  if (tool.action === "journal") {
+                    setJournalTitle("");
+                    setJournalContent("");
+                    setEditingJournalId(null);
+                    setShowJournalModal(true);
+                  } else if (tool.action === "breathing") {
+                    setShowDecompressionModal(true);
+                  } else if (tool.path) {
+                    router.push(tool.path);
+                  }
+                }}
+                className="flex flex-col items-center gap-1.5 p-2 rounded-2xl hover:scale-105 transition-transform cursor-pointer"
               >
-                <div
-                  onClick={() => handleToggleGoal(g.id, g.completed)}
-                  className="flex items-center gap-3 cursor-pointer flex-1 min-w-0"
-                >
-                  <span className={`material-symbols-outlined text-sm shrink-0 leading-none ${
-                    g.completed ? "text-[#62B596]" : "text-slate-300"
-                  }`}>
-                    {g.completed ? "check_circle" : "radio_button_unchecked"}
-                  </span>
-                  <div className="truncate">
-                    <span className={`text-[11px] font-bold block leading-tight ${
-                      g.completed ? "line-through text-slate-400" : "text-[#18322A] dark:text-slate-200"
-                    }`}>
-                      {g.title}
-                    </span>
-                    {g.description && (
-                      <span className="text-[9px] text-slate-400 font-medium block mt-0.5 truncate">{g.description}</span>
-                    )}
-                  </div>
+                <div className={`w-10 h-10 rounded-full ${tool.bg} ${tool.text} flex items-center justify-center shrink-0`}>
+                  <span className="material-symbols-outlined text-lg">{tool.icon}</span>
                 </div>
-                
-                <div className="flex gap-2 ml-2 shrink-0">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setEditingGoalId(g.id);
-                      setEditingGoalTitle(g.title);
-                    }}
-                    className="text-[9px] font-black text-slate-450 hover:text-[#0B4F3C] uppercase tracking-wider cursor-pointer"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleDeleteGoal(g.id)}
-                    className="text-[9px] font-black text-red-500 hover:text-red-700 uppercase tracking-wider cursor-pointer"
-                  >
-                    Delete
-                  </button>
-                </div>
-              </div>
+                <span className="text-[9px] font-extrabold text-slate-500 dark:text-slate-400 tracking-tight leading-none truncate w-full text-center">
+                  {tool.name}
+                </span>
+              </button>
             ))}
-            {(!data?.goals || data.goals.length === 0) && (
-              <div className="py-4 text-center">
-                <p className="text-[11px] text-[#718079] font-bold">You haven't created any goals yet.</p>
-              </div>
-            )}
           </div>
         </div>
 
-        {/* Leave Work at Work */}
-        <div className="p-6 rounded-[20px] bg-white dark:bg-[#132E3F] border border-slate-200/40 dark:border-slate-800 shadow-[0_2px_12px_rgba(11,79,60,0.015)] hover:translate-y-[-2px] hover:shadow-[0_4px_16px_rgba(11,79,60,0.035)] transition-all duration-300 flex flex-col justify-between min-h-[220px]">
-          <div>
-            <h4 className="font-heading font-black text-[11px] text-[#718079] uppercase tracking-widest">LEAVE WORK AT WORK</h4>
-            <p className="text-[12px] font-black text-[#18322A] dark:text-slate-100 mt-2">guided decompression ritual</p>
-          </div>
-
-          <p className="text-[12px] font-bold text-[#718079] leading-relaxed">
-            A short decompression ritual to transition from work mode to personal time.
-          </p>
-
-          <div className="text-2xl text-center py-1">🌿</div>
-
-          <button
-            type="button"
-            onClick={() => {
-              setDecompressionTimeLeft(120);
-              setShowDecompressionModal(true);
-            }}
-            className="w-full py-2.5 rounded-xl bg-[#0B4F3C] hover:bg-[#073C2C] text-white text-[9px] font-black uppercase tracking-widest transition-all cursor-pointer"
-          >
-            Start Decompression
-          </button>
-        </div>
-
       </div>
-
-      {/* AI RECOMMENDATION BOTTOM BANNER */}
-      <div className="p-6 rounded-[20px] bg-[#EAF7F1] dark:bg-[#17382B] border border-[#62B596]/15 shadow-[0_2px_12px_rgba(11,79,60,0.01)] text-left flex flex-col md:flex-row items-center justify-between gap-6">
-        <div className="space-y-1.5 flex-1">
-          <h4 className="text-[11px] font-black uppercase tracking-widest text-[#0B4F3C] dark:text-emerald-450">✨ AI Recommendation for You</h4>
-          <p className="text-[12px] font-bold text-[#718079] dark:text-slate-300 leading-relaxed pr-6">
-            "{data?.recommendation || "You've had a demanding week. Try a short 2-minute reset session before starting your evening."}"
-          </p>
-        </div>
-        <button
-          type="button"
-          onClick={() => {
-            setDecompressionTimeLeft(120);
-            setShowDecompressionModal(true);
-          }}
-          className="py-2.5 px-5 bg-[#0B4F3C] hover:bg-[#073C2C] text-white text-[9px] font-black uppercase tracking-widest rounded-xl transition-all shrink-0 cursor-pointer"
-        >
-          Start Recommendation
-        </button>
-      </div>
-
-      {/* MODALS */}
+{/* MODALS */}
 
       {/* Profile Edit Modal */}
       <AnimatePresence>
@@ -1753,9 +1530,9 @@ export default function WorkingProfessionalDashboard() {
               exit={{ opacity: 0, scale: 0.97 }}
               className="fixed inset-0 m-auto z-50 w-full max-w-[420px] h-fit bg-white dark:bg-[#132E3F] border border-slate-200 dark:border-slate-800 rounded-[20px] p-6 space-y-4 shadow-2xl text-left"
             >
-              <h4 className="font-heading font-black text-xs text-[#0B4F3C] uppercase tracking-widest">Sanctuary Profile Settings</h4>
+              <h4 className="font-heading font-black text-xs text-[#5F4EA5] uppercase tracking-widest">Sanctuary Profile Settings</h4>
               
-              <div className="space-y-3 text-[11px] text-[#718079] font-bold bg-slate-50 dark:bg-slate-800/40 p-3 rounded-2xl">
+              <div className="space-y-3 text-[11px] text-[#8E8A9F] font-bold bg-slate-50 dark:bg-slate-800/40 p-3 rounded-2xl">
                 <p>Joined Date: <span className="text-slate-800 dark:text-slate-200">{data?.user?.createdAt ? new Date(data.user.createdAt).toLocaleDateString("en-US", { month: "long", year: "numeric" }) : "Aug 2026"}</span></p>
                 <p>Streak: <span className="text-slate-800 dark:text-slate-200">{data?.streak?.currentStreak || 1} Days</span></p>
                 <p>Wellness Score: <span className="text-slate-800 dark:text-slate-200">{data?.wellnessScore?.score || 70}/100</span></p>
@@ -1770,7 +1547,7 @@ export default function WorkingProfessionalDashboard() {
                     required
                     value={profileName}
                     onChange={(e) => setProfileName(e.target.value)}
-                    className="w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 text-xs focus:outline-none focus:ring-1 focus:ring-[#0B4F3C] text-slate-800 dark:text-slate-100"
+                    className="w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 text-xs focus:outline-none focus:ring-1 focus:ring-[#5F4EA5] text-slate-800 dark:text-slate-100"
                   />
                 </div>
 
@@ -1781,7 +1558,7 @@ export default function WorkingProfessionalDashboard() {
                     value={profileAvatar}
                     onChange={(e) => setProfileAvatar(e.target.value)}
                     placeholder="/images/user_avatar.jpg"
-                    className="w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 text-xs focus:outline-none focus:ring-1 focus:ring-[#0B4F3C] text-slate-800 dark:text-slate-100"
+                    className="w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 text-xs focus:outline-none focus:ring-1 focus:ring-[#5F4EA5] text-slate-800 dark:text-slate-100"
                   />
                 </div>
 
@@ -1789,14 +1566,14 @@ export default function WorkingProfessionalDashboard() {
                   <button
                     type="submit"
                     disabled={isSavingProfile}
-                    className="flex-1 py-3 bg-[#0B4F3C] hover:bg-[#073C2C] text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all cursor-pointer"
+                    className="flex-1 py-3 bg-[#5F4EA5] hover:bg-[#4A3C8C] text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all cursor-pointer"
                   >
                     Save Changes
                   </button>
                   <button
                     type="button"
                     onClick={() => setShowProfileModal(false)}
-                    className="px-5 py-3 border border-slate-200 text-[#718079] rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all cursor-pointer"
+                    className="px-5 py-3 border border-slate-200 text-[#8E8A9F] rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all cursor-pointer"
                   >
                     Cancel
                   </button>
@@ -1818,7 +1595,7 @@ export default function WorkingProfessionalDashboard() {
               exit={{ opacity: 0, scale: 0.97 }}
               className="fixed inset-0 m-auto z-50 w-full max-w-[400px] h-fit bg-white dark:bg-[#132E3F] border border-slate-200 dark:border-slate-800 rounded-[20px] p-8 space-y-6 shadow-2xl text-center"
             >
-              <h4 className="font-heading font-black text-xs text-[#0B4F3C] uppercase tracking-widest">Focus Session Timer</h4>
+              <h4 className="font-heading font-black text-xs text-[#5F4EA5] uppercase tracking-widest">Focus Session Timer</h4>
 
               <div className="py-6">
                 <p className="text-4xl font-black text-slate-800 dark:text-slate-100 leading-none">
@@ -1839,7 +1616,7 @@ export default function WorkingProfessionalDashboard() {
                       }}
                       className={`px-3 py-1.5 border text-[9px] font-black uppercase tracking-wider rounded-lg transition-all ${
                         focusDuration === mins * 60
-                          ? "bg-[#0B4F3C] text-white border-[#0B4F3C]"
+                          ? "bg-[#5F4EA5] text-white border-[#5F4EA5]"
                           : "border-slate-250 text-slate-650 hover:bg-slate-50 text-slate-500"
                       }`}
                     >
@@ -1854,7 +1631,7 @@ export default function WorkingProfessionalDashboard() {
                   type="button"
                   onClick={() => setIsFocusRunning(!isFocusRunning)}
                   className={`flex-1 py-3 rounded-xl text-white text-[10px] font-black uppercase tracking-widest transition-all cursor-pointer ${
-                    isFocusRunning ? "bg-[#EA5E5E] hover:bg-[#D54D4D]" : "bg-[#0B4F3C] hover:bg-[#073C2C]"
+                    isFocusRunning ? "bg-[#EA5E5E] hover:bg-[#D54D4D]" : "bg-[#5F4EA5] hover:bg-[#4A3C8C]"
                   }`}
                 >
                   {isFocusRunning ? "Pause" : "Start Focus"}
@@ -1886,7 +1663,7 @@ export default function WorkingProfessionalDashboard() {
               exit={{ opacity: 0, scale: 0.97 }}
               className="fixed inset-0 m-auto z-50 w-full max-w-[400px] h-fit bg-white dark:bg-[#132E3F] border border-slate-200 dark:border-slate-800 rounded-[20px] p-8 space-y-6 shadow-2xl text-center"
             >
-              <h4 className="font-heading font-black text-xs text-[#0B4F3C] uppercase tracking-widest">Leave Work at Work</h4>
+              <h4 className="font-heading font-black text-xs text-[#5F4EA5] uppercase tracking-widest">Leave Work at Work</h4>
               <p className="text-[10px] font-bold text-slate-450 leading-normal px-4">Take a short transition reset to leave your work tasks at your desk and start your personal time.</p>
 
               {/* Animated guided breathing circle */}
@@ -1894,14 +1671,14 @@ export default function WorkingProfessionalDashboard() {
                 const instr = getDecompressionInstruction(decompressionTimeLeft);
                 return (
                   <div className="py-6 flex flex-col items-center justify-center space-y-4">
-                    <p className="text-4xl font-black text-[#62B596] leading-none">
+                    <p className="text-4xl font-black text-[#7C6BC4] leading-none">
                       {Math.floor(decompressionTimeLeft / 60)}:{String(decompressionTimeLeft % 60).padStart(2, "0")}
                     </p>
                     
                     <motion.div
                       animate={{ scale: isDecompressionRunning ? instr.scale : 1 }}
                       transition={{ duration: instr.duration, ease: "easeInOut" }}
-                      className="w-28 h-28 rounded-full bg-emerald-500/10 border border-[#62B596]/30 flex items-center justify-center shadow-inner"
+                      className="w-28 h-28 rounded-full bg-emerald-500/10 border border-[#7C6BC4]/30 flex items-center justify-center shadow-inner"
                     >
                       <span className={`text-xs font-black uppercase ${instr.color}`}>{instr.text}</span>
                     </motion.div>
@@ -1914,7 +1691,7 @@ export default function WorkingProfessionalDashboard() {
                   type="button"
                   onClick={() => setIsDecompressionRunning(!isDecompressionRunning)}
                   className={`flex-1 py-3 rounded-xl text-white text-[10px] font-black uppercase tracking-widest transition-all cursor-pointer ${
-                    isDecompressionRunning ? "bg-[#EA5E5E] hover:bg-[#D54D4D]" : "bg-[#0B4F3C] hover:bg-[#073C2C]"
+                    isDecompressionRunning ? "bg-[#EA5E5E] hover:bg-[#D54D4D]" : "bg-[#5F4EA5] hover:bg-[#4A3C8C]"
                   }`}
                 >
                   {isDecompressionRunning ? "Pause" : "Start Reset"}
@@ -1946,7 +1723,7 @@ export default function WorkingProfessionalDashboard() {
               exit={{ opacity: 0, scale: 0.97 }}
               className="fixed inset-0 m-auto z-50 w-full max-w-[480px] max-h-[90vh] overflow-y-auto bg-white dark:bg-[#132E3F] border border-slate-200 dark:border-slate-800 rounded-[20px] p-8 space-y-6 shadow-2xl text-left"
             >
-              <h4 className="font-heading font-black text-xs text-[#0B4F3C] uppercase tracking-widest">Daily Wellbeing Check-In</h4>
+              <h4 className="font-heading font-black text-xs text-[#5F4EA5] uppercase tracking-widest">Daily Wellbeing Check-In</h4>
 
               <form onSubmit={handleSaveCheckinSubmit} className="space-y-4 text-xs font-bold text-slate-750 dark:text-slate-350">
                 
@@ -1968,7 +1745,7 @@ export default function WorkingProfessionalDashboard() {
                         onClick={() => setCheckinMood(m.val)}
                         className={`p-2 rounded-xl border text-center transition-all ${
                           checkinMood === m.val
-                            ? "border-[#0B4F3C] bg-[#0B4F3C]/5 text-[#0B4F3C]"
+                            ? "border-[#5F4EA5] bg-[#5F4EA5]/5 text-[#5F4EA5]"
                             : "border-slate-150 hover:bg-slate-50"
                         } disabled:cursor-not-allowed`}
                       >
@@ -1986,7 +1763,7 @@ export default function WorkingProfessionalDashboard() {
                     value={checkinStress}
                     disabled={!!data?.todayCheckin}
                     onChange={(e) => setCheckinStress(e.target.value)}
-                    className="w-full px-4 py-3 rounded-2xl bg-slate-5-0 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 text-xs focus:outline-none focus:ring-1 focus:ring-[#0B4F3C] text-slate-800 dark:text-slate-100 disabled:cursor-not-allowed"
+                    className="w-full px-4 py-3 rounded-2xl bg-slate-5-0 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 text-xs focus:outline-none focus:ring-1 focus:ring-[#5F4EA5] text-slate-800 dark:text-slate-100 disabled:cursor-not-allowed"
                   >
                     <option value="Low">Low Stress</option>
                     <option value="Manageable">Manageable</option>
@@ -2007,7 +1784,7 @@ export default function WorkingProfessionalDashboard() {
                       disabled={!!data?.todayCheckin}
                       value={checkinEnergy}
                       onChange={(e) => setCheckinEnergy(Number(e.target.value))}
-                      className="w-full accent-[#0B4F3C] disabled:cursor-not-allowed"
+                      className="w-full accent-[#5F4EA5] disabled:cursor-not-allowed"
                     />
                   </div>
                   <div className="space-y-2">
@@ -2019,7 +1796,7 @@ export default function WorkingProfessionalDashboard() {
                       disabled={!!data?.todayCheckin}
                       value={checkinSleep}
                       onChange={(e) => setCheckinSleep(Number(e.target.value))}
-                      className="w-full accent-[#0B4F3C] disabled:cursor-not-allowed"
+                      className="w-full accent-[#5F4EA5] disabled:cursor-not-allowed"
                     />
                   </div>
                 </div>
@@ -2034,7 +1811,7 @@ export default function WorkingProfessionalDashboard() {
                     disabled={!!data?.todayCheckin}
                     value={checkinBalance}
                     onChange={(e) => setCheckinBalance(Number(e.target.value))}
-                    className="w-full accent-[#0B4F3C] disabled:cursor-not-allowed"
+                    className="w-full accent-[#5F4EA5] disabled:cursor-not-allowed"
                   />
                 </div>
 
@@ -2046,7 +1823,7 @@ export default function WorkingProfessionalDashboard() {
                     disabled={!!data?.todayCheckin}
                     onChange={(e) => setCheckinNote(e.target.value)}
                     placeholder="Reflect on your day..."
-                    className="w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 text-xs focus:outline-none focus:ring-1 focus:ring-[#0B4F3C] text-slate-800 dark:text-slate-100 min-h-[70px] disabled:cursor-not-allowed"
+                    className="w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 text-xs focus:outline-none focus:ring-1 focus:ring-[#5F4EA5] text-slate-800 dark:text-slate-100 min-h-[70px] disabled:cursor-not-allowed"
                   />
                 </div>
 
@@ -2055,19 +1832,19 @@ export default function WorkingProfessionalDashboard() {
                     <button
                       type="submit"
                       disabled={isSubmittingCheckin}
-                      className="flex-1 py-3 bg-[#0B4F3C] hover:bg-[#073C2C] text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all cursor-pointer"
+                      className="flex-1 py-3 bg-[#5F4EA5] hover:bg-[#4A3C8C] text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all cursor-pointer"
                     >
                       {isSubmittingCheckin ? "Submitting..." : "Submit Check-in"}
                     </button>
                   ) : (
-                    <div className="flex-1 text-center py-2.5 px-4 bg-[#EAF7F1] text-[#0B4F3C] text-[10px] font-black uppercase tracking-wider rounded-xl">
+                    <div className="flex-1 text-center py-2.5 px-4 bg-[#F5F3FC] text-[#5F4EA5] text-[10px] font-black uppercase tracking-wider rounded-xl">
                       ✓ Logged for Today
                     </div>
                   )}
                   <button
                     type="button"
                     onClick={() => setShowCheckinModal(false)}
-                    className="px-5 py-3 border border-slate-200 text-[#718079] rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all cursor-pointer"
+                    className="px-5 py-3 border border-slate-200 text-[#8E8A9F] rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all cursor-pointer"
                   >
                     Close
                   </button>
@@ -2090,7 +1867,7 @@ export default function WorkingProfessionalDashboard() {
               exit={{ opacity: 0, scale: 0.97 }}
               className="fixed inset-0 m-auto z-50 w-full max-w-[360px] h-fit bg-white dark:bg-[#132E3F] border border-slate-200 dark:border-slate-800 rounded-[20px] p-6 space-y-4 shadow-2xl text-left"
             >
-              <h4 className="font-heading font-black text-xs text-[#0B4F3C] uppercase tracking-widest">Edit Wellness Goal</h4>
+              <h4 className="font-heading font-black text-xs text-[#5F4EA5] uppercase tracking-widest">Edit Wellness Goal</h4>
               <form onSubmit={handleEditGoalSave} className="space-y-4 text-xs font-bold text-slate-750 dark:text-slate-350">
                 <div className="space-y-1.5">
                   <label className="block text-[8px] font-black uppercase tracking-widest text-slate-400">Goal Title</label>
@@ -2099,21 +1876,21 @@ export default function WorkingProfessionalDashboard() {
                     required
                     value={editingGoalTitle}
                     onChange={(e) => setEditingGoalTitle(e.target.value)}
-                    className="w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 text-xs focus:outline-none focus:ring-1 focus:ring-[#0B4F3C] text-slate-800 dark:text-slate-100"
+                    className="w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 text-xs focus:outline-none focus:ring-1 focus:ring-[#5F4EA5] text-slate-800 dark:text-slate-100"
                   />
                 </div>
                 <div className="flex gap-2">
                   <button
                     type="submit"
                     disabled={isSavingEditGoal}
-                    className="flex-1 py-2.5 bg-[#0B4F3C] hover:bg-[#073C2C] text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all cursor-pointer"
+                    className="flex-1 py-2.5 bg-[#5F4EA5] hover:bg-[#4A3C8C] text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all cursor-pointer"
                   >
                     Save Changes
                   </button>
                   <button
                     type="button"
                     onClick={() => setEditingGoalId(null)}
-                    className="px-4 py-2.5 border border-slate-200 text-[#718079] rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all cursor-pointer"
+                    className="px-4 py-2.5 border border-slate-200 text-[#8E8A9F] rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all cursor-pointer"
                   >
                     Cancel
                   </button>
@@ -2135,7 +1912,7 @@ export default function WorkingProfessionalDashboard() {
               exit={{ opacity: 0, scale: 0.97 }}
               className="fixed inset-0 m-auto z-50 w-full max-w-[400px] h-fit bg-white dark:bg-[#132E3F] border border-slate-200 dark:border-slate-800 rounded-[20px] p-6 space-y-4 shadow-2xl text-left"
             >
-              <h4 className="font-heading font-black text-xs text-[#0B4F3C] uppercase tracking-widest">Log Sleep & Recovery</h4>
+              <h4 className="font-heading font-black text-xs text-[#5F4EA5] uppercase tracking-widest">Log Sleep & Recovery</h4>
               
               <form onSubmit={handleSaveSleepSubmit} className="space-y-4 text-xs font-bold text-slate-750 dark:text-slate-350">
                 <div className="grid grid-cols-2 gap-4">
@@ -2182,7 +1959,7 @@ export default function WorkingProfessionalDashboard() {
                     max="100"
                     value={sleepQuality}
                     onChange={(e) => setSleepQuality(Number(e.target.value))}
-                    className="w-full accent-[#0B4F3C]"
+                    className="w-full accent-[#5F4EA5]"
                   />
                 </div>
 
@@ -2190,14 +1967,14 @@ export default function WorkingProfessionalDashboard() {
                   <button
                     type="submit"
                     disabled={isSavingSleep}
-                    className="flex-1 py-3 bg-[#0B4F3C] hover:bg-[#073C2C] text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all cursor-pointer"
+                    className="flex-1 py-3 bg-[#5F4EA5] hover:bg-[#4A3C8C] text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all cursor-pointer"
                   >
                     Save Sleep Log
                   </button>
                   <button
                     type="button"
                     onClick={() => setShowSleepModal(false)}
-                    className="px-5 py-3 border border-slate-200 text-[#718079] rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all cursor-pointer"
+                    className="px-5 py-3 border border-slate-200 text-[#8E8A9F] rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all cursor-pointer"
                   >
                     Cancel
                   </button>
@@ -2219,7 +1996,7 @@ export default function WorkingProfessionalDashboard() {
               exit={{ opacity: 0, scale: 0.97 }}
               className="fixed inset-0 m-auto z-50 w-full max-w-[400px] h-fit bg-white dark:bg-[#132E3F] border border-slate-200 dark:border-slate-800 rounded-[20px] p-6 space-y-4 shadow-2xl text-left"
             >
-              <h4 className="font-heading font-black text-xs text-[#0B4F3C] uppercase tracking-widest">Update Work-Life Balance</h4>
+              <h4 className="font-heading font-black text-xs text-[#5F4EA5] uppercase tracking-widest">Update Work-Life Balance</h4>
               
               <form onSubmit={handleSaveWorkLifeSubmit} className="space-y-4 text-xs font-bold text-slate-750 dark:text-slate-350">
                 <div className="space-y-1.5">
@@ -2230,7 +2007,7 @@ export default function WorkingProfessionalDashboard() {
                     max="100"
                     value={workVal}
                     onChange={(e) => setWorkVal(Number(e.target.value))}
-                    className="w-full accent-[#0B4F3C]"
+                    className="w-full accent-[#5F4EA5]"
                   />
                 </div>
                 <div className="space-y-1.5">
@@ -2241,7 +2018,7 @@ export default function WorkingProfessionalDashboard() {
                     max="100"
                     value={personalVal}
                     onChange={(e) => setPersonalVal(Number(e.target.value))}
-                    className="w-full accent-[#0B4F3C]"
+                    className="w-full accent-[#5F4EA5]"
                   />
                 </div>
                 <div className="space-y-1.5">
@@ -2252,7 +2029,7 @@ export default function WorkingProfessionalDashboard() {
                     max="100"
                     value={recoveryVal}
                     onChange={(e) => setRecoveryVal(Number(e.target.value))}
-                    className="w-full accent-[#0B4F3C]"
+                    className="w-full accent-[#5F4EA5]"
                   />
                 </div>
 
@@ -2260,14 +2037,14 @@ export default function WorkingProfessionalDashboard() {
                   <button
                     type="submit"
                     disabled={isSavingWorkLife}
-                    className="flex-1 py-3 bg-[#0B4F3C] hover:bg-[#073C2C] text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all cursor-pointer"
+                    className="flex-1 py-3 bg-[#5F4EA5] hover:bg-[#4A3C8C] text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all cursor-pointer"
                   >
                     Save Balance Update
                   </button>
                   <button
                     type="button"
                     onClick={() => setShowWorkLifeModal(false)}
-                    className="px-5 py-3 border border-slate-200 text-[#718079] rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all cursor-pointer"
+                    className="px-5 py-3 border border-slate-200 text-[#8E8A9F] rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all cursor-pointer"
                   >
                     Cancel
                   </button>
@@ -2289,7 +2066,7 @@ export default function WorkingProfessionalDashboard() {
               exit={{ opacity: 0, scale: 0.97 }}
               className="fixed inset-0 m-auto z-50 w-full max-w-[360px] h-fit bg-white dark:bg-[#132E3F] border border-slate-200 dark:border-slate-800 rounded-[20px] p-6 space-y-4 shadow-2xl text-left"
             >
-              <h4 className="font-heading font-black text-xs text-[#0B4F3C] uppercase tracking-widest">Reschedule Appointment</h4>
+              <h4 className="font-heading font-black text-xs text-[#5F4EA5] uppercase tracking-widest">Reschedule Appointment</h4>
               
               <form onSubmit={handleRescheduleApptSubmit} className="space-y-4 text-xs font-bold text-slate-750 dark:text-slate-350">
                 <div className="space-y-1.5">
@@ -2318,14 +2095,14 @@ export default function WorkingProfessionalDashboard() {
                   <button
                     type="submit"
                     disabled={isSavingAppt}
-                    className="flex-1 py-3 bg-[#0B4F3C] hover:bg-[#073C2C] text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all cursor-pointer"
+                    className="flex-1 py-3 bg-[#5F4EA5] hover:bg-[#4A3C8C] text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all cursor-pointer"
                   >
                     Confirm Reschedule
                   </button>
                   <button
                     type="button"
                     onClick={() => setShowApptModal(false)}
-                    className="px-5 py-3 border border-slate-200 text-[#718079] rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all cursor-pointer"
+                    className="px-5 py-3 border border-slate-200 text-[#8E8A9F] rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all cursor-pointer"
                   >
                     Cancel
                   </button>
@@ -2347,7 +2124,7 @@ export default function WorkingProfessionalDashboard() {
               exit={{ opacity: 0, scale: 0.97 }}
               className="fixed inset-0 m-auto z-50 w-full max-w-[620px] max-h-[85vh] overflow-y-auto bg-white dark:bg-[#132E3F] border border-slate-200 dark:border-slate-800 rounded-[20px] p-6 space-y-6 shadow-2xl text-left"
             >
-              <h4 className="font-heading font-black text-xs text-[#0B4F3C] uppercase tracking-widest">Sanctuary Journal Entry</h4>
+              <h4 className="font-heading font-black text-xs text-[#5F4EA5] uppercase tracking-widest">Sanctuary Journal Entry</h4>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 
@@ -2408,7 +2185,7 @@ export default function WorkingProfessionalDashboard() {
                     <button
                       type="submit"
                       disabled={isSavingJournal}
-                      className="flex-1 py-2.5 bg-[#0B4F3C] hover:bg-[#073C2C] text-white text-[9px] font-black uppercase tracking-widest rounded-xl transition-all cursor-pointer"
+                      className="flex-1 py-2.5 bg-[#5F4EA5] hover:bg-[#4A3C8C] text-white text-[9px] font-black uppercase tracking-widest rounded-xl transition-all cursor-pointer"
                     >
                       {editingJournalId ? "Update Entry" : "Save Entry"}
                     </button>
@@ -2420,7 +2197,7 @@ export default function WorkingProfessionalDashboard() {
                           setJournalContent("");
                           setEditingJournalId(null);
                         }}
-                        className="px-3 py-2.5 border border-slate-200 text-[#718079] rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all cursor-pointer"
+                        className="px-3 py-2.5 border border-slate-200 text-[#8E8A9F] rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all cursor-pointer"
                       >
                         Cancel Edit
                       </button>
@@ -2444,7 +2221,7 @@ export default function WorkingProfessionalDashboard() {
                               setJournalMoodTag(ref.mood_tag || "Reflective");
                               setJournalCategory(ref.category || "Personal");
                             }}
-                            className="text-[8px] font-black uppercase text-[#0B4F3C] hover:underline"
+                            className="text-[8px] font-black uppercase text-[#5F4EA5] hover:underline"
                           >
                             Edit
                           </button>
@@ -2477,7 +2254,7 @@ export default function WorkingProfessionalDashboard() {
                 <button
                   type="button"
                   onClick={() => setShowJournalModal(false)}
-                  className="px-5 py-2.5 border border-slate-200 text-[#718079] rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all cursor-pointer"
+                  className="px-5 py-2.5 border border-slate-200 text-[#8E8A9F] rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all cursor-pointer"
                 >
                   Close Journal
                 </button>

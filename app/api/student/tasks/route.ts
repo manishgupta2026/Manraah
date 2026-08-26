@@ -15,7 +15,12 @@ export async function GET(req: Request) {
       WHERE user_id = ${userId}
       ORDER BY completed ASC, due_date ASC
     `;
-    return NextResponse.json(tasks);
+    const mapped = tasks.map((t: any) => ({
+      ...t,
+      due_date: t.date,
+      duration_minutes: t.duration
+    }));
+    return NextResponse.json(mapped);
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
@@ -39,7 +44,12 @@ export async function POST(req: Request) {
       RETURNING id, subject, task_title as title, priority, due_date as date, estimated_duration as duration, completed
     `;
 
-    return NextResponse.json(inserted[0]);
+    const t = inserted[0];
+    return NextResponse.json({
+      ...t,
+      due_date: t.date,
+      duration_minutes: t.duration
+    });
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
@@ -74,7 +84,12 @@ export async function PUT(req: Request) {
       return NextResponse.json({ error: "Task not found" }, { status: 404 });
     }
 
-    return NextResponse.json(updated[0]);
+    const t = updated[0];
+    return NextResponse.json({
+      ...t,
+      due_date: t.date,
+      duration_minutes: t.duration
+    });
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }

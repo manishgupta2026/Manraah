@@ -20,10 +20,20 @@ export async function saveMoodEntry(
   }
 ) {
   await initMoodDatabase();
+  const getCalendarDayString = (date: Date) => {
+    const formatter = new Intl.DateTimeFormat("en-CA", {
+      timeZone: "Asia/Kolkata",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    });
+    return formatter.format(date);
+  };
+  const todayStr = getCalendarDayString(new Date());
   try {
     const result = await sql`
-      INSERT INTO mood_entries (user_id, mood, energy, stress, reflection, factors)
-      VALUES (${userId}, ${data.mood}, ${data.energy}, ${data.stress}, ${data.reflection || null}, ${data.factors || null})
+      INSERT INTO mood_entries (user_id, mood, energy, stress, reflection, factors, checkin_date)
+      VALUES (${userId}, ${data.mood}, ${data.energy}, ${data.stress}, ${data.reflection || null}, ${data.factors || null}, ${todayStr})
       RETURNING *
     `;
     return result[0];

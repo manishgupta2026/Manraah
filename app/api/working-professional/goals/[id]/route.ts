@@ -14,7 +14,7 @@ export async function PATCH(
 
   try {
     const body = await req.json();
-    const { title, description, completed } = body;
+    const { title, description, completed, priority, due_date } = body;
 
     let compAt = undefined;
     if (completed !== undefined) {
@@ -29,7 +29,9 @@ export async function PATCH(
           completed_at = CASE 
             WHEN ${completed} IS NOT NULL THEN ${compAt}::timestamp with time zone 
             ELSE completed_at 
-          END
+          END,
+          priority = COALESCE(${priority}, priority),
+          due_date = COALESCE(${due_date}, due_date)
       WHERE id = ${goalId} AND user_id = ${userId}
       RETURNING *
     `;

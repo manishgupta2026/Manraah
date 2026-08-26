@@ -28,7 +28,10 @@ export function getCategoryDashboardRoute(categoryRaw?: string | null): string {
 
     case "couple":
     case "couples":
-      return "/dashboard/couples";
+      return "/dashboard/couple";
+
+    case "other":
+      return "/dashboard/other";
 
     case "senior_citizen":
     case "seniorcitizen":
