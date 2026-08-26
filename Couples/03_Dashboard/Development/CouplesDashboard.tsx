@@ -536,16 +536,22 @@ export default function CouplesDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FCF8FB] p-3 md:p-6 text-slate-800 font-sans relative">
+    <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 relative select-none animate-fadeIn bg-[#F8F9FD] dark:bg-[#0D1F2D] text-slate-800 dark:text-slate-100 min-h-screen">
       
-      <div className="z-10 relative space-y-6 max-w-7xl mx-auto">
+      {/* Ambient background glows */}
+      <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden animate-pulse">
+        <div className="absolute top-0 right-1/4 w-96 h-96 rounded-full blur-[120px] opacity-[0.02] bg-[#F5C99B]" />
+        <div className="absolute bottom-1/4 left-1/4 w-[450px] h-[450px] rounded-full blur-[140px] opacity-[0.02] bg-[#7C6BC4]" />
+      </div>
+
+      <div className="z-10 relative space-y-6">
         
         {/* ==================== TOP NAVIGATION CONTROLS ==================== */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           
           <button 
             onClick={() => setShowDisconnectModal(true)}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-white text-xs font-extrabold text-[#7C6BC4] border border-[#ECE5F5] shadow-sm hover:bg-slate-50 transition-all cursor-pointer w-fit"
+            className="flex items-center gap-2 px-4 py-2 rounded-full bg-white dark:bg-[#132E3F] border border-[#EAEAFF] dark:border-slate-800 text-xs font-bold text-[#7C6BC4] dark:text-purple-300 shadow-sm hover:bg-[#F2F4FD] dark:hover:bg-slate-800 active:scale-95 transition-all cursor-pointer w-fit"
           >
             <span className="material-symbols-outlined text-xs font-black">arrow_back</span>
             Back to home
@@ -559,7 +565,7 @@ export default function CouplesDashboard() {
                 localStorage.setItem("couple_reset_assessment_flow", "true");
                 router.push("/assessment");
               }}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-white text-xs font-extrabold text-[#D66B60] border border-[#FADCD9] hover:bg-rose-50/50 transition-all cursor-pointer"
+              className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-white dark:bg-[#132E3F] border border-[#FADCD9] dark:border-slate-800 text-xs font-bold text-[#D66B60] dark:text-rose-350 hover:bg-[#FFF2F2] dark:hover:bg-slate-800 transition-all cursor-pointer"
             >
               <span className="material-symbols-outlined text-xs font-black">assignment</span>
               Retake Assessment
@@ -571,14 +577,14 @@ export default function CouplesDashboard() {
                 setCalmZoneActive(true);
                 setBreathingActive(false);
               }}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-white text-xs font-extrabold text-[#9A6293] border border-[#F2D7EE] hover:bg-[#F2D7EE]/20 transition-all cursor-pointer"
+              className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-white dark:bg-[#132E3F] border border-[#F2D7EE] dark:border-slate-800 text-xs font-bold text-[#9A6293] dark:text-pink-300 hover:bg-[#FAF2FA] dark:hover:bg-slate-800 transition-all cursor-pointer"
             >
               <span className="material-symbols-outlined text-xs font-black">security</span>
               Empathy calm zone
             </button>
 
-            <span className="px-4 py-2 rounded-full bg-[#E5F9F4] text-[#006B56] text-[10px] font-black uppercase tracking-wider border border-[#BFF3E7] flex items-center gap-1">
-              <span>🔒 PRIVATE RETREAT CONNECTION</span>
+            <span className="px-3.5 py-1 rounded-full bg-[#E5F9F4] dark:bg-[#112F28] text-[#006B56] dark:text-[#5FAF8A] text-[10px] font-black uppercase tracking-wider border border-[#BFF3E7] dark:border-[#1C463C]/30 flex items-center gap-1">
+              <span>🔒 Private Retreat Connection</span>
             </span>
           </div>
 
@@ -589,20 +595,20 @@ export default function CouplesDashboard() {
           <motion.div 
             initial={{ opacity: 0, y: -5 }} 
             animate={{ opacity: 1, y: 0 }}
-            className="bg-[#FFF2F2] border border-[#FADCD9] rounded-3xl p-4 flex items-center justify-between gap-4 shadow-sm"
+            className="bg-[#FFF2F2] dark:bg-[#2A1616] border border-[#FADCD9] dark:border-[#522424] rounded-[24px] p-4 flex items-center justify-between gap-4 shadow-sm"
           >
             <div className="flex items-center gap-3">
               <span className="text-xl">🌱</span>
               <div>
-                <h5 className="font-heading font-black text-xs text-[#D64E4D]">You broke your streak!</h5>
-                <p className="text-[10px] text-[#A65B5B] font-bold leading-normal">
+                <h5 className="font-heading font-black text-xs text-[#D64E4D] dark:text-[#EF6A6A]">You broke your streak!</h5>
+                <p className="text-[10px] text-[#A65B5B] dark:text-rose-300 font-bold leading-normal">
                   Don't worry, wellness is a continuous journey. Check in today to start a fresh streak!
                 </p>
               </div>
             </div>
             <button 
               onClick={() => setStreakBroken(false)}
-              className="text-[#D64E4D] font-bold text-xs hover:opacity-80"
+              className="text-[#D64E4D] dark:text-[#EF6A6A] font-bold text-xs hover:opacity-80"
             >
               dismiss
             </button>
@@ -610,26 +616,25 @@ export default function CouplesDashboard() {
         )}
 
         {/* ==================== THREE COLUMN GRID LAYOUT ==================== */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
           
           {/* COLUMN 1: LEFT SIDEBAR (MINT DESIGN) - 3/12 */}
-          <div className="lg:col-span-3 bg-[#E5F5F0] rounded-[40px] p-6 border border-[#CDEAE1] flex flex-col justify-between space-y-6 shadow-sm min-h-[680px]">
+          <div className="lg:col-span-3 space-y-4">
             
-            {/* Header / Condition check block */}
-            <div className="space-y-6">
-              <div className="text-center space-y-4">
+            <div className="bg-[#E6F4F0] dark:bg-[#112F28] rounded-[32px] p-6 border border-[#CBECE2] dark:border-[#1C463C] shadow-[0_10px_35px_rgba(0,107,86,0.03)] text-center space-y-6 flex flex-col justify-between min-h-[480px]">
+              
+              {/* Header / Condition check block */}
+              <div className="space-y-4">
                 <div className="relative w-20 h-20 mx-auto">
-                  <div className="w-full h-full rounded-full bg-[#FCE3CF]/80 border-4 border-white flex items-center justify-center text-4xl shadow-sm">
+                  <div className="w-full h-full rounded-full bg-[#FCE3CF]/40 border-4 border-white dark:border-slate-800 flex items-center justify-center text-4xl shadow-sm">
                     💑
                   </div>
-                  <span className="absolute bottom-0 right-0 w-6 h-6 bg-[#006B56] border-2 border-white rounded-full flex items-center justify-center text-[10px] text-white font-bold">
-                    ✓
-                  </span>
+                  <span className="absolute bottom-0 right-0 w-5 h-5 bg-[#006B56] border-2 border-white dark:border-slate-800 rounded-full flex items-center justify-center text-[10px] text-white">✓</span>
                 </div>
 
                 <div className="space-y-1">
-                  <h4 className="font-heading font-black text-slate-800 text-sm">Check your harmony</h4>
-                  <p className="text-[10px] text-slate-600 font-bold leading-relaxed px-1">
+                  <h4 className="font-heading font-black text-slate-800 dark:text-slate-100 text-sm">Check your harmony</h4>
+                  <p className="text-[10px] text-slate-500 dark:text-slate-400 font-bold leading-relaxed px-1">
                     Check your every situation, stress factors, and relationship activities.
                   </p>
                 </div>
@@ -638,24 +643,29 @@ export default function CouplesDashboard() {
               {/* Action check-in button */}
               <button 
                 onClick={() => setShowCheckinModal(true)}
-                className="w-full py-3 rounded-2xl bg-[#006B56] hover:bg-[#005B48] text-white font-bold text-xs shadow-md transition-all active:scale-95 cursor-pointer uppercase tracking-wider"
+                className="w-full py-3 rounded-2xl bg-[#006B56] hover:bg-[#005B48] text-white font-bold text-xs shadow-md transition-transform active:scale-95 cursor-pointer uppercase tracking-wider"
               >
                 Check It Now
               </button>
 
-              {/* Mockup Illustration artwork */}
-              <div className="bg-[#FEF6EB] p-4 rounded-3xl border border-[#F7E7D0] flex flex-col items-center justify-center relative overflow-hidden">
-                <img src="/category/couple.png" alt="Couple Illustration" className="h-32 object-contain rounded-2xl" />
+              {/* Vector Artwork/Illustration placeholder */}
+              <div className="pt-4 border-t border-[#D0EDE4] dark:border-[#1C463C] flex justify-center overflow-hidden rounded-2xl">
+                <img 
+                  src="/category/couple.png" 
+                  alt="Couple Illustration" 
+                  className="w-full h-auto object-cover max-h-[140px] hover:scale-105 transition-transform duration-500 rounded-xl" 
+                />
               </div>
+
             </div>
 
             {/* Harmony Metrics sliders */}
-            <div className="space-y-4 pt-4 border-t border-[#CDEAE1]/60">
-              <span className="text-[10px] uppercase font-black tracking-widest text-[#006B56]">Harmony Metrics</span>
+            <div className="bg-white dark:bg-[#132E3F] rounded-[24px] border border-[#EAEAFF] dark:border-slate-800 p-5 space-y-4 shadow-[0_10px_35px_rgba(0,0,0,0.015)]">
+              <span className="text-[10px] uppercase font-black tracking-widest text-[#006B56] dark:text-[#5FAF8A]">Harmony Metrics</span>
               
               {/* Slider 1: Conversation */}
               <div className="space-y-1.5">
-                <div className="flex justify-between text-[11px] font-black text-[#006B56]">
+                <div className="flex justify-between text-[11px] font-black text-[#006B56] dark:text-[#5FAF8A]">
                   <span className="flex items-center gap-1">💬 Conversation</span>
                   <span>{conversationScore}/10</span>
                 </div>
@@ -673,7 +683,7 @@ export default function CouplesDashboard() {
 
               {/* Slider 2: Shared Energy */}
               <div className="space-y-1.5">
-                <div className="flex justify-between text-[11px] font-black text-[#006B56]">
+                <div className="flex justify-between text-[11px] font-black text-[#006B56] dark:text-[#5FAF8A]">
                   <span className="flex items-center gap-1">⚡ Shared Energy</span>
                   <span>{sharedEnergyScore}/10</span>
                 </div>
@@ -691,7 +701,7 @@ export default function CouplesDashboard() {
 
               {/* Slider 3: Tension Rate (Reddish/rose accent) */}
               <div className="space-y-1.5">
-                <div className="flex justify-between text-[11px] font-black text-[#D64E4D]">
+                <div className="flex justify-between text-[11px] font-black text-[#D64E4D] dark:text-[#EF6A6A]">
                   <span className="flex items-center gap-1">⚠️ Tension Rate</span>
                   <span>{tensionRateScore}/10</span>
                 </div>
@@ -703,7 +713,7 @@ export default function CouplesDashboard() {
                     setTensionRateScore(val);
                     saveDashboardStateToDb({ tensionRateScore: val });
                   }}
-                  className="w-full accent-[#D64E4D] cursor-pointer"
+                  className="w-full accent-[#D64E4D] dark:accent-rose-500 cursor-pointer"
                 />
               </div>
 
@@ -712,14 +722,14 @@ export default function CouplesDashboard() {
           </div>
 
           {/* COLUMN 2: MIDDLE COLUMN (WELCOME & CLINICAL LOG & OVERALL PIE) - 5/12 */}
-          <div className="lg:col-span-5 space-y-6">
+          <div className="lg:col-span-5 space-y-4">
             
             {/* Welcome Greeting block */}
-            <div className="bg-white border border-slate-100 p-6 rounded-[36px] shadow-soft-sm space-y-4">
+            <div className="bg-white dark:bg-[#132E3F] border border-[#EAEAFF] dark:border-slate-800 p-6 rounded-[32px] shadow-[0_10px_35px_rgba(0,0,0,0.015)] space-y-4">
               <div className="flex items-start justify-between">
                 <div>
-                  <h2 className="text-xl font-heading font-black text-slate-800">Hi, {userName}</h2>
-                  <p className="text-[11px] text-slate-400 font-bold">Let's track your relationship health daily!</p>
+                  <h2 className="text-xl font-heading font-black text-slate-800 dark:text-slate-100">Hi, {userName}</h2>
+                  <p className="text-[11px] text-slate-400 dark:text-slate-400 font-bold">Let's track your relationship health daily!</p>
                 </div>
                 
                 {/* Link Partner control */}
@@ -730,19 +740,19 @@ export default function CouplesDashboard() {
                         type="text" 
                         value={tempPartnerName}
                         onChange={(e) => setTempPartnerName(e.target.value)}
-                        className="px-2 py-0.5 bg-slate-50 border border-[#ECE5F5] rounded text-[10px] text-slate-700 font-bold focus:outline-none focus:ring-1 focus:ring-[#7C6BC4] w-20"
+                        className="px-2 py-0.5 bg-slate-50 dark:bg-[#0D1F2D] border border-[#ECE5F5] dark:border-slate-800 rounded text-[10px] text-slate-700 dark:text-slate-200 font-bold focus:outline-none focus:ring-1 focus:ring-[#7C6BC4] w-20"
                       />
-                      <button onClick={savePartnerName} className="text-[9px] font-black text-[#7C6BC4] uppercase hover:underline">Save</button>
+                      <button onClick={savePartnerName} className="text-[9px] font-black text-[#7C6BC4] dark:text-purple-300 uppercase hover:underline">Save</button>
                     </div>
                   ) : (
-                    <div className="text-[10px] text-slate-600 font-bold">
-                      Linked: <span className="text-[#7C6BC4] font-black">{partnerName}</span>{" "}
+                    <div className="text-[10px] text-slate-600 dark:text-slate-400 font-bold">
+                      Linked: <span className="text-[#7C6BC4] dark:text-purple-300 font-black">{partnerName}</span>{" "}
                       <button 
                         onClick={() => {
                           setTempPartnerName(partnerName);
                           setIsEditingPartner(true);
                         }} 
-                        className="text-[#7C6BC4] font-black underline hover:opacity-85"
+                        className="text-[#7C6BC4] dark:text-purple-300 font-black underline hover:opacity-85"
                       >
                         (Edit)
                       </button>
@@ -752,64 +762,64 @@ export default function CouplesDashboard() {
               </div>
 
               {/* Streak info */}
-              <div className="flex justify-between items-center pt-3 border-t border-slate-50">
-                <span className="text-[10px] uppercase font-black tracking-wider text-slate-400">Streak Progress</span>
-                <span className="px-3 py-1 rounded-full bg-[#FFF2EA] text-[#E37A47] font-black text-[10px] tracking-wide flex items-center gap-1.5">
+              <div className="flex justify-between items-center pt-3 border-t border-slate-50 dark:border-slate-800/80">
+                <span className="text-[10px] uppercase font-black tracking-wider text-slate-450 dark:text-slate-450">Streak Progress</span>
+                <span className="px-3 py-1 rounded-full bg-[#FFF2EA] dark:bg-amber-950/20 text-[#E37A47] dark:text-orange-400 font-black text-[10px] tracking-wide flex items-center gap-1.5 border border-orange-100/10">
                   Day {streakDays} Streak 🔥
                 </span>
               </div>
             </div>
 
             {/* Upcoming Appointment card */}
-            <div className="bg-white border border-slate-100 p-6 rounded-[36px] shadow-soft-sm space-y-4">
+            <div className="bg-white dark:bg-[#132E3F] border border-[#EAEAFF] dark:border-slate-800 p-6 rounded-[32px] shadow-[0_10px_35px_rgba(0,0,0,0.015)] space-y-4">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] uppercase font-black tracking-widest text-[#7C6BC4]">Upcoming Appointment</span>
+                <span className="text-[10px] uppercase font-black tracking-widest text-[#7C6BC4] dark:text-purple-300">Upcoming Appointment</span>
                 <span className="text-xs">📅</span>
               </div>
 
               {upcomingApp ? (
                 <div className="space-y-4">
                   <div className="flex items-start gap-4">
-                    <div className="w-10 h-10 rounded-2xl bg-[#EAEAFF] text-[#7C6BC4] flex items-center justify-center font-bold text-lg flex-shrink-0">
+                    <div className="w-10 h-10 rounded-2xl bg-[#EAEAFF] dark:bg-[#202E4E] text-[#7C6BC4] dark:text-[#AFA4EC] flex items-center justify-center font-bold text-lg flex-shrink-0">
                       🏥
                     </div>
                     <div className="space-y-1">
-                      <h4 className="font-heading font-black text-sm text-slate-800">{upcomingApp.title}</h4>
-                      <p className="text-[10px] text-slate-400 font-bold">{upcomingApp.desc}</p>
+                      <h4 className="font-heading font-black text-sm text-slate-800 dark:text-slate-100">{upcomingApp.title}</h4>
+                      <p className="text-[10px] text-slate-400 dark:text-slate-400 font-bold">{upcomingApp.desc}</p>
                     </div>
                   </div>
 
-                  <div className="flex justify-between items-center bg-[#F9FBFF] p-4 rounded-3xl border border-[#EDF3FF]">
+                  <div className="flex justify-between items-center bg-[#F9FBFF] dark:bg-[#0D1F2D]/30 p-4 rounded-3xl border border-[#EDF3FF] dark:border-slate-850">
                     <div className="flex items-center gap-2">
-                      <span className="w-8 h-8 rounded-full bg-[#E5ECFF] text-[10px] flex items-center justify-center">👨‍⚕️</span>
+                      <span className="w-8 h-8 rounded-full bg-[#E5ECFF] dark:bg-[#202E4E] text-[10px] flex items-center justify-center">👨‍⚕️</span>
                       <div>
-                        <p className="text-[10px] font-black text-slate-700">{upcomingApp.doctor}</p>
-                        <p className="text-[9px] text-[#006B56] font-black uppercase tracking-wider">PHYSIOTHERAPY</p>
+                        <p className="text-[10px] font-black text-slate-700 dark:text-slate-200">{upcomingApp.doctor}</p>
+                        <p className="text-[9px] text-[#006B56] dark:text-[#5FAF8A] font-black uppercase tracking-wider">PHYSIOTHERAPY</p>
                       </div>
                     </div>
 
                     {upcomingApp.videoCall && (
-                      <button className="px-4 py-1.5 rounded-full bg-[#006B56] hover:bg-[#005B48] text-white font-bold text-[9px] uppercase tracking-wider shadow-sm transition-all">
+                      <button className="px-4 py-1.5 rounded-full bg-[#006B56] hover:bg-[#005B48] text-white font-bold text-[9px] uppercase tracking-wider shadow-sm transition-transform active:scale-95 cursor-pointer">
                         Video Call
                       </button>
                     )}
                   </div>
 
                   {/* Time Footer */}
-                  <div className="flex justify-between items-center text-[10px] text-slate-400 font-bold pt-2 border-t border-slate-50">
+                  <div className="flex justify-between items-center text-[10px] text-slate-450 dark:text-slate-450 font-bold pt-2 border-t border-slate-50 dark:border-slate-800/80">
                     <span className="flex items-center gap-1"><span className="material-symbols-outlined text-[12px] font-black">calendar_today</span>{upcomingApp.date}</span>
                     <span className="flex items-center gap-1"><span className="material-symbols-outlined text-[12px] font-black">schedule</span>{upcomingApp.time}</span>
                   </div>
                 </div>
               ) : (
-                <div className="py-6 text-center text-[11px] text-slate-400 font-bold space-y-2">
+                <div className="py-6 text-center text-[11px] text-slate-400 dark:text-slate-400 font-bold space-y-2">
                   <p>No upcoming appointments found.</p>
                   <button 
                     onClick={() => {
                       setActiveTab("monthly");
                       setShowAddAppointment(true);
                     }}
-                    className="text-[#7C6BC4] hover:underline"
+                    className="text-[#7C6BC4] dark:text-purple-300 hover:underline"
                   >
                     + Add New Appointment
                   </button>
@@ -818,14 +828,14 @@ export default function CouplesDashboard() {
             </div>
 
             {/* Patient Activities chart widget */}
-            <div className="bg-white border border-slate-100 p-6 rounded-[36px] shadow-soft-sm space-y-4">
+            <div className="bg-white dark:bg-[#132E3F] border border-[#EAEAFF] dark:border-slate-800 p-6 rounded-[32px] shadow-[0_10px_35px_rgba(0,0,0,0.015)] space-y-4">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] uppercase font-black tracking-widest text-[#7C6BC4]">Patient Activities</span>
-                <span className="text-[9px] text-slate-400 font-bold border border-slate-100 rounded-md px-2 py-0.5 bg-slate-50/50">Month ▾</span>
+                <span className="text-[10px] uppercase font-black tracking-widest text-[#7C6BC4] dark:text-purple-300">Patient Activities</span>
+                <span className="text-[9px] text-slate-455 dark:text-slate-400 font-bold border border-slate-100 dark:border-slate-800 rounded-md px-2 py-0.5 bg-slate-50/50 dark:bg-[#0D1F2D]">Month ▾</span>
               </div>
 
-              <div className="space-y-1">
-                <p className="text-[10px] text-slate-400 font-bold">Today, 5 October 2022</p>
+              <div className="space-y-1 text-left">
+                <p className="text-[10px] text-slate-400 dark:text-slate-400 font-bold">Today, 5 October 2022</p>
               </div>
 
               {/* Connection Rating bar chart */}
@@ -840,20 +850,20 @@ export default function CouplesDashboard() {
                 ].map((d, index) => (
                   <div key={index} className="flex-1 flex flex-col items-center gap-2">
                     <div className="w-full flex items-end justify-center h-20">
-                      <div className="w-6 bg-[#CDEAE1] rounded-t-lg transition-all duration-300" style={{ height: `${d.score * 10}%` }} title={`Rating: ${d.score}`} />
+                      <div className="w-6 bg-[#CDEAE1] dark:bg-[#1D463C] rounded-t-lg transition-all duration-300" style={{ height: `${d.score * 10}%` }} title={`Rating: ${d.score}`} />
                     </div>
-                    <span className="text-[9px] text-slate-400 font-black">{d.day}</span>
+                    <span className="text-[9px] text-slate-455 dark:text-slate-400 font-black">{d.day}</span>
                   </div>
                 ))}
               </div>
             </div>
 
             {/* Overall Metrics - Harmony Overview Pie Chart (Mockup Alignment) */}
-            <div className="bg-white border border-slate-100 p-6 rounded-[36px] shadow-soft-sm space-y-4 text-left">
+            <div className="bg-white dark:bg-[#132E3F] border border-[#EAEAFF] dark:border-slate-800 p-6 rounded-[32px] shadow-[0_10px_35px_rgba(0,0,0,0.015)] space-y-4 text-left">
               <div className="flex items-center justify-between">
                 <div>
-                  <span className="text-[10px] uppercase font-black tracking-widest text-[#006B56]">Overall Metrics</span>
-                  <h3 className="text-sm font-heading font-black text-slate-800">Harmony Overview</h3>
+                  <span className="text-[10px] uppercase font-black tracking-widest text-[#006B56] dark:text-[#5FAF8A]">Overall Metrics</span>
+                  <h3 className="text-sm font-heading font-black text-slate-800 dark:text-slate-100">Harmony Overview</h3>
                 </div>
                 <span className="text-xl">📊</span>
               </div>
@@ -887,7 +897,7 @@ export default function CouplesDashboard() {
                   </svg>
 
                   {/* Percentage Labels overlay inside slices */}
-                  <div className="absolute inset-0 pointer-events-none text-[8px] font-black text-slate-800">
+                  <div className="absolute inset-0 pointer-events-none text-[8px] font-black text-slate-800 dark:text-slate-205">
                     {distribution.great >= 5 && (
                       <span className="absolute" style={{ left: `${getLabelCoordinates(greatStart, greatEnd).x}%`, top: `${getLabelCoordinates(greatStart, greatEnd).y}%`, transform: "translate(-50%, -50%)" }}>
                         {distribution.great}%
@@ -917,7 +927,7 @@ export default function CouplesDashboard() {
                 </div>
 
                 {/* Legends */}
-                <div className="grid grid-cols-2 gap-x-6 gap-y-2.5 text-[10px] font-bold text-slate-600">
+                <div className="grid grid-cols-2 gap-x-6 gap-y-2.5 text-[10px] font-bold text-slate-500 dark:text-slate-400">
                   <div className="flex items-center gap-2">
                     <span className="w-3 h-3 rounded-sm bg-[#006B56] flex-shrink-0" />
                     <span>Great</span>
@@ -946,20 +956,20 @@ export default function CouplesDashboard() {
           </div>
 
           {/* COLUMN 3: RIGHT COLUMN (CALENDAR & HABITS & INTERACTIVE IDEAS) - 4/12 */}
-          <div className="lg:col-span-4 space-y-6">
+          <div className="lg:col-span-4 space-y-4">
             
             {/* List of Appointments Calendar Widget */}
-            <div className="bg-white border border-slate-100 p-5 rounded-[36px] shadow-soft-sm space-y-5">
+            <div className="bg-white dark:bg-[#132E3F] border border-[#EAEAFF] dark:border-slate-800 p-5 rounded-[32px] shadow-[0_10px_35px_rgba(0,0,0,0.015)] space-y-5">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] uppercase font-black tracking-widest text-[#7C6BC4]">List of Appointments</span>
+                <span className="text-[10px] uppercase font-black tracking-widest text-[#7C6BC4] dark:text-purple-300">List of Appointments</span>
               </div>
 
               {/* Monthly/Daily Tabs */}
-              <div className="bg-slate-100/50 p-1 rounded-2xl flex gap-1 border border-slate-200/20">
+              <div className="bg-slate-100/50 dark:bg-[#0D1F2D] p-1 rounded-2xl flex gap-1 border border-slate-200/20 dark:border-slate-800">
                 <button 
                   onClick={() => { setActiveTab("monthly"); setShowAddAppointment(false); }}
                   className={`flex-1 py-2 text-center rounded-xl text-[9px] font-black uppercase tracking-wider transition-all cursor-pointer ${
-                    activeTab === "monthly" ? "bg-[#006B56] text-white shadow-sm" : "text-slate-400 hover:text-slate-600"
+                    activeTab === "monthly" ? "bg-[#006B56] text-white shadow-sm" : "text-slate-450 hover:text-slate-600 dark:text-slate-400"
                   }`}
                 >
                   Monthly
@@ -967,7 +977,7 @@ export default function CouplesDashboard() {
                 <button 
                   onClick={() => { setActiveTab("daily"); setShowAddAppointment(false); }}
                   className={`flex-1 py-2 text-center rounded-xl text-[9px] font-black uppercase tracking-wider transition-all cursor-pointer ${
-                    activeTab === "daily" ? "bg-[#006B56] text-white shadow-sm" : "text-slate-400 hover:text-slate-600"
+                    activeTab === "daily" ? "bg-[#006B56] text-white shadow-sm" : "text-slate-455 hover:text-slate-600 dark:text-slate-400"
                   }`}
                 >
                   Daily
@@ -979,7 +989,7 @@ export default function CouplesDashboard() {
                 <div className="space-y-4">
                   {/* Calendar Month Header */}
                   <div className="flex justify-between items-center px-1">
-                    <span className="font-heading font-black text-xs text-slate-800">{MONTH_NAMES[currentMonth]} {currentYear}</span>
+                    <span className="font-heading font-black text-xs text-slate-800 dark:text-slate-100">{MONTH_NAMES[currentMonth]} {currentYear}</span>
                     <div className="flex items-center gap-1.5">
                       <button onClick={handlePrevMonth} className="material-symbols-outlined text-sm font-bold text-slate-400 hover:text-slate-700 cursor-pointer select-none">chevron_left</button>
                       <button onClick={handleNextMonth} className="material-symbols-outlined text-sm font-bold text-slate-400 hover:text-slate-700 cursor-pointer select-none">chevron_right</button>
@@ -990,7 +1000,7 @@ export default function CouplesDashboard() {
                   <div className="grid grid-cols-7 gap-y-2 text-center">
                     {/* Weekdays */}
                     {WEEKDAYS.map((w, idx) => (
-                      <span key={idx} className="text-[9px] text-slate-400 font-bold">{w}</span>
+                      <span key={idx} className="text-[9px] text-slate-400 dark:text-slate-500 font-bold">{w}</span>
                     ))}
                     
                     {/* Empty starting padding days */}
@@ -1013,10 +1023,10 @@ export default function CouplesDashboard() {
                             onClick={() => setSelectedDate(dateObj)}
                             className={`w-6 h-6 rounded-full flex items-center justify-center text-[9px] font-black cursor-pointer transition-all ${
                               isSelected 
-                                ? "bg-[#E37A47] text-white font-extrabold shadow-sm" 
+                                ? "bg-[#E37A47] text-white dark:text-white font-extrabold shadow-sm" 
                                 : hasAppointments 
-                                  ? "bg-[#E5F5F0] text-[#006B56] border border-[#CDEAE1]/60" 
-                                  : "text-slate-700 hover:bg-slate-50"
+                                  ? "bg-[#E5F5F0] dark:bg-[#112F28] text-[#006B56] dark:text-[#5FAF8A] border border-[#CBECE2]/60 dark:border-[#1C463C]/30" 
+                                  : "text-slate-700 dark:text-slate-350 hover:bg-slate-50 dark:hover:bg-slate-800"
                             }`}
                           >
                             {dayNumber}
@@ -1027,12 +1037,12 @@ export default function CouplesDashboard() {
                   </div>
 
                   {/* Selected Date Appointments List */}
-                  <div className="pt-2 border-t border-slate-50 space-y-2.5">
-                    <div className="flex justify-between items-center text-[10px] font-black text-slate-400 uppercase">
+                  <div className="pt-2 border-t border-slate-50 dark:border-slate-800/80 space-y-2.5 text-left">
+                    <div className="flex justify-between items-center text-[10px] font-black text-slate-450 dark:text-slate-450 uppercase">
                       <span>Schedule: {selectedDate.getDate()} {MONTH_NAMES[selectedDate.getMonth()]}</span>
                       <button 
                         onClick={() => setShowAddAppointment(true)} 
-                        className="text-[#7C6BC4] hover:underline"
+                        className="text-[#7C6BC4] dark:text-purple-300 hover:underline"
                       >
                         + Add
                       </button>
@@ -1040,16 +1050,16 @@ export default function CouplesDashboard() {
 
                     {getAppointmentsForDate(selectedDate).length > 0 ? (
                       getAppointmentsForDate(selectedDate).map((app) => (
-                        <div key={app.id} className="p-3 rounded-2xl bg-[#F9FBFF] border border-[#EDF3FF] flex items-center justify-between">
+                        <div key={app.id} className="p-3 rounded-2xl bg-[#F9FBFF] dark:bg-[#0D1F2D]/40 border border-[#EDF3FF] dark:border-slate-850 flex items-center justify-between">
                           <div className="space-y-0.5 text-left">
-                            <h5 className="text-[10px] font-black text-slate-800">{app.title}</h5>
-                            <p className="text-[9px] text-slate-400 font-bold">{app.desc} ({app.time})</p>
+                            <h5 className="text-[10px] font-black text-slate-800 dark:text-slate-200">{app.title}</h5>
+                            <p className="text-[9px] text-slate-400 dark:text-slate-400 font-bold">{app.desc} ({app.time})</p>
                           </div>
                           <span className="text-[10px]">🥂</span>
                         </div>
                       ))
                     ) : (
-                      <p className="text-[10px] text-slate-400 font-bold py-1">No activities set on this date.</p>
+                      <p className="text-[10px] text-slate-400 dark:text-slate-400 font-bold py-1">No activities set on this date.</p>
                     )}
                   </div>
                 </div>
@@ -1058,76 +1068,76 @@ export default function CouplesDashboard() {
               {/* Tab: Daily (Show Today's Schedule Overview) */}
               {activeTab === "daily" && !showAddAppointment && (
                 <div className="space-y-3 max-h-[300px] overflow-y-auto pr-1">
-                  <div className="flex justify-between items-center text-[10px] font-black text-slate-400 uppercase">
+                  <div className="flex justify-between items-center text-[10px] font-black text-slate-450 dark:text-slate-450 uppercase text-left">
                     <span>Active Appointments List</span>
-                    <button onClick={() => setShowAddAppointment(true)} className="text-[#7C6BC4] hover:underline">+ Add</button>
+                    <button onClick={() => setShowAddAppointment(true)} className="text-[#7C6BC4] dark:text-purple-300 hover:underline">+ Add</button>
                   </div>
 
                   {appointments.length > 0 ? (
                     appointments.map(app => (
-                      <div key={app.id} className="p-3 rounded-2xl border border-slate-100 space-y-1 text-left">
+                      <div key={app.id} className="p-3 rounded-2xl border border-slate-100 dark:border-slate-800 space-y-1 text-left bg-white dark:bg-[#132E3F]">
                         <div className="flex justify-between items-center">
-                          <span className={`px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-wider ${app.type === 'medical' ? 'bg-[#E5F5F0] text-[#006B56]' : 'bg-[#FFF2EA] text-[#E37A47]'}`}>{app.type}</span>
-                          <span className="text-[9px] text-slate-400 font-bold">{app.date}</span>
+                          <span className={`px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-wider ${app.type === 'medical' ? 'bg-[#E5F5F0] dark:bg-[#112F28] text-[#006B56] dark:text-[#5FAF8A]' : 'bg-[#FFF2EA] dark:bg-orange-950/20 text-[#E37A47] dark:text-orange-400'}`}>{app.type}</span>
+                          <span className="text-[9px] text-slate-400 dark:text-slate-400 font-bold">{app.date}</span>
                         </div>
-                        <h5 className="text-[10px] font-black text-slate-800">{app.title}</h5>
-                        <p className="text-[9px] text-slate-400 font-bold leading-normal">{app.desc} • {app.time}</p>
+                        <h5 className="text-[10px] font-black text-slate-800 dark:text-slate-200">{app.title}</h5>
+                        <p className="text-[9px] text-slate-400 dark:text-slate-400 font-bold leading-normal">{app.desc} • {app.time}</p>
                       </div>
                     ))
                   ) : (
-                    <p className="text-[10px] text-slate-400 font-bold py-4 text-center">No active appointments set.</p>
+                    <p className="text-[10px] text-slate-400 dark:text-slate-400 font-bold py-4 text-center">No active appointments set.</p>
                   )}
                 </div>
               )}
 
               {/* Sub-State: Add Appointment Form */}
               {showAddAppointment && (
-                <form onSubmit={handleAddAppointmentSubmit} className="space-y-3.5 text-left border border-slate-100 p-4 rounded-3xl bg-slate-50/20">
+                <form onSubmit={handleAddAppointmentSubmit} className="space-y-3.5 text-left border border-slate-100 dark:border-slate-800 p-4 rounded-3xl bg-slate-50/20 dark:bg-[#0D1F2D]/20">
                   <div className="flex justify-between items-center">
-                    <span className="text-[10px] font-black text-slate-400 uppercase">New Appointment</span>
-                    <button type="button" onClick={() => setShowAddAppointment(false)} className="text-[10px] text-slate-400 hover:text-slate-600 font-bold">Cancel</button>
+                    <span className="text-[10px] font-black text-slate-450 dark:text-slate-400 uppercase">New Appointment</span>
+                    <button type="button" onClick={() => setShowAddAppointment(false)} className="text-[10px] text-slate-400 dark:text-slate-400 hover:text-slate-600 font-bold">Cancel</button>
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-[9px] font-black text-slate-400 uppercase">Title</label>
+                    <label className="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase">Title</label>
                     <input 
                       type="text" 
                       placeholder="e.g. Cinema Date Night" 
                       value={newTitle} 
                       onChange={e => setNewTitle(e.target.value)}
-                      className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-[11px] focus:outline-none focus:ring-1 focus:ring-[#7C6BC4]"
+                      className="w-full px-3 py-2 bg-white dark:bg-[#0D1F2D] border border-slate-200 dark:border-slate-700 rounded-xl text-[11px] text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-[#7C6BC4]"
                       required
                     />
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-[9px] font-black text-slate-400 uppercase">Location / Description</label>
+                    <label className="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase">Location / Description</label>
                     <input 
                       type="text" 
                       placeholder="e.g. Regal Theater, NY" 
                       value={newDesc} 
                       onChange={e => setNewDesc(e.target.value)}
-                      className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-[11px] focus:outline-none focus:ring-1 focus:ring-[#7C6BC4]"
+                      className="w-full px-3 py-2 bg-white dark:bg-[#0D1F2D] border border-slate-200 dark:border-slate-700 rounded-xl text-[11px] text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-[#7C6BC4]"
                     />
                   </div>
 
                   <div className="grid grid-cols-2 gap-2">
                     <div className="space-y-1">
-                      <label className="text-[9px] font-black text-slate-400 uppercase">Time</label>
+                      <label className="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase">Time</label>
                       <input 
                         type="text" 
                         placeholder="e.g. 08.30 pm" 
                         value={newTime} 
                         onChange={e => setNewTime(e.target.value)}
-                        className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-[11px] focus:outline-none focus:ring-1 focus:ring-[#7C6BC4]"
+                        className="w-full px-3 py-2 bg-white dark:bg-[#0D1F2D] border border-slate-200 dark:border-slate-700 rounded-xl text-[11px] text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-[#7C6BC4]"
                       />
                     </div>
                     <div className="space-y-1">
-                      <label className="text-[9px] font-black text-slate-400 uppercase">Type</label>
+                      <label className="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase">Type</label>
                       <select 
                         value={newType} 
                         onChange={e => setNewType(e.target.value)}
-                        className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-[11px] focus:outline-none focus:ring-1 focus:ring-[#7C6BC4]"
+                        className="w-full px-3 py-2 bg-white dark:bg-[#0D1F2D] border border-slate-200 dark:border-slate-700 rounded-xl text-[11px] text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-[#7C6BC4]"
                       >
                         <option value="date">Date Night</option>
                         <option value="medical">Medical / Therapy</option>
@@ -1148,10 +1158,10 @@ export default function CouplesDashboard() {
             </div>
 
             {/* Daily Progress circle card */}
-            <div className="bg-[#E5F5F0] border border-[#CDEAE1] p-6 rounded-[36px] shadow-sm flex items-center justify-between gap-4">
+            <div className="bg-[#E5F5F0] dark:bg-[#112F28] border border-[#CDEAE1] dark:border-[#1C463C] p-6 rounded-[32px] shadow-sm flex items-center justify-between gap-4">
               <div className="space-y-1 text-left">
-                <h4 className="text-sm font-heading font-black text-slate-800">Daily progress</h4>
-                <p className="text-[10px] text-slate-500 font-bold leading-normal">Keep improving your connection quality</p>
+                <h4 className="text-sm font-heading font-black text-slate-800 dark:text-slate-100">Daily progress</h4>
+                <p className="text-[10px] text-slate-500 dark:text-slate-400 font-bold leading-normal">Keep improving your connection quality</p>
               </div>
 
               {/* Progress Ring */}
@@ -1165,7 +1175,7 @@ export default function CouplesDashboard() {
                     className="transition-all duration-500"
                   />
                 </svg>
-                <span className="absolute text-[10px] font-black text-slate-800">{habitsProgressPercent}%</span>
+                <span className="absolute text-[10px] font-black text-slate-800 dark:text-slate-100">{habitsProgressPercent}%</span>
               </div>
             </div>
 
@@ -1175,34 +1185,34 @@ export default function CouplesDashboard() {
                 <div 
                   key={habit.id}
                   onClick={() => toggleHabit(habit.id)}
-                  className="flex items-center justify-between p-4 rounded-3xl bg-white border border-slate-100 hover:bg-slate-50 transition-all cursor-pointer shadow-soft-sm select-none"
+                  className="flex items-center justify-between p-4 rounded-3xl bg-white dark:bg-[#132E3F] border border-[#EAEAFF] dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all cursor-pointer shadow-sm select-none"
                 >
                   <div className="flex items-center gap-3">
                     <div className={`w-5 h-5 rounded-full flex items-center justify-center border transition-all ${
-                      habit.completed ? "bg-[#006B56] border-[#006B56] text-white" : "border-slate-300 bg-white"
+                      habit.completed ? "bg-[#006B56] border-[#006B56] text-white" : "border-slate-300 dark:border-slate-700 bg-white dark:bg-[#0D1F2D]"
                     }`}>
                       {habit.completed && <span className="material-symbols-outlined text-xs font-bold">check</span>}
                     </div>
                     <div className="space-y-0.5 text-left">
-                      <h5 className={`text-[10px] font-black leading-relaxed ${habit.completed ? "line-through text-slate-400" : "text-slate-800"}`}>
+                      <h5 className={`text-[10px] font-black leading-relaxed ${habit.completed ? "line-through text-slate-400 dark:text-slate-505" : "text-slate-800 dark:text-slate-100"}`}>
                         {habit.text}
                       </h5>
-                      <p className="text-[8px] text-slate-400 font-bold">{habit.category}</p>
+                      <p className="text-[8px] text-slate-400 dark:text-slate-400 font-bold">{habit.category}</p>
                     </div>
                   </div>
-                  <span className="material-symbols-outlined text-slate-300 text-xs font-bold">chevron_right</span>
+                  <span className="material-symbols-outlined text-slate-300 dark:text-slate-600 text-xs font-bold">chevron_right</span>
                 </div>
               ))}
             </div>
 
             {/* Interactive Ideas - Tailored Date Idea (Mockup Alignment) */}
-            <div className="bg-[#E5F5F0]/65 p-6 rounded-[36px] border border-[#CDEAE1]/60 shadow-sm space-y-5 text-left">
+            <div className="bg-[#E6F4F0]/65 dark:bg-[#112F28]/40 p-6 rounded-[32px] border border-[#CDEAE1]/60 dark:border-[#1C463C]/30 shadow-sm space-y-5 text-left">
               <div className="space-y-1">
-                <span className="text-[10px] uppercase font-black tracking-widest text-[#006B56]">Interactive Ideas</span>
-                <h3 className="text-sm font-heading font-black text-slate-800">Tailored Date Idea 🥂</h3>
+                <span className="text-[10px] uppercase font-black tracking-widest text-[#006B56] dark:text-[#5FAF8A]">Interactive Ideas</span>
+                <h3 className="text-sm font-heading font-black text-slate-800 dark:text-slate-100">Tailored Date Idea 🥂</h3>
               </div>
 
-              <div className="bg-white border border-slate-100 p-5 rounded-3xl min-h-[120px] flex flex-col justify-between shadow-sm relative overflow-hidden">
+              <div className="bg-white dark:bg-[#132E3F] border border-[#EAEAFF] dark:border-slate-800 p-5 rounded-3xl min-h-[120px] flex flex-col justify-between shadow-sm relative overflow-hidden">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={currentDateIdea.title}
@@ -1211,11 +1221,11 @@ export default function CouplesDashboard() {
                     exit={{ opacity: 0, y: -5 }}
                     className="space-y-1 text-left"
                   >
-                    <span className="px-2 py-0.5 rounded-full bg-[#FFF2EA] text-[#E37A47] text-[8px] font-black uppercase tracking-wider">
+                    <span className="px-2 py-0.5 rounded-full bg-[#FFF2EA] dark:bg-orange-950/20 text-[#E37A47] dark:text-orange-400 text-[8px] font-black uppercase tracking-wider">
                       {currentDateIdea.category}
                     </span>
-                    <h4 className="font-heading font-black text-xs text-slate-800 pt-1">{currentDateIdea.title}</h4>
-                    <p className="text-[10px] text-slate-400 leading-relaxed font-bold">
+                    <h4 className="font-heading font-black text-xs text-slate-800 dark:text-slate-100 pt-1">{currentDateIdea.title}</h4>
+                    <p className="text-[10px] text-slate-400 dark:text-slate-400 leading-relaxed font-bold">
                       {currentDateIdea.desc}
                     </p>
                   </motion.div>
@@ -1250,7 +1260,7 @@ export default function CouplesDashboard() {
               initial={{ scale: 0.95 }}
               animate={{ scale: 1 }}
               exit={{ scale: 0.95 }}
-              className="bg-white max-w-sm w-full p-8 rounded-[36px] text-center space-y-6 shadow-2xl relative border border-[#EAEAFF]"
+              className="bg-white dark:bg-[#132E3F] max-w-sm w-full p-8 rounded-[36px] text-center space-y-6 shadow-2xl relative border border-[#EAEAFF] dark:border-slate-800"
             >
               <div className="w-16 h-16 rounded-full bg-[#E37A47]/10 text-[#E37A47] flex items-center justify-center mx-auto border border-[#E37A47]/20">
                 <span className="material-symbols-outlined text-3xl font-black">assignment</span>
@@ -1258,10 +1268,10 @@ export default function CouplesDashboard() {
 
               <div className="space-y-1 font-heading">
                 <span className="text-[10px] uppercase font-black tracking-widest text-[#E37A47]">Onboarding Retreat</span>
-                <h3 className="text-xl font-heading font-black text-slate-800">Complete Assessment</h3>
+                <h3 className="text-xl font-heading font-black text-slate-800 dark:text-slate-100">Complete Assessment</h3>
               </div>
 
-              <p className="text-[11px] text-slate-400 font-bold leading-relaxed px-2">
+              <p className="text-[11px] text-slate-400 dark:text-slate-400 font-bold leading-relaxed px-2">
                 To unlock your personalized Couples Dashboard, custom connection checklist, and relationship health tracking, please complete your initial assessment.
               </p>
 
@@ -1295,24 +1305,24 @@ export default function CouplesDashboard() {
               initial={{ scale: 0.95 }}
               animate={{ scale: 1 }}
               exit={{ scale: 0.95 }}
-              className="bg-white max-w-sm w-full p-8 rounded-[36px] text-center space-y-6 shadow-2xl relative border border-[#EAEAFF]"
+              className="bg-white dark:bg-[#132E3F] max-w-sm w-full p-8 rounded-[36px] text-center space-y-6 shadow-2xl relative border border-[#EAEAFF] dark:border-slate-800"
             >
-              <div className="w-16 h-16 rounded-[20px] bg-[#EAE8F8] flex items-center justify-center mx-auto border border-[#E1DEFB]">
-                <span className="material-symbols-outlined text-2xl text-[#7C6BC4]">filter_vintage</span>
+              <div className="w-16 h-16 rounded-[20px] bg-[#EAE8F8] dark:bg-[#202E4E] flex items-center justify-center mx-auto border border-[#E1DEFB] dark:border-[#2D3F66]">
+                <span className="material-symbols-outlined text-2xl text-[#7C6BC4] dark:text-[#AFA4EC]">filter_vintage</span>
               </div>
 
               <div className="space-y-1 font-heading">
-                <h3 className="text-xl font-heading font-black text-slate-800 flex items-center justify-center gap-2">
+                <h3 className="text-xl font-heading font-black text-slate-800 dark:text-slate-100 flex items-center justify-center gap-2">
                   <span>🌿</span> Your Retreat is Private
                 </h3>
               </div>
 
-              <p className="text-[11px] text-slate-500 font-bold leading-relaxed px-2">
+              <p className="text-[11px] text-slate-550 dark:text-slate-400 font-bold leading-relaxed px-2">
                 Everything you write, journal, and share inside Manraah remains private. This is your personal space to reflect honestly and safely.
               </p>
 
               <div className="flex justify-center">
-                <span className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#EAE8F8] border border-[#E1DEFB] rounded-full text-[10px] font-black text-[#7C6BC4]">
+                <span className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#EAE8F8] dark:bg-[#202E4E] border border-[#E1DEFB] dark:border-[#2D3F66] rounded-full text-[10px] font-black text-[#7C6BC4] dark:text-[#AFA4EC]">
                   <span>🔒</span> Your wellbeing belongs to you.
                 </span>
               </div>
@@ -1343,25 +1353,25 @@ export default function CouplesDashboard() {
               initial={{ scale: 0.95, y: 15 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.95, y: 15 }}
-              className="bg-white max-w-sm w-full p-8 rounded-[36px] space-y-6 shadow-2xl relative border border-[#EAEAFF]"
+              className="bg-white dark:bg-[#132E3F] max-w-sm w-full p-8 rounded-[36px] space-y-6 shadow-2xl relative border border-[#EAEAFF] dark:border-slate-800"
             >
-              <div className="w-16 h-16 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center mx-auto border border-rose-100">
+              <div className="w-16 h-16 rounded-full bg-rose-50 dark:bg-rose-950/20 text-rose-600 dark:text-rose-450 flex items-center justify-center mx-auto border border-rose-100 dark:border-rose-900/30">
                 <span className="material-symbols-outlined text-3xl font-black">logout</span>
               </div>
 
               <div className="space-y-1 font-heading">
-                <span className="text-[10px] uppercase font-black tracking-widest text-[#7C6BC4]">Session Warning</span>
-                <h3 className="text-xl font-heading font-black text-slate-800">Disconnect Session?</h3>
+                <span className="text-[10px] uppercase font-black tracking-widest text-[#7C6BC4] dark:text-purple-300">Session Warning</span>
+                <h3 className="text-xl font-heading font-black text-slate-800 dark:text-slate-100">Disconnect Session?</h3>
               </div>
 
-              <p className="text-[11px] text-slate-400 font-bold leading-relaxed px-2">
+              <p className="text-[11px] text-slate-400 dark:text-slate-400 font-bold leading-relaxed px-2">
                 Going back to the landing page will disconnect your active session. You will need to authenticate again to view your dashboard.
               </p>
 
               <div className="flex gap-4">
                 <button 
                   onClick={() => setShowDisconnectModal(false)}
-                  className="flex-1 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-full font-bold text-xs transition-all active:scale-95 cursor-pointer"
+                  className="flex-1 py-3 bg-slate-100 dark:bg-[#0D1F2D] hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-350 rounded-full font-bold text-xs transition-all active:scale-95 cursor-pointer"
                 >
                   Stay
                 </button>
@@ -1393,25 +1403,25 @@ export default function CouplesDashboard() {
               initial={{ scale: 0.95, y: 15 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.95, y: 15 }}
-              className="bg-white max-w-md w-full p-8 rounded-[40px] border border-slate-100 shadow-2xl space-y-6 relative text-center"
+              className="bg-white dark:bg-[#132E3F] max-w-md w-full p-8 rounded-[40px] border border-slate-100 dark:border-slate-800 shadow-2xl space-y-6 relative text-center"
             >
               <button 
                 onClick={() => setShowCheckinModal(false)}
-                className="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-slate-100"
+                className="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-50 dark:bg-[#0D1F2D] flex items-center justify-center text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
               >
                 <span className="material-symbols-outlined text-sm font-bold">close</span>
               </button>
 
               <div className="space-y-1">
-                <span className="px-3.5 py-1 rounded-full bg-[#E5F5F0] text-[#006B56] text-[10px] font-black uppercase tracking-wider border border-[#CDEAE1]">
+                <span className="px-3.5 py-1 rounded-full bg-[#E5F5F0] dark:bg-[#112F28] text-[#006B56] dark:text-[#5FAF8A] text-[10px] font-black uppercase tracking-wider border border-[#CDEAE1] dark:border-[#1C463C]/30">
                   Daily Connection Check-in
                 </span>
-                <h3 className="text-xl font-heading font-black text-slate-800 pt-2">How is your connection today?</h3>
+                <h3 className="text-xl font-heading font-black text-slate-800 dark:text-slate-100 pt-2">How is your connection today?</h3>
               </div>
 
               {/* Mood options */}
               <div className="space-y-3 text-left">
-                <label className="text-[10px] font-black uppercase tracking-wider text-slate-400">Current Mood/Vibe</label>
+                <label className="text-[10px] font-black uppercase tracking-wider text-slate-405 dark:text-slate-400">Current Mood/Vibe</label>
                 <div className="grid grid-cols-5 gap-2">
                   {[
                     { key: "Great", label: "😊 Great" },
@@ -1424,10 +1434,10 @@ export default function CouplesDashboard() {
                       key={m.key}
                       type="button"
                       onClick={() => setSelectedMood(m.key)}
-                      className={`py-2 px-1 text-center rounded-xl text-[9px] font-black transition-all ${
+                      className={`py-2 px-1 text-center rounded-xl text-[9px] font-black transition-all cursor-pointer ${
                         selectedMood === m.key 
                           ? "bg-[#006B56] text-white shadow-sm" 
-                          : "bg-slate-50 text-slate-500 hover:bg-slate-100"
+                          : "bg-slate-50 dark:bg-[#0D1F2D] text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
                       }`}
                     >
                       {m.label}
@@ -1438,7 +1448,7 @@ export default function CouplesDashboard() {
 
               {/* Activities Checklist */}
               <div className="space-y-3 text-left">
-                <label className="text-[10px] font-black uppercase tracking-wider text-slate-400">Today's Connection Activities</label>
+                <label className="text-[10px] font-black uppercase tracking-wider text-slate-405 dark:text-slate-400">Today's Connection Activities</label>
                 <div className="space-y-2">
                   {checkinActivitiesList.map((activity) => {
                     const isChecked = checkedActivities.includes(activity);
@@ -1452,14 +1462,14 @@ export default function CouplesDashboard() {
                             setCheckedActivities(prev => [...prev, activity]);
                           }
                         }}
-                        className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50/50 hover:bg-slate-50 border border-slate-100 cursor-pointer select-none transition-all"
+                        className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50/50 dark:bg-[#0D1F2D]/55 hover:bg-slate-50 dark:hover:bg-slate-800 border border-slate-100 dark:border-slate-700 cursor-pointer select-none transition-all"
                       >
                         <div className={`w-4 h-4 rounded flex items-center justify-center border transition-all ${
-                          isChecked ? "bg-[#006B56] border-[#006B56] text-white" : "border-slate-300 bg-white"
+                          isChecked ? "bg-[#006B56] border-[#006B56] text-white" : "border-slate-350 dark:border-slate-700 bg-white dark:bg-[#0D1F2D]"
                         }`}>
                           {isChecked && <span className="material-symbols-outlined text-[10px] font-black">check</span>}
                         </div>
-                        <span className="text-[10px] font-bold text-slate-700">{activity}</span>
+                        <span className="text-[10px] font-bold text-slate-705 dark:text-slate-300">{activity}</span>
                       </div>
                     );
                   })}
@@ -1468,12 +1478,12 @@ export default function CouplesDashboard() {
 
               {/* Short reflection note */}
               <div className="space-y-1.5 text-left">
-                <label className="text-[10px] font-black uppercase tracking-wider text-slate-400">Journal Reflections</label>
+                <label className="text-[10px] font-black uppercase tracking-wider text-slate-405 dark:text-slate-400">Journal Reflections</label>
                 <textarea
                   value={reflectionText}
                   onChange={(e) => setReflectionText(e.target.value)}
                   placeholder="Share a brief private reflection about your relationship today..."
-                  className="w-full px-3.5 py-3 border border-slate-200 rounded-2xl text-[11px] focus:outline-none focus:ring-1 focus:ring-[#006B56] min-h-[70px] bg-slate-50/20"
+                  className="w-full px-3.5 py-3 border border-slate-200 dark:border-slate-700 rounded-2xl text-[11px] text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-[#006B56] min-h-[70px] bg-slate-50/20 dark:bg-[#0D1F2D]/20"
                 />
               </div>
 
@@ -1503,7 +1513,7 @@ export default function CouplesDashboard() {
               initial={{ scale: 0.95, y: 15 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.95, y: 15 }}
-              className="bg-[#fdf7ff] max-w-md w-full p-8 rounded-[40px] border border-white/50 shadow-2xl space-y-6 relative text-center"
+              className="bg-[#fdf7ff] dark:bg-[#132E3F] max-w-md w-full p-8 rounded-[40px] border border-white/50 dark:border-slate-800 shadow-2xl space-y-6 relative text-center"
             >
               {/* Close Button */}
               <button 
@@ -1511,27 +1521,27 @@ export default function CouplesDashboard() {
                   setCalmZoneActive(false);
                   setBreathingActive(false);
                 }}
-                className="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-slate-100 transition-colors"
+                className="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-50 dark:bg-[#0D1F2D] flex items-center justify-center text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
               >
                 <span className="material-symbols-outlined text-sm font-bold">close</span>
               </button>
 
               <div className="space-y-1">
-                <span className="px-3.5 py-1 rounded-full bg-rose-100 text-rose-800 text-[10px] font-black uppercase tracking-wider">
+                <span className="px-3.5 py-1 rounded-full bg-rose-100 dark:bg-rose-950/20 text-rose-800 dark:text-rose-350 text-[10px] font-black uppercase tracking-wider">
                   Conflict Resolution Portal
                 </span>
-                <h3 className="text-2xl font-heading font-black text-slate-800 pt-2">Empathy Pause</h3>
+                <h3 className="text-2xl font-heading font-black text-slate-850 dark:text-slate-100 pt-2">Empathy Pause</h3>
               </div>
 
               {/* Steps Area */}
-              <div className="bg-white border border-slate-100 p-6 rounded-3xl min-h-[220px] flex flex-col justify-between text-left">
+              <div className="bg-white dark:bg-[#0D1F2D] border border-slate-100 dark:border-slate-800 p-6 rounded-3xl min-h-[220px] flex flex-col justify-between text-left">
                 
                 {/* Step 1: Mutual Pause & Breathing */}
                 {calmStep === 1 && (
                   <div className="space-y-4 text-center">
                     <span className="text-3xl">🧘 Step 1: Synced Pause</span>
-                    <h4 className="font-heading font-black text-sm text-slate-800">Slow down together</h4>
-                    <p className="text-xs text-slate-500 leading-relaxed">
+                    <h4 className="font-heading font-black text-sm text-slate-850 dark:text-slate-100">Slow down together</h4>
+                    <p className="text-xs text-slate-500 dark:text-slate-450 leading-relaxed">
                       Sit facing each other. Agree to hold a 1-minute silence. Click below to start the visual breathing guide.
                     </p>
                     
@@ -1546,7 +1556,7 @@ export default function CouplesDashboard() {
                             breathingPhase === "Inhale" ? "bg-emerald-200/50" : breathingPhase === "Hold" ? "bg-amber-100" : "bg-purple-200/50"
                           }`}
                         />
-                        <span className="text-xs font-black text-slate-700">{breathingPhase} ({breathingSeconds}s)</span>
+                        <span className="text-xs font-black text-slate-700 dark:text-slate-200">{breathingPhase} ({breathingSeconds}s)</span>
                       </div>
                     ) : (
                       <button 
@@ -1567,8 +1577,8 @@ export default function CouplesDashboard() {
                 {calmStep === 2 && (
                   <div className="space-y-2">
                     <span className="text-3xl">🗣️ Step 2: Share Feelings</span>
-                    <h4 className="font-heading font-black text-sm text-slate-800">Use "I Feel" phrasing</h4>
-                    <p className="text-xs text-slate-500 leading-relaxed">
+                    <h4 className="font-heading font-black text-sm text-slate-850 dark:text-slate-100">Use "I Feel" phrasing</h4>
+                    <p className="text-xs text-slate-505 dark:text-slate-450 leading-relaxed">
                       One partner shares their perspective using "I feel" instead of accusing "You did". 
                       <br /><br />
                       <em>Example: "I feel unheard when decisions are made without talking first," instead of "You never include me."</em>
@@ -1580,8 +1590,8 @@ export default function CouplesDashboard() {
                 {calmStep === 3 && (
                   <div className="space-y-2">
                     <span className="text-3xl">🗣️ Step 3: Mirror & Validate</span>
-                    <h4 className="font-heading font-black text-sm text-slate-800">Repeat back what you heard</h4>
-                    <p className="text-xs text-slate-500 leading-relaxed">
+                    <h4 className="font-heading font-black text-sm text-slate-850 dark:text-slate-100">Repeat back what you heard</h4>
+                    <p className="text-xs text-slate-505 dark:text-slate-455 leading-relaxed">
                       Before defending or replying, mirror your partner's feelings to ensure they feel heard.
                       <br /><br />
                       <em>Example: "What I hear you saying is that you felt stressed because you wanted to make that choice together. Is that right?"</em>
@@ -1593,8 +1603,8 @@ export default function CouplesDashboard() {
                 {calmStep === 4 && (
                   <div className="space-y-2">
                     <span className="text-3xl">🤝 Step 4: Small Agreement</span>
-                    <h4 className="font-heading font-black text-sm text-slate-800">Find a shared micro-action</h4>
-                    <p className="text-xs text-slate-500 leading-relaxed">
+                    <h4 className="font-heading font-black text-sm text-slate-855 dark:text-slate-100">Find a shared micro-action</h4>
+                    <p className="text-xs text-slate-505 dark:text-slate-455 leading-relaxed">
                       Co-create one small action you can both agree on to ease the situation right now. It doesn't have to fix the whole issue, just resolve the immediate tension.
                     </p>
                   </div>
@@ -1606,7 +1616,7 @@ export default function CouplesDashboard() {
                     <div 
                       key={i} 
                       className={`h-1.5 rounded-full transition-all duration-300 ${
-                        i + 1 === calmStep ? "w-6 bg-rose-500" : "w-1.5 bg-slate-100"
+                        i + 1 === calmStep ? "w-6 bg-rose-500" : "w-1.5 bg-slate-100 dark:bg-slate-800"
                       }`}
                     />
                   ))}
@@ -1621,7 +1631,7 @@ export default function CouplesDashboard() {
                       setCalmStep(prev => prev - 1);
                       setBreathingActive(false);
                     }}
-                    className="flex-1 py-3 bg-slate-50 text-slate-600 rounded-full font-bold text-xs hover:bg-slate-100 transition-transform active:scale-95"
+                    className="flex-1 py-3 bg-slate-50 dark:bg-[#0D1F2D] text-slate-600 dark:text-slate-350 rounded-full font-bold text-xs hover:bg-slate-100 dark:hover:bg-slate-800 transition-transform active:scale-95"
                   >
                     Back
                   </button>
