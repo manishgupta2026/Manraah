@@ -773,42 +773,54 @@ export default function CouplesDashboard() {
             {/* Upcoming Appointment card */}
             <div className="bg-white dark:bg-[#132E3F] border border-[#EAEAFF] dark:border-slate-800 p-6 rounded-[32px] shadow-[0_10px_35px_rgba(0,0,0,0.015)] space-y-4">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] uppercase font-black tracking-widest text-[#7C6BC4] dark:text-purple-300">Upcoming Appointment</span>
-                <span className="text-xs">📅</span>
+                <span className="text-[10px] uppercase font-black tracking-widest text-[#006B56] dark:text-[#5FAF8A]">Upcoming appointment</span>
               </div>
 
               {upcomingApp ? (
-                <div className="space-y-4">
-                  <div className="flex items-start gap-4">
-                    <div className="w-10 h-10 rounded-2xl bg-[#EAEAFF] dark:bg-[#202E4E] text-[#7C6BC4] dark:text-[#AFA4EC] flex items-center justify-center font-bold text-lg flex-shrink-0">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Left Column: Hospital Card */}
+                  <div className="bg-[#FAFDFB] dark:bg-[#0D1F2D]/20 border border-[#EAEAFF] dark:border-slate-800 p-4 rounded-3xl space-y-3">
+                    <div className="h-28 w-full bg-[#E5F5F0] dark:bg-[#112F28] rounded-2xl flex items-center justify-center text-3xl overflow-hidden relative border border-[#CDEAE1] dark:border-[#1C463C]/30">
                       🏥
                     </div>
-                    <div className="space-y-1">
+                    <div className="text-left space-y-0.5">
                       <h4 className="font-heading font-black text-sm text-slate-800 dark:text-slate-100">{upcomingApp.title}</h4>
                       <p className="text-[10px] text-slate-400 dark:text-slate-400 font-bold">{upcomingApp.desc}</p>
                     </div>
                   </div>
 
-                  <div className="flex justify-between items-center bg-[#F9FBFF] dark:bg-[#0D1F2D]/30 p-4 rounded-3xl border border-[#EDF3FF] dark:border-slate-850">
-                    <div className="flex items-center gap-2">
-                      <span className="w-8 h-8 rounded-full bg-[#E5ECFF] dark:bg-[#202E4E] text-[10px] flex items-center justify-center">👨‍⚕️</span>
-                      <div>
-                        <p className="text-[10px] font-black text-slate-700 dark:text-slate-200">{upcomingApp.doctor}</p>
-                        <p className="text-[9px] text-[#006B56] dark:text-[#5FAF8A] font-black uppercase tracking-wider">PHYSIOTHERAPY</p>
+                  {/* Right Column: Doctor & Date/Time info */}
+                  <div className="flex flex-col justify-between gap-4">
+                    {/* Doctor Details Row */}
+                    <div className="flex items-center justify-between bg-[#F9FBFF] dark:bg-[#0D1F2D]/30 p-4 rounded-3xl border border-[#EDF3FF] dark:border-slate-850">
+                      <div className="flex items-center gap-2 text-left">
+                        <span className="w-9 h-9 rounded-full bg-[#E5ECFF] dark:bg-[#202E4E] text-xs flex items-center justify-center">👩‍⚕️</span>
+                        <div>
+                          <p className="text-[11px] font-black text-slate-700 dark:text-slate-200">{upcomingApp.doctor}</p>
+                          <p className="text-[9px] text-[#006B56] dark:text-[#5FAF8A] font-black uppercase tracking-wider">Physiotherapy</p>
+                        </div>
                       </div>
+                      {upcomingApp.videoCall && (
+                        <button className="px-4 py-1.5 rounded-full bg-[#8DC37B] hover:bg-[#7FB26E] text-white font-bold text-[9px] uppercase tracking-wider shadow-sm transition-transform active:scale-95 cursor-pointer">
+                          Video call
+                        </button>
+                      )}
                     </div>
 
-                    {upcomingApp.videoCall && (
-                      <button className="px-4 py-1.5 rounded-full bg-[#006B56] hover:bg-[#005B48] text-white font-bold text-[9px] uppercase tracking-wider shadow-sm transition-transform active:scale-95 cursor-pointer">
-                        Video Call
-                      </button>
-                    )}
-                  </div>
-
-                  {/* Time Footer */}
-                  <div className="flex justify-between items-center text-[10px] text-slate-450 dark:text-slate-450 font-bold pt-2 border-t border-slate-50 dark:border-slate-800/80">
-                    <span className="flex items-center gap-1"><span className="material-symbols-outlined text-[12px] font-black">calendar_today</span>{upcomingApp.date}</span>
-                    <span className="flex items-center gap-1"><span className="material-symbols-outlined text-[12px] font-black">schedule</span>{upcomingApp.time}</span>
+                    {/* Date and Time Capsules horizontal */}
+                    <div className="grid grid-cols-2 gap-2 text-left">
+                      {/* Date capsule */}
+                      <div className="flex items-center gap-2 p-3 bg-[#F4F5F9] dark:bg-[#0D1F2D] rounded-2xl border border-slate-100 dark:border-slate-800">
+                        <span className="material-symbols-outlined text-xs text-[#006B56] font-black">calendar_today</span>
+                        <span className="text-[10px] text-slate-700 dark:text-slate-350 font-bold">{upcomingApp.date}</span>
+                      </div>
+                      
+                      {/* Time capsule */}
+                      <div className="flex items-center gap-2 p-3 bg-[#FCE3CF]/20 dark:bg-orange-950/20 rounded-2xl border border-orange-100/10 dark:border-orange-900/10">
+                        <span className="material-symbols-outlined text-xs text-[#E37A47] font-black">schedule</span>
+                        <span className="text-[10px] text-slate-700 dark:text-slate-350 font-bold">{upcomingApp.time}</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               ) : (
