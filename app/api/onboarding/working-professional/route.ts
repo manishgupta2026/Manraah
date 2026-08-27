@@ -127,7 +127,7 @@ export async function POST(req: Request) {
       INSERT INTO assessments (
         user_id, category, total_score, max_score, percentage, wellness_level
       ) VALUES (
-        ${userId}, 'working-professional', ${scoreResult.score}, 100, ${scoreResult.score}, ${scoreResult.level}
+        ${userId}, 'working_professional', ${scoreResult.score}, 100, ${scoreResult.score}, ${scoreResult.level}
       )
     `;
 

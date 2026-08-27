@@ -7,6 +7,7 @@ import { getClientSession } from "@/backend/auth/client";
 import MobileDrawer from "@/frontend/components/shell/MobileDrawer";
 import { getCategoryDashboardRoute } from "@/frontend/lib/category-routes";
 import StudentDashboardLayoutShell from "./StudentDashboardLayoutShell";
+import { getAssessmentMetadata, getOnboardingQuestions } from "@/frontend/lib/assessment/questions/onboarding";
 
 // --- Colors Palette Custom Mappings ---
 // Background: #F5FAFB
@@ -363,6 +364,9 @@ export function StudentDashboardProvider({ children }: { children: React.ReactNo
     if (isOnboardingSubmitting) return;
 
     const answersToSubmit = onboardingAnswers;
+    const category = (data?.user?.selectedCategory || profileCategory || "student").toLowerCase().trim();
+    const questionsList = getOnboardingQuestions(category);
+
     if (answersToSubmit.length < 10 || answersToSubmit.some((a) => !a || !a.answer)) {
       setOnboardingSubmitError("Please answer all questions before submitting.");
       return;
@@ -372,16 +376,48 @@ export function StudentDashboardProvider({ children }: { children: React.ReactNo
     setOnboardingSubmitError(null);
 
     try {
-      const res = await fetch("/api/onboarding/student", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ answers: answersToSubmit }),
-      });
+      const isStudent = category === "student";
 
-      const resJson = await res.json();
+      if (isStudent) {
+        const res = await fetch("/api/onboarding/student", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ answers: answersToSubmit }),
+        });
 
-      if (!res.ok) {
-        throw new Error(resJson.error || "Unable to save your assessment. Please try again.");
+        const resJson = await res.json();
+
+        if (!res.ok) {
+          throw new Error(resJson.error || "Unable to save your assessment. Please try again.");
+        }
+      } else {
+        const mappedAnswers = answersToSubmit.map((ans, idx) => {
+          const matchingQ = questionsList[idx];
+          const selectedOpt = matchingQ.options.find((opt: any) => opt.val === ans.answer);
+          
+          const score = selectedOpt && 'score' in selectedOpt ? (selectedOpt as any).score : 3;
+          const optId = selectedOpt && 'id' in selectedOpt ? (selectedOpt as any).id : `${matchingQ.id}_opt_default`;
+          const selectedText = selectedOpt ? selectedOpt.text : ans.answer;
+
+          return {
+            questionId: Number(matchingQ.id) || idx + 6,
+            selectedOptionId: optId,
+            score: score,
+            selectedText: selectedText
+          };
+        });
+
+        const res = await fetch("/api/assessment", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ answers: mappedAnswers }),
+        });
+
+        const resJson = await res.json();
+
+        if (!res.ok) {
+          throw new Error(resJson.error || "Unable to save your assessment. Please try again.");
+        }
       }
 
       // Show personalizing screen briefly
@@ -419,7 +455,7 @@ export function StudentDashboardProvider({ children }: { children: React.ReactNo
       }, 1500);
 
     } catch (err: any) {
-      console.error("[Student Dashboard Onboarding submit error]:", err);
+      console.error("[Onboarding submit error]:", err);
       setOnboardingSubmitError(err.message || "Unable to save your assessment. Please try again.");
       setIsOnboardingSubmitting(false);
     }
@@ -1320,7 +1356,7 @@ export function StudentDashboardProvider({ children }: { children: React.ReactNo
       journalTitle, setJournalTitle,
       journalContent, setJournalContent,
       journalMood, setJournalMood,
-      ONBOARDING_QUESTIONS
+      ONBOARDING_QUESTIONS: getOnboardingQuestions(data?.user?.selectedCategory || profileCategory || "student")
     }}>
       {children}
     </StudentDashboardContext.Provider>
@@ -2058,7 +2094,7 @@ export function StudentSidebar() {
           items: [
             { label: "Focus Timer", icon: "timer", href: "/dashboard/working-professional/focus" },
             { label: "Task Manager", icon: "assignment", href: "/dashboard/working-professional/study-planner" },
-            { label: "Calendar", icon: "calendar_month", href: "/dashboard/working-professional/exams" },
+            { label: "Calendar", icon: "calendar_month", href: "/dashboard/working-professional/calendar" },
             { label: "Meetings", icon: "groups", href: "/dashboard/working-professional/meetings" },
             { label: "Analytics", icon: "bar_chart", href: "/dashboard/working-professional/analytics" },
           ]
@@ -2341,6 +2377,10 @@ export function StudentHeader() {
 export function LeaveConfirmationModal() {
   const { isLeaveModalOpen, setIsLeaveModalOpen } = useStudentDashboard();
 
+  const session = typeof window !== "undefined" ? JSON.parse(localStorage.getItem("manraah_auth_session") || "null") : null;
+  const category = (session?.user?.selectedCategory || "student").toLowerCase().trim();
+  const isWp = category === "working_professional" || category === "working-professional";
+
   return (
     <AnimatePresence>
       {isLeaveModalOpen && (
@@ -2355,15 +2395,17 @@ export function LeaveConfirmationModal() {
               <span className="material-symbols-outlined text-2xl">logout</span>
             </div>
             <div className="space-y-2">
-              <h3 className="text-lg font-heading font-black text-slate-800 dark:text-slate-100">Log Out?</h3>
+              <h3 className="text-lg font-heading font-black text-slate-800 dark:text-slate-100">
+                {isWp ? "Go Back?" : "Log Out?"}
+              </h3>
               <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 leading-relaxed">
-                Do you really want to log out?
+                {isWp ? "Do you really want to go back?" : "Do you really want to log out?"}
               </p>
             </div>
             <div className="flex gap-3 pt-2">
               <button
                 onClick={() => setIsLeaveModalOpen(false)}
-                className="flex-1 py-3.5 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-750 text-slate-700 dark:text-slate-300 font-heading font-black text-xs transition-all cursor-pointer"
+                className="flex-1 py-3.5 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-750 text-slate-700 dark:text-slate-350 font-heading font-black text-xs transition-all cursor-pointer"
               >
                 Cancel
               </button>
@@ -2375,7 +2417,7 @@ export function LeaveConfirmationModal() {
                 }}
                 className="flex-1 py-3.5 rounded-full bg-[#D96C6C] hover:bg-red-600 text-white font-heading font-black text-xs transition-all cursor-pointer"
               >
-                Log Out
+                {isWp ? "Logout" : "Log Out"}
               </button>
             </div>
           </motion.div>
@@ -2446,8 +2488,12 @@ export function StudentModals() {
     timerRunning, setTimerRunning,
     handleCompleteFocus,
     ONBOARDING_QUESTIONS,
+    profileCategory,
     toast
   } = useStudentDashboard();
+
+  const category = (user?.selectedCategory || profileCategory || "student").toLowerCase().trim();
+  const metadata = getAssessmentMetadata(category);
 
   return (
     <>
@@ -3278,7 +3324,17 @@ export function StudentModals() {
               </button>
 
               <div className="flex justify-between items-center text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                <span>Student Assessment</span>
+                <span>
+                  {category.includes("working") || category.includes("professional") || category === "young_pro" || category === "youngprofessional"
+                    ? "Working Professional Assessment"
+                    : category === "couple" || category === "couples"
+                    ? "Couple Assessment"
+                    : category === "parent" || category === "parents"
+                    ? "Parent Assessment"
+                    : category === "student"
+                    ? "Student Assessment"
+                    : "Personal Assessment"}
+                </span>
                 <span>Question {onboardingStep} of 10</span>
               </div>
 
@@ -3424,10 +3480,10 @@ export function StudentModals() {
               </div>
               <div className="space-y-2">
                 <h3 className="text-lg font-heading font-black text-[#100E26] dark:text-slate-100 uppercase tracking-wide">
-                  STUDENT WELLNESS ASSESSMENT
+                  {metadata.title}
                 </h3>
                 <p className="text-xs font-semibold text-slate-555 dark:text-slate-400 leading-relaxed">
-                  Help us understand your wellness needs so we can personalize your Manraah experience.
+                  {metadata.description}
                 </p>
               </div>
               <div className="flex gap-3 pt-2">
@@ -3473,7 +3529,8 @@ export function StudentModals() {
 
 // --- Student Wellness Assessment Subpage ---
 export function StudentWellnessContent() {
-  const { user, assessmentStatus, fetchAssessmentStatus, setOnboardingStep, setOnboardingAnswers, setIsAssessmentPopupOpen } = useStudentDashboard();
+  const { user, assessmentStatus, fetchAssessmentStatus, setOnboardingStep, setOnboardingAnswers, setIsAssessmentPopupOpen, profileCategory } = useStudentDashboard();
+  const metadata = getAssessmentMetadata(user?.selectedCategory || profileCategory || "student");
 
   return (
     <div className="max-w-4xl mx-auto space-y-6 text-left animate-fadeIn">
@@ -3489,7 +3546,7 @@ export function StudentWellnessContent() {
           </div>
           <div className="space-y-1">
             <h4 className="text-[10px] font-black text-[#5F4EA5] dark:text-purple-300 uppercase tracking-widest">
-              STUDENT WELLNESS ASSESSMENT
+              {metadata.title}
             </h4>
             {assessmentStatus?.completed ? (
               <>
@@ -4395,7 +4452,7 @@ export function StudentSettingsContent() {
     <div className="max-w-3xl mx-auto space-y-6 text-left animate-fadeIn">
       <div>
         <h2 className="text-2xl font-heading font-black text-[#100E26] dark:text-slate-100">Settings & Privacy</h2>
-        <p className="text-xs font-semibold text-slate-400 mt-1">Manage your profile, sanctuary preferences, and account privacy options.</p>
+        <p className="text-xs font-semibold text-slate-400 mt-1">Manage your profile, display preferences, and account privacy options.</p>
       </div>
 
       {/* Profile Card Section */}
@@ -4429,7 +4486,7 @@ export function StudentSettingsContent() {
 
           <form onSubmit={handleUpdateProfileSubmit} className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-4 w-full text-left">
             <div className="space-y-1">
-              <label className="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest block">Sanctuary Name</label>
+              <label className="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest block">Display Name</label>
               <input
                 type="text"
                 required
@@ -4454,7 +4511,7 @@ export function StudentSettingsContent() {
               <input
                 type="text"
                 disabled
-                value="Student"
+                value={user?.selectedCategory === "working-professional" || user?.selectedCategory === "working_professional" ? "Working Professional" : "Student"}
                 className="w-full px-4 py-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-xs text-slate-400 dark:text-slate-500 font-bold cursor-not-allowed"
               />
             </div>
@@ -4474,7 +4531,7 @@ export function StudentSettingsContent() {
       {/* Preferences Section */}
       <div className="p-6 rounded-[28px] bg-white dark:bg-[#132E3F] border border-slate-200/60 dark:border-slate-800 shadow-[0_2px_12px_rgba(0,0,0,0.03)] space-y-6">
         <h3 className="font-heading font-black text-xs text-[#100E26] dark:text-slate-100 uppercase tracking-widest border-b border-slate-50 dark:border-slate-800 pb-2">
-          Sanctuary Preferences
+          Theme & Preferences
         </h3>
 
         <div className="space-y-4">

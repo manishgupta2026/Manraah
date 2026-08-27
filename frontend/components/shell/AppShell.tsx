@@ -92,7 +92,14 @@ export default function AppShell({ children }: { children: ReactNode }) {
                   {children}
                 </main>
               </div>
-            ) : pathname.startsWith("/dashboard/student") ? (
+            ) : (
+              pathname.startsWith("/dashboard/student") ||
+              pathname.startsWith("/dashboard/working-professional") ||
+              pathname.startsWith("/dashboard/working_professional") ||
+              pathname.startsWith("/dashboard/couple") ||
+              pathname.startsWith("/dashboard/parents") ||
+              pathname.startsWith("/dashboard/parent")
+            ) ? (
               /* Dedicated Student Dashboard Custom Layout (Exact Match with Reference Image) */
               <div className="min-h-screen w-full bg-[#F5FAFB] dark:bg-[#0D1F2D] text-slate-800 dark:text-slate-100 font-sans antialiased flex overflow-hidden">
                 {children}

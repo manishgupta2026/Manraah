@@ -74,8 +74,10 @@ export async function POST(req: Request) {
   let userCategory = "student";
   const uRes = await sql`SELECT selected_category FROM users WHERE id = ${userId} LIMIT 1`;
   if (uRes.length > 0) {
-    userCategory = uRes[0].selected_category;
+    userCategory = uRes[0].selected_category || "student";
   }
+
+  const dbCategory = userCategory.toLowerCase().trim().replace("-", "_");
 
   // Category verification: student or working professional only
   if (userCategory !== "student" && userCategory !== "working_professional" && userCategory !== "working-professional") {
@@ -167,7 +169,7 @@ export async function POST(req: Request) {
       INSERT INTO assessments (
         user_id, category, total_score, max_score, percentage, wellness_level
       ) VALUES (
-        ${userId}, ${userCategory}, ${scoreResult.score}, 100, ${scoreResult.score}, ${scoreResult.level}
+        ${userId}, ${dbCategory}, ${scoreResult.score}, 100, ${scoreResult.score}, ${scoreResult.level}
       )
     `;
 

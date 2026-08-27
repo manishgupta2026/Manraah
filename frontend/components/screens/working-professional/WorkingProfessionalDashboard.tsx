@@ -33,6 +33,16 @@ export default function WorkingProfessionalDashboard() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
+  const {
+    assessmentStatus,
+    assessmentStatusLoading,
+    assessmentStatusError,
+    fetchAssessmentStatus,
+    setOnboardingStep,
+    setOnboardingAnswers,
+    setIsAssessmentPopupOpen,
+  } = useStudentDashboard();
+
   // Toast State
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
@@ -954,7 +964,7 @@ export default function WorkingProfessionalDashboard() {
       <div className="min-h-[70vh] flex items-center justify-center p-4 bg-[#F5FAFB] dark:bg-slate-900">
         <div className="w-full max-w-[400px] bg-white dark:bg-[#132E3F] rounded-[20px] p-8 border border-slate-200/50 text-center space-y-4 shadow-sm">
           <span className="material-symbols-outlined text-4xl text-[#EA5E5E]">warning</span>
-          <h4 className="font-heading font-black text-xs text-[#100E26] dark:text-slate-100 uppercase tracking-wider">Sanctuary Sync Failed</h4>
+          <h4 className="font-heading font-black text-xs text-[#100E26] dark:text-slate-100 uppercase tracking-wider">Dashboard Sync Failed</h4>
           <p className="text-[11px] font-bold text-slate-400 leading-normal">{error}</p>
           <button
             onClick={loadDashboardData}
@@ -995,10 +1005,18 @@ export default function WorkingProfessionalDashboard() {
           {/* Daily Check-in Complete */}
           <div className="p-6 rounded-[24px] bg-white dark:bg-[#132E3F] border border-slate-200/40 dark:border-slate-800 shadow-[0_2px_12px_rgba(0,0,0,0.02)] hover:translate-y-[-2px] transition-all duration-300 flex flex-col items-center text-center space-y-4">
             <div className="relative">
-              <div className="w-20 h-20 rounded-full bg-[#F5F3FC] dark:bg-purple-950/20 overflow-hidden flex items-center justify-center border-2 border-purple-100 dark:border-purple-900/50">
-                <img src="/images/avatar_placeholder.jpg" alt="Avatar" className="w-full h-full object-cover" onError={(e) => {
-                  e.currentTarget.src = `https://api.dicebear.com/7.x/bottts/svg?seed=${data?.user?.name || 'Sanctuary'}`;
-                }} />
+              <div className="w-20 h-20 rounded-full bg-amber-50 dark:bg-amber-950/20 flex items-center justify-center text-4xl select-none border-2 border-amber-100 dark:border-amber-900/50">
+                {data?.todayCheckin ? (
+                  (() => {
+                    const mood = (data.todayCheckin.mood || "").toLowerCase();
+                    if (mood === "joyful" || mood === "amazing") return "😁";
+                    if (mood === "good" || mood === "calm") return "😊";
+                    if (mood === "stressed" || mood === "anxious") return "😰";
+                    if (mood === "tired" || mood === "drained") return "🥱";
+                    if (mood === "sad" || mood === "down") return "😔";
+                    return "😐";
+                  })()
+                ) : "😊"}
               </div>
               {data?.todayCheckin && (
                 <div className="absolute bottom-0 right-0 w-6 h-6 rounded-full bg-emerald-500 border-2 border-white dark:border-[#132E3F] flex items-center justify-center text-white text-xs font-black">
@@ -1109,6 +1127,56 @@ export default function WorkingProfessionalDashboard() {
               </span>
             </div>
           </div>
+
+          {/* Working Professional Wellness Assessment Status Card */}
+          {!assessmentStatusLoading && assessmentStatus && (
+            <div className="p-5 lg:p-6 rounded-[28px] bg-white dark:bg-[#132E3F] border border-slate-200/60 dark:border-slate-800 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 text-left animate-fadeIn">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 rounded-2xl bg-[#F5F3FC] dark:bg-slate-800 flex items-center justify-center shrink-0 text-xl select-none">
+                  🧠
+                </div>
+                <div className="space-y-1">
+                  <h4 className="text-[10px] font-black text-[#5F4EA5] dark:text-purple-300 uppercase tracking-widest leading-none">
+                    WORKING PROFESSIONAL WELLNESS ASSESSMENT
+                  </h4>
+                  {assessmentStatus.completed ? (
+                    <>
+                      <h5 className="text-xs font-black text-slate-800 dark:text-slate-100 flex items-center gap-1.5">
+                        <span className="text-emerald-500 font-extrabold text-sm leading-none">✓</span> Assessment completed
+                      </h5>
+                      <p className="text-[9px] text-slate-400 font-bold leading-normal">
+                        Your wellness profile has been updated. Last completed: {assessmentStatus.latestAssessment?.completedAt ? new Date(assessmentStatus.latestAssessment.completedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "Recently"}
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <h5 className="text-xs font-black text-slate-800 dark:text-slate-100">
+                        Complete Your Assessment
+                      </h5>
+                      <p className="text-[9px] text-slate-400 font-bold leading-normal">
+                        Help us understand your work, stress, and wellness needs so we can personalize your Manraah experience.
+                      </p>
+                    </>
+                  )}
+                </div>
+              </div>
+
+              <button
+                onClick={() => {
+                  setOnboardingStep(1);
+                  setOnboardingAnswers([]);
+                  setIsAssessmentPopupOpen(true);
+                }}
+                className={`px-5 py-3 rounded-2xl font-heading font-black text-[10px] uppercase tracking-wider transition-all shadow-2xs shrink-0 self-stretch sm:self-auto text-center cursor-pointer ${
+                  assessmentStatus.completed
+                    ? "bg-slate-50 hover:bg-slate-100 dark:bg-slate-800/80 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200/50 dark:border-slate-700"
+                    : "bg-[#5F4EA5] hover:bg-[#100E26] text-white"
+                }`}
+              >
+                {assessmentStatus.completed ? "Retake Assessment" : "Do Assessment"}
+              </button>
+            </div>
+          )}
 
           {/* Work Performance Overview */}
           <div className="p-6 rounded-[24px] bg-white dark:bg-[#132E3F] border border-slate-200/40 dark:border-slate-800 shadow-[0_2px_12px_rgba(0,0,0,0.02)] flex items-center justify-between gap-4 text-left">
@@ -1530,7 +1598,7 @@ export default function WorkingProfessionalDashboard() {
               exit={{ opacity: 0, scale: 0.97 }}
               className="fixed inset-0 m-auto z-50 w-full max-w-[420px] h-fit bg-white dark:bg-[#132E3F] border border-slate-200 dark:border-slate-800 rounded-[20px] p-6 space-y-4 shadow-2xl text-left"
             >
-              <h4 className="font-heading font-black text-xs text-[#5F4EA5] uppercase tracking-widest">Sanctuary Profile Settings</h4>
+              <h4 className="font-heading font-black text-xs text-[#5F4EA5] uppercase tracking-widest">Profile Settings</h4>
               
               <div className="space-y-3 text-[11px] text-[#8E8A9F] font-bold bg-slate-50 dark:bg-slate-800/40 p-3 rounded-2xl">
                 <p>Joined Date: <span className="text-slate-800 dark:text-slate-200">{data?.user?.createdAt ? new Date(data.user.createdAt).toLocaleDateString("en-US", { month: "long", year: "numeric" }) : "Aug 2026"}</span></p>
@@ -1541,7 +1609,7 @@ export default function WorkingProfessionalDashboard() {
 
               <form onSubmit={handleSaveProfileSubmit} className="space-y-4 text-xs font-bold text-slate-750 dark:text-slate-350">
                 <div className="space-y-1.5">
-                  <label className="block text-[8px] font-black uppercase tracking-widest text-slate-400">Sanctuary Display Name</label>
+                  <label className="block text-[8px] font-black uppercase tracking-widest text-slate-400">Display Name</label>
                   <input
                     type="text"
                     required
@@ -2124,7 +2192,7 @@ export default function WorkingProfessionalDashboard() {
               exit={{ opacity: 0, scale: 0.97 }}
               className="fixed inset-0 m-auto z-50 w-full max-w-[620px] max-h-[85vh] overflow-y-auto bg-white dark:bg-[#132E3F] border border-slate-200 dark:border-slate-800 rounded-[20px] p-6 space-y-6 shadow-2xl text-left"
             >
-              <h4 className="font-heading font-black text-xs text-[#5F4EA5] uppercase tracking-widest">Sanctuary Journal Entry</h4>
+              <h4 className="font-heading font-black text-xs text-[#5F4EA5] uppercase tracking-widest">Journal Entry</h4>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 

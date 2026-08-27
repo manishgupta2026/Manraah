@@ -285,7 +285,8 @@ export async function saveUserAssessment(
   // Ensure tables are initialized
   await initDatabase();
 
-  const dbCategory = category === "parents" || category === "parent" ? "parent" : (category === "couples" || category === "couple" ? "couple" : category);
+  const normalizedCategory = (category || "").replace("-", "_");
+  const dbCategory = normalizedCategory === "parents" || normalizedCategory === "parent" ? "parent" : (normalizedCategory === "couples" || normalizedCategory === "couple" ? "couple" : normalizedCategory);
 
   try {
     // 1. Insert or update user profile details

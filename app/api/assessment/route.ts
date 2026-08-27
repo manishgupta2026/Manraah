@@ -6,6 +6,7 @@ import { getWellnessLevel, getWellnessMessage } from "@/frontend/lib/assessment/
 import { calculateSanctuaryScore } from "@/frontend/lib/assessment/scoring";
 import { AssessmentAnswer } from "@/frontend/lib/assessment/types";
 import { getUserById } from "@/backend/queries/users";
+import { sql } from "@/backend/db/client";
 
 export const dynamic = "force-dynamic";
 
@@ -150,6 +151,11 @@ export async function POST(req: Request) {
       wellnessLevel,
       maxScore
     );
+
+    // 6. Update user onboarding completed state
+    await sql`
+      UPDATE users SET onboarding_completed = true WHERE id = ${userId}
+    `;
 
     return NextResponse.json({
       success: true,

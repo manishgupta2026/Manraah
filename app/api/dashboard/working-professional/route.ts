@@ -71,12 +71,18 @@ async function ensureWpTablesExist() {
       id SERIAL PRIMARY KEY,
       user_id VARCHAR(100) NOT NULL,
       title VARCHAR(255) NOT NULL,
+      description TEXT,
+      category VARCHAR(100),
+      location VARCHAR(255),
       start_time VARCHAR(20) NOT NULL,
       end_time VARCHAR(20) NOT NULL,
       event_date DATE NOT NULL,
       created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
     )
   `;
+  await sql`ALTER TABLE wp_schedule_events ADD COLUMN IF NOT EXISTS description TEXT`;
+  await sql`ALTER TABLE wp_schedule_events ADD COLUMN IF NOT EXISTS category VARCHAR(100)`;
+  await sql`ALTER TABLE wp_schedule_events ADD COLUMN IF NOT EXISTS location VARCHAR(255)`;
 
   // 6. wp_work_life_records
   await sql`
