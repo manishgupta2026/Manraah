@@ -10,6 +10,7 @@ import ParentDashboard from "@/frontend/components/screens/ParentDashboard";
 import CouplesDashboard from "@/Couples/03_Dashboard/Development/CouplesDashboard";
 import StudentDashboard from "@/frontend/components/screens/StudentDashboard";
 import WorkingProfessionalDashboard from "@/frontend/components/screens/WorkingProfessionalDashboard";
+import OtherDashboard from "@/Others/03_Dashboard/Development/OtherDashboard";
 import DailyPrivacyReminder from "@/frontend/components/ui/DailyPrivacyReminder";
 import ScreenHeader from "@/frontend/components/ui/ScreenHeader";
 import SanctuaryScoreModal from "@/frontend/components/ui/SanctuaryScoreModal";
@@ -253,6 +254,10 @@ export default function DashboardScreen() {
 
   if (category === "couple" || category === "couples") {
     return <CouplesDashboard />;
+  }
+
+  if (category === "other" || category === "others") {
+    return <OtherDashboard />;
   }
 
   const moodScoreMap: Record<string, number> = {

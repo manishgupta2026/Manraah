@@ -630,92 +630,103 @@ export default function CouplesDashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           
           {/* ==================== COLUMN 1: LEFT SIDE (width: 3/12) ==================== */}
-          <div className="lg:col-span-3 bg-[#E3F2EC] dark:bg-[#0E3529]/20 rounded-[32px] p-6 space-y-6 text-center shadow-soft-sm border border-[#CDE5DB]/40 dark:border-[#005B48]/20 animate-fadeIn">
-            
-            <div className="space-y-4">
-              <div className="relative w-20 h-20 mx-auto">
-                <div className="w-full h-full rounded-full border-4 border-white dark:border-slate-800 bg-rose-50 dark:bg-[#1A3A34]/50 flex items-center justify-center shadow-sm">
-                  <span className="text-4xl">👩‍❤️‍👨</span>
-                </div>
-                <span className="absolute bottom-0 right-0 w-5 h-5 bg-[#005B48] border-2 border-white dark:border-slate-800 rounded-full flex items-center justify-center text-[10px] text-white">✓</span>
-              </div>
-
-              <div className="space-y-1">
-                <h4 className="font-heading font-black text-slate-800 dark:text-slate-100 text-sm">Check your harmony</h4>
-                <p className="text-[10px] text-slate-550 dark:text-slate-400 font-bold leading-relaxed px-1">
-                  Check your every situation, stress factors, and relationship activities.
-                </p>
-              </div>
-            </div>
-
-            <button 
-              onClick={() => router.push("/checkin")}
-              className="w-full py-3 rounded-2xl bg-[#005B48] hover:bg-[#004738] text-white font-extrabold text-xs shadow-md transition-transform active:scale-95 uppercase tracking-wider"
-            >
-              Check It Now
-            </button>
-
-            {/* Cozy Illustration Card */}
-            <div className="py-2">
-              <div className="w-full overflow-hidden rounded-2xl border border-slate-100 dark:border-slate-800 shadow-xs bg-white dark:bg-[#0D1F2D]">
-                <img 
-                  src="/category/couple.png" 
-                  alt="Check Harmony" 
-                  className="w-full h-auto object-cover"
-                />
-              </div>
-            </div>
-
-            {/* HARMONY METRICS */}
-            <div className="text-left space-y-4 pt-2 border-t border-[#CDE5DB]/60 dark:border-[#005B48]/20">
-              <h5 className="text-[10px] font-black text-[#005B48] dark:text-[#5FAF8A] uppercase tracking-wider">Harmony Metrics</h5>
+          <div className="lg:col-span-3 space-y-6">
+            <div className="bg-[#E3F2EC] dark:bg-[#0E3529]/20 rounded-[32px] p-6 space-y-6 text-center shadow-soft-sm border border-[#CDE5DB]/40 dark:border-[#005B48]/20 animate-fadeIn">
               
-              {/* Conversation */}
-              <div className="space-y-1.5">
-                <div className="flex justify-between text-[10px] font-bold text-slate-700 dark:text-slate-200">
-                  <span>Conversation</span>
-                  <span className="font-extrabold text-[#005B48] dark:text-[#5FAF8A]">{communicationScore}/10</span>
+              <div className="space-y-4">
+                <div className="relative w-20 h-20 mx-auto">
+                  <div className="w-full h-full rounded-full border-4 border-white dark:border-slate-800 bg-rose-50 dark:bg-[#1A3A34]/50 flex items-center justify-center shadow-sm">
+                    <span className="text-4xl">👩‍❤️‍👨</span>
+                  </div>
+                  <span className="absolute bottom-0 right-0 w-5 h-5 bg-[#005B48] border-2 border-white dark:border-slate-800 rounded-full flex items-center justify-center text-[10px] text-white">✓</span>
                 </div>
-                <input 
-                  type="range" min="1" max="10" 
-                  value={communicationScore}
-                  onChange={(e) => handleSliderChange("comm", parseInt(e.target.value))}
-                  onMouseUp={(e) => handleSliderSave("comm", parseInt((e.target as HTMLInputElement).value))}
-                  onTouchEnd={(e) => handleSliderSave("comm", parseInt((e.target as HTMLInputElement).value))}
-                  className="w-full accent-[#005B48] dark:accent-[#5FAF8A] cursor-pointer h-1 bg-[#CDE5DB]/40 dark:bg-slate-800 rounded-lg appearance-none"
-                />
+
+                <div className="space-y-1">
+                  <h4 className="font-heading font-black text-slate-800 dark:text-slate-100 text-sm">Check your harmony</h4>
+                  <p className="text-[10px] text-slate-550 dark:text-slate-400 font-bold leading-relaxed px-1">
+                    Check your every situation, stress factors, and relationship activities.
+                  </p>
+                </div>
               </div>
 
-              {/* Shared Energy */}
-              <div className="space-y-1.5">
-                <div className="flex justify-between text-[10px] font-bold text-slate-700 dark:text-slate-200">
-                  <span>Shared Energy</span>
-                  <span className="font-extrabold text-[#005B48] dark:text-[#5FAF8A]">{energyLevel}/10</span>
+              <button 
+                onClick={() => router.push("/checkin")}
+                className="w-full py-3.5 rounded-2xl bg-[#005B48] hover:bg-[#004738] text-white font-extrabold text-xs shadow-md transition-transform active:scale-95 uppercase tracking-wider"
+              >
+                Check It Now
+              </button>
+
+              {/* Cozy Illustration Card */}
+              <div className="py-2">
+                <div className="w-full overflow-hidden rounded-2xl border border-slate-105 dark:border-slate-800 shadow-xs bg-white dark:bg-[#0D1F2D]">
+                  <img 
+                    src="/category/couple.png" 
+                    alt="Check Harmony" 
+                    className="w-full h-auto object-cover"
+                  />
                 </div>
-                <input 
-                  type="range" min="1" max="10" 
-                  value={energyLevel}
-                  onChange={(e) => handleSliderChange("energy", parseInt(e.target.value))}
-                  onMouseUp={(e) => handleSliderSave("energy", parseInt((e.target as HTMLInputElement).value))}
-                  onTouchEnd={(e) => handleSliderSave("energy", parseInt((e.target as HTMLInputElement).value))}
-                  className="w-full accent-[#005B48] dark:accent-[#5FAF8A] cursor-pointer h-1 bg-[#CDE5DB]/40 dark:bg-slate-800 rounded-lg appearance-none"
-                />
               </div>
 
-              {/* Tension Rate */}
-              <div className="space-y-1.5">
-                <div className="flex justify-between text-[10px] font-bold text-slate-700 dark:text-slate-200">
-                  <span>Tension Rate</span>
-                  <span className="font-extrabold text-rose-600 dark:text-rose-400">{stressLevel}/10</span>
+              {/* HARMONY METRICS */}
+              <div className="text-left space-y-4 pt-2 border-t border-[#CDE5DB]/60 dark:border-[#005B48]/20">
+                <h5 className="text-[10px] font-black text-[#005B48] dark:text-[#5FAF8A] uppercase tracking-wider">Harmony Metrics</h5>
+                
+                {/* Conversation */}
+                <div className="space-y-1.5">
+                  <div className="flex justify-between text-[10px] font-bold text-slate-700 dark:text-slate-200">
+                    <span>Conversation</span>
+                    <span className="font-extrabold text-[#005B48] dark:text-[#5FAF8A]">{communicationScore}/10</span>
+                  </div>
+                  <input 
+                    type="range" min="1" max="10" 
+                    value={communicationScore}
+                    onChange={(e) => handleSliderChange("comm", parseInt(e.target.value))}
+                    onMouseUp={(e) => handleSliderSave("comm", parseInt((e.target as HTMLInputElement).value))}
+                    onTouchEnd={(e) => handleSliderSave("comm", parseInt((e.target as HTMLInputElement).value))}
+                    className="w-full accent-[#005B48] dark:accent-[#5FAF8A] cursor-pointer h-1 bg-[#CDE5DB]/40 dark:bg-slate-800 rounded-lg appearance-none"
+                  />
                 </div>
-                <input 
-                  type="range" min="1" max="10" 
-                  value={stressLevel}
-                  onChange={(e) => handleSliderChange("stress", parseInt(e.target.value))}
-                  onMouseUp={(e) => handleSliderSave("stress", parseInt((e.target as HTMLInputElement).value))}
-                  onTouchEnd={(e) => handleSliderSave("stress", parseInt((e.target as HTMLInputElement).value))}
-                  className="w-full accent-rose-500 cursor-pointer h-1 bg-[#CDE5DB]/40 dark:bg-slate-800 rounded-lg appearance-none"
-                />
+
+                {/* Shared Energy */}
+                <div className="space-y-1.5">
+                  <div className="flex justify-between text-[10px] font-bold text-slate-700 dark:text-slate-200">
+                    <span>Shared Energy</span>
+                    <span className="font-extrabold text-[#005B48] dark:text-[#5FAF8A]">{energyLevel}/10</span>
+                  </div>
+                  <input 
+                    type="range" min="1" max="10" 
+                    value={energyLevel}
+                    onChange={(e) => handleSliderChange("energy", parseInt(e.target.value))}
+                    onMouseUp={(e) => handleSliderSave("energy", parseInt((e.target as HTMLInputElement).value))}
+                    onTouchEnd={(e) => handleSliderSave("energy", parseInt((e.target as HTMLInputElement).value))}
+                    className="w-full accent-[#005B48] dark:accent-[#5FAF8A] cursor-pointer h-1 bg-[#CDE5DB]/40 dark:bg-slate-800 rounded-lg appearance-none"
+                  />
+                </div>
+
+                {/* Tension Rate */}
+                <div className="space-y-1.5">
+                  <div className="flex justify-between text-[10px] font-bold text-slate-700 dark:text-slate-200">
+                    <span>Tension Rate</span>
+                    <span className="font-extrabold text-rose-600 dark:text-rose-400">{stressLevel}/10</span>
+                  </div>
+                  <input 
+                    type="range" min="1" max="10" 
+                    value={stressLevel}
+                    onChange={(e) => handleSliderChange("stress", parseInt(e.target.value))}
+                    onMouseUp={(e) => handleSliderSave("stress", parseInt((e.target as HTMLInputElement).value))}
+                    onTouchEnd={(e) => handleSliderSave("stress", parseInt((e.target as HTMLInputElement).value))}
+                    className="w-full accent-rose-500 cursor-pointer h-1 bg-[#CDE5DB]/40 dark:bg-slate-800 rounded-lg appearance-none"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* 100% Confidential Info Card */}
+            <div className="bg-white dark:bg-[#132E3F] p-4 rounded-[24px] border border-[#EAEAFF] dark:border-slate-800 shadow-soft flex items-center gap-3 text-left w-full">
+              <span className="text-2xl filter drop-shadow-sm select-none">🤫</span>
+              <div>
+                <h4 className="text-[11px] font-heading font-black text-slate-800 dark:text-slate-100 leading-tight">100% Confidential</h4>
+                <p className="text-[9px] text-slate-450 dark:text-slate-500 font-bold leading-normal mt-0.5">No data ever leaves this device.</p>
               </div>
             </div>
           </div>

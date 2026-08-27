@@ -372,13 +372,13 @@ export async function getUserAssessment(userId: string): Promise<any> {
   await initDatabase();
   try {
     const results = await sql`
-      SELECT * FROM assessment_results WHERE user_id = ${userId} ORDER BY created_at DESC LIMIT 1
+      SELECT * FROM assessments WHERE user_id = ${userId} ORDER BY created_at DESC LIMIT 1
     `;
     if (results.length === 0) return null;
 
     const result = results[0];
     const answers = await sql`
-      SELECT * FROM assessment_answers WHERE assessment_result_id = ${result.id}
+      SELECT * FROM assessment_answers_detailed WHERE assessment_id = ${result.id}
     `;
 
     return {

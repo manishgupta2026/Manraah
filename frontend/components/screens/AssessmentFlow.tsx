@@ -160,6 +160,9 @@ export default function AssessmentFlow() {
             } else if (targetCategory === "couples" || targetCategory === "couple") {
               localStorage.setItem("couple_assessment_completed", "true");
               localStorage.setItem("couple_show_security_immediately", "true");
+            } else if (targetCategory === "other" || targetCategory === "others") {
+              localStorage.setItem("other_assessment_completed", "true");
+              localStorage.setItem("other_show_security_immediately", "true");
             }
             const updatedSession = {
               ...session,

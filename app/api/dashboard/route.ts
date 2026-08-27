@@ -80,7 +80,7 @@ export async function GET(req: Request) {
           user.selected_category === "working_professional" || user.selected_category === "working-professional" || user.selected_category === "young_pro" || user.selected_category === "youngprofessional" ? "working_professional" :
           user.selected_category || "student"
         ),
-        streakDays: streak.currentStreak || user.streak_days || 1,
+        streakDays: (streak && typeof streak.currentStreak === "number") ? streak.currentStreak : (user.streak_days || 0),
         mindfulnessMinutes: user.mindfulness_minutes || 0,
         currentMood: user.current_mood || "Sanctuary Member",
         assessmentScore: userProfile?.total_score || null,
@@ -95,9 +95,9 @@ export async function GET(req: Request) {
       monthlySummary,
       insights,
       streak: {
-        currentStreak: streak.currentStreak || 1,
-        longestStreak: streak.longestStreak || 1,
-        lastCheckinDate: streak.lastCheckinDate || null,
+        currentStreak: (streak && typeof streak.currentStreak === "number") ? streak.currentStreak : 0,
+        longestStreak: (streak && typeof streak.longestStreak === "number") ? streak.longestStreak : 0,
+        lastCheckinDate: streak?.lastCheckinDate || null,
       },
       recommendation,
     };
