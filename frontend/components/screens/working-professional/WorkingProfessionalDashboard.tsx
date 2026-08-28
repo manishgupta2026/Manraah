@@ -958,11 +958,10 @@ export default function WorkingProfessionalDashboard() {
     );
   }
 
-  // Connection fail / error
   if (error) {
     return (
-      <div className="min-h-[70vh] flex items-center justify-center p-4 bg-[#F5FAFB] dark:bg-slate-900">
-        <div className="w-full max-w-[400px] bg-white dark:bg-[#132E3F] rounded-[20px] p-8 border border-slate-200/50 text-center space-y-4 shadow-sm">
+      <div className="min-h-[70vh] flex items-center justify-center p-4 bg-[#F5FAFB] dark:bg-[#0D1F2D]">
+        <div className="w-full max-w-[400px] bg-white dark:bg-[#132E3F] rounded-[28px] p-8 border border-slate-200/60 text-center space-y-4 shadow-sm">
           <span className="material-symbols-outlined text-4xl text-[#EA5E5E]">warning</span>
           <h4 className="font-heading font-black text-xs text-[#100E26] dark:text-slate-100 uppercase tracking-wider">Dashboard Sync Failed</h4>
           <p className="text-[11px] font-bold text-slate-400 leading-normal">{error}</p>
@@ -980,7 +979,7 @@ export default function WorkingProfessionalDashboard() {
   const moodOrderData = getMoodOverviewData();
 
   return (
-    <div className="w-full space-y-[32px] bg-[#F5FAFB] dark:bg-slate-900 text-[#100E26] dark:text-[#E2E8F0] min-h-screen relative">
+    <div className="w-full space-y-[32px] bg-[#F5FAFB] dark:bg-[#0D1F2D] text-[#100E26] dark:text-[#E2E8F0] min-h-screen relative">
       
       {/* Toast Notice */}
       <AnimatePresence>
@@ -1003,7 +1002,7 @@ export default function WorkingProfessionalDashboard() {
         <div className="space-y-6 lg:col-span-1">
           
           {/* Daily Check-in Complete */}
-          <div className="p-6 rounded-[24px] bg-white dark:bg-[#132E3F] border border-slate-200/40 dark:border-slate-800 shadow-[0_2px_12px_rgba(0,0,0,0.02)] hover:translate-y-[-2px] transition-all duration-300 flex flex-col items-center text-center space-y-4">
+          <div className="p-5 lg:p-6 rounded-[28px] bg-white dark:bg-[#132E3F] border border-slate-200/60 dark:border-slate-800 shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:translate-y-[-2px] transition-all duration-300 flex flex-col items-center text-center space-y-4">
             <div className="relative">
               <div className="w-20 h-20 rounded-full bg-amber-50 dark:bg-amber-950/20 flex items-center justify-center text-4xl select-none border-2 border-amber-100 dark:border-amber-900/50">
                 {data?.todayCheckin ? (
@@ -1075,12 +1074,12 @@ export default function WorkingProfessionalDashboard() {
           </div>
 
           {/* Desk Illustration Card */}
-          <div className="rounded-[24px] overflow-hidden border border-slate-200/30 dark:border-slate-800 shadow-[0_2px_12px_rgba(0,0,0,0.02)] hover:scale-[1.01] transition-transform duration-300">
+          <div className="rounded-[28px] overflow-hidden border border-slate-200/60 dark:border-slate-800 shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:scale-[1.01] transition-transform duration-300">
             <img src="/images/wp_desk_illustration.jpg" alt="Workspace desk illustration" className="w-full h-auto object-cover" />
           </div>
 
           {/* 100% Confidential */}
-          <div className="p-5 rounded-[24px] bg-slate-50/50 dark:bg-slate-800/20 border border-slate-200/30 dark:border-slate-800 flex items-start gap-4 text-left">
+          <div className="p-5 rounded-[28px] bg-slate-50/50 dark:bg-slate-800/20 border border-slate-200/60 dark:border-slate-800 flex items-start gap-4 text-left shadow-[0_2px_12px_rgba(0,0,0,0.03)]">
             <div className="w-10 h-10 rounded-xl bg-purple-50 dark:bg-purple-950/30 flex items-center justify-center text-[#5F4EA5] shrink-0">
               <span className="material-symbols-outlined text-lg leading-none">lock</span>
             </div>
@@ -1093,7 +1092,7 @@ export default function WorkingProfessionalDashboard() {
           </div>
 
           {/* Today's Motivation */}
-          <div className="p-6 rounded-[24px] bg-gradient-to-br from-amber-50/60 to-purple-50/40 dark:from-amber-950/10 dark:to-purple-950/10 border border-amber-100/40 dark:border-slate-800 text-left space-y-3 relative overflow-hidden">
+          <div className="p-6 rounded-[28px] bg-[#F5F3FC] dark:bg-[#1C1635]/40 border border-[#5F4EA5]/15 text-left space-y-3 relative overflow-hidden shadow-[0_2px_12px_rgba(0,0,0,0.03)]">
             <div className="absolute right-[-10px] bottom-[-10px] w-24 h-24 rounded-full bg-amber-200/10 filter blur-xl" />
             <p className="text-[9px] font-black text-[#5F4EA5] dark:text-purple-300 uppercase tracking-widest leading-none">Today's Motivation</p>
             <blockquote className="text-[12px] font-extrabold text-[#100E26] dark:text-slate-200 leading-relaxed z-10 relative">
@@ -1179,7 +1178,7 @@ export default function WorkingProfessionalDashboard() {
           )}
 
           {/* Work Performance Overview */}
-          <div className="p-6 rounded-[24px] bg-white dark:bg-[#132E3F] border border-slate-200/40 dark:border-slate-800 shadow-[0_2px_12px_rgba(0,0,0,0.02)] flex items-center justify-between gap-4 text-left">
+          <div className="p-5 lg:p-6 rounded-[28px] bg-white dark:bg-[#132E3F] border border-slate-200/60 dark:border-slate-800 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex items-center justify-between gap-4 text-left">
             <div className="space-y-1 flex-1">
               <h4 className="font-heading font-black text-[10px] text-slate-450 uppercase tracking-widest">WORK PERFORMANCE OVERVIEW</h4>
               <div className="flex items-center gap-1.5 pt-1 text-emerald-600 dark:text-emerald-400 font-extrabold text-xs">
@@ -1191,14 +1190,14 @@ export default function WorkingProfessionalDashboard() {
             </div>
             <button
               onClick={() => router.push("/dashboard/working-professional/analytics")}
-              className="px-4 py-2 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-750 text-[#100E26] dark:text-slate-200 text-[10px] font-black uppercase tracking-widest rounded-full transition-all cursor-pointer border border-slate-200/40 dark:border-slate-700"
+              className="px-4 py-2 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-750 text-[#100E26] dark:text-slate-200 text-[10px] font-black uppercase tracking-widest rounded-full transition-all cursor-pointer border border-slate-200/60 dark:border-slate-700"
             >
               View Insights
             </button>
           </div>
 
           {/* Today's Priorities */}
-          <div className="p-6 rounded-[24px] bg-white dark:bg-[#132E3F] border border-slate-200/40 dark:border-slate-800 shadow-[0_2px_12px_rgba(0,0,0,0.02)] space-y-4 text-left">
+          <div className="p-5 lg:p-6 rounded-[28px] bg-white dark:bg-[#132E3F] border border-slate-200/60 dark:border-slate-800 shadow-[0_2px_12px_rgba(0,0,0,0.03)] space-y-4 text-left">
             <h4 className="font-heading font-black text-[10px] text-slate-450 uppercase tracking-widest">TODAY'S PRIORITIES</h4>
             
             {(!data?.goals || data.goals.length === 0) ? (
@@ -1246,8 +1245,8 @@ export default function WorkingProfessionalDashboard() {
             )}
 
             <button
-              onClick={() => router.push("/dashboard/working-professional/study-planner")}
-              className="w-full py-3 rounded-xl bg-[#5F4EA5] hover:bg-[#4A3C8C] text-white text-[10px] font-black uppercase tracking-widest transition-all cursor-pointer text-center shadow-xs"
+              onClick={() => router.push("/dashboard/working-professional/task-manager")}
+              className="w-full py-3.5 rounded-2xl bg-[#5F4EA5] hover:bg-[#100E26] text-white font-heading font-black text-xs shadow-md hover:shadow-lg transition-all cursor-pointer text-center"
             >
               Manage Tasks
             </button>
