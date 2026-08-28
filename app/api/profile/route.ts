@@ -122,6 +122,26 @@ export async function PUT(request: Request) {
       await updateUserDashboardState(userId, dashboardState);
       // Increment user streak days dynamically upon dashboard activity updates
       await updateUserStreak(userId);
+
+      // Keep user profile and assessment logs fully in sync with slider-based wellnessScore updates
+      if (dashboardState.wellnessScore !== undefined && dashboardState.wellnessScore !== null) {
+        const score = typeof dashboardState.wellnessScore === "number" ? dashboardState.wellnessScore : Number(dashboardState.wellnessScore);
+        if (!isNaN(score)) {
+          const lvl = score >= 80 ? "Optimized" : (score >= 50 ? "Balanced" : "Needs Attention");
+          await sql`
+            UPDATE user_profiles 
+            SET percentage = ${score}, 
+                total_score = ${score},
+                wellness_level = ${lvl}
+            WHERE user_id = ${userId}
+          `;
+          
+          await sql`
+            INSERT INTO assessments (user_id, category, total_score, max_score, percentage, wellness_level)
+            VALUES (${userId}, 'other', ${score}, 100, ${score}, ${lvl})
+          `;
+        }
+      }
     }
 
     // 5. Fetch updated user details

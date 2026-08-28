@@ -634,51 +634,53 @@ export default function ParentDashboard() {
           {/* ────────────────────────────────────────────────────────────
               COLUMN 1: MINT SIDEBAR (col-span-3)
               ──────────────────────────────────────────────────────────── */}
-          <div className="lg:col-span-3 space-y-4">
-            <div className="bg-[#E6F4F0] dark:bg-[#112F28] rounded-[32px] p-6 border border-[#CBECE2] dark:border-[#1C463C] shadow-[0_10px_35px_rgba(0,107,86,0.03)] text-center space-y-6 flex flex-col justify-between min-h-[480px]">
-              
-              {/* Profile details */}
-              <div className="space-y-4">
-                <div className="relative w-20 h-20 mx-auto">
-                  <div className="w-full h-full rounded-full border-4 border-white dark:border-slate-800 bg-[#F5C99B]/40 flex items-center justify-center shadow-sm">
-                    <span className="text-4xl">👩‍👦</span>
+          <div className="lg:col-span-3 space-y-6">
+            <div className="p-6 rounded-[36px] bg-[#E6F4F0] dark:bg-[#112F28] border border-[#CBECE2] dark:border-[#1C463C] shadow-soft flex flex-col justify-between space-y-6">
+              <div className="space-y-6 text-center">
+                
+                {/* User Profile Info */}
+                <div className="flex flex-col items-center space-y-3">
+                  <div className="relative w-20 h-20">
+                    <div className="w-20 h-20 rounded-full border-4 border-white dark:border-slate-800 shadow-md overflow-hidden bg-[#F5C99B]/40 flex items-center justify-center">
+                      <span className="text-4xl select-none">👩‍👦</span>
+                    </div>
+                    <span className="absolute bottom-0 right-0 w-5 h-5 bg-[#006B56] border-2 border-white dark:border-slate-800 rounded-full flex items-center justify-center text-[10px] text-white">✓</span>
                   </div>
-                  <span className="absolute bottom-0 right-0 w-5 h-5 bg-[#006B56] border-2 border-white dark:border-slate-800 rounded-full flex items-center justify-center text-[10px] text-white">✓</span>
+                  
+                  <div className="space-y-1 text-center">
+                    <h3 className="text-lg font-heading font-black text-slate-800 dark:text-slate-100">Check your condition</h3>
+                    <p className="text-[10px] text-slate-500 dark:text-slate-400 font-bold leading-relaxed px-1">
+                      Check your every situation, stress factors, and parenting activities.
+                    </p>
+                  </div>
                 </div>
 
-                <div className="space-y-1">
-                  <h4 className="font-heading font-black text-slate-800 dark:text-slate-100 text-sm">Check your condition</h4>
-                  <p className="text-[10px] text-slate-500 dark:text-slate-400 font-bold leading-relaxed">
-                    Check your every situation, stress factors, and parenting activities.
-                  </p>
+                {/* Check It Now CTA Button */}
+                <button 
+                  onClick={() => router.push("/checkin")}
+                  className="w-full py-3.5 rounded-2xl bg-[#006B56] hover:bg-[#005B48] text-white font-black text-xs shadow-md transition-transform active:scale-95 cursor-pointer uppercase tracking-wider"
+                >
+                  Check It Now
+                </button>
+
+                {/* Vector Artwork/Illustration matching mockup */}
+                <div className="pt-2 border-t border-[#D0EDE4] dark:border-[#1C463C] flex justify-center overflow-hidden rounded-2xl bg-white dark:bg-[#132E3F]">
+                  <img 
+                    src="/images/pediatrician_consult.jpg" 
+                    alt="Pediatrician Consult" 
+                    className="w-full h-auto object-cover max-h-[140px] hover:scale-105 transition-transform duration-500 rounded-xl"
+                  />
                 </div>
+
               </div>
-
-              {/* Action Button */}
-              <button 
-                onClick={() => router.push("/checkin")}
-                className="w-full py-3 rounded-2xl bg-[#006B56] hover:bg-[#005B48] text-white font-bold text-xs shadow-md transition-transform active:scale-95"
-              >
-                Check It Now
-              </button>
-
-              {/* Vector Artwork/Illustration placeholder */}
-              <div className="pt-4 border-t border-[#D0EDE4] dark:border-[#1C463C] flex justify-center overflow-hidden rounded-2xl">
-                <img 
-                  src="/images/pediatrician_consult.jpg" 
-                  alt="Pediatrician Consult" 
-                  className="w-full h-auto object-cover max-h-[140px] hover:scale-105 transition-transform duration-500 rounded-xl"
-                />
-              </div>
-
             </div>
 
-            {/* Extra safety assurances */}
-            <div className="bg-white dark:bg-[#132E3F] rounded-[24px] border border-[#EAEAFF] dark:border-slate-800 p-4 flex items-center gap-3">
-              <span className="text-xl">🤫</span>
+            {/* 100% Confidential Info Card */}
+            <div className="bg-white dark:bg-[#132E3F] p-4 rounded-[24px] border border-[#EAEAFF] dark:border-slate-800 shadow-soft flex items-center gap-3 text-left w-full">
+              <span className="text-2xl filter drop-shadow-sm select-none">🤫</span>
               <div>
-                <h5 className="text-[11px] font-heading font-black text-slate-800 dark:text-slate-200">100% Confidential</h5>
-                <p className="text-[9px] text-slate-400 dark:text-slate-500 font-semibold leading-tight">No data ever leaves this device.</p>
+                <h4 className="text-[11px] font-heading font-black text-slate-800 dark:text-slate-100 leading-tight">100% Confidential</h4>
+                <p className="text-[9px] text-slate-450 dark:text-slate-500 font-bold leading-normal mt-0.5">No data ever leaves this device.</p>
               </div>
             </div>
           </div>
