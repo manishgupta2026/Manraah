@@ -13,9 +13,7 @@ export default function DynamicCategoryDashboardLayout({ children }: { children:
   const isCustomShell = category === "student" || 
                         category === "working-professional" || 
                         category === "working_professional" || 
-                        category === "couple" || 
-                        category === "parent" || 
-                        category === "parents";
+                        category === "couple";
 
   if (isCustomShell) {
     return (
