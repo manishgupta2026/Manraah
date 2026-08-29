@@ -12,8 +12,7 @@ export default function DynamicCategoryDashboardLayout({ children }: { children:
   // Wrap specified custom dashboard categories in the new shell
   const isCustomShell = category === "student" || 
                         category === "working-professional" || 
-                        category === "working_professional" || 
-                        category === "couple";
+                        category === "working_professional";
 
   if (isCustomShell) {
     return (
