@@ -24,11 +24,7 @@ export default function PublicFooter() {
     } catch {
       // ignore
     }
-    if (catId === "working_professional" || catId === "working-professional") {
-      router.push("/onboarding/working-professional");
-    } else {
-      router.push("/category-selection");
-    }
+    router.push("/category-selection");
   };
 
   return (

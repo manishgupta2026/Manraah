@@ -66,7 +66,7 @@ export default function CategorySelection() {
         router.push("/dashboard/student");
         return;
       } else if (targetType === "working_professional" || targetType === "working-professional") {
-        router.push("/onboarding/working-professional");
+        router.push("/dashboard/working-professional");
         return;
       } else {
         // Redirection based on normalizeCategory mapping
@@ -82,11 +82,8 @@ export default function CategorySelection() {
       }
     }
 
-    if (targetType === "working_professional" || targetType === "working-professional") {
-      router.push("/onboarding/working-professional");
-    } else {
-      router.push("/signup");
-    }
+    // Unauthenticated visitors always proceed to signup
+    router.push("/signup");
   };
 
   return (

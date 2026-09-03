@@ -61,7 +61,14 @@ export async function POST(request: Request) {
       wellnessLevel,
     } = body;
 
-    // 1. Input validation
+    // 1. Input validation - all fields are strictly required
+    if (!name || typeof name !== "string" || !name.trim()) {
+      return NextResponse.json(
+        { error: "Full name is required." },
+        { status: 400 }
+      );
+    }
+
     if (!email || typeof email !== "string" || !email.trim()) {
       return NextResponse.json(
         { error: "Email address is required." },
@@ -72,6 +79,34 @@ export async function POST(request: Request) {
     if (!password || typeof password !== "string" || password.length < 6) {
       return NextResponse.json(
         { error: "Password must be at least 6 characters long." },
+        { status: 400 }
+      );
+    }
+
+    if (!dob || typeof dob !== "string" || !dob.trim()) {
+      return NextResponse.json(
+        { error: "Date of birth is required." },
+        { status: 400 }
+      );
+    }
+
+    if (!gender || typeof gender !== "string" || !gender.trim()) {
+      return NextResponse.json(
+        { error: "Gender identity is required." },
+        { status: 400 }
+      );
+    }
+
+    if (!country || typeof country !== "string" || !country.trim()) {
+      return NextResponse.json(
+        { error: "Country is required." },
+        { status: 400 }
+      );
+    }
+
+    if (!phone || typeof phone !== "string" || !phone.trim()) {
+      return NextResponse.json(
+        { error: "Phone number is required." },
         { status: 400 }
       );
     }
