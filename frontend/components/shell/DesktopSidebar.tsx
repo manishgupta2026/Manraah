@@ -25,16 +25,25 @@ const WP_NAV_ITEMS = [
 export default function DesktopSidebar() {
   const pathname = usePathname();
   const { category } = useCategory();
-  const [userName, setUserName] = useState("Ashutosh Sahu");
-  const [avatar, setAvatar] = useState("");
-  const [streakDays, setStreakDays] = useState<number>(4);
+  const [userName, setUserName] = useState(() => {
+    const session = getClientSession();
+    return session?.user?.sanctuaryName || session?.user?.name || "Member";
+  });
+  const [avatar, setAvatar] = useState(() => {
+    const session = getClientSession();
+    return session?.user?.avatar || "";
+  });
+  const [streakDays, setStreakDays] = useState<number>(() => {
+    const session = getClientSession();
+    return session?.user?.streakDays || 1;
+  });
 
   useEffect(() => {
     const session = getClientSession();
-    if (session.user) {
-      setUserName(session.user.sanctuaryName || session.user.name || "Ashutosh Sahu");
+    if (session?.user) {
+      setUserName(session.user.sanctuaryName || session.user.name || "Member");
       setAvatar(session.user.avatar || "");
-      setStreakDays(session.user.streakDays || 4);
+      setStreakDays(session.user.streakDays || 1);
     }
   }, []);
 

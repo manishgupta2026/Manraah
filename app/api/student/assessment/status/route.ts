@@ -4,6 +4,8 @@ import { getAuthSessionFromRequest } from "@/backend/auth/session";
 
 export const dynamic = "force-dynamic";
 
+let assessmentTablesInitialized = false;
+
 export async function GET(req: Request) {
   try {
     const session = getAuthSessionFromRequest();
@@ -13,10 +15,24 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Ensure assessment_skipped column exists
-    await sql`
-      ALTER TABLE users ADD COLUMN IF NOT EXISTS assessment_skipped BOOLEAN DEFAULT FALSE;
-    `;
+    if (!assessmentTablesInitialized) {
+      try {
+        await sql`
+          ALTER TABLE users ADD COLUMN IF NOT EXISTS assessment_skipped BOOLEAN DEFAULT FALSE;
+        `;
+        await sql`
+          CREATE TABLE IF NOT EXISTS student_onboarding_assessments (
+            id SERIAL PRIMARY KEY,
+            user_id VARCHAR(255) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+            answers JSONB DEFAULT '[]'::jsonb,
+            completed_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+            created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+          )
+        `;
+        assessmentTablesInitialized = true;
+      } catch (e) {}
+    }
 
     // Verify user profile category & status
     const userCategoryResult = await sql`

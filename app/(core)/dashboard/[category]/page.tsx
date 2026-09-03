@@ -3,22 +3,28 @@
 import { useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import DashboardScreen from "@/frontend/components/screens/DashboardScreen";
+import WorkingProfessionalDashboard from "@/frontend/components/screens/working-professional/WorkingProfessionalDashboard";
 
 export default function DynamicCategoryDashboardPage() {
   const router = useRouter();
   const params = useParams();
-  const category = params?.category as string;
+  const rawCat = (params?.category as string)?.toLowerCase()?.trim() || "";
 
   useEffect(() => {
-    if (category) {
-      const c = category.toLowerCase().trim();
-      if (c === "parent" || c === "parents") {
-        router.replace("/dashboard/parents");
-      } else if (c === "couple" || c === "couples") {
-        router.replace("/dashboard/couple");
-      }
+    if (rawCat === "parent" || rawCat === "parents") {
+      router.replace("/dashboard/parents");
+    } else if (rawCat === "couple" || rawCat === "couples") {
+      router.replace("/dashboard/couple");
+    } else if (rawCat === "student") {
+      router.replace("/dashboard/student");
+    } else if (rawCat === "working_professional") {
+      router.replace("/dashboard/working-professional");
     }
-  }, [category, router]);
+  }, [rawCat, router]);
+
+  if (rawCat === "working-professional" || rawCat === "working_professional" || rawCat.includes("working") || rawCat.includes("prof")) {
+    return <WorkingProfessionalDashboard />;
+  }
 
   return <DashboardScreen />;
 }

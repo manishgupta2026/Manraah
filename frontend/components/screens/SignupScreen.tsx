@@ -107,9 +107,11 @@ export default function SignupScreen() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    const params = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : null;
+    const fromQuery = params?.get("category") || params?.get("selected");
     const fromContext = selectedCategory;
     const fromCookie = readCookie("userType") || readCookie("manraah_userType");
-    const resolved = fromContext || fromCookie || "student";
+    const resolved = fromQuery || fromContext || fromCookie || "student";
     setResolvedCategory(resolved.toLowerCase().replace(/\s+/g, "_").replace(/-/g, "_"));
   }, [selectedCategory]);
 
@@ -468,6 +470,28 @@ export default function SignupScreen() {
                     transition={{ duration: 0.2 }}
                     className="space-y-3.5"
                   >
+                    {/* Journey Category Selector */}
+                    <div>
+                      <label className="block text-xs font-heading font-bold text-on-surface mb-1">
+                        Select Your Journey <span className="text-red-500">*</span>
+                      </label>
+                      <select
+                        value={resolvedCategory}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          setResolvedCategory(val);
+                          document.cookie = `userType=${val}; path=/; max-age=86400`;
+                        }}
+                        className="w-full px-4 py-3 rounded-2xl bg-surface-container-low border border-surface-variant/40 text-xs font-bold text-on-surface focus:outline-none focus:ring-2 focus:ring-primary cursor-pointer"
+                      >
+                        <option value="working_professional">👔 Working Professional</option>
+                        <option value="student">🎓 Student & Academic</option>
+                        <option value="parent">🍼 Parent & Family</option>
+                        <option value="couple">💖 Couples & Harmony</option>
+                        <option value="other">🌿 Other / Personalized</option>
+                      </select>
+                    </div>
+
                     {/* Full Name Input */}
                     <div>
                       <FormInput
@@ -475,7 +499,7 @@ export default function SignupScreen() {
                         required
                         type="text"
                         icon="face"
-                        placeholder="e.g. Ashutosh Sahu"
+                        placeholder="e.g. Alex Smith"
                         value={fullName}
                         onChange={(e) => {
                           setFullName(e.target.value);

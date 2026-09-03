@@ -36,8 +36,12 @@ export async function GET(request: Request) {
       name: sanctuaryName,
       sanctuaryName: sanctuaryName,
       email: user.email,
-      avatar: user.avatar,
-      category: user.selected_category === "couples" || user.selected_category === "couple" ? "couple" : (user.selected_category === "parents" || user.selected_category === "parent" ? "parent" : user.selected_category || "student"),
+      category: (
+        user.selected_category === "working_professional" || user.selected_category === "working-professional" || user.selected_category === "young_pro" || user.selected_category === "youngprofessional" ? "working-professional" :
+        user.selected_category === "couples" || user.selected_category === "couple" ? "couple" :
+        user.selected_category === "parents" || user.selected_category === "parent" ? "parent" :
+        user.selected_category || "student"
+      ),
       streakDays: user.streak_days,
       mindfulnessMinutes: user.mindfulness_minutes,
       currentMood: user.current_mood

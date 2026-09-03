@@ -27,10 +27,21 @@ const cardVariants = {
   },
 };
 
+let memoryWpDataCache: any = null;
+
 export default function WorkingProfessionalDashboard() {
   const router = useRouter();
-  const [data, setData] = useState<any | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [data, setData] = useState<any | null>(() => {
+    if (memoryWpDataCache) return memoryWpDataCache;
+    if (typeof window !== "undefined") {
+      try {
+        const local = localStorage.getItem("manraah_wp_dashboard_cache");
+        if (local) return JSON.parse(local);
+      } catch {}
+    }
+    return null;
+  });
+  const [isLoading, setIsLoading] = useState<boolean>(() => !memoryWpDataCache);
   const [error, setError] = useState<string | null>(null);
 
   const {
@@ -128,16 +139,11 @@ export default function WorkingProfessionalDashboard() {
     setTimeout(() => setToastMessage(null), 4000);
   };
 
-  // Auth and category guard
+  // Auth check
   useEffect(() => {
     const session = getClientSession();
     if (!session || !session.isAuthenticated) {
       router.push("/login");
-      return;
-    }
-    const cat = session.user?.selectedCategory || (session.user as any)?.category;
-    if (cat === "student") {
-      router.push("/dashboard/student");
     }
   }, [router]);
 
@@ -151,14 +157,13 @@ export default function WorkingProfessionalDashboard() {
         throw new Error("Failed to load dashboard data");
       }
       const json = await res.json();
-      
-      // Category Security Guard check from database response
-      const dbCat = json.user?.selectedCategory || json.user?.category;
-      if (dbCat === "student") {
-        router.push("/dashboard/student");
-        return;
-      }
 
+      memoryWpDataCache = json;
+      if (typeof window !== "undefined") {
+        try {
+          localStorage.setItem("manraah_wp_dashboard_cache", JSON.stringify(json));
+        } catch {}
+      }
       setData(json);
       
       // Initialize edit values from DB profile
@@ -937,7 +942,7 @@ export default function WorkingProfessionalDashboard() {
   };
 
   // Loading Skeletons
-  if (isLoading) {
+  if (isLoading && !data) {
     return (
       <div className="w-full space-y-[32px] animate-pulse py-4 bg-[#F5FAFB] dark:bg-slate-900 min-h-screen p-[28px] lg:p-[36px]">
         <div className="h-28 bg-white dark:bg-slate-800 rounded-[20px]" />
@@ -1332,39 +1337,48 @@ export default function WorkingProfessionalDashboard() {
               </button>
             </div>
 
-            <div className="space-y-3">
-              <div className="flex items-center justify-between p-3 rounded-2xl bg-slate-50/50 dark:bg-slate-850/30 border border-slate-200/30 dark:border-slate-800">
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-[#5F4EA5]/10 flex items-center justify-center text-[#5F4EA5] shrink-0">
-                    <span className="material-symbols-outlined text-base">calendar_today</span>
-                  </div>
-                  <div>
-                    <h5 className="text-[11px] font-black text-[#100E26] dark:text-slate-100 leading-tight">Project Planning Discussion</h5>
-                    <p className="text-[9px] text-slate-450 font-bold mt-0.5">Team Sync</p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <p className="text-[10px] font-extrabold text-[#100E26] dark:text-slate-200">Tomorrow</p>
-                  <p className="text-[9px] text-[#5F4EA5] font-black mt-0.5">10:00 AM</p>
-                </div>
+            {(!data?.appointments || data.appointments.length === 0) ? (
+              <div className="text-center py-4 space-y-2 border border-dashed border-slate-200/30 dark:border-slate-700 rounded-[20px]">
+                <p className="text-xs text-slate-450 font-bold">No upcoming meetings scheduled</p>
+                <button
+                  onClick={() => router.push("/dashboard/working-professional/meetings")}
+                  className="px-3.5 py-1.5 rounded-xl bg-[#5F4EA5]/15 hover:bg-[#5F4EA5]/25 text-[#5F4EA5] font-black text-[9px] uppercase tracking-wider transition-all cursor-pointer"
+                >
+                  Schedule Meeting
+                </button>
               </div>
-
-              <div className="flex items-center justify-between p-3 rounded-2xl bg-slate-50/50 dark:bg-slate-850/30 border border-slate-200/30 dark:border-slate-800">
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-[#5F4EA5]/10 flex items-center justify-center text-[#5F4EA5] shrink-0">
-                    <span className="material-symbols-outlined text-base">calendar_today</span>
+            ) : (
+              <div className="space-y-3">
+                {data.appointments.slice(0, 3).map((appt: any) => (
+                  <div
+                    key={appt.id}
+                    className="flex items-center justify-between p-3 rounded-2xl bg-slate-50/50 dark:bg-slate-850/30 border border-slate-200/30 dark:border-slate-800"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-9 h-9 rounded-xl bg-[#5F4EA5]/10 flex items-center justify-center text-[#5F4EA5] shrink-0">
+                        <span className="material-symbols-outlined text-base">calendar_today</span>
+                      </div>
+                      <div>
+                        <h5 className="text-[11px] font-black text-[#100E26] dark:text-slate-100 leading-tight">
+                          {appt.doctor_name || appt.title || "Meeting"}
+                        </h5>
+                        <p className="text-[9px] text-slate-450 font-bold mt-0.5">
+                          {appt.doctor_title || appt.category || "Consultation"}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-[10px] font-extrabold text-[#100E26] dark:text-slate-200">
+                        {appt.appointment_date || "Upcoming"}
+                      </p>
+                      <p className="text-[9px] text-[#5F4EA5] font-black mt-0.5">
+                        {appt.appointment_time || ""}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <h5 className="text-[11px] font-black text-[#100E26] dark:text-slate-100 leading-tight">Client Review Meeting</h5>
-                    <p className="text-[9px] text-slate-450 font-bold mt-0.5">External Call</p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <p className="text-[10px] font-extrabold text-[#100E26] dark:text-slate-200">Fri, Aug 29</p>
-                  <p className="text-[9px] text-[#5F4EA5] font-black mt-0.5">04:00 PM</p>
-                </div>
+                ))}
               </div>
-            </div>
+            )}
           </div>
 
         </div>

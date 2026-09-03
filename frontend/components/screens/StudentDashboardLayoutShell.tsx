@@ -6,7 +6,7 @@ import { useStudentDashboard, StudentSidebar, StudentHeader, StudentModals, Leav
 import { ErrorBoundary } from "@/frontend/components/ui/ErrorBoundary";
 
 export default function StudentDashboardLayoutShell({ children }: { children: React.ReactNode }) {
-  const { isPrivacyPopupOpen, isLeaveModalOpen, setIsLeaveModalOpen, isLoading, error, fetchAllData, user } = useStudentDashboard();
+  const { isPrivacyPopupOpen, isLeaveModalOpen, setIsLeaveModalOpen, isLoading, data, error, fetchAllData, user } = useStudentDashboard();
   const pathname = usePathname();
 
   useEffect(() => {
@@ -28,7 +28,7 @@ export default function StudentDashboardLayoutShell({ children }: { children: Re
     return () => window.removeEventListener("popstate", handlePopState);
   }, [setIsLeaveModalOpen, user]);
 
-  if (isLoading) {
+  if (isLoading && !data) {
     return (
       <div className="min-h-screen w-full bg-[#F5FAFB] dark:bg-[#0D1F2D] flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-[#5F4EA5]" />

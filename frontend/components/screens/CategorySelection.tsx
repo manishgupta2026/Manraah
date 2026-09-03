@@ -16,10 +16,13 @@ export default function CategorySelection() {
 
   React.useEffect(() => {
     try {
+      const params = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : null;
+      const paramCat = params?.get("selected") || params?.get("category");
       const match = document.cookie.match(/(?:^|;\s*)userType=([^;]*)/);
-      if (match && match[1]) {
-        setSelectedCategory(match[1] as UserCategory);
-        setCategory(match[1]);
+      const cat = paramCat || (match && match[1]);
+      if (cat) {
+        setSelectedCategory(cat as UserCategory);
+        setCategory(cat);
       }
     } catch {
       // ignore

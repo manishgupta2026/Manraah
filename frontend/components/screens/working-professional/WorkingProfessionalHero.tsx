@@ -119,7 +119,7 @@ export default function WorkingProfessionalHero({
   };
 
   const timeDetails = getTimeDetails();
-  const displayName = sanctuaryName || "Ashutosh";
+  const displayName = sanctuaryName || "Member";
 
   const getTodayFormatted = () => {
     const d = new Date();

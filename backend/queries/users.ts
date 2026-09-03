@@ -4,11 +4,18 @@ import { sql } from "@/backend/db/client";
  * Encapsulated user-related Neon PostgreSQL queries
  */
 
-export async function getUserByEmail(email: string) {
-  const cleanEmail = email.trim().toLowerCase();
+let usersTableMigrated = false;
+async function ensureUsersTableMigrated() {
+  if (usersTableMigrated) return;
   try {
     await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS dashboard_state JSONB DEFAULT '{}'::jsonb`;
+    usersTableMigrated = true;
   } catch {}
+}
+
+export async function getUserByEmail(email: string) {
+  const cleanEmail = email.trim().toLowerCase();
+  await ensureUsersTableMigrated();
 
   const results = await sql`
     SELECT id, name, email, password_hash, sanctuary_name, avatar, selected_category, streak_days, mindfulness_minutes, current_mood, dashboard_state, onboarding_completed
@@ -20,9 +27,7 @@ export async function getUserByEmail(email: string) {
 }
 
 export async function getUserById(id: string) {
-  try {
-    await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS dashboard_state JSONB DEFAULT '{}'::jsonb`;
-  } catch {}
+  await ensureUsersTableMigrated();
 
   const results = await sql`
     SELECT id, name, email, sanctuary_name, avatar, selected_category, streak_days, mindfulness_minutes, current_mood, dashboard_state, onboarding_completed

@@ -1,7 +1,7 @@
 "use client";
 
-import DashboardScreen from "@/frontend/components/screens/DashboardScreen";
+import WorkingProfessionalDashboard from "@/frontend/components/screens/working-professional/WorkingProfessionalDashboard";
 
 export default function WorkingProfessionalDashboardPage() {
-  return <DashboardScreen />;
+  return <WorkingProfessionalDashboard />;
 }

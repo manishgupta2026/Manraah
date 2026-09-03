@@ -191,7 +191,7 @@ export default function DashboardScreen() {
 
   const { user, todayMood, streak, recommendation, insights } = dashboardData;
   const history = dashboardData.history || dashboardData.moodHistory || [];
-  const name = user?.sanctuaryName || user?.name || "Ashutosh Sahu";
+  const name = user?.sanctuaryName || user?.name || "Member";
 
   console.log("[Dashboard] [POINT 3 — after login] DB:", dashboardData?.user?.selectedCategory, "| session cookie:", sessionCategory, "| resolved:", category);
   const streakDays = typeof streak === "number" 
@@ -240,12 +240,12 @@ export default function DashboardScreen() {
     return `I noticed you haven't checked in today. Would you like to slow down and share how you feel?`;
   })();
 
-  if (category === "student") {
-    return <StudentDashboard />;
+  if (category === "working_professional" || category === "working-professional" || category === "young_pro" || category === "youngprofessional" || category.includes("working") || category.includes("prof")) {
+    return <WorkingProfessionalDashboard />;
   }
 
-  if (category === "working_professional" || category === "working-professional" || category === "young_pro" || category === "youngprofessional") {
-    return <WorkingProfessionalDashboard />;
+  if (category === "student") {
+    return <StudentDashboard />;
   }
 
   if (category === "parent" || category === "parents") {

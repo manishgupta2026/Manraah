@@ -6,92 +6,76 @@ import { recordUserLogin } from "@/backend/queries/streak";
 
 export const dynamic = "force-dynamic";
 
+let studentTablesInitialized = false;
+
 async function ensureStudentTablesExist() {
+  if (studentTablesInitialized) return;
   try {
-    // 1. student_tasks (Study Planner)
-    await sql`
-      CREATE TABLE IF NOT EXISTS student_tasks (
-        id SERIAL PRIMARY KEY,
-        user_id VARCHAR(100) NOT NULL,
-        subject VARCHAR(255) NOT NULL,
-        task_title VARCHAR(255) NOT NULL,
-        priority VARCHAR(50) DEFAULT 'Medium',
-        due_date TIMESTAMP WITH TIME ZONE NOT NULL,
-        estimated_duration INT DEFAULT 30, -- minutes
-        completed BOOLEAN DEFAULT FALSE,
-        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-      )
-    `;
-
-    // 2. student_exams (Exam Tracker)
-    await sql`
-      CREATE TABLE IF NOT EXISTS student_exams (
-        id SERIAL PRIMARY KEY,
-        user_id VARCHAR(100) NOT NULL,
-        exam_name VARCHAR(255) NOT NULL,
-        subject VARCHAR(255) NOT NULL,
-        exam_date TIMESTAMP WITH TIME ZONE NOT NULL,
-        exam_time VARCHAR(50) DEFAULT '09:00 AM',
-        priority VARCHAR(50) DEFAULT 'Medium',
-        prep_progress INT DEFAULT 0,
-        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-      )
-    `;
-
-    // 3. student_focus_sessions (Focus Timer)
-    await sql`
-      CREATE TABLE IF NOT EXISTS student_focus_sessions (
-        id SERIAL PRIMARY KEY,
-        user_id VARCHAR(100) NOT NULL,
-        duration_minutes INT NOT NULL,
-        start_time TIMESTAMP WITH TIME ZONE,
-        end_time TIMESTAMP WITH TIME ZONE,
-        status VARCHAR(50) DEFAULT 'COMPLETED',
-        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-      )
-    `;
-    try {
-      await sql`ALTER TABLE student_focus_sessions ADD COLUMN IF NOT EXISTS start_time TIMESTAMP WITH TIME ZONE`;
-      await sql`ALTER TABLE student_focus_sessions ADD COLUMN IF NOT EXISTS end_time TIMESTAMP WITH TIME ZONE`;
-      await sql`ALTER TABLE student_focus_sessions ADD COLUMN IF NOT EXISTS status VARCHAR(50) DEFAULT 'COMPLETED'`;
-    } catch (e) {}
-
-    // 4. student_sleep_records (Sleep Quality)
-    await sql`
-      CREATE TABLE IF NOT EXISTS student_sleep_records (
-        id SERIAL PRIMARY KEY,
-        user_id VARCHAR(100) NOT NULL,
-        sleep_time TIMESTAMP WITH TIME ZONE,
-        white_time TIMESTAMP WITH TIME ZONE, -- wake_time, but let's name column properly
-        wake_time TIMESTAMP WITH TIME ZONE,
-        duration_minutes INT DEFAULT 480,
-        quality_score INT DEFAULT 78,
-        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-      )
-    `;
-    try {
-      await sql`ALTER TABLE student_sleep_records ADD COLUMN IF NOT EXISTS wake_time TIMESTAMP WITH TIME ZONE`;
-    } catch (e) {}
-
-    // 5. student_appointments (Upcoming Consultation)
-    await sql`
-      CREATE TABLE IF NOT EXISTS student_appointments (
-        id SERIAL PRIMARY KEY,
-        user_id VARCHAR(100) NOT NULL,
-        doctor_name VARCHAR(255) NOT NULL,
-        doctor_title VARCHAR(255) NOT NULL,
-        doctor_avatar VARCHAR(255) NOT NULL,
-        appointment_date TIMESTAMP WITH TIME ZONE NOT NULL,
-        appointment_time VARCHAR(50) NOT NULL,
-        status VARCHAR(50) DEFAULT 'ACTIVE',
-        video_call_url VARCHAR(255),
-        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-      )
-    `;
-    try {
-      await sql`ALTER TABLE daily_checkins ADD COLUMN IF NOT EXISTS checkin_date DATE DEFAULT CURRENT_DATE`;
-      await sql`ALTER TABLE daily_checkins ADD CONSTRAINT unique_user_daily_checkin_date UNIQUE (user_id, checkin_date)`;
-    } catch (e) {}
+    await Promise.all([
+      sql`
+        CREATE TABLE IF NOT EXISTS student_tasks (
+          id SERIAL PRIMARY KEY,
+          user_id VARCHAR(100) NOT NULL,
+          subject VARCHAR(255) NOT NULL,
+          task_title VARCHAR(255) NOT NULL,
+          priority VARCHAR(50) DEFAULT 'Medium',
+          due_date TIMESTAMP WITH TIME ZONE NOT NULL,
+          estimated_duration INT DEFAULT 30,
+          completed BOOLEAN DEFAULT FALSE,
+          created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+        )
+      `,
+      sql`
+        CREATE TABLE IF NOT EXISTS student_exams (
+          id SERIAL PRIMARY KEY,
+          user_id VARCHAR(100) NOT NULL,
+          exam_name VARCHAR(255) NOT NULL,
+          subject VARCHAR(255) NOT NULL,
+          exam_date TIMESTAMP WITH TIME ZONE NOT NULL,
+          exam_time VARCHAR(50) DEFAULT '09:00 AM',
+          priority VARCHAR(50) DEFAULT 'Medium',
+          prep_progress INT DEFAULT 0,
+          created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+        )
+      `,
+      sql`
+        CREATE TABLE IF NOT EXISTS student_focus_sessions (
+          id SERIAL PRIMARY KEY,
+          user_id VARCHAR(100) NOT NULL,
+          duration_minutes INT NOT NULL,
+          start_time TIMESTAMP WITH TIME ZONE,
+          end_time TIMESTAMP WITH TIME ZONE,
+          status VARCHAR(50) DEFAULT 'COMPLETED',
+          created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+        )
+      `,
+      sql`
+        CREATE TABLE IF NOT EXISTS student_sleep_records (
+          id SERIAL PRIMARY KEY,
+          user_id VARCHAR(100) NOT NULL,
+          sleep_time TIMESTAMP WITH TIME ZONE,
+          wake_time TIMESTAMP WITH TIME ZONE,
+          duration_minutes INT DEFAULT 480,
+          quality_score INT DEFAULT 78,
+          created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+        )
+      `,
+      sql`
+        CREATE TABLE IF NOT EXISTS student_appointments (
+          id SERIAL PRIMARY KEY,
+          user_id VARCHAR(100) NOT NULL,
+          doctor_name VARCHAR(255) NOT NULL,
+          doctor_title VARCHAR(255) NOT NULL,
+          doctor_avatar VARCHAR(255) NOT NULL,
+          appointment_date TIMESTAMP WITH TIME ZONE NOT NULL,
+          appointment_time VARCHAR(50) NOT NULL,
+          status VARCHAR(50) DEFAULT 'ACTIVE',
+          video_call_url VARCHAR(255),
+          created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+        )
+      `,
+    ]);
+    studentTablesInitialized = true;
   } catch (err) {
     console.error("Failed to verify/create student tables:", err);
   }
@@ -221,7 +205,7 @@ export async function GET(req: Request) {
       duration: totalDurationToday,
     };
 
-    // 4. Seed default/fetch study tasks (Planner)
+    // 4. Fetch study tasks (Planner)
     let tasks: any[] = [];
     try {
       tasks = await sql`
@@ -230,33 +214,16 @@ export async function GET(req: Request) {
         WHERE user_id = ${user.id}
         ORDER BY completed ASC, due_date ASC
       `;
-
-      if (tasks.length === 0) {
-        const today = new Date();
-        await sql`
-          INSERT INTO student_tasks (user_id, subject, task_title, priority, due_date, estimated_duration, completed)
-          VALUES 
-          (${user.id}, 'Physics', 'Read Chapter 4 on Thermodynamics', 'High', ${today.toISOString()}, 45, false),
-          (${user.id}, 'Chemistry', 'Complete Lab Report Draft', 'Medium', ${today.toISOString()}, 60, false),
-          (${user.id}, 'Mathematics', 'Solve Calculus Practice Set 2', 'Low', ${today.toISOString()}, 30, true)
-        `;
-        tasks = await sql`
-          SELECT id, subject, task_title as title, priority, due_date as date, estimated_duration as duration, completed
-          FROM student_tasks
-          WHERE user_id = ${user.id}
-          ORDER BY completed ASC, due_date ASC
-        `;
-      }
       tasks = tasks.map((t: any) => ({
         ...t,
         due_date: t.date,
         duration_minutes: t.duration
       }));
     } catch (e) {
-      console.error("tasks fetch/seed error:", e);
+      console.error("tasks fetch error:", e);
     }
 
-    // 5. Seed default/fetch exams
+    // 5. Fetch exams
     let exams: any[] = [];
     try {
       exams = await sql`
@@ -265,26 +232,6 @@ export async function GET(req: Request) {
         WHERE user_id = ${user.id}
         ORDER BY exam_date ASC
       `;
-
-      if (exams.length === 0) {
-        const physicsDate = new Date();
-        physicsDate.setDate(physicsDate.getDate() + 6);
-        const mathDate = new Date();
-        mathDate.setDate(mathDate.getDate() + 2);
-
-        await sql`
-          INSERT INTO student_exams (user_id, exam_name, subject, exam_date, exam_time, priority, prep_progress)
-          VALUES 
-          (${user.id}, 'Physics Midterm', 'Physics', ${physicsDate.toISOString()}, '10:00 AM', 'High', 72),
-          (${user.id}, 'Math Quiz', 'Mathematics', ${mathDate.toISOString()}, '02:00 PM', 'Medium', 40)
-        `;
-        exams = await sql`
-          SELECT id, exam_name as name, subject, exam_date as date, exam_time as time, priority, prep_progress as progress
-          FROM student_exams
-          WHERE user_id = ${user.id}
-          ORDER BY exam_date ASC
-        `;
-      }
 
       // Adjust days_left dynamically
       exams = exams.map((ex: any) => {
@@ -299,10 +246,10 @@ export async function GET(req: Request) {
         };
       });
     } catch (e) {
-      console.error("exams fetch/seed error:", e);
+      console.error("exams fetch error:", e);
     }
 
-    // 6. Seed default/fetch upcoming appointments
+    // 6. Fetch upcoming appointments
     let appointments: any[] = [];
     try {
       appointments = await sql`
@@ -316,39 +263,19 @@ export async function GET(req: Request) {
       console.error("appointments fetch error:", e);
     }
 
-    // 7. Seed default/fetch sleep records
+    // 7. Fetch sleep records
     let sleepRecord = null;
     try {
-      let sleepResult = await sql`
+      const sleepResult = await sql`
         SELECT id, sleep_time, wake_time, duration_minutes as duration, quality_score as score
         FROM student_sleep_records
         WHERE user_id = ${user.id}
         ORDER BY created_at DESC
         LIMIT 1
       `;
-
-      if (sleepResult.length === 0) {
-        const yesterday = new Date();
-        yesterday.setDate(yesterday.getDate() - 1);
-        yesterday.setHours(22, 30, 0, 0); // 10:30 PM
-        const todayWake = new Date();
-        todayWake.setHours(6, 45, 0, 0); // 6:45 AM (8h 15m)
-
-        await sql`
-          INSERT INTO student_sleep_records (user_id, sleep_time, wake_time, duration_minutes, quality_score)
-          VALUES (${user.id}, ${yesterday.toISOString()}, ${todayWake.toISOString()}, 495, 78)
-        `;
-        sleepResult = await sql`
-          SELECT id, sleep_time, wake_time, duration_minutes as duration, quality_score as score
-          FROM student_sleep_records
-          WHERE user_id = ${user.id}
-          ORDER BY created_at DESC
-          LIMIT 1
-        `;
-      }
-      sleepRecord = sleepResult[0] || null;
+      sleepRecord = sleepResult.length > 0 ? sleepResult[0] : null;
     } catch (e) {
-      console.error("sleepRecords fetch/seed error:", e);
+      console.error("sleepResult fetch error:", e);
     }
 
     // 8. Dynamic Wellness Score calculation

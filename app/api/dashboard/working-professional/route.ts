@@ -5,97 +5,92 @@ import { calculateWellnessScore, normalizeStress } from "@/backend/lib/wellness-
 
 export const dynamic = "force-dynamic";
 
+let wpTablesInitialized = false;
+
 async function ensureWpTablesExist() {
-  // 1. wp_appointments
-  await sql`
-    CREATE TABLE IF NOT EXISTS wp_appointments (
-      id SERIAL PRIMARY KEY,
-      user_id VARCHAR(100) NOT NULL,
-      doctor_name VARCHAR(100) NOT NULL,
-      doctor_title VARCHAR(100) NOT NULL,
-      doctor_avatar VARCHAR(255),
-      appointment_date DATE NOT NULL,
-      appointment_time VARCHAR(20) NOT NULL,
-      status VARCHAR(50) DEFAULT 'SCHEDULED',
-      video_call_url VARCHAR(255),
-      created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-    )
-  `;
+  if (wpTablesInitialized) return;
 
-  // 2. wp_goals
-  await sql`
-    CREATE TABLE IF NOT EXISTS wp_goals (
-      id SERIAL PRIMARY KEY,
-      user_id VARCHAR(100) NOT NULL,
-      title VARCHAR(255) NOT NULL,
-      completed BOOLEAN DEFAULT FALSE,
-      created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-    )
-  `;
-  await sql`ALTER TABLE wp_goals ADD COLUMN IF NOT EXISTS description VARCHAR(255)`;
-  await sql`ALTER TABLE wp_goals ADD COLUMN IF NOT EXISTS completed_at TIMESTAMP WITH TIME ZONE`;
-  await sql`ALTER TABLE wp_goals ADD COLUMN IF NOT EXISTS priority VARCHAR(50) DEFAULT 'Medium'`;
-  await sql`ALTER TABLE wp_goals ADD COLUMN IF NOT EXISTS due_date VARCHAR(100)`;
-
-  // 3. wp_focus_sessions
-  await sql`
-    CREATE TABLE IF NOT EXISTS wp_focus_sessions (
-      id SERIAL PRIMARY KEY,
-      user_id VARCHAR(100) NOT NULL,
-      duration_minutes INT NOT NULL,
-      start_time TIMESTAMP WITH TIME ZONE,
-      end_time TIMESTAMP WITH TIME ZONE,
-      status VARCHAR(50) DEFAULT 'COMPLETED',
-      created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-    )
-  `;
-
-  // 4. wp_sleep_records
-  await sql`
-    CREATE TABLE IF NOT EXISTS wp_sleep_records (
-      id SERIAL PRIMARY KEY,
-      user_id VARCHAR(100) NOT NULL,
-      duration_minutes INT DEFAULT 480,
-      quality_score INT DEFAULT 78,
-      created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-    )
-  `;
-
-  // Add bedtime and wake_time columns if not present
-  await sql`ALTER TABLE wp_sleep_records ADD COLUMN IF NOT EXISTS bedtime VARCHAR(50)`;
-  await sql`ALTER TABLE wp_sleep_records ADD COLUMN IF NOT EXISTS wake_time VARCHAR(50)`;
-
-  // 5. wp_schedule_events
-  await sql`
-    CREATE TABLE IF NOT EXISTS wp_schedule_events (
-      id SERIAL PRIMARY KEY,
-      user_id VARCHAR(100) NOT NULL,
-      title VARCHAR(255) NOT NULL,
-      description TEXT,
-      category VARCHAR(100),
-      location VARCHAR(255),
-      start_time VARCHAR(20) NOT NULL,
-      end_time VARCHAR(20) NOT NULL,
-      event_date DATE NOT NULL,
-      created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-    )
-  `;
-  await sql`ALTER TABLE wp_schedule_events ADD COLUMN IF NOT EXISTS description TEXT`;
-  await sql`ALTER TABLE wp_schedule_events ADD COLUMN IF NOT EXISTS category VARCHAR(100)`;
-  await sql`ALTER TABLE wp_schedule_events ADD COLUMN IF NOT EXISTS location VARCHAR(255)`;
-
-  // 6. wp_work_life_records
-  await sql`
-    CREATE TABLE IF NOT EXISTS wp_work_life_records (
-      id SERIAL PRIMARY KEY,
-      user_id VARCHAR(100) NOT NULL,
-      work_val INT NOT NULL DEFAULT 70,
-      personal_val INT NOT NULL DEFAULT 80,
-      recovery_val INT NOT NULL DEFAULT 60,
-      balance_score INT NOT NULL DEFAULT 70,
-      created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-    )
-  `;
+  try {
+    await Promise.all([
+      sql`
+        CREATE TABLE IF NOT EXISTS wp_appointments (
+          id SERIAL PRIMARY KEY,
+          user_id VARCHAR(100) NOT NULL,
+          doctor_name VARCHAR(100) NOT NULL,
+          doctor_title VARCHAR(100) NOT NULL,
+          doctor_avatar VARCHAR(255),
+          appointment_date DATE NOT NULL,
+          appointment_time VARCHAR(20) NOT NULL,
+          status VARCHAR(50) DEFAULT 'SCHEDULED',
+          video_call_url VARCHAR(255),
+          created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+        )
+      `,
+      sql`
+        CREATE TABLE IF NOT EXISTS wp_goals (
+          id SERIAL PRIMARY KEY,
+          user_id VARCHAR(100) NOT NULL,
+          title VARCHAR(255) NOT NULL,
+          description VARCHAR(255),
+          completed_at TIMESTAMP WITH TIME ZONE,
+          priority VARCHAR(50) DEFAULT 'Medium',
+          due_date VARCHAR(100),
+          completed BOOLEAN DEFAULT FALSE,
+          created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+        )
+      `,
+      sql`
+        CREATE TABLE IF NOT EXISTS wp_focus_sessions (
+          id SERIAL PRIMARY KEY,
+          user_id VARCHAR(100) NOT NULL,
+          duration_minutes INT NOT NULL,
+          start_time TIMESTAMP WITH TIME ZONE,
+          end_time TIMESTAMP WITH TIME ZONE,
+          status VARCHAR(50) DEFAULT 'COMPLETED',
+          created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+        )
+      `,
+      sql`
+        CREATE TABLE IF NOT EXISTS wp_sleep_records (
+          id SERIAL PRIMARY KEY,
+          user_id VARCHAR(100) NOT NULL,
+          duration_minutes INT DEFAULT 480,
+          quality_score INT DEFAULT 78,
+          bedtime VARCHAR(50),
+          wake_time VARCHAR(50),
+          created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+        )
+      `,
+      sql`
+        CREATE TABLE IF NOT EXISTS wp_schedule_events (
+          id SERIAL PRIMARY KEY,
+          user_id VARCHAR(100) NOT NULL,
+          title VARCHAR(255) NOT NULL,
+          description TEXT,
+          category VARCHAR(100),
+          location VARCHAR(255),
+          start_time VARCHAR(20) NOT NULL,
+          end_time VARCHAR(20) NOT NULL,
+          event_date DATE NOT NULL,
+          created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+        )
+      `,
+      sql`
+        CREATE TABLE IF NOT EXISTS wp_work_life_records (
+          id SERIAL PRIMARY KEY,
+          user_id VARCHAR(100) NOT NULL,
+          work_val INT NOT NULL DEFAULT 70,
+          personal_val INT NOT NULL DEFAULT 80,
+          recovery_val INT NOT NULL DEFAULT 60,
+          balance_score INT NOT NULL DEFAULT 70,
+          created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+        )
+      `,
+    ]);
+    wpTablesInitialized = true;
+  } catch (e) {
+    console.error("ensureWpTablesExist error:", e);
+  }
 }
 
 export async function GET(req: Request) {
@@ -177,100 +172,101 @@ export async function GET(req: Request) {
 
     const preferredName = user.name || user.sanctuary_name || "Sanctuary Member";
 
-    // Run table setup & seed
-    await ensureWpTablesExist();
-
-    // Seed default appointments if empty
-    const appointmentsCheck = await sql`
-      SELECT id FROM wp_appointments WHERE user_id = ${user.id} LIMIT 1
-    `;
-    if (appointmentsCheck.length === 0) {
-      const tomorrow = new Date();
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      const tomorrowStr = tomorrow.toISOString().split("T")[0];
-      await sql`
-        INSERT INTO wp_appointments (user_id, doctor_name, doctor_title, doctor_avatar, appointment_date, appointment_time, status, video_call_url)
-        VALUES (${user.id}, 'Dr. Sarah Jenkins', 'Workplace Wellness Consultant', '/images/therapist_sarah.jpg', ${tomorrowStr}, '09:00 PM', 'SCHEDULED', 'https://meet.google.com/abc-defg-hij')
-      `;
+    // Fast non-blocking table check if not yet initialized
+    if (!wpTablesInitialized) {
+      await ensureWpTablesExist();
     }
 
-    // Seed default goals if empty
-    const goalsCheck = await sql`
-      SELECT id FROM wp_goals WHERE user_id = ${user.id} LIMIT 1
-    `;
-    if (goalsCheck.length === 0) {
-      await sql`
-        INSERT INTO wp_goals (user_id, title, priority, due_date, completed) VALUES
-        (${user.id}, 'Prepare Q2 Business Report', 'High', 'Today, 05:00 PM', false),
-        (${user.id}, 'Team Stand-up & Project Sync', 'Medium', 'Today, 11:00 AM', false),
-        (${user.id}, 'Review Emails & Follow-ups', 'Low', 'Today, 03:30 PM', false),
-        (${user.id}, 'Take 2 mindful breaks', 'Low', 'Today, 06:00 PM', true)
-      `;
-    }
-
-    // Seed default schedule events if empty
-    const scheduleCheck = await sql`
-      SELECT id FROM wp_schedule_events WHERE user_id = ${user.id} LIMIT 1
-    `;
-    if (scheduleCheck.length === 0) {
-      await sql`
-        INSERT INTO wp_schedule_events (user_id, title, start_time, end_time, event_date) VALUES
-        (${user.id}, 'STRESS RESET', '10:00 AM', '10:15 AM', CURRENT_DATE),
-        (${user.id}, 'MINDFULNESS BREAK', '01:30 PM', '01:40 PM', CURRENT_DATE),
-        (${user.id}, 'WORK DECOMPRESSION', '06:30 PM', '06:45 PM', CURRENT_DATE)
-      `;
-    }
-
-    // Seed default work-life balance if empty
-    const workLifeCheck = await sql`
-      SELECT id FROM wp_work_life_records WHERE user_id = ${user.id} LIMIT 1
-    `;
-    if (workLifeCheck.length === 0) {
-      await sql`
-        INSERT INTO wp_work_life_records (user_id, work_val, personal_val, recovery_val, balance_score)
-        VALUES (${user.id}, 70, 80, 60, 70)
-      `;
-    }
-
-    // 2. Fetch Check-ins History (from daily_checkins & mood_entries)
-    const rawCheckins = await sql`
-      SELECT 
-        id, 
-        user_id, 
-        mood, 
-        energy_level as energy, 
-        sleep_quality, 
-        stress, 
-        work_life_balance, 
-        note, 
-        created_at
-      FROM daily_checkins
-      WHERE user_id = ${user.id}
-      ORDER BY created_at DESC
-      LIMIT 14
-    `;
-
-    // Also fetch from mood_entries if daily_checkins is empty
-    let history = rawCheckins;
-    if (history.length === 0) {
-      const moodHistory = await sql`
-        SELECT 
-          id, 
-          user_id, 
-          mood, 
-          energy, 
-          COALESCE(sleep_quality, 3) as sleep_quality, 
-          stress, 
-          COALESCE(work_life_balance, 3) as work_life_balance, 
-          reflection as note, 
-          created_at
-        FROM mood_entries
+    // 2. Fetch all data concurrently in ONE Promise.all
+    const [
+      rawCheckins,
+      focusWeek,
+      sleepRecords,
+      scheduleEventsResult,
+      workLifeRecordsResult,
+      recentReflections,
+      sessionsResult,
+      appointmentsResult,
+      goalsResult,
+    ] = await Promise.all([
+      sql`
+        SELECT id, user_id, mood, energy_level as energy, sleep_quality, stress, work_life_balance, note, created_at
+        FROM daily_checkins
         WHERE user_id = ${user.id}
         ORDER BY created_at DESC
         LIMIT 14
-      `;
-      history = moodHistory;
+      `,
+      sql`
+        SELECT duration_minutes, created_at
+        FROM wp_focus_sessions
+        WHERE user_id = ${user.id} AND created_at >= CURRENT_DATE - INTERVAL '7 days'
+      `,
+      sql`
+        SELECT duration_minutes, quality_score, bedtime, wake_time, created_at
+        FROM wp_sleep_records
+        WHERE user_id = ${user.id}
+        ORDER BY created_at DESC
+        LIMIT 7
+      `,
+      sql`
+        SELECT id, title, start_time, end_time, event_date
+        FROM wp_schedule_events
+        WHERE user_id = ${user.id}
+        ORDER BY event_date ASC, start_time ASC
+      `,
+      sql`
+        SELECT id, work_val, personal_val, recovery_val, balance_score, created_at
+        FROM wp_work_life_records
+        WHERE user_id = ${user.id}
+        ORDER BY created_at DESC
+        LIMIT 7
+      `,
+      sql`
+        SELECT id, title, excerpt, content, mood_tag, category, created_at 
+        FROM journal_entries 
+        WHERE user_id = ${user.id} 
+        ORDER BY created_at DESC 
+        LIMIT 10
+      `,
+      sql`
+        SELECT count(*) as count
+        FROM activity_sessions
+        WHERE user_id = ${user.id} AND completed = true
+      `,
+      sql`
+        SELECT id, doctor_name, doctor_title, doctor_avatar, appointment_date, appointment_time, status, video_call_url
+        FROM wp_appointments
+        WHERE user_id = ${user.id} AND status = 'SCHEDULED'
+        ORDER BY appointment_date ASC, appointment_time ASC
+      `,
+      sql`
+        SELECT id, title, priority, due_date, completed, created_at
+        FROM wp_goals
+        WHERE user_id = ${user.id}
+        ORDER BY created_at ASC
+      `,
+    ]);
+
+    // Handle checkins fallback to mood_entries if daily_checkins is empty
+    let history = rawCheckins;
+    if (history.length === 0) {
+      try {
+        const moodHistory = await sql`
+          SELECT id, user_id, mood, energy, COALESCE(sleep_quality, 3) as sleep_quality, stress, COALESCE(work_life_balance, 3) as work_life_balance, reflection as note, created_at
+          FROM mood_entries
+          WHERE user_id = ${user.id}
+          ORDER BY created_at DESC
+          LIMIT 14
+        `;
+        history = moodHistory;
+      } catch (e) {}
     }
+
+    // Real data arrays directly from DB (empty array if no records logged yet)
+    const appointments = appointmentsResult || [];
+    const goals = goalsResult || [];
+    const scheduleEvents = scheduleEventsResult || [];
+    const workLifeRecords = workLifeRecordsResult || [];
 
     // 3. Today's Check-in
     const latestCheckin = history.length > 0 ? history[0] : null;
@@ -280,44 +276,11 @@ export async function GET(req: Request) {
     const todayCheckin = isToday ? latestCheckin : null;
 
     // 4. Calculate Dynamic Wellness Score
-    let wellnessScoreObj = null;
-
-    // Fetch focus sessions completed today & weekly
-    const focusWeek = await sql`
-      SELECT duration_minutes, created_at
-      FROM wp_focus_sessions
-      WHERE user_id = ${user.id} AND created_at >= CURRENT_DATE - INTERVAL '7 days'
-    `;
-    const completedFocusMinutes = focusWeek.reduce((acc: number, f: any) => acc + f.duration_minutes, 0);
-
-    // Fetch sleep records
-    const sleepRecords = await sql`
-      SELECT duration_minutes, quality_score, bedtime, wake_time, created_at
-      FROM wp_sleep_records
-      WHERE user_id = ${user.id}
-      ORDER BY created_at DESC
-      LIMIT 7
-    `;
+    const completedFocusMinutes = focusWeek.reduce((acc: number, f: any) => acc + (f.duration_minutes || 0), 0);
     const latestSleep = sleepRecords[0] || null;
-
-    // Fetch schedule events
-    const scheduleEvents = await sql`
-      SELECT id, title, start_time, end_time, event_date
-      FROM wp_schedule_events
-      WHERE user_id = ${user.id}
-      ORDER BY event_date ASC, start_time ASC
-    `;
-
-    // Fetch work-life balance records (get the latest one)
-    const workLifeRecords = await sql`
-      SELECT id, work_val, personal_val, recovery_val, balance_score, created_at
-      FROM wp_work_life_records
-      WHERE user_id = ${user.id}
-      ORDER BY created_at DESC
-      LIMIT 7
-    `;
     const workLife = workLifeRecords[0] || { work_val: 70, personal_val: 80, recovery_val: 60, balance_score: 70 };
 
+    let wellnessScoreObj = null;
     if (history.length > 0) {
       const activeEntry = todayCheckin || history[0];
       const result = calculateWellnessScore({
@@ -336,7 +299,6 @@ export async function GET(req: Request) {
       const currentScore = Math.round((mindVal + stressScoreVal + sleepVal + balanceVal) / 4);
       const scoreLevel = currentScore >= 85 ? "Thriving" : currentScore >= 70 ? "Good" : currentScore >= 50 ? "Stable" : "Needs Care";
       
-      // Calculate past week average comparison if more than 1 entry exists
       let deltaVsLastWeek = 0;
       if (history.length > 1) {
         const pastEntries = history.slice(1);
@@ -367,7 +329,6 @@ export async function GET(req: Request) {
         delta: deltaVsLastWeek,
       };
     } else {
-      // Return default values for user with no history
       wellnessScoreObj = {
         score: 70,
         level: "STABLE",
@@ -401,38 +362,7 @@ export async function GET(req: Request) {
     }
     const streakDays = Math.max(1, calculatedStreak || user.streak_days || 1);
 
-    // 6. Fetch Recent Journal Reflections
-    const recentReflections = await sql`
-      SELECT id, title, excerpt, content, mood_tag, category, created_at 
-      FROM journal_entries 
-      WHERE user_id = ${user.id} 
-      ORDER BY created_at DESC 
-      LIMIT 10
-    `;
-
-    // 7. Activity Sessions (Decompression / Reset)
-    const sessionsResult = await sql`
-      SELECT count(*) as count
-      FROM activity_sessions
-      WHERE user_id = ${user.id} AND completed = true
-    `;
     const completedSessionsCount = parseInt(sessionsResult[0]?.count || "0", 10);
-
-    // Fetch upcoming appointments
-    const appointments = await sql`
-      SELECT id, doctor_name, doctor_title, doctor_avatar, appointment_date, appointment_time, status, video_call_url
-      FROM wp_appointments
-      WHERE user_id = ${user.id} AND status = 'SCHEDULED'
-      ORDER BY appointment_date ASC, appointment_time ASC
-    `;
-
-    // Fetch goals
-    const goals = await sql`
-      SELECT id, title, priority, due_date, completed, created_at
-      FROM wp_goals
-      WHERE user_id = ${user.id}
-      ORDER BY created_at ASC
-    `;
 
     // Burnout risk calculation
     let burnoutRisk = "LOW";
@@ -451,7 +381,7 @@ export async function GET(req: Request) {
 
     // Recommendation & motivation quote
     let recommendation = "Take a short reset after work to mentally transition into your personal time.";
-    let motivation = "Your sanctuary is here to support you at every step.";
+    let motivation = "Your private space is here to support you at every step.";
     if (todayCheckin) {
       const moodLower = todayCheckin.mood.toLowerCase();
       if (moodLower === "stressed" || moodLower === "overwhelmed") {
@@ -463,7 +393,7 @@ export async function GET(req: Request) {
       }
     }
 
-    // 8. Construct Response Payload
+    // 6. Construct and return response
     return NextResponse.json({
       user: {
         id: user.id,

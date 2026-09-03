@@ -1,7 +1,13 @@
 "use client";
 
-import DashboardScreen from "@/frontend/components/screens/DashboardScreen";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import WorkingProfessionalDashboard from "@/frontend/components/screens/working-professional/WorkingProfessionalDashboard";
 
 export default function WorkingProfessionalUnderscoreDashboardPage() {
-  return <DashboardScreen />;
+  const router = useRouter();
+  useEffect(() => {
+    router.replace("/dashboard/working-professional");
+  }, [router]);
+  return <WorkingProfessionalDashboard />;
 }

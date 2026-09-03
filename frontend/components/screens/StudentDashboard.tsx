@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, createContext, useContext } from "react";
+import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { getClientSession } from "@/backend/auth/client";
@@ -169,6 +170,8 @@ export function useStudentDashboard() {
   return useContext(StudentDashboardContext);
 }
 
+let memoryDashboardCache: any = null;
+
 export function StudentDashboardProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -178,8 +181,17 @@ export function StudentDashboardProvider({ children }: { children: React.ReactNo
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
 
   // --- States ---
-  const [data, setData] = useState<any>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [data, setData] = useState<any>(() => {
+    if (memoryDashboardCache) return memoryDashboardCache;
+    if (typeof window !== "undefined") {
+      try {
+        const local = localStorage.getItem("manraah_dashboard_cache");
+        if (local) return JSON.parse(local);
+      } catch {}
+    }
+    return null;
+  });
+  const [isLoading, setIsLoading] = useState(() => !memoryDashboardCache);
   const [error, setError] = useState<string | null>(null);
 
   // --- Student Onboarding States ---
@@ -465,9 +477,10 @@ export function StudentDashboardProvider({ children }: { children: React.ReactNo
   const fetchAllData = async () => {
     try {
       const localDate = getLocalDateString();
+      const isWpPath = pathname?.includes("working-professional") || pathname?.includes("working_professional");
       const session = typeof window !== "undefined" ? JSON.parse(localStorage.getItem("manraah_auth_session") || "null") : null;
-      const category = (session?.user?.selectedCategory || "student").toLowerCase().trim();
-      const isWp = category.includes("working") || category.includes("prof");
+      const category = (session?.user?.selectedCategory || (isWpPath ? "working-professional" : "student")).toLowerCase().trim();
+      const isWp = isWpPath || category.includes("working") || category.includes("prof");
       
       const apiEndpoint = isWp 
         ? `/api/dashboard/working-professional?localDate=${localDate}` 
@@ -482,15 +495,23 @@ export function StudentDashboardProvider({ children }: { children: React.ReactNo
       }
 
       if (res.status === 403 || json.redirect) {
-        const targetRoute = json.redirect || getCategoryDashboardRoute(json.category);
-        router.replace(targetRoute);
-        return;
+        if (!isWpPath || !json.redirect?.includes("student")) {
+          const targetRoute = json.redirect || getCategoryDashboardRoute(json.category);
+          router.replace(targetRoute);
+          return;
+        }
       }
 
       if (!res.ok) {
         throw new Error(json.error || "Failed to load Dashboard payload.");
       }
       
+      memoryDashboardCache = json;
+      if (typeof window !== "undefined") {
+        try {
+          localStorage.setItem("manraah_dashboard_cache", JSON.stringify(json));
+        } catch {}
+      }
       setData(json);
       setTasks(isWp ? (json.goals || []) : (json.tasks || []));
       setExams(isWp ? (json.appointments || []) : (json.exams || []));
@@ -2034,9 +2055,12 @@ export function StudentSidebar() {
   };
 
   const session = typeof window !== "undefined" ? JSON.parse(localStorage.getItem("manraah_auth_session") || "null") : null;
-  const category = (session?.user?.selectedCategory || user?.selectedCategory || "student").toLowerCase().trim();
-  const isStudent = category === "student";
-  const categorySlug = category === "working_professional" ? "working-professional" : category;
+  const isWpPath = pathname?.includes("working-professional") || pathname?.includes("working_professional");
+  const category = isWpPath 
+    ? "working-professional" 
+    : (session?.user?.selectedCategory || user?.selectedCategory || "student").toLowerCase().trim();
+  const isStudent = !isWpPath && category === "student";
+  const categorySlug = isWpPath ? "working-professional" : (category === "working_professional" ? "working-professional" : category);
 
   const groups = isStudent
     ? [
@@ -2172,9 +2196,10 @@ export function StudentSidebar() {
                 {group.items.map((item, idx) => {
                   const isActive = pathname === item.href || (item.href !== `/dashboard/${categorySlug}` && pathname.startsWith(item.href));
                   return (
-                    <button
+                    <Link
                       key={idx}
-                      onClick={() => router.push(item.href)}
+                      href={item.href}
+                      prefetch={true}
                       aria-label={item.label}
                       className={`w-full flex items-center h-[38px] px-3 gap-0 rounded-xl transition-all duration-200 group/item relative select-none cursor-pointer ${
                         isHovered ? "justify-start" : "justify-center"
@@ -2200,7 +2225,7 @@ export function StudentSidebar() {
                       >
                         {item.label}
                       </span>
-                    </button>
+                    </Link>
                   );
                 })}
               </div>

@@ -1,16 +1,23 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "@/backend/auth/client";
 import { FormInput } from "@/frontend/components/ui/FormInput";
 import { motion } from "framer-motion";
 import { getCategoryDashboardRoute } from "@/frontend/lib/category-routes";
 import { useAssessment } from "@/frontend/lib/context/AssessmentContext";
 
+function readCookie(name: string): string | null {
+  if (typeof document === "undefined") return null;
+  const match = document.cookie.match(new RegExp(`(?:^|;\\s*)${name}=([^;]*)`));
+  return match ? decodeURIComponent(match[1]) : null;
+}
+
 export default function LoginScreen() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { selectedCategory, detailedAnswers, computedScore, assessmentResult } = useAssessment();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -33,10 +40,14 @@ export default function LoginScreen() {
 
     setLoading(true);
     try {
+      const queryCat = searchParams?.get("category") || searchParams?.get("selected") || "";
+      const cookieCat = readCookie("userType") || readCookie("manraah_userType") || "";
+      const effectiveCategory = queryCat || selectedCategory || cookieCat || "";
+
       const session = await signIn(
         email.trim().toLowerCase(),
         password,
-        selectedCategory || "",
+        effectiveCategory || "",
         detailedAnswers || [],
         computedScore || 0,
         assessmentResult?.percentage || computedScore || 0,
@@ -47,7 +58,7 @@ export default function LoginScreen() {
       document.cookie = "userType=; path=/; max-age=0";
       document.cookie = "manraah_userType=; path=/; max-age=0";
 
-      const categoryRaw = session.user?.selectedCategory || "";
+      const categoryRaw = session.user?.selectedCategory || effectiveCategory || "student";
       const targetRoute = getCategoryDashboardRoute(categoryRaw);
 
       router.push(targetRoute);

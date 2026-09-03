@@ -56,8 +56,19 @@ export async function POST(request: Request) {
     // Record login streak activity
     const streakInfo = await recordUserLogin(user.id);
 
-    const rawCategory = user.selected_category || "student";
-    const mappedCategory = rawCategory === "couples" || rawCategory === "couple" ? "couples" : (rawCategory === "parents" || rawCategory === "parent" ? "parents" : rawCategory);
+    function normalizeCat(c: string | undefined): string {
+      if (!c) return "student";
+      const val = c.toLowerCase().trim().replace(/\s+/g, "_").replace(/-/g, "_");
+      if (val === "working_professional" || val === "workingprofessional" || val === "young_pro" || val === "youngprofessional") return "working-professional";
+      if (val === "parent" || val === "parents") return "parents";
+      if (val === "couple" || val === "couples") return "couples";
+      if (val === "student") return "student";
+      if (val === "other") return "other";
+      if (val === "senior_citizen" || val === "seniorcitizen") return "senior_citizen";
+      return c;
+    }
+
+    const rawCategory = normalizeCat(user.selected_category);
 
     const userProfile = {
       id: user.id,
@@ -68,14 +79,14 @@ export async function POST(request: Request) {
       streakDays: streakInfo.currentStreak,
       mindfulnessMinutes: user.mindfulness_minutes || 0,
       currentMood: user.current_mood || "Sanctuary Member",
-      selectedCategory: mappedCategory,
+      selectedCategory: rawCategory,
       onboardingCompleted: !!user.onboarding_completed,
     };
 
     if (category) {
-      const incomingCategory = category === "couples" || category === "couple" ? "couples" : (category === "parents" || category === "parent" ? "parents" : category);
+      const incomingCategory = normalizeCat(category);
       if (incomingCategory !== userProfile.selectedCategory) {
-        console.log("[Login API] [POINT 3 — after login] Updating selectedCategory in DB:", incomingCategory);
+        console.log("[Login API] Updating selectedCategory in DB:", incomingCategory);
         await updateUserCategory(user.id, incomingCategory);
         userProfile.selectedCategory = incomingCategory;
       }
