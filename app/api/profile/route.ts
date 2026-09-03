@@ -94,11 +94,13 @@ export async function PUT(request: Request) {
 
     // 3. Update category if provided
     if (category) {
-      if (currentUser.selected_category === "student" && category !== "student") {
-        return NextResponse.json({ error: "Category is locked and cannot be changed." }, { status: 400 });
-      }
-      const targetCategory = category === "couples" || category === "couple" ? "couple" : (category === "parents" || category === "parent" ? "parent" : category);
-      await updateUserCategory(userId, targetCategory);
+      const normalizedCat = (
+        category === "working_professional" || category === "working-professional" || category === "young_pro" || category === "youngprofessional" ? "working-professional" :
+        category === "couples" || category === "couple" ? "couple" :
+        category === "parents" || category === "parent" ? "parent" :
+        category
+      );
+      await updateUserCategory(userId, normalizedCat);
     }
 
     // Save assessment if provided in PUT payload (e.g. when retaking assessment on active session)

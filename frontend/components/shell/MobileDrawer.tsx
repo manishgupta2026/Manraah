@@ -8,6 +8,7 @@ import { MAIN_NAV_ITEMS } from "@/frontend/lib/constants";
 import { getClientSession } from "@/backend/auth/client";
 import { getInitials, getPastelBgColor, getPastelTextColor } from "@/frontend/lib/avatar-helper";
 import { useCategory } from "@/frontend/lib/context/CategoryContext";
+import { getCategoryDashboardRoute } from "@/frontend/lib/category-routes";
 import Logo from "@/frontend/components/ui/Logo";
 
 interface MobileDrawerProps {
@@ -65,7 +66,7 @@ export default function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
           {/* Navigation Items */}
           <nav className="space-y-2">
             {MAIN_NAV_ITEMS.map((item) => {
-              const targetHref = item.href === "/dashboard" ? `/dashboard/${category}` : item.href;
+              const targetHref = item.href === "/dashboard" ? getCategoryDashboardRoute(category) : item.href;
               const isActive = pathname === targetHref || (targetHref !== "/" && pathname.startsWith(targetHref));
               return (
                 <Link

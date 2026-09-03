@@ -391,18 +391,13 @@ export default function SettingsPrivacyScreen() {
                 <select
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
-                  disabled
-                  className="w-full p-3.5 rounded-2xl bg-surface-container-low/50 border border-surface-variant/20 text-sm font-semibold text-on-surface/60 focus:outline-none cursor-not-allowed"
+                  className="w-full p-3.5 rounded-2xl bg-surface-container-low border border-surface-variant/40 text-sm font-semibold text-on-surface focus:outline-none focus:ring-2 focus:ring-primary cursor-pointer"
                 >
-                  <option value="student">Student (Academic stress reduction)</option>
-                  <option value="young_pro">Young Professional (Career building & balance)</option>
-                  <option value="working_professional">Working Professional (Work-life harmony)</option>
-                  <option value="parent">Parent (Mindful parenting & patience)</option>
-                  <option value="couple">Couple (Nurturing shared life)</option>
-                  <option value="family">Family (Household well-being)</option>
-                  <option value="women">Women (Demographic-focused wellness)</option>
-                  <option value="men">Men (Focused mental health sanctuary)</option>
-                  <option value="senior_citizen">Senior Citizen (Gentle vitality & calm)</option>
+                  <option value="student">🎓 Student (Academic stress reduction)</option>
+                  <option value="working_professional">👔 Working Professional (Work-life harmony)</option>
+                  <option value="parent">🍼 Parent (Mindful parenting & patience)</option>
+                  <option value="couple">💖 Couple (Nurturing shared life)</option>
+                  <option value="other">✨ Other (Personalized holistic wellness)</option>
                 </select>
                 <p className="text-[10px] text-on-surface-variant/65 leading-relaxed mt-1">
                   Modify your sanctuary journey style. Saving updates your active dashboard instantly.

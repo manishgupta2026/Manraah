@@ -7,6 +7,7 @@ import { MAIN_NAV_ITEMS } from "@/frontend/lib/constants";
 import { getClientSession } from "@/backend/auth/client";
 import { getInitials, getPastelBgColor, getPastelTextColor } from "@/frontend/lib/avatar-helper";
 import { useCategory } from "@/frontend/lib/context/CategoryContext";
+import { getCategoryDashboardRoute } from "@/frontend/lib/category-routes";
 
 const WP_NAV_ITEMS = [
   { label: "Dashboard", href: "/dashboard", icon: "grid_view" },
@@ -67,7 +68,7 @@ export default function DesktopSidebar() {
       {/* Navigation Links */}
       <nav className="flex-1 px-3 py-4 space-y-2 overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
         {navList.map((item) => {
-          const targetHref = item.href === "/dashboard" ? `/dashboard/${category}` : item.href;
+          const targetHref = item.href === "/dashboard" ? getCategoryDashboardRoute(category) : item.href;
           const isActive = pathname === targetHref || (targetHref !== "/" && pathname.startsWith(targetHref));
           return (
             <Link

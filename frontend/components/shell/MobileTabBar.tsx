@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { MOBILE_TAB_ITEMS } from "@/frontend/lib/constants";
 import { useCategory } from "@/frontend/lib/context/CategoryContext";
+import { getCategoryDashboardRoute } from "@/frontend/lib/category-routes";
 
 export default function MobileTabBar() {
   const pathname = usePathname();
@@ -14,7 +15,7 @@ export default function MobileTabBar() {
     <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-surface-container-lowest/90 backdrop-blur-md border-t border-surface-variant/40 px-3 py-2 shadow-lg">
       <nav className="flex items-center justify-around">
         {MOBILE_TAB_ITEMS.map((tab) => {
-          const targetHref = tab.href === "/dashboard" ? `/dashboard/${category}` : tab.href;
+          const targetHref = tab.href === "/dashboard" ? getCategoryDashboardRoute(category) : tab.href;
           const isActive = pathname === targetHref || (tab.href !== "/" && pathname.startsWith(targetHref));
           return (
             <Link
