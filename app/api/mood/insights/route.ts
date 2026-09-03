@@ -6,7 +6,11 @@ export const dynamic = "force-dynamic";
 
 export async function GET(req: Request) {
   const session = getAuthSessionFromRequest();
-  const userId = session.user?.id || "demo-user";
+  const userId = session.user?.id;
+
+  if (!userId) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
   try {
     const insights = await getMoodInsights(userId);

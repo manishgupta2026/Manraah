@@ -247,20 +247,7 @@ export async function GET(req: Request) {
       `,
     ]);
 
-    // Handle checkins fallback to mood_entries if daily_checkins is empty
-    let history = rawCheckins;
-    if (history.length === 0) {
-      try {
-        const moodHistory = await sql`
-          SELECT id, user_id, mood, energy, COALESCE(sleep_quality, 3) as sleep_quality, stress, COALESCE(work_life_balance, 3) as work_life_balance, reflection as note, created_at
-          FROM mood_entries
-          WHERE user_id = ${user.id}
-          ORDER BY created_at DESC
-          LIMIT 14
-        `;
-        history = moodHistory;
-      } catch (e) {}
-    }
+    const history = rawCheckins;
 
     // Real data arrays directly from DB (empty array if no records logged yet)
     const appointments = appointmentsResult || [];

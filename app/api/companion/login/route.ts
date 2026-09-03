@@ -1,15 +1,8 @@
 import { NextResponse } from "next/server";
 import { sql } from "@/backend/db/client";
-import crypto from "crypto";
+import { verifyPassword } from "@/backend/auth/crypto";
 
 export const dynamic = "force-dynamic";
-
-function verifyPassword(password: string, storedHash: string): boolean {
-  const [salt, originalHash] = storedHash.split(":");
-  if (!salt || !originalHash) return false;
-  const hash = crypto.scryptSync(password, salt, 64).toString("hex");
-  return hash === originalHash;
-}
 
 export async function POST(request: Request) {
   try {

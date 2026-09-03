@@ -4,7 +4,11 @@ import { saveMoodEntry, getMoodHistory } from "@/backend/queries/mood";
 
 export async function POST(req: Request) {
   const session = getAuthSessionFromRequest();
-  const userId = session.user?.id || "demo-user";
+  const userId = session.user?.id;
+
+  if (!userId) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
   try {
     const body = await req.json();
@@ -31,7 +35,11 @@ export async function POST(req: Request) {
 
 export async function GET(req: Request) {
   const session = getAuthSessionFromRequest();
-  const userId = session.user?.id || "demo-user";
+  const userId = session.user?.id;
+
+  if (!userId) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
   const { searchParams } = new URL(req.url);
   const filter = searchParams.get("filter") || "all";

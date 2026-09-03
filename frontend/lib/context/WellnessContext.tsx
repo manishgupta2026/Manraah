@@ -146,7 +146,7 @@ export function WellnessProvider({ children }: { children: ReactNode }) {
   }) => {
     setIsLoading(true);
     try {
-      const res = await fetch("/api/checkin", {
+      const res = await fetch("/api/checkins", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(checkInData),

@@ -3,15 +3,7 @@ import { saveUserAssessment } from "@/backend/queries/assessment";
 import { generateUniqueSanctuaryName } from "@/backend/auth/sanctuary";
 import { getUserByEmail, updateUserSanctuaryName, updateUserCategory } from "@/backend/queries/users";
 import { recordUserLogin } from "@/backend/queries/streak";
-import crypto from "crypto";
-
-function verifyPassword(password: string, storedHash: string | null): boolean {
-  if (!storedHash) return false;
-  const [salt, originalHash] = storedHash.split(":");
-  if (!salt || !originalHash) return false;
-  const hash = crypto.scryptSync(password, salt, 64).toString("hex");
-  return hash === originalHash;
-}
+import { verifyPassword } from "@/backend/auth/crypto";
 
 export async function POST(request: Request) {
   try {

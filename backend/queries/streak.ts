@@ -1,4 +1,5 @@
 import { sql } from "@/backend/db/client";
+import { getCalendarDayString } from "@/backend/lib/date-utils";
 
 export async function ensureLoginActivityTableExists() {
   try {
@@ -19,17 +20,6 @@ export async function ensureLoginActivityTableExists() {
 export async function recordUserLogin(userId: string) {
   // Ensure table exists first
   await ensureLoginActivityTableExists();
-
-  // Configured timezone: Asia/Kolkata
-  const getCalendarDayString = (date: Date) => {
-    const formatter = new Intl.DateTimeFormat("en-CA", {
-      timeZone: "Asia/Kolkata",
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    });
-    return formatter.format(date); // YYYY-MM-DD
-  };
 
   const todayStr = getCalendarDayString(new Date());
 

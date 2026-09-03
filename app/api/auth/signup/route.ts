@@ -4,7 +4,7 @@ import { saveUserAssessment } from "@/backend/queries/assessment";
 import { generateUniqueSanctuaryName } from "@/backend/auth/sanctuary";
 import { getUserByEmail, getUserBySanctuaryName, createUser } from "@/backend/queries/users";
 import { recordUserLogin } from "@/backend/queries/streak";
-import crypto from "crypto";
+import { hashPassword } from "@/backend/auth/crypto";
 
 // Allowed sanctuary categories
 const ALLOWED_CATEGORIES = new Set([
@@ -32,13 +32,6 @@ function normalizeCategory(cat: string | undefined): string | null {
   if (c === "couples") return "couple";
   if (c === "other") return "other";
   return null;
-}
-
-// Secure password hashing using Node scrypt
-function hashPassword(password: string): string {
-  const salt = crypto.randomBytes(16).toString("hex");
-  const hash = crypto.scryptSync(password, salt, 64).toString("hex");
-  return `${salt}:${hash}`;
 }
 
 export async function POST(request: Request) {

@@ -35,13 +35,4 @@ export async function generateUniqueSanctuaryName(): Promise<string> {
   return `${baseName} ${Math.floor(Math.random() * 900) + 100}`;
 }
 
-export function getInitials(name: string): string {
-  const parts = name.trim().split(/\s+/);
-  if (parts.length === 0) return "ME";
-  if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
-  // Filter out numeric parts when taking initials
-  const letterParts = parts.filter(p => isNaN(Number(p)));
-  if (letterParts.length === 0) return parts[0].substring(0, 2).toUpperCase();
-  if (letterParts.length === 1) return letterParts[0].substring(0, 2).toUpperCase();
-  return (letterParts[0][0] + letterParts[letterParts.length - 1][0]).toUpperCase();
-}
+export { getInitials } from "@/frontend/lib/avatar-helper";

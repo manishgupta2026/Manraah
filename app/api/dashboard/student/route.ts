@@ -3,6 +3,7 @@ import { getAuthSessionFromRequest } from "@/backend/auth/session";
 import { sql } from "@/backend/db/client";
 import { calculateWellnessScore } from "@/backend/lib/wellness-scoring";
 import { recordUserLogin } from "@/backend/queries/streak";
+import { getCalendarDayString } from "@/backend/lib/date-utils";
 
 export const dynamic = "force-dynamic";
 
@@ -132,16 +133,6 @@ export async function GET(req: Request) {
     const streakInfo = await recordUserLogin(userId);
     const preferredName = user.name || user.sanctuary_name || "Student Sanctuary Member";
 
-    const getCalendarDayString = (date: Date | string) => {
-      const formatter = new Intl.DateTimeFormat("en-CA", {
-        timeZone: "Asia/Kolkata",
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-      });
-      return formatter.format(new Date(date));
-    };
-
     const url = new URL(req.url);
     const localDate = url.searchParams.get("localDate") || getCalendarDayString(new Date());
 
@@ -159,21 +150,7 @@ export async function GET(req: Request) {
       console.error("rawCheckins fetch error:", e);
     }
 
-    let history = rawCheckins;
-    if (history.length === 0) {
-      try {
-        const moodHistory = await sql`
-          SELECT id, user_id, mood, energy, COALESCE(sleep_quality, 3) as sleep_quality, stress, reflection as note, created_at
-          FROM mood_entries
-          WHERE user_id = ${user.id}
-          ORDER BY created_at DESC
-          LIMIT 14
-        `;
-        history = moodHistory;
-      } catch (e) {
-        console.error("moodHistory fetch error:", e);
-      }
-    }
+    const history = rawCheckins;
 
     const todayCheckin = history.find((c: any) => {
       const checkinDateVal = c.checkin_date || c.check_in_date;
@@ -380,27 +357,6 @@ export async function GET(req: Request) {
           else if (m === "overwhelmed" || m === "drained") weeklyMoods[idx] = 2;
         }
       });
-
-      if (checkinWeek.length === 0) {
-        const moodWeek = await sql`
-          SELECT mood, created_at
-          FROM mood_entries
-          WHERE user_id = ${user.id} AND created_at >= CURRENT_DATE - INTERVAL '7 days'
-          ORDER BY created_at ASC
-        `;
-        moodWeek.forEach((ch: any) => {
-          const day = new Date(ch.created_at).getDay();
-          const idx = day === 0 ? 6 : day - 1;
-          if (!checkinDaysSeen[idx]) {
-            checkinDaysSeen[idx] = true;
-            const m = (ch.mood || "").toLowerCase().trim();
-            if (m === "good" || m === "joyful" || m === "happy" || m === "amazing") weeklyMoods[idx] = 5;
-            else if (m === "okay" || m === "calm") weeklyMoods[idx] = 4;
-            else if (m === "stressed" || m === "anxious" || m === "low") weeklyMoods[idx] = 3;
-            else if (m === "overwhelmed" || m === "drained") weeklyMoods[idx] = 2;
-          }
-        });
-      }
     } catch (e) {
       console.error("weeklyMoods fetch error:", e);
     }

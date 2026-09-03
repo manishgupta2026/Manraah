@@ -17,6 +17,7 @@ const PROTECTED_ROUTES = [
   "/crisis-support",
   "/call",
   "/onboarding",
+  "/admin",
 ];
 
 const AUTH_ROUTES = ["/login", "/signup"];

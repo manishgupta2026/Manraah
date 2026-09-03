@@ -2,12 +2,15 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import WorkingProfessionalDashboard from "@/frontend/components/screens/working-professional/WorkingProfessionalDashboard";
 
 export default function WorkingProfessionalUnderscoreDashboardPage() {
   const router = useRouter();
   useEffect(() => {
     router.replace("/dashboard/working-professional");
   }, [router]);
-  return <WorkingProfessionalDashboard />;
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-[#0B091E]">
+      <div className="animate-pulse text-sm text-slate-400">Redirecting to dashboard...</div>
+    </div>
+  );
 }

@@ -2,26 +2,24 @@ import { NextResponse } from "next/server";
 import { getAuthSessionFromRequest } from "@/backend/auth/session";
 import { sql } from "@/backend/db/client";
 import { calculateWellnessScore } from "@/backend/lib/wellness-scoring";
+import { getCalendarDayString } from "@/backend/lib/date-utils";
+import { normalizeCategoryForDb } from "@/backend/lib/category-utils";
 
 export const dynamic = "force-dynamic";
 
+let checkinSchemaInitialized = false;
+
 async function ensureCheckinSchema() {
+  if (checkinSchemaInitialized || (globalThis as any).__checkinSchemaInitialized) return;
+  checkinSchemaInitialized = true;
+  (globalThis as any).__checkinSchemaInitialized = true;
+
   try {
     await sql`ALTER TABLE daily_checkins ADD COLUMN IF NOT EXISTS checkin_date DATE DEFAULT CURRENT_DATE`;
     await sql`ALTER TABLE daily_checkins ADD CONSTRAINT unique_user_daily_checkin_date UNIQUE (user_id, checkin_date)`;
   } catch (e) {
     // Constraint may already exist or table alteration done
   }
-}
-
-function getCalendarDayString(date: Date | string) {
-  const formatter = new Intl.DateTimeFormat("en-CA", {
-    timeZone: "Asia/Kolkata",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  });
-  return formatter.format(new Date(date));
 }
 
 export async function GET(req: Request) {
@@ -77,26 +75,26 @@ export async function POST(req: Request) {
     userCategory = uRes[0].selected_category || "student";
   }
 
-  const dbCategory = userCategory.toLowerCase().trim().replace("-", "_");
-
-  // Category verification: student or working professional only
-  if (userCategory !== "student" && userCategory !== "working_professional" && userCategory !== "working-professional") {
-    return NextResponse.json({ error: "Category access denied" }, { status: 403 });
-  }
+  const dbCategory = normalizeCategoryForDb(userCategory);
 
   try {
     await ensureCheckinSchema();
     const body = await req.json();
-    const { mood, stressLevel, energyLevel, reflection } = body;
-
-    const todayDateStr = getCalendarDayString(new Date());
+    const mood = body.mood;
 
     if (!mood) {
       return NextResponse.json({ error: "Mood is required" }, { status: 400 });
     }
 
-    const energyVal = Math.min(5, Math.max(1, Number(energyLevel) || 3));
-    const stressVal = typeof stressLevel === "string" ? stressLevel : "Manageable";
+    const energyVal = Math.min(5, Math.max(1, Number(body.energyLevel ?? body.energy) || 3));
+    const stressVal = typeof (body.stressLevel ?? body.stress) === "string" ? (body.stressLevel ?? body.stress) : "Manageable";
+    const sleepVal = Math.min(5, Math.max(1, Number(body.sleepQuality ?? body.sleep) || 3));
+    const workLifeVal = Math.min(5, Math.max(1, Number(body.workLifeBalance ?? body.work_life_balance) || 3));
+    const reflectionText = body.reflection || body.note || "";
+    const gratitudeText = body.gratitude || body.factors || "";
+    const intentionText = body.dailyIntention || body.daily_intention || body.intention || "";
+
+    const todayDateStr = getCalendarDayString(new Date());
 
     // 1. Check if user already checked in today
     const existingCheckin = await sql`
@@ -116,37 +114,34 @@ export async function POST(req: Request) {
       // Update daily_checkins
       await sql`
         UPDATE daily_checkins
-        SET mood = ${mood}, energy_level = ${energyVal}, stress = ${stressVal}, note = ${reflection || null}, reflection = ${reflection || null}
+        SET mood = ${mood},
+            energy_level = ${energyVal},
+            stress = ${stressVal},
+            sleep_quality = ${sleepVal},
+            work_life_balance = ${workLifeVal},
+            note = ${reflectionText || null},
+            reflection = ${reflectionText || null},
+            gratitude_reflection = ${gratitudeText || null},
+            daily_intention = ${intentionText || null},
+            updated_at = CURRENT_TIMESTAMP
         WHERE id = ${savedId}
-      `;
-
-      // Update mood_entries
-      await sql`
-        UPDATE mood_entries
-        SET mood = ${mood}, energy = ${energyVal}, stress = ${stressVal}, reflection = ${reflection || null}
-        WHERE user_id = ${userId} AND checkin_date = ${todayDateStr}
       `;
     } else {
       // Insert new checkin
       const insertRes = await sql`
         INSERT INTO daily_checkins (
-          user_id, mood, energy_level, sleep_quality, stress, work_life_balance, note, checkin_date, reflection
+          user_id, mood, energy_level, sleep_quality, stress, work_life_balance,
+          note, reflection, gratitude_reflection, daily_intention, checkin_date, created_at, updated_at
         ) VALUES (
-          ${userId}, ${mood}, ${energyVal}, 3, ${stressVal}, 3, ${reflection || null}, ${todayDateStr}, ${reflection || null}
+          ${userId}, ${mood}, ${energyVal}, ${sleepVal}, ${stressVal}, ${workLifeVal},
+          ${reflectionText || null}, ${reflectionText || null}, ${gratitudeText || null}, ${intentionText || null},
+          ${todayDateStr}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
         ) RETURNING id, created_at
       `;
       
       const savedRecord = insertRes[0];
       savedId = savedRecord?.id;
       createdAt = savedRecord?.created_at;
-
-      await sql`
-        INSERT INTO mood_entries (
-          user_id, mood, energy, stress, sleep_quality, work_life_balance, reflection, checkin_date
-        ) VALUES (
-          ${userId}, ${mood}, ${energyVal}, ${stressVal}, 3, 3, ${reflection || null}, ${todayDateStr}
-        )
-      `;
     }
 
     // 2. Calculate updated wellness score
@@ -154,26 +149,31 @@ export async function POST(req: Request) {
       mood,
       stress: stressVal,
       energy: energyVal,
-      sleep: 3,
-      workLifeBalance: 3,
+      sleep: sleepVal,
+      workLifeBalance: workLifeVal,
     });
 
-    // 3. Update user current mood
+    // 3. Update user current mood & streak days
     await sql`
       UPDATE users SET
-        current_mood = ${mood}
+        current_mood = ${mood},
+        streak_days = COALESCE(streak_days, 0) + 1
       WHERE id = ${userId}
     `;
 
-    await sql`
-      INSERT INTO assessments (
-        user_id, category, total_score, max_score, percentage, wellness_level
-      ) VALUES (
-        ${userId}, ${dbCategory}, ${scoreResult.score}, 100, ${scoreResult.score}, ${scoreResult.level}
-      )
-    `;
+    try {
+      await sql`
+        INSERT INTO assessments (
+          user_id, category, total_score, max_score, percentage, wellness_level
+        ) VALUES (
+          ${userId}, ${dbCategory}, ${scoreResult.score}, 100, ${scoreResult.score}, ${scoreResult.level}
+        )
+      `;
+    } catch (assessErr) {
+      console.error("[checkins] Non-fatal assessment logging error:", assessErr);
+    }
 
-    // 4. Update streak
+    // 4. Update user_streaks table
     await sql`
       INSERT INTO user_streaks (id, user_id, current_streak, longest_streak, last_checkin_date)
       VALUES (${'strk_' + userId}, ${userId}, 1, 1, CURRENT_TIMESTAMP)
@@ -192,7 +192,11 @@ export async function POST(req: Request) {
         mood: mood,
         stress_level: stressVal,
         energy_level: energyVal,
-        reflection: reflection || null,
+        sleep_quality: sleepVal,
+        work_life_balance: workLifeVal,
+        reflection: reflectionText || null,
+        gratitude_reflection: gratitudeText || null,
+        daily_intention: intentionText || null,
         created_at: createdAt
       }
     });

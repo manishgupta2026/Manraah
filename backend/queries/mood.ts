@@ -1,4 +1,5 @@
 import { sql } from "@/backend/db/client";
+import { getCalendarDayString } from "@/backend/lib/date-utils";
 
 let isMoodInitialized = true;
 (globalThis as any).isMoodDatabaseInitialized = true;
@@ -20,21 +21,27 @@ export async function saveMoodEntry(
   }
 ) {
   await initMoodDatabase();
-  const getCalendarDayString = (date: Date) => {
-    const formatter = new Intl.DateTimeFormat("en-CA", {
-      timeZone: "Asia/Kolkata",
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    });
-    return formatter.format(date);
-  };
   const todayStr = getCalendarDayString(new Date());
   try {
     const result = await sql`
-      INSERT INTO mood_entries (user_id, mood, energy, stress, reflection, factors, checkin_date)
-      VALUES (${userId}, ${data.mood}, ${data.energy}, ${data.stress}, ${data.reflection || null}, ${data.factors || null}, ${todayStr})
-      RETURNING *
+      INSERT INTO daily_checkins (
+        user_id, mood, energy_level, sleep_quality, stress, work_life_balance,
+        reflection, note, gratitude_reflection, checkin_date, created_at, updated_at
+      )
+      VALUES (
+        ${userId}, ${data.mood}, ${data.energy}, 3, ${data.stress}, 3,
+        ${data.reflection || null}, ${data.reflection || null}, ${data.factors || null},
+        ${todayStr}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+      )
+      ON CONFLICT (user_id, checkin_date) DO UPDATE SET
+        mood = EXCLUDED.mood,
+        energy_level = EXCLUDED.energy_level,
+        stress = EXCLUDED.stress,
+        reflection = EXCLUDED.reflection,
+        note = EXCLUDED.note,
+        gratitude_reflection = EXCLUDED.gratitude_reflection,
+        updated_at = CURRENT_TIMESTAMP
+      RETURNING id, user_id, mood, energy_level as energy, stress, sleep_quality, work_life_balance, reflection, gratitude_reflection as factors, checkin_date, created_at, updated_at
     `;
     return result[0];
   } catch (err) {
@@ -46,47 +53,47 @@ export async function saveMoodEntry(
 export async function getMoodHistory(userId: string, filter: string) {
   await initMoodDatabase();
   try {
-    let query = sql`SELECT * FROM mood_entries WHERE user_id = ${userId}`;
-    
-    // Applying date filter
     const now = new Date();
     if (filter === "today") {
       const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-      query = sql`
-        SELECT * FROM mood_entries 
+      return await sql`
+        SELECT id, user_id, mood, energy_level as energy, stress, sleep_quality, work_life_balance, reflection, gratitude_reflection as factors, checkin_date, created_at, updated_at
+        FROM daily_checkins 
         WHERE user_id = ${userId} AND created_at >= ${startOfDay.toISOString()}
         ORDER BY created_at DESC
       `;
     } else if (filter === "week") {
       const startOfWeek = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-      query = sql`
-        SELECT * FROM mood_entries 
+      return await sql`
+        SELECT id, user_id, mood, energy_level as energy, stress, sleep_quality, work_life_balance, reflection, gratitude_reflection as factors, checkin_date, created_at, updated_at
+        FROM daily_checkins 
         WHERE user_id = ${userId} AND created_at >= ${startOfWeek.toISOString()}
         ORDER BY created_at DESC
       `;
     } else if (filter === "month") {
       const startOfMonth = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
-      query = sql`
-        SELECT * FROM mood_entries 
+      return await sql`
+        SELECT id, user_id, mood, energy_level as energy, stress, sleep_quality, work_life_balance, reflection, gratitude_reflection as factors, checkin_date, created_at, updated_at
+        FROM daily_checkins 
         WHERE user_id = ${userId} AND created_at >= ${startOfMonth.toISOString()}
         ORDER BY created_at DESC
       `;
     } else if (filter === "year") {
       const startOfYear = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate());
-      query = sql`
-        SELECT * FROM mood_entries 
+      return await sql`
+        SELECT id, user_id, mood, energy_level as energy, stress, sleep_quality, work_life_balance, reflection, gratitude_reflection as factors, checkin_date, created_at, updated_at
+        FROM daily_checkins 
         WHERE user_id = ${userId} AND created_at >= ${startOfYear.toISOString()}
         ORDER BY created_at DESC
       `;
     } else {
-      query = sql`
-        SELECT * FROM mood_entries 
+      return await sql`
+        SELECT id, user_id, mood, energy_level as energy, stress, sleep_quality, work_life_balance, reflection, gratitude_reflection as factors, checkin_date, created_at, updated_at
+        FROM daily_checkins 
         WHERE user_id = ${userId} 
         ORDER BY created_at DESC
       `;
     }
-
-    return await query;
   } catch (err) {
     console.error("Error fetching mood history:", err);
     throw err;
@@ -107,12 +114,13 @@ export async function updateMoodEntry(
   await initMoodDatabase();
   try {
     const result = await sql`
-      UPDATE mood_entries
-      SET mood = ${data.mood}, energy = ${data.energy}, stress = ${data.stress}, 
-          reflection = ${data.reflection || null}, factors = ${data.factors || null}, 
+      UPDATE daily_checkins
+      SET mood = ${data.mood}, energy_level = ${data.energy}, stress = ${data.stress}, 
+          reflection = ${data.reflection || null}, note = ${data.reflection || null},
+          gratitude_reflection = ${data.factors || null}, 
           updated_at = CURRENT_TIMESTAMP
       WHERE id = ${Number(entryId)} AND user_id = ${userId}
-      RETURNING *
+      RETURNING id, user_id, mood, energy_level as energy, stress, sleep_quality, work_life_balance, reflection, gratitude_reflection as factors, checkin_date, created_at, updated_at
     `;
     return result[0];
   } catch (err) {
@@ -125,7 +133,7 @@ export async function deleteMoodEntry(userId: string, entryId: string) {
   await initMoodDatabase();
   try {
     await sql`
-      DELETE FROM mood_entries 
+      DELETE FROM daily_checkins 
       WHERE id = ${Number(entryId)} AND user_id = ${userId}
     `;
     return { success: true };
@@ -140,7 +148,8 @@ export async function getWeeklySummary(userId: string) {
   await initMoodDatabase();
   try {
     const entries = await sql`
-      SELECT * FROM mood_entries 
+      SELECT id, user_id, mood, energy_level as energy, stress, sleep_quality, work_life_balance, reflection, gratitude_reflection as factors, checkin_date, created_at, updated_at
+      FROM daily_checkins 
       WHERE user_id = ${userId} AND created_at >= NOW() - INTERVAL '7 days'
       ORDER BY created_at DESC
     `;
@@ -166,7 +175,7 @@ export async function getWeeklySummary(userId: string) {
     const stressCounts: Record<string, number> = { Low: 0, Medium: 0, High: 0, "Very High": 0 };
 
     entries.forEach((e: any) => {
-      totalEnergy += e.energy;
+      totalEnergy += Number(e.energy) || 3;
       moodCounts[e.mood] = (moodCounts[e.mood] || 0) + 1;
       
       if (e.stress && stressCounts[e.stress] !== undefined) {
@@ -186,23 +195,13 @@ export async function getWeeklySummary(userId: string) {
     const avgEnergy = Number((totalEnergy / entries.length).toFixed(1));
     
     // Sort mood counts
-    const sortedMoods = Object.entries(moodCounts).sort((a, b) => b[1] - a[1]);
-    const frequentMood = sortedMoods[0]?.[0] || "Calm";
+    const frequentMood = Object.entries(moodCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || "Neutral";
+    const frequentStress = Object.entries(stressCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || "Medium";
+    const topTrigger = Object.entries(triggerCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || "Workload";
 
-    // Sort triggers
-    const sortedTriggers = Object.entries(triggerCounts).sort((a, b) => b[1] - a[1]);
-    const topTrigger = sortedTriggers[0]?.[0] || "None logged";
-
-    // Frequent stress
-    const frequentStress = Object.entries(stressCounts).sort((a, b) => b[1] - a[1])[0][0];
-
-    // Determine Best Day (highest energy) and Hardest Day (lowest energy/high stress)
-    let bestDayEntry = entries[0];
-    let hardestDayEntry = entries[0];
-    entries.forEach((e: any) => {
-      if (e.energy > bestDayEntry.energy) bestDayEntry = e;
-      if (e.energy < hardestDayEntry.energy) hardestDayEntry = e;
-    });
+    // Best and hardest days
+    const bestDayEntry = entries.slice().sort((a: any, b: any) => (Number(b.energy) || 3) - (Number(a.energy) || 3))[0];
+    const hardestDayEntry = entries.slice().sort((a: any, b: any) => (Number(a.energy) || 3) - (Number(b.energy) || 3))[0];
 
     const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     const bestDayName = daysOfWeek[new Date(bestDayEntry.created_at).getDay()];
@@ -242,7 +241,8 @@ export async function getMonthlySummary(userId: string) {
   await initMoodDatabase();
   try {
     const entries = await sql`
-      SELECT * FROM mood_entries 
+      SELECT id, user_id, mood, energy_level as energy, stress, sleep_quality, work_life_balance, reflection, gratitude_reflection as factors, checkin_date, created_at, updated_at
+      FROM daily_checkins 
       WHERE user_id = ${userId} AND created_at >= NOW() - INTERVAL '30 days'
       ORDER BY created_at ASC
     `;
@@ -295,7 +295,8 @@ export async function getMoodInsights(userId: string) {
   await initMoodDatabase();
   try {
     const entries = await sql`
-      SELECT * FROM mood_entries 
+      SELECT id, user_id, mood, energy_level as energy, stress, sleep_quality, work_life_balance, reflection, gratitude_reflection as factors, checkin_date, created_at, updated_at
+      FROM daily_checkins 
       WHERE user_id = ${userId}
       ORDER BY created_at DESC
       LIMIT 30

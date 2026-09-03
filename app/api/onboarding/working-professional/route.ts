@@ -3,6 +3,7 @@ import { sql } from "@/backend/db/client";
 import { getAuthSessionFromRequest } from "@/backend/auth/session";
 import { calculateWellnessScore } from "@/backend/lib/wellness-scoring";
 import { generateUniqueSanctuaryName } from "@/backend/auth/sanctuary";
+import { getCalendarDayString } from "@/backend/lib/date-utils";
 
 export const dynamic = "force-dynamic";
 
@@ -92,34 +93,29 @@ export async function POST(req: Request) {
       workLifeBalance: Number(workLifeBalance) || 3,
     });
 
-    const getCalendarDayString = (date: Date) => {
-      const formatter = new Intl.DateTimeFormat("en-CA", {
-        timeZone: "Asia/Kolkata",
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-      });
-      return formatter.format(date);
-    };
     const todayStr = getCalendarDayString(new Date());
 
-    // 3. Save initial check-in to mood_entries & daily_checkins
-    await sql`
-      INSERT INTO mood_entries (
-        user_id, mood, energy, stress, sleep_quality, work_life_balance, reflection, factors, checkin_date
-      ) VALUES (
-        ${userId}, ${mood || 'Good'}, ${Number(energy) || 4}, ${typeof stress === 'string' ? stress : 'Manageable'}, 
-        ${Number(sleep) || 4}, ${Number(workLifeBalance) || 3}, 'Initial baseline check-in from onboarding', ${workSituation || 'Working Professional'}, ${todayStr}
-      )
-    `;
-
+    // 3. Save initial check-in to daily_checkins
     await sql`
       INSERT INTO daily_checkins (
-        user_id, mood, energy_level, sleep_quality, stress, work_life_balance, note, checkin_date
+        user_id, mood, energy_level, sleep_quality, stress, work_life_balance,
+        note, reflection, gratitude_reflection, checkin_date, created_at, updated_at
       ) VALUES (
         ${userId}, ${mood || 'Good'}, ${Number(energy) || 4}, ${Number(sleep) || 4},
-        ${typeof stress === 'string' ? stress : 'Manageable'}, ${Number(workLifeBalance) || 3}, 'Initial onboarding check-in', ${todayStr}
+        ${typeof stress === 'string' ? stress : 'Manageable'}, ${Number(workLifeBalance) || 3},
+        'Initial onboarding check-in', 'Initial baseline check-in from onboarding',
+        ${workSituation || 'Working Professional'}, ${todayStr}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
       )
+      ON CONFLICT (user_id, checkin_date) DO UPDATE SET
+        mood = EXCLUDED.mood,
+        energy_level = EXCLUDED.energy_level,
+        sleep_quality = EXCLUDED.sleep_quality,
+        stress = EXCLUDED.stress,
+        work_life_balance = EXCLUDED.work_life_balance,
+        note = EXCLUDED.note,
+        reflection = EXCLUDED.reflection,
+        gratitude_reflection = EXCLUDED.gratitude_reflection,
+        updated_at = CURRENT_TIMESTAMP
     `;
 
     // 4. Save assessment record
