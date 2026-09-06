@@ -3,8 +3,6 @@
 import React, { useState, useMemo } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { useRouter } from "next/navigation";
-import { signOut } from "@/backend/auth/client";
 
 interface FAQItem {
   id: string;
@@ -134,7 +132,6 @@ const CATEGORY_TABS = [
 ];
 
 export default function FAQPage() {
-  const router = useRouter();
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [openIds, setOpenIds] = useState<Record<string, boolean>>({
@@ -148,15 +145,6 @@ export default function FAQPage() {
       ...prev,
       [id]: !prev[id],
     }));
-  };
-
-  const handleGetStarted = async () => {
-    try {
-      await signOut();
-    } catch {
-      // ignore
-    }
-    router.push("/category-selection");
   };
 
   const filteredFaqs = useMemo(() => {
@@ -346,13 +334,13 @@ export default function FAQPage() {
           </p>
 
           <div className="pt-2">
-            <button
-              onClick={handleGetStarted}
+            <Link
+              href="/how-it-works"
               className="px-9 py-4 rounded-full bg-white text-primary hover:bg-surface-container-low font-heading font-extrabold text-sm shadow-xl hover:scale-105 transition-all inline-flex items-center gap-2 cursor-pointer"
             >
-              <span>Get Started Free Today</span>
+              <span>Explore How It Works</span>
               <span className="material-symbols-outlined text-lg">arrow_forward</span>
-            </button>
+            </Link>
           </div>
         </div>
       </section>

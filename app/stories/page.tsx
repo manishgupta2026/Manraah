@@ -3,8 +3,6 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { useRouter } from "next/navigation";
-import { signOut } from "@/backend/auth/client";
 
 interface Story {
   id: string;
@@ -164,7 +162,6 @@ const CATEGORIES = [
 ];
 
 export default function StoriesPage() {
-  const router = useRouter();
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [expandedStoryId, setExpandedStoryId] = useState<string | null>(null);
 
@@ -172,15 +169,6 @@ export default function StoriesPage() {
     selectedCategory === "all"
       ? ALL_STORIES
       : ALL_STORIES.filter((s) => s.category === selectedCategory);
-
-  const handleGetStarted = async () => {
-    try {
-      await signOut();
-    } catch {
-      // ignore
-    }
-    router.push("/category-selection");
-  };
 
   return (
     <div className="min-h-screen bg-surface text-on-surface select-none">
@@ -348,20 +336,13 @@ export default function StoriesPage() {
             Take 2 minutes today to check in with your mind, talk to your companion, and cultivate everyday emotional stillness.
           </p>
 
-          <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <button
-              onClick={handleGetStarted}
-              className="px-9 py-4 rounded-full bg-white text-primary hover:bg-surface-container-low font-heading font-extrabold text-sm shadow-xl hover:scale-105 transition-all inline-flex items-center gap-2 cursor-pointer"
-            >
-              <span>Start Free Today</span>
-              <span className="material-symbols-outlined text-lg">arrow_forward</span>
-            </button>
-
+          <div className="pt-2 flex items-center justify-center">
             <Link
               href="/features"
-              className="px-8 py-4 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white font-heading font-semibold text-sm transition-all"
+              className="px-9 py-4 rounded-full bg-white text-primary hover:bg-surface-container-low font-heading font-extrabold text-sm shadow-xl hover:scale-105 transition-all inline-flex items-center gap-2 cursor-pointer"
             >
-              Explore Features
+              <span>Explore All Features</span>
+              <span className="material-symbols-outlined text-lg">arrow_forward</span>
             </Link>
           </div>
         </div>

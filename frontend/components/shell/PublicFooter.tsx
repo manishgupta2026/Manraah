@@ -35,7 +35,7 @@ export default function PublicFooter() {
           {/* Brand Column */}
           <div className="lg:col-span-2 space-y-5 text-left">
             <Link href="/" className="inline-block hover:opacity-90 transition-opacity">
-              <Logo variant="white" size="md" className="h-8 sm:h-9" />
+              <Logo variant="white" size="md" />
             </Link>
             <p className="text-xs text-white/70 leading-relaxed max-w-sm">
               A private, compassionate mental wellness retreat combining 24/7 AI companion care, verified peer listeners, licensed therapists, and category-based personalization.

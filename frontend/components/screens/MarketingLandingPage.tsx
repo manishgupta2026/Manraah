@@ -2,11 +2,8 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { motion, AnimatePresence, useInView } from "framer-motion";
 import { USER_CATEGORIES } from "@/frontend/lib/constants";
-import { signOut } from "@/backend/auth/client";
-import Logo from "@/frontend/components/ui/Logo";
 
 // Vibrant 2-Tone Brand Gradients per Category
 const USER_CATEGORY_GRADIENTS: Record<string, { bg: string; badge: string }> = {
@@ -317,7 +314,6 @@ const HERO_CAROUSEL_IMAGES = [
 ];
 
 export default function MarketingLandingPage() {
-  const router = useRouter();
   const [selectedMoodIdx, setSelectedMoodIdx] = useState<number | null>(null);
   const [activeHeroSlide, setActiveHeroSlide] = useState<number>(0);
   const [isHeroCarouselHovered, setIsHeroCarouselHovered] = useState<boolean>(false);
@@ -364,23 +360,6 @@ export default function MarketingLandingPage() {
     }
   };
 
-  const handleGetStarted = async () => {
-    try {
-      await signOut();
-    } catch {
-      // ignore
-    }
-    router.push("/category-selection");
-  };
-
-  const handleSelectCategory = async (catId: string) => {
-    try {
-      document.cookie = `userType=${catId}; path=/; max-age=86400`;
-    } catch {
-      // ignore
-    }
-    router.push("/category-selection");
-  };
 
   const currentSlide = HERO_CAROUSEL_IMAGES[activeHeroSlide];
 
@@ -464,196 +443,12 @@ export default function MarketingLandingPage() {
         </div>
       </section>
 
-      {/* ═══ 2. HERO SECTION — INTERACTIVE MOOD CHECK-IN, HEADLINE & CTAs ═══ */}
-      <section className="relative pt-2 pb-16 md:pb-24 px-6 max-w-5xl mx-auto">
-
-        {/* Soft Atmospheric Glow Blobs */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[80vw] md:w-[600px] h-[400px] bg-primary/10 rounded-full blur-[130px] pointer-events-none -z-10" />
-        <div className="absolute bottom-0 right-0 w-[300px] h-[300px] bg-mint/10 rounded-full blur-[100px] pointer-events-none -z-10" />
-        <div className="absolute top-20 left-0 w-[250px] h-[250px] bg-pink/10 rounded-full blur-[100px] pointer-events-none -z-10" />
-
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          animate="show"
-          className="flex flex-col items-center text-center gap-8"
-        >
-          {/* Eyebrow Label */}
-          <motion.div variants={itemVariants} className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-heading font-bold uppercase tracking-widest">
-            <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-            <span>A Retreat for Mind &amp; Soul</span>
-          </motion.div>
-
-          {/* ── MOOD CHECK-IN PROMPT ── */}
-          <motion.div variants={itemVariants} className="w-full max-w-xl space-y-4">
-            <p className="text-sm sm:text-base font-heading font-semibold text-on-surface-variant">
-              How are you feeling right now?
-            </p>
-
-            {/* Mood Emoji Row — same set as DailyCheckInScreen */}
-            <div className="flex items-center justify-center gap-2 sm:gap-3 flex-wrap">
-              {HERO_MOODS.map((mood, idx) => {
-                const isSelected = selectedMoodIdx === idx;
-                return (
-                  <button
-                    key={mood.label}
-                    onClick={() => setSelectedMoodIdx(isSelected ? null : idx)}
-                    aria-label={mood.label}
-                    className={`flex flex-col items-center gap-1 px-3 py-2.5 sm:px-4 sm:py-3 rounded-2xl border transition-all duration-200 cursor-pointer group ${
-                      isSelected
-                        ? `${mood.color} ring-2 ${mood.ring} shadow-md scale-[1.08]`
-                        : "bg-surface-container-lowest border-surface-variant/40 hover:bg-surface-container hover:border-surface-variant/60 hover:scale-[1.04]"
-                    }`}
-                  >
-                    <span className={`text-2xl sm:text-3xl leading-none transition-transform duration-200 ${isSelected ? "scale-110" : "group-hover:scale-105"}`}>
-                      {mood.emoji}
-                    </span>
-                    <span className={`text-[10px] sm:text-[11px] font-heading font-bold leading-none ${
-                      isSelected ? "opacity-100 font-black" : "text-on-surface-variant"
-                    }`}>
-                      {mood.label}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-          </motion.div>
-
-          {/* ── RESPONSIVE HEADLINE — CROSS-FADES ON MOOD SELECTION ── */}
-          <motion.div variants={itemVariants} className="w-full max-w-3xl space-y-4">
-            <AnimatePresence mode="wait">
-              {selectedMoodIdx === null ? (
-                <motion.h1
-                  key="default"
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -12 }}
-                  transition={{ duration: 0.28, ease: "easeInOut" }}
-                  className="text-4xl sm:text-5xl lg:text-6xl font-heading font-black tracking-tight leading-[1.12] text-on-surface"
-                >
-                  Your Safe Space to{" "}
-                  <span className="text-primary bg-clip-text text-transparent bg-gradient-to-r from-primary via-[#5F4EA5] to-mint">
-                    Breathe, Reflect & Feel Heard
-                  </span>
-                </motion.h1>
-              ) : (
-                <motion.h1
-                  key={`mood-${selectedMoodIdx}`}
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -12 }}
-                  transition={{ duration: 0.28, ease: "easeInOut" }}
-                  className="text-3xl sm:text-4xl lg:text-5xl font-heading font-black tracking-tight leading-[1.18] text-on-surface"
-                >
-                  {HERO_MOODS[selectedMoodIdx].headline}
-                </motion.h1>
-              )}
-            </AnimatePresence>
-
-            {/* Subheading — cross-fades too */}
-            <AnimatePresence mode="wait">
-              {selectedMoodIdx === null ? (
-                <motion.p
-                  key="sub-default"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.22 }}
-                  className="text-base sm:text-lg leading-relaxed text-on-surface-variant max-w-2xl mx-auto font-normal"
-                >
-                  Connect with an empathetic AI companion 24/7, talk to verified peer listeners, track your emotional wellness, and access guided care — personalized for your exact stage in life.
-                </motion.p>
-              ) : (
-                <motion.p
-                  key={`sub-mood-${selectedMoodIdx}`}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.22 }}
-                  className="text-base sm:text-lg leading-relaxed text-on-surface-variant max-w-2xl mx-auto font-normal"
-                >
-                  {HERO_MOODS[selectedMoodIdx].subNote}
-                </motion.p>
-              )}
-            </AnimatePresence>
-          </motion.div>
-
-          {/* ── CTAs ── */}
-          <motion.div variants={itemVariants} className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-4">
-            <AnimatePresence mode="wait">
-              <motion.button
-                key={selectedMoodIdx === null ? "cta-default" : `cta-${selectedMoodIdx}`}
-                initial={{ opacity: 0, scale: 0.96 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.96 }}
-                transition={{ duration: 0.2 }}
-                onClick={handleGetStarted}
-                className="px-9 py-4 rounded-full bg-primary hover:bg-primary-purple text-white font-heading font-bold text-sm shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2 group cursor-pointer"
-              >
-                <span>
-                  {selectedMoodIdx !== null ? HERO_MOODS[selectedMoodIdx].cta : "Start Your Free Journey"}
-                </span>
-                <span className="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">
-                  arrow_forward
-                </span>
-              </motion.button>
-            </AnimatePresence>
-
-            <Link
-              href="/how-it-works"
-              className="px-8 py-4 rounded-full bg-surface-container border border-surface-variant/40 font-heading font-semibold text-sm text-on-surface text-center hover:bg-primary/5 hover:-translate-y-0.5 transition-all"
-            >
-              See How It Works
-            </Link>
-          </motion.div>
-
-          {/* ── Social Proof Row ── */}
-          <motion.div variants={itemVariants} className="flex items-center gap-4 pt-2 border-t border-surface-variant/20">
-            <div className="flex -space-x-2 overflow-hidden">
-              <div className="inline-block h-8 w-8 rounded-full ring-2 ring-surface bg-primary/20 text-primary font-bold text-xs flex items-center justify-center">A</div>
-              <div className="inline-block h-8 w-8 rounded-full ring-2 ring-surface bg-mint/30 text-[#006B56] font-bold text-xs flex items-center justify-center">M</div>
-              <div className="inline-block h-8 w-8 rounded-full ring-2 ring-surface bg-peach/40 text-[#9E5D28] font-bold text-xs flex items-center justify-center">R</div>
-              <div className="inline-block h-8 w-8 rounded-full ring-2 ring-surface bg-pink/30 text-[#A83256] font-bold text-xs flex items-center justify-center">S</div>
-            </div>
-            <div className="text-xs text-on-surface-variant text-left">
-              <p className="font-heading font-bold text-on-surface">14,000+ members finding daily calm</p>
-              <p className="text-[11px] text-on-surface-variant/80">⭐️ 4.9/5 Rating • 100% Private & Encrypted</p>
-            </div>
-          </motion.div>
-        </motion.div>
-
-        {/* ── Trust Badges Strip ── */}
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true }}
-          className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-16 lg:mt-20 max-w-6xl mx-auto"
-        >
-          {TRUST_BADGES.map((b, idx) => (
-            <motion.div
-              key={idx}
-              variants={itemVariants}
-              className={`p-5 rounded-[24px] bg-surface-container-lowest border ${b.border} shadow-ambient hover:-translate-y-1 hover:shadow-md transition-all flex flex-col justify-between h-36 text-left`}
-            >
-              <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${b.bg} ${b.iconColor}`}>
-                <span className="material-symbols-outlined text-xl font-bold">{b.icon}</span>
-              </div>
-              <div>
-                <h4 className="text-xs font-heading font-black text-on-surface">{b.title}</h4>
-                <p className="text-[11px] text-on-surface-variant font-medium mt-0.5">{b.desc}</p>
-              </div>
-            </motion.div>
-          ))}
-        </motion.div>
-      </section>
-
       {/* ==================== 3. PROBLEM / EMPATHY SECTION ==================== */}
       <section className="py-20 md:py-28 bg-[#F2EBFF]/60 border-y border-surface-variant/20 px-6">
-        <div className="max-w-5xl mx-auto space-y-12">
+        <div className="max-w-7xl mx-auto space-y-12">
 
-          {/* Section Header — centered above the two columns */}
-          <div className="text-center max-w-3xl mx-auto space-y-4">
+          {/* Section Header — left-aligned above the two columns */}
+          <div className="text-left max-w-3xl space-y-4">
             <p className="text-xs font-heading font-bold text-[#874959] tracking-widest uppercase">
               Why We Built Manraah
             </p>
@@ -842,7 +637,7 @@ export default function MarketingLandingPage() {
                 <span className="material-symbols-outlined text-xl">chevron_right</span>
               </button>
               <Link
-                href="/category-selection"
+                href="/for-you"
                 className="px-5 py-2.5 rounded-full text-xs font-heading font-bold bg-primary/10 text-primary border border-primary/20 hover:bg-primary hover:text-white transition-all ml-2"
               >
                 View All Categories →
@@ -864,8 +659,7 @@ export default function MarketingLandingPage() {
               return (
                 <div
                   key={cat.id}
-                  onClick={() => handleSelectCategory(cat.id)}
-                  className={`snap-start shrink-0 w-[270px] sm:w-[310px] h-[340px] sm:h-[380px] rounded-[32px] p-7 relative overflow-hidden flex flex-col justify-between shadow-card-lift hover:-translate-y-2 hover:shadow-2xl transition-all duration-300 group cursor-pointer border border-white/20`}
+                  className={`snap-start shrink-0 w-[270px] sm:w-[310px] h-[340px] sm:h-[380px] rounded-[32px] p-7 relative overflow-hidden flex flex-col justify-between shadow-card-lift hover:-translate-y-2 hover:shadow-2xl transition-all duration-300 group cursor-default border border-white/20`}
                 >
                   {/* Full-Bleed Background Image */}
                   {cat.image ? (
@@ -893,11 +687,8 @@ export default function MarketingLandingPage() {
 
                   {/* Bottom Card Content */}
                   <div className="relative z-20 space-y-2 text-left">
-                    <h3 className="font-heading font-black text-xl sm:text-2xl text-white tracking-tight flex items-center justify-between">
-                      <span>{cat.name}</span>
-                      <span className="material-symbols-outlined text-xl text-white/90 group-hover:translate-x-1 transition-transform">
-                        arrow_forward
-                      </span>
+                    <h3 className="font-heading font-black text-xl sm:text-2xl text-white tracking-tight">
+                      {cat.name}
                     </h3>
                     <p className="text-xs text-white/90 leading-relaxed font-normal">
                       {cat.desc}
@@ -909,7 +700,7 @@ export default function MarketingLandingPage() {
           </div>
 
           {/* Explore All Pathways CTA Button */}
-          <div className="text-center pt-4">
+          <div className="text-left pt-4">
             <Link
               href="/for-you"
               className="inline-flex items-center gap-2 px-7 py-3 rounded-full bg-surface-container-lowest hover:bg-primary/10 text-primary border border-primary/30 font-heading font-bold text-xs sm:text-sm shadow-xs hover:shadow-md transition-all hover:scale-105 cursor-pointer"
@@ -923,16 +714,18 @@ export default function MarketingLandingPage() {
 
       {/* ==================== 7. TESTIMONIALS SECTION (SINGLE CONTINUOUS MARQUEE LINE) ==================== */}
       <section id="testimonials" className="py-12 md:py-16 bg-surface overflow-hidden">
-        <div className="text-center max-w-3xl mx-auto mb-8 px-6 space-y-3">
-          <p className="text-xs font-heading font-bold text-[#006B56] tracking-widest uppercase">
-            Real Perspectives &amp; Reflections
-          </p>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-heading font-extrabold text-on-surface">
-            Built With Real People In Mind
-          </h2>
-          <p className="text-base text-on-surface-variant max-w-2xl mx-auto">
-            How individuals across students, parents, couples, and working professionals find daily moments of calm and emotional grounding with Manraah.
-          </p>
+        <div className="px-6 mb-8">
+          <div className="max-w-7xl mx-auto space-y-3 text-left">
+            <p className="text-xs font-heading font-bold text-[#006B56] tracking-widest uppercase">
+              Real Perspectives &amp; Reflections
+            </p>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-heading font-extrabold text-on-surface">
+              Built With Real People In Mind
+            </h2>
+            <p className="text-base text-on-surface-variant max-w-2xl">
+              How individuals across students, parents, couples, and working professionals find daily moments of calm and emotional grounding with Manraah.
+            </p>
+          </div>
         </div>
 
         {/* Marquee Wrapper with edge gradient fade masks */}
@@ -981,20 +774,193 @@ export default function MarketingLandingPage() {
         </div>
 
         {/* Read More Stories CTA Button */}
-        <div className="text-center pt-6 px-6">
-          <Link
-            href="/stories"
-            className="inline-flex items-center gap-2 px-7 py-3 rounded-full bg-surface-container-lowest hover:bg-primary/10 text-primary border border-primary/30 font-heading font-bold text-xs sm:text-sm shadow-xs hover:shadow-md transition-all hover:scale-105 cursor-pointer"
+        <div className="px-6 pt-6">
+          <div className="max-w-7xl mx-auto text-left">
+            <Link
+              href="/stories"
+              className="inline-flex items-center gap-2 px-7 py-3 rounded-full bg-surface-container-lowest hover:bg-primary/10 text-primary border border-primary/30 font-heading font-bold text-xs sm:text-sm shadow-xs hover:shadow-md transition-all hover:scale-105 cursor-pointer"
+            >
+              <span>Explore All Member Stories &amp; Journeys</span>
+              <span className="material-symbols-outlined text-base">arrow_forward</span>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══ 8. INTERACTIVE MOOD CHECK-IN, HEADLINE & CTAs ═══ */}
+      <section className="relative py-16 md:py-24 px-6 overflow-hidden">
+
+        {/* Soft Atmospheric Glow Blobs */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[80vw] md:w-[600px] h-[400px] bg-primary/10 rounded-full blur-[130px] pointer-events-none -z-10" />
+        <div className="absolute bottom-0 right-0 w-[300px] h-[300px] bg-mint/10 rounded-full blur-[100px] pointer-events-none -z-10" />
+        <div className="absolute top-20 left-0 w-[250px] h-[250px] bg-pink/10 rounded-full blur-[100px] pointer-events-none -z-10" />
+
+        <div className="max-w-7xl mx-auto space-y-16">
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true }}
+            className="flex flex-col items-start text-left gap-8"
           >
-            <span>Explore All Member Stories &amp; Journeys</span>
-            <span className="material-symbols-outlined text-base">arrow_forward</span>
-          </Link>
+          {/* Eyebrow Label */}
+          <motion.div variants={itemVariants} className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-heading font-bold uppercase tracking-widest">
+            <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+            <span>A Retreat for Mind &amp; Soul</span>
+          </motion.div>
+
+          {/* ── MOOD CHECK-IN PROMPT ── */}
+          <motion.div variants={itemVariants} className="w-full max-w-3xl space-y-4">
+            <p className="text-sm sm:text-base font-heading font-semibold text-on-surface-variant">
+              How are you feeling right now?
+            </p>
+
+            {/* Mood Emoji Row — same set as DailyCheckInScreen */}
+            <div className="flex items-center justify-start gap-2 sm:gap-3 flex-wrap">
+              {HERO_MOODS.map((mood, idx) => {
+                const isSelected = selectedMoodIdx === idx;
+                return (
+                  <button
+                    key={mood.label}
+                    onClick={() => setSelectedMoodIdx(isSelected ? null : idx)}
+                    aria-label={mood.label}
+                    className={`flex flex-col items-center gap-1 px-3 py-2.5 sm:px-4 sm:py-3 rounded-2xl border transition-all duration-200 cursor-pointer group ${
+                      isSelected
+                        ? `${mood.color} ring-2 ${mood.ring} shadow-md scale-[1.08]`
+                        : "bg-surface-container-lowest border-surface-variant/40 hover:bg-surface-container hover:border-surface-variant/60 hover:scale-[1.04]"
+                    }`}
+                  >
+                    <span className={`text-2xl sm:text-3xl leading-none transition-transform duration-200 ${isSelected ? "scale-110" : "group-hover:scale-105"}`}>
+                      {mood.emoji}
+                    </span>
+                    <span className={`text-[10px] sm:text-[11px] font-heading font-bold leading-none ${
+                      isSelected ? "opacity-100 font-black" : "text-on-surface-variant"
+                    }`}>
+                      {mood.label}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </motion.div>
+
+          {/* ── RESPONSIVE HEADLINE — CROSS-FADES ON MOOD SELECTION ── */}
+          <motion.div variants={itemVariants} className="w-full max-w-3xl space-y-4">
+            <AnimatePresence mode="wait">
+              {selectedMoodIdx === null ? (
+                <motion.h1
+                  key="default"
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -12 }}
+                  transition={{ duration: 0.28, ease: "easeInOut" }}
+                  className="text-4xl sm:text-5xl lg:text-6xl font-heading font-black tracking-tight leading-[1.12] text-on-surface"
+                >
+                  Your Safe Space to{" "}
+                  <span className="text-primary bg-clip-text text-transparent bg-gradient-to-r from-primary via-[#5F4EA5] to-mint">
+                    Breathe, Reflect & Feel Heard
+                  </span>
+                </motion.h1>
+              ) : (
+                <motion.h1
+                  key={`mood-${selectedMoodIdx}`}
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -12 }}
+                  transition={{ duration: 0.28, ease: "easeInOut" }}
+                  className="text-3xl sm:text-4xl lg:text-5xl font-heading font-black tracking-tight leading-[1.18] text-on-surface"
+                >
+                  {HERO_MOODS[selectedMoodIdx].headline}
+                </motion.h1>
+              )}
+            </AnimatePresence>
+
+            {/* Subheading — cross-fades too */}
+            <AnimatePresence mode="wait">
+              {selectedMoodIdx === null ? (
+                <motion.p
+                  key="sub-default"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.22 }}
+                  className="text-base sm:text-lg leading-relaxed text-on-surface-variant max-w-2xl font-normal"
+                >
+                  Connect with an empathetic AI companion 24/7, talk to verified peer listeners, track your emotional wellness, and access guided care — personalized for your exact stage in life.
+                </motion.p>
+              ) : (
+                <motion.p
+                  key={`sub-mood-${selectedMoodIdx}`}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.22 }}
+                  className="text-base sm:text-lg leading-relaxed text-on-surface-variant max-w-2xl font-normal"
+                >
+                  {HERO_MOODS[selectedMoodIdx].subNote}
+                </motion.p>
+              )}
+            </AnimatePresence>
+          </motion.div>
+
+          {/* ── CTAs ── */}
+          <motion.div variants={itemVariants} className="flex items-center justify-start">
+            <Link
+              href="/how-it-works"
+              className="px-9 py-4 rounded-full bg-primary hover:bg-primary-purple text-white font-heading font-bold text-sm shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all inline-flex items-center gap-2 group cursor-pointer"
+            >
+              <span>See How It Works</span>
+              <span className="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">
+                arrow_forward
+              </span>
+            </Link>
+          </motion.div>
+
+          {/* ── Social Proof Row ── */}
+          <motion.div variants={itemVariants} className="flex items-center gap-4 pt-2 border-t border-surface-variant/20">
+            <div className="flex -space-x-2 overflow-hidden">
+              <div className="inline-block h-8 w-8 rounded-full ring-2 ring-surface bg-primary/20 text-primary font-bold text-xs flex items-center justify-center">A</div>
+              <div className="inline-block h-8 w-8 rounded-full ring-2 ring-surface bg-mint/30 text-[#006B56] font-bold text-xs flex items-center justify-center">M</div>
+              <div className="inline-block h-8 w-8 rounded-full ring-2 ring-surface bg-peach/40 text-[#9E5D28] font-bold text-xs flex items-center justify-center">R</div>
+              <div className="inline-block h-8 w-8 rounded-full ring-2 ring-surface bg-pink/30 text-[#A83256] font-bold text-xs flex items-center justify-center">S</div>
+            </div>
+            <div className="text-xs text-on-surface-variant text-left">
+              <p className="font-heading font-bold text-on-surface">14,000+ members finding daily calm</p>
+              <p className="text-[11px] text-on-surface-variant/80">⭐️ 4.9/5 Rating • 100% Private & Encrypted</p>
+            </div>
+          </motion.div>
+        </motion.div>
+
+          {/* ── Trust Badges Strip ── */}
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true }}
+            className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full"
+          >
+            {TRUST_BADGES.map((b, idx) => (
+              <motion.div
+                key={idx}
+                variants={itemVariants}
+                className={`p-5 rounded-[24px] bg-surface-container-lowest border ${b.border} shadow-ambient hover:-translate-y-1 hover:shadow-md transition-all flex flex-col justify-between h-36 text-left`}
+              >
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${b.bg} ${b.iconColor}`}>
+                  <span className="material-symbols-outlined text-xl font-bold">{b.icon}</span>
+                </div>
+                <div>
+                  <h4 className="text-xs font-heading font-black text-on-surface">{b.title}</h4>
+                  <p className="text-[11px] text-on-surface-variant font-medium mt-0.5">{b.desc}</p>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
         </div>
       </section>
 
 
       {/* ==================== 10. FINAL CTA BAND ==================== */}
-      <section className="py-20 md:py-28 bg-gradient-to-br from-[#4A388E] via-[#5F4EA5] to-[#3B2C78] text-white px-6 text-center relative overflow-hidden">
+      <section className="py-20 md:py-28 bg-gradient-to-br from-[#4A388E] via-[#5F4EA5] to-[#3B2C78] text-white px-6 relative overflow-hidden">
         {/* Subtle Atmospheric Glow Blobs for Depth */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[320px] bg-primary-purple/30 rounded-full blur-[110px] pointer-events-none" />
         <div className="absolute -top-16 -left-16 w-80 h-80 bg-mint/20 rounded-full blur-3xl pointer-events-none" />
@@ -1009,22 +975,22 @@ export default function MarketingLandingPage() {
           </svg>
         </div>
 
-        <div className="max-w-4xl mx-auto space-y-8 relative z-10">
+        <div className="max-w-7xl mx-auto space-y-8 relative z-10 text-left">
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-heading font-black tracking-tight leading-tight">
             Your Retreat for Mind is Just One Step Away
           </h2>
-          <p className="text-base sm:text-lg text-white/90 max-w-2xl mx-auto leading-relaxed font-normal">
+          <p className="text-base sm:text-lg text-white/90 max-w-2xl leading-relaxed font-normal">
             Join individuals building daily emotional clarity, resilience, and peace with Manraah.
           </p>
 
           <div className="pt-2">
-            <button
-              onClick={handleGetStarted}
+            <Link
+              href="/how-it-works"
               className="px-10 py-4.5 rounded-full bg-white text-primary hover:bg-surface-container-low font-heading font-extrabold text-base shadow-xl hover:scale-105 transition-all inline-flex items-center gap-2 cursor-pointer"
             >
-              <span>Get Started Free Now</span>
+              <span>Explore How It Works</span>
               <span className="material-symbols-outlined text-xl">arrow_forward</span>
-            </button>
+            </Link>
           </div>
         </div>
       </section>

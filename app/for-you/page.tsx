@@ -3,9 +3,6 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { useRouter } from "next/navigation";
-import { signOut } from "@/backend/auth/client";
-import { USER_CATEGORIES } from "@/frontend/lib/constants";
 
 interface PathwayDetail {
   id: string;
@@ -147,19 +144,9 @@ const PATHWAYS: PathwayDetail[] = [
 ];
 
 export default function ForYouPage() {
-  const router = useRouter();
   const [activePathwayId, setActivePathwayId] = useState<string>("student");
 
   const activePathway = PATHWAYS.find((p) => p.id === activePathwayId) || PATHWAYS[0];
-
-  const handleGetStarted = async (category: string) => {
-    try {
-      await signOut();
-    } catch {
-      // ignore
-    }
-    router.push(`/category-selection?selected=${category}`);
-  };
 
   return (
     <div className="min-h-screen bg-surface text-on-surface select-none">
@@ -221,8 +208,8 @@ export default function ForYouPage() {
             className="rounded-[32px] bg-surface-container-lowest border border-surface-variant/40 shadow-card-lift p-8 sm:p-12 space-y-10"
           >
             {/* Header Info */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-8 border-b border-surface-variant/20">
-              <div className="space-y-3 max-w-2xl">
+            <div className="pb-8 border-b border-surface-variant/20">
+              <div className="space-y-3 max-w-3xl text-left">
                 <span className={`px-3 py-1 rounded-full text-xs font-heading font-bold ${activePathway.badgeStyle}`}>
                   {activePathway.badge}
                 </span>
@@ -233,14 +220,6 @@ export default function ForYouPage() {
                   {activePathway.description}
                 </p>
               </div>
-
-              <button
-                onClick={() => handleGetStarted(activePathway.id)}
-                className="px-8 py-3.5 rounded-full bg-primary hover:bg-primary-purple text-white font-heading font-bold text-sm shadow-md hover:shadow-lg transition-all inline-flex items-center gap-2 shrink-0 cursor-pointer self-start md:self-center"
-              >
-                <span>Start This Pathway</span>
-                <span className="material-symbols-outlined text-base">arrow_forward</span>
-              </button>
             </div>
 
             {/* Grid breakdown */}
@@ -382,13 +361,13 @@ export default function ForYouPage() {
           </p>
 
           <div className="pt-2">
-            <button
-              onClick={() => handleGetStarted("student")}
+            <Link
+              href="/how-it-works"
               className="px-9 py-4 rounded-full bg-white text-primary hover:bg-surface-container-low font-heading font-extrabold text-sm shadow-xl hover:scale-105 transition-all inline-flex items-center gap-2 cursor-pointer"
             >
-              <span>Choose Your Category &amp; Begin</span>
+              <span>Explore How It Works</span>
               <span className="material-symbols-outlined text-lg">arrow_forward</span>
-            </button>
+            </Link>
           </div>
         </div>
       </section>

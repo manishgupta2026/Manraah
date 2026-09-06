@@ -72,7 +72,7 @@ export default function WelcomeFlow() {
       {/* Header */}
       <header className="w-full max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
         <Link href="/" className="inline-block hover:opacity-90 transition-opacity">
-          <Logo size="md" priority className="h-8 sm:h-9" />
+          <Logo size="md" priority />
         </Link>
 
         <Link

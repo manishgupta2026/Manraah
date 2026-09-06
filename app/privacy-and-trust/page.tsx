@@ -3,20 +3,8 @@
 import React from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { useRouter } from "next/navigation";
-import { signOut } from "@/backend/auth/client";
 
 export default function PrivacyAndTrustPage() {
-  const router = useRouter();
-
-  const handleGetStarted = async () => {
-    try {
-      await signOut();
-    } catch {
-      // ignore
-    }
-    router.push("/category-selection");
-  };
 
   return (
     <div className="min-h-screen bg-surface text-on-surface select-none">
@@ -254,13 +242,13 @@ export default function PrivacyAndTrustPage() {
           </p>
 
           <div className="pt-2">
-            <button
-              onClick={handleGetStarted}
+            <Link
+              href="/faq"
               className="px-9 py-4 rounded-full bg-white text-primary hover:bg-surface-container-low font-heading font-extrabold text-sm shadow-xl hover:scale-105 transition-all inline-flex items-center gap-2 cursor-pointer"
             >
-              <span>Get Started Free Today</span>
+              <span>Explore Privacy FAQs</span>
               <span className="material-symbols-outlined text-lg">arrow_forward</span>
-            </button>
+            </Link>
           </div>
         </div>
       </section>

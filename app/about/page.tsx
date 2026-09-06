@@ -1,9 +1,8 @@
 "use client";
 
 import React from "react";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
-import { signOut } from "@/backend/auth/client";
 
 const PILLARS = [
   {
@@ -66,17 +65,7 @@ const PRINCIPLES = [
 ];
 
 export default function AboutPage() {
-  const router = useRouter();
   const shouldReduceMotion = useReducedMotion();
-
-  const handleGetStarted = async () => {
-    try {
-      await signOut();
-    } catch {
-      // ignore
-    }
-    router.push("/category-selection");
-  };
 
   // ═══ ANIMATION VARIANTS ═══
   const heroContainerVariants = {
@@ -214,18 +203,15 @@ export default function AboutPage() {
 
         {/* Quick CTA */}
         <motion.div variants={heroItemVariants} className="pt-2">
-          <motion.button
-            onClick={handleGetStarted}
-            initial="rest"
-            whileHover="hover"
-            variants={buttonVariants}
+          <Link
+            href="/for-you"
             className="px-8 py-3.5 rounded-full bg-primary hover:bg-primary-purple text-white font-heading font-bold text-sm shadow-md hover:shadow-lg transition-all inline-flex items-center gap-2 cursor-pointer"
           >
-            <span>Explore Your Path</span>
-            <motion.span variants={arrowVariants} className="material-symbols-outlined text-base">
+            <span>Explore Life Pathways</span>
+            <span className="material-symbols-outlined text-base">
               arrow_forward
-            </motion.span>
-          </motion.button>
+            </span>
+          </Link>
         </motion.div>
       </motion.section>
 
@@ -239,7 +225,7 @@ export default function AboutPage() {
           className="rounded-[32px] bg-surface-container-lowest border border-surface-variant/40 shadow-card-lift p-8 sm:p-12 space-y-10"
         >
           {/* Header Info */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-8 border-b border-surface-variant/20">
+          <div className="pb-8 border-b border-surface-variant/20">
             <div className="space-y-3 max-w-3xl text-left">
               <span className="px-3 py-1 rounded-full text-xs font-heading font-bold bg-primary/10 text-primary border border-primary/20 uppercase tracking-wider">
                 Our Essence &amp; Meaning
@@ -251,19 +237,6 @@ export default function AboutPage() {
                 The name Manraah comes from <span className="font-semibold text-primary">&quot;Man&quot;</span> (mind) and <span className="font-semibold text-primary">&quot;raah&quot;</span> (path) — quite literally, a path for the mind. We created Manraah as a warm, welcoming space that brings together three essential pillars of mental wellness: professional therapy for those who need expert guidance, self-help tools for everyday emotional care, and a community of people who understand what you&apos;re going through. We don&apos;t believe in a one-size-fits-all approach to healing. Instead, we meet you where you are, and walk with you toward where you want to be.
               </p>
             </div>
-
-            <motion.button
-              onClick={handleGetStarted}
-              initial="rest"
-              whileHover="hover"
-              variants={buttonVariants}
-              className="px-7 py-3 rounded-full bg-primary/10 hover:bg-primary/20 text-primary border border-primary/30 font-heading font-bold text-sm transition-all inline-flex items-center gap-2 shrink-0 cursor-pointer self-start md:self-center"
-            >
-              <span>Get Started</span>
-              <motion.span variants={arrowVariants} className="material-symbols-outlined text-base">
-                arrow_forward
-              </motion.span>
-            </motion.button>
           </div>
 
           {/* Three Pillars Showcase */}
@@ -504,18 +477,15 @@ export default function AboutPage() {
           </p>
 
           <div className="pt-2">
-            <motion.button
-              onClick={handleGetStarted}
-              initial="rest"
-              whileHover="hover"
-              variants={buttonVariants}
+            <Link
+              href="/how-it-works"
               className="px-9 py-4 rounded-full bg-white text-primary hover:bg-surface-container-low font-heading font-extrabold text-sm shadow-xl transition-all inline-flex items-center gap-2 cursor-pointer"
             >
-              <span>Get Started with Manraah</span>
-              <motion.span variants={arrowVariants} className="material-symbols-outlined text-lg">
+              <span>Explore How It Works</span>
+              <span className="material-symbols-outlined text-lg">
                 arrow_forward
-              </motion.span>
-            </motion.button>
+              </span>
+            </Link>
           </div>
         </div>
       </section>

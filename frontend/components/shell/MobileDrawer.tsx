@@ -53,7 +53,7 @@ export default function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
           {/* Header & Brand with Close */}
           <div className="flex items-center justify-between pb-4 border-b border-surface-variant/30">
             <Link href="/" onClick={onClose} className="inline-block hover:opacity-90 transition-opacity">
-              <Logo size="md" className="h-8 w-auto" />
+              <Logo size="md" />
             </Link>
             <button
               onClick={onClose}

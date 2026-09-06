@@ -18,10 +18,10 @@ export default function Logo({
   priority = false,
 }: LogoProps) {
   const sizeClasses = {
-    sm: "h-7 sm:h-8",
-    md: "h-8 sm:h-9",
-    lg: "h-10 sm:h-11 md:h-12",
-    xl: "h-12 sm:h-14 md:h-16",
+    sm: "h-8 sm:h-9",
+    md: "h-10 sm:h-11",
+    lg: "h-12 sm:h-14",
+    xl: "h-16 sm:h-18",
     custom: "",
   };
 

@@ -2,9 +2,8 @@
 
 import React, { useState, useEffect, useRef, Suspense } from "react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { signOut } from "@/backend/auth/client";
 
 const FEATURES_DATA = [
   {
@@ -138,7 +137,6 @@ const FEATURES_DATA = [
 ];
 
 function FeaturesContent() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const [selectedPillar, setSelectedPillar] = useState<number>(0);
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
@@ -192,15 +190,6 @@ function FeaturesContent() {
     setTouchStartX(null);
   };
 
-  const handleGetStarted = async () => {
-    try {
-      await signOut();
-    } catch {
-      // ignore
-    }
-    router.push("/category-selection");
-  };
-
   const currentFeature = FEATURES_DATA[selectedPillar];
 
   return (
@@ -220,13 +209,13 @@ function FeaturesContent() {
           </p>
 
           <div className="pt-2 flex items-center justify-center gap-3">
-            <button
-              onClick={handleGetStarted}
+            <Link
+              href="/how-it-works"
               className="px-8 py-4 rounded-full bg-primary hover:bg-primary-purple text-white font-heading font-bold text-sm shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all inline-flex items-center gap-2 cursor-pointer"
             >
-              <span>Explore Your Retreat Free</span>
+              <span>See How It Works</span>
               <span className="material-symbols-outlined text-lg">arrow_forward</span>
-            </button>
+            </Link>
           </div>
         </div>
 
@@ -297,14 +286,6 @@ function FeaturesContent() {
                   </div>
 
                   <div className="pt-3 flex items-center gap-3">
-                    <button
-                      onClick={handleGetStarted}
-                      className="px-7 py-3.5 rounded-full bg-primary hover:bg-primary-purple text-white font-heading font-bold text-sm shadow-md transition-all inline-flex items-center gap-2 cursor-pointer"
-                    >
-                      <span>Try {currentFeature.label}</span>
-                      <span className="material-symbols-outlined text-lg">arrow_forward</span>
-                    </button>
-
                     <span className="text-xs text-on-surface-variant/70 font-semibold">
                       Feature {selectedPillar + 1} of {FEATURES_DATA.length}
                     </span>
@@ -370,9 +351,9 @@ function FeaturesContent() {
                       </div>
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs pt-1">
                         <span className="text-on-surface-variant/70 text-[11px]">100% Anonymous & Private</span>
-                        <button onClick={handleGetStarted} className="px-4 py-2 rounded-full bg-[#9E5D28] text-white font-heading font-bold text-xs shadow-xs shrink-0 cursor-pointer">
-                          Start Chat Session
-                        </button>
+                        <span className="px-4 py-1.5 rounded-full bg-peach/20 text-[#9E5D28] font-heading font-bold text-xs shrink-0">
+                          Peer Space
+                        </span>
                       </div>
                     </div>
                   )}
@@ -401,9 +382,9 @@ function FeaturesContent() {
                           🔒 Encrypted Video
                         </div>
                       </div>
-                      <button onClick={handleGetStarted} className="w-full py-2.5 rounded-full bg-[#874959] text-white font-heading font-bold text-xs shadow-xs cursor-pointer">
-                        Schedule 1-on-1 Session
-                      </button>
+                      <div className="w-full py-2 rounded-full bg-surface-container-low border border-surface-variant/30 text-on-surface-variant font-heading font-semibold text-xs text-center">
+                        Verified Professional Care
+                      </div>
                     </div>
                   )}
 
@@ -659,13 +640,13 @@ function FeaturesContent() {
               Unlock mood tracking, daily reflections, audio meditations, and your empathetic AI companion today.
             </p>
             <div className="pt-2">
-              <button
-                onClick={handleGetStarted}
+              <Link
+                href="/how-it-works"
                 className="px-8 py-4 rounded-full bg-white text-primary hover:bg-surface-container-low font-heading font-bold text-sm shadow-xl hover:scale-105 transition-all inline-flex items-center gap-2 cursor-pointer"
               >
-                <span>Create Your Retreat</span>
+                <span>Explore How It Works</span>
                 <span className="material-symbols-outlined text-lg">arrow_forward</span>
-              </button>
+              </Link>
             </div>
           </div>
         </div>

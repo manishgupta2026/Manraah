@@ -31,7 +31,7 @@ export default function PublicNavbar() {
         
         {/* Brand Logo */}
         <Link href="/" className="flex items-center gap-2 group hover:opacity-90 transition-opacity">
-          <Logo size="md" priority className="h-8 sm:h-9" />
+          <Logo size="md" priority />
         </Link>
 
         {/* Navigation Links (Desktop) */}
