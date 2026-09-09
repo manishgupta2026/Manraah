@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence, useInView } from "framer-motion";
 import { USER_CATEGORIES } from "@/frontend/lib/constants";
+import BottomCtaBand from "@/frontend/components/ui/BottomCtaBand";
 
 // Vibrant 2-Tone Brand Gradients per Category
 const USER_CATEGORY_GRADIENTS: Record<string, { bg: string; badge: string }> = {
@@ -774,7 +775,7 @@ export default function MarketingLandingPage() {
         </div>
 
         {/* Read More Stories CTA Button */}
-        <div className="px-6 pt-6">
+        <div className="px-6 pt-8">
           <div className="max-w-7xl mx-auto text-left">
             <Link
               href="/stories"
@@ -787,8 +788,8 @@ export default function MarketingLandingPage() {
         </div>
       </section>
 
-      {/* ═══ 8. INTERACTIVE MOOD CHECK-IN, HEADLINE & CTAs ═══ */}
-      <section className="relative py-16 md:py-24 px-6 overflow-hidden">
+      {/* ═══ 8. HEADLINE, CTAs & TRUST BADGES (MOOD CHECK-IN PROMPT COMMENTED OUT) ═══ */}
+      <section className="relative pt-6 md:pt-10 pb-16 md:py-24 px-6 overflow-hidden">
 
         {/* Soft Atmospheric Glow Blobs */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[80vw] md:w-[600px] h-[400px] bg-primary/10 rounded-full blur-[130px] pointer-events-none -z-10" />
@@ -803,19 +804,21 @@ export default function MarketingLandingPage() {
             viewport={{ once: true }}
             className="flex flex-col items-start text-left gap-8"
           >
-          {/* Eyebrow Label */}
+          {/* ── COMMENTED OUT: MOOD CHECK-IN PROMPT & EYEBROW ── */}
+          {/*
+          // Eyebrow Label
           <motion.div variants={itemVariants} className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-heading font-bold uppercase tracking-widest">
             <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
             <span>A Retreat for Mind &amp; Soul</span>
           </motion.div>
 
-          {/* ── MOOD CHECK-IN PROMPT ── */}
+          // MOOD CHECK-IN PROMPT
           <motion.div variants={itemVariants} className="w-full max-w-3xl space-y-4">
             <p className="text-sm sm:text-base font-heading font-semibold text-on-surface-variant">
               How are you feeling right now?
             </p>
 
-            {/* Mood Emoji Row — same set as DailyCheckInScreen */}
+            // Mood Emoji Row — same set as DailyCheckInScreen
             <div className="flex items-center justify-start gap-2 sm:gap-3 flex-wrap">
               {HERO_MOODS.map((mood, idx) => {
                 const isSelected = selectedMoodIdx === idx;
@@ -843,64 +846,20 @@ export default function MarketingLandingPage() {
               })}
             </div>
           </motion.div>
+          */}
 
-          {/* ── RESPONSIVE HEADLINE — CROSS-FADES ON MOOD SELECTION ── */}
+          {/* ── HEADLINE & SUBTITLE ── */}
           <motion.div variants={itemVariants} className="w-full max-w-3xl space-y-4">
-            <AnimatePresence mode="wait">
-              {selectedMoodIdx === null ? (
-                <motion.h1
-                  key="default"
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -12 }}
-                  transition={{ duration: 0.28, ease: "easeInOut" }}
-                  className="text-4xl sm:text-5xl lg:text-6xl font-heading font-black tracking-tight leading-[1.12] text-on-surface"
-                >
-                  Your Safe Space to{" "}
-                  <span className="text-primary bg-clip-text text-transparent bg-gradient-to-r from-primary via-[#5F4EA5] to-mint">
-                    Breathe, Reflect & Feel Heard
-                  </span>
-                </motion.h1>
-              ) : (
-                <motion.h1
-                  key={`mood-${selectedMoodIdx}`}
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -12 }}
-                  transition={{ duration: 0.28, ease: "easeInOut" }}
-                  className="text-3xl sm:text-4xl lg:text-5xl font-heading font-black tracking-tight leading-[1.18] text-on-surface"
-                >
-                  {HERO_MOODS[selectedMoodIdx].headline}
-                </motion.h1>
-              )}
-            </AnimatePresence>
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-heading font-black tracking-tight leading-[1.12] text-on-surface">
+              Your Safe Space to{" "}
+              <span className="text-primary bg-clip-text text-transparent bg-gradient-to-r from-primary via-[#5F4EA5] to-mint">
+                Breathe, Reflect & Feel Heard
+              </span>
+            </h1>
 
-            {/* Subheading — cross-fades too */}
-            <AnimatePresence mode="wait">
-              {selectedMoodIdx === null ? (
-                <motion.p
-                  key="sub-default"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.22 }}
-                  className="text-base sm:text-lg leading-relaxed text-on-surface-variant max-w-2xl font-normal"
-                >
-                  Connect with an empathetic AI companion 24/7, talk to verified peer listeners, track your emotional wellness, and access guided care — personalized for your exact stage in life.
-                </motion.p>
-              ) : (
-                <motion.p
-                  key={`sub-mood-${selectedMoodIdx}`}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.22 }}
-                  className="text-base sm:text-lg leading-relaxed text-on-surface-variant max-w-2xl font-normal"
-                >
-                  {HERO_MOODS[selectedMoodIdx].subNote}
-                </motion.p>
-              )}
-            </AnimatePresence>
+            <p className="text-base sm:text-lg leading-relaxed text-on-surface-variant max-w-2xl font-normal">
+              Connect with an empathetic AI companion 24/7, talk to verified peer listeners, track your emotional wellness, and access guided care — personalized for your exact stage in life.
+            </p>
           </motion.div>
 
           {/* ── CTAs ── */}
@@ -914,20 +873,6 @@ export default function MarketingLandingPage() {
                 arrow_forward
               </span>
             </Link>
-          </motion.div>
-
-          {/* ── Social Proof Row ── */}
-          <motion.div variants={itemVariants} className="flex items-center gap-4 pt-2 border-t border-surface-variant/20">
-            <div className="flex -space-x-2 overflow-hidden">
-              <div className="inline-block h-8 w-8 rounded-full ring-2 ring-surface bg-primary/20 text-primary font-bold text-xs flex items-center justify-center">A</div>
-              <div className="inline-block h-8 w-8 rounded-full ring-2 ring-surface bg-mint/30 text-[#006B56] font-bold text-xs flex items-center justify-center">M</div>
-              <div className="inline-block h-8 w-8 rounded-full ring-2 ring-surface bg-peach/40 text-[#9E5D28] font-bold text-xs flex items-center justify-center">R</div>
-              <div className="inline-block h-8 w-8 rounded-full ring-2 ring-surface bg-pink/30 text-[#A83256] font-bold text-xs flex items-center justify-center">S</div>
-            </div>
-            <div className="text-xs text-on-surface-variant text-left">
-              <p className="font-heading font-bold text-on-surface">14,000+ members finding daily calm</p>
-              <p className="text-[11px] text-on-surface-variant/80">⭐️ 4.9/5 Rating • 100% Private & Encrypted</p>
-            </div>
           </motion.div>
         </motion.div>
 
@@ -960,40 +905,12 @@ export default function MarketingLandingPage() {
 
 
       {/* ==================== 10. FINAL CTA BAND ==================== */}
-      <section className="py-20 md:py-28 bg-gradient-to-br from-[#4A388E] via-[#5F4EA5] to-[#3B2C78] text-white px-6 relative overflow-hidden">
-        {/* Subtle Atmospheric Glow Blobs for Depth */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[320px] bg-primary-purple/30 rounded-full blur-[110px] pointer-events-none" />
-        <div className="absolute -top-16 -left-16 w-80 h-80 bg-mint/20 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-16 -right-16 w-80 h-80 bg-pink/20 rounded-full blur-3xl pointer-events-none" />
-
-        {/* Faint Brand Emblem Motif in Background (Low Opacity) */}
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none opacity-[0.04] text-white overflow-hidden">
-          <svg viewBox="0 0 100 100" className="w-[520px] h-[520px] fill-current">
-            <path d="M50 15 C40 30, 45 60, 50 85 C55 60, 60 30, 50 15 Z" />
-            <path d="M50 35 C30 45, 30 65, 50 85 C70 65, 70 45, 50 35 Z" opacity="0.75" />
-            <path d="M50 50 C20 55, 15 70, 50 85 C85 70, 80 55, 50 50 Z" opacity="0.5" />
-          </svg>
-        </div>
-
-        <div className="max-w-7xl mx-auto space-y-8 relative z-10 text-left">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-heading font-black tracking-tight leading-tight">
-            Your Retreat for Mind is Just One Step Away
-          </h2>
-          <p className="text-base sm:text-lg text-white/90 max-w-2xl leading-relaxed font-normal">
-            Join individuals building daily emotional clarity, resilience, and peace with Manraah.
-          </p>
-
-          <div className="pt-2">
-            <Link
-              href="/how-it-works"
-              className="px-10 py-4.5 rounded-full bg-white text-primary hover:bg-surface-container-low font-heading font-extrabold text-base shadow-xl hover:scale-105 transition-all inline-flex items-center gap-2 cursor-pointer"
-            >
-              <span>Explore How It Works</span>
-              <span className="material-symbols-outlined text-xl">arrow_forward</span>
-            </Link>
-          </div>
-        </div>
-      </section>
+      <BottomCtaBand
+        title="Your Retreat for Mind is Just One Step Away"
+        description="Join individuals building daily emotional clarity, resilience, and peace with Manraah."
+        buttonText="Explore How It Works"
+        buttonHref="/how-it-works"
+      />
     </div>
   );
 }

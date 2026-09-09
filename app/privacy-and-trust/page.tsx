@@ -3,6 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import BottomCtaBand from "@/frontend/components/ui/BottomCtaBand";
 
 export default function PrivacyAndTrustPage() {
 
@@ -231,27 +232,12 @@ export default function PrivacyAndTrustPage() {
       </section>
 
       {/* ═══ 5. BOTTOM CTA BANNER ═══ */}
-      <section className="py-20 md:py-28 bg-gradient-to-br from-[#4A388E] via-[#5F4EA5] to-[#3B2C78] text-white px-6 text-center relative overflow-hidden">
-        <div className="max-w-3xl mx-auto space-y-7 relative z-10">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-heading font-black tracking-tight leading-tight">
-            Your Private Mind Sanctuary Awaits
-          </h2>
-
-          <p className="text-sm sm:text-base text-white/90 max-w-xl mx-auto leading-relaxed font-normal">
-            Begin your journey in a safe, zero-judgment, encrypted environment designed around your well-being.
-          </p>
-
-          <div className="pt-2">
-            <Link
-              href="/faq"
-              className="px-9 py-4 rounded-full bg-white text-primary hover:bg-surface-container-low font-heading font-extrabold text-sm shadow-xl hover:scale-105 transition-all inline-flex items-center gap-2 cursor-pointer"
-            >
-              <span>Explore Privacy FAQs</span>
-              <span className="material-symbols-outlined text-lg">arrow_forward</span>
-            </Link>
-          </div>
-        </div>
-      </section>
+      <BottomCtaBand
+        title="Your Private Mind Sanctuary Awaits"
+        description="Begin your journey in a safe, zero-judgment, encrypted environment designed around your well-being."
+        buttonText="Explore Privacy FAQs"
+        buttonHref="/faq"
+      />
     </div>
   );
 }

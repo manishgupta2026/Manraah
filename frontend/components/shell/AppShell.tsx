@@ -20,8 +20,10 @@ import { ThemeProvider } from "@/frontend/lib/context/ThemeContext";
 const STANDALONE_ROUTES = [
   "/",
   "/how-it-works",
+  "/our-solution",
   "/features",
   "/stories",
+  "/blog",
   "/faq",
   "/for-you",
   "/privacy-and-trust",
@@ -43,8 +45,10 @@ export default function AppShell({ children }: { children: ReactNode }) {
   const isStandalone =
     STANDALONE_ROUTES.includes(pathname) ||
     pathname.startsWith("/how-it-works") ||
+    pathname.startsWith("/our-solution") ||
     pathname.startsWith("/features") ||
     pathname.startsWith("/stories") ||
+    pathname.startsWith("/blog") ||
     pathname.startsWith("/faq") ||
     pathname.startsWith("/for-you") ||
     pathname.startsWith("/privacy-and-trust") ||

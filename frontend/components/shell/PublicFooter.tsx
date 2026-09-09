@@ -84,6 +84,7 @@ export default function PublicFooter() {
             <h4 className="font-heading font-bold text-white text-xs uppercase tracking-wider">Product</h4>
             <ul className="space-y-2 text-xs text-white/70">
               <li><Link href="/how-it-works" className="hover:text-white transition-colors">How it Works</Link></li>
+              <li><Link href="/our-solution" className="hover:text-white transition-colors flex items-center gap-1.5"><span>Our Solution</span><span className="text-[9px] font-bold px-1.5 py-0.2 rounded-full bg-primary/30 text-white">Soon</span></Link></li>
               <li><Link href="/features" className="hover:text-white transition-colors">Features Overview</Link></li>
               <li><Link href="/stories" className="hover:text-white transition-colors">Member Stories</Link></li>
               <li><Link href="/features?tab=ai" className="hover:text-white transition-colors">AI Companion</Link></li>
@@ -113,6 +114,7 @@ export default function PublicFooter() {
             <h4 className="font-heading font-bold text-white text-xs uppercase tracking-wider">Trust &amp; Legal</h4>
             <ul className="space-y-2 text-xs text-white/70">
               <li><Link href="/about" className="hover:text-white transition-colors">About Us</Link></li>
+              <li><Link href="/blog" className="hover:text-white transition-colors">Wellness Blog</Link></li>
               <li><Link href="/privacy-and-trust" className="hover:text-white transition-colors">Privacy &amp; Trust Center</Link></li>
               <li><Link href="/faq" className="hover:text-white transition-colors">Frequently Asked Questions (FAQ)</Link></li>
               <li><Link href="/security" className="hover:text-white transition-colors">Security Standards</Link></li>

@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
+import BottomCtaBand from "@/frontend/components/ui/BottomCtaBand";
 
 const FEATURES_DATA = [
   {
@@ -629,29 +630,15 @@ function FeaturesContent() {
             ))}
           </div>
         </div>
-
-        {/* ═══ 4. BOTTOM CTA BANNER ═══ */}
-        <div className="p-8 sm:p-12 rounded-[36px] bg-gradient-to-br from-[#4A388E] via-[#5F4EA5] to-[#3B2C78] text-white text-center space-y-6 shadow-2xl relative overflow-hidden">
-          <div className="max-w-2xl mx-auto space-y-4 relative z-10">
-            <h2 className="text-3xl sm:text-4xl font-heading font-black tracking-tight">
-              Begin With All Features Free
-            </h2>
-            <p className="text-sm sm:text-base text-white/90 leading-relaxed font-normal">
-              Unlock mood tracking, daily reflections, audio meditations, and your empathetic AI companion today.
-            </p>
-            <div className="pt-2">
-              <Link
-                href="/how-it-works"
-                className="px-8 py-4 rounded-full bg-white text-primary hover:bg-surface-container-low font-heading font-bold text-sm shadow-xl hover:scale-105 transition-all inline-flex items-center gap-2 cursor-pointer"
-              >
-                <span>Explore How It Works</span>
-                <span className="material-symbols-outlined text-lg">arrow_forward</span>
-              </Link>
-            </div>
-          </div>
-        </div>
-
       </div>
+
+      {/* ═══ 4. BOTTOM CTA BANNER ═══ */}
+      <BottomCtaBand
+        title="Begin With All Features Free"
+        description="Unlock mood tracking, daily reflections, audio meditations, and your empathetic AI companion today."
+        buttonText="Explore How It Works"
+        buttonHref="/how-it-works"
+      />
     </div>
   );
 }

@@ -3,6 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
+import BottomCtaBand from "@/frontend/components/ui/BottomCtaBand";
 
 const PILLARS = [
   {
@@ -240,7 +241,7 @@ export default function AboutPage() {
           </div>
 
           {/* Three Pillars Showcase */}
-          <div className="space-y-4 text-left">
+          <div className="space-y-4 text-left pb-8 border-b border-surface-variant/20">
             <div className="flex items-center gap-2 text-on-surface">
               <span className="material-symbols-outlined text-mint text-2xl">auto_awesome</span>
               <h3 className="font-heading font-extrabold text-xl text-on-surface">
@@ -283,25 +284,15 @@ export default function AboutPage() {
               ))}
             </div>
           </div>
-        </motion.div>
-      </section>
 
-      {/* ═══ 3. VISION & MISSION ═══ */}
-      <section className="px-6 max-w-6xl mx-auto pb-14">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* VISION CARD */}
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            variants={sectionRevealVariants}
-            className="w-full"
-          >
+          {/* 4 Pillars of Purpose: Vision, Mission, Problem Statement & Goal (Inside the SAME div) */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* VISION CARD */}
             <motion.div
               variants={cardHoverVariants}
               initial="rest"
               whileHover="hover"
-              className="h-full p-8 sm:p-10 rounded-[32px] bg-surface-container-lowest border border-surface-variant/40 shadow-card-lift space-y-4 cursor-default text-left relative overflow-hidden"
+              className="p-7 sm:p-8 rounded-[24px] bg-surface-container-low/60 border border-surface-variant/30 hover:border-primary/30 transition-all flex flex-col justify-between space-y-4 text-left cursor-default relative overflow-hidden"
             >
               <div className="flex items-center justify-between">
                 <span className="px-3.5 py-1.5 rounded-full text-xs font-heading font-bold bg-primary/10 text-primary border border-primary/20 uppercase tracking-wider">
@@ -309,28 +300,20 @@ export default function AboutPage() {
                 </span>
                 <span className="material-symbols-outlined text-primary/40 text-2xl">visibility</span>
               </div>
-              <h2 className="text-2xl sm:text-3xl font-heading font-extrabold text-on-surface tracking-tight">
+              <h3 className="text-2xl sm:text-3xl font-heading font-extrabold text-on-surface tracking-tight">
                 Our Vision
-              </h2>
-              <p className="text-base text-on-surface-variant leading-relaxed font-normal">
+              </h3>
+              <p className="text-sm sm:text-base text-on-surface-variant leading-relaxed font-normal">
                 A world where mental health is treated with the same care, openness, and priority as physical health — where seeking support is seen as a sign of strength, not stigma, and where every individual has a safe path toward emotional well-being.
               </p>
             </motion.div>
-          </motion.div>
 
-          {/* MISSION CARD */}
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            variants={sectionRevealVariants}
-            className="w-full"
-          >
+            {/* MISSION CARD */}
             <motion.div
               variants={cardHoverVariants}
               initial="rest"
               whileHover="hover"
-              className="h-full p-8 sm:p-10 rounded-[32px] bg-surface-container-lowest border border-surface-variant/40 shadow-card-lift space-y-4 cursor-default text-left relative overflow-hidden"
+              className="p-7 sm:p-8 rounded-[24px] bg-surface-container-low/60 border border-surface-variant/30 hover:border-[#006B56]/30 transition-all flex flex-col justify-between space-y-4 text-left cursor-default relative overflow-hidden"
             >
               <div className="flex items-center justify-between">
                 <span className="px-3.5 py-1.5 rounded-full text-xs font-heading font-bold bg-[#006B56]/15 text-[#006B56] border border-[#006B56]/20 uppercase tracking-wider">
@@ -338,33 +321,20 @@ export default function AboutPage() {
                 </span>
                 <span className="material-symbols-outlined text-[#006B56]/40 text-2xl">flag</span>
               </div>
-              <h2 className="text-2xl sm:text-3xl font-heading font-extrabold text-on-surface tracking-tight">
+              <h3 className="text-2xl sm:text-3xl font-heading font-extrabold text-on-surface tracking-tight">
                 Our Mission
-              </h2>
-              <p className="text-base text-on-surface-variant leading-relaxed font-normal">
+              </h3>
+              <p className="text-sm sm:text-base text-on-surface-variant leading-relaxed font-normal">
                 To make mental health support accessible, affordable, and human — by combining professional therapy, practical self-help resources, and a compassionate community, so that no one has to face their struggles in silence or alone.
               </p>
             </motion.div>
-          </motion.div>
-        </div>
-      </section>
 
-      {/* ═══ 4. PROBLEM STATEMENT & GOAL ═══ */}
-      <section className="px-6 max-w-6xl mx-auto pb-14">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* PROBLEM STATEMENT CARD */}
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            variants={sectionRevealVariants}
-            className="w-full"
-          >
+            {/* PROBLEM STATEMENT CARD */}
             <motion.div
               variants={cardHoverVariants}
               initial="rest"
               whileHover="hover"
-              className="h-full p-8 sm:p-10 rounded-[32px] bg-surface-container-lowest border border-surface-variant/40 shadow-card-lift space-y-4 cursor-default text-left relative overflow-hidden"
+              className="p-7 sm:p-8 rounded-[24px] bg-surface-container-low/60 border border-surface-variant/30 hover:border-[#874959]/30 transition-all flex flex-col justify-between space-y-4 text-left cursor-default relative overflow-hidden"
             >
               <div className="flex items-center justify-between">
                 <span className="px-3.5 py-1.5 rounded-full text-xs font-heading font-bold bg-pink/30 text-[#874959] border border-pink/40 uppercase tracking-wider">
@@ -372,28 +342,20 @@ export default function AboutPage() {
                 </span>
                 <span className="material-symbols-outlined text-[#874959]/40 text-2xl">report_problem</span>
               </div>
-              <h2 className="text-2xl sm:text-3xl font-heading font-extrabold text-on-surface tracking-tight">
+              <h3 className="text-2xl sm:text-3xl font-heading font-extrabold text-on-surface tracking-tight">
                 Problem Statement
-              </h2>
-              <p className="text-base text-on-surface-variant leading-relaxed font-normal">
+              </h3>
+              <p className="text-sm sm:text-base text-on-surface-variant leading-relaxed font-normal">
                 Millions of people silently carry emotional pain they&apos;ve never spoken about — held back by stigma, high costs, inaccessible services, or simply not knowing where a safe conversation might begin. Existing solutions are often expensive, impersonal, or disconnected from the cultural realities people live in. What&apos;s missing is a space that offers real hope: professional care that&apos;s easy to reach, self-help that actually helps, and a community that reminds people they were never alone in the first place.
               </p>
             </motion.div>
-          </motion.div>
 
-          {/* GOAL CARD */}
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            variants={sectionRevealVariants}
-            className="w-full"
-          >
+            {/* GOAL CARD */}
             <motion.div
               variants={cardHoverVariants}
               initial="rest"
               whileHover="hover"
-              className="h-full p-8 sm:p-10 rounded-[32px] bg-surface-container-lowest border border-surface-variant/40 shadow-card-lift space-y-4 cursor-default text-left relative overflow-hidden"
+              className="p-7 sm:p-8 rounded-[24px] bg-surface-container-low/60 border border-surface-variant/30 hover:border-[#9E5D28]/30 transition-all flex flex-col justify-between space-y-4 text-left cursor-default relative overflow-hidden"
             >
               <div className="flex items-center justify-between">
                 <span className="px-3.5 py-1.5 rounded-full text-xs font-heading font-bold bg-[#9E5D28]/15 text-[#9E5D28] border border-[#9E5D28]/30 uppercase tracking-wider">
@@ -401,18 +363,18 @@ export default function AboutPage() {
                 </span>
                 <span className="material-symbols-outlined text-[#9E5D28]/40 text-2xl">track_changes</span>
               </div>
-              <h2 className="text-2xl sm:text-3xl font-heading font-extrabold text-on-surface tracking-tight">
+              <h3 className="text-2xl sm:text-3xl font-heading font-extrabold text-on-surface tracking-tight">
                 Our Goal
-              </h2>
-              <p className="text-base text-on-surface-variant leading-relaxed font-normal">
+              </h3>
+              <p className="text-sm sm:text-base text-on-surface-variant leading-relaxed font-normal">
                 To build a trusted, inclusive platform that empowers individuals at every stage of their mental health journey, from those just starting to explore their emotions, to those actively seeking therapy — through accessible care, meaningful self-help content, and a supportive community that reminds them they are never alone.
               </p>
             </motion.div>
-          </motion.div>
-        </div>
+          </div>
+        </motion.div>
       </section>
 
-      {/* ═══ 5. CORE PRINCIPLES ═══ */}
+      {/* ═══ 3. CORE PRINCIPLES ═══ */}
       <section className="py-16 bg-[#F2EBFF]/40 border-y border-surface-variant/20 px-6">
         <div className="max-w-6xl mx-auto space-y-12">
           <div className="text-center space-y-3 max-w-2xl mx-auto">
@@ -465,30 +427,13 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* ═══ 6. BOTTOM CTA BANNER ═══ */}
-      <section className="py-20 md:py-28 bg-gradient-to-br from-[#4A388E] via-[#5F4EA5] to-[#3B2C78] text-white px-6 text-center relative overflow-hidden">
-        <div className="max-w-3xl mx-auto space-y-7 relative z-10">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-heading font-black tracking-tight leading-tight">
-            Begin Your Journey to Well-being
-          </h2>
-
-          <p className="text-sm sm:text-base text-white/90 max-w-xl mx-auto leading-relaxed font-normal">
-            Experience compassionate support, expert therapy, self-help tools, and a welcoming community all in one place.
-          </p>
-
-          <div className="pt-2">
-            <Link
-              href="/how-it-works"
-              className="px-9 py-4 rounded-full bg-white text-primary hover:bg-surface-container-low font-heading font-extrabold text-sm shadow-xl transition-all inline-flex items-center gap-2 cursor-pointer"
-            >
-              <span>Explore How It Works</span>
-              <span className="material-symbols-outlined text-lg">
-                arrow_forward
-              </span>
-            </Link>
-          </div>
-        </div>
-      </section>
+      {/* ═══ 4. BOTTOM CTA BANNER ═══ */}
+      <BottomCtaBand
+        title="Begin Your Journey to Well-being"
+        description="Experience compassionate support, expert therapy, self-help tools, and a welcoming community all in one place."
+        buttonText="Explore How It Works"
+        buttonHref="/how-it-works"
+      />
     </div>
   );
 }

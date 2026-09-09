@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
+import BottomCtaBand from "@/frontend/components/ui/BottomCtaBand";
 
 interface PathwayDetail {
   id: string;
@@ -207,18 +207,53 @@ export default function ForYouPage() {
             transition={{ duration: 0.25 }}
             className="rounded-[32px] bg-surface-container-lowest border border-surface-variant/40 shadow-card-lift p-8 sm:p-12 space-y-10"
           >
-            {/* Header Info */}
-            <div className="pb-8 border-b border-surface-variant/20">
-              <div className="space-y-3 max-w-3xl text-left">
-                <span className={`px-3 py-1 rounded-full text-xs font-heading font-bold ${activePathway.badgeStyle}`}>
+            {/* Header Info + Active Pathway Artwork */}
+            <div className="pb-8 border-b border-surface-variant/20 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+              <div className="lg:col-span-7 space-y-4 text-left">
+                <span className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-heading font-bold ${activePathway.badgeStyle}`}>
                   {activePathway.badge}
                 </span>
-                <h2 className="text-3xl sm:text-4xl font-heading font-extrabold text-on-surface">
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-heading font-extrabold text-on-surface tracking-tight">
                   {activePathway.name}
                 </h2>
-                <p className="text-base text-on-surface-variant leading-relaxed">
+                <p className="text-base sm:text-lg text-on-surface-variant leading-relaxed font-normal">
                   {activePathway.description}
                 </p>
+                <div className="pt-1 flex items-center gap-2">
+                  <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface-container-low/80 border border-surface-variant/40 text-xs sm:text-sm font-heading font-semibold text-on-surface-variant">
+                    <span className="w-2 h-2 rounded-full bg-primary" />
+                    <span>{activePathway.tagline}</span>
+                  </span>
+                </div>
+              </div>
+
+              {/* Active Pathway Illustration Card */}
+              <div className="lg:col-span-5">
+                <div className="h-[230px] sm:h-[260px] w-full rounded-[28px] relative overflow-hidden shadow-card-lift border border-white/20 group">
+                  <img
+                    src={activePathway.image}
+                    alt={activePathway.name}
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 pointer-events-none z-0"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-black/10 pointer-events-none z-10" />
+
+                  {/* Badges on artwork */}
+                  <div className="flex items-start justify-between relative z-20 p-5">
+                    <div className="w-10 h-10 rounded-2xl bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center text-xl shadow-md">
+                      {activePathway.emoji}
+                    </div>
+                    <span className="px-3 py-1 rounded-full text-[11px] font-heading font-extrabold bg-white/20 backdrop-blur-md border border-white/30 text-white shadow-xs">
+                      {activePathway.badge}
+                    </span>
+                  </div>
+
+                  {/* Bottom overlay text on artwork */}
+                  <div className="absolute bottom-0 inset-x-0 p-5 z-20 text-left">
+                    <p className="text-xs text-white/95 leading-snug font-medium drop-shadow-sm">
+                      {activePathway.tagline}
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -285,92 +320,13 @@ export default function ForYouPage() {
         </AnimatePresence>
       </section>
 
-      {/* ═══ 4. ALL 5 PATHWAYS IMAGE GRID SUMMARY ═══ */}
-      <section className="py-16 bg-[#F2EBFF]/40 border-y border-surface-variant/20 px-6">
-        <div className="max-w-6xl mx-auto space-y-12">
-          <div className="text-center space-y-3 max-w-2xl mx-auto">
-            <p className="text-xs font-heading font-bold text-[#006B56] tracking-widest uppercase">
-              Comprehensive Coverage
-            </p>
-            <h2 className="text-3xl font-heading font-extrabold text-on-surface">
-              Explore All 5 Life Stage Pathways
-            </h2>
-            <p className="text-sm text-on-surface-variant">
-              You can easily switch or update your primary life pathway anytime from your account settings.
-            </p>
-          </div>
-
-          {/* 5-Category Image Cards matching MarketingLandingPage */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {PATHWAYS.map((p) => (
-              <div
-                key={p.id}
-                onClick={() => {
-                  setActivePathwayId(p.id);
-                  window.scrollTo({ top: 300, behavior: "smooth" });
-                }}
-                className="h-[340px] rounded-[32px] p-7 relative overflow-hidden flex flex-col justify-between shadow-card-lift hover:-translate-y-2 hover:shadow-2xl transition-all duration-300 group cursor-pointer border border-white/20"
-              >
-                {/* Full-Bleed Background Image */}
-                <img
-                  src={p.image}
-                  alt={p.name}
-                  className="absolute inset-0 w-full h-full object-cover scale-105 group-hover:scale-110 transition-transform duration-700 pointer-events-none z-0"
-                />
-
-                {/* Dark Gradient Overlay for Readability */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/20 pointer-events-none z-10" />
-
-                {/* Header: Emoji Badge + Category Badge */}
-                <div className="flex items-start justify-between relative z-20">
-                  <div className="w-11 h-11 rounded-2xl bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center text-xl shadow-md group-hover:scale-110 transition-transform">
-                    {p.emoji}
-                  </div>
-                  <span className="px-3 py-1 rounded-full text-[10px] font-heading font-extrabold bg-white/20 backdrop-blur-md border border-white/30 text-white shadow-xs">
-                    {p.badge}
-                  </span>
-                </div>
-
-                {/* Bottom Card Content */}
-                <div className="relative z-20 space-y-2 text-left">
-                  <h3 className="font-heading font-black text-xl text-white tracking-tight flex items-center justify-between">
-                    <span>{p.name}</span>
-                    <span className="material-symbols-outlined text-lg text-white/90 group-hover:translate-x-1 transition-transform">
-                      arrow_forward
-                    </span>
-                  </h3>
-                  <p className="text-xs text-white/90 leading-relaxed font-normal">
-                    {p.tagline}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ═══ 5. BOTTOM CTA BANNER ═══ */}
-      <section className="py-20 md:py-28 bg-gradient-to-br from-[#4A388E] via-[#5F4EA5] to-[#3B2C78] text-white px-6 text-center relative overflow-hidden">
-        <div className="max-w-3xl mx-auto space-y-7 relative z-10">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-heading font-black tracking-tight leading-tight">
-            Find Stillness Calibrated For You
-          </h2>
-
-          <p className="text-sm sm:text-base text-white/90 max-w-xl mx-auto leading-relaxed font-normal">
-            Select your category and experience daily mood check-ins, CBT prompts, and soundscapes built specifically for your life stage.
-          </p>
-
-          <div className="pt-2">
-            <Link
-              href="/how-it-works"
-              className="px-9 py-4 rounded-full bg-white text-primary hover:bg-surface-container-low font-heading font-extrabold text-sm shadow-xl hover:scale-105 transition-all inline-flex items-center gap-2 cursor-pointer"
-            >
-              <span>Explore How It Works</span>
-              <span className="material-symbols-outlined text-lg">arrow_forward</span>
-            </Link>
-          </div>
-        </div>
-      </section>
+      {/* ═══ 4. BOTTOM CTA BANNER ═══ */}
+      <BottomCtaBand
+        title="Find Stillness Calibrated For You"
+        description="Select your category and experience daily mood check-ins, CBT prompts, and soundscapes built specifically for your life stage."
+        buttonText="Explore How It Works"
+        buttonHref="/how-it-works"
+      />
     </div>
   );
 }

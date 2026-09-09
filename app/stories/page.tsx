@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
+import BottomCtaBand from "@/frontend/components/ui/BottomCtaBand";
 
 interface Story {
   id: string;
@@ -326,27 +327,12 @@ export default function StoriesPage() {
       </section>
 
       {/* ═══ 5. BOTTOM INVITATION CTA ═══ */}
-      <section className="py-20 md:py-28 bg-gradient-to-br from-[#4A388E] via-[#5F4EA5] to-[#3B2C78] text-white px-6 text-center relative overflow-hidden">
-        <div className="max-w-3xl mx-auto space-y-7 relative z-10">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-heading font-black tracking-tight leading-tight">
-            Ready to Begin Your Own Journey?
-          </h2>
-
-          <p className="text-sm sm:text-base text-white/90 max-w-xl mx-auto leading-relaxed font-normal">
-            Take 2 minutes today to check in with your mind, talk to your companion, and cultivate everyday emotional stillness.
-          </p>
-
-          <div className="pt-2 flex items-center justify-center">
-            <Link
-              href="/features"
-              className="px-9 py-4 rounded-full bg-white text-primary hover:bg-surface-container-low font-heading font-extrabold text-sm shadow-xl hover:scale-105 transition-all inline-flex items-center gap-2 cursor-pointer"
-            >
-              <span>Explore All Features</span>
-              <span className="material-symbols-outlined text-lg">arrow_forward</span>
-            </Link>
-          </div>
-        </div>
-      </section>
+      <BottomCtaBand
+        title="Ready to Begin Your Own Journey?"
+        description="Take 2 minutes today to check in with your mind, talk to your companion, and cultivate everyday emotional stillness."
+        buttonText="Explore All Features"
+        buttonHref="/features"
+      />
     </div>
   );
 }
