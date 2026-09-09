@@ -88,7 +88,7 @@ export default function JournalScreen() {
 
   return (
     <div className="space-y-8">
-      <ScreenHeader title="📖 Journal" showBackButton={true} fallbackRoute="/dashboard" />
+      <ScreenHeader title="📖 Journal" showBackButton={true} fallbackRoute="/" />
       {/* Header */}
       <div className="p-8 rounded-3xl bg-surface-container-lowest border border-surface-variant/30 shadow-soft space-y-3">
         <span className="px-4 py-1.5 rounded-full bg-pale-yellow/40 text-on-surface text-xs font-semibold uppercase tracking-wider">

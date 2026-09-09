@@ -123,7 +123,7 @@ export const MOCK_RESOURCES: ResourceArticle[] = [
   },
 ];
 // ─────────────────────────────────────────────────────────────────────────────
-// STUDENT-SPECIFIC MOCK DATA (used by StudentDashboard & personalized screens)
+// STUDENT-SPECIFIC MOCK DATA (used by personalized screens)
 // ─────────────────────────────────────────────────────────────────────────────
 
 /** Belonging & Connection Signal options */
@@ -173,7 +173,7 @@ export const STUDENT_ACTIVE_PROGRAM = {
   nextSessionLink: "/meditation",
 };
 
-/** Daily Quote for Student dashboard */
+/** Daily Quote for Student sanctuary */
 export const STUDENT_DAILY_QUOTES = [
   "\"A well-rested mind retains 40% more. Sleep is your superpower this exam season.\"",
   "\"Progress, not perfection. Every small step forward is still forward.\"",

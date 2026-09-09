@@ -212,9 +212,9 @@ export default function DailyCheckInScreen() {
         factors: gratitude.trim(),
       });
       setSuccessMessage("Your reflection is safely tucked away 🌱");
-      // Seamlessly redirect to /dashboard after confirmation
+      // Seamlessly redirect after confirmation
       setTimeout(() => {
-        router.push("/dashboard");
+        router.push("/mood-tracking");
       }, 500);
     } catch (err: any) {
       console.error("[DailyCheckIn] Failed saving daily log:", err);
@@ -235,7 +235,7 @@ export default function DailyCheckInScreen() {
 
   return (
     <div className="max-w-7xl mx-auto py-4 px-3 md:px-6 relative min-h-[85vh] flex flex-col justify-between overflow-hidden select-none">
-      <ScreenHeader title="🌸 Daily Check-in" showBackButton={true} fallbackRoute="/dashboard" />
+      <ScreenHeader title="🌸 Daily Check-in" showBackButton={true} fallbackRoute="/" />
       
       {/* Background Breathing Gradients */}
       <div className="absolute inset-0 pointer-events-none z-0">
@@ -712,10 +712,10 @@ export default function DailyCheckInScreen() {
 
                 <div className="flex flex-col sm:flex-row gap-3.5 w-full max-w-sm justify-center pt-2">
                   <button
-                    onClick={() => router.push("/dashboard")}
+                    onClick={() => router.push("/")}
                     className="flex-1 py-3.5 rounded-full bg-primary hover:bg-primary-purple text-white text-xs font-bold shadow-md scale-102 hover:scale-105 active:scale-98 transition-all"
                   >
-                    Return to Dashboard
+                    Return to Home
                   </button>
                   <button
                     onClick={() => router.push("/mood-tracking")}

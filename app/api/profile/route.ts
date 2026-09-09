@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getAuthSessionFromRequest } from "@/backend/auth/session";
 import { generateUniqueSanctuaryName } from "@/backend/auth/sanctuary";
 import { saveUserAssessment } from "@/backend/queries/assessment";
-import { getUserById, updateUserSanctuaryName, checkSanctuaryNameDuplicate, updateUserCategory, updateUserAvatar, updateUserDashboardState, updateUserStreak } from "@/backend/queries/users";
+import { getUserById, updateUserSanctuaryName, checkSanctuaryNameDuplicate, updateUserCategory, updateUserAvatar, updateUserStreak } from "@/backend/queries/users";
 import { sql } from "@/backend/db/client";
 
 export const dynamic = "force-dynamic";
@@ -62,7 +62,7 @@ export async function PUT(request: Request) {
 
   try {
     const body = await request.json();
-    const { sanctuaryName, category, avatar, dashboardState } = body;
+    const { sanctuaryName, category, avatar } = body;
 
     // 1. Verify user exists
     const existingUsers = await getUserById(userId);
@@ -123,33 +123,6 @@ export async function PUT(request: Request) {
       await updateUserAvatar(userId, avatar);
     }
 
-    // Update dashboardState if provided
-    if (dashboardState) {
-      await updateUserDashboardState(userId, dashboardState);
-      // Increment user streak days dynamically upon dashboard activity updates
-      await updateUserStreak(userId);
-
-      // Keep user profile and assessment logs fully in sync with slider-based wellnessScore updates
-      if (dashboardState.wellnessScore !== undefined && dashboardState.wellnessScore !== null) {
-        const score = typeof dashboardState.wellnessScore === "number" ? dashboardState.wellnessScore : Number(dashboardState.wellnessScore);
-        if (!isNaN(score)) {
-          const lvl = score >= 80 ? "Optimized" : (score >= 50 ? "Balanced" : "Needs Attention");
-          await sql`
-            UPDATE user_profiles 
-            SET percentage = ${score}, 
-                total_score = ${score},
-                wellness_level = ${lvl}
-            WHERE user_id = ${userId}
-          `;
-          
-          await sql`
-            INSERT INTO assessments (user_id, category, total_score, max_score, percentage, wellness_level)
-            VALUES (${userId}, 'other', ${score}, 100, ${score}, ${lvl})
-          `;
-        }
-      }
-    }
-
     // 5. Fetch updated user details
     const updatedUsers = await getUserById(userId);
     const updatedUser = updatedUsers[0];
@@ -164,7 +137,6 @@ export async function PUT(request: Request) {
       streakDays: updatedUser.streak_days,
       mindfulnessMinutes: updatedUser.mindfulness_minutes,
       currentMood: updatedUser.current_mood,
-      dashboardState: updatedUser.dashboard_state || null,
     };
 
     const sessionData = {

@@ -10,7 +10,6 @@ import { CustomSelect, CustomSelectOption } from "@/frontend/components/ui/Custo
 import { DobPicker } from "@/frontend/components/ui/DobPicker";
 import { GenderSelect } from "@/frontend/components/ui/GenderSelect";
 import { motion, AnimatePresence } from "framer-motion";
-import { getCategoryDashboardRoute } from "@/frontend/lib/category-routes";
 
 function readCookie(name: string): string | null {
   if (typeof document === "undefined") return null;
@@ -232,9 +231,7 @@ export default function SignupScreen() {
       document.cookie = "userType=; path=/; max-age=0";
       document.cookie = "manraah_userType=; path=/; max-age=0";
 
-      const categoryRaw = session.user?.selectedCategory || resolvedCategory;
-      const targetRoute = getCategoryDashboardRoute(categoryRaw);
-      router.push(targetRoute);
+      router.push("/");
     } catch (err: any) {
       console.error("Signup authentication error:", err);
       setError(

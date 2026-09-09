@@ -327,7 +327,7 @@ export default function MeditationPlayerScreen() {
 
   return (
     <div className="max-w-4xl mx-auto py-4 space-y-6 animate-fadeIn select-none relative">
-      <ScreenHeader title="🧘 Meditation" showBackButton={true} fallbackRoute="/dashboard" />
+      <ScreenHeader title="🧘 Meditation" showBackButton={true} fallbackRoute="/" />
 
       {/* Category Focus Mode Banner */}
       {p.meditationBannerTitle && (

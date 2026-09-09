@@ -44,7 +44,7 @@ export default function ProfessionalCareScreen() {
 
   return (
     <div className="space-y-8">
-      <ScreenHeader title="🩺 Professional Care" showBackButton={true} fallbackRoute="/dashboard" />
+      <ScreenHeader title="🩺 Professional Care" showBackButton={true} fallbackRoute="/" />
       {/* Header Banner */}
       <div className="p-8 rounded-3xl bg-surface-container-lowest border border-surface-variant/30 shadow-soft space-y-4">
         <span className="px-4 py-1.5 rounded-full bg-peach/30 text-tertiary text-xs font-semibold uppercase tracking-wider">

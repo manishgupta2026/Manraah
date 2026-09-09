@@ -113,7 +113,7 @@ export default function MoodCheckInScreen() {
       <ScreenHeader
         title="🌿 Log Mood"
         showBackButton={true}
-        onBack={step > 0 && step < 6 ? handlePrev : () => router.push("/dashboard")}
+        onBack={step > 0 && step < 6 ? handlePrev : () => router.push("/")}
       />
       
       {/* Falling Flower Petals success animation for Step 6 */}

@@ -7,21 +7,6 @@ import { MAIN_NAV_ITEMS } from "@/frontend/lib/constants";
 import { getClientSession } from "@/backend/auth/client";
 import { getInitials, getPastelBgColor, getPastelTextColor } from "@/frontend/lib/avatar-helper";
 import { useCategory } from "@/frontend/lib/context/CategoryContext";
-import { getCategoryDashboardRoute } from "@/frontend/lib/category-routes";
-
-const WP_NAV_ITEMS = [
-  { label: "Dashboard", href: "/dashboard", icon: "grid_view" },
-  { label: "AI Companion", href: "/ai-chat", icon: "smart_toy" },
-  { label: "Daily Check-in", href: "/checkin", icon: "mood" },
-  { label: "Focus & Reset", href: "/meditation", icon: "schedule" },
-  { label: "Work Wellness", href: "/dashboard/working-professional#work-wellness", icon: "assignment" },
-  { label: "Analytics", href: "/reports", icon: "analytics" },
-  { label: "Sleep Support", href: "/sleep", icon: "bedtime" },
-  { label: "Journal", href: "/journal", icon: "auto_stories" },
-  { label: "Community", href: "/community", icon: "groups" },
-  { label: "Professional Care", href: "/professional-care", icon: "medical_services" },
-  { label: "Resources", href: "/resources", icon: "menu_book" },
-];
 
 export default function DesktopSidebar() {
   const pathname = usePathname();
@@ -48,9 +33,8 @@ export default function DesktopSidebar() {
     }
   }, []);
 
-  const isWP = category === "working_professional" || category === "working professional";
-  const navList = isWP ? WP_NAV_ITEMS : MAIN_NAV_ITEMS;
-  const brandBg = isWP ? "bg-[#0B4F3C]" : "bg-[#E37A47]";
+  const navList = MAIN_NAV_ITEMS;
+  const brandBg = "bg-[#0B4F3C]";
 
   return (
     <aside className="hidden md:flex flex-col fixed top-0 left-0 h-screen w-[76px] hover:w-[240px] bg-[#0D1512] border-r border-[#2C2A30]/40 z-40 shadow-xl transition-all duration-300 ease-in-out group select-none text-slate-300">
@@ -68,7 +52,7 @@ export default function DesktopSidebar() {
       {/* Navigation Links */}
       <nav className="flex-1 px-3 py-4 space-y-2 overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
         {navList.map((item) => {
-          const targetHref = item.href === "/dashboard" ? getCategoryDashboardRoute(category) : item.href;
+          const targetHref = item.href;
           const isActive = pathname === targetHref || (targetHref !== "/" && pathname.startsWith(targetHref));
           return (
             <Link
@@ -87,7 +71,7 @@ export default function DesktopSidebar() {
               
               {isActive && (
                 <span className="text-[8px] font-black uppercase tracking-wider text-[#62B596] block group-hover:hidden transition-all mt-0.5 leading-none">
-                  {item.label === "Dashboard" ? "Dash" : item.label.split(" ")[0]}
+                  {item.label.split(" ")[0]}
                 </span>
               )}
 

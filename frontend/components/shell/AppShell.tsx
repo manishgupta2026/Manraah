@@ -93,15 +93,6 @@ export default function AppShell({ children }: { children: ReactNode }) {
                 </main>
               </div>
             ) : (
-              pathname.startsWith("/dashboard/student") ||
-              pathname.startsWith("/dashboard/working-professional") ||
-              pathname.startsWith("/dashboard/working_professional")
-            ) ? (
-              /* Dedicated Student Dashboard Custom Layout (Exact Match with Reference Image) */
-              <div className="min-h-screen w-full bg-[#F5FAFB] dark:bg-[#0D1F2D] text-slate-800 dark:text-slate-100 font-sans antialiased flex overflow-hidden">
-                {children}
-              </div>
-            ) : (
               /* Main Regular User Application Shell with Sidebar & Header */
               <div className="flex min-h-screen bg-background dark:bg-[#0D1F2D] text-on-background dark:text-slate-100 font-sans antialiased overflow-hidden">
                 {/* Desktop Left Sidebar */}
@@ -110,7 +101,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
                 {/* Main Content Area */}
                 <div className="flex-1 flex flex-col min-w-0 md:ml-[76px] lg:ml-[76px] h-screen overflow-y-auto pb-16 md:pb-6 bg-background dark:bg-[#0D1F2D]">
                   <Header onOpenMenu={() => setIsMobileDrawerOpen(true)} />
-                  <main className={`flex-1 w-full ${pathname.startsWith("/dashboard/working-professional") ? "max-w-none px-[28px] lg:px-[36px] py-[24px] lg:py-[32px]" : "px-3 md:px-6 py-4 max-w-7xl mx-auto"}`}>
+                  <main className="flex-1 w-full px-3 md:px-6 py-4 max-w-7xl mx-auto">
                     {children}
                   </main>
                 </div>

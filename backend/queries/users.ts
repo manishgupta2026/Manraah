@@ -4,21 +4,11 @@ import { sql } from "@/backend/db/client";
  * Encapsulated user-related Neon PostgreSQL queries
  */
 
-let usersTableMigrated = false;
-async function ensureUsersTableMigrated() {
-  if (usersTableMigrated) return;
-  try {
-    await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS dashboard_state JSONB DEFAULT '{}'::jsonb`;
-    usersTableMigrated = true;
-  } catch {}
-}
-
 export async function getUserByEmail(email: string) {
   const cleanEmail = email.trim().toLowerCase();
-  await ensureUsersTableMigrated();
 
   const results = await sql`
-    SELECT id, name, email, password_hash, sanctuary_name, avatar, selected_category, streak_days, mindfulness_minutes, current_mood, dashboard_state, onboarding_completed
+    SELECT id, name, email, password_hash, sanctuary_name, avatar, selected_category, streak_days, mindfulness_minutes, current_mood, onboarding_completed
     FROM users
     WHERE LOWER(email) = ${cleanEmail}
     LIMIT 1
@@ -27,10 +17,8 @@ export async function getUserByEmail(email: string) {
 }
 
 export async function getUserById(id: string) {
-  await ensureUsersTableMigrated();
-
   const results = await sql`
-    SELECT id, name, email, sanctuary_name, avatar, selected_category, streak_days, mindfulness_minutes, current_mood, dashboard_state, onboarding_completed
+    SELECT id, name, email, sanctuary_name, avatar, selected_category, streak_days, mindfulness_minutes, current_mood, onboarding_completed
     FROM users
     WHERE id = ${id}
     LIMIT 1
@@ -97,13 +85,6 @@ export async function createDefaultUser(userId: string, name: string, email: str
     INSERT INTO users (id, name, email, selected_category, streak_days, mindfulness_minutes, current_mood)
     VALUES (${userId}, ${name}, ${email}, ${category}, 1, 0, 'Sanctuary Member')
     ON CONFLICT (id) DO NOTHING
-  `;
-}
-
-export async function updateUserDashboardState(userId: string, dashboardState: any) {
-  const jsonStr = JSON.stringify(dashboardState);
-  return await sql`
-    UPDATE users SET dashboard_state = ${jsonStr}::jsonb WHERE id = ${userId}
   `;
 }
 

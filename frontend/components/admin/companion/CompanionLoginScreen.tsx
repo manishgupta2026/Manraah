@@ -25,7 +25,7 @@ export default function CompanionLoginScreen() {
       const data = await res.json();
 
       if (res.ok && data.isAuthenticated) {
-        router.push("/companion/dashboard");
+        router.push("/admin/human-companion");
       } else {
         setError(data.error || "Login failed. Please check your credentials.");
       }

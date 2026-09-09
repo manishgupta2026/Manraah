@@ -64,25 +64,8 @@ export default function CategorySelection() {
         console.error("Failed to update profile category on selection click:", err);
       }
 
-      // If student, go to student dashboard. Otherwise keep their existing routing.
-      if (targetType === "student") {
-        router.push("/dashboard/student");
-        return;
-      } else if (targetType === "working_professional" || targetType === "working-professional") {
-        router.push("/dashboard/working-professional");
-        return;
-      } else {
-        // Redirection based on normalizeCategory mapping
-        const normalized = targetType.replace(/-/g, "_");
-        if (normalized === "couple" || normalized === "couples") {
-          router.push("/dashboard/couples");
-        } else if (normalized === "parent" || normalized === "parents") {
-          router.push("/dashboard/parents");
-        } else {
-          router.push(`/dashboard/${targetType.replace(/_/g, "-")}`);
-        }
-        return;
-      }
+      router.push("/");
+      return;
     }
 
     // Unauthenticated visitors always proceed to signup

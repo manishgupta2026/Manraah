@@ -44,7 +44,7 @@ export default function AdminHeader() {
           <Link
             href="/admin/human-companion"
             className={`px-4 py-1.5 rounded-xl text-xs font-bold transition-all ${
-              pathname === "/admin/human-companion" || pathname === "/companion/dashboard"
+              pathname === "/admin/human-companion" || pathname === "/listener"
                 ? "bg-surface-container-lowest text-primary shadow-xs"
                 : "text-on-surface-variant hover:text-on-surface"
             }`}

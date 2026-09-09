@@ -21,7 +21,7 @@ export default function WellnessReportsScreen() {
       <ScreenHeader
         title="📊 Wellness Reports"
         showBackButton={true}
-        fallbackRoute="/dashboard"
+        fallbackRoute="/"
         action={{ label: "Export PDF", onClick: handleExport }}
       />
       {/* Header */}

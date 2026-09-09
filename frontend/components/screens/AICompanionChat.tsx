@@ -103,7 +103,7 @@ How has this focus been serving you so far? Let's take a slow breath and talk ab
 
   return (
     <div className="space-y-6">
-      <ScreenHeader title="💜 AI Companion" showBackButton={true} fallbackRoute="/dashboard" />
+      <ScreenHeader title="💜 AI Companion" showBackButton={true} fallbackRoute="/" />
       {/* Mode Switcher Tabs */}
       <div className="flex items-center justify-between p-2 rounded-2xl bg-surface-container-low border border-surface-variant/30 max-w-md mx-auto">
         <button

@@ -15,7 +15,7 @@ export default function SleepSupportScreen() {
 
   return (
     <div className="space-y-8">
-      <ScreenHeader title="🌙 Sleep Support" showBackButton={true} fallbackRoute="/dashboard" />
+      <ScreenHeader title="🌙 Sleep Support" showBackButton={true} fallbackRoute="/" />
       {/* Header */}
       <div className="p-8 rounded-3xl bg-surface-container-lowest border border-surface-variant/30 shadow-soft space-y-3">
         <span className="px-4 py-1.5 rounded-full bg-primary-container/20 text-primary text-xs font-semibold uppercase tracking-wider">

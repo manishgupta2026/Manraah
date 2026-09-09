@@ -35,9 +35,7 @@ export default function DynamicHeader() {
         router.push(headerConfig.fallbackRoute);
       } else {
         // Safe default fallback paths
-        if (pathname === "/dashboard") {
-          router.push("/");
-        } else if (pathname === "/category-selection") {
+        if (pathname === "/category-selection") {
           router.push("/");
         } else if (pathname === "/assessment") {
           router.push("/category-selection");
@@ -46,7 +44,7 @@ export default function DynamicHeader() {
         } else if (pathname && pathname.startsWith("/professional-care/")) {
           router.push("/professional-care");
         } else {
-          router.push("/dashboard");
+          router.push("/");
         }
       }
     }

@@ -49,7 +49,7 @@ export default function AssessmentFlow() {
 
   const [direction, setDirection] = useState(1);
 
-  // Fall back to session/cookie category if user comes directly from dashboard
+  // Fall back to session/cookie category if not set in assessment context
   const [effectiveCategory, setEffectiveCategory] = useState<string>(selectedCategory || "student");
 
   useEffect(() => {
@@ -175,7 +175,7 @@ export default function AssessmentFlow() {
             document.cookie = `manraah_session=${JSON.stringify(updatedSession)}; path=/; max-age=2592000`;
             document.cookie = `userType=${targetCategory}; path=/; max-age=2592000`;
             
-            router.push(`/dashboard/${targetCategory}`);
+            router.push("/wellness-score");
           } catch (e) {
             console.error("Failed to auto-save assessment:", e);
             router.push("/wellness-score");

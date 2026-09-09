@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { getClientSession } from "@/backend/auth/client";
 
-export interface DashboardState {
+export interface WellnessState {
   user: {
     id: string;
     name: string;
@@ -51,9 +51,13 @@ export interface DashboardState {
   recommendations?: string[];
 }
 
+export type DashboardState = WellnessState;
+
 interface WellnessContextType {
-  dashboardData: DashboardState | null;
+  wellnessData: WellnessState | null;
+  dashboardData: WellnessState | null;
   isLoading: boolean;
+  refetchWellnessData: () => Promise<void>;
   refetchDashboardData: () => Promise<void>;
   submitCheckIn: (data: {
     mood: string;
@@ -69,23 +73,42 @@ interface WellnessContextType {
 const WellnessContext = createContext<WellnessContextType | undefined>(undefined);
 
 export function WellnessProvider({ children }: { children: ReactNode }) {
-  const [dashboardData, setDashboardData] = useState<DashboardState | null>(null);
+  const [wellnessData, setWellnessData] = useState<WellnessState | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  const fetchDashboard = async () => {
+  const fetchWellness = async () => {
     try {
-      const res = await fetch("/api/dashboard");
+      const res = await fetch("/api/checkins");
       if (res.ok) {
         const data = await res.json();
-        setDashboardData(data);
-        if (typeof window !== "undefined") {
-          try {
-            localStorage.setItem("manraah_dashboard_cache", JSON.stringify(data));
-          } catch {}
-        }
+        const session = getClientSession();
+        const u = session?.user;
+        const currentStreak = u?.streakDays || 1;
+        setWellnessData((prev) => ({
+          user: u ? {
+            id: u.id || "demo-user",
+            name: u.sanctuaryName || u.name || "Sanctuary Member",
+            sanctuaryName: u.sanctuaryName || u.name || "Sanctuary Member",
+            email: u.email || "",
+            selectedCategory: u.selectedCategory || "student",
+            streakDays: currentStreak,
+            mindfulnessMinutes: u.mindfulnessMinutes || 0,
+            currentMood: data.todayCheckin?.mood || u.currentMood || "Sanctuary Member",
+          } : (prev?.user || null),
+          todayMood: data.todayCheckin || null,
+          history: data.history || [],
+          moodHistory: data.history || [],
+          wellnessMetrics: [],
+          journalEntries: [],
+          weeklySummary: null,
+          monthlySummary: null,
+          insights: [],
+          streak: { currentStreak: currentStreak, longestStreak: currentStreak },
+          recommendation: "Focus on matching your pace with slow cycles to restore internal alignment.",
+        }));
       }
     } catch (err) {
-      console.error("Failed to fetch dashboard data:", err);
+      console.error("Failed to fetch checkin data:", err);
     } finally {
       setIsLoading(false);
     }
@@ -95,9 +118,9 @@ export function WellnessProvider({ children }: { children: ReactNode }) {
     // Safely hydrate client-side cache after initial SSR hydration pass
     if (typeof window !== "undefined") {
       try {
-        const cached = localStorage.getItem("manraah_dashboard_cache");
+        const cached = localStorage.getItem("manraah_wellness_cache") || localStorage.getItem("manraah_dashboard_cache");
         if (cached) {
-          setDashboardData(JSON.parse(cached));
+          setWellnessData(JSON.parse(cached));
           setIsLoading(false);
         }
       } catch {}
@@ -105,7 +128,7 @@ export function WellnessProvider({ children }: { children: ReactNode }) {
       const session = getClientSession();
       if (session?.user) {
         const u = session.user;
-        setDashboardData((prev) => prev || {
+        setWellnessData((prev) => prev || {
           user: {
             id: u.id || "demo-user",
             name: u.sanctuaryName || u.name || "Sanctuary Member",
@@ -128,12 +151,12 @@ export function WellnessProvider({ children }: { children: ReactNode }) {
       }
     }
 
-    fetchDashboard();
+    fetchWellness();
   }, []);
 
-  const refetchDashboardData = async () => {
+  const refetchWellnessData = async () => {
     setIsLoading(true);
-    await fetchDashboard();
+    await fetchWellness();
   };
 
   const submitCheckIn = async (checkInData: {
@@ -158,8 +181,8 @@ export function WellnessProvider({ children }: { children: ReactNode }) {
 
       const updatedRecord = await res.json();
 
-      // Automatically refetch latest dashboard state from server
-      await fetchDashboard();
+      // Automatically refetch latest wellness state from server
+      await fetchWellness();
 
       return updatedRecord;
     } catch (err) {
@@ -170,7 +193,16 @@ export function WellnessProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <WellnessContext.Provider value={{ dashboardData, isLoading, refetchDashboardData, submitCheckIn }}>
+    <WellnessContext.Provider
+      value={{
+        wellnessData,
+        dashboardData: wellnessData,
+        isLoading,
+        refetchWellnessData,
+        refetchDashboardData: refetchWellnessData,
+        submitCheckIn,
+      }}
+    >
       {children}
     </WellnessContext.Provider>
   );

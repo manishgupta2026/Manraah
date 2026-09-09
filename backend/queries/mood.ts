@@ -212,7 +212,7 @@ export async function getWeeklySummary(userId: string) {
     if (frequentMood === "Exhausted" || frequentMood === "Low") {
       aiRec = "Your reports indicate lower energy. Try scheduling brief 5-minute outdoor walking breaks during work/studies.";
     } else if (frequentMood === "Anxious" || frequentMood === "Overwhelmed") {
-      aiRec = "Your system registers higher tension rates. Engaging in slow breathing loops on your dashboard may restore calm.";
+      aiRec = "Your system registers higher tension rates. Engaging in slow breathing loops may restore calm.";
     } else if (topTrigger.toLowerCase() === "social media") {
       aiRec = "Digital exposure seems directly linked to restlessness. Try initiating a 2-hour offline window before rest.";
     } else if (topTrigger.toLowerCase() === "studies" || topTrigger.toLowerCase() === "work") {

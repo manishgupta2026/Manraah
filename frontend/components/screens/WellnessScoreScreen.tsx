@@ -10,7 +10,6 @@ import { motion } from "framer-motion";
 import ScreenHeader from "@/frontend/components/ui/ScreenHeader";
 import { getClientSession, signOut } from "@/backend/auth/client";
 import { AuthSession } from "@/backend/types";
-import { getCategoryDashboardRoute } from "@/frontend/lib/category-routes";
 
 export default function WellnessScoreScreen() {
   const router = useRouter();
@@ -109,10 +108,10 @@ export default function WellnessScoreScreen() {
       document.cookie = `manraah_session=${JSON.stringify(updatedSession)}; path=/; max-age=2592000`;
       document.cookie = `userType=${targetCategory}; path=/; max-age=2592000`;
 
-      router.push(getCategoryDashboardRoute(targetCategory));
+      router.push("/");
     } catch (err) {
       console.error("[Assessment Save Error]:", err);
-      router.push(getCategoryDashboardRoute(selectedCategory));
+      router.push("/");
     } finally {
       setSaving(false);
     }
@@ -221,7 +220,7 @@ export default function WellnessScoreScreen() {
         <p className="text-sm md:text-base text-on-surface-variant/90 max-w-lg mx-auto font-light leading-relaxed">
           We've prepared your personalized wellness journey.
           <br />
-          Create your account or log in to unlock your dashboard.
+          Create your account or log in to unlock your sanctuary.
         </p>
       </motion.div>
 
@@ -347,7 +346,7 @@ export default function WellnessScoreScreen() {
               disabled={saving}
               className="w-full sm:w-auto px-12 py-4 rounded-full bg-primary text-white font-bold text-sm shadow-lg hover:bg-primary-purple hover:scale-[1.02] disabled:opacity-50 transition-all text-center flex items-center justify-center gap-2"
             >
-              {saving ? "Saving..." : "Save & Go to Dashboard"}
+              {saving ? "Saving..." : "Save & Continue"}
               <span className="material-symbols-outlined text-base">arrow_forward</span>
             </button>
             <p className="text-xs text-[#5F309E] font-medium text-center bg-[#5F309E]/5 px-4 py-1.5 rounded-full mt-1 border border-[#5F309E]/10 flex items-center gap-1.5">

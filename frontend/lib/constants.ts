@@ -9,7 +9,7 @@ export interface NavItem {
 }
 
 export const MAIN_NAV_ITEMS: NavItem[] = [
-  { label: "Dashboard", href: "/dashboard", icon: "grid_view" },
+  { label: "Home", href: "/", icon: "grid_view" },
   { label: "Human Companion", href: "/human-companion", icon: "diversity_1" },
   { label: "AI Companion", href: "/ai-chat", icon: "smart_toy" },
   { label: "Daily Check-in", href: "/checkin", icon: "mood" },
@@ -24,7 +24,7 @@ export const MAIN_NAV_ITEMS: NavItem[] = [
 ];
 
 export const MOBILE_TAB_ITEMS: NavItem[] = [
-  { label: "Home", href: "/dashboard", icon: "grid_view" },
+  { label: "Home", href: "/", icon: "grid_view" },
   { label: "AI Chat", href: "/ai-chat", icon: "smart_toy" },
   { label: "Check-in", href: "/checkin", icon: "mood" },
   { label: "Community", href: "/community", icon: "groups" },

@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 const PROTECTED_ROUTES = [
-  "/dashboard",
   "/ai-chat",
   "/checkin",
   "/journal",
@@ -16,12 +15,11 @@ const PROTECTED_ROUTES = [
   "/profile",
   "/crisis-support",
   "/call",
-  "/onboarding",
   "/admin",
 ];
 
 const AUTH_ROUTES = ["/login", "/signup"];
-const ONBOARDING_ROUTES = ["/", "/category-selection", "/assessment", "/wellness-score", "/onboarding"];
+const ONBOARDING_ROUTES = ["/", "/category-selection", "/assessment", "/wellness-score"];
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;

@@ -117,26 +117,6 @@ export function CategoryProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  // Sync category with viewed dashboard path dynamically on routing (UI context only)
-  useEffect(() => {
-    if (typeof window !== "undefined" && pathname) {
-      let detectedCategory: UserCategory | null = null;
-      if (pathname.startsWith("/dashboard/parents") || pathname.startsWith("/dashboard/parent")) {
-        detectedCategory = "parents";
-      } else if (pathname.startsWith("/dashboard/couples") || pathname.startsWith("/dashboard/couple")) {
-        detectedCategory = "couples";
-      } else if (pathname.startsWith("/dashboard/student")) {
-        detectedCategory = "student";
-      } else if (pathname.startsWith("/dashboard/working-professional")) {
-        detectedCategory = "working_professional";
-      }
-
-      if (detectedCategory) {
-        setCategory(detectedCategory);
-      }
-    }
-  }, [pathname]);
-
   const categoryDetails = CATEGORIES[category] || DEFAULT_CATEGORY;
 
   const value = {

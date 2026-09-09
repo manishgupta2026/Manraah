@@ -246,7 +246,7 @@ export default function SettingsPrivacyScreen() {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[50vh] space-y-4">
-        <ScreenHeader title="⚙️ Settings" showBackButton={true} fallbackRoute="/dashboard" />
+        <ScreenHeader title="⚙️ Settings" showBackButton={true} fallbackRoute="/" />
         <span className="material-symbols-outlined text-4xl text-primary animate-spin">spa</span>
         <p className="text-sm text-on-surface-variant font-medium">Loading settings...</p>
       </div>
@@ -262,7 +262,7 @@ export default function SettingsPrivacyScreen() {
 
   return (
     <div className="max-w-3xl mx-auto py-6 space-y-8 px-4 sm:px-6">
-      <ScreenHeader title="⚙️ Settings" showBackButton={true} fallbackRoute="/dashboard" />
+      <ScreenHeader title="⚙️ Settings" showBackButton={true} fallbackRoute="/" />
       {/* Header */}
       <div className="p-8 rounded-3xl bg-surface-container-lowest border border-surface-variant/30 shadow-soft flex items-center justify-between gap-6">
         <div className="space-y-3">
@@ -365,7 +365,7 @@ export default function SettingsPrivacyScreen() {
                   className="w-full p-3.5 rounded-2xl bg-surface-container-low border border-surface-variant/40 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 font-semibold text-on-surface"
                 />
                 <p className="text-[10px] text-on-surface-variant/65 leading-relaxed mt-1">
-                  Publicly displayed across forums and dashboards. You can change this anytime.
+                  Publicly displayed across community spaces. You can change this anytime.
                 </p>
               </div>
 
@@ -400,7 +400,7 @@ export default function SettingsPrivacyScreen() {
                   <option value="other">✨ Other (Personalized holistic wellness)</option>
                 </select>
                 <p className="text-[10px] text-on-surface-variant/65 leading-relaxed mt-1">
-                  Modify your sanctuary journey style. Saving updates your active dashboard instantly.
+                  Modify your sanctuary journey style. Saving updates your active preferences instantly.
                 </p>
               </div>
             </div>
@@ -424,7 +424,7 @@ export default function SettingsPrivacyScreen() {
             <div className="p-6 rounded-2xl bg-surface-container-low border border-surface-variant/30 space-y-4">
               <div>
                 <h4 className="font-heading font-bold text-sm text-on-surface">Confidential Username</h4>
-                <p className="text-xs text-on-surface-variant">Choose a unique anonymous username displayed on your dashboard greeting.</p>
+                <p className="text-xs text-on-surface-variant">Choose a unique anonymous username displayed on your profile greeting.</p>
               </div>
 
               {/* Username Input and Check */}
@@ -486,7 +486,7 @@ export default function SettingsPrivacyScreen() {
             {/* Display Phone Toggle Switch */}
             <div className="flex items-center justify-between p-4 rounded-2xl bg-surface-container-low border border-surface-variant/30">
               <div>
-                <h4 className="font-heading font-bold text-sm text-on-surface">Show Phone Number on Dashboard</h4>
+                <h4 className="font-heading font-bold text-sm text-on-surface">Show Phone Number on Profile</h4>
                 <p className="text-xs text-on-surface-variant">Toggle whether your registered phone number (+91 ••••• ••982) is displayed in the header.</p>
               </div>
               <input

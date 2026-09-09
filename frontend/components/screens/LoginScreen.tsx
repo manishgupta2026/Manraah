@@ -6,7 +6,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "@/backend/auth/client";
 import { FormInput } from "@/frontend/components/ui/FormInput";
 import { motion } from "framer-motion";
-import { getCategoryDashboardRoute } from "@/frontend/lib/category-routes";
 import { useAssessment } from "@/frontend/lib/context/AssessmentContext";
 
 function readCookie(name: string): string | null {
@@ -44,7 +43,7 @@ export default function LoginScreen() {
       const cookieCat = readCookie("userType") || readCookie("manraah_userType") || "";
       const effectiveCategory = queryCat || selectedCategory || cookieCat || "";
 
-      const session = await signIn(
+      await signIn(
         email.trim().toLowerCase(),
         password,
         effectiveCategory || "",
@@ -58,10 +57,7 @@ export default function LoginScreen() {
       document.cookie = "userType=; path=/; max-age=0";
       document.cookie = "manraah_userType=; path=/; max-age=0";
 
-      const categoryRaw = session.user?.selectedCategory || effectiveCategory || "student";
-      const targetRoute = getCategoryDashboardRoute(categoryRaw);
-
-      router.push(targetRoute);
+      router.push("/");
     } catch (err: any) {
       console.error("Login authentication error:", err);
       setError(
