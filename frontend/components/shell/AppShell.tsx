@@ -81,7 +81,12 @@ export default function AppShell({ children }: { children: ReactNode }) {
         <AssessmentProvider>
           <WellnessProvider>
             <HeaderProvider>
-            {isStandalone ? (
+            {pathname === "/dashboard" ? (
+              /* Dedicated Full-Width Unified Dashboard Layout */
+              <div className="min-h-screen bg-[#F8F9FD] text-[#211D26] font-sans antialiased">
+                {children}
+              </div>
+            ) : isStandalone ? (
               /* Standalone Onboarding / Auth / Public Layout with Global Public Header & Footer */
               <div className="min-h-screen bg-background text-on-background font-sans antialiased flex flex-col justify-between overflow-hidden">
                 {!["/assessment", "/wellness-score", "/category-selection"].includes(pathname) && <PublicNavbar />}

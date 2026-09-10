@@ -1,5 +1,5 @@
 import DailyCheckInScreen from "@/frontend/components/screens/DailyCheckInScreen";
 
-export default function CheckInPage() {
+export default function CheckinPage() {
   return <DailyCheckInScreen />;
 }

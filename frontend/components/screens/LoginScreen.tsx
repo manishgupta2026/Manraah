@@ -57,7 +57,7 @@ export default function LoginScreen() {
       document.cookie = "userType=; path=/; max-age=0";
       document.cookie = "manraah_userType=; path=/; max-age=0";
 
-      router.push("/");
+      router.push("/dashboard");
     } catch (err: any) {
       console.error("Login authentication error:", err);
       setError(

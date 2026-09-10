@@ -20,7 +20,7 @@ export default function PublicNavbar() {
     } catch {
       // ignore
     }
-    router.push("/category-selection");
+    router.push("/signup");
   };
 
   const isLoginPage = pathname === "/login";

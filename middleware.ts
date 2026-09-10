@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 const PROTECTED_ROUTES = [
+  "/dashboard",
   "/ai-chat",
   "/checkin",
   "/journal",
@@ -19,12 +20,11 @@ const PROTECTED_ROUTES = [
 ];
 
 const AUTH_ROUTES = ["/login", "/signup"];
-const ONBOARDING_ROUTES = ["/", "/category-selection", "/assessment", "/wellness-score"];
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Skip internal Next.js system routes
+  // Skip internal Next.js system routes and assets
   if (
     pathname.startsWith("/_next") ||
     pathname.startsWith("/api") ||
@@ -60,11 +60,21 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
+  // 2. Authenticated users trying to access auth routes (/login, /signup) -> redirect to /dashboard
+  const isAuthRoute = AUTH_ROUTES.some(
+    (route) => pathname === route || pathname.startsWith(`${route}/`)
+  );
+
+  if (isAuthRoute && hasSession) {
+    const dashboardUrl = new URL("/dashboard", request.url);
+    return NextResponse.redirect(dashboardUrl);
+  }
+
   return NextResponse.next();
 }
 
 export const config = {
   matcher: [
-    "/((?!api|_next/static|_next/image|_next|_document|_error|favicon.ico|images).*)",
+    "/((?!api|_next/static|_next/image|_next|_document|_error|favicon.ico|images|logo|category).*)",
   ],
 };
