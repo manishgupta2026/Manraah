@@ -289,12 +289,12 @@ export default function LoginScreen() {
               </div>
             </form>
 
-            {/* Bottom link to Signup / Category Selection */}
+            {/* Bottom link to Signup */}
             <div className="text-center pt-4 mt-4 border-t border-surface-variant/30">
               <p className="text-xs text-on-surface-variant font-normal">
                 Don&apos;t have an account yet?{" "}
                 <Link
-                  href="/category-selection"
+                  href="/signup"
                   className="font-heading font-bold text-primary hover:underline"
                 >
                   Create Free Account

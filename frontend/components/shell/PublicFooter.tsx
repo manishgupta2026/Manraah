@@ -15,7 +15,7 @@ export default function PublicFooter() {
     } catch {
       // ignore
     }
-    router.push("/category-selection");
+    router.push("/signup");
   };
 
   const handleSelectCategory = (catId: string) => {
@@ -24,7 +24,7 @@ export default function PublicFooter() {
     } catch {
       // ignore
     }
-    router.push("/category-selection");
+    router.push(`/for-you?selected=${catId}`);
   };
 
   return (
@@ -105,7 +105,7 @@ export default function PublicFooter() {
               <li><Link href="/for-you?selected=working_professional" className="hover:text-white transition-colors">Working Professionals</Link></li>
               <li><Link href="/for-you?selected=parent" className="hover:text-white transition-colors">Parents &amp; Families</Link></li>
               <li><Link href="/for-you?selected=couple" className="hover:text-white transition-colors">Couples &amp; Relationships</Link></li>
-              <li><Link href="/category-selection" className="hover:text-white transition-colors">All Life Categories →</Link></li>
+              <li><Link href="/for-you" className="hover:text-white transition-colors">All Life Categories →</Link></li>
             </ul>
           </div>
 
