@@ -3,19 +3,14 @@ import type { NextRequest } from "next/server";
 
 const PROTECTED_ROUTES = [
   "/dashboard",
-  "/ai-chat",
-  "/checkin",
-  "/journal",
-  "/meditation",
-  "/sleep",
-  "/community",
-  "/resources",
-  "/professional-care",
+  "/appointments",
   "/journey",
-  "/reports",
+  "/my-journey",
+  "/resources",
+  "/ai-companion",
+  "/messages",
+  "/community",
   "/profile",
-  "/crisis-support",
-  "/call",
   "/admin",
 ];
 

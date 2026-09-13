@@ -7,6 +7,43 @@
 :root {
   --font-quicksand: 'Quicksand', sans-serif;
   --font-work-sans: 'Work Sans', sans-serif;
+  color-scheme: light;
+  
+  /* Manraah Light Tokens */
+  --dashboard-bg: #F4F9F6;
+  --dashboard-surface: #FFFFFF;
+  --dashboard-surface-secondary: #0D2821;
+  --dashboard-card: #FFFFFF;
+  --dashboard-card-elevated: #FFFFFF;
+  --dashboard-primary: #006C56;
+  --dashboard-primary-hover: #004D3D;
+  --dashboard-mint: #E6F4F0;
+  --dashboard-text-primary: #19332A;
+  --dashboard-text-secondary: #4F685F;
+  --dashboard-text-muted: #789389;
+  --dashboard-border: #E2ECE6;
+  --dashboard-border-subtle: #EBF0EC;
+  --dashboard-sidebar: #052820;
+}
+
+.dark {
+  color-scheme: dark;
+  
+  /* Manraah Dark Theme Tokens */
+  --dashboard-bg: #071C17;
+  --dashboard-surface: #0D2821;
+  --dashboard-surface-secondary: #0D2821;
+  --dashboard-card: #102F27;
+  --dashboard-card-elevated: #14382F;
+  --dashboard-primary: #00A982;
+  --dashboard-primary-hover: #00916F;
+  --dashboard-mint: #BFE8DC;
+  --dashboard-text-primary: #F4FAF7;
+  --dashboard-text-secondary: #A9C5BC;
+  --dashboard-text-muted: #78958C;
+  --dashboard-border: #23483E;
+  --dashboard-border-subtle: #23483E;
+  --dashboard-sidebar: #0A221C;
 }
 
 body {
@@ -17,6 +54,12 @@ body {
   margin: 0;
   padding: 0;
   overflow-x: hidden;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.dark body {
+  background-color: #071C17;
+  color: #F4FAF7;
 }
 
 h1, h2, h3, h4, h5, h6 {

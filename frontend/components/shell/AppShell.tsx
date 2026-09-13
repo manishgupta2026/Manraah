@@ -14,7 +14,6 @@ import Header from "./Header";
 import PublicNavbar from "./PublicNavbar";
 import PublicFooter from "./PublicFooter";
 import AdminHeader from "../admin/shell/AdminHeader";
-
 import { ThemeProvider } from "@/frontend/lib/context/ThemeContext";
 
 const STANDALONE_ROUTES = [
@@ -81,58 +80,58 @@ export default function AppShell({ children }: { children: ReactNode }) {
         <AssessmentProvider>
           <WellnessProvider>
             <HeaderProvider>
-            {pathname === "/dashboard" ? (
-              /* Dedicated Full-Width Unified Dashboard Layout */
-              <div className="min-h-screen bg-[#F8F9FD] text-[#211D26] font-sans antialiased">
-                {children}
-              </div>
-            ) : isStandalone ? (
-              /* Standalone Onboarding / Auth / Public Layout with Global Public Header & Footer */
-              <div className="min-h-screen bg-background text-on-background font-sans antialiased flex flex-col justify-between overflow-hidden">
-                {!["/assessment", "/wellness-score", "/category-selection"].includes(pathname) && <PublicNavbar />}
-                <div className="flex-1 h-full w-full overflow-hidden">{children}</div>
-                {!["/assessment", "/wellness-score", "/category-selection"].includes(pathname) && <PublicFooter />}
-              </div>
-            ) : isAdminRoute ? (
-              /* Dedicated Admin Listener Portal Shell - Isolated from Regular User Navigation */
-              <div className="min-h-screen bg-background text-on-background font-sans antialiased flex flex-col">
-                <AdminHeader />
-                <main className="flex-1 px-4 md:px-8 py-6 max-w-7xl mx-auto w-full">
-                  {children}
-                </main>
-              </div>
-            ) : (
-              /* Main Regular User Application Shell with Sidebar & Header */
-              <div className="flex min-h-screen bg-background dark:bg-[#0D1F2D] text-on-background dark:text-slate-100 font-sans antialiased overflow-hidden">
-                {/* Desktop Left Sidebar */}
-                <DesktopSidebar />
-
-                {/* Main Content Area */}
-                <div className="flex-1 flex flex-col min-w-0 md:ml-[76px] lg:ml-[76px] h-screen overflow-y-auto pb-16 md:pb-6 bg-background dark:bg-[#0D1F2D]">
-                  <Header onOpenMenu={() => setIsMobileDrawerOpen(true)} />
-                  <main className="flex-1 w-full px-3 md:px-6 py-4 max-w-7xl mx-auto">
+              {isStandalone ? (
+                /* Standalone Onboarding / Auth / Public Layout with Global Public Header & Footer */
+                <div className="min-h-screen bg-background text-on-background font-sans antialiased flex flex-col justify-between overflow-hidden">
+                  {!["/assessment", "/wellness-score", "/category-selection"].includes(pathname) && <PublicNavbar />}
+                  <div className="flex-1 h-full w-full overflow-hidden">{children}</div>
+                  {!["/assessment", "/wellness-score", "/category-selection"].includes(pathname) && <PublicFooter />}
+                </div>
+              ) : isAdminRoute ? (
+                /* Dedicated Admin Listener Portal Shell - Isolated from Regular User Navigation */
+                <div className="min-h-screen bg-background text-on-background font-sans antialiased flex flex-col">
+                  <AdminHeader />
+                  <main className="flex-1 px-4 md:px-8 py-6 max-w-7xl mx-auto w-full">
                     {children}
                   </main>
                 </div>
+              ) : (
+                /* ONE UNIFIED AUTHENTICATED APPLICATION SHELL FOR ALL USER FEATURES */
+                <div className="min-h-screen bg-[#F4F9F6] dark:bg-[#071C17] text-[#211D26] dark:text-[#F4FAF7] font-sans antialiased flex flex-col transition-colors duration-200">
+                  {/* Top Unified Header / Navbar (Compact 62px Height) */}
+                  <Header onOpenMenu={() => setIsMobileDrawerOpen(true)} />
 
-                {/* Mobile Animated Drawer navigation overlay */}
-                <AnimatePresence>
-                  {isMobileDrawerOpen && (
-                    <MobileDrawer
-                      isOpen={isMobileDrawerOpen}
-                      onClose={() => setIsMobileDrawerOpen(false)}
-                    />
-                  )}
-                </AnimatePresence>
+                  {/* Body Container: Fixed 88px Sidebar + Scrollable Feature Content */}
+                  <div className="flex-1 flex w-full">
+                    {/* Fixed 88px Sidebar */}
+                    <div className="hidden md:block">
+                      <DesktopSidebar />
+                    </div>
 
-                {/* Mobile Bottom Navigation Bar */}
-                <MobileTabBar />
-              </div>
-            )}
-          </HeaderProvider>
-        </WellnessProvider>
-      </AssessmentProvider>
-    </CategoryProvider>
-  </ThemeProvider>
+                    {/* Main Feature Content Area */}
+                    <div className="flex-1 min-w-0 pb-16 md:pb-0">
+                      {children}
+                    </div>
+                  </div>
+
+                  {/* Mobile Animated Drawer navigation overlay */}
+                  <AnimatePresence>
+                    {isMobileDrawerOpen && (
+                      <MobileDrawer
+                        isOpen={isMobileDrawerOpen}
+                        onClose={() => setIsMobileDrawerOpen(false)}
+                      />
+                    )}
+                  </AnimatePresence>
+
+                  {/* Mobile Bottom Navigation Bar */}
+                  <MobileTabBar />
+                </div>
+              )}
+            </HeaderProvider>
+          </WellnessProvider>
+        </AssessmentProvider>
+      </CategoryProvider>
+    </ThemeProvider>
   );
 }

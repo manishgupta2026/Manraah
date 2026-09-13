@@ -3,6 +3,7 @@ import { getAuthSessionFromRequest } from "@/backend/auth/session";
 import { sql } from "@/backend/db/client";
 import { calculateWellnessScore } from "@/backend/lib/wellness-scoring";
 import { getCalendarDayString } from "@/backend/lib/date-utils";
+import { calculateCheckinStreak } from "@/backend/lib/streak-utils";
 import { normalizeCategoryForDb } from "@/backend/lib/category-utils";
 
 export const dynamic = "force-dynamic";
@@ -30,29 +31,58 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const url = new URL(req.url);
-  const localDate = url.searchParams.get("localDate") || getCalendarDayString(new Date());
+  const todayDateStr = getCalendarDayString(new Date());
 
   try {
     await ensureCheckinSchema();
+
+    // Fetch all distinct check-in dates for deterministic streak calculation
+    const allDatesRes = await sql`
+      SELECT DISTINCT checkin_date, created_at
+      FROM daily_checkins
+      WHERE user_id = ${userId}
+      ORDER BY checkin_date DESC
+    `;
+
+    const allDates = allDatesRes.map((r: any) => r.checkin_date || r.created_at);
+    const { currentStreak, longestStreak, hasCheckedInToday } = calculateCheckinStreak(allDates);
+
+    // Fetch check-in records for history
     const checkins = await sql`
       SELECT id, user_id, mood, energy_level as energy, sleep_quality, stress, note, created_at, checkin_date, reflection
       FROM daily_checkins
       WHERE user_id = ${userId}
       ORDER BY created_at DESC
-      LIMIT 14
+      LIMIT 30
     `;
 
     const todayCheckin = checkins.find((c: any) => {
       if (c.checkin_date) {
-        const dateStr = getCalendarDayString(c.checkin_date);
-        return dateStr === localDate;
+        return getCalendarDayString(c.checkin_date) === todayDateStr;
       }
       return false;
     }) || null;
 
+    // Sync streak to database tables
+    try {
+      await sql`UPDATE users SET streak_days = ${currentStreak} WHERE id = ${userId}`;
+      await sql`
+        INSERT INTO user_streaks (id, user_id, current_streak, longest_streak, last_checkin_date)
+        VALUES (${'strk_' + userId}, ${userId}, ${currentStreak}, ${longestStreak}, CURRENT_TIMESTAMP)
+        ON CONFLICT (user_id) DO UPDATE SET
+          current_streak = ${currentStreak},
+          longest_streak = GREATEST(user_streaks.longest_streak, ${longestStreak}),
+          last_checkin_date = CURRENT_TIMESTAMP
+      `;
+    } catch (syncErr) {
+      console.error("[checkins] Non-fatal streak sync error:", syncErr);
+    }
+
     return NextResponse.json({
       todayCheckin,
+      hasCheckedInToday,
+      currentStreak,
+      longestStreak,
       history: checkins,
     });
   } catch (err: any) {
@@ -79,17 +109,18 @@ export async function POST(req: Request) {
 
   try {
     await ensureCheckinSchema();
-    const body = await req.json();
-    const mood = body.mood;
-
-    if (!mood) {
-      return NextResponse.json({ error: "Mood is required" }, { status: 400 });
+    let body: any = {};
+    try {
+      body = await req.json();
+    } catch {
+      body = {};
     }
 
-    const energyVal = Math.min(5, Math.max(1, Number(body.energyLevel ?? body.energy) || 3));
+    const mood = body.mood || "Good";
+    const energyVal = Math.min(5, Math.max(1, Number(body.energyLevel ?? body.energy) || 4));
     const stressVal = typeof (body.stressLevel ?? body.stress) === "string" ? (body.stressLevel ?? body.stress) : "Manageable";
-    const sleepVal = Math.min(5, Math.max(1, Number(body.sleepQuality ?? body.sleep) || 3));
-    const workLifeVal = Math.min(5, Math.max(1, Number(body.workLifeBalance ?? body.work_life_balance) || 3));
+    const sleepVal = Math.min(5, Math.max(1, Number(body.sleepQuality ?? body.sleep) || 4));
+    const workLifeVal = Math.min(5, Math.max(1, Number(body.workLifeBalance ?? body.work_life_balance) || 4));
     const reflectionText = body.reflection || body.note || "";
     const gratitudeText = body.gratitude || body.factors || "";
     const intentionText = body.dailyIntention || body.daily_intention || body.intention || "";
@@ -111,7 +142,7 @@ export async function POST(req: Request) {
       savedId = existingCheckin[0].id;
       createdAt = existingCheckin[0].created_at;
 
-      // Update daily_checkins
+      // Update existing check-in for today
       await sql`
         UPDATE daily_checkins
         SET mood = ${mood},
@@ -119,15 +150,15 @@ export async function POST(req: Request) {
             stress = ${stressVal},
             sleep_quality = ${sleepVal},
             work_life_balance = ${workLifeVal},
-            note = ${reflectionText || null},
-            reflection = ${reflectionText || null},
-            gratitude_reflection = ${gratitudeText || null},
-            daily_intention = ${intentionText || null},
+            note = COALESCE(${reflectionText || null}, note),
+            reflection = COALESCE(${reflectionText || null}, reflection),
+            gratitude_reflection = COALESCE(${gratitudeText || null}, gratitude_reflection),
+            daily_intention = COALESCE(${intentionText || null}, daily_intention),
             updated_at = CURRENT_TIMESTAMP
         WHERE id = ${savedId}
       `;
     } else {
-      // Insert new checkin
+      // Insert new checkin for today
       const insertRes = await sql`
         INSERT INTO daily_checkins (
           user_id, mood, energy_level, sleep_quality, stress, work_life_balance,
@@ -144,7 +175,7 @@ export async function POST(req: Request) {
       createdAt = savedRecord?.created_at;
     }
 
-    // 2. Calculate updated wellness score
+    // 2. Compute wellness score
     const scoreResult = calculateWellnessScore({
       mood,
       stress: stressVal,
@@ -152,14 +183,6 @@ export async function POST(req: Request) {
       sleep: sleepVal,
       workLifeBalance: workLifeVal,
     });
-
-    // 3. Update user current mood & streak days
-    await sql`
-      UPDATE users SET
-        current_mood = ${mood},
-        streak_days = COALESCE(streak_days, 0) + 1
-      WHERE id = ${userId}
-    `;
 
     try {
       await sql`
@@ -173,18 +196,39 @@ export async function POST(req: Request) {
       console.error("[checkins] Non-fatal assessment logging error:", assessErr);
     }
 
-    // 4. Update user_streaks table
+    // 3. Deterministically recalculate streak from all dates
+    const allDatesRes = await sql`
+      SELECT DISTINCT checkin_date, created_at
+      FROM daily_checkins
+      WHERE user_id = ${userId}
+      ORDER BY checkin_date DESC
+    `;
+
+    const allDates = allDatesRes.map((r: any) => r.checkin_date || r.created_at);
+    const { currentStreak, longestStreak } = calculateCheckinStreak(allDates);
+
+    // 4. Update users table and user_streaks table
+    await sql`
+      UPDATE users SET
+        current_mood = ${mood},
+        streak_days = ${currentStreak}
+      WHERE id = ${userId}
+    `;
+
     await sql`
       INSERT INTO user_streaks (id, user_id, current_streak, longest_streak, last_checkin_date)
-      VALUES (${'strk_' + userId}, ${userId}, 1, 1, CURRENT_TIMESTAMP)
+      VALUES (${'strk_' + userId}, ${userId}, ${currentStreak}, ${longestStreak}, CURRENT_TIMESTAMP)
       ON CONFLICT (user_id) DO UPDATE SET
-        current_streak = user_streaks.current_streak + 1,
-        longest_streak = GREATEST(user_streaks.longest_streak, user_streaks.current_streak + 1),
+        current_streak = ${currentStreak},
+        longest_streak = GREATEST(user_streaks.longest_streak, ${longestStreak}),
         last_checkin_date = CURRENT_TIMESTAMP
     `;
 
     return NextResponse.json({
       success: true,
+      hasCheckedInToday: true,
+      currentStreak,
+      longestStreak,
       checkIn: {
         id: savedId,
         user_id: userId,
@@ -197,8 +241,8 @@ export async function POST(req: Request) {
         reflection: reflectionText || null,
         gratitude_reflection: gratitudeText || null,
         daily_intention: intentionText || null,
-        created_at: createdAt
-      }
+        created_at: createdAt,
+      },
     });
   } catch (err: any) {
     console.error("POST /api/checkins error:", err);
@@ -208,3 +252,4 @@ export async function POST(req: Request) {
     );
   }
 }
+

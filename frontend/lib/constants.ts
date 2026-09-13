@@ -10,25 +10,18 @@ export interface NavItem {
 
 export const MAIN_NAV_ITEMS: NavItem[] = [
   { label: "Dashboard", href: "/dashboard", icon: "grid_view" },
-  { label: "Human Companion", href: "/human-companion", icon: "diversity_1" },
-  { label: "AI Companion", href: "/ai-chat", icon: "smart_toy" },
-  { label: "Daily Check-in", href: "/checkin", icon: "mood" },
-  { label: "Focus Timer", href: "/meditation", icon: "schedule" },
-  { label: "Analytics", href: "/reports", icon: "analytics" },
-  { label: "Wellness", href: "/wellness-score", icon: "spa" },
-  { label: "Journal", href: "/journal", icon: "auto_stories" },
-  { label: "Sleep", href: "/sleep", icon: "bedtime" },
+  { label: "Appointments", href: "/appointments", icon: "calendar_month" },
+  { label: "My Journey", href: "/journey", icon: "explore" },
   { label: "Resources", href: "/resources", icon: "menu_book" },
-  { label: "Community", href: "/community", icon: "groups" },
-  { label: "Professional Care", href: "/professional-care", icon: "medical_services" },
+  { label: "AI Companion", href: "/ai-companion", icon: "auto_awesome" },
 ];
 
 export const MOBILE_TAB_ITEMS: NavItem[] = [
   { label: "Dashboard", href: "/dashboard", icon: "grid_view" },
-  { label: "AI Chat", href: "/ai-chat", icon: "smart_toy" },
-  { label: "Check-in", href: "/checkin", icon: "mood" },
-  { label: "Community", href: "/community", icon: "groups" },
-  { label: "Profile", href: "/profile", icon: "person" },
+  { label: "Appointments", href: "/appointments", icon: "calendar_month" },
+  { label: "Journey", href: "/journey", icon: "explore" },
+  { label: "Resources", href: "/resources", icon: "menu_book" },
+  { label: "AI Companion", href: "/ai-companion", icon: "auto_awesome" },
 ];
 
 export function getCategoryJourneyBadge(cat: string | null | undefined): string {

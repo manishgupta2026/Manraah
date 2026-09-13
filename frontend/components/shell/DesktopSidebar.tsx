@@ -3,155 +3,109 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { MAIN_NAV_ITEMS } from "@/frontend/lib/constants";
 import { getClientSession } from "@/backend/auth/client";
-import { getInitials, getPastelBgColor, getPastelTextColor } from "@/frontend/lib/avatar-helper";
-import { useCategory } from "@/frontend/lib/context/CategoryContext";
 
 export default function DesktopSidebar() {
   const pathname = usePathname();
-  const { category } = useCategory();
-  const [userName, setUserName] = useState(() => {
-    const session = getClientSession();
-    return session?.user?.sanctuaryName || session?.user?.name || "Member";
-  });
-  const [avatar, setAvatar] = useState(() => {
-    const session = getClientSession();
-    return session?.user?.avatar || "";
-  });
-  const [streakDays, setStreakDays] = useState<number>(() => {
-    const session = getClientSession();
-    return session?.user?.streakDays || 1;
-  });
+  const [userName, setUserName] = useState("Aditi");
 
   useEffect(() => {
     const session = getClientSession();
     if (session?.user) {
-      setUserName(session.user.sanctuaryName || session.user.name || "Member");
-      setAvatar(session.user.avatar || "");
-      setStreakDays(session.user.streakDays || 1);
+      setUserName(session.user.name || session.user.sanctuaryName || "Aditi");
     }
   }, []);
 
-  const navList = MAIN_NAV_ITEMS;
-  const brandBg = "bg-[#0B4F3C]";
+  const navItems = [
+    {
+      id: "dashboard",
+      label: "Dashboard",
+      href: "/dashboard",
+      isActive: pathname === "/dashboard",
+      icon: (
+        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+        </svg>
+      ),
+    },
+    {
+      id: "appointments",
+      label: "Appointments",
+      href: "/appointments",
+      isActive: pathname === "/appointments" || pathname.startsWith("/appointments/"),
+      icon: (
+        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        </svg>
+      ),
+    },
+    {
+      id: "journey",
+      label: "My Journey",
+      href: "/journey",
+      isActive: pathname === "/journey" || pathname.startsWith("/journey/"),
+      icon: (
+        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      ),
+    },
+    {
+      id: "resources",
+      label: "Resources",
+      href: "/resources",
+      isActive: pathname === "/resources" || pathname.startsWith("/resources/"),
+      icon: (
+        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+        </svg>
+      ),
+    },
+    {
+      id: "ai-companion",
+      label: "AI Companion",
+      href: "/ai-companion",
+      isActive: pathname === "/ai-companion" || pathname.startsWith("/ai-companion/") || pathname === "/messages",
+      icon: (
+        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z" />
+        </svg>
+      ),
+    },
+  ];
 
   return (
-    <aside className="hidden md:flex flex-col fixed top-0 left-0 h-screen w-[76px] hover:w-[240px] bg-[#0D1512] border-r border-[#2C2A30]/40 z-40 shadow-xl transition-all duration-300 ease-in-out group select-none text-slate-300">
-      {/* Brand Header */}
-      <div className="p-4 flex items-center gap-3 border-b border-white/5 shrink-0 h-16">
-        <div className={`w-10 h-10 rounded-2xl ${brandBg} flex items-center justify-center text-white shadow-md shrink-0 transition-colors duration-300`}>
-          <span className="material-symbols-outlined text-2xl font-black">spa</span>
-        </div>
-        <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 overflow-hidden whitespace-nowrap">
-          <h1 className="font-heading font-black text-sm text-white uppercase tracking-widest leading-none">Manraah</h1>
-          <p className="text-[9px] text-[#A6A4AD] font-bold uppercase tracking-wider mt-1">Sanctuary for Mind</p>
-        </div>
-      </div>
-
-      {/* Navigation Links */}
-      <nav className="flex-1 px-3 py-4 space-y-2 overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
-        {navList.map((item) => {
-          const targetHref = item.href;
-          const isActive = pathname === targetHref || (targetHref !== "/" && pathname.startsWith(targetHref));
-          return (
-            <Link
-              key={item.href}
-              href={targetHref}
-              className={`flex flex-col group-hover:flex-row items-center justify-center group-hover:justify-start gap-1 group-hover:gap-3 p-2 rounded-xl text-xs font-bold transition-all duration-200 ${
-                isActive
-                  ? "bg-[#0B4F3C]/20 text-[#62B596] border border-[#0B4F3C]/40"
-                  : "text-slate-400 hover:bg-white/5 hover:text-white"
-              }`}
-              title={item.label}
-            >
-              <span className={`material-symbols-outlined text-xl shrink-0 ${isActive ? "text-[#62B596]" : "text-slate-400"}`}>
-                {item.icon}
-              </span>
-              
-              {isActive && (
-                <span className="text-[8px] font-black uppercase tracking-wider text-[#62B596] block group-hover:hidden transition-all mt-0.5 leading-none">
-                  {item.label.split(" ")[0]}
-                </span>
-              )}
-
-              <span className="hidden group-hover:inline opacity-0 group-hover:opacity-100 transition-opacity duration-300 overflow-hidden whitespace-nowrap">
-                {item.label}
-              </span>
-            </Link>
-          );
-        })}
+    <aside className="w-[88px] shrink-0 bg-[#052820] dark:bg-[#0A221C] border-r border-[#0d3b30] dark:border-[#1d3f35] text-white flex flex-col justify-between items-center py-5 sticky top-[62px] h-[calc(100vh-62px)] z-40 select-none transition-colors duration-200">
+      {/* Navigation Icons Stack */}
+      <nav className="flex flex-col items-center gap-3 w-full px-2">
+        {navItems.map((item) => (
+          <Link
+            key={item.id}
+            href={item.href}
+            className={`w-[72px] flex flex-col items-center py-2 px-1 rounded-2xl transition-all ${
+              item.isActive
+                ? "bg-[#006C56] dark:bg-[#00A982] text-white dark:text-[#071C17] shadow-sm border border-[#008968]/40 dark:border-[#00A982] font-bold"
+                : "text-[#8EAAA1] dark:text-[#78958C] hover:text-white dark:hover:text-[#F4FAF7] hover:bg-white/5 font-medium"
+            }`}
+          >
+            {item.icon}
+            <span className="text-[10px] mt-1 tracking-tight leading-tight">{item.label}</span>
+          </Link>
+        ))}
       </nav>
 
-      {/* User Profile Card */}
-      <div className="p-3 border-t border-white/5 bg-[#080E0C] shrink-0 space-y-3">
-        <div className="flex items-center justify-center group-hover:justify-start gap-3 p-2 rounded-[20px] hover:bg-white/5 transition-colors">
-          {avatar && avatar.startsWith("data:image/") ? (
-            <img
-              src={avatar}
-              alt="Avatar"
-              className="w-9 h-9 rounded-full object-cover border border-[#2C2A30] shadow-sm shrink-0"
-            />
-          ) : (
-            <div
-              className="w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs shrink-0 border border-white/10 shadow-sm"
-              style={{ backgroundColor: getPastelBgColor(userName), color: getPastelTextColor(userName) }}
-            >
-              {getInitials(userName)}
-            </div>
-          )}
-          <div className="hidden group-hover:block flex-1 min-w-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 overflow-hidden whitespace-nowrap text-left">
-            <p className="text-xs font-extrabold text-white truncate leading-tight">{userName.split(" ")[0]}</p>
-            <p className="text-[9px] leading-none truncate mt-0.5 font-bold uppercase text-slate-400">
-              {(() => {
-                if (!category) return "Student";
-                const cat = category.toLowerCase().replace(/[^a-z0-9_]/g, "");
-                if (cat === "student") return "Student";
-                if (cat === "working_professional" || cat === "workingprofessional" || cat === "young_pro" || cat === "youngprofessional") return "Working Professional";
-                if (cat === "parent" || cat === "parents") return "Parent";
-                if (cat === "couple" || cat === "couples") return "Couple";
-                if (cat === "senior_citizen" || cat === "seniorcitizen") return "Senior Citizen";
-                return category;
-              })()}
-            </p>
-          </div>
+      {/* Bottom Avatar + Initials + View Profile */}
+      <div className="flex flex-col items-center text-center space-y-1">
+        <div className="w-9 h-9 rounded-full bg-[#FF8577] text-white flex items-center justify-center font-bold text-xs shadow-xs">
+          {userName.slice(0, 2).toUpperCase()}
         </div>
-
-        {/* Streak card (only when sidebar expanded) */}
-        <div className="hidden group-hover:block p-3 rounded-2xl bg-[#0B4F3C]/10 border border-[#0B4F3C]/30 text-left">
-          <div className="flex items-center gap-2">
-            <span className="text-base leading-none">🔥</span>
-            <div>
-              <p className="text-[10px] font-black text-white leading-tight">{streakDays} Day Streak</p>
-              <p className="text-[8px] font-bold text-[#62B596] leading-none mt-0.5">Keep going strong!</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Settings & Logout (only when sidebar expanded) */}
-        <div className="hidden group-hover:flex items-center justify-between gap-3 text-[10px] pt-2 border-t border-white/5">
-          <Link
-            href="/profile"
-            className="flex items-center gap-1.5 text-slate-400 hover:text-white cursor-pointer font-bold transition-colors select-none"
-            title="Settings"
-          >
-            <span className="material-symbols-outlined text-sm shrink-0">settings</span>
-            <span>Settings</span>
-          </Link>
-
-          <button
-            onClick={async () => {
-              const { signOut } = await import("@/backend/auth/client");
-              await signOut();
-              window.location.href = "/login";
-            }}
-            className="flex items-center gap-1.5 text-slate-400 hover:text-red-400 cursor-pointer font-bold transition-colors select-none"
-            title="Logout"
-          >
-            <span className="material-symbols-outlined text-sm shrink-0">logout</span>
-            <span>Log Out</span>
-          </button>
-        </div>
+        <p className="text-[11px] font-bold text-white leading-tight mt-1">{userName.split(" ")[0]}</p>
+        <Link
+          href="/profile"
+          className="text-[9px] text-[#8EAAA1] dark:text-[#78958C] hover:text-white transition-colors"
+        >
+          View Profile
+        </Link>
       </div>
     </aside>
   );

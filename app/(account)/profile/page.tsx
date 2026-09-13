@@ -1,5 +1,6 @@
-import SettingsPrivacyScreen from "@/frontend/components/screens/SettingsPrivacyScreen";
+import UnifiedDashboard from "@/frontend/components/dashboard/UnifiedDashboard";
 
 export default function ProfilePage() {
-  return <SettingsPrivacyScreen />;
+  return <UnifiedDashboard initialSection="profile" />;
 }
+

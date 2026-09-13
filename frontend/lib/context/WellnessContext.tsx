@@ -15,6 +15,7 @@ export interface WellnessState {
     currentMood: string;
   } | null;
   todayMood: any | null;
+  hasCheckedInToday?: boolean;
   latestCheckIn?: any | null;
   history?: any[];
   moodHistory?: any[];
@@ -57,8 +58,12 @@ interface WellnessContextType {
   wellnessData: WellnessState | null;
   dashboardData: WellnessState | null;
   isLoading: boolean;
+  isCheckingIn: boolean;
+  hasCheckedInToday: boolean;
+  currentStreak: number;
   refetchWellnessData: () => Promise<void>;
   refetchDashboardData: () => Promise<void>;
+  performDailyCheckIn: () => Promise<any>;
   submitCheckIn: (data: {
     mood: string;
     energy: number;
@@ -75,6 +80,7 @@ const WellnessContext = createContext<WellnessContextType | undefined>(undefined
 export function WellnessProvider({ children }: { children: ReactNode }) {
   const [wellnessData, setWellnessData] = useState<WellnessState | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isCheckingIn, setIsCheckingIn] = useState<boolean>(false);
 
   const fetchWellness = async () => {
     try {
@@ -83,7 +89,10 @@ export function WellnessProvider({ children }: { children: ReactNode }) {
         const data = await res.json();
         const session = getClientSession();
         const u = session?.user;
-        const currentStreak = u?.streakDays || 1;
+        const currentStreak = typeof data.currentStreak === "number" ? data.currentStreak : (u?.streakDays ?? 0);
+        const longestStreak = typeof data.longestStreak === "number" ? data.longestStreak : currentStreak;
+        const hasCheckedInToday = Boolean(data.hasCheckedInToday || data.todayCheckin);
+
         setWellnessData((prev) => ({
           user: u ? {
             id: u.id || "demo-user",
@@ -93,9 +102,10 @@ export function WellnessProvider({ children }: { children: ReactNode }) {
             selectedCategory: u.selectedCategory || "student",
             streakDays: currentStreak,
             mindfulnessMinutes: u.mindfulnessMinutes || 0,
-            currentMood: data.todayCheckin?.mood || u.currentMood || "Sanctuary Member",
+            currentMood: data.todayCheckin?.mood || u.currentMood || "Good",
           } : (prev?.user || null),
           todayMood: data.todayCheckin || null,
+          hasCheckedInToday,
           history: data.history || [],
           moodHistory: data.history || [],
           wellnessMetrics: [],
@@ -103,7 +113,7 @@ export function WellnessProvider({ children }: { children: ReactNode }) {
           weeklySummary: null,
           monthlySummary: null,
           insights: [],
-          streak: { currentStreak: currentStreak, longestStreak: currentStreak },
+          streak: { currentStreak, longestStreak },
           recommendation: "Focus on matching your pace with slow cycles to restore internal alignment.",
         }));
       }
@@ -115,48 +125,63 @@ export function WellnessProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
-    // Safely hydrate client-side cache after initial SSR hydration pass
-    if (typeof window !== "undefined") {
-      try {
-        const cached = localStorage.getItem("manraah_wellness_cache") || localStorage.getItem("manraah_dashboard_cache");
-        if (cached) {
-          setWellnessData(JSON.parse(cached));
-          setIsLoading(false);
-        }
-      } catch {}
-
-      const session = getClientSession();
-      if (session?.user) {
-        const u = session.user;
-        setWellnessData((prev) => prev || {
-          user: {
-            id: u.id || "demo-user",
-            name: u.sanctuaryName || u.name || "Sanctuary Member",
-            sanctuaryName: u.sanctuaryName || u.name || "Sanctuary Member",
-            email: u.email || "",
-            selectedCategory: u.selectedCategory || "student",
-            streakDays: u.streakDays || 1,
-            mindfulnessMinutes: u.mindfulnessMinutes || 0,
-            currentMood: u.currentMood || "Sanctuary Member",
-          },
-          todayMood: null,
-          history: [],
-          weeklySummary: null,
-          monthlySummary: null,
-          insights: [],
-          streak: { currentStreak: u.streakDays || 1, longestStreak: 1 },
-          recommendation: "Focus on matching your pace with slow cycles to restore internal alignment.",
-        });
-        setIsLoading(false);
-      }
-    }
-
     fetchWellness();
   }, []);
 
   const refetchWellnessData = async () => {
     setIsLoading(true);
     await fetchWellness();
+  };
+
+  const performDailyCheckIn = async () => {
+    setIsCheckingIn(true);
+    try {
+      const res = await fetch("/api/checkins", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          mood: "Good",
+          energy: 4,
+          stress: "Manageable",
+          sleep: 4,
+          reflection: "Daily wellness check-in completed from companion panel.",
+        }),
+      });
+
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || "Failed to complete check-in");
+      }
+
+      const result = await res.json();
+      const nextStreak = typeof result.currentStreak === "number" ? result.currentStreak : 1;
+      const longest = typeof result.longestStreak === "number" ? result.longestStreak : nextStreak;
+
+      // Immediately update local context state
+      setWellnessData((prev) => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          todayMood: result.checkIn || prev.todayMood,
+          hasCheckedInToday: true,
+          streak: {
+            currentStreak: nextStreak,
+            longestStreak: longest,
+          },
+          user: prev.user ? {
+            ...prev.user,
+            streakDays: nextStreak,
+          } : null,
+        };
+      });
+
+      return result;
+    } catch (err) {
+      console.error("Error performing daily check-in:", err);
+      throw err;
+    } finally {
+      setIsCheckingIn(false);
+    }
   };
 
   const submitCheckIn = async (checkInData: {
@@ -167,7 +192,7 @@ export function WellnessProvider({ children }: { children: ReactNode }) {
     reflection?: string;
     factors?: string;
   }) => {
-    setIsLoading(true);
+    setIsCheckingIn(true);
     try {
       const res = await fetch("/api/checkins", {
         method: "POST",
@@ -176,21 +201,42 @@ export function WellnessProvider({ children }: { children: ReactNode }) {
       });
 
       if (!res.ok) {
-        throw new Error("Failed to submit check-in");
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || "Failed to submit check-in");
       }
 
       const updatedRecord = await res.json();
+      const nextStreak = typeof updatedRecord.currentStreak === "number" ? updatedRecord.currentStreak : 1;
+      const longest = typeof updatedRecord.longestStreak === "number" ? updatedRecord.longestStreak : nextStreak;
 
-      // Automatically refetch latest wellness state from server
-      await fetchWellness();
+      setWellnessData((prev) => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          todayMood: updatedRecord.checkIn || prev.todayMood,
+          hasCheckedInToday: true,
+          streak: {
+            currentStreak: nextStreak,
+            longestStreak: longest,
+          },
+          user: prev.user ? {
+            ...prev.user,
+            streakDays: nextStreak,
+          } : null,
+        };
+      });
 
       return updatedRecord;
     } catch (err) {
-      setIsLoading(false);
       console.error("Error submitting check-in:", err);
       throw err;
+    } finally {
+      setIsCheckingIn(false);
     }
   };
+
+  const hasCheckedInToday = Boolean(wellnessData?.hasCheckedInToday || wellnessData?.todayMood);
+  const currentStreak = wellnessData?.streak?.currentStreak ?? 0;
 
   return (
     <WellnessContext.Provider
@@ -198,8 +244,12 @@ export function WellnessProvider({ children }: { children: ReactNode }) {
         wellnessData,
         dashboardData: wellnessData,
         isLoading,
+        isCheckingIn,
+        hasCheckedInToday,
+        currentStreak,
         refetchWellnessData,
         refetchDashboardData: refetchWellnessData,
+        performDailyCheckIn,
         submitCheckIn,
       }}
     >

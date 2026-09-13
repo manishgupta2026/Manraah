@@ -1,5 +1,5 @@
-import ResourcesScreen from "@/frontend/components/screens/ResourcesScreen";
+import UnifiedDashboard from "@/frontend/components/dashboard/UnifiedDashboard";
 
 export default function ResourcesPage() {
-  return <ResourcesScreen />;
+  return <UnifiedDashboard initialSection="resources" />;
 }

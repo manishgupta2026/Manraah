@@ -1,5 +1,6 @@
 import { sql } from "@/backend/db/client";
 import { getCalendarDayString } from "@/backend/lib/date-utils";
+import { calculateCheckinStreak } from "@/backend/lib/streak-utils";
 
 export async function ensureLoginActivityTableExists() {
   try {
@@ -23,102 +24,58 @@ export async function recordUserLogin(userId: string) {
 
   const todayStr = getCalendarDayString(new Date());
 
-  // Check if today's login record already exists
-  const existing = await sql`
-    SELECT id FROM login_activity
-    WHERE user_id = ${userId} AND login_date = ${todayStr}
-    LIMIT 1
-  `;
-
-  if (existing.length > 0) {
-    // Today's login already recorded. Update last_login_at.
-    await sql`
-      UPDATE login_activity
-      SET last_login_at = CURRENT_TIMESTAMP
-      WHERE id = ${existing[0].id}
-    `;
-  } else {
-    // Today's login does not exist. Let's record it!
+  // Record login activity
+  try {
     await sql`
       INSERT INTO login_activity (user_id, login_date, last_login_at)
       VALUES (${userId}, ${todayStr}, CURRENT_TIMESTAMP)
+      ON CONFLICT (user_id, login_date) DO UPDATE SET
+        last_login_at = CURRENT_TIMESTAMP
+    `;
+  } catch (e) {
+    console.error("Login activity record error:", e);
+  }
+
+  // Derive streak deterministically from checkins
+  let currentStreak = 0;
+  let longestStreak = 0;
+
+  try {
+    const allDatesRes = await sql`
+      SELECT DISTINCT checkin_date, created_at
+      FROM daily_checkins
+      WHERE user_id = ${userId}
+      ORDER BY checkin_date DESC
     `;
 
-    // Yesterday's calendar date string
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
-    const yesterdayStr = getCalendarDayString(yesterday);
+    const allDates = allDatesRes.map((r: any) => r.checkin_date || r.created_at);
+    const result = calculateCheckinStreak(allDates);
+    currentStreak = result.currentStreak;
+    longestStreak = result.longestStreak;
 
-    // Check if user logged in yesterday
-    const loggedYesterday = await sql`
-      SELECT id FROM login_activity
-      WHERE user_id = ${userId} AND login_date = ${yesterdayStr}
-      LIMIT 1
-    `;
-
-    // Fetch user profile to read current streak
-    const userProfile = await sql`
-      SELECT streak_days FROM users WHERE id = ${userId} LIMIT 1
-    `;
-
-    let currentStreak = 1;
-    if (userProfile.length > 0) {
-      const prevStreak = userProfile[0].streak_days || 0;
-      if (loggedYesterday.length > 0) {
-        // Increment streak
-        currentStreak = prevStreak + 1;
-      } else {
-        // Reset streak to 1
-        currentStreak = 1;
-      }
-    }
-
-    // Update users streak_days
     await sql`
       UPDATE users
       SET streak_days = ${currentStreak}
       WHERE id = ${userId}
     `;
 
-    // Upsert into user_streaks table to keep it in sync
-    const streakRecord = await sql`
-      SELECT id, longest_streak FROM user_streaks
-      WHERE user_id = ${userId}
-      LIMIT 1
+    await sql`
+      INSERT INTO user_streaks (id, user_id, current_streak, longest_streak, last_checkin_date)
+      VALUES (${'strk_' + userId}, ${userId}, ${currentStreak}, ${longestStreak}, CURRENT_TIMESTAMP)
+      ON CONFLICT (user_id) DO UPDATE SET
+        current_streak = ${currentStreak},
+        longest_streak = GREATEST(user_streaks.longest_streak, ${longestStreak}),
+        last_checkin_date = CURRENT_TIMESTAMP,
+        updated_at = CURRENT_TIMESTAMP
     `;
-
-    if (streakRecord.length > 0) {
-      const longest = Math.max(currentStreak, streakRecord[0].longest_streak || 1);
-      await sql`
-        UPDATE user_streaks
-        SET current_streak = ${currentStreak},
-            longest_streak = ${longest},
-            last_checkin_date = CURRENT_TIMESTAMP,
-            updated_at = CURRENT_TIMESTAMP
-        WHERE user_id = ${userId}
-      `;
-    } else {
-      const uuid = `streak_${userId}_${Date.now()}`;
-      await sql`
-        INSERT INTO user_streaks (id, user_id, current_streak, longest_streak, last_checkin_date)
-        VALUES (${uuid}, ${userId}, ${currentStreak}, ${currentStreak}, CURRENT_TIMESTAMP)
-      `;
-    }
+  } catch (streakErr) {
+    console.error("Streak computation error:", streakErr);
   }
 
-  // Fetch updated user streak information
-  const updatedUser = await sql`
-    SELECT streak_days FROM users WHERE id = ${userId} LIMIT 1
-  `;
-  const updatedStreak = await sql`
-    SELECT current_streak, longest_streak, last_checkin_date FROM user_streaks
-    WHERE user_id = ${userId}
-    LIMIT 1
-  `;
-
   return {
-    currentStreak: updatedUser[0]?.streak_days || 1,
-    longestStreak: updatedStreak[0]?.longest_streak || 1,
-    lastLoginAt: updatedStreak[0]?.last_checkin_date || new Date(),
+    currentStreak,
+    longestStreak,
+    lastLoginAt: new Date(),
   };
 }
+

@@ -1,5 +1,5 @@
-import CommunityScreen from "@/frontend/components/screens/CommunityScreen";
+import UnifiedDashboard from "@/frontend/components/dashboard/UnifiedDashboard";
 
 export default function CommunityPage() {
-  return <CommunityScreen />;
+  return <UnifiedDashboard initialSection="dashboard" />;
 }
