@@ -8,6 +8,9 @@ import AppointmentsView from "./views/AppointmentsView";
 import JourneyView from "./views/JourneyView";
 import ResourcesView from "./views/ResourcesView";
 import AICompanionView from "./views/AICompanionView";
+import HumanCompanionView from "./views/HumanCompanionView";
+import JournalView from "./views/JournalView";
+import CommunityView from "./views/CommunityView";
 import ProfileView from "./views/ProfileView";
 
 export type DashboardSection =
@@ -16,6 +19,9 @@ export type DashboardSection =
   | "journey"
   | "resources"
   | "ai-companion"
+  | "human-companion"
+  | "journal"
+  | "community"
   | "profile";
 
 interface UnifiedDashboardProps {
@@ -38,6 +44,9 @@ function DashboardContent({ initialSection }: UnifiedDashboardProps) {
       tabParam === "my-journey" ||
       tabParam === "resources" ||
       tabParam === "ai-companion" ||
+      tabParam === "human-companion" ||
+      tabParam === "journal" ||
+      tabParam === "community" ||
       tabParam === "profile"
     ) {
       return tabParam === "my-journey" ? "journey" : tabParam;
@@ -47,6 +56,9 @@ function DashboardContent({ initialSection }: UnifiedDashboardProps) {
     if (pathname.includes("/journey") || pathname.includes("/my-journey")) return "journey";
     if (pathname.includes("/resources")) return "resources";
     if (pathname.includes("/ai-companion") || pathname.includes("/messages")) return "ai-companion";
+    if (pathname.includes("/human-companion")) return "human-companion";
+    if (pathname.includes("/journal")) return "journal";
+    if (pathname.includes("/community")) return "community";
     if (pathname.includes("/profile")) return "profile";
 
     return "dashboard";
@@ -100,6 +112,9 @@ function DashboardContent({ initialSection }: UnifiedDashboardProps) {
           {activeSection === "journey" && <JourneyView />}
           {activeSection === "resources" && <ResourcesView />}
           {activeSection === "ai-companion" && <AICompanionView />}
+          {activeSection === "human-companion" && <HumanCompanionView />}
+          {activeSection === "journal" && <JournalView />}
+          {activeSection === "community" && <CommunityView />}
           {activeSection === "profile" && <ProfileView />}
         </div>
       </div>

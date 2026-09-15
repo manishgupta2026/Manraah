@@ -9,6 +9,8 @@ const PROTECTED_ROUTES = [
   "/resources",
   "/ai-companion",
   "/messages",
+  "/human-companion",
+  "/journal",
   "/community",
   "/profile",
   "/admin",

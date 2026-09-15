@@ -13,6 +13,9 @@ const VALID_SECTIONS: DashboardSection[] = [
   "journey",
   "resources",
   "ai-companion",
+  "human-companion",
+  "journal",
+  "community",
 ];
 
 export default function DashboardSectionPage({ params }: DashboardSectionPageProps) {
