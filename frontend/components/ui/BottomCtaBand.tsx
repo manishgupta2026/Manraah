@@ -17,9 +17,9 @@ export default function BottomCtaBand({
   className = "",
 }: BottomCtaBandProps) {
   return (
-    <section className={`w-full py-12 md:py-16 px-4 sm:px-6 bg-surface ${className}`}>
+    <section className={`w-full py-10 sm:py-14 px-4 sm:px-6 bg-surface ${className}`}>
       <div className="max-w-6xl mx-auto">
-        <div className="p-8 sm:p-14 lg:p-16 rounded-[32px] sm:rounded-[36px] bg-gradient-to-br from-[#4A388E] via-[#5F4EA5] to-[#3B2C78] text-white text-center space-y-6 shadow-2xl relative overflow-hidden">
+        <div className="p-6 sm:p-10 lg:p-14 rounded-2xl sm:rounded-3xl bg-gradient-to-br from-[#4A388E] via-[#5F4EA5] to-[#3B2C78] text-white text-center space-y-5 sm:space-y-6 shadow-2xl relative overflow-hidden">
           {/* Atmospheric Glow Blobs for Depth */}
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[260px] bg-primary-purple/30 rounded-full blur-[100px] pointer-events-none" />
           <div className="absolute -top-12 -left-12 w-64 h-64 bg-mint/20 rounded-full blur-3xl pointer-events-none" />

@@ -28,14 +28,14 @@ export default function PublicFooter() {
   };
 
   return (
-    <footer className="bg-[#262235] text-surface/90 pt-16 pb-12 px-6 border-t border-white/10 select-none">
-      <div className="max-w-7xl mx-auto space-y-12">
+    <footer className="bg-[#262235] text-surface/90 pt-12 sm:pt-16 pb-10 sm:pb-12 px-4 sm:px-6 lg:px-8 border-t border-white/10 select-none">
+      <div className="max-w-7xl mx-auto space-y-10 sm:space-y-12">
         {/* Main Footer Columns */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 text-sm">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 lg:gap-10 text-sm">
           {/* Brand Column */}
-          <div className="lg:col-span-2 space-y-5 text-left">
+          <div className="sm:col-span-2 lg:col-span-2 space-y-4 sm:space-y-5 text-left">
             <Link href="/" className="inline-block hover:opacity-90 transition-opacity">
-              <Logo variant="white" size="md" />
+              <Logo variant="white" size="lg" />
             </Link>
             <p className="text-xs text-white/70 leading-relaxed max-w-sm">
               A private, compassionate mental wellness retreat combining 24/7 AI companion care, verified peer listeners, licensed therapists, and category-based personalization.
@@ -133,7 +133,7 @@ export default function PublicFooter() {
             <span>24/7 Immediate Support Notice</span>
           </div>
           <p className="leading-relaxed">
-            If you or someone you know is in immediate crisis or emotional distress, please reach out to professional emergency resources: call <span className="font-bold text-white underline decoration-white/30">[National Crisis Helpline Placeholder — e.g., 988 in US/Canada, 14416 Tele-MANAS in India, or 112 in EU]</span>. Manraah is an everyday supportive wellness companion, not an emergency medical intervention service.
+            If you or someone you know is in immediate crisis or emotional distress, please reach out to professional emergency resources: call <a href="tel:14416" className="font-bold text-white underline decoration-white/30 hover:text-mint transition-colors">Tele-MANAS (14416 / 1800-891-4416)</a>. Manraah is an everyday supportive wellness companion, not an emergency medical intervention service.
           </p>
         </div>
 
