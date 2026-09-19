@@ -4,12 +4,10 @@ import React, { useState, useEffect } from "react";
 import AdminCard from "@/frontend/components/ui/AdminCard";
 import AdminTable, { Column } from "@/frontend/components/ui/AdminTable";
 import StatusBadge from "@/frontend/components/ui/StatusBadge";
-import { getAICrisisFlags, updateAICrisisStatus, AICrisisFlag } from "@/backend/queries/ai-crisis-flags";
-import { getCommunityReports, updateCommunityReportStatus, CommunityReport } from "@/backend/queries/community";
 
 interface UnifiedCrisisFeedItem {
   id: string;
-  source: "Human Companion Flag" | "AI Companion Safety" | "Community Moderation Report";
+  source: string;
   sourceOrigin: string;
   userTag: string;
   severity: "CRITICAL" | "HIGH" | "MEDIUM";
@@ -22,166 +20,159 @@ interface UnifiedCrisisFeedItem {
 export default function CrisisEscalationCenter() {
   const [feed, setFeed] = useState<UnifiedCrisisFeedItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  useEffect(() => {
-    async function loadUnifiedCrisisFeed() {
-      const [aiFlags, communityReports] = await Promise.all([
-        getAICrisisFlags(),
-        getCommunityReports(),
-      ]);
-
-      const unified: UnifiedCrisisFeedItem[] = [
-        // 1. Human Companion PostSessionFlag Submissions
-        {
-          id: "flag-hc-1",
-          source: "Human Companion Flag",
-          sourceOrigin: "PostSessionFlag Submission",
-          userTag: "Anonymous Member #204",
-          severity: "CRITICAL",
-          details: "Listener requested immediate supervisor intervention due to severe distress during voice session.",
-          timestamp: "5 mins ago",
-          assignedTo: "Unassigned",
-          status: "OPEN",
-        },
-        // 2. AI Companion Crisis Detection
-        ...aiFlags.map((f) => ({
-          id: f.id,
-          source: "AI Companion Safety" as const,
-          sourceOrigin: `AI Category: ${f.aiGuidelineCategory}`,
-          userTag: f.userTag,
-          severity: f.severity,
-          details: f.triggerMessage,
-          timestamp: f.timestamp,
-          assignedTo: f.assignedTo || "Unassigned",
-          status: f.status,
-        })),
-        // 3. Community Moderation Safety Reports
-        ...communityReports
-          .filter((c) => c.isSafetyRelated)
-          .map((c) => ({
-            id: c.id,
-            source: "Community Moderation Report" as const,
-            sourceOrigin: `Post: ${c.postTitle}`,
-            userTag: c.reportedUser,
-            severity: c.severity === "LOW" ? "MEDIUM" : (c.severity as any),
-            details: c.reason,
-            timestamp: c.timestamp,
-            assignedTo: c.assignedTo || "Unassigned",
-            status: c.status === "DISMISSED" ? "RESOLVED" : (c.status as any),
-          })),
-      ];
-
-      setFeed(unified);
-      setLoading(false);
-    }
-
-    loadUnifiedCrisisFeed();
-  }, []);
-
-  const handleAssign = (id: string) => {
-    setFeed((prev) =>
-      prev.map((item) =>
-        item.id === id ? { ...item, assignedTo: "Ashutosh Sahu (Admin)", status: "IN_REVIEW" } : item
-      )
-    );
+  const showToast = (msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(null), 3000);
   };
 
-  const handleResolve = (id: string) => {
+  const loadCrisisFeed = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch("/api/admin/crisis");
+      if (res.ok) {
+        const data = await res.json();
+        if (data.feed) {
+          setFeed(data.feed);
+        }
+      }
+    } catch (err) {
+      console.error("Error loading crisis feed:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadCrisisFeed();
+  }, []);
+
+  const handleUpdateStatus = async (id: string, newStatus: "OPEN" | "IN_REVIEW" | "RESOLVED") => {
     setFeed((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, status: "RESOLVED" } : item))
+      prev.map((item) => (item.id === id ? { ...item, status: newStatus } : item))
     );
+
+    try {
+      await fetch("/api/admin/crisis", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, status: newStatus }),
+      });
+      showToast(`Crisis flag marked as ${newStatus.replace("_", " ")}.`);
+    } catch (err) {
+      console.error("Error updating crisis status:", err);
+    }
   };
 
   const columns: Column<UnifiedCrisisFeedItem>[] = [
     {
-      header: "Origin & Source",
+      header: "Origin & Severity",
       accessor: (row) => (
-        <div>
-          <span className={`px-2 py-0.5 rounded-full text-[9px] font-extrabold uppercase ${
-            row.source === "Human Companion Flag"
-              ? "bg-purple-500/10 text-purple-600 border border-purple-500/20"
-              : row.source === "AI Companion Safety"
-              ? "bg-rose-500/10 text-rose-600 border border-rose-500/20"
-              : "bg-amber-500/10 text-amber-600 border border-amber-500/20"
-          }`}>
-            {row.source}
-          </span>
-          <p className="text-[10px] text-on-surface-variant font-medium mt-1">{row.sourceOrigin}</p>
+        <div className="space-y-1">
+          <div className="flex items-center gap-1.5">
+            <StatusBadge
+              label={row.severity}
+              variant={row.severity === "CRITICAL" ? "error" : "warning"}
+              pulse={row.severity === "CRITICAL" && row.status !== "RESOLVED"}
+            />
+            <span className="text-[10px] font-extrabold uppercase tracking-wide text-primary">
+              {row.source}
+            </span>
+          </div>
+          <p className="text-[10px] text-on-surface-variant font-mono">{row.sourceOrigin}</p>
         </div>
       ),
     },
     {
       header: "Member Tag",
-      accessor: (row) => <span className="font-bold text-on-surface">{row.userTag}</span>,
+      accessor: (row) => (
+        <span className="font-bold text-xs text-on-surface">{row.userTag}</span>
+      ),
     },
     {
-      header: "Severity Level",
+      header: "Trigger Details",
+      accessor: (row) => (
+        <p className="text-xs text-on-surface font-medium max-w-sm line-clamp-2">
+          {row.details}
+        </p>
+      ),
+    },
+    {
+      header: "Timestamp",
+      accessor: (row) => (
+        <span className="text-xs text-on-surface-variant font-medium">{row.timestamp}</span>
+      ),
+    },
+    {
+      header: "Status",
       accessor: (row) => (
         <StatusBadge
-          label={row.severity}
-          variant={row.severity === "CRITICAL" ? "error" : row.severity === "HIGH" ? "warning" : "info"}
-          pulse={row.severity === "CRITICAL"}
+          label={row.status.replace("_", " ")}
+          variant={row.status === "RESOLVED" ? "success" : row.status === "IN_REVIEW" ? "info" : "error"}
         />
       ),
     },
     {
-      header: "Trigger / Flag Details",
-      accessor: (row) => <span className="text-on-surface-variant font-medium max-w-xs block truncate">{row.details}</span>,
-    },
-    {
-      header: "Assignment & Status",
-      accessor: (row) => (
-        <div>
-          <StatusBadge
-            label={row.status}
-            variant={row.status === "RESOLVED" ? "success" : row.status === "IN_REVIEW" ? "info" : "warning"}
-          />
-          <p className="text-[10px] text-on-surface-variant font-semibold mt-1">
-            Assignee: {row.assignedTo}
-          </p>
-        </div>
-      ),
-    },
-    {
       header: "Actions",
-      className: "text-right",
       accessor: (row) => (
-        row.status !== "RESOLVED" ? (
-          <div className="flex items-center justify-end gap-2">
-            {row.assignedTo === "Unassigned" && (
-              <button
-                onClick={() => handleAssign(row.id)}
-                className="px-3 py-1.5 rounded-xl bg-primary text-white font-bold text-xs"
-              >
-                Assign to Me
-              </button>
-            )}
+        <div className="flex items-center gap-1.5">
+          {row.status === "OPEN" && (
             <button
-              onClick={() => handleResolve(row.id)}
-              className="px-3 py-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs"
+              onClick={() => handleUpdateStatus(row.id, "IN_REVIEW")}
+              className="px-2.5 py-1 rounded-xl bg-amber-50 text-amber-700 hover:bg-amber-100 text-xs font-bold transition-all"
             >
-              Mark Resolved ✓
+              Take Case
             </button>
-          </div>
-        ) : (
-          <span className="text-[11px] font-bold text-emerald-600">✓ Case Closed</span>
-        )
+          )}
+          {row.status !== "RESOLVED" && (
+            <button
+              onClick={() => handleUpdateStatus(row.id, "RESOLVED")}
+              className="px-2.5 py-1 rounded-xl bg-emerald-50 text-emerald-700 hover:bg-emerald-100 text-xs font-bold transition-all"
+            >
+              Resolve
+            </button>
+          )}
+          {row.status === "RESOLVED" && (
+            <span className="text-[11px] text-emerald-600 font-bold">Resolved ✓</span>
+          )}
+        </div>
       ),
     },
   ];
 
   return (
     <div className="space-y-6 animate-fadeIn select-none">
+      {toastMessage && (
+        <div className="p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 text-xs font-bold text-center animate-fadeIn">
+          ✓ {toastMessage}
+        </div>
+      )}
+
+      {/* Triage Banner */}
+      <div className="p-6 rounded-3xl bg-gradient-to-r from-rose-600 via-rose-500 to-amber-600 text-white shadow-card-lift flex items-center justify-between">
+        <div>
+          <span className="px-3 py-1 rounded-full bg-white/20 text-[10px] font-black uppercase tracking-widest">
+            24/7 Clinical Safety Protocols
+          </span>
+          <h2 className="text-xl font-heading font-extrabold mt-1">Crisis Escalation Center</h2>
+          <p className="text-xs text-white/90 max-w-xl">
+            Live triage signals from high-distress user check-ins and human companion voice sessions. Tele-MANAS (14416) emergency protocols ready.
+          </p>
+        </div>
+        <StatusBadge label="Protocols Active" variant="info" pulse />
+      </div>
+
+      {/* Escalation Feed Table */}
       <AdminCard
-        title="Crisis Escalation Center (Unified Triage Feed)"
-        subtitle="Consolidated real-time emergency triage merging Human Companion flags, AI safety triggers, and Community safety reports."
+        title="Active Escalation Queue"
+        subtitle="Priority incidents requiring supervisor intervention or crisis escalation."
       >
         <AdminTable
           columns={columns}
           data={feed}
-          keyExtractor={(row) => row.id}
           loading={loading}
-          emptyMessage="No open crisis escalation flags."
+          emptyMessage="No open crisis flags. All member check-ins within baseline safety parameters."
         />
       </AdminCard>
     </div>

@@ -71,7 +71,7 @@ export async function POST(request: Request) {
       path: "/",
     });
 
-    response.cookies.set("manraah_companion_role", companionProfile.role, {
+    response.cookies.set("manraah_companion_role", (companionProfile.role || "admin").toLowerCase(), {
       httpOnly: false,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",

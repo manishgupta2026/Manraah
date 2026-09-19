@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import AdminCard from "@/frontend/components/ui/AdminCard";
 import AdminTable, { Column } from "@/frontend/components/ui/AdminTable";
@@ -9,8 +9,10 @@ import StatusBadge from "@/frontend/components/ui/StatusBadge";
 interface UserItem {
   id: string;
   userTag: string;
+  email: string;
   category: string;
   serenityScore: number;
+  streakDays: number;
   status: "Active" | "Warning" | "Flagged";
   joinedDate: string;
   role: "user" | "listener" | "admin";
@@ -19,96 +21,84 @@ interface UserItem {
 export default function UserManagementTable() {
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("ALL");
+  const [users, setUsers] = useState<UserItem[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const [users] = useState<UserItem[]>([
-    {
-      id: "usr-101",
-      userTag: "Anonymous Member #582",
-      category: "Student",
-      serenityScore: 82,
-      status: "Active",
-      joinedDate: "Aug 1, 2026",
-      role: "user",
-    },
-    {
-      id: "usr-102",
-      userTag: "Anonymous Member #914",
-      category: "Working Professional",
-      serenityScore: 64,
-      status: "Active",
-      joinedDate: "Jul 28, 2026",
-      role: "user",
-    },
-    {
-      id: "usr-103",
-      userTag: "Anonymous Member #204",
-      category: "Parent",
-      serenityScore: 48,
-      status: "Warning",
-      joinedDate: "Jul 20, 2026",
-      role: "user",
-    },
-    {
-      id: "usr-104",
-      userTag: "Dr. Sarah Jenkins",
-      category: "Working Professional",
-      serenityScore: 92,
-      status: "Active",
-      joinedDate: "Jul 15, 2026",
-      role: "listener",
-    },
-    {
-      id: "usr-105",
-      userTag: "Ashutosh Sahu",
-      category: "Working Professional",
-      serenityScore: 88,
-      status: "Active",
-      joinedDate: "Aug 1, 2026",
-      role: "admin",
-    },
-  ]);
+  const fetchUsers = async () => {
+    try {
+      setLoading(true);
+      const params = new URLSearchParams();
+      if (search.trim()) params.set("search", search.trim());
+      if (categoryFilter !== "ALL") params.set("category", categoryFilter);
 
-  const filteredUsers = users.filter((u) => {
-    const matchesSearch =
-      u.userTag.toLowerCase().includes(search.toLowerCase()) ||
-      u.id.toLowerCase().includes(search.toLowerCase());
-    const matchesCategory =
-      categoryFilter === "ALL" || u.category === categoryFilter;
-    return matchesSearch && matchesCategory;
-  });
+      const res = await fetch(`/api/admin/users?${params.toString()}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data.users) {
+          setUsers(data.users);
+        }
+      }
+    } catch (err) {
+      console.error("Failed to fetch users from database:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      fetchUsers();
+    }, 300);
+    return () => clearTimeout(timeout);
+  }, [search, categoryFilter]);
 
   const columns: Column<UserItem>[] = [
     {
-      header: "User Tag & Identifier",
+      header: "Member Tag / Name",
       accessor: (row) => (
-        <div>
-          <p className="font-bold text-on-surface">{row.userTag}</p>
-          <span className="text-[10px] text-on-surface-variant/80 font-mono">{row.id}</span>
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center font-bold text-primary text-xs">
+            {(row.userTag || row.email || "U")[0].toUpperCase()}
+          </div>
+          <div>
+            <p className="font-bold text-on-surface hover:text-primary transition-colors">
+              <Link href={`/admin/users/${row.id}`}>{row.userTag}</Link>
+            </p>
+            <p className="text-[10px] text-on-surface-variant font-mono">{row.email}</p>
+          </div>
         </div>
       ),
     },
     {
-      header: "Cohort",
-      accessor: (row) => <span className="font-semibold text-on-surface-variant">{row.category}</span>,
-    },
-    {
-      header: "Platform Role",
+      header: "Cohort Category",
       accessor: (row) => (
-        <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase ${
-          row.role === "admin"
-            ? "bg-purple-500/10 text-purple-600 border border-purple-500/20"
-            : row.role === "listener"
-            ? "bg-emerald-500/10 text-emerald-600 border border-emerald-500/20"
-            : "bg-surface-container-high text-on-surface-variant"
-        }`}>
-          {row.role}
+        <span className="px-2.5 py-1 rounded-full bg-surface-container-high text-xs font-bold text-on-surface-variant uppercase">
+          {row.category}
         </span>
       ),
     },
     {
-      header: "Serenity Score",
+      header: "Wellness Score",
       accessor: (row) => (
-        <span className="font-bold text-primary">{row.serenityScore} / 100</span>
+        <div className="flex items-center gap-2">
+          <span className="font-bold text-xs font-mono">{row.serenityScore}%</span>
+          <div className="w-16 h-1.5 rounded-full bg-surface-container-high overflow-hidden">
+            <div
+              className={`h-full rounded-full ${
+                row.serenityScore >= 70 ? "bg-emerald-500" : row.serenityScore >= 50 ? "bg-amber-400" : "bg-rose-500"
+              }`}
+              style={{ width: `${row.serenityScore}%` }}
+            />
+          </div>
+        </div>
+      ),
+    },
+    {
+      header: "Streak",
+      accessor: (row) => (
+        <span className="text-xs font-bold text-amber-600 flex items-center gap-1">
+          🔥 {row.streakDays || 1}d
+        </span>
       ),
     },
     {
@@ -121,54 +111,68 @@ export default function UserManagementTable() {
       ),
     },
     {
-      header: "Actions",
-      className: "text-right",
+      header: "Joined Date",
+      accessor: (row) => <span className="text-xs text-on-surface-variant font-medium">{row.joinedDate}</span>,
+    },
+    {
+      header: "Action",
       accessor: (row) => (
         <Link
           href={`/admin/users/${row.id}`}
-          className="px-3 py-1.5 rounded-xl bg-primary/10 hover:bg-primary hover:text-white text-primary text-xs font-bold transition-all inline-block"
+          className="px-3 py-1 rounded-xl bg-primary/10 text-primary hover:bg-primary/20 text-xs font-bold transition-all inline-block"
         >
-          View Profile →
+          Inspect User
         </Link>
       ),
     },
   ];
 
   return (
-    <div className="space-y-6 animate-fadeIn">
+    <div className="space-y-6 animate-fadeIn select-none">
       <AdminCard
-        title="Member Directory & Privacy Inspection"
-        subtitle="Manage registered members, inspect privacy-preserved serenity scores, and monitor flags."
-        action={
-          <div className="flex items-center gap-2">
+        title="Registered Members Directory"
+        subtitle="Manage and audit users synchronized directly from Neon PostgreSQL."
+      >
+        {/* Search & Filter Controls */}
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mb-6 pt-2">
+          {/* Search Box */}
+          <div className="relative w-full sm:w-80">
+            <span className="material-symbols-outlined absolute left-3 top-2.5 text-base text-outline">
+              search
+            </span>
             <input
               type="text"
+              placeholder="Search by name, email, or ID..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search member tag or ID..."
-              className="px-3 py-1.5 rounded-xl bg-surface-container-low border border-surface-variant/30 text-xs focus:outline-none focus:ring-2 focus:ring-primary/40 w-48"
+              className="w-full pl-9 pr-3.5 py-2 rounded-2xl bg-surface-container-low border border-surface-variant/30 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-primary/40"
             />
-            {["ALL", "Student", "Working Professional", "Parent"].map((cat) => (
+          </div>
+
+          {/* Category Filter Pills */}
+          <div className="flex flex-wrap items-center gap-1.5 w-full sm:w-auto">
+            {["ALL", "student", "working_professional", "parent", "couple"].map((cat) => (
               <button
                 key={cat}
                 onClick={() => setCategoryFilter(cat)}
-                className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all border ${
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all capitalize ${
                   categoryFilter === cat
-                    ? "bg-primary text-white border-primary"
-                    : "bg-surface-container-low text-on-surface-variant border-surface-variant/30"
+                    ? "bg-primary text-white shadow-xs"
+                    : "bg-surface-container-low text-on-surface-variant hover:bg-surface-container"
                 }`}
               >
-                {cat}
+                {cat === "ALL" ? "All Cohorts" : cat.replace(/_/g, " ")}
               </button>
             ))}
           </div>
-        }
-      >
+        </div>
+
+        {/* Members Table */}
         <AdminTable
           columns={columns}
-          data={filteredUsers}
-          keyExtractor={(row) => row.id}
-          emptyMessage="No members match search criteria."
+          data={users}
+          loading={loading}
+          emptyMessage="No members match the selected search criteria in the database."
         />
       </AdminCard>
     </div>

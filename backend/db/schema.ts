@@ -189,6 +189,12 @@ export const assessmentAnswers = pgTable("assessment_answers", {
   score: integer("score").notNull(),
   answeredAt: timestamp("answered_at").defaultNow().notNull(),
 });
-
-
-
+export const companionUsers = pgTable("companion_users", {
+  id: text("id").primaryKey(),
+  name: text("name").notNull(),
+  email: text("email").notNull().unique(),
+  passwordHash: text("password_hash").notNull(),
+  role: text("role").notNull().default("admin"),
+  status: text("status").default("ONLINE"),
+  createdAt: timestamp("created_at").defaultNow(),
+});

@@ -22,7 +22,13 @@ export default function AdminShell({ children }: { children: ReactNode }) {
   const router = useRouter();
 
   const handleSignOut = async () => {
-    await signOut();
+    try {
+      await signOut();
+      document.cookie = "manraah_companion_session=; path=/; max-age=0";
+      document.cookie = "manraah_companion_role=; path=/; max-age=0";
+    } catch (e) {
+      console.error(e);
+    }
     router.push("/admin/login");
   };
 
@@ -61,7 +67,7 @@ export default function AdminShell({ children }: { children: ReactNode }) {
         <div className="flex items-center gap-3">
           <div className="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 text-xs font-bold">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
-            <span>Server Active</span>
+            <span>Neon DB Connected</span>
           </div>
 
           <button
@@ -73,6 +79,27 @@ export default function AdminShell({ children }: { children: ReactNode }) {
           </button>
         </div>
       </header>
+
+      {/* Mobile / Tablet Horizontal Navigation Strip */}
+      <div className="lg:hidden bg-surface-container-lowest border-b border-surface-variant/30 px-3 py-2 flex items-center gap-1.5 overflow-x-auto no-scrollbar shrink-0">
+        {ADMIN_NAV.map((item) => {
+          const isActive = pathname === item.href || (item.href !== "/admin/dashboard" && pathname.startsWith(item.href));
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap shrink-0 transition-all ${
+                isActive
+                  ? "bg-primary text-white shadow-xs"
+                  : "bg-surface-container-low text-on-surface-variant hover:bg-surface-container"
+              }`}
+            >
+              <span className="material-symbols-outlined text-sm">{item.icon}</span>
+              <span>{item.label}</span>
+            </Link>
+          );
+        })}
+      </div>
 
       {/* Main Workspace Layout */}
       <div className="flex-1 flex overflow-hidden">

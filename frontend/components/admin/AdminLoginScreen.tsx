@@ -26,7 +26,7 @@ export default function AdminLoginScreen() {
       const data = await res.json();
 
       if (res.ok && data.isAuthenticated) {
-        const role = data.companion?.role || "admin";
+        const role = (data.companion?.role || "admin").toLowerCase();
         document.cookie = `manraah_companion_role=${role}; path=/; max-age=2592000; SameSite=Lax`;
         const targetUrl = role === "listener"
           ? "/listener/human-companion"

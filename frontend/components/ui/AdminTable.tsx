@@ -11,7 +11,7 @@ export interface Column<T> {
 interface AdminTableProps<T> {
   columns: Column<T>[];
   data: T[];
-  keyExtractor: (row: T, index: number) => string;
+  keyExtractor?: (row: T, index: number) => string;
   emptyMessage?: string;
   emptyIcon?: string;
   loading?: boolean;
@@ -25,6 +25,7 @@ export default function AdminTable<T>({
   emptyIcon = "inbox",
   loading = false,
 }: AdminTableProps<T>) {
+  const getKey = keyExtractor || ((row: any, idx: number) => row?.id || String(idx));
   if (loading) {
     return (
       <div className="p-8 text-center text-xs font-bold text-on-surface-variant animate-pulse">
@@ -56,7 +57,7 @@ export default function AdminTable<T>({
         </thead>
         <tbody className="divide-y divide-surface-variant/10">
           {data.map((row, rowIdx) => (
-            <tr key={keyExtractor(row, rowIdx)} className="hover:bg-surface-container-low/50 transition-all">
+            <tr key={getKey(row, rowIdx)} className="hover:bg-surface-container-low/50 transition-all">
               {columns.map((col, colIdx) => (
                 <td key={colIdx} className={`py-3.5 px-3.5 ${col.className || ""}`}>
                   {typeof col.accessor === "function"
