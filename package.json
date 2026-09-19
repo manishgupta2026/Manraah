@@ -13,7 +13,6 @@
   },
   "dependencies": {
     "@neondatabase/serverless": "^0.10.4",
-    "better-auth": "^1.6.25",
     "clsx": "^2.1.1",
     "drizzle-orm": "^0.45.2",
     "framer-motion": "^11.3.2",

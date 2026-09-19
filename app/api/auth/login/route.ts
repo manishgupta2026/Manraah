@@ -1,15 +1,9 @@
 import { NextResponse } from "next/server";
-import { sql } from "@/backend/db/client";
 import { saveUserAssessment } from "@/backend/queries/assessment";
 import { generateUniqueSanctuaryName } from "@/backend/auth/sanctuary";
-import crypto from "crypto";
-
-function verifyPassword(password: string, storedHash: string): boolean {
-  const [salt, originalHash] = storedHash.split(":");
-  if (!salt || !originalHash) return false;
-  const hash = crypto.scryptSync(password, salt, 64).toString("hex");
-  return hash === originalHash;
-}
+import { getUserByEmail, updateUserSanctuaryName, updateUserCategory } from "@/backend/queries/users";
+import { recordUserLogin } from "@/backend/queries/streak";
+import { verifyPassword } from "@/backend/auth/crypto";
 
 export async function POST(request: Request) {
   try {
@@ -24,12 +18,7 @@ export async function POST(request: Request) {
     }
 
     // 1. Fetch user from Neon PostgreSQL
-    const users = await sql`
-      SELECT id, name, email, password_hash, sanctuary_name, avatar, selected_category, streak_days, mindfulness_minutes, current_mood
-      FROM users
-      WHERE LOWER(email) = LOWER(${email})
-      LIMIT 1
-    `;
+    const users = await getUserByEmail(email);
 
     if (users.length === 0) {
       return NextResponse.json(
@@ -53,13 +42,25 @@ export async function POST(request: Request) {
     let sanctuaryName = user.sanctuary_name;
     if (!sanctuaryName) {
       sanctuaryName = await generateUniqueSanctuaryName();
-      await sql`
-        UPDATE users SET sanctuary_name = ${sanctuaryName}, name = ${sanctuaryName} WHERE id = ${user.id}
-      `;
+      await updateUserSanctuaryName(user.id, sanctuaryName);
     }
 
-    const rawCategory = user.selected_category || "student";
-    const mappedCategory = rawCategory === "couples" || rawCategory === "couple" ? "couples" : (rawCategory === "parents" || rawCategory === "parent" ? "parents" : rawCategory);
+    // Record login streak activity
+    const streakInfo = await recordUserLogin(user.id);
+
+    function normalizeCat(c: string | undefined): string {
+      if (!c) return "student";
+      const val = c.toLowerCase().trim().replace(/\s+/g, "_").replace(/-/g, "_");
+      if (val === "working_professional" || val === "workingprofessional" || val === "young_pro" || val === "youngprofessional") return "working-professional";
+      if (val === "parent" || val === "parents") return "parents";
+      if (val === "couple" || val === "couples") return "couples";
+      if (val === "student") return "student";
+      if (val === "other") return "other";
+      if (val === "senior_citizen" || val === "seniorcitizen") return "senior_citizen";
+      return c;
+    }
+
+    const rawCategory = normalizeCat(user.selected_category);
 
     const userProfile = {
       id: user.id,
@@ -67,17 +68,18 @@ export async function POST(request: Request) {
       sanctuaryName: sanctuaryName,
       email: user.email,
       avatar: user.avatar || "/images/user_avatar.jpg",
-      streakDays: user.streak_days || 1,
+      streakDays: streakInfo.currentStreak,
       mindfulnessMinutes: user.mindfulness_minutes || 0,
       currentMood: user.current_mood || "Sanctuary Member",
-      selectedCategory: mappedCategory,
+      selectedCategory: rawCategory,
+      onboardingCompleted: !!user.onboarding_completed,
     };
 
     if (category) {
-      const incomingCategory = category === "couples" || category === "couple" ? "couples" : (category === "parents" || category === "parent" ? "parents" : category);
+      const incomingCategory = normalizeCat(category);
       if (incomingCategory !== userProfile.selectedCategory) {
-        console.log("[Login API] [POINT 3 — after login] Updating selectedCategory in DB:", incomingCategory);
-        await sql`UPDATE users SET selected_category = ${incomingCategory} WHERE id = ${user.id}`;
+        console.log("[Login API] Updating selectedCategory in DB:", incomingCategory);
+        await updateUserCategory(user.id, incomingCategory);
         userProfile.selectedCategory = incomingCategory;
       }
     }
@@ -99,6 +101,10 @@ export async function POST(request: Request) {
       user: userProfile,
       token: "m_token_" + user.id,
       isAuthenticated: true,
+      category: userProfile.selectedCategory,
+      currentStreak: streakInfo.currentStreak,
+      longestStreak: streakInfo.longestStreak,
+      lastLoginAt: streakInfo.lastLoginAt,
     };
 
     // Set session cookie

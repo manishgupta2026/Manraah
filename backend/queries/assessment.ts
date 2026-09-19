@@ -106,7 +106,19 @@ export async function initDatabase() {
     try {
       await sql`ALTER TABLE daily_checkins ADD COLUMN IF NOT EXISTS reflection TEXT`;
     } catch (err) {
-      console.warn("Could not alter table daily_checkins:", err);
+      console.warn("Could not alter table daily_checkins to add reflection:", err);
+    }
+
+    try {
+      await sql`ALTER TABLE daily_checkins ADD COLUMN IF NOT EXISTS stress VARCHAR(255) DEFAULT 'Manageable'`;
+    } catch (err) {
+      console.warn("Could not alter table daily_checkins to add stress:", err);
+    }
+
+    try {
+      await sql`ALTER TABLE daily_checkins ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP`;
+    } catch (err) {
+      console.warn("Could not alter table daily_checkins to add updated_at:", err);
     }
 
     // 6. Create user_streaks table
@@ -273,7 +285,8 @@ export async function saveUserAssessment(
   // Ensure tables are initialized
   await initDatabase();
 
-  const dbCategory = category === "parents" || category === "parent" ? "parent" : (category === "couples" || category === "couple" ? "couple" : category);
+  const normalizedCategory = (category || "").replace("-", "_");
+  const dbCategory = normalizedCategory === "parents" || normalizedCategory === "parent" ? "parent" : (normalizedCategory === "couples" || normalizedCategory === "couple" ? "couple" : normalizedCategory);
 
   try {
     // 1. Insert or update user profile details
@@ -359,13 +372,13 @@ export async function getUserAssessment(userId: string): Promise<any> {
   await initDatabase();
   try {
     const results = await sql`
-      SELECT * FROM assessment_results WHERE user_id = ${userId} ORDER BY created_at DESC LIMIT 1
+      SELECT * FROM assessments WHERE user_id = ${userId} ORDER BY created_at DESC LIMIT 1
     `;
     if (results.length === 0) return null;
 
     const result = results[0];
     const answers = await sql`
-      SELECT * FROM assessment_answers WHERE assessment_result_id = ${result.id}
+      SELECT * FROM assessment_answers_detailed WHERE assessment_id = ${result.id}
     `;
 
     return {
@@ -392,9 +405,10 @@ export async function saveDailyCheckIn(
   await initDatabase();
   try {
     // 1. Save check-in
+    const todayStr = new Date().toISOString().split('T')[0];
     await sql`
-      INSERT INTO daily_checkins (user_id, mood, energy_level, sleep_quality, gratitude_reflection, daily_intention, reflection)
-      VALUES (${userId}, ${data.mood}, ${data.energyLevel}, ${data.sleepQuality}, ${data.gratitudeReflection}, ${data.dailyIntention}, ${data.reflection || null})
+      INSERT INTO daily_checkins (user_id, mood, energy_level, sleep_quality, gratitude_reflection, daily_intention, reflection, checkin_date, check_in_date)
+      VALUES (${userId}, ${data.mood}, ${data.energyLevel}, ${data.sleepQuality}, ${data.gratitudeReflection}, ${data.dailyIntention}, ${data.reflection || null}, ${todayStr}, ${todayStr})
     `;
 
     // 2. Manage user streak
@@ -483,16 +497,17 @@ export async function getDailyCheckInSummary(userId: string): Promise<any> {
   }
 }
 
-export async function getUserStreak(userId: string): Promise<{ currentStreak: number; longestStreak: number }> {
+export async function getUserStreak(userId: string): Promise<{ currentStreak: number; longestStreak: number; lastCheckinDate?: string }> {
   await initDatabase();
   try {
     const results = await sql`
-      SELECT current_streak, longest_streak FROM user_streaks WHERE user_id = ${userId} LIMIT 1
+      SELECT current_streak, longest_streak, last_checkin_date FROM user_streaks WHERE user_id = ${userId} LIMIT 1
     `;
     if (results.length > 0) {
       return {
         currentStreak: results[0].current_streak,
         longestStreak: results[0].longest_streak,
+        lastCheckinDate: results[0].last_checkin_date ? new Date(results[0].last_checkin_date).toISOString() : undefined,
       };
     }
     return { currentStreak: 0, longestStreak: 0 };

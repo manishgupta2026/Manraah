@@ -5,8 +5,8 @@ import { useRouter } from "next/navigation";
 
 export default function CompanionLoginScreen() {
   const router = useRouter();
-  const [email, setEmail] = useState("companion@manraah.com");
-  const [password, setPassword] = useState("CompanionPass123!");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -25,7 +25,7 @@ export default function CompanionLoginScreen() {
       const data = await res.json();
 
       if (res.ok && data.isAuthenticated) {
-        router.push("/companion/dashboard");
+        router.push("/admin/human-companion");
       } else {
         setError(data.error || "Login failed. Please check your credentials.");
       }

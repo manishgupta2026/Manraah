@@ -7,6 +7,7 @@ import { useAssessment } from "@/frontend/lib/context/AssessmentContext";
 import { UserCategory } from "@/backend/types";
 import { USER_CATEGORIES } from "@/frontend/lib/constants";
 import ScreenHeader from "@/frontend/components/ui/ScreenHeader";
+import { getClientSession } from "@/backend/auth/client";
 
 export default function CategorySelection() {
   const router = useRouter();
@@ -15,17 +16,20 @@ export default function CategorySelection() {
 
   React.useEffect(() => {
     try {
+      const params = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : null;
+      const paramCat = params?.get("selected") || params?.get("category");
       const match = document.cookie.match(/(?:^|;\s*)userType=([^;]*)/);
-      if (match && match[1]) {
-        setSelectedCategory(match[1] as UserCategory);
-        setCategory(match[1]);
+      const cat = paramCat || (match && match[1]);
+      if (cat) {
+        setSelectedCategory(cat as UserCategory);
+        setCategory(cat);
       }
     } catch {
       // ignore
     }
   }, [setCategory, setSelectedCategory]);
 
-  const handleSelect = (id: string) => {
+  const handleSelect = async (id: string) => {
     const targetType = id;
     setSelectedCategory(targetType as UserCategory);
     setCategory(targetType);
@@ -34,11 +38,38 @@ export default function CategorySelection() {
     document.cookie = `userType=${targetType}; path=/; max-age=86400`;
     console.log("[CategorySelection] [POINT 1 — after category selection] userType selected:", targetType);
 
-    if (targetType === "working_professional" || targetType === "working-professional") {
-      router.push("/onboarding/working-professional");
-    } else {
-      router.push("/signup");
+    // Check if user is already authenticated
+    const session = getClientSession();
+    if (session && session.isAuthenticated && session.user) {
+      try {
+        // Persist category to DB immediately
+        const res = await fetch("/api/profile", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            userId: session.user.id,
+            category: targetType,
+          }),
+        });
+
+        if (res.ok) {
+          const resJson = await res.json();
+          // Update cookie session details in client
+          if (resJson.user) {
+            const updatedSession = { ...session, user: resJson.user };
+            document.cookie = `manraah_session=${JSON.stringify(updatedSession)}; path=/; max-age=86400`;
+          }
+        }
+      } catch (err) {
+        console.error("Failed to update profile category on selection click:", err);
+      }
+
+      router.push("/");
+      return;
     }
+
+    // Unauthenticated visitors always proceed to signup
+    router.push("/signup");
   };
 
   return (

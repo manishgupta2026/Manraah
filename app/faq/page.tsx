@@ -3,8 +3,7 @@
 import React, { useState, useMemo } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { useRouter } from "next/navigation";
-import { signOut } from "@/backend/auth/client";
+import BottomCtaBand from "@/frontend/components/ui/BottomCtaBand";
 
 interface FAQItem {
   id: string;
@@ -134,7 +133,6 @@ const CATEGORY_TABS = [
 ];
 
 export default function FAQPage() {
-  const router = useRouter();
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [openIds, setOpenIds] = useState<Record<string, boolean>>({
@@ -148,15 +146,6 @@ export default function FAQPage() {
       ...prev,
       [id]: !prev[id],
     }));
-  };
-
-  const handleGetStarted = async () => {
-    try {
-      await signOut();
-    } catch {
-      // ignore
-    }
-    router.push("/category-selection");
   };
 
   const filteredFaqs = useMemo(() => {
@@ -335,27 +324,12 @@ export default function FAQPage() {
       </section>
 
       {/* ═══ 5. BOTTOM CTA BANNER ═══ */}
-      <section className="py-20 md:py-28 bg-gradient-to-br from-[#4A388E] via-[#5F4EA5] to-[#3B2C78] text-white px-6 text-center relative overflow-hidden">
-        <div className="max-w-3xl mx-auto space-y-7 relative z-10">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-heading font-black tracking-tight leading-tight">
-            Your Retreat for Mind is Ready
-          </h2>
-
-          <p className="text-sm sm:text-base text-white/90 max-w-xl mx-auto leading-relaxed font-normal">
-            Join thousands of individuals cultivating everyday stillness, resilience, and emotional clarity with Manraah.
-          </p>
-
-          <div className="pt-2">
-            <button
-              onClick={handleGetStarted}
-              className="px-9 py-4 rounded-full bg-white text-primary hover:bg-surface-container-low font-heading font-extrabold text-sm shadow-xl hover:scale-105 transition-all inline-flex items-center gap-2 cursor-pointer"
-            >
-              <span>Get Started Free Today</span>
-              <span className="material-symbols-outlined text-lg">arrow_forward</span>
-            </button>
-          </div>
-        </div>
-      </section>
+      <BottomCtaBand
+        title="Your Retreat for Mind is Ready"
+        description="Join thousands of individuals cultivating everyday stillness, resilience, and emotional clarity with Manraah."
+        buttonText="Explore How It Works"
+        buttonHref="/how-it-works"
+      />
     </div>
   );
 }

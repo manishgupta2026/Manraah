@@ -94,7 +94,7 @@ function WheelColumn<T>({ items, selectedIndex, onSelect, formatItem }: WheelCol
 
 export function DobPicker({
   label = "Date of Birth",
-  sublabel = "(Optional)",
+  sublabel,
   value = "",
   onChange,
 }: DobPickerProps) {

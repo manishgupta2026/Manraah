@@ -7,6 +7,14 @@ export const dynamic = "force-dynamic";
 
 // GET /api/companion/queue - List waiting or active rooms
 export async function GET(request: Request) {
+  const companionSession = getCompanionSessionFromRequest();
+  if (!companionSession.isAuthenticated || !companionSession.companion?.id) {
+    return NextResponse.json(
+      { error: "Unauthorized: Valid companion authentication required." },
+      { status: 401 }
+    );
+  }
+
   const { searchParams } = new URL(request.url);
   const status = searchParams.get("status") || "WAITING";
 
@@ -74,8 +82,50 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: true, roomId, status: "ACTIVE" });
     }
 
-    // ACTION: END (End room)
+    // ACTION: END (End room - participant ownership required)
     if (action === "end") {
+      if (!roomId) {
+        return NextResponse.json({ error: "roomId parameter is required" }, { status: 400 });
+      }
+
+      const userSession = getAuthSessionFromRequest();
+      const companionSession = getCompanionSessionFromRequest();
+
+      const currentUserId = userSession.user?.id;
+      const currentCompanionId = companionSession.companion?.id;
+      const isCompanionAdmin =
+        companionSession.companion?.role === "ADMIN" ||
+        companionSession.companion?.role === "SUPERVISOR";
+
+      if (!currentUserId && !currentCompanionId) {
+        return NextResponse.json(
+          { error: "Unauthorized: Active session required to end room." },
+          { status: 401 }
+        );
+      }
+
+      const existingRooms = await sql`
+        SELECT id, user_id, companion_id, status
+        FROM anonymous_rooms
+        WHERE id = ${roomId}
+        LIMIT 1
+      `;
+
+      if (existingRooms.length === 0) {
+        return NextResponse.json({ error: "Room not found" }, { status: 404 });
+      }
+
+      const room = existingRooms[0];
+      const isUserOwner = currentUserId && room.user_id === currentUserId;
+      const isCompanionOwner = currentCompanionId && (room.companion_id === currentCompanionId || isCompanionAdmin);
+
+      if (!isUserOwner && !isCompanionOwner) {
+        return NextResponse.json(
+          { error: "Forbidden: You are not authorized to terminate this session." },
+          { status: 403 }
+        );
+      }
+
       await sql`
         UPDATE anonymous_rooms
         SET status = 'ENDED', ended_at = CURRENT_TIMESTAMP

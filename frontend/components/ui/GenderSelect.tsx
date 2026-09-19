@@ -19,7 +19,7 @@ const GENDER_OPTIONS: CustomSelectOption[] = [
 
 export function GenderSelect({
   label = "Gender Identity",
-  sublabel = "(Optional)",
+  sublabel,
   value,
   onChange,
 }: GenderSelectProps) {

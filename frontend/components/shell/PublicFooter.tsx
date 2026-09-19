@@ -15,7 +15,7 @@ export default function PublicFooter() {
     } catch {
       // ignore
     }
-    router.push("/category-selection");
+    router.push("/signup");
   };
 
   const handleSelectCategory = (catId: string) => {
@@ -24,22 +24,18 @@ export default function PublicFooter() {
     } catch {
       // ignore
     }
-    if (catId === "working_professional" || catId === "working-professional") {
-      router.push("/onboarding/working-professional");
-    } else {
-      router.push("/category-selection");
-    }
+    router.push(`/for-you?selected=${catId}`);
   };
 
   return (
-    <footer className="bg-[#262235] text-surface/90 pt-16 pb-12 px-6 border-t border-white/10 select-none">
-      <div className="max-w-7xl mx-auto space-y-12">
+    <footer className="bg-[#262235] text-surface/90 pt-12 sm:pt-16 pb-10 sm:pb-12 px-4 sm:px-6 lg:px-8 border-t border-white/10 select-none">
+      <div className="max-w-7xl mx-auto space-y-10 sm:space-y-12">
         {/* Main Footer Columns */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 text-sm">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 lg:gap-10 text-sm">
           {/* Brand Column */}
-          <div className="lg:col-span-2 space-y-5 text-left">
+          <div className="sm:col-span-2 lg:col-span-2 space-y-4 sm:space-y-5 text-left">
             <Link href="/" className="inline-block hover:opacity-90 transition-opacity">
-              <Logo variant="white" size="md" className="h-8 sm:h-9" />
+              <Logo variant="white" size="lg" />
             </Link>
             <p className="text-xs text-white/70 leading-relaxed max-w-sm">
               A private, compassionate mental wellness retreat combining 24/7 AI companion care, verified peer listeners, licensed therapists, and category-based personalization.
@@ -88,6 +84,7 @@ export default function PublicFooter() {
             <h4 className="font-heading font-bold text-white text-xs uppercase tracking-wider">Product</h4>
             <ul className="space-y-2 text-xs text-white/70">
               <li><Link href="/how-it-works" className="hover:text-white transition-colors">How it Works</Link></li>
+              <li><Link href="/our-solution" className="hover:text-white transition-colors flex items-center gap-1.5"><span>Our Solution</span><span className="text-[9px] font-bold px-1.5 py-0.2 rounded-full bg-primary/30 text-white">Soon</span></Link></li>
               <li><Link href="/features" className="hover:text-white transition-colors">Features Overview</Link></li>
               <li><Link href="/stories" className="hover:text-white transition-colors">Member Stories</Link></li>
               <li><Link href="/features?tab=ai" className="hover:text-white transition-colors">AI Companion</Link></li>
@@ -103,11 +100,12 @@ export default function PublicFooter() {
           <div className="space-y-3 text-left">
             <h4 className="font-heading font-bold text-white text-xs uppercase tracking-wider">Categories</h4>
             <ul className="space-y-2 text-xs text-white/70">
-              <li><Link href="/#categories" className="hover:text-white transition-colors">Students</Link></li>
-              <li><Link href="/#categories" className="hover:text-white transition-colors">Working Professionals</Link></li>
-              <li><Link href="/#categories" className="hover:text-white transition-colors">Parents</Link></li>
-              <li><Link href="/#categories" className="hover:text-white transition-colors">Couples</Link></li>
-              <li><Link href="/category-selection" className="hover:text-white transition-colors">All Life Categories →</Link></li>
+              <li><Link href="/for-you" className="hover:text-white transition-colors">Pathways Overview (/for-you)</Link></li>
+              <li><Link href="/for-you?selected=student" className="hover:text-white transition-colors">Students &amp; Academics</Link></li>
+              <li><Link href="/for-you?selected=working_professional" className="hover:text-white transition-colors">Working Professionals</Link></li>
+              <li><Link href="/for-you?selected=parent" className="hover:text-white transition-colors">Parents &amp; Families</Link></li>
+              <li><Link href="/for-you?selected=couple" className="hover:text-white transition-colors">Couples &amp; Relationships</Link></li>
+              <li><Link href="/for-you" className="hover:text-white transition-colors">All Life Categories →</Link></li>
             </ul>
           </div>
 
@@ -116,8 +114,9 @@ export default function PublicFooter() {
             <h4 className="font-heading font-bold text-white text-xs uppercase tracking-wider">Trust &amp; Legal</h4>
             <ul className="space-y-2 text-xs text-white/70">
               <li><Link href="/about" className="hover:text-white transition-colors">About Us</Link></li>
+              <li><Link href="/blog" className="hover:text-white transition-colors">Wellness Blog</Link></li>
+              <li><Link href="/privacy-and-trust" className="hover:text-white transition-colors">Privacy &amp; Trust Center</Link></li>
               <li><Link href="/faq" className="hover:text-white transition-colors">Frequently Asked Questions (FAQ)</Link></li>
-              <li><Link href="/privacy" className="hover:text-white transition-colors">Privacy &amp; Encryption</Link></li>
               <li><Link href="/security" className="hover:text-white transition-colors">Security Standards</Link></li>
               <li><Link href="/terms" className="hover:text-white transition-colors">Terms of Service</Link></li>
               <li><Link href="/contact" className="hover:text-white transition-colors">Contact Support</Link></li>
@@ -134,7 +133,7 @@ export default function PublicFooter() {
             <span>24/7 Immediate Support Notice</span>
           </div>
           <p className="leading-relaxed">
-            If you or someone you know is in immediate crisis or emotional distress, please reach out to professional emergency resources: call <span className="font-bold text-white underline decoration-white/30">[National Crisis Helpline Placeholder — e.g., 988 in US/Canada, 14416 Tele-MANAS in India, or 112 in EU]</span>. Manraah is an everyday supportive wellness companion, not an emergency medical intervention service.
+            If you or someone you know is in immediate crisis or emotional distress, please reach out to professional emergency resources: call <a href="tel:14416" className="font-bold text-white underline decoration-white/30 hover:text-mint transition-colors">Tele-MANAS (14416 / 1800-891-4416)</a>. Manraah is an everyday supportive wellness companion, not an emergency medical intervention service.
           </p>
         </div>
 

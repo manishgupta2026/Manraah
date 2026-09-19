@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { UserCategory } from "@/backend/types";
 import { getClientSession } from "@/backend/auth/client";
+import { usePathname } from "next/navigation";
 
 export interface CategoryInfo {
   id: UserCategory;
@@ -104,6 +105,7 @@ const CategoryContext = createContext<CategoryContextType | undefined>(undefined
 
 export function CategoryProvider({ children }: { children: ReactNode }) {
   const [category, setCategory] = useState<UserCategory>("student");
+  const pathname = usePathname();
 
   // Sync category with user session on mount
   useEffect(() => {

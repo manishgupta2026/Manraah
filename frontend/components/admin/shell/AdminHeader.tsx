@@ -18,7 +18,7 @@ export default function AdminHeader() {
 
   const handleSignOut = async () => {
     await signOut();
-    router.push("/companion/login");
+    router.push("/admin/login");
   };
 
   return (

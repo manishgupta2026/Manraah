@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import { MAIN_NAV_ITEMS } from "@/frontend/lib/constants";
 import { getClientSession } from "@/backend/auth/client";
 import { getInitials, getPastelBgColor, getPastelTextColor } from "@/frontend/lib/avatar-helper";
+import { useCategory } from "@/frontend/lib/context/CategoryContext";
 import Logo from "@/frontend/components/ui/Logo";
 
 interface MobileDrawerProps {
@@ -16,6 +17,7 @@ interface MobileDrawerProps {
 
 export default function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
   const pathname = usePathname();
+  const { category } = useCategory();
   const [user, setUser] = useState<{ name?: string; sanctuaryName?: string; avatar?: string } | null>(null);
 
   useEffect(() => {
@@ -50,7 +52,7 @@ export default function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
           {/* Header & Brand with Close */}
           <div className="flex items-center justify-between pb-4 border-b border-surface-variant/30">
             <Link href="/" onClick={onClose} className="inline-block hover:opacity-90 transition-opacity">
-              <Logo size="md" className="h-8 w-auto" />
+              <Logo size="md" />
             </Link>
             <button
               onClick={onClose}
@@ -63,11 +65,12 @@ export default function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
           {/* Navigation Items */}
           <nav className="space-y-2">
             {MAIN_NAV_ITEMS.map((item) => {
-              const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
+              const targetHref = item.href;
+              const isActive = pathname === targetHref || (targetHref !== "/" && pathname.startsWith(targetHref));
               return (
                 <Link
                   key={item.href}
-                  href={item.href}
+                  href={targetHref}
                   onClick={onClose}
                   className={`flex items-center gap-3.5 px-4 py-3 rounded-full text-sm font-medium transition-all duration-200 ${
                     isActive
@@ -85,16 +88,8 @@ export default function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
           </nav>
         </div>
 
-        {/* Emergency Crisis Helpline & User Profile Foot */}
+        {/* User Profile Foot */}
         <div className="space-y-3 pt-4 border-t border-surface-variant/30">
-          <Link
-            href="/crisis-support"
-            onClick={onClose}
-            className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-full bg-error-container text-on-error-container hover:bg-error/15 font-semibold text-xs transition-colors shadow-sm"
-          >
-            <span className="material-symbols-outlined text-base">emergency</span>
-            <span>Support Helpline 24/7</span>
-          </Link>
 
           {(() => {
             const displayName = user?.sanctuaryName || user?.name || "Sanctuary Member";
@@ -122,7 +117,7 @@ export default function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
                 )}
                 <div className="flex-1 min-w-0">
                   <p className="text-xs font-semibold text-on-surface truncate">{displayName}</p>
-                  <p className="text-[10px] text-on-surface-variant/70 truncate">Settings & Profile</p>
+                  <p className="text-[10px] text-on-surface-variant/70 truncate">View Profile</p>
                 </div>
                 <span className="material-symbols-outlined text-lg text-outline">settings</span>
               </Link>

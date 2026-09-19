@@ -1,14 +1,14 @@
 import { NextResponse } from "next/server";
-import { headers } from "next/headers";
-import { auth } from "@/backend/auth/auth";
+import { getAuthSessionFromRequest } from "@/backend/auth/session";
 import { getMoodHistory } from "@/backend/queries/mood";
 
-export async function GET(req: Request) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+export const dynamic = "force-dynamic";
 
-  if (!session?.user) {
+export async function GET(req: Request) {
+  const session = getAuthSessionFromRequest();
+  const userId = session.user?.id;
+
+  if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -16,7 +16,7 @@ export async function GET(req: Request) {
   const filter = searchParams.get("filter") || "all";
 
   try {
-    const history = await getMoodHistory(session.user.id, filter);
+    const history = await getMoodHistory(userId, filter);
     return NextResponse.json(history);
   } catch (err: any) {
     console.error("API GET /api/mood/history error:", err);

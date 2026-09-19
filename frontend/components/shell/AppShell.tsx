@@ -14,13 +14,18 @@ import Header from "./Header";
 import PublicNavbar from "./PublicNavbar";
 import PublicFooter from "./PublicFooter";
 import AdminHeader from "../admin/shell/AdminHeader";
+import { ThemeProvider } from "@/frontend/lib/context/ThemeContext";
 
 const STANDALONE_ROUTES = [
   "/",
   "/how-it-works",
+  "/our-solution",
   "/features",
   "/stories",
+  "/blog",
   "/faq",
+  "/for-you",
+  "/privacy-and-trust",
   "/about",
   "/category-selection",
   "/assessment",
@@ -41,9 +46,13 @@ export default function AppShell({ children }: { children: ReactNode }) {
   const isStandalone =
     STANDALONE_ROUTES.includes(pathname) ||
     pathname.startsWith("/how-it-works") ||
+    pathname.startsWith("/our-solution") ||
     pathname.startsWith("/features") ||
     pathname.startsWith("/stories") ||
+    pathname.startsWith("/blog") ||
     pathname.startsWith("/faq") ||
+    pathname.startsWith("/for-you") ||
+    pathname.startsWith("/privacy-and-trust") ||
     pathname.startsWith("/about") ||
     pathname.startsWith("/onboarding") ||
     pathname.startsWith("/category-selection") ||
@@ -67,54 +76,60 @@ export default function AppShell({ children }: { children: ReactNode }) {
     return () => window.removeEventListener("open-mobile-drawer", handleOpen);
   }, []);
 
-  return (
-    <CategoryProvider>
-      <AssessmentProvider>
-        <WellnessProvider>
-          <HeaderProvider>
-            {isStandalone ? (
-              /* Standalone Onboarding / Auth / Public Layout with Global Public Header & Footer */
-              <div className="min-h-screen bg-background text-on-background font-sans antialiased flex flex-col justify-between">
-                <PublicNavbar />
-                <div className="flex-1">{children}</div>
-                <PublicFooter />
-              </div>
-            ) : isAdminRoute ? (
-              /* Dedicated Admin Shell - Clean Layout without stacked header bar */
-              <div className="min-h-screen bg-background text-on-background font-sans antialiased">
-                {children}
-              </div>
-            ) : (
-              /* Main Regular User Application Shell with Sidebar & Header */
-              <div className="flex min-h-screen bg-background text-on-background font-sans antialiased overflow-hidden">
-                {/* Desktop Left Sidebar */}
-                <DesktopSidebar />
-
-                {/* Main Content Area */}
-                <div className="flex-1 flex flex-col min-w-0 md:ml-[80px] lg:ml-[260px] h-screen overflow-y-auto pb-16 md:pb-6">
-                  <Header onOpenMenu={() => setIsMobileDrawerOpen(true)} />
-                  <main className="flex-1 px-3 md:px-6 py-4 max-w-7xl mx-auto w-full">
-                    {children}
-                  </main>
+    <ThemeProvider>
+      <CategoryProvider>
+        <AssessmentProvider>
+          <WellnessProvider>
+            <HeaderProvider>
+              {isAdminRoute ? (
+                /* Dedicated Admin Shell - Isolated from Regular User Navigation */
+                <div className="min-h-screen bg-background text-on-background font-sans antialiased">
+                  {children}
                 </div>
+              ) : isStandalone ? (
+                /* Standalone Onboarding / Auth / Public Layout with Global Public Header & Footer */
+                <div className="min-h-screen bg-background text-on-background font-sans antialiased flex flex-col justify-between overflow-hidden">
+                  {!["/assessment", "/wellness-score", "/category-selection"].includes(pathname) && <PublicNavbar />}
+                  <div className="flex-1 h-full w-full overflow-hidden">{children}</div>
+                  {!["/assessment", "/wellness-score", "/category-selection"].includes(pathname) && <PublicFooter />}
+                </div>
+              ) : (
+                /* ONE UNIFIED AUTHENTICATED APPLICATION SHELL FOR ALL USER FEATURES */
+                <div className="min-h-screen bg-[#F4F9F6] dark:bg-[#071C17] text-[#211D26] dark:text-[#F4FAF7] font-sans antialiased flex flex-col transition-colors duration-200">
+                  {/* Top Unified Header / Navbar (Compact 62px Height) */}
+                  <Header onOpenMenu={() => setIsMobileDrawerOpen(true)} />
 
-                {/* Mobile Animated Drawer navigation overlay */}
-                <AnimatePresence>
-                  {isMobileDrawerOpen && (
-                    <MobileDrawer
-                      isOpen={isMobileDrawerOpen}
-                      onClose={() => setIsMobileDrawerOpen(false)}
-                    />
-                  )}
-                </AnimatePresence>
+                  {/* Body Container: Fixed 88px Sidebar + Scrollable Feature Content */}
+                  <div className="flex-1 flex w-full">
+                    {/* Fixed 88px Sidebar */}
+                    <div className="hidden md:block">
+                      <DesktopSidebar />
+                    </div>
 
-                {/* Mobile Bottom Navigation Bar */}
-                <MobileTabBar />
-              </div>
-            )}
-          </HeaderProvider>
-        </WellnessProvider>
-      </AssessmentProvider>
-    </CategoryProvider>
+                    {/* Main Feature Content Area */}
+                    <div className="flex-1 min-w-0 pb-16 md:pb-0">
+                      {children}
+                    </div>
+                  </div>
+
+                  {/* Mobile Animated Drawer navigation overlay */}
+                  <AnimatePresence>
+                    {isMobileDrawerOpen && (
+                      <MobileDrawer
+                        isOpen={isMobileDrawerOpen}
+                        onClose={() => setIsMobileDrawerOpen(false)}
+                      />
+                    )}
+                  </AnimatePresence>
+
+                  {/* Mobile Bottom Navigation Bar */}
+                  <MobileTabBar />
+                </div>
+              )}
+            </HeaderProvider>
+          </WellnessProvider>
+        </AssessmentProvider>
+      </CategoryProvider>
+    </ThemeProvider>
   );
 }

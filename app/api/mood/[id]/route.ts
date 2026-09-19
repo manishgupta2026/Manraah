@@ -1,14 +1,14 @@
 import { NextResponse } from "next/server";
-import { headers } from "next/headers";
-import { auth } from "@/backend/auth/auth";
+import { getAuthSessionFromRequest } from "@/backend/auth/session";
 import { updateMoodEntry, deleteMoodEntry } from "@/backend/queries/mood";
 
-export async function PUT(req: Request, { params }: { params: { id: string } }) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+export const dynamic = "force-dynamic";
 
-  if (!session?.user) {
+export async function PUT(req: Request, { params }: { params: { id: string } }) {
+  const session = getAuthSessionFromRequest();
+  const userId = session.user?.id;
+
+  if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -22,7 +22,7 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
-    const updated = await updateMoodEntry(session.user.id, id, {
+    const updated = await updateMoodEntry(userId, id, {
       mood,
       energy: Number(energy),
       stress,
@@ -38,18 +38,17 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
 }
 
 export async function DELETE(req: Request, { params }: { params: { id: string } }) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const session = getAuthSessionFromRequest();
+  const userId = session.user?.id;
 
-  if (!session?.user) {
+  if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const { id } = params;
 
   try {
-    const res = await deleteMoodEntry(session.user.id, id);
+    const res = await deleteMoodEntry(userId, id);
     return NextResponse.json(res);
   } catch (err: any) {
     console.error("API DELETE /api/mood/[id] error:", err);

@@ -3,8 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { useRouter } from "next/navigation";
-import { signOut } from "@/backend/auth/client";
+import BottomCtaBand from "@/frontend/components/ui/BottomCtaBand";
 
 interface Story {
   id: string;
@@ -164,7 +163,6 @@ const CATEGORIES = [
 ];
 
 export default function StoriesPage() {
-  const router = useRouter();
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [expandedStoryId, setExpandedStoryId] = useState<string | null>(null);
 
@@ -172,15 +170,6 @@ export default function StoriesPage() {
     selectedCategory === "all"
       ? ALL_STORIES
       : ALL_STORIES.filter((s) => s.category === selectedCategory);
-
-  const handleGetStarted = async () => {
-    try {
-      await signOut();
-    } catch {
-      // ignore
-    }
-    router.push("/category-selection");
-  };
 
   return (
     <div className="min-h-screen bg-surface text-on-surface select-none">
@@ -338,34 +327,12 @@ export default function StoriesPage() {
       </section>
 
       {/* ═══ 5. BOTTOM INVITATION CTA ═══ */}
-      <section className="py-20 md:py-28 bg-gradient-to-br from-[#4A388E] via-[#5F4EA5] to-[#3B2C78] text-white px-6 text-center relative overflow-hidden">
-        <div className="max-w-3xl mx-auto space-y-7 relative z-10">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-heading font-black tracking-tight leading-tight">
-            Ready to Begin Your Own Journey?
-          </h2>
-
-          <p className="text-sm sm:text-base text-white/90 max-w-xl mx-auto leading-relaxed font-normal">
-            Take 2 minutes today to check in with your mind, talk to your companion, and cultivate everyday emotional stillness.
-          </p>
-
-          <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <button
-              onClick={handleGetStarted}
-              className="px-9 py-4 rounded-full bg-white text-primary hover:bg-surface-container-low font-heading font-extrabold text-sm shadow-xl hover:scale-105 transition-all inline-flex items-center gap-2 cursor-pointer"
-            >
-              <span>Start Free Today</span>
-              <span className="material-symbols-outlined text-lg">arrow_forward</span>
-            </button>
-
-            <Link
-              href="/features"
-              className="px-8 py-4 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white font-heading font-semibold text-sm transition-all"
-            >
-              Explore Features
-            </Link>
-          </div>
-        </div>
-      </section>
+      <BottomCtaBand
+        title="Ready to Begin Your Own Journey?"
+        description="Take 2 minutes today to check in with your mind, talk to your companion, and cultivate everyday emotional stillness."
+        buttonText="Explore All Features"
+        buttonHref="/features"
+      />
     </div>
   );
 }

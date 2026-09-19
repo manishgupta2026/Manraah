@@ -2,7 +2,9 @@ import { NextResponse } from "next/server";
 import { sql } from "@/backend/db/client";
 import { saveUserAssessment } from "@/backend/queries/assessment";
 import { generateUniqueSanctuaryName } from "@/backend/auth/sanctuary";
-import crypto from "crypto";
+import { getUserByEmail, getUserBySanctuaryName, createUser } from "@/backend/queries/users";
+import { recordUserLogin } from "@/backend/queries/streak";
+import { hashPassword } from "@/backend/auth/crypto";
 
 // Allowed sanctuary categories
 const ALLOWED_CATEGORIES = new Set([
@@ -15,6 +17,7 @@ const ALLOWED_CATEGORIES = new Set([
   "women",
   "men",
   "senior_citizen",
+  "other",
 ]);
 
 // Map common frontend variants to canonical DB category IDs
@@ -27,14 +30,8 @@ function normalizeCategory(cat: string | undefined): string | null {
   if (c === "seniorcitizen" || c === "senior-citizen") return "senior_citizen";
   if (c === "parents") return "parent";
   if (c === "couples") return "couple";
+  if (c === "other") return "other";
   return null;
-}
-
-// Secure password hashing using Node scrypt
-function hashPassword(password: string): string {
-  const salt = crypto.randomBytes(16).toString("hex");
-  const hash = crypto.scryptSync(password, salt, 64).toString("hex");
-  return `${salt}:${hash}`;
 }
 
 export async function POST(request: Request) {
@@ -57,10 +54,25 @@ export async function POST(request: Request) {
       wellnessLevel,
     } = body;
 
-    // 1. Input validation
+    // 1. Input validation - required fields
+    if (!name || typeof name !== "string" || !name.trim()) {
+      return NextResponse.json(
+        { error: "Please enter your full name." },
+        { status: 400 }
+      );
+    }
+
     if (!email || typeof email !== "string" || !email.trim()) {
       return NextResponse.json(
-        { error: "Email address is required." },
+        { error: "Please enter a valid email address." },
+        { status: 400 }
+      );
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email.trim())) {
+      return NextResponse.json(
+        { error: "Please enter a valid email address." },
         { status: 400 }
       );
     }
@@ -73,20 +85,12 @@ export async function POST(request: Request) {
     }
 
     // 2. Validate category against allowed Manraah categories
-    const validatedCategory = normalizeCategory(category);
-    if (!validatedCategory) {
-      return NextResponse.json(
-        { error: "Invalid sanctuary journey category. Please select a valid category." },
-        { status: 400 }
-      );
-    }
+    const validatedCategory = normalizeCategory(category) || "student";
 
     const cleanEmail = email.trim().toLowerCase();
 
     // 3. Check if user already exists
-    const existing = await sql`
-      SELECT id FROM users WHERE LOWER(email) = ${cleanEmail} LIMIT 1
-    `;
+    const existing = await getUserByEmail(cleanEmail);
 
     if (existing.length > 0) {
       return NextResponse.json(
@@ -105,9 +109,7 @@ export async function POST(request: Request) {
         );
       }
       
-      const existingName = await sql`
-        SELECT id FROM users WHERE LOWER(sanctuary_name) = LOWER(${finalSanctuaryName}) LIMIT 1
-      `;
+      const existingName = await getUserBySanctuaryName(finalSanctuaryName);
       if (existingName.length > 0) {
         return NextResponse.json(
           { error: "This Sanctuary Name is already taken. Please choose another one or leave it blank to auto-generate." },
@@ -123,11 +125,11 @@ export async function POST(request: Request) {
     const cleanDob = dob && typeof dob === "string" ? dob.trim() : null;
     const cleanCountry = country && typeof country === "string" ? country.trim() : null;
     const cleanGender = gender && typeof gender === "string" ? gender.trim() : null;
+    const initialJson = initialAnswers ? JSON.stringify(initialAnswers) : "{}";
 
     // 5. Create user ID & hash password
     const userId = "usr_" + Date.now() + "_" + Math.random().toString(36).substring(2, 7);
     const passwordHash = hashPassword(password);
-    const initialJson = initialAnswers ? JSON.stringify(initialAnswers) : "{}";
 
     // Ensure table has optional columns if not present
     try {
@@ -143,10 +145,19 @@ export async function POST(request: Request) {
     }
 
     // 6. Insert user into Neon PostgreSQL with permanent category & details
-    await sql`
-      INSERT INTO users (id, name, email, password_hash, sanctuary_name, selected_category, phone, dob, country, gender, streak_days, mindfulness_minutes, current_mood, initial_answers_json)
-      VALUES (${userId}, ${fullName}, ${cleanEmail}, ${passwordHash}, ${finalSanctuaryName}, ${validatedCategory}, ${cleanPhone}, ${cleanDob}, ${cleanCountry}, ${cleanGender}, 1, 0, 'Sanctuary Member', ${initialJson}::jsonb)
-    `;
+    await createUser(
+      userId,
+      fullName,
+      cleanEmail,
+      passwordHash,
+      finalSanctuaryName,
+      validatedCategory,
+      cleanPhone,
+      cleanDob,
+      cleanCountry,
+      cleanGender,
+      initialJson
+    );
 
     // 7. Save assessment if provided
     if (answers && Array.isArray(answers) && answers.length > 0) {
@@ -160,6 +171,9 @@ export async function POST(request: Request) {
       );
     }
 
+    // Record login streak activity
+    const streakInfo = await recordUserLogin(userId);
+
     const userProfile = {
       id: userId,
       name: fullName,
@@ -170,16 +184,21 @@ export async function POST(request: Request) {
       country: cleanCountry || undefined,
       gender: cleanGender || undefined,
       avatar: "/images/user_avatar.jpg",
-      streakDays: 1,
+      streakDays: streakInfo.currentStreak,
       mindfulnessMinutes: 0,
       currentMood: "Sanctuary Member",
       selectedCategory: validatedCategory,
+      onboardingCompleted: false,
     };
 
     const sessionData = {
       user: userProfile,
       token: "m_token_" + userId,
       isAuthenticated: true,
+      category: userProfile.selectedCategory,
+      currentStreak: streakInfo.currentStreak,
+      longestStreak: streakInfo.longestStreak,
+      lastLoginAt: streakInfo.lastLoginAt,
     };
 
     // 8. Create HTTP session cookies

@@ -1,11 +1,12 @@
 import { NextResponse } from "next/server";
 import { getAuthSessionFromRequest } from "@/backend/auth/session";
-import { sql } from "@/backend/db/client";
-import { saveUserAssessment, getUserAssessment } from "@/backend/queries/assessment";
+import { saveUserAssessment, getUserAssessment, getUserProfile } from "@/backend/queries/assessment";
 import { getCategoryQuestions } from "@/frontend/lib/assessment/questions";
 import { getWellnessLevel, getWellnessMessage } from "@/frontend/lib/assessment/wellness";
 import { calculateSanctuaryScore } from "@/frontend/lib/assessment/scoring";
 import { AssessmentAnswer } from "@/frontend/lib/assessment/types";
+import { getUserById } from "@/backend/queries/users";
+import { sql } from "@/backend/db/client";
 
 export const dynamic = "force-dynamic";
 
@@ -18,9 +19,7 @@ export async function GET(req: Request) {
   }
 
   try {
-    const userResult = await sql`
-      SELECT id, selected_category FROM users WHERE id = ${userId} LIMIT 1
-    `;
+    const userResult = await getUserById(userId);
 
     if (userResult.length === 0) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
@@ -29,12 +28,26 @@ export async function GET(req: Request) {
     const category = userResult[0].selected_category || "student";
     const questions = getCategoryQuestions(category);
     const latestAssessment = await getUserAssessment(userId);
+    let finalAssessment = latestAssessment;
+
+    if (!finalAssessment) {
+      const profile = await getUserProfile(userId);
+      if (profile && profile.percentage !== null) {
+        finalAssessment = {
+          total_score: profile.total_score || Math.round((profile.percentage / 100) * 50),
+          max_score: 50,
+          percentage: profile.percentage,
+          wellness_level: profile.wellness_level || "Stable",
+          answers: [],
+        };
+      }
+    }
 
     return NextResponse.json({
       category,
       questions,
-      assessmentCompleted: !!latestAssessment,
-      latestAssessment: latestAssessment || null,
+      assessmentCompleted: !!finalAssessment,
+      latestAssessment: finalAssessment || null,
     });
   } catch (err: any) {
     console.error("[API GET /api/assessment Error]:", err);
@@ -62,9 +75,7 @@ export async function POST(req: Request) {
     }
 
     // 1. Read user's PERMANENT category from database (Do NOT trust frontend category)
-    const userResult = await sql`
-      SELECT id, selected_category, sanctuary_name FROM users WHERE id = ${userId} LIMIT 1
-    `;
+    const userResult = await getUserById(userId);
 
     if (userResult.length === 0) {
       return NextResponse.json({ error: "User not found." }, { status: 404 });
@@ -140,6 +151,11 @@ export async function POST(req: Request) {
       wellnessLevel,
       maxScore
     );
+
+    // 6. Update user onboarding completed state
+    await sql`
+      UPDATE users SET onboarding_completed = true WHERE id = ${userId}
+    `;
 
     return NextResponse.json({
       success: true,

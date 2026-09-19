@@ -33,6 +33,7 @@ export interface UserProfile {
   currentMood: string;
   selectedCategory: UserCategory;
   role?: UserRole;
+  onboardingCompleted?: boolean;
 }
 
 export interface AssessmentAnswers {

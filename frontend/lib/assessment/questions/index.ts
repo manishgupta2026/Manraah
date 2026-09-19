@@ -9,6 +9,7 @@ import { familyQuestions } from "./family";
 import { womenQuestions } from "./women";
 import { menQuestions } from "./men";
 import { seniorCitizenQuestions } from "./seniorCitizen";
+import { otherQuestions } from "./other";
 
 export { COMMON_QUESTIONS };
 
@@ -27,6 +28,8 @@ export const CATEGORY_QUESTIONS_MAP: Record<string, AssessmentQuestion[]> = {
   men: menQuestions,
   senior_citizen: seniorCitizenQuestions,
   seniorcitizen: seniorCitizenQuestions,
+  other: otherQuestions,
+  others: otherQuestions,
 };
 
 export function getCategoryQuestions(category: string | null): AssessmentQuestion[] {

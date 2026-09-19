@@ -14,21 +14,54 @@ import { AuthSession } from "@/backend/types";
 export default function WellnessScoreScreen() {
   const router = useRouter();
   const { categoryDetails } = useCategory();
-  const { assessmentResult, detailedAnswers, computedScore, selectedCategory } = useAssessment();
+  const { assessmentResult, detailedAnswers, selectedCategory, totalScore, percentage, wellnessLevel, maxScore } = useAssessment();
 
-  // Guard: Do NOT allow direct access without assessment
-  useEffect(() => {
-    if (!selectedCategory || !detailedAnswers || detailedAnswers.length < 15) {
-      router.push("/");
-    }
-  }, [selectedCategory, detailedAnswers, router]);
-
+  const [dbAssessment, setDbAssessment] = useState<any>(null);
+  const [loadingDb, setLoadingDb] = useState(true);
   const [session, setSession] = useState<AuthSession | null>(null);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    setSession(getClientSession());
+    const activeSession = getClientSession();
+    setSession(activeSession);
+
+    if (activeSession && activeSession.isAuthenticated) {
+      fetch("/api/assessment")
+        .then((res) => {
+          if (res.ok) return res.json();
+          throw new Error("Failed to fetch assessment");
+        })
+        .then((data) => {
+          if (data.latestAssessment) {
+            setDbAssessment(data.latestAssessment);
+          }
+          setLoadingDb(false);
+        })
+        .catch(() => {
+          setLoadingDb(false);
+        });
+    } else {
+      setLoadingDb(false);
+    }
   }, []);
+
+  // Guard: Do NOT allow direct access without assessment
+  useEffect(() => {
+    if (loadingDb) return;
+
+    const activeSession = getClientSession();
+    if (activeSession && activeSession.isAuthenticated) {
+      // Authenticated users should never be forced to "/"
+      return;
+    }
+
+    const stored = typeof window !== "undefined" ? sessionStorage.getItem("manraah_onboarding_assessment") : null;
+    const hasDbResult = !!dbAssessment;
+
+    if (!stored && !hasDbResult && (!selectedCategory || !detailedAnswers || detailedAnswers.length < 10)) {
+      router.push("/");
+    }
+  }, [selectedCategory, detailedAnswers, dbAssessment, loadingDb, router]);
 
   const handleSaveAndGoToDashboard = async () => {
     if (!session || !session.user) return;
@@ -39,11 +72,12 @@ export default function WellnessScoreScreen() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           userId: session.user.id,
-          category: selectedCategory,
-          answers: detailedAnswers,
-          computedScore,
-          percentage: finalResult.percentage,
-          wellnessLevel: finalResult.wellnessLevel
+          category: selectedCategory || (dbAssessment ? dbAssessment.category : "student"),
+          answers: detailedAnswers.length > 0 ? detailedAnswers : (dbAssessment ? dbAssessment.answers : []),
+          computedScore: totalScore,
+          percentage: percentage,
+          wellnessLevel: wellnessLevel,
+          maxScore: maxScore
         })
       });
       
@@ -52,8 +86,17 @@ export default function WellnessScoreScreen() {
         throw new Error(data.error || "Failed to save assessment.");
       }
 
-      // Sync local storage session category
       const targetCategory = selectedCategory === "couples" || selectedCategory === "couple" ? "couples" : (selectedCategory === "parents" || selectedCategory === "parent" ? "parents" : selectedCategory || "student");
+      if (targetCategory === "parents" || targetCategory === "parent") {
+        localStorage.setItem("parent_assessment_completed", "true");
+        localStorage.setItem("parent_show_security_immediately", "true");
+      } else if (targetCategory === "couples" || targetCategory === "couple") {
+        localStorage.setItem("couple_assessment_completed", "true");
+        localStorage.setItem("couple_show_security_immediately", "true");
+      } else if (targetCategory === "other" || targetCategory === "others") {
+        localStorage.setItem("other_assessment_completed", "true");
+        localStorage.setItem("other_show_security_immediately", "true");
+      }
       const updatedSession = {
         ...session,
         user: {
@@ -65,14 +108,10 @@ export default function WellnessScoreScreen() {
       document.cookie = `manraah_session=${JSON.stringify(updatedSession)}; path=/; max-age=2592000`;
       document.cookie = `userType=${targetCategory}; path=/; max-age=2592000`;
 
-      const c = (targetCategory || "").toLowerCase();
-      const targetSubpath = c === "couples" || c === "couple" ? "couples" : (c === "parents" || c === "parent" ? "parents" : "student");
-      router.push(`/dashboard/${targetSubpath}`);
+      router.push("/");
     } catch (err) {
       console.error("[Assessment Save Error]:", err);
-      const c = (selectedCategory || "").toLowerCase();
-      const fallbackSubpath = c === "couples" || c === "couple" ? "couples" : (c === "parents" || c === "parent" ? "parents" : "student");
-      router.push(`/dashboard/${fallbackSubpath}`);
+      router.push("/");
     } finally {
       setSaving(false);
     }
@@ -90,14 +129,25 @@ export default function WellnessScoreScreen() {
     router.push(targetPath);
   };
 
-  // Handle fallback if the user navigated directly or refreshed
-  const finalResult = assessmentResult || {
-    totalScore: Math.round((computedScore / 100) * 75) || 45,
-    maxScore: 75,
-    percentage: computedScore || 60,
-    wellnessLevel: getWellnessLevel(Math.round((computedScore / 100) * 75) || 45, 75),
-    message: getWellnessMessage(getWellnessLevel(Math.round((computedScore / 100) * 75) || 45, 75)),
+  // Map assessment details for display
+  const finalResult = {
+    totalScore: dbAssessment ? dbAssessment.total_score : totalScore,
+    maxScore: dbAssessment ? dbAssessment.max_score : (maxScore || 50),
+    percentage: dbAssessment ? dbAssessment.percentage : percentage,
+    wellnessLevel: dbAssessment ? dbAssessment.wellness_level : wellnessLevel,
+    message: getWellnessMessage(dbAssessment ? dbAssessment.wellness_level : wellnessLevel),
   };
+
+  const finalDetailedAnswers = dbAssessment && Array.isArray(dbAssessment.answers)
+    ? dbAssessment.answers.map((ans: any) => ({
+        questionId: ans.question_id,
+        questionKey: ans.question_key || "",
+        questionType: ans.question_type || "common",
+        selectedOption: ans.selected_option,
+        selectedText: ans.selected_text,
+        score: ans.score,
+      }))
+    : detailedAnswers;
 
   // Helper to format keys like "academic_pressure" to "Academic Pressure"
   const formatKeyToLabel = (key: string): string => {
@@ -170,7 +220,7 @@ export default function WellnessScoreScreen() {
         <p className="text-sm md:text-base text-on-surface-variant/90 max-w-lg mx-auto font-light leading-relaxed">
           We've prepared your personalized wellness journey.
           <br />
-          Create your account or log in to unlock your dashboard.
+          Create your account or log in to unlock your sanctuary.
         </p>
       </motion.div>
 
@@ -249,8 +299,8 @@ export default function WellnessScoreScreen() {
           </div>
           
           <div className="space-y-4">
-            {detailedAnswers.length > 0 ? (
-              detailedAnswers.map((ans) => {
+            {finalDetailedAnswers.length > 0 ? (
+              finalDetailedAnswers.map((ans: any) => {
                 const label = formatKeyToLabel(ans.questionKey);
                 return (
                   <div key={ans.questionId} className="space-y-1.5 text-left border-b border-surface-variant/10 pb-3 last:border-0 last:pb-0">
@@ -296,7 +346,7 @@ export default function WellnessScoreScreen() {
               disabled={saving}
               className="w-full sm:w-auto px-12 py-4 rounded-full bg-primary text-white font-bold text-sm shadow-lg hover:bg-primary-purple hover:scale-[1.02] disabled:opacity-50 transition-all text-center flex items-center justify-center gap-2"
             >
-              {saving ? "Saving..." : "Save & Go to Dashboard"}
+              {saving ? "Saving..." : "Save & Continue"}
               <span className="material-symbols-outlined text-base">arrow_forward</span>
             </button>
             <p className="text-xs text-[#5F309E] font-medium text-center bg-[#5F309E]/5 px-4 py-1.5 rounded-full mt-1 border border-[#5F309E]/10 flex items-center gap-1.5">
