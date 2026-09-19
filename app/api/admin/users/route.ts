@@ -15,7 +15,12 @@ export async function GET(request: Request) {
   const category = searchParams.get("category") || "ALL";
 
   try {
-    let query = sql`
+    const searchPattern = search.trim() ? `%${search.trim()}%` : "";
+    const categoryPattern = category && category !== "ALL"
+      ? `%${category.toLowerCase().replace(/[\s_]+/g, "")}%`
+      : "";
+
+    const usersList = await sql`
       SELECT 
         u.id,
         COALESCE(u.name, 'Anonymous Member') AS name,
@@ -31,33 +36,12 @@ export async function GET(request: Request) {
           78
         ) AS "serenityScore"
       FROM users u
-      WHERE 1=1
+      WHERE 
+        (${searchPattern} = '' OR u.name ILIKE ${searchPattern} OR u.email ILIKE ${searchPattern} OR u.id ILIKE ${searchPattern} OR u.sanctuary_name ILIKE ${searchPattern})
+        AND (${categoryPattern} = '' OR REPLACE(REPLACE(LOWER(COALESCE(u.selected_category, 'student')), '_', ''), '-', '') LIKE ${categoryPattern})
+      ORDER BY u.created_at DESC 
+      LIMIT 50
     `;
-
-    if (search.trim()) {
-      const searchPattern = `%${search.trim()}%`;
-      query = sql`
-        ${query} 
-        AND (
-          u.name ILIKE ${searchPattern} 
-          OR u.email ILIKE ${searchPattern} 
-          OR u.id ILIKE ${searchPattern}
-          OR u.sanctuary_name ILIKE ${searchPattern}
-        )
-      `;
-    }
-
-    if (category && category !== "ALL") {
-      const normalizedCat = category.toLowerCase().replace(/[\s_]+/g, "");
-      query = sql`
-        ${query} 
-        AND REPLACE(REPLACE(LOWER(COALESCE(u.selected_category, 'student')), '_', ''), '-', '') LIKE ${`%${normalizedCat}%`}
-      `;
-    }
-
-    query = sql`${query} ORDER BY u.created_at DESC LIMIT 50`;
-
-    const usersList = await query;
 
     return NextResponse.json({
       success: true,
