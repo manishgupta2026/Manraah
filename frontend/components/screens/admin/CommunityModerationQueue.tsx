@@ -49,20 +49,25 @@ export default function CommunityModerationQueue() {
   }, []);
 
   const handleResolve = (id: string) => {
-    setReports((prev) => prev.map((r) => (r.id === id ? { ...r, status: "RESOLVED" } : r)));
-    showToast("Community report resolved.");
+    setReports((prev) =>
+      prev.map((r) => (r.id === id ? { ...r, status: "RESOLVED" } : r))
+    );
+    showToast("Community flag marked as resolved.");
   };
 
   const handleDeletePost = async (postId: string) => {
-    if (!confirm("Are you sure you want to remove this post from the community feed?")) return;
+    if (!confirm("Are you sure you want to remove this post from the community feed?"))
+      return;
 
     try {
       setPosts((prev) => prev.filter((p) => p.id !== postId));
       setReports((prev) => prev.filter((r) => r.postId !== postId));
 
-      const res = await fetch(`/api/admin/community?postId=${postId}`, { method: "DELETE" });
+      const res = await fetch(`/api/admin/community?postId=${postId}`, {
+        method: "DELETE",
+      });
       if (res.ok) {
-        showToast("Post removed from database community feed.");
+        showToast("Post removed from community database.");
       }
     } catch (err) {
       console.error("Error deleting post:", err);
@@ -72,33 +77,46 @@ export default function CommunityModerationQueue() {
 
   const columns: Column<CommunityReportItem>[] = [
     {
-      header: "Post / Discussion Title",
+      header: "Flagged Post & ID",
       accessor: (row) => (
         <div>
-          <p className="font-bold text-on-surface">{row.postTitle}</p>
-          <span className="text-[10px] text-on-surface-variant font-mono">ID: {row.postId}</span>
+          <p className="font-semibold text-slate-900 line-clamp-1">{row.postTitle}</p>
+          <span className="text-[10px] text-slate-400 font-mono">ID: {row.postId}</span>
         </div>
       ),
     },
     {
-      header: "Reported Member",
-      accessor: (row) => <span className="font-semibold text-on-surface text-xs">{row.reportedUser}</span>,
+      header: "Author",
+      accessor: (row) => (
+        <span className="font-semibold text-slate-800 text-xs">{row.reportedUser}</span>
+      ),
     },
     {
-      header: "Reason & Notes",
-      accessor: (row) => <span className="text-on-surface-variant text-xs font-medium">{row.reason}</span>,
+      header: "Flag Reason",
+      accessor: (row) => (
+        <span className="text-slate-600 text-xs font-normal max-w-xs line-clamp-1">
+          {row.reason}
+        </span>
+      ),
     },
     {
-      header: "Severity & Tag",
+      header: "Severity",
       accessor: (row) => (
         <div className="flex items-center gap-1.5">
           <StatusBadge
             label={row.severity}
-            variant={row.severity === "CRITICAL" ? "error" : row.severity === "HIGH" ? "warning" : "info"}
+            variant={
+              row.severity === "CRITICAL"
+                ? "error"
+                : row.severity === "HIGH"
+                ? "warning"
+                : "info"
+            }
+            size="sm"
           />
           {row.isSafetyRelated && (
-            <span className="px-2 py-0.5 rounded-full bg-rose-500/10 text-rose-600 text-[9px] font-extrabold border border-rose-500/20">
-              SAFETY FLAG
+            <span className="px-1.5 py-0.5 rounded bg-rose-50 text-rose-700 text-[9px] font-bold border border-rose-200/60">
+              SAFETY
             </span>
           )}
         </div>
@@ -110,80 +128,98 @@ export default function CommunityModerationQueue() {
         <StatusBadge
           label={row.status}
           variant={row.status === "OPEN" ? "warning" : "success"}
+          size="sm"
         />
       ),
     },
     {
       header: "Actions",
+      className: "text-right",
       accessor: (row) =>
         row.status === "OPEN" ? (
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center justify-end gap-1.5">
             <button
               onClick={() => handleResolve(row.id)}
-              className="px-2.5 py-1 rounded-xl bg-emerald-50 text-emerald-700 hover:bg-emerald-100 text-xs font-bold transition-all"
+              className="px-2.5 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200/80 text-xs font-semibold active:scale-[0.98] transition-all"
             >
               Resolve
             </button>
             <button
               onClick={() => handleDeletePost(row.postId)}
-              className="px-2.5 py-1 rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-100 text-xs font-bold transition-all"
+              className="px-2.5 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200/80 text-xs font-semibold active:scale-[0.98] transition-all"
             >
               Remove Post
             </button>
           </div>
         ) : (
-          <span className="text-[11px] text-outline font-semibold">Handled</span>
+          <span className="text-xs text-slate-400 font-medium">Handled</span>
         ),
     },
   ];
 
   return (
-    <div className="space-y-6 animate-fadeIn select-none">
+    <div className="space-y-6 select-none">
       {toastMessage && (
-        <div className="p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 text-xs font-bold text-center animate-fadeIn">
-          ✓ {toastMessage}
+        <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold flex items-center justify-between shadow-sm animate-fadeIn">
+          <span>{toastMessage}</span>
+          <button onClick={() => setToastMessage(null)} className="text-emerald-600">✕</button>
         </div>
       )}
 
+      {/* Moderation Queue */}
       <AdminCard
-        title="Community Content Moderation"
-        subtitle="Review community discussions, reports, and safety flags synchronized with community_posts table."
+        title="Community Safety & Moderation Queue"
+        subtitle="Review reported discussions, safety flags, and policy violations across community posts."
       >
         <AdminTable
           columns={columns}
           data={reports}
+          keyExtractor={(row) => row.id}
           loading={loading}
-          emptyMessage="No pending moderation flags in community discussions."
+          emptyMessage="No reports in moderation queue."
+          emptySubtitle="Community feeds are compliant with sanctuary safety standards."
+          emptyIcon="verified"
         />
       </AdminCard>
 
       {/* Live Community Posts in Database */}
-      {posts && posts.length > 0 && (
-        <AdminCard title="Recent Community Discussions" subtitle="Directly from Neon DB">
-          <div className="space-y-3">
-            {posts.map((post: any) => (
-              <div key={post.id} className="p-3.5 rounded-2xl bg-surface-container-low flex items-center justify-between text-xs">
-                <div>
+      <AdminCard
+        title="Active Community Discussions"
+        subtitle="Recent posts synchronized from community_posts table"
+      >
+        {posts && posts.length > 0 ? (
+          <div className="divide-y divide-slate-100">
+            {posts.map((post) => (
+              <div key={post.id} className="py-4 flex items-start justify-between gap-4 first:pt-0 last:pb-0">
+                <div className="space-y-1">
                   <div className="flex items-center gap-2">
-                    <span className="font-bold text-on-surface">{post.title}</span>
-                    <span className="px-2 py-0.5 rounded-full bg-surface-container-high text-[10px] font-semibold text-on-surface-variant uppercase">
-                      {post.category}
+                    <span className="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 text-[10px] font-semibold">
+                      {post.category || "General"}
                     </span>
+                    <span className="text-xs font-semibold text-slate-900">{post.title}</span>
                   </div>
-                  <p className="text-[11px] text-on-surface-variant line-clamp-1 mt-0.5">{post.content}</p>
-                  <p className="text-[10px] text-outline mt-1 font-mono">By {post.authorName} • {post.likes || 0} likes</p>
+                  <p className="text-xs text-slate-600 max-w-2xl line-clamp-2 leading-relaxed">
+                    {post.content}
+                  </p>
+                  <p className="text-[10px] text-slate-400">
+                    By {post.author_name || "Community Member"} • {post.likes_count || 0} likes • {post.comments_count || 0} comments
+                  </p>
                 </div>
                 <button
                   onClick={() => handleDeletePost(post.id)}
-                  className="px-3 py-1 rounded-xl text-rose-600 hover:bg-rose-100 text-xs font-bold transition-all shrink-0"
+                  className="px-2.5 py-1 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 text-xs font-semibold transition-colors shrink-0"
                 >
-                  Delete
+                  Remove
                 </button>
               </div>
             ))}
           </div>
-        </AdminCard>
-      )}
+        ) : (
+          <p className="text-xs text-slate-500 py-4 text-center">
+            No community posts currently found in database.
+          </p>
+        )}
+      </AdminCard>
     </div>
   );
 }

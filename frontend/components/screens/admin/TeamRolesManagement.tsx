@@ -23,6 +23,7 @@ export default function TeamRolesManagement() {
   const [inviteEmail, setInviteEmail] = useState("");
   const [inviteRole, setInviteRole] = useState<UserRole>("listener");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showInviteModal, setShowInviteModal] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const showToast = (msg: string) => {
@@ -53,8 +54,9 @@ export default function TeamRolesManagement() {
 
   const handleRoleChange = async (userId: string, newRole: string) => {
     try {
-      // Optimistic update
-      setTeam((prev) => prev.map((m) => (m.id === userId ? { ...m, role: newRole } : m)));
+      setTeam((prev) =>
+        prev.map((m) => (m.id === userId ? { ...m, role: newRole } : m))
+      );
 
       const res = await fetch("/api/admin/team", {
         method: "PATCH",
@@ -63,9 +65,9 @@ export default function TeamRolesManagement() {
       });
 
       if (res.ok) {
-        showToast(`Updated role to ${newRole.toUpperCase()} in database.`);
+        showToast(`Role updated to ${newRole.toUpperCase()} in database.`);
       } else {
-        await loadTeam(); // revert if failed
+        await loadTeam();
       }
     } catch (err) {
       console.error("Error updating role:", err);
@@ -97,7 +99,8 @@ export default function TeamRolesManagement() {
         }
         setInviteName("");
         setInviteEmail("");
-        showToast(`New ${inviteRole.toUpperCase()} successfully registered in database.`);
+        setShowInviteModal(false);
+        showToast(`New ${inviteRole.toUpperCase()} registered in database.`);
       }
     } catch (err) {
       console.error("Error inviting member:", err);
@@ -107,11 +110,14 @@ export default function TeamRolesManagement() {
   };
 
   const handleDelete = async (userId: string, memberEmail: string) => {
-    if (!confirm(`Are you sure you want to remove ${memberEmail} from companion users?`)) return;
+    if (!confirm(`Are you sure you want to remove ${memberEmail} from companion users?`))
+      return;
 
     try {
       setTeam((prev) => prev.filter((m) => m.id !== userId));
-      const res = await fetch(`/api/admin/team?userId=${userId}`, { method: "DELETE" });
+      const res = await fetch(`/api/admin/team?userId=${userId}`, {
+        method: "DELETE",
+      });
       if (res.ok) {
         showToast("Team member removed from database.");
       } else {
@@ -125,26 +131,18 @@ export default function TeamRolesManagement() {
 
   const columns: Column<TeamMember>[] = [
     {
-      header: "Team Member",
+      header: "Member & Email",
       accessor: (row) => (
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center font-bold text-primary text-xs">
+          <div className="w-8 h-8 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center font-bold text-xs shrink-0">
             {(row.name || row.email || "T")[0].toUpperCase()}
           </div>
           <div>
-            <p className="font-bold text-on-surface">{row.name}</p>
-            <span className="text-[10px] text-on-surface-variant font-mono">{row.email}</span>
+            <p className="font-semibold text-slate-900">{row.name}</p>
+            <span className="text-[10px] text-slate-400 font-mono">{row.email}</span>
           </div>
         </div>
       ),
-    },
-    {
-      header: "Joined Date",
-      accessor: (row) => <span className="font-medium text-on-surface-variant text-xs">{row.joinedDate}</span>,
-    },
-    {
-      header: "Account Status",
-      accessor: (row) => <StatusBadge label={row.status} variant={row.status === "ONLINE" || row.status === "Active" ? "success" : "warning"} />,
     },
     {
       header: "Assigned Platform Role",
@@ -152,95 +150,167 @@ export default function TeamRolesManagement() {
         <select
           value={row.role}
           onChange={(e) => handleRoleChange(row.id, e.target.value)}
-          className="px-3 py-1.5 rounded-xl bg-surface-container-low border border-surface-variant/30 text-xs font-bold text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/40 capitalize cursor-pointer"
+          className="text-xs font-semibold px-2.5 py-1 rounded-lg bg-slate-50 border border-slate-200 text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer transition-all"
         >
-          <option value="admin">Administrator (Full Access)</option>
-          <option value="listener">Peer Listener (Companion Portal)</option>
-          <option value="supervisor">Clinical Supervisor</option>
+          <option value="admin">Administrator</option>
+          <option value="therapist">Clinician / Therapist</option>
+          <option value="listener">Peer Listener</option>
+          <option value="staff">Operations Staff</option>
+          <option value="user">Standard Member</option>
         </select>
       ),
     },
     {
-      header: "Actions",
+      header: "Status",
       accessor: (row) => (
-        row.email === "admin@manraah.com" ? (
-          <span className="text-[10px] text-outline italic">Root Admin</span>
-        ) : (
-          <button
-            onClick={() => handleDelete(row.id, row.email)}
-            className="px-2.5 py-1 rounded-xl text-rose-600 hover:bg-rose-50 text-xs font-bold transition-all"
-          >
-            Remove
-          </button>
-        )
+        <StatusBadge
+          label={row.status || "Active"}
+          variant={row.status === "OFFLINE" ? "neutral" : "success"}
+          size="sm"
+        />
+      ),
+    },
+    {
+      header: "Joined Date",
+      accessor: (row) => (
+        <span className="text-xs text-slate-500 font-medium whitespace-nowrap">
+          {row.joinedDate}
+        </span>
+      ),
+    },
+    {
+      header: "Action",
+      className: "text-right",
+      accessor: (row) => (
+        <button
+          onClick={() => handleDelete(row.id, row.email)}
+          className="px-2.5 py-1 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 text-xs font-semibold transition-colors"
+          title="Remove from platform team"
+        >
+          Remove
+        </button>
       ),
     },
   ];
 
   return (
-    <div className="space-y-6 animate-fadeIn select-none">
+    <div className="space-y-6 select-none">
       {toastMessage && (
-        <div className="p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 text-xs font-bold text-center animate-fadeIn">
-          ✓ {toastMessage}
+        <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold flex items-center justify-between shadow-sm animate-fadeIn">
+          <span>{toastMessage}</span>
+          <button onClick={() => setToastMessage(null)} className="text-emerald-600">✕</button>
         </div>
       )}
 
-      {/* Invite Member Card */}
+      {/* Main Team Table Card */}
       <AdminCard
-        title="Invite / Register Platform Member"
-        subtitle="Grant role-based credentials for peer listeners, supervisors, and executive administrators."
-      >
-        <form onSubmit={handleInvite} className="grid grid-cols-1 sm:grid-cols-4 gap-3 pt-2">
-          <input
-            type="text"
-            placeholder="Full Name"
-            value={inviteName}
-            onChange={(e) => setInviteName(e.target.value)}
-            className="px-3.5 py-2.5 rounded-2xl bg-surface-container-low border border-surface-variant/30 text-xs focus:outline-none focus:ring-2 focus:ring-primary/40 font-medium"
-          />
-
-          <input
-            type="email"
-            placeholder="member@manraah.com"
-            value={inviteEmail}
-            onChange={(e) => setInviteEmail(e.target.value)}
-            required
-            className="px-3.5 py-2.5 rounded-2xl bg-surface-container-low border border-surface-variant/30 text-xs focus:outline-none focus:ring-2 focus:ring-primary/40 font-medium"
-          />
-
-          <select
-            value={inviteRole}
-            onChange={(e) => setInviteRole(e.target.value as UserRole)}
-            className="px-3.5 py-2.5 rounded-2xl bg-surface-container-low border border-surface-variant/30 text-xs focus:outline-none focus:ring-2 focus:ring-primary/40 font-bold"
-          >
-            <option value="listener">Peer Listener</option>
-            <option value="supervisor">Clinical Supervisor</option>
-            <option value="admin">Platform Administrator</option>
-          </select>
-
+        title="Administrative Team & Role Permissions"
+        subtitle="Manage executive administrators, peer listeners, and staff stored in companion_users table."
+        action={
           <button
-            type="submit"
-            disabled={isSubmitting}
-            className="px-4 py-2.5 rounded-2xl bg-primary text-white text-xs font-bold shadow-sm hover:opacity-90 transition-all flex items-center justify-center gap-1.5"
+            onClick={() => setShowInviteModal(true)}
+            className="px-3.5 py-1.5 rounded-lg bg-primary hover:bg-primary/90 text-white text-xs font-semibold flex items-center gap-1.5 active:scale-[0.98] transition-all shadow-xs"
           >
             <span className="material-symbols-outlined text-sm">person_add</span>
-            {isSubmitting ? "Registering..." : "Add to Database"}
+            <span>Add Companion / Staff</span>
           </button>
-        </form>
-      </AdminCard>
-
-      {/* Team Roster Table */}
-      <AdminCard
-        title="Companion Users & Team Roster"
-        subtitle="Active staff records synchronized directly from companion_users table in Neon PostgreSQL."
+        }
       >
         <AdminTable
           columns={columns}
           data={team}
+          keyExtractor={(row) => row.id}
           loading={loading}
-          emptyMessage="No team members currently registered."
+          emptyMessage="No team members registered."
+          emptySubtitle="Click 'Add Companion / Staff' above to register a new administrator or listener."
+          emptyIcon="group_add"
         />
       </AdminCard>
+
+      {/* Invite Member Modal */}
+      {showInviteModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-fadeIn">
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-xl max-w-md w-full p-6 space-y-5">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div>
+                <h3 className="font-heading font-bold text-base text-slate-900">
+                  Register New Companion / Staff
+                </h3>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Creates an account in Neon companion_users table.
+                </p>
+              </div>
+              <button
+                onClick={() => setShowInviteModal(false)}
+                className="text-slate-400 hover:text-slate-600 text-sm"
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleInvite} className="space-y-4">
+              <div className="space-y-1">
+                <label className="text-xs font-semibold text-slate-700">Full Name</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Alex Morgan"
+                  value={inviteName}
+                  onChange={(e) => setInviteName(e.target.value)}
+                  className="w-full px-3 py-2 rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-semibold text-slate-700">Email Address</label>
+                <input
+                  type="email"
+                  required
+                  placeholder="name@manraah.com"
+                  value={inviteEmail}
+                  onChange={(e) => setInviteEmail(e.target.value)}
+                  className="w-full px-3 py-2 rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-semibold text-slate-700">Role Assignment</label>
+                <select
+                  value={inviteRole}
+                  onChange={(e) => setInviteRole(e.target.value as UserRole)}
+                  className="w-full px-3 py-2 rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary cursor-pointer"
+                >
+                  <option value="listener">Peer Listener</option>
+                  <option value="admin">Platform Administrator</option>
+                  <option value="therapist">Clinician / Therapist</option>
+                  <option value="staff">Support Staff</option>
+                </select>
+              </div>
+
+              <div className="p-3 rounded-lg bg-slate-50 border border-slate-100 text-[11px] text-slate-500">
+                <p>Default credential password will be initialized as <code className="font-mono text-slate-700 font-bold">CompanionPass123!</code>.</p>
+              </div>
+
+              <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+                <button
+                  type="button"
+                  onClick={() => setShowInviteModal(false)}
+                  className="px-3.5 py-1.5 rounded-lg bg-slate-100 text-slate-700 text-xs font-semibold hover:bg-slate-200 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="px-4 py-1.5 rounded-lg bg-primary hover:bg-primary/90 text-white text-xs font-semibold disabled:opacity-50 transition-colors shadow-xs"
+                >
+                  {isSubmitting ? "Creating..." : "Create Account"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

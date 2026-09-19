@@ -8,6 +8,8 @@ interface AdminCardProps {
   action?: ReactNode;
   children: ReactNode;
   className?: string;
+  headerClassName?: string;
+  noPadding?: boolean;
 }
 
 export default function AdminCard({
@@ -16,19 +18,35 @@ export default function AdminCard({
   action,
   children,
   className = "",
+  headerClassName = "",
+  noPadding = false,
 }: AdminCardProps) {
   return (
-    <div className={`p-6 rounded-3xl bg-surface-container-lowest/80 backdrop-blur-md border border-surface-variant/30 shadow-card-lift space-y-4 ${className}`}>
+    <section
+      className={`rounded-2xl bg-white border border-slate-200/80 shadow-[0_1px_3px_0_rgba(0,0,0,0.03)] transition-all ${
+        noPadding ? "" : "p-5 sm:p-6"
+      } ${className}`}
+    >
       {(title || action) && (
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-surface-variant/20 pb-3.5">
+        <header
+          className={`flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-4 mb-5 ${headerClassName}`}
+        >
           <div>
-            {title && <h3 className="font-heading font-bold text-base text-on-surface">{title}</h3>}
-            {subtitle && <p className="text-xs text-on-surface-variant/80 mt-0.5">{subtitle}</p>}
+            {title && (
+              <h3 className="font-heading font-bold text-sm sm:text-base text-slate-900 tracking-tight">
+                {title}
+              </h3>
+            )}
+            {subtitle && (
+              <p className="text-xs text-slate-500 mt-0.5 font-normal leading-relaxed">
+                {subtitle}
+              </p>
+            )}
           </div>
           {action && <div className="shrink-0">{action}</div>}
-        </div>
+        </header>
       )}
-      <div>{children}</div>
-    </div>
+      <div className="relative">{children}</div>
+    </section>
   );
 }
