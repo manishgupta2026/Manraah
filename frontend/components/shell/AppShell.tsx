@@ -76,6 +76,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
     return () => window.removeEventListener("open-mobile-drawer", handleOpen);
   }, []);
 
+  return (
     <ThemeProvider>
       <CategoryProvider>
         <AssessmentProvider>
