@@ -5,6 +5,8 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { getClientSession } from "@/backend/auth/client";
 import { useWellness } from "@/frontend/lib/context/WellnessContext";
+import { useWellnessScore } from "@/frontend/lib/context/WellnessScoreContext";
+import RecommendedProfessionals from "../therapists/RecommendedProfessionals";
 
 const MOTIVATIONAL_QUOTES = [
   "“You are stronger than you think, and you're doing better than you realize.”",
@@ -14,79 +16,25 @@ const MOTIVATIONAL_QUOTES = [
   "“You don't have to control your thoughts. You just have to stop letting them control you.”",
 ];
 
-const RECOMMENDED_PROFESSIONALS = [
-  {
-    id: "dr-sarah-jenkins",
-    name: "Dr. Sarah Jenkins",
-    role: "Clinical Psychologist",
-    rating: "4.9",
-    reviewCount: "120+",
-    experience: "12+ yrs experience",
-    badge: "Top Rated",
-    badgeClass: "bg-[#DCF2E7] text-[#006C56] dark:bg-[#14382F] dark:text-[#88F7D6]",
-    description:
-      "Specializes in anxiety, stress management, and emotional well-being. Helping you build a calmer, more confident you.",
-    image: "/images/therapist_sarah.jpg",
-    bgTint: "bg-[#F0F9F5] dark:bg-[#102F27]",
-    borderClass: "border border-[#D6EFE2] dark:border-[#23483E]",
-    tags: [
-      { text: "Anxiety & Stress", lightBg: "bg-[#E1F3EA] text-[#0A6349]", darkBg: "dark:bg-[#14382F] dark:text-[#88F7D6] dark:border dark:border-[#23483E]" },
-      { text: "Self-Esteem", lightBg: "bg-[#E5EFFB] text-[#185FA5]", darkBg: "dark:bg-[#14382F] dark:text-[#A8C7FA] dark:border dark:border-[#23483E]" },
-      { text: "Emotional Well-being", lightBg: "bg-[#F2E8FA] text-[#712BB8]", darkBg: "dark:bg-[#14382F] dark:text-[#CFC4F7] dark:border dark:border-[#23483E]" },
-    ],
-  },
-  {
-    id: "dr-arjun-mehta",
-    name: "Dr. Arjun Mehta",
-    role: "Career Counselor",
-    rating: "4.8",
-    reviewCount: "98+",
-    experience: "10+ yrs experience",
-    badge: "Highly Rated",
-    badgeClass: "bg-[#E1EDFA] text-[#1A73E8] dark:bg-[#153B54] dark:text-[#A8C7FA]",
-    description:
-      "Helps you navigate career transitions, workplace challenges, and achieve a healthier work-life balance.",
-    image: "/images/therapist_arjun.jpg",
-    bgTint: "bg-[#F0F6FD] dark:bg-[#102F27]",
-    borderClass: "border border-[#D4E5F7] dark:border-[#23483E]",
-    tags: [
-      { text: "Work-Life Balance", lightBg: "bg-[#E1F3EA] text-[#0A6349]", darkBg: "dark:bg-[#14382F] dark:text-[#88F7D6] dark:border dark:border-[#23483E]" },
-      { text: "Career Growth", lightBg: "bg-[#E5EFFB] text-[#185FA5]", darkBg: "dark:bg-[#14382F] dark:text-[#A8C7FA] dark:border dark:border-[#23483E]" },
-      { text: "Goal Setting", lightBg: "bg-[#F2E8FA] text-[#712BB8]", darkBg: "dark:bg-[#14382F] dark:text-[#CFC4F7] dark:border dark:border-[#23483E]" },
-    ],
-  },
-  {
-    id: "dr-neha-kapoor",
-    name: "Dr. Neha Kapoor",
-    role: "Relationship Therapist",
-    rating: "4.9",
-    reviewCount: "140+",
-    experience: "14+ yrs experience",
-    badge: "Popular",
-    badgeClass: "bg-[#F5E6F5] text-[#8430CE] dark:bg-[#3D1D4A] dark:text-[#E2B7FA]",
-    description:
-      "Supports individuals and couples in building healthier, happier relationships and better communication.",
-    image: "/images/user_avatar.jpg",
-    bgTint: "bg-[#FAF2F8] dark:bg-[#102F27]",
-    borderClass: "border border-[#F2D7EE] dark:border-[#23483E]",
-    tags: [
-      { text: "Relationships", lightBg: "bg-[#E1F3EA] text-[#0A6349]", darkBg: "dark:bg-[#14382F] dark:text-[#88F7D6] dark:border dark:border-[#23483E]" },
-      { text: "Communication", lightBg: "bg-[#E5EFFB] text-[#185FA5]", darkBg: "dark:bg-[#14382F] dark:text-[#A8C7FA] dark:border dark:border-[#23483E]" },
-      { text: "Family Well-being", lightBg: "bg-[#F2E8FA] text-[#712BB8]", darkBg: "dark:bg-[#14382F] dark:text-[#CFC4F7] dark:border dark:border-[#23483E]" },
-    ],
-  },
-];
-
 interface DashboardHomeProps {
   onNavigate?: (section: "dashboard" | "appointments" | "journey" | "resources" | "ai-companion") => void;
 }
 
 export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
   const { currentStreak, hasCheckedInToday } = useWellness();
+  const {
+    currentCategory,
+    currentCategoryName,
+    currentScore,
+    isCurrentAssessed,
+    levelBadge,
+    openBreakdownModal,
+    openAssessment,
+  } = useWellnessScore();
+
   const [userName, setUserName] = useState("Aditi");
   const [userCategoryLabel, setUserCategoryLabel] = useState("parenting");
   const [nextAppointment, setNextAppointment] = useState("6 Oct 2026, 09:00 PM");
-  const [wellnessScore, setWellnessScore] = useState(68);
   const [quoteIndex, setQuoteIndex] = useState(0);
 
   useEffect(() => {
@@ -147,7 +95,7 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
       iconColor: "text-[#008968] dark:text-[#00A982]",
       icon: (
         <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+          <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
         </svg>
       ),
     },
@@ -178,7 +126,7 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
             Hi, {userName}! 👋
           </h1>
           <p className="text-xs text-[#6B857C] dark:text-[#A9C5BC] font-medium">
-            Let's track your health &amp; {userCategoryLabel} wellness daily!
+            Let&apos;s track your health &amp; {currentCategoryName} wellness daily!
           </p>
         </div>
 
@@ -220,147 +168,8 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
         </div>
       </div>
 
-      {/* 2. Recommended for You (3 Equal-Height, Perfectly Aligned Professional Cards) */}
-      <div className="bg-white dark:bg-[#102F27] rounded-3xl p-5 sm:p-6 border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs flex flex-col gap-4 sm:gap-5 transition-colors">
-        {/* Section Header */}
-        <div className="flex items-center justify-between gap-3">
-          <div className="flex items-center gap-3">
-            <div className="w-8.5 h-8.5 rounded-2xl bg-[#EAF6F0] dark:bg-[#14382F] text-[#006C56] dark:text-[#00A982] flex items-center justify-center shrink-0">
-              <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-              </svg>
-            </div>
-            <div>
-              <h2 className="text-sm font-heading font-black text-[#19332A] dark:text-[#F4FAF7] leading-tight">
-                Recommended for You
-              </h2>
-              <p className="text-[10px] text-[#789389] dark:text-[#78958C] font-medium leading-tight mt-0.5">
-                Curated by our mental health professionals
-              </p>
-            </div>
-          </div>
-
-          {onNavigate ? (
-            <button
-              onClick={() => onNavigate("appointments")}
-              type="button"
-              className="text-xs font-bold text-[#004D3D] dark:text-[#00A982] hover:underline flex items-center gap-1 cursor-pointer shrink-0"
-            >
-              <span>View All</span>
-              <span>→</span>
-            </button>
-          ) : (
-            <Link
-              href="/appointments"
-              className="text-xs font-bold text-[#004D3D] dark:text-[#00A982] hover:underline flex items-center gap-1 shrink-0"
-            >
-              <span>View All</span>
-              <span>→</span>
-            </Link>
-          )}
-        </div>
-
-        {/* 3 Equal-Width, Equal-Height Professional Cards in 1 Row on Desktop */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-stretch">
-          {RECOMMENDED_PROFESSIONALS.map((prof) => (
-            <div
-              key={prof.id}
-              className={`${prof.bgTint} ${prof.borderClass} rounded-3xl p-5 flex flex-col justify-between shadow-2xs hover:shadow-md transition-all duration-200 group h-full min-w-0 overflow-hidden select-none`}
-            >
-              {/* Top Row: Avatar + Info Header + Status Badge */}
-              <div className="flex items-start justify-between gap-2.5">
-                <div className="flex items-center gap-3 min-w-0 flex-1">
-                  {/* Contained Avatar (52px × 52px, Circular, Cover) */}
-                  <div className="relative shrink-0 w-[52px] h-[52px] min-w-[52px] max-w-[52px] min-h-[52px] max-h-[52px]">
-                    <div className="w-[52px] h-[52px] min-w-[52px] min-h-[52px] rounded-full overflow-hidden border-2 border-white dark:border-[#1A453B] shadow-xs bg-slate-100 dark:bg-[#14382F]">
-                      <img
-                        src={prof.image}
-                        alt={prof.name}
-                        className="w-full h-full object-cover block rounded-full"
-                      />
-                    </div>
-                    <span
-                      className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-[#00A982] border-2 border-white dark:border-[#102F27] shadow-xs"
-                      title="Available"
-                    />
-                  </div>
-
-                  {/* Professional Info (Aligned Name / Role / Rating) */}
-                  <div className="min-w-0 flex-1">
-                    <h3 className="text-sm font-heading font-black text-[#19332A] dark:text-[#F4FAF7] truncate leading-tight">
-                      {prof.name}
-                    </h3>
-                    <p className="text-[11px] text-[#5A756C] dark:text-[#A9C5BC] font-semibold truncate mt-0.5 leading-tight">
-                      {prof.role}
-                    </p>
-                    <div className="text-[10px] font-medium text-[#789389] dark:text-[#78958C] mt-1 leading-tight flex items-center gap-1 flex-wrap">
-                      <span className="text-amber-500 font-bold">⭐ {prof.rating}</span>
-                      <span>({prof.reviewCount})</span>
-                      <span className="text-slate-300 dark:text-slate-600">|</span>
-                      <span>{prof.experience}</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Status Badge */}
-                {prof.badge && (
-                  <span
-                    className={`text-[9.5px] font-bold px-2.5 py-0.5 rounded-full ${prof.badgeClass} shrink-0 whitespace-nowrap leading-tight self-start`}
-                  >
-                    {prof.badge}
-                  </span>
-                )}
-              </div>
-
-              {/* Description (Flexible middle area with consistent height) */}
-              <p className="text-[11px] text-[#4E685F] dark:text-[#A9C5BC] font-medium leading-relaxed my-3 min-h-[34px] line-clamp-2">
-                {prof.description}
-              </p>
-
-              {/* Expertise Tags (Anchored above action row) */}
-              <div className="flex flex-wrap gap-1.5 mb-3.5 min-h-[46px] content-start">
-                {prof.tags.map((tag) => (
-                  <span
-                    key={tag.text}
-                    className={`text-[9.5px] font-semibold px-2.5 py-0.5 rounded-full ${tag.lightBg} ${tag.darkBg} leading-tight transition-colors`}
-                  >
-                    {tag.text}
-                  </span>
-                ))}
-              </div>
-
-              {/* Bottom Action Row (Horizontally & vertically aligned across all 3 cards) */}
-              <div className="mt-auto pt-3 border-t border-black/5 dark:border-white/5 flex items-center justify-between gap-2">
-                <div className="flex items-center gap-1.5 text-[10.5px] font-semibold text-[#4E685F] dark:text-[#8EAAA1]">
-                  <svg className="w-3.5 h-3.5 text-[#006C56] dark:text-[#00A982] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
-                  <span>Available this week</span>
-                </div>
-
-                {onNavigate ? (
-                  <button
-                    onClick={() => onNavigate("appointments")}
-                    type="button"
-                    className="w-8 h-8 rounded-full bg-[#D4EFE2] text-[#004D3D] hover:bg-[#004D3D] hover:text-white dark:bg-[#164438] dark:text-[#00A982] dark:hover:bg-[#00A982] dark:hover:text-[#071C17] flex items-center justify-center text-xs font-bold shrink-0 transition-all shadow-2xs group-hover:scale-105 cursor-pointer"
-                    aria-label={`Book session with ${prof.name}`}
-                  >
-                    →
-                  </button>
-                ) : (
-                  <Link
-                    href="/appointments"
-                    className="w-8 h-8 rounded-full bg-[#D4EFE2] text-[#004D3D] hover:bg-[#004D3D] hover:text-white dark:bg-[#164438] dark:text-[#00A982] dark:hover:bg-[#00A982] dark:hover:text-[#071C17] flex items-center justify-center text-xs font-bold shrink-0 transition-all shadow-2xs group-hover:scale-105"
-                    aria-label={`Book session with ${prof.name}`}
-                  >
-                    →
-                  </Link>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+      {/* 2. Recommended for You (Dynamic Horizontal Therapist Carousel) */}
+      <RecommendedProfessionals onNavigate={onNavigate} />
 
       {/* 3. Today's Motivation Card */}
       <div className="bg-white dark:bg-[#102F27] rounded-3xl p-5 border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs space-y-3 transition-colors">
@@ -373,7 +182,7 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
             </div>
             <div>
               <h2 className="text-sm font-heading font-black text-[#19332A] dark:text-[#F4FAF7] leading-tight">
-                Today's Motivation
+                Today&apos;s Motivation
               </h2>
               <p className="text-[10px] text-[#789389] dark:text-[#78958C] font-medium leading-tight mt-0.5">
                 A little encouragement for your journey.
@@ -473,6 +282,7 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
                   </button>
                 );
               }
+
               return (
                 <Link
                   key={tool.id}
@@ -491,22 +301,32 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
           </div>
         </div>
 
-        {/* Right: Wellness Score (5 cols, Full Height) */}
-        <div className="lg:col-span-5 bg-white dark:bg-[#102F27] rounded-3xl p-5 border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs flex flex-col justify-between gap-3.5 h-full min-h-[204px] transition-colors">
-          <div className="flex items-center gap-2">
-            <div className="w-7.5 h-7.5 rounded-xl bg-[#EAF6F0] dark:bg-[#14382F] text-[#006C56] dark:text-[#00A982] flex items-center justify-center">
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-              </svg>
+        {/* Right: Category Wellness Score (5 cols, Full Height) */}
+        <div
+          onClick={() => openBreakdownModal()}
+          className="lg:col-span-5 bg-white dark:bg-[#102F27] rounded-3xl p-5 border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs flex flex-col justify-between gap-3.5 h-full min-h-[204px] transition-all cursor-pointer hover:border-[#008968]/50 dark:hover:border-[#00A982]/50 group"
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="w-7.5 h-7.5 rounded-xl bg-[#EAF6F0] dark:bg-[#14382F] text-[#006C56] dark:text-[#00A982] flex items-center justify-center">
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="text-xs font-heading font-black text-[#19332A] dark:text-[#F4FAF7] leading-tight">
+                  {currentCategoryName} Wellness
+                </h3>
+                <p className="text-[9.5px] text-[#789389] dark:text-[#78958C] font-medium leading-tight mt-0.5">
+                  {isCurrentAssessed
+                    ? "Your active life-stage wellness score"
+                    : "Complete your first wellness check"}
+                </p>
+              </div>
             </div>
-            <div>
-              <h3 className="text-xs font-heading font-black text-[#19332A] dark:text-[#F4FAF7] leading-tight">
-                Wellness Score
-              </h3>
-              <p className="text-[9.5px] text-[#789389] dark:text-[#78958C] font-medium leading-tight mt-0.5">
-                Your overall well-being this week.
-              </p>
-            </div>
+            <span className="text-[10px] font-bold text-[#006C56] dark:text-[#00A982] group-hover:translate-x-0.5 transition-transform">
+              Overview →
+            </span>
           </div>
 
           {/* Circular Score and Status */}
@@ -527,10 +347,14 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
                   cx="50"
                   cy="50"
                   r="40"
-                  className="text-[#008968] dark:text-[#00A982]"
+                  className="text-[#008968] dark:text-[#00A982] transition-all duration-700"
                   strokeWidth="10"
                   strokeDasharray={2 * Math.PI * 40}
-                  strokeDashoffset={2 * Math.PI * 40 * (1 - wellnessScore / 100)}
+                  strokeDashoffset={
+                    isCurrentAssessed && currentScore !== null
+                      ? 2 * Math.PI * 40 * (1 - currentScore / 100)
+                      : 2 * Math.PI * 40
+                  }
                   strokeLinecap="round"
                   stroke="currentColor"
                   fill="transparent"
@@ -538,18 +362,35 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
               </svg>
               <div className="absolute inset-0 flex items-center justify-center">
                 <span className="text-base font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
-                  {wellnessScore}%
+                  {isCurrentAssessed && currentScore !== null ? `${currentScore}%` : "--"}
                 </span>
               </div>
             </div>
 
             {/* Text Status */}
             <div className="space-y-0.5">
-              <h4 className="text-xs font-black text-[#008968] dark:text-[#00A982] leading-tight">
-                Good Progress!
-              </h4>
+              <div className="flex items-center gap-1.5">
+                <h4 className="text-xs font-black text-[#008968] dark:text-[#00A982] leading-tight">
+                  {isCurrentAssessed && currentScore !== null
+                    ? currentScore >= 80
+                      ? "Flourishing!"
+                      : currentScore >= 60
+                      ? "Good Progress!"
+                      : currentScore >= 40
+                      ? "Fair Balance"
+                      : "Needs Attention"
+                    : "Not Assessed Yet"}
+                </h4>
+                {isCurrentAssessed && (
+                  <span className="px-1.5 py-0.2 rounded-md bg-[#008968]/10 text-[#008968] dark:text-[#00A982] text-[8.5px] font-bold">
+                    {levelBadge}
+                  </span>
+                )}
+              </div>
               <p className="text-[10px] text-[#789389] dark:text-[#78958C] font-medium leading-tight">
-                Keep taking small steps.
+                {isCurrentAssessed
+                  ? "Based on 5-question check-in."
+                  : "Click to start 1-minute check-in."}
               </p>
             </div>
           </div>

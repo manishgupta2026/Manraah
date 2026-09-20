@@ -1,6 +1,7 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
+import { useAuth } from "@/frontend/lib/context/AuthContext";
 import { getInitials, getPastelBgColor, getPastelTextColor } from "@/frontend/lib/avatar-helper";
 
 export interface UserAvatarProps {
@@ -8,50 +9,68 @@ export interface UserAvatarProps {
     name?: string | null;
     sanctuaryName?: string | null;
     avatar?: string | null;
+    profileImage?: string | null;
   } | null;
   name?: string | null;
   avatar?: string | null;
+  profileImage?: string | null;
   sizeClass?: string;
   className?: string;
+  showBorder?: boolean;
 }
 
 export default function UserAvatar({
-  user,
+  user: explicitUser,
   name: explicitName,
   avatar: explicitAvatar,
+  profileImage: explicitProfileImage,
   sizeClass = "w-9 h-9 text-xs",
   className = "",
+  showBorder = true,
 }: UserAvatarProps) {
-  const avatarUrl = explicitAvatar ?? user?.avatar;
-  const displayName = explicitName ?? user?.name ?? user?.sanctuaryName ?? "Member";
+  // Use auth context for fallback if explicit props not provided
+  let authUser = null;
+  try {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const auth = useAuth();
+    authUser = auth.user;
+  } catch {
+    // Context may not be mounted in standalone isolated pages
+  }
 
-  const hasCustomAvatar =
-    avatarUrl &&
-    avatarUrl !== "" &&
-    avatarUrl !== "/images/user_avatar.jpg" &&
-    !avatarUrl.includes("placeholder") &&
-    (avatarUrl.startsWith("data:") || avatarUrl.startsWith("/") || avatarUrl.startsWith("http"));
+  const user = explicitUser !== undefined ? explicitUser : authUser;
+  const avatarUrl = explicitProfileImage || explicitAvatar || user?.profileImage || user?.avatar || (user ? "/images/user_avatar.jpg" : null);
+  const displayName = explicitName || user?.sanctuaryName || user?.name || "Sanctuary Member";
 
-  if (hasCustomAvatar) {
+  const [hasError, setHasError] = useState(false);
+
+  // If valid image URL is available and hasn't errored, render clean circular img
+  if (avatarUrl && !hasError) {
     return (
       <img
         src={avatarUrl}
-        alt={displayName || "Profile"}
-        className={`${sizeClass} rounded-full object-cover border border-white/10 shrink-0 ${className}`}
+        alt={displayName}
+        onError={() => setHasError(true)}
+        className={`${sizeClass} rounded-full object-cover shrink-0 select-none ${
+          showBorder ? "border border-white/20 dark:border-white/10" : ""
+        } ${className}`}
       />
     );
   }
 
-  const initials = getInitials(displayName);
+  // Consistent Fallback Initials Badge
+  const initials = getInitials(displayName) || "M";
   const bgColor = getPastelBgColor(displayName);
   const textColor = getPastelTextColor(displayName);
 
   return (
     <div
       style={{ backgroundColor: bgColor, color: textColor }}
-      className={`${sizeClass} rounded-full flex items-center justify-center font-bold tracking-wider border border-white/10 shrink-0 select-none shadow-xs ${className}`}
+      className={`${sizeClass} rounded-full flex items-center justify-center font-bold tracking-wider shrink-0 select-none shadow-xs ${
+        showBorder ? "border border-white/20 dark:border-white/10" : ""
+      } ${className}`}
     >
-      {initials || "M"}
+      {initials}
     </div>
   );
 }

@@ -62,12 +62,14 @@ export async function POST(request: Request) {
 
     const rawCategory = normalizeCat(user.selected_category);
 
+    const userAvatarUrl = user.avatar || user.image || "/images/user_avatar.jpg";
     const userProfile = {
       id: user.id,
       name: sanctuaryName,
       sanctuaryName: sanctuaryName,
       email: user.email,
-      avatar: user.avatar || "/images/user_avatar.jpg",
+      avatar: userAvatarUrl,
+      profileImage: userAvatarUrl,
       streakDays: streakInfo.currentStreak,
       mindfulnessMinutes: user.mindfulness_minutes || 0,
       currentMood: user.current_mood || "Sanctuary Member",

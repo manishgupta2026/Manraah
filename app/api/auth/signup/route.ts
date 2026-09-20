@@ -184,6 +184,7 @@ export async function POST(request: Request) {
       country: cleanCountry || undefined,
       gender: cleanGender || undefined,
       avatar: "/images/user_avatar.jpg",
+      profileImage: "/images/user_avatar.jpg",
       streakDays: streakInfo.currentStreak,
       mindfulnessMinutes: 0,
       currentMood: "Sanctuary Member",

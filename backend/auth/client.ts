@@ -110,6 +110,7 @@ export async function signOut(): Promise<void> {
     document.cookie = "manraah_session=; path=/; max-age=0";
     document.cookie = "userType=; path=/; max-age=0";
     document.cookie = "manraah_userType=; path=/; max-age=0";
+    window.dispatchEvent(new CustomEvent("manraah_auth_changed", { detail: { session: null } }));
   }
 }
 
@@ -119,6 +120,20 @@ function getCookie(name: string): string | null {
   const parts = value.split(`; ${name}=`);
   if (parts.length === 2) return decodeURIComponent(parts.pop()?.split(";").shift() || "");
   return null;
+}
+
+export function updateClientSession(session: AuthSession): void {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem(SESSION_KEY, JSON.stringify(session));
+    document.cookie = `manraah_session=${JSON.stringify(session)}; path=/; max-age=2592000`;
+    if (session.user?.selectedCategory) {
+      document.cookie = `userType=${session.user.selectedCategory}; path=/; max-age=2592000`;
+    }
+    window.dispatchEvent(new CustomEvent("manraah_auth_changed", { detail: { session } }));
+  } catch (err) {
+    console.error("Failed to update client session:", err);
+  }
 }
 
 export function getClientSession(): AuthSession {

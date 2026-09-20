@@ -1,20 +1,15 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { getClientSession } from "@/backend/auth/client";
+import { useAuth } from "@/frontend/lib/context/AuthContext";
+import UserAvatar from "@/frontend/components/ui/UserAvatar";
 
 export default function DesktopSidebar() {
   const pathname = usePathname();
-  const [userName, setUserName] = useState("Aditi");
-
-  useEffect(() => {
-    const session = getClientSession();
-    if (session?.user) {
-      setUserName(session.user.name || session.user.sanctuaryName || "Aditi");
-    }
-  }, []);
+  const { user } = useAuth();
+  const userName = user?.sanctuaryName || user?.name || "Sanctuary Member";
 
   const navItems = [
     {
@@ -127,12 +122,12 @@ export default function DesktopSidebar() {
         ))}
       </nav>
 
-      {/* Bottom Avatar + Initials + View Profile */}
+      {/* Bottom Avatar + Profile Name + View Profile */}
       <div className="flex flex-col items-center text-center space-y-1">
-        <div className="w-9 h-9 rounded-full bg-[#FF8577] text-white flex items-center justify-center font-bold text-xs shadow-xs">
-          {userName.slice(0, 2).toUpperCase()}
-        </div>
-        <p className="text-[11px] font-bold text-white leading-tight mt-1">{userName.split(" ")[0]}</p>
+        <Link href="/profile" className="hover:opacity-90 transition-opacity">
+          <UserAvatar user={user} sizeClass="w-9 h-9 text-xs" />
+        </Link>
+        <p className="text-[11px] font-bold text-white leading-tight mt-1 truncate max-w-[76px] px-0.5">{userName.split(" ")[0]}</p>
         <Link
           href="/profile"
           className="text-[9px] text-[#8EAAA1] dark:text-[#78958C] hover:text-white transition-colors"

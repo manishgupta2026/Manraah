@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { getClientSession } from "@/backend/auth/client";
+import { useAuth } from "@/frontend/lib/context/AuthContext";
+import UserAvatar from "@/frontend/components/ui/UserAvatar";
 
 interface CommunityPostItem {
   id: string;
@@ -77,8 +78,8 @@ const COMMUNITY_CATEGORIES = [
 ];
 
 export default function CommunityView() {
-  const session = getClientSession();
-  const userName = session?.user?.name || session?.user?.sanctuaryName || "Aditi";
+  const { user } = useAuth();
+  const userName = user?.sanctuaryName || user?.name || "Sanctuary Member";
 
   const [posts, setPosts] = useState<CommunityPostItem[]>(INITIAL_POSTS);
   const [selectedCategory, setSelectedCategory] = useState("All Circles");
@@ -269,10 +270,8 @@ export default function CommunityView() {
         <div className="lg:col-span-8 flex flex-col gap-5">
           {/* Create Post Widget */}
           <div className="bg-white dark:bg-[#102F27] rounded-3xl p-5 sm:p-6 border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs space-y-4 transition-colors">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-[#006C56] text-white flex items-center justify-center font-bold text-xs">
-                {userName.slice(0, 2).toUpperCase()}
-              </div>
+            <div className="flex items-center gap-2.5">
+              <UserAvatar user={user} sizeClass="w-8 h-8 text-xs" />
               <div>
                 <h3 className="text-xs font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
                   Share with the Sanctuary

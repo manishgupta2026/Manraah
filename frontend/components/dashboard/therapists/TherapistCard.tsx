@@ -1,0 +1,141 @@
+"use client";
+
+import React from "react";
+import Link from "next/link";
+import { UnifiedTherapist } from "./types";
+
+interface TherapistCardProps {
+  therapist: UnifiedTherapist;
+  onNavigate?: (section: "dashboard" | "appointments" | "journey" | "resources" | "ai-companion") => void;
+  onBook?: (therapist: UnifiedTherapist) => void;
+}
+
+export default function TherapistCard({
+  therapist,
+  onNavigate,
+  onBook,
+}: TherapistCardProps) {
+  const handleClick = (e: React.MouseEvent) => {
+    if (onBook) {
+      e.preventDefault();
+      onBook(therapist);
+    } else if (onNavigate) {
+      e.preventDefault();
+      onNavigate("appointments");
+    }
+  };
+
+  return (
+    <div
+      className={`${therapist.bgTint} ${therapist.borderClass} rounded-3xl p-5 flex flex-col justify-between shadow-2xs hover:shadow-md transition-all duration-200 group h-full min-w-0 overflow-hidden select-none`}
+    >
+      {/* Top Row: Avatar + Info Header + Status Badge */}
+      <div className="flex items-start justify-between gap-2.5">
+        <div className="flex items-center gap-3 min-w-0 flex-1">
+          {/* Contained Avatar (52px × 52px, Circular, Cover) */}
+          <div className="relative shrink-0 w-[52px] h-[52px] min-w-[52px] max-w-[52px] min-h-[52px] max-h-[52px]">
+            <div className="w-[52px] h-[52px] min-w-[52px] min-h-[52px] rounded-full overflow-hidden border-2 border-white dark:border-[#1A453B] shadow-xs bg-slate-100 dark:bg-[#14382F]">
+              <img
+                src={therapist.profileImage || therapist.image || "/images/therapists/default-professional.jpg"}
+                alt={therapist.name}
+                className="w-full h-full object-cover block rounded-full"
+                loading="lazy"
+                onError={(e) => {
+                  const target = e.currentTarget;
+                  if (!target.src.includes("default-professional.jpg")) {
+                    target.src = "/images/therapists/default-professional.jpg";
+                  }
+                }}
+              />
+            </div>
+            <span
+              className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-[#00A982] border-2 border-white dark:border-[#102F27] shadow-xs"
+              title="Available"
+            />
+          </div>
+
+          {/* Professional Info (Aligned Name / Role / Rating) */}
+          <div className="min-w-0 flex-1">
+            <h3 className="text-sm font-heading font-black text-[#19332A] dark:text-[#F4FAF7] truncate leading-tight">
+              {therapist.name}
+            </h3>
+            <p className="text-[11px] text-[#5A756C] dark:text-[#A9C5BC] font-semibold truncate mt-0.5 leading-tight">
+              {therapist.role}
+            </p>
+            <div className="text-[10px] font-medium text-[#789389] dark:text-[#78958C] mt-1 leading-tight flex items-center gap-1 flex-wrap">
+              <span className="text-amber-500 font-bold">⭐ {therapist.rating}</span>
+              <span>({therapist.reviewCount})</span>
+              <span className="text-slate-300 dark:text-slate-600">|</span>
+              <span>{therapist.experience}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Status Badge */}
+        {therapist.badge && (
+          <span
+            className={`text-[9.5px] font-bold px-2.5 py-0.5 rounded-full ${therapist.badgeClass} shrink-0 whitespace-nowrap leading-tight self-start`}
+          >
+            {therapist.badge}
+          </span>
+        )}
+      </div>
+
+      {/* Description (Constrained middle area with consistent height) */}
+      <p className="text-[11px] text-[#4E685F] dark:text-[#A9C5BC] font-medium leading-relaxed my-3 min-h-[34px] line-clamp-2">
+        {therapist.description}
+      </p>
+
+      {/* Expertise Tags (Anchored above action row) */}
+      <div className="flex flex-wrap gap-1.5 mb-3.5 min-h-[46px] content-start">
+        {therapist.tags.map((tag) => (
+          <span
+            key={tag.text}
+            className={`text-[9.5px] font-semibold px-2.5 py-0.5 rounded-full ${tag.lightBg} ${tag.darkBg} leading-tight transition-colors`}
+          >
+            {tag.text}
+          </span>
+        ))}
+      </div>
+
+      {/* Bottom Action Row (Horizontally & vertically aligned across all cards) */}
+      <div className="mt-auto pt-3 border-t border-black/5 dark:border-white/5 flex items-center justify-between gap-2">
+        <div className="flex items-center gap-1.5 text-[10.5px] font-semibold text-[#4E685F] dark:text-[#8EAAA1]">
+          <svg
+            className="w-3.5 h-3.5 text-[#006C56] dark:text-[#00A982] shrink-0"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+            />
+          </svg>
+          <span className="truncate">{therapist.availability}</span>
+        </div>
+
+        {onNavigate || onBook ? (
+          <button
+            onClick={handleClick}
+            type="button"
+            className="w-8 h-8 rounded-full bg-[#D4EFE2] text-[#004D3D] hover:bg-[#004D3D] hover:text-white dark:bg-[#164438] dark:text-[#00A982] dark:hover:bg-[#00A982] dark:hover:text-[#071C17] flex items-center justify-center text-xs font-bold shrink-0 transition-all shadow-2xs group-hover:scale-105 cursor-pointer"
+            aria-label={`Book session with ${therapist.name}`}
+          >
+            →
+          </button>
+        ) : (
+          <Link
+            href="/appointments"
+            className="w-8 h-8 rounded-full bg-[#D4EFE2] text-[#004D3D] hover:bg-[#004D3D] hover:text-white dark:bg-[#164438] dark:text-[#00A982] dark:hover:bg-[#00A982] dark:hover:text-[#071C17] flex items-center justify-center text-xs font-bold shrink-0 transition-all shadow-2xs group-hover:scale-105"
+            aria-label={`Book session with ${therapist.name}`}
+          >
+            →
+          </Link>
+        )}
+      </div>
+    </div>
+  );
+}

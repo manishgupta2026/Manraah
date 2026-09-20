@@ -21,6 +21,7 @@ export interface UserProfile {
   name?: string;
   sanctuaryName?: string;
   avatar: string;
+  profileImage?: string;
   email: string;
   phone?: string;
   dob?: string;
@@ -78,6 +79,7 @@ export interface Therapist {
   name: string;
   title: string;
   avatar: string;
+  profileImage?: string;
   specialties: string[];
   rating: number;
   reviewCount: number;

@@ -31,11 +31,14 @@ export async function GET(request: Request) {
       await updateUserSanctuaryName(user.id, sanctuaryName);
     }
 
+    const avatarUrl = user.avatar || user.image || "/images/user_avatar.jpg";
     return NextResponse.json({
       id: user.id,
       name: sanctuaryName,
       sanctuaryName: sanctuaryName,
       email: user.email,
+      avatar: avatarUrl,
+      profileImage: avatarUrl,
       category: (
         user.selected_category === "working_professional" || user.selected_category === "working-professional" || user.selected_category === "young_pro" || user.selected_category === "youngprofessional" ? "working-professional" :
         user.selected_category === "couples" || user.selected_category === "couple" ? "couple" :
@@ -48,7 +51,7 @@ export async function GET(request: Request) {
     });
   } catch (err: any) {
     console.error("[API GET /api/profile error]:", err);
-    return NextResponse.json({ category: "student" });
+    return NextResponse.json({ category: "student", avatar: "/images/user_avatar.jpg", profileImage: "/images/user_avatar.jpg" });
   }
 }
 
@@ -62,7 +65,7 @@ export async function PUT(request: Request) {
 
   try {
     const body = await request.json();
-    const { sanctuaryName, category, avatar } = body;
+    const { sanctuaryName, category, avatar, profileImage } = body;
 
     // 1. Verify user exists
     const existingUsers = await getUserById(userId);
@@ -119,20 +122,24 @@ export async function PUT(request: Request) {
     }
 
     // 4. Update avatar if provided
-    if (avatar) {
-      await updateUserAvatar(userId, avatar);
+    const newAvatar = avatar || profileImage;
+    if (newAvatar) {
+      await updateUserAvatar(userId, newAvatar);
     }
 
     // 5. Fetch updated user details
     const updatedUsers = await getUserById(userId);
     const updatedUser = updatedUsers[0];
 
+    const finalAvatar = updatedUser.avatar || updatedUser.image || newAvatar || "/images/user_avatar.jpg";
+
     const userProfile = {
       id: updatedUser.id,
       name: updatedUser.sanctuary_name || updatedUser.name,
       sanctuaryName: updatedUser.sanctuary_name || updatedUser.name,
       email: updatedUser.email,
-      avatar: updatedUser.avatar,
+      avatar: finalAvatar,
+      profileImage: finalAvatar,
       selectedCategory: updatedUser.selected_category || "student",
       streakDays: updatedUser.streak_days,
       mindfulnessMinutes: updatedUser.mindfulness_minutes,
