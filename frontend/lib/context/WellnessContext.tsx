@@ -59,11 +59,14 @@ interface WellnessContextType {
   dashboardData: WellnessState | null;
   isLoading: boolean;
   isCheckingIn: boolean;
+  isCheckInModalOpen: boolean;
   hasCheckedInToday: boolean;
   currentStreak: number;
   todayMood: any | null;
   history: any[];
   insights: any | null;
+  openCheckInModal: () => void;
+  closeCheckInModal: () => void;
   refetchWellnessData: () => Promise<void>;
   refetchDashboardData: () => Promise<void>;
   performDailyCheckIn: () => Promise<any>;
@@ -77,7 +80,6 @@ interface WellnessContextType {
     factors?: string;
     gratitude?: string;
     categoryId?: string;
-    answers?: { questionId: number; answer: number }[];
   }) => Promise<any>;
 }
 
@@ -89,6 +91,10 @@ export function WellnessProvider({ children }: { children: ReactNode }) {
   const [journeyInsights, setJourneyInsights] = useState<any | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isCheckingIn, setIsCheckingIn] = useState<boolean>(false);
+  const [isCheckInModalOpen, setIsCheckInModalOpen] = useState<boolean>(false);
+
+  const openCheckInModal = () => setIsCheckInModalOpen(true);
+  const closeCheckInModal = () => setIsCheckInModalOpen(false);
 
   const fetchWellness = async () => {
     try {
@@ -237,11 +243,14 @@ export function WellnessProvider({ children }: { children: ReactNode }) {
         dashboardData: wellnessData,
         isLoading,
         isCheckingIn,
+        isCheckInModalOpen,
         hasCheckedInToday,
         currentStreak,
         todayMood,
         history: historyList,
         insights: journeyInsights,
+        openCheckInModal,
+        closeCheckInModal,
         refetchWellnessData,
         refetchDashboardData: refetchWellnessData,
         performDailyCheckIn,

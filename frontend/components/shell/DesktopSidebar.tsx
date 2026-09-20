@@ -103,7 +103,7 @@ export default function DesktopSidebar() {
   ];
 
   return (
-    <aside className="w-[88px] shrink-0 bg-[#052820] dark:bg-[#0A221C] border-r border-[#0d3b30] dark:border-[#1d3f35] text-white flex flex-col justify-between items-center py-3.5 sticky top-[62px] h-[calc(100vh-62px)] z-40 select-none transition-colors duration-200 overflow-y-auto overflow-x-hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+    <aside className="w-[88px] shrink-0 bg-[#052820] dark:bg-[#0A221C] border-r border-[#0d3b30] dark:border-[#1d3f35] text-white flex flex-col justify-between items-center py-3.5 sticky top-14 sm:top-16 h-[calc(100vh-3.5rem)] sm:h-[calc(100vh-4rem)] z-40 select-none transition-colors duration-200 overflow-y-auto overflow-x-hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
       {/* Navigation Icons Stack */}
       <nav className="flex flex-col items-center gap-1.5 w-full px-1">
         {navItems.map((item) => (

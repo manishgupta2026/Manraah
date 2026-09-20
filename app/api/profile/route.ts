@@ -31,7 +31,11 @@ export async function GET(request: Request) {
       await updateUserSanctuaryName(user.id, sanctuaryName);
     }
 
-    const avatarUrl = user.avatar || user.image || "/images/user_avatar.jpg";
+    const avatarUrl = user.avatar || user.image || "";
+    const previouslyLoggedIn = Boolean(user.has_logged_in_before);
+    const count = Number(user.login_count || 0);
+    const isFirst = !previouslyLoggedIn && count <= 1;
+
     return NextResponse.json({
       id: user.id,
       name: sanctuaryName,
@@ -47,7 +51,10 @@ export async function GET(request: Request) {
       ),
       streakDays: user.streak_days,
       mindfulnessMinutes: user.mindfulness_minutes,
-      currentMood: user.current_mood
+      currentMood: user.current_mood,
+      hasLoggedInBefore: previouslyLoggedIn,
+      loginCount: count,
+      isFirstLogin: isFirst,
     });
   } catch (err: any) {
     console.error("[API GET /api/profile error]:", err);

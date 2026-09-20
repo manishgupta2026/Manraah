@@ -350,9 +350,7 @@ export default function CommunityView() {
                   {/* Author Header */}
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#006C56] to-[#00A982] text-white flex items-center justify-center font-bold text-xs shadow-xs">
-                        {post.author.slice(0, 2).toUpperCase()}
-                      </div>
+                      <UserAvatar name={post.author} avatar={post.avatar} sizeClass="w-9 h-9 text-xs" />
                       <div>
                         <h4 className="text-xs font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
                           {post.author}

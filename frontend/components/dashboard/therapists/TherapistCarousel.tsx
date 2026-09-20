@@ -88,7 +88,7 @@ export default function TherapistCarousel({
         {displayList.map((therapist, idx) => (
           <div
             key={`${therapist.id}-${idx}`}
-            className="w-[290px] sm:w-[330px] lg:w-[348px] shrink-0 flex flex-col h-full"
+            className="w-[290px] sm:w-[330px] lg:w-[348px] shrink-0 flex flex-col h-[238px]"
           >
             <TherapistCard
               therapist={therapist}

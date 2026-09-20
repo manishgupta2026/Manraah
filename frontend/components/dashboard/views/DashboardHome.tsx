@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { getClientSession } from "@/backend/auth/client";
+import { useAuth } from "@/frontend/lib/context/AuthContext";
 import { useWellness } from "@/frontend/lib/context/WellnessContext";
 import { useWellnessScore } from "@/frontend/lib/context/WellnessScoreContext";
 import RecommendedProfessionals from "../therapists/RecommendedProfessionals";
@@ -20,7 +21,38 @@ interface DashboardHomeProps {
   onNavigate?: (section: "dashboard" | "appointments" | "journey" | "resources" | "ai-companion") => void;
 }
 
+interface UpcomingAppointmentData {
+  id: string;
+  therapistId: string;
+  therapistName: string;
+  therapistRole: string;
+  therapistImage: string;
+  appointmentDate: string;
+  status: string;
+}
+
+function formatAppointmentDisplay(isoDateStr: string): string {
+  try {
+    const d = new Date(isoDateStr);
+    if (isNaN(d.getTime())) return "Upcoming Session";
+
+    const day = d.getDate();
+    const month = d.toLocaleDateString("en-US", { month: "short" });
+    const year = d.getFullYear();
+    const time = d.toLocaleTimeString("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    });
+
+    return `${day} ${month} ${year}, ${time}`;
+  } catch {
+    return "Upcoming Session";
+  }
+}
+
 export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
+  const { user } = useAuth();
   const { currentStreak, hasCheckedInToday } = useWellness();
   const {
     currentCategory,
@@ -30,32 +62,101 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
     levelBadge,
     openBreakdownModal,
     openAssessment,
+    openReattemptModal,
   } = useWellnessScore();
 
-  const [userName, setUserName] = useState("Aditi");
-  const [userCategoryLabel, setUserCategoryLabel] = useState("parenting");
-  const [nextAppointment, setNextAppointment] = useState("6 Oct 2026, 09:00 PM");
+  const [userName, setUserName] = useState(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const session = getClientSession();
+        return session?.user?.name || session?.user?.sanctuaryName || "Sanctuary Member";
+      } catch {
+        // ignore
+      }
+    }
+    return "Sanctuary Member";
+  });
+
+  const [isFirstLoginState, setIsFirstLoginState] = useState<boolean>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const session = getClientSession();
+        if (session?.isFirstLogin === true || session?.user?.isFirstLogin === true || session?.user?.hasLoggedInBefore === false) {
+          return true;
+        }
+      } catch {
+        // ignore
+      }
+    }
+    return false;
+  });
+
+  const [upcomingAppointment, setUpcomingAppointment] = useState<UpcomingAppointmentData | null>(null);
+  const [isLoadingAppointment, setIsLoadingAppointment] = useState(true);
   const [quoteIndex, setQuoteIndex] = useState(0);
 
   useEffect(() => {
     const session = getClientSession();
     if (session?.user) {
-      const rawName = session.user.name || session.user.sanctuaryName || "Aditi";
+      const rawName = session.user.name || session.user.sanctuaryName || "Sanctuary Member";
       setUserName(rawName);
 
-      const cat = (session.user.selectedCategory || "student").toLowerCase();
-      if (cat.includes("work") || cat.includes("young_pro")) {
-        setUserCategoryLabel("career");
-      } else if (cat.includes("parent")) {
-        setUserCategoryLabel("parenting");
-      } else if (cat.includes("couple")) {
-        setUserCategoryLabel("relationship");
-      } else if (cat.includes("other")) {
-        setUserCategoryLabel("mindfulness");
-      } else {
-        setUserCategoryLabel("academic");
+      const isFirst =
+        session.isFirstLogin === true ||
+        session.user.isFirstLogin === true ||
+        session.user.hasLoggedInBefore === false ||
+        user?.hasLoggedInBefore === false;
+      setIsFirstLoginState(Boolean(isFirst));
+    } else if (user) {
+      const rawName = user.name || user.sanctuaryName || "Sanctuary Member";
+      setUserName(rawName);
+      if (typeof user.hasLoggedInBefore === "boolean") {
+        setIsFirstLoginState(!user.hasLoggedInBefore);
       }
     }
+  }, [user]);
+
+  // Fetch real upcoming appointment from backend
+  useEffect(() => {
+    let isMounted = true;
+
+    async function loadUpcomingAppointment() {
+      try {
+        setIsLoadingAppointment(true);
+        const res = await fetch("/api/appointments/upcoming");
+        if (res.ok) {
+          const data = await res.json();
+          if (isMounted) {
+            setUpcomingAppointment(data.upcomingAppointment || null);
+          }
+        } else {
+          if (isMounted) {
+            setUpcomingAppointment(null);
+          }
+        }
+      } catch (err) {
+        console.error("Error loading upcoming appointment:", err);
+        if (isMounted) {
+          setUpcomingAppointment(null);
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoadingAppointment(false);
+        }
+      }
+    }
+
+    loadUpcomingAppointment();
+
+    const handleAppointmentsChange = () => {
+      loadUpcomingAppointment();
+    };
+
+    window.addEventListener("appointments-updated", handleAppointmentsChange);
+    return () => {
+      isMounted = false;
+      window.removeEventListener("appointments-updated", handleAppointmentsChange);
+    };
   }, []);
 
   const handleNextQuote = () => {
@@ -114,13 +215,13 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
   ];
 
   return (
-    <div className="w-full min-w-0 flex flex-col gap-4.5">
+    <div className="w-full min-w-0 flex flex-col gap-5">
       {/* 1. Top Welcome Banner + Streak & Next Appointment Cards */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-0.5">
-        {/* Greeting */}
+        {/* Greeting: WELCOME for first-time login vs WELCOME BACK for returning logins */}
         <div className="space-y-0.5">
           <span className="text-[10px] font-black uppercase tracking-widest text-[#006C56] dark:text-[#00A982]">
-            WELCOME BACK
+            {isFirstLoginState ? "WELCOME" : "WELCOME BACK"}
           </span>
           <h1 className="text-2xl font-heading font-black text-[#19332A] dark:text-[#F4FAF7] leading-tight">
             Hi, {userName}! 👋
@@ -149,19 +250,32 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
             </div>
           </div>
 
-          {/* Next Appointment Card */}
-          <div className="bg-white dark:bg-[#102F27] rounded-2xl p-2.5 px-4 border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs flex items-center gap-3 min-w-[175px] transition-colors">
+          {/* Dynamic Next Appointment Card */}
+          <div
+            onClick={() => {
+              if (onNavigate) {
+                onNavigate("appointments");
+              }
+            }}
+            className="bg-white dark:bg-[#102F27] rounded-2xl p-2.5 px-4 border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs flex items-center gap-3 min-w-[175px] max-w-[240px] transition-all cursor-pointer hover:border-[#008968]/50 dark:hover:border-[#00A982]/50 group"
+          >
             <div className="w-7 h-7 rounded-xl bg-[#EAF6F0] dark:bg-[#14382F] text-[#006C56] dark:text-[#00A982] flex items-center justify-center shrink-0">
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
             </div>
-            <div>
+            <div className="min-w-0 flex-1">
               <p className="text-[9.5px] text-[#789389] dark:text-[#78958C] font-semibold leading-tight">
                 Next Appointment
               </p>
-              <p className="text-[11px] font-black text-[#19332A] dark:text-[#F4FAF7] leading-tight mt-0.5">
-                {nextAppointment}
+              <p className="text-[11px] font-black text-[#19332A] dark:text-[#F4FAF7] leading-tight mt-0.5 truncate">
+                {isLoadingAppointment ? (
+                  <span className="text-[#789389] dark:text-[#78958C] font-medium animate-pulse">Loading...</span>
+                ) : upcomingAppointment ? (
+                  formatAppointmentDisplay(upcomingAppointment.appointmentDate)
+                ) : (
+                  <span className="text-[#789389] dark:text-[#78958C] font-semibold text-[10px]">No upcoming appointment</span>
+                )}
               </p>
             </div>
           </div>
@@ -303,7 +417,13 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
 
         {/* Right: Category Wellness Score (5 cols, Full Height) */}
         <div
-          onClick={() => openBreakdownModal()}
+          onClick={() => {
+            if (isCurrentAssessed && currentScore !== null) {
+              openReattemptModal(currentCategory);
+            } else {
+              openAssessment(currentCategory);
+            }
+          }}
           className="lg:col-span-5 bg-white dark:bg-[#102F27] rounded-3xl p-5 border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs flex flex-col justify-between gap-3.5 h-full min-h-[204px] transition-all cursor-pointer hover:border-[#008968]/50 dark:hover:border-[#00A982]/50 group"
         >
           <div className="flex items-center justify-between">
@@ -318,14 +438,14 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
                   {currentCategoryName} Wellness
                 </h3>
                 <p className="text-[9.5px] text-[#789389] dark:text-[#78958C] font-medium leading-tight mt-0.5">
-                  {isCurrentAssessed
-                    ? "Your active life-stage wellness score"
+                  {isCurrentAssessed && currentScore !== null
+                    ? "Based on your wellness assessment"
                     : "Complete your first wellness check"}
                 </p>
               </div>
             </div>
             <span className="text-[10px] font-bold text-[#006C56] dark:text-[#00A982] group-hover:translate-x-0.5 transition-transform">
-              Overview →
+              {isCurrentAssessed && currentScore !== null ? "Re-attempt Check →" : "Start Check →"}
             </span>
           </div>
 
@@ -375,7 +495,7 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
                     ? currentScore >= 80
                       ? "Flourishing!"
                       : currentScore >= 60
-                      ? "Good Progress!"
+                      ? "Good Progress"
                       : currentScore >= 40
                       ? "Fair Balance"
                       : "Needs Attention"
@@ -388,9 +508,9 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
                 )}
               </div>
               <p className="text-[10px] text-[#789389] dark:text-[#78958C] font-medium leading-tight">
-                {isCurrentAssessed
-                  ? "Based on 5-question check-in."
-                  : "Click to start 1-minute check-in."}
+                {isCurrentAssessed && currentScore !== null
+                  ? "Click to re-attempt assessment."
+                  : "Click to start 5-question check."}
               </p>
             </div>
           </div>

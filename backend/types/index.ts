@@ -20,6 +20,8 @@ export interface UserProfile {
   id: string;
   name?: string;
   sanctuaryName?: string;
+  firstName?: string;
+  lastName?: string;
   avatar: string;
   profileImage?: string;
   email: string;
@@ -33,6 +35,10 @@ export interface UserProfile {
   selectedCategory: UserCategory;
   role?: "user" | "admin";
   onboardingCompleted?: boolean;
+  hasLoggedInBefore?: boolean;
+  loginCount?: number;
+  isFirstLogin?: boolean;
+  lastLoginAt?: string;
 }
 
 export interface AssessmentAnswers {
@@ -54,6 +60,9 @@ export interface AuthSession {
   token: string | null;
   isAuthenticated: boolean;
   role?: "user" | "admin";
+  isFirstLogin?: boolean;
+  hasLoggedInBefore?: boolean;
+  loginCount?: number;
 }
 
 export interface MoodEntry {

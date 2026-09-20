@@ -15,7 +15,7 @@ interface AuthContextType {
   logout: () => Promise<void>;
 }
 
-const DEFAULT_AVATAR = "/images/user_avatar.jpg";
+const DEFAULT_AVATAR = "";
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -33,8 +33,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (session?.user && session.isAuthenticated) {
         const normalizedUser: UserProfile = {
           ...session.user,
-          avatar: session.user.avatar || session.user.profileImage || DEFAULT_AVATAR,
-          profileImage: session.user.profileImage || session.user.avatar || DEFAULT_AVATAR,
+          avatar: session.user.avatar || session.user.profileImage || "",
+          profileImage: session.user.profileImage || session.user.avatar || "",
         };
         setUser(normalizedUser);
         setIsAuthenticated(true);
@@ -55,14 +55,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 name: data.sanctuaryName || data.name || session.user?.name || "Member",
                 sanctuaryName: data.sanctuaryName || data.name || session.user?.sanctuaryName || "Member",
                 email: data.email || session.user?.email || "",
-                avatar: data.avatar || data.profileImage || session.user?.avatar || DEFAULT_AVATAR,
-                profileImage: data.profileImage || data.avatar || session.user?.profileImage || DEFAULT_AVATAR,
+                avatar: data.avatar || data.profileImage || session.user?.avatar || "",
+                profileImage: data.profileImage || data.avatar || session.user?.profileImage || "",
                 selectedCategory: data.category || data.selectedCategory || session.user?.selectedCategory || "student",
                 streakDays: typeof data.streakDays === "number" ? data.streakDays : (session.user?.streakDays || 1),
                 mindfulnessMinutes: typeof data.mindfulnessMinutes === "number" ? data.mindfulnessMinutes : (session.user?.mindfulnessMinutes || 0),
                 currentMood: data.currentMood || session.user?.currentMood || "Sanctuary Member",
                 role: session.user?.role,
                 onboardingCompleted: session.user?.onboardingCompleted,
+                hasLoggedInBefore: typeof data.hasLoggedInBefore === "boolean" ? data.hasLoggedInBefore : session.user?.hasLoggedInBefore,
+                loginCount: typeof data.loginCount === "number" ? data.loginCount : session.user?.loginCount,
+                isFirstLogin: typeof data.isFirstLogin === "boolean" ? data.isFirstLogin : session.user?.isFirstLogin,
               };
 
               setUser(freshUser);

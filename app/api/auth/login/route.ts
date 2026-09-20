@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { saveUserAssessment } from "@/backend/queries/assessment";
 import { generateUniqueSanctuaryName } from "@/backend/auth/sanctuary";
-import { getUserByEmail, updateUserSanctuaryName, updateUserCategory } from "@/backend/queries/users";
+import { getUserByEmail, updateUserSanctuaryName, updateUserCategory, recordUserLoginSuccess } from "@/backend/queries/users";
 import { recordUserLogin } from "@/backend/queries/streak";
 import { verifyPassword } from "@/backend/auth/crypto";
 
@@ -45,8 +45,9 @@ export async function POST(request: Request) {
       await updateUserSanctuaryName(user.id, sanctuaryName);
     }
 
-    // Record login streak activity
+    // Record login streak activity and track first-login vs returning-user status in DB
     const streakInfo = await recordUserLogin(user.id);
+    const loginStatus = await recordUserLoginSuccess(user.id);
 
     function normalizeCat(c: string | undefined): string {
       if (!c) return "student";
@@ -75,6 +76,9 @@ export async function POST(request: Request) {
       currentMood: user.current_mood || "Sanctuary Member",
       selectedCategory: rawCategory,
       onboardingCompleted: !!user.onboarding_completed,
+      isFirstLogin: loginStatus.isFirstLogin,
+      hasLoggedInBefore: loginStatus.hasLoggedInBefore,
+      loginCount: loginStatus.loginCount,
     };
 
     if (category) {
@@ -107,6 +111,9 @@ export async function POST(request: Request) {
       currentStreak: streakInfo.currentStreak,
       longestStreak: streakInfo.longestStreak,
       lastLoginAt: streakInfo.lastLoginAt,
+      isFirstLogin: loginStatus.isFirstLogin,
+      hasLoggedInBefore: loginStatus.hasLoggedInBefore,
+      loginCount: loginStatus.loginCount,
     };
 
     // Set session cookie

@@ -207,41 +207,11 @@ export async function POST(req: Request) {
 
     const rawMood = body.mood || "Calm";
     const noteText = (body.note || body.reflection || "").trim();
-    const rawCategory = body.categoryId || body.category || session.user?.selectedCategory || "student";
-    const categoryId = normalizeCategorySlug(rawCategory);
-    const answers = Array.isArray(body.answers) ? body.answers : [];
-
     const todayDateStr = getCalendarDayString(new Date());
 
-    let computedScore: number | null = null;
-    let assessmentResult: any = null;
-
-    // 1. If 5 answers provided, calculate and save wellness assessment
-    if (answers.length === 5) {
-      try {
-        assessmentResult = await submitWellnessAssessment(userId, categoryId, answers);
-        computedScore = assessmentResult.score;
-      } catch (assessErr) {
-        console.error("[checkins POST] Assessment calculation error:", assessErr);
-      }
-    }
-
-    // If score not calculated via answers, look up latest score for this category
-    if (computedScore === null) {
-      const prevScores = await sql`
-        SELECT score FROM wellness_assessments
-        WHERE user_id = ${userId} AND category_id = ${categoryId}
-        ORDER BY completed_at DESC
-        LIMIT 1
-      `;
-      if (prevScores.length > 0) {
-        computedScore = Number(prevScores[0].score);
-      }
-    }
-
-    // 2. Upsert into daily_checkins for today
+    // 1. Upsert into daily_checkins for today
     const existingCheckin = await sql`
-      SELECT id, mood, note, category, wellness_score, created_at, checkin_date
+      SELECT id, mood, note, created_at, checkin_date
       FROM daily_checkins
       WHERE user_id = ${userId} AND checkin_date = ${todayDateStr}
       LIMIT 1
@@ -257,11 +227,8 @@ export async function POST(req: Request) {
       await sql`
         UPDATE daily_checkins
         SET mood = ${rawMood},
-            category = ${categoryId},
             note = ${noteText || null},
             reflection = ${noteText || null},
-            wellness_score = COALESCE(${computedScore}, wellness_score),
-            answers_json = ${JSON.stringify(answers)}::jsonb,
             updated_at = CURRENT_TIMESTAMP
         WHERE id = ${savedId}
       `;
@@ -274,9 +241,6 @@ export async function POST(req: Request) {
           sleep_quality,
           stress,
           work_life_balance,
-          category,
-          wellness_score,
-          answers_json,
           note, 
           reflection, 
           checkin_date, 
@@ -289,9 +253,6 @@ export async function POST(req: Request) {
           4,
           'Manageable',
           3,
-          ${categoryId},
-          ${computedScore},
-          ${JSON.stringify(answers)}::jsonb,
           ${noteText || null}, 
           ${noteText || null}, 
           ${todayDateStr}, 
@@ -304,7 +265,7 @@ export async function POST(req: Request) {
       createdAt = insertRes[0]?.created_at || new Date();
     }
 
-    // 3. Deterministically recalculate streak from all dates
+    // 2. Deterministically recalculate streak from all check-in dates
     const allDatesRes = await sql`
       SELECT DISTINCT checkin_date, created_at
       FROM daily_checkins
@@ -315,11 +276,10 @@ export async function POST(req: Request) {
     const allDates = allDatesRes.map((r: any) => r.checkin_date || r.created_at);
     const { currentStreak, longestStreak } = calculateCheckinStreak(allDates);
 
-    // 4. Update users table and user_streaks table
+    // 3. Update users table and user_streaks table
     await sql`
       UPDATE users SET
         current_mood = ${rawMood},
-        selected_category = ${categoryId},
         streak_days = ${currentStreak}
       WHERE id = ${userId}
     `;
@@ -333,14 +293,10 @@ export async function POST(req: Request) {
         last_checkin_date = CURRENT_TIMESTAMP
     `;
 
-    const levelInfo = getWellnessLevelInfo(computedScore ?? 75);
-
     const checkInRecord = {
       id: String(savedId),
       userId,
       mood: rawMood,
-      category: categoryId,
-      wellnessScore: computedScore,
       note: noteText,
       reflection: noteText,
       checkinDate: todayDateStr,
@@ -353,10 +309,6 @@ export async function POST(req: Request) {
       hasCheckedInToday: true,
       currentStreak,
       longestStreak,
-      wellnessScore: computedScore,
-      category: categoryId,
-      levelBadge: levelInfo.levelBadge,
-      levelDescription: levelInfo.levelDescription,
       checkIn: checkInRecord,
       todayCheckin: checkInRecord,
     });

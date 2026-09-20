@@ -104,14 +104,26 @@ interface CategoryContextType {
 const CategoryContext = createContext<CategoryContextType | undefined>(undefined);
 
 export function CategoryProvider({ children }: { children: ReactNode }) {
-  const [category, setCategory] = useState<UserCategory>("student");
+  const [category, setCategory] = useState<UserCategory>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const session = getClientSession();
+        if (session?.user?.selectedCategory) {
+          return session.user.selectedCategory as UserCategory;
+        }
+      } catch {
+        // ignore
+      }
+    }
+    return "working_professional" as UserCategory;
+  });
   const pathname = usePathname();
 
-  // Sync category with user session on mount
+  // Sync category with user session if changed
   useEffect(() => {
     if (typeof window !== "undefined") {
       const session = getClientSession();
-      if (session?.user?.selectedCategory) {
+      if (session?.user?.selectedCategory && session.user.selectedCategory !== category) {
         setCategory(session.user.selectedCategory as UserCategory);
       }
     }

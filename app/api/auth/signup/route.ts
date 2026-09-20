@@ -190,6 +190,9 @@ export async function POST(request: Request) {
       currentMood: "Sanctuary Member",
       selectedCategory: validatedCategory,
       onboardingCompleted: false,
+      isFirstLogin: true,
+      hasLoggedInBefore: false,
+      loginCount: 1,
     };
 
     const sessionData = {
@@ -200,6 +203,9 @@ export async function POST(request: Request) {
       currentStreak: streakInfo.currentStreak,
       longestStreak: streakInfo.longestStreak,
       lastLoginAt: streakInfo.lastLoginAt,
+      isFirstLogin: true,
+      hasLoggedInBefore: false,
+      loginCount: 1,
     };
 
     // 8. Create HTTP session cookies

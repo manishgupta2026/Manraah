@@ -1,14 +1,30 @@
 import { sql } from "@/backend/db/client";
 
-/**
- * Encapsulated user-related Neon PostgreSQL queries
- */
+let userLoginSchemaEnsured = false;
+
+export async function ensureUserLoginSchema() {
+  if (userLoginSchemaEnsured || (globalThis as any).__userLoginSchemaEnsured) return;
+  userLoginSchemaEnsured = true;
+  (globalThis as any).__userLoginSchemaEnsured = true;
+
+  try {
+    await sql`
+      ALTER TABLE users 
+      ADD COLUMN IF NOT EXISTS has_logged_in_before BOOLEAN DEFAULT FALSE,
+      ADD COLUMN IF NOT EXISTS login_count INT DEFAULT 0,
+      ADD COLUMN IF NOT EXISTS last_login_at TIMESTAMP WITH TIME ZONE;
+    `;
+  } catch (err) {
+    // ignore
+  }
+}
 
 export async function getUserByEmail(email: string) {
+  await ensureUserLoginSchema();
   const cleanEmail = email.trim().toLowerCase();
 
   const results = await sql`
-    SELECT id, name, email, password_hash, sanctuary_name, avatar, selected_category, streak_days, mindfulness_minutes, current_mood, onboarding_completed
+    SELECT id, name, email, password_hash, sanctuary_name, avatar, selected_category, streak_days, mindfulness_minutes, current_mood, onboarding_completed, has_logged_in_before, login_count, last_login_at
     FROM users
     WHERE LOWER(email) = ${cleanEmail}
     LIMIT 1
@@ -17,13 +33,56 @@ export async function getUserByEmail(email: string) {
 }
 
 export async function getUserById(id: string) {
+  await ensureUserLoginSchema();
   const results = await sql`
-    SELECT id, name, email, sanctuary_name, avatar, selected_category, streak_days, mindfulness_minutes, current_mood, onboarding_completed
+    SELECT id, name, email, sanctuary_name, avatar, selected_category, streak_days, mindfulness_minutes, current_mood, onboarding_completed, has_logged_in_before, login_count, last_login_at
     FROM users
     WHERE id = ${id}
     LIMIT 1
   `;
   return results;
+}
+
+export async function recordUserLoginSuccess(userId: string): Promise<{
+  isFirstLogin: boolean;
+  hasLoggedInBefore: boolean;
+  loginCount: number;
+}> {
+  await ensureUserLoginSchema();
+
+  const userRows = await sql`
+    SELECT id, has_logged_in_before, login_count
+    FROM users
+    WHERE id = ${userId}
+    LIMIT 1
+  `;
+
+  if (userRows.length === 0) {
+    return { isFirstLogin: false, hasLoggedInBefore: true, loginCount: 1 };
+  }
+
+  const u = userRows[0];
+  const currentCount = Number(u.login_count || 0);
+  const previouslyLoggedIn = Boolean(u.has_logged_in_before);
+
+  // If user has never logged in before, this is their first login
+  const isFirstLogin = !previouslyLoggedIn && currentCount <= 1;
+
+  // Mark as logged in and increment count in DB
+  const nextCount = currentCount + 1;
+  await sql`
+    UPDATE users
+    SET has_logged_in_before = TRUE,
+        login_count = ${nextCount},
+        last_login_at = CURRENT_TIMESTAMP
+    WHERE id = ${userId}
+  `;
+
+  return {
+    isFirstLogin,
+    hasLoggedInBefore: previouslyLoggedIn,
+    loginCount: nextCount,
+  };
 }
 
 export async function getUserBySanctuaryName(name: string) {
@@ -55,9 +114,18 @@ export async function createUser(
   gender: string | null,
   initialAnswersJson: string
 ) {
+  await ensureUserLoginSchema();
   return await sql`
-    INSERT INTO users (id, name, email, password_hash, sanctuary_name, selected_category, phone, dob, country, gender, streak_days, mindfulness_minutes, current_mood, initial_answers_json)
-    VALUES (${userId}, ${name}, ${email.trim().toLowerCase()}, ${passwordHash}, ${sanctuaryName}, ${category}, ${phone}, ${dob}, ${country}, ${gender}, 1, 0, 'Sanctuary Member', ${initialAnswersJson}::jsonb)
+    INSERT INTO users (
+      id, name, email, password_hash, sanctuary_name, selected_category, 
+      phone, dob, country, gender, streak_days, mindfulness_minutes, current_mood, 
+      initial_answers_json, has_logged_in_before, login_count, last_login_at
+    )
+    VALUES (
+      ${userId}, ${name}, ${email.trim().toLowerCase()}, ${passwordHash}, ${sanctuaryName}, ${category}, 
+      ${phone}, ${dob}, ${country}, ${gender}, 1, 0, 'Sanctuary Member', 
+      ${initialAnswersJson}::jsonb, FALSE, 1, CURRENT_TIMESTAMP
+    )
   `;
 }
 
@@ -149,3 +217,16 @@ export async function updateUserStreak(userId: string) {
   
   return currentStreak;
 }
+
+export async function deleteUserById(userId: string): Promise<void> {
+  try {
+    await sql`DELETE FROM user_streaks WHERE user_id = ${userId}`;
+    await sql`DELETE FROM daily_moods WHERE user_id = ${userId}`;
+    await sql`DELETE FROM category_wellness_scores WHERE user_id = ${userId}`;
+    await sql`DELETE FROM appointments WHERE user_id = ${userId}`;
+    await sql`DELETE FROM users WHERE id = ${userId}`;
+  } catch (err) {
+    // ignore
+  }
+}
+

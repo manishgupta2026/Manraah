@@ -89,7 +89,7 @@ function DashboardContent({ initialSection }: UnifiedDashboardProps) {
         {/* =================================================================== */}
         {/* PERSISTENT STICKY LEFT COMPANION PANEL (Constant across all sections)*/}
         {/* =================================================================== */}
-        <aside className="w-full lg:w-[320px] lg:min-w-[320px] lg:max-w-[320px] shrink-0 select-none pointer-events-auto lg:sticky lg:top-[78px] self-start z-10">
+        <aside className="w-full lg:w-[320px] lg:min-w-[320px] lg:max-w-[320px] shrink-0 select-none pointer-events-auto lg:sticky lg:top-[88px] self-start z-10">
           <WellnessCompanionPanel
             onCheckCondition={() => handleNavigate("journey")}
           />

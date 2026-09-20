@@ -19,6 +19,8 @@ import { AuthProvider } from "@/frontend/lib/context/AuthContext";
 import { ThemeProvider } from "@/frontend/lib/context/ThemeContext";
 import WellnessAssessmentModal from "../wellness/WellnessAssessmentModal";
 import WellnessBreakdownModal from "../wellness/WellnessBreakdownModal";
+import WellnessReattemptModal from "../wellness/WellnessReattemptModal";
+import DailyCheckInModal from "../wellness/DailyCheckInModal";
 import LoginWellnessPrompt from "../wellness/LoginWellnessPrompt";
 
 const STANDALONE_ROUTES = [
@@ -136,9 +138,11 @@ export default function AppShell({ children }: { children: ReactNode }) {
                     </div>
                   )}
 
-                  {/* Global Wellness Score Assessment & Breakdown Modals */}
+                  {/* Global Daily Check-In & Wellness Score Assessment Modals */}
+                  <DailyCheckInModal />
                   <WellnessAssessmentModal />
                   <WellnessBreakdownModal />
+                  <WellnessReattemptModal />
                   <LoginWellnessPrompt />
                 </HeaderProvider>
               </WellnessScoreProvider>

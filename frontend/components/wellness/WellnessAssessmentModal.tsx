@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useWellnessScore } from "@/frontend/lib/context/WellnessScoreContext";
-import { useWellness } from "@/frontend/lib/context/WellnessContext";
 
 interface QuestionItem {
   id: number;
@@ -13,17 +12,6 @@ interface QuestionItem {
   reverseScored: boolean;
   optionsJson?: { score: number; text: string }[];
 }
-
-const MOOD_OPTIONS = [
-  { id: "Happy", label: "Happy", emoji: "😊", color: "from-amber-400/20 to-emerald-400/20" },
-  { id: "Calm", label: "Calm", emoji: "😌", color: "from-emerald-400/20 to-teal-400/20" },
-  { id: "Neutral", label: "Neutral", emoji: "😐", color: "from-slate-400/20 to-zinc-400/20" },
-  { id: "Anxious", label: "Anxious", emoji: "😟", color: "from-violet-400/20 to-indigo-400/20" },
-  { id: "Sad", label: "Sad", emoji: "😔", color: "from-blue-400/20 to-cyan-400/20" },
-  { id: "Stressed", label: "Stressed", emoji: "😤", color: "from-rose-400/20 to-orange-400/20" },
-  { id: "Tired", label: "Tired", emoji: "😴", color: "from-purple-400/20 to-blue-400/20" },
-  { id: "Motivated", label: "Motivated", emoji: "💪", color: "from-orange-400/20 to-amber-400/20" },
-];
 
 const DEFAULT_OPTIONS = [
   { score: 1, text: "Never / Rarely" },
@@ -39,27 +27,17 @@ export default function WellnessAssessmentModal() {
     activeAssessmentCategory,
     allCategories,
     closeAssessment,
-    submitFullCheckIn,
+    submitAssessment,
   } = useWellnessScore();
 
-  const { refetchWellnessData } = useWellness();
-
-  // Modal Steps:
-  // 0: Mood selection
-  // 1: Optional Note
-  // 2 to 6: 5 Category Questions (question 0 to 4)
-  // 7: Result Screen
-  const [step, setStep] = useState<number>(0);
-  const [selectedMood, setSelectedMood] = useState<string>("Calm");
-  const [note, setNote] = useState<string>("");
   const [questions, setQuestions] = useState<QuestionItem[]>([]);
   const [loadingQuestions, setLoadingQuestions] = useState(false);
   const [questionStep, setQuestionStep] = useState(0); // 0 to 4
   const [answers, setAnswers] = useState<Record<number, number>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submittedScore, setSubmittedScore] = useState<number | null>(null);
-  const [newStreak, setNewStreak] = useState<number>(1);
   const [submissionError, setSubmissionError] = useState<string | null>(null);
+  const [isCompleted, setIsCompleted] = useState(false);
 
   const activeCategoryInfo =
     allCategories.find((c) => c.id === activeAssessmentCategory) || {
@@ -69,20 +47,18 @@ export default function WellnessAssessmentModal() {
           ? "Working Professional"
           : activeAssessmentCategory.charAt(0).toUpperCase() + activeAssessmentCategory.slice(1),
       icon: "🌱",
-      description: "Daily wellness check-in",
+      description: "Category wellness assessment",
     };
 
   // Reset state and load questions whenever modal opens
   useEffect(() => {
     if (!isAssessmentModalOpen) return;
 
-    setStep(0);
-    setSelectedMood("Calm");
-    setNote("");
     setQuestionStep(0);
     setAnswers({});
     setSubmittedScore(null);
     setSubmissionError(null);
+    setIsCompleted(false);
 
     async function loadQuestions() {
       try {
@@ -111,22 +87,9 @@ export default function WellnessAssessmentModal() {
   const currentQ = questions[questionStep];
   const isCurrentQAnswered = currentQ && answers[currentQ.id] !== undefined;
 
-  const handleSelectMood = (moodId: string) => {
-    setSelectedMood(moodId);
-  };
-
   const handleSelectOption = (score: number) => {
     if (!currentQ) return;
     setAnswers((prev) => ({ ...prev, [currentQ.id]: score }));
-  };
-
-  const handleNextFromMood = () => {
-    setStep(1); // Go to optional note
-  };
-
-  const handleNextFromNote = () => {
-    setStep(2); // Go to question 1
-    setQuestionStep(0);
   };
 
   const handleNextQuestion = () => {
@@ -138,8 +101,6 @@ export default function WellnessAssessmentModal() {
   const handlePrevQuestion = () => {
     if (questionStep > 0) {
       setQuestionStep((prev) => prev - 1);
-    } else {
-      setStep(1); // Back to note
     }
   };
 
@@ -148,7 +109,7 @@ export default function WellnessAssessmentModal() {
 
     for (const q of questions) {
       if (answers[q.id] === undefined) {
-        setSubmissionError("Please answer all 5 questions before completing.");
+        setSubmissionError("Please answer all 5 questions before calculating your score.");
         return;
       }
     }
@@ -162,22 +123,13 @@ export default function WellnessAssessmentModal() {
         answer: answers[q.id],
       }));
 
-      const res = await submitFullCheckIn(
-        selectedMood,
-        note,
-        activeAssessmentCategory,
-        formattedAnswers
-      );
+      const res = await submitAssessment(activeAssessmentCategory, formattedAnswers);
 
       setSubmittedScore(res.score);
-      setNewStreak(res.currentStreak || 1);
-      setStep(3); // Result step
-
-      // Refresh background wellness & journey data
-      await refetchWellnessData();
+      setIsCompleted(true);
     } catch (err: any) {
-      console.error("Failed to submit check-in:", err);
-      setSubmissionError(err.message || "Failed to submit check-in. Please try again.");
+      console.error("Failed to submit assessment:", err);
+      setSubmissionError(err.message || "Failed to calculate wellness score. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -200,10 +152,10 @@ export default function WellnessAssessmentModal() {
             </div>
             <div>
               <h2 className="text-base sm:text-lg font-heading font-black text-[#19332A] dark:text-[#F4FAF7] leading-tight">
-                Today&apos;s Wellness Check-In
+                {activeCategoryInfo.name} Wellness Assessment
               </h2>
               <p className="text-[11.5px] text-[#789389] dark:text-[#78958C] font-medium">
-                Take one minute for yourself.
+                5 targeted questions to calculate your category wellness score.
               </p>
             </div>
           </div>
@@ -222,297 +174,201 @@ export default function WellnessAssessmentModal() {
             <div className="py-20 text-center space-y-3">
               <div className="w-9 h-9 border-3 border-[#008968] border-t-transparent rounded-full animate-spin mx-auto" />
               <p className="text-xs text-[#789389] dark:text-[#78958C] font-medium">
-                Preparing your check-in...
+                Loading assessment questions...
               </p>
             </div>
-          ) : step === 0 ? (
-            /* STEP 1: MOOD SELECTION */
-            <div className="space-y-5">
-              <div>
-                <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#006C56] dark:text-[#00A982]">
-                  Step 1 of 3
-                </span>
-                <h3 className="text-base sm:text-lg font-heading font-black text-[#19332A] dark:text-[#F4FAF7] mt-0.5">
-                  How are you feeling right now?
-                </h3>
-                <p className="text-xs text-[#6B857C] dark:text-[#A9C5BC] font-medium mt-1">
-                  Select the mood that best resonates with your current state.
-                </p>
-              </div>
-
-              {/* 8 Large Emoji Buttons with Spring Animation & Glow */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-1">
-                {MOOD_OPTIONS.map((mood) => {
-                  const isSelected = selectedMood === mood.id;
-                  return (
-                    <motion.button
-                      key={mood.id}
-                      type="button"
-                      whileHover={{ scale: 1.04, y: -2 }}
-                      whileTap={{ scale: 0.96 }}
-                      transition={{ type: "spring", stiffness: 400, damping: 17 }}
-                      onClick={() => handleSelectMood(mood.id)}
-                      className={`p-3.5 sm:p-4 rounded-2xl flex flex-col items-center justify-center gap-2 border transition-all cursor-pointer select-none relative overflow-hidden ${
-                        isSelected
-                          ? "bg-[#EAF6F0] dark:bg-[#14382F] border-[#008968] dark:border-[#00A982] shadow-lg shadow-[#008968]/15 ring-2 ring-[#008968]/30 dark:ring-[#00A982]/30"
-                          : "bg-[#F8FCFA] dark:bg-[#0E2A23] border-[#E2ECE6] dark:border-[#23483E] hover:border-[#008968]/50 dark:hover:border-[#00A982]/50 hover:bg-[#F2FAF6] dark:hover:bg-[#13352B]"
-                      }`}
-                    >
-                      <span className="text-3xl sm:text-4xl filter drop-shadow-xs">
-                        {mood.emoji}
-                      </span>
-                      <span
-                        className={`text-xs font-bold leading-tight ${
-                          isSelected
-                            ? "text-[#006C56] dark:text-[#00A982] font-black"
-                            : "text-[#19332A] dark:text-[#F4FAF7]"
-                        }`}
-                      >
-                        {mood.label}
-                      </span>
-
-                      {isSelected && (
-                        <motion.div
-                          layoutId="activeMoodCheck"
-                          className="absolute top-2 right-2 w-4 h-4 rounded-full bg-[#006C56] text-white flex items-center justify-center text-[9px] font-bold"
-                        >
-                          ✓
-                        </motion.div>
-                      )}
-                    </motion.button>
-                  );
-                })}
-              </div>
-            </div>
-          ) : step === 1 ? (
-            /* STEP 2: OPTIONAL NOTE / REFLECTION */
-            <div className="space-y-4">
-              <div>
-                <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#006C56] dark:text-[#00A982]">
-                  Step 2 of 3
-                </span>
-                <h3 className="text-base sm:text-lg font-heading font-black text-[#19332A] dark:text-[#F4FAF7] mt-0.5">
-                  Want to share what&apos;s on your mind?
-                </h3>
-                <p className="text-xs text-[#6B857C] dark:text-[#A9C5BC] font-medium mt-1">
-                  Optional reflection to look back on in your journey timeline.
-                </p>
-              </div>
-
-              {/* Selected Mood Preview */}
-              <div className="flex items-center gap-2 p-2.5 px-3 rounded-xl bg-[#EAF6F0] dark:bg-[#14382F] border border-[#D2E8DC] dark:border-[#23483E] text-xs font-bold text-[#006C56] dark:text-[#00A982] w-fit">
-                <span>Selected Mood:</span>
-                <span>
-                  {MOOD_OPTIONS.find((m) => m.id === selectedMood)?.emoji}{" "}
-                  {selectedMood}
-                </span>
-              </div>
-
-              {/* Textarea */}
-              <div className="space-y-1.5 pt-1">
-                <label className="text-[11px] font-bold text-[#4F685F] dark:text-[#A9C5BC]">
-                  Personal note or triggers (optional)
-                </label>
-                <textarea
-                  value={note}
-                  onChange={(e) => setNote(e.target.value)}
-                  placeholder="I had a stressful class today, but feeling grounded after a short walk..."
-                  rows={4}
-                  className="w-full p-3.5 rounded-2xl bg-[#F8FCFA] dark:bg-[#0E2A23] border border-[#E2ECE6] dark:border-[#23483E] text-[#19332A] dark:text-[#F4FAF7] text-xs placeholder:text-[#A0B8AF] focus:outline-none focus:ring-2 focus:ring-[#008968] dark:focus:ring-[#00A982] transition-all resize-none"
-                />
-              </div>
-            </div>
-          ) : step === 2 && questions.length === 5 ? (
-            /* STEP 3: 5 CATEGORY WELLNESS QUESTIONS */
-            <div className="space-y-5">
-              {/* Progress Indicator */}
-              <div className="space-y-1.5">
-                <div className="flex justify-between text-[11px] font-bold text-[#789389] dark:text-[#78958C]">
-                  <span>
-                    {activeCategoryInfo.name} Wellness: Question {questionStep + 1} of 5
-                  </span>
-                  <span>{Math.round(((questionStep + 1) / 5) * 100)}%</span>
-                </div>
-                <div className="w-full bg-[#EAF6F0] dark:bg-[#14382F] h-2 rounded-full overflow-hidden">
-                  <div
-                    className="bg-[#008968] dark:bg-[#00A982] h-full rounded-full transition-all duration-300"
-                    style={{ width: `${((questionStep + 1) / 5) * 100}%` }}
+          ) : isCompleted && submittedScore !== null ? (
+            /* RESULT SCREEN */
+            <div className="space-y-6 text-center py-4">
+              <motion.div
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                className="relative w-32 h-32 mx-auto flex items-center justify-center"
+              >
+                <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                  <circle
+                    cx="50"
+                    cy="50"
+                    r="40"
+                    className="text-[#E9F3EE] dark:text-[#14382F]"
+                    strokeWidth="8"
+                    fill="none"
                   />
-                </div>
-              </div>
-
-              {/* Question Text */}
-              <div className="min-h-[58px] flex items-center">
-                <h3 className="text-sm sm:text-base font-heading font-bold text-[#19332A] dark:text-[#F4FAF7] leading-snug">
-                  {currentQ?.questionText}
-                </h3>
-              </div>
-
-              {/* 5 Likert Options */}
-              <div className="space-y-2 pt-1">
-                {(currentQ?.optionsJson && currentQ.optionsJson.length === 5
-                  ? currentQ.optionsJson
-                  : DEFAULT_OPTIONS
-                ).map((opt) => {
-                  const isSelected = answers[currentQ?.id] === opt.score;
-                  return (
-                    <button
-                      key={opt.score}
-                      type="button"
-                      onClick={() => handleSelectOption(opt.score)}
-                      className={`w-full p-3.5 rounded-2xl text-left text-xs font-semibold flex items-center justify-between border transition-all cursor-pointer ${
-                        isSelected
-                          ? "bg-[#EAF6F0] dark:bg-[#14382F] border-[#008968] dark:border-[#00A982] text-[#006C56] dark:text-[#00A982] shadow-xs ring-1 ring-[#008968]/30"
-                          : "bg-[#F8FCFA] dark:bg-[#0E2A23] border-[#E2ECE6] dark:border-[#23483E] text-[#19332A] dark:text-[#F4FAF7] hover:border-[#008968]/50"
-                      }`}
-                    >
-                      <span>{opt.text}</span>
-                      <span
-                        className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold border transition-colors ${
-                          isSelected
-                            ? "bg-[#006C56] text-white border-[#006C56]"
-                            : "border-[#A9C5BC] dark:border-[#2E584C] text-[#789389]"
-                        }`}
-                      >
-                        {opt.score}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-
-              {submissionError && (
-                <p className="text-xs text-rose-600 dark:text-rose-400 font-semibold text-center pt-2">
-                  {submissionError}
-                </p>
-              )}
-            </div>
-          ) : step === 3 && submittedScore !== null ? (
-            /* STEP 4: CELEBRATION & RESULTS SCREEN */
-            <div className="py-6 text-center space-y-5">
-              {/* Score & Streak Badges */}
-              <div className="flex items-center justify-center gap-4">
-                <div className="w-20 h-20 rounded-full bg-[#EAF6F0] dark:bg-[#14382F] text-[#006C56] dark:text-[#00A982] flex flex-col items-center justify-center shadow-md border border-[#D2E8DC] dark:border-[#23483E]">
-                  <span className="text-2xl font-heading font-black">{submittedScore}%</span>
-                  <span className="text-[8px] font-extrabold uppercase tracking-wider text-[#789389] dark:text-[#78958C]">
+                  <motion.circle
+                    cx="50"
+                    cy="50"
+                    r="40"
+                    className="text-[#008968] dark:text-[#00A982]"
+                    strokeWidth="8"
+                    strokeDasharray={251.2}
+                    initial={{ strokeDashoffset: 251.2 }}
+                    animate={{
+                      strokeDashoffset: 251.2 - (251.2 * submittedScore) / 100,
+                    }}
+                    transition={{ duration: 1.2, ease: "easeOut" }}
+                    strokeLinecap="round"
+                    fill="none"
+                  />
+                </svg>
+                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                  <span className="text-3xl font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
+                    {submittedScore}%
+                  </span>
+                  <span className="text-[9px] font-bold text-[#789389] dark:text-[#78958C] uppercase tracking-wider">
                     Score
                   </span>
                 </div>
+              </motion.div>
 
-                <div className="w-20 h-20 rounded-full bg-[#FFF8F2] dark:bg-[#14382F] text-[#F28C4B] flex flex-col items-center justify-center shadow-md border border-[#FDE5D2] dark:border-[#23483E]">
-                  <span className="text-xl">🔥</span>
-                  <span className="text-xs font-heading font-black">Day {newStreak}</span>
-                  <span className="text-[8px] font-extrabold uppercase tracking-wider text-[#789389] dark:text-[#78958C]">
-                    Streak
-                  </span>
-                </div>
-              </div>
-
-              {/* Message */}
-              <div className="space-y-1.5 max-w-md mx-auto">
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EAF6F0] dark:bg-[#14382F] text-[#006C56] dark:text-[#00A982] text-xs font-bold">
-                  <span>Mood: {MOOD_OPTIONS.find((m) => m.id === selectedMood)?.emoji} {selectedMood}</span>
-                </div>
-
+              <div className="space-y-2">
+                <span className="inline-block px-3 py-1 rounded-full text-xs font-bold bg-[#EAF6F0] dark:bg-[#14382F] text-[#006C56] dark:text-[#00A982] border border-[#008968]/20">
+                  Assessment Complete
+                </span>
                 <h3 className="text-xl font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
-                  Today&apos;s Check-In Complete!
+                  {activeCategoryInfo.name} Wellness Score Saved!
                 </h3>
-                <p className="text-xs text-[#6B857C] dark:text-[#A9C5BC] font-medium leading-relaxed">
-                  Your daily mood and {activeCategoryInfo.name} wellness score have been securely saved. Your dashboard, streak, and My Journey timeline are now updated.
+                <p className="text-xs text-[#6B857C] dark:text-[#A9C5BC] max-w-sm mx-auto leading-relaxed">
+                  Your wellness baseline is calculated and stored. It will remain saved on your dashboard and won&apos;t recalculate unless you choose to re-attempt.
                 </p>
               </div>
 
-              <div className="pt-2">
+              <div className="pt-4 border-t border-[#E2ECE6] dark:border-[#23483E] flex items-center justify-center">
                 <button
-                  type="button"
                   onClick={closeAssessment}
-                  className="px-6 py-2.5 rounded-2xl bg-[#006C56] hover:bg-[#005241] text-white font-bold text-xs transition-all shadow-md cursor-pointer"
+                  className="px-8 py-3 rounded-full bg-[#004D3D] hover:bg-[#003B2E] dark:bg-[#00A982] dark:hover:bg-[#00916F] text-white dark:text-[#071C17] text-xs font-bold shadow-md shadow-[#004D3D]/20 transition-all cursor-pointer"
                 >
-                  Return to Dashboard
+                  View on Dashboard →
                 </button>
               </div>
             </div>
-          ) : (
-            <div className="py-12 text-center text-xs text-[#789389]">
-              Loading check-in questions...
-            </div>
-          )}
-        </div>
+          ) : questions.length === 5 ? (
+            /* 5 ASSESSMENT QUESTIONS */
+            <div className="space-y-5">
+              {/* Progress & Breadcrumb */}
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#006C56] dark:text-[#00A982]">
+                  Question {questionStep + 1} of 5
+                </span>
+                <span className="text-xs font-bold text-[#789389] dark:text-[#78958C]">
+                  {Math.round(((questionStep + 1) / 5) * 100)}%
+                </span>
+              </div>
 
-        {/* Footer Navigation Actions */}
-        {step !== 3 && !loadingQuestions && (
-          <div className="flex items-center justify-between pt-4 border-t border-[#E2ECE6] dark:border-[#23483E]">
-            {step === 0 ? (
-              <div className="w-full flex justify-end">
-                <button
-                  type="button"
-                  onClick={handleNextFromMood}
-                  className="px-5 py-2.5 rounded-xl bg-[#006C56] text-white text-xs font-bold shadow-sm transition-all hover:bg-[#005241] cursor-pointer flex items-center gap-1.5"
-                >
-                  <span>Continue</span>
-                  <span>→</span>
-                </button>
+              {/* Progress Bar */}
+              <div className="w-full h-1.5 rounded-full bg-[#EAF6F0] dark:bg-[#14382F] overflow-hidden">
+                <motion.div
+                  className="h-full bg-[#006C56] dark:bg-[#00A982] rounded-full"
+                  initial={{ width: 0 }}
+                  animate={{ width: `${((questionStep + 1) / 5) * 100}%` }}
+                  transition={{ duration: 0.3 }}
+                />
               </div>
-            ) : step === 1 ? (
-              <div className="w-full flex items-center justify-between">
-                <button
-                  type="button"
-                  onClick={() => setStep(0)}
-                  className="px-4 py-2 rounded-xl text-xs font-bold text-[#4F685F] dark:text-[#A9C5BC] hover:bg-[#F4FAF7] dark:hover:bg-[#14382F] transition-colors cursor-pointer"
-                >
-                  ← Back to Mood
-                </button>
-                <button
-                  type="button"
-                  onClick={handleNextFromNote}
-                  className="px-5 py-2.5 rounded-xl bg-[#006C56] text-white text-xs font-bold shadow-sm transition-all hover:bg-[#005241] cursor-pointer flex items-center gap-1.5"
-                >
-                  <span>Next: Wellness Questions</span>
-                  <span>→</span>
-                </button>
-              </div>
-            ) : step === 2 ? (
-              <div className="w-full flex items-center justify-between">
+
+              {/* Question Text */}
+              {currentQ && (
+                <div className="space-y-4 pt-1">
+                  <h3 className="text-base sm:text-lg font-heading font-black text-[#19332A] dark:text-[#F4FAF7] leading-snug">
+                    {currentQ.questionText}
+                  </h3>
+
+                  {/* Likert Scale Options */}
+                  <div className="space-y-2 pt-2">
+                    {(currentQ.optionsJson && currentQ.optionsJson.length > 0
+                      ? currentQ.optionsJson
+                      : DEFAULT_OPTIONS
+                    ).map((opt) => {
+                      const isSelected = answers[currentQ.id] === opt.score;
+                      return (
+                        <button
+                          key={opt.score}
+                          type="button"
+                          onClick={() => handleSelectOption(opt.score)}
+                          className={`w-full p-3.5 rounded-2xl flex items-center justify-between border transition-all text-left cursor-pointer ${
+                            isSelected
+                              ? "bg-[#EAF6F0] dark:bg-[#14382F] border-[#008968] dark:border-[#00A982] ring-2 ring-[#008968]/20 dark:ring-[#00A982]/20"
+                              : "bg-[#F8FCFA] dark:bg-[#0E2A23] border-[#E2ECE6] dark:border-[#23483E] hover:border-[#008968]/40 dark:hover:border-[#00A982]/40"
+                          }`}
+                        >
+                          <span
+                            className={`text-xs font-bold ${
+                              isSelected
+                                ? "text-[#006C56] dark:text-[#00A982]"
+                                : "text-[#19332A] dark:text-[#F4FAF7]"
+                            }`}
+                          >
+                            {opt.text}
+                          </span>
+                          <span
+                            className={`w-5 h-5 rounded-full border flex items-center justify-center text-[10px] font-bold ${
+                              isSelected
+                                ? "bg-[#006C56] border-[#006C56] text-white"
+                                : "border-[#789389]/40 text-transparent"
+                            }`}
+                          >
+                            ✓
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {submissionError && (
+                <p className="text-xs font-bold text-red-500 dark:text-red-400">
+                  {submissionError}
+                </p>
+              )}
+
+              {/* Navigation Controls */}
+              <div className="flex items-center justify-between pt-4 border-t border-[#E2ECE6] dark:border-[#23483E]">
                 <button
                   type="button"
                   onClick={handlePrevQuestion}
-                  disabled={isSubmitting}
-                  className="px-4 py-2 rounded-xl text-xs font-bold text-[#4F685F] dark:text-[#A9C5BC] hover:bg-[#F4FAF7] dark:hover:bg-[#14382F] transition-colors cursor-pointer disabled:opacity-50"
+                  disabled={questionStep === 0}
+                  className="px-4 py-2.5 rounded-xl bg-[#F4FAF7] dark:bg-[#14382F] hover:bg-[#E2ECE6] dark:hover:bg-[#1C4E40] text-[#4F685F] dark:text-[#A9C5BC] text-xs font-bold transition-colors disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
                 >
                   ← Previous
                 </button>
 
-                {questionStep === questions.length - 1 ? (
-                  <button
-                    type="button"
-                    onClick={handleSubmit}
-                    disabled={!isCurrentQAnswered || isSubmitting}
-                    className={`px-5 py-2.5 rounded-xl bg-[#006C56] text-white text-xs font-bold shadow-sm transition-all cursor-pointer ${
-                      !isCurrentQAnswered || isSubmitting
-                        ? "opacity-50 cursor-not-allowed"
-                        : "hover:bg-[#005241]"
-                    }`}
-                  >
-                    {isSubmitting ? "Saving Check-In..." : "Complete Check-In ✓"}
-                  </button>
-                ) : (
+                {questionStep < 4 ? (
                   <button
                     type="button"
                     onClick={handleNextQuestion}
                     disabled={!isCurrentQAnswered}
-                    className={`px-5 py-2.5 rounded-xl bg-[#006C56] text-white text-xs font-bold shadow-sm transition-all cursor-pointer ${
-                      !isCurrentQAnswered
-                        ? "opacity-50 cursor-not-allowed"
-                        : "hover:bg-[#005241]"
-                    }`}
+                    className="px-6 py-2.5 rounded-xl bg-[#006C56] hover:bg-[#005241] dark:bg-[#00A982] dark:hover:bg-[#00916F] text-white dark:text-[#071C17] text-xs font-bold transition-all shadow-md shadow-[#006C56]/20 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                   >
                     Next Question →
                   </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={handleSubmit}
+                    disabled={!isCurrentQAnswered || isSubmitting}
+                    className="px-6 py-2.5 rounded-xl bg-[#006C56] hover:bg-[#005241] dark:bg-[#00A982] dark:hover:bg-[#00916F] text-white dark:text-[#071C17] text-xs font-bold transition-all shadow-md shadow-[#006C56]/20 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center gap-2"
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <div className="w-3.5 h-3.5 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                        <span>Calculating Score...</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>Calculate Wellness Score</span>
+                        <span>✦</span>
+                      </>
+                    )}
+                  </button>
                 )}
               </div>
-            ) : null}
-          </div>
-        )}
+            </div>
+          ) : (
+            <div className="py-12 text-center text-xs text-[#789389] dark:text-[#78958C]">
+              No questions found for this category.
+            </div>
+          )}
+        </div>
       </motion.div>
     </div>
   );

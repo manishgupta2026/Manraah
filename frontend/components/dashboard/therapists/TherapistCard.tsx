@@ -29,8 +29,8 @@ export default function TherapistCard({
     <div
       className={`${therapist.bgTint} ${therapist.borderClass} rounded-3xl p-5 flex flex-col justify-between shadow-2xs hover:shadow-md transition-all duration-200 group h-full min-w-0 overflow-hidden select-none`}
     >
-      {/* Top Row: Avatar + Info Header + Status Badge */}
-      <div className="flex items-start justify-between gap-2.5">
+      {/* Top Row: Avatar + Info Header + Status Badge (Fixed 52px Header) */}
+      <div className="flex items-start justify-between gap-2.5 h-[52px] shrink-0">
         <div className="flex items-center gap-3 min-w-0 flex-1">
           {/* Contained Avatar (52px × 52px, Circular, Cover) */}
           <div className="relative shrink-0 w-[52px] h-[52px] min-w-[52px] max-w-[52px] min-h-[52px] max-h-[52px]">
@@ -55,52 +55,54 @@ export default function TherapistCard({
           </div>
 
           {/* Professional Info (Aligned Name / Role / Rating) */}
-          <div className="min-w-0 flex-1">
+          <div className="min-w-0 flex-1 flex flex-col justify-center">
             <h3 className="text-sm font-heading font-black text-[#19332A] dark:text-[#F4FAF7] truncate leading-tight">
               {therapist.name}
             </h3>
             <p className="text-[11px] text-[#5A756C] dark:text-[#A9C5BC] font-semibold truncate mt-0.5 leading-tight">
               {therapist.role}
             </p>
-            <div className="text-[10px] font-medium text-[#789389] dark:text-[#78958C] mt-1 leading-tight flex items-center gap-1 flex-wrap">
-              <span className="text-amber-500 font-bold">⭐ {therapist.rating}</span>
-              <span>({therapist.reviewCount})</span>
-              <span className="text-slate-300 dark:text-slate-600">|</span>
-              <span>{therapist.experience}</span>
+            <div className="text-[10px] font-medium text-[#789389] dark:text-[#78958C] mt-1 leading-tight flex items-center gap-1 truncate">
+              <span className="text-amber-500 font-bold shrink-0">⭐ {therapist.rating}</span>
+              <span className="shrink-0">({therapist.reviewCount})</span>
+              <span className="text-slate-300 dark:text-slate-600 shrink-0">|</span>
+              <span className="truncate">{therapist.experience}</span>
             </div>
           </div>
         </div>
 
         {/* Status Badge */}
-        {therapist.badge && (
+        {therapist.badge ? (
           <span
             className={`text-[9.5px] font-bold px-2.5 py-0.5 rounded-full ${therapist.badgeClass} shrink-0 whitespace-nowrap leading-tight self-start`}
           >
             {therapist.badge}
           </span>
-        )}
+        ) : null}
       </div>
 
-      {/* Description (Constrained middle area with consistent height) */}
-      <p className="text-[11px] text-[#4E685F] dark:text-[#A9C5BC] font-medium leading-relaxed my-3 min-h-[34px] line-clamp-2">
-        {therapist.description}
-      </p>
+      {/* Description (Fixed uniform 2-line height) */}
+      <div className="my-2.5 h-[34px] flex items-center overflow-hidden shrink-0">
+        <p className="text-[11px] text-[#4E685F] dark:text-[#A9C5BC] font-medium leading-relaxed line-clamp-2">
+          {therapist.description}
+        </p>
+      </div>
 
-      {/* Expertise Tags (Anchored above action row) */}
-      <div className="flex flex-wrap gap-1.5 mb-3.5 min-h-[46px] content-start">
+      {/* Expertise Tags (Fixed height, 2 rows max, content-start) */}
+      <div className="flex flex-wrap gap-1.5 mb-3 h-[46px] overflow-hidden content-start shrink-0">
         {therapist.tags.map((tag) => (
           <span
             key={tag.text}
-            className={`text-[9.5px] font-semibold px-2.5 py-0.5 rounded-full ${tag.lightBg} ${tag.darkBg} leading-tight transition-colors`}
+            className={`text-[9.5px] font-semibold px-2.5 py-0.5 rounded-full ${tag.lightBg} ${tag.darkBg} leading-tight transition-colors whitespace-nowrap`}
           >
             {tag.text}
           </span>
         ))}
       </div>
 
-      {/* Bottom Action Row (Horizontally & vertically aligned across all cards) */}
-      <div className="mt-auto pt-3 border-t border-black/5 dark:border-white/5 flex items-center justify-between gap-2">
-        <div className="flex items-center gap-1.5 text-[10.5px] font-semibold text-[#4E685F] dark:text-[#8EAAA1]">
+      {/* Bottom Action Row (Anchored to the bottom across all cards) */}
+      <div className="mt-auto pt-3 border-t border-black/5 dark:border-white/5 flex items-center justify-between gap-2 h-11 shrink-0">
+        <div className="flex items-center gap-1.5 text-[10.5px] font-semibold text-[#4E685F] dark:text-[#8EAAA1] min-w-0">
           <svg
             className="w-3.5 h-3.5 text-[#006C56] dark:text-[#00A982] shrink-0"
             fill="none"

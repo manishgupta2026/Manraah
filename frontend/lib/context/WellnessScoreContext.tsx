@@ -6,7 +6,7 @@ import React, {
   useState,
   useEffect,
   useCallback,
-  useRef,
+  useMemo,
   ReactNode,
 } from "react";
 import { getClientSession } from "@/backend/auth/client";
@@ -55,9 +55,13 @@ interface WellnessScoreContextType {
   isAssessmentModalOpen: boolean;
   activeAssessmentCategory: CanonicalCategorySlug;
   isBreakdownModalOpen: boolean;
+  isReattemptModalOpen: boolean;
   isLoginPromptOpen: boolean;
   openAssessment: (categorySlug?: string) => void;
   closeAssessment: () => void;
+  openReattemptModal: (categorySlug?: string) => void;
+  closeReattemptModal: () => void;
+  confirmReattempt: () => void;
   openBreakdownModal: () => void;
   closeBreakdownModal: () => void;
   dismissLoginPrompt: () => void;
@@ -66,13 +70,15 @@ interface WellnessScoreContextType {
     categoryId: string,
     answers: { questionId: number; answer: number }[]
   ) => Promise<{ success: boolean; score: number }>;
-  submitFullCheckIn: (
-    mood: string,
-    note: string,
-    categoryId: string,
-    answers: { questionId: number; answer: number }[]
-  ) => Promise<{ success: boolean; score: number; currentStreak: number }>;
 }
+
+const CATEGORY_DISPLAY_NAMES: Record<CanonicalCategorySlug, string> = {
+  "student": "Student",
+  "parent": "Parent",
+  "couple": "Couple",
+  "working-professional": "Working Professional",
+  "other": "Others",
+};
 
 const DEFAULT_CATEGORIES: LifeStageWellnessCategory[] = [
   {
@@ -125,7 +131,7 @@ const DEFAULT_CATEGORIES: LifeStageWellnessCategory[] = [
   },
   {
     id: "other",
-    name: "Other",
+    name: "Others",
     description: "Holistic emotional wellbeing & daily balance",
     icon: "self_improvement",
     colorTheme: "teal",
@@ -138,7 +144,7 @@ const DEFAULT_CATEGORIES: LifeStageWellnessCategory[] = [
 ];
 
 function normalizeSlug(raw?: string | null): CanonicalCategorySlug {
-  if (!raw) return "student";
+  if (!raw) return "working-professional";
   const s = raw.trim().toLowerCase().replace(/_/g, "-");
   if (s === "student" || s === "academic") return "student";
   if (s === "parent" || s === "parents") return "parent";
@@ -160,43 +166,50 @@ const WellnessScoreContext = createContext<WellnessScoreContextType | undefined>
 
 export function WellnessScoreProvider({ children }: { children: ReactNode }) {
   const { category: contextCategory } = useCategory();
-  const [currentCategory, setCurrentCategory] = useState<CanonicalCategorySlug>("student");
-  const [currentCategoryName, setCurrentCategoryName] = useState<string>("Student");
+
+  // Stable category initialized synchronously from session/context immediately
+  const [currentCategory, setCurrentCategory] = useState<CanonicalCategorySlug>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const session = getClientSession();
+        const raw = session?.user?.selectedCategory || contextCategory;
+        if (raw) return normalizeSlug(raw);
+      } catch {
+        // ignore
+      }
+    }
+    return normalizeSlug(contextCategory || "working-professional");
+  });
+
+  // currentCategoryName derived stably and synchronously (no blinking or lagging state)
+  const currentCategoryName = CATEGORY_DISPLAY_NAMES[currentCategory] || "Working Professional";
+
   const [currentScore, setCurrentScore] = useState<number | null>(null);
   const [isCurrentAssessed, setIsCurrentAssessed] = useState<boolean>(false);
   const [levelBadge, setLevelBadge] = useState<string>("Gentle Care");
   const [levelDescription, setLevelDescription] = useState<string>("Ready to check in");
   const [allCategories, setAllCategories] = useState<LifeStageWellnessCategory[]>(DEFAULT_CATEGORIES);
   const [recentHistory, setRecentHistory] = useState<WellnessHistoryItem[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
   // Modals
   const [isAssessmentModalOpen, setIsAssessmentModalOpen] = useState(false);
-  const [activeAssessmentCategory, setActiveAssessmentCategory] = useState<CanonicalCategorySlug>("student");
+  const [activeAssessmentCategory, setActiveAssessmentCategory] = useState<CanonicalCategorySlug>("working-professional");
   const [isBreakdownModalOpen, setIsBreakdownModalOpen] = useState(false);
+  const [isReattemptModalOpen, setIsReattemptModalOpen] = useState(false);
   const [isLoginPromptOpen, setIsLoginPromptOpen] = useState(false);
 
-  const prevCategoryRef = useRef<CanonicalCategorySlug | null>(null);
-  const hasInitializedCategoryRef = useRef<boolean>(false);
-
-  // Sync category with CategoryContext / user session
+  // Update currentCategory ONLY when contextCategory actually changes
   useEffect(() => {
-    const session = getClientSession();
-    const rawCat = session?.user?.selectedCategory || contextCategory || "student";
-    const canonical = normalizeSlug(rawCat);
-    setCurrentCategory(canonical);
-
-    const match = DEFAULT_CATEGORIES.find((c) => c.id === canonical);
-    if (match) {
-      setCurrentCategoryName(match.name);
-    }
+    if (!contextCategory) return;
+    const nextCanonical = normalizeSlug(contextCategory);
+    setCurrentCategory((prev) => (prev !== nextCanonical ? nextCanonical : prev));
   }, [contextCategory]);
 
-  // Fetch wellness scores for current category & all 5 categories
+  // Fetch wellness scores strictly for current category
   const fetchScores = useCallback(async () => {
     try {
-      setIsLoading(true);
       setError(null);
       const res = await fetch(`/api/wellness/current?category=${currentCategory}`);
       if (!res.ok) {
@@ -204,10 +217,6 @@ export function WellnessScoreProvider({ children }: { children: ReactNode }) {
       }
       const data = await res.json();
 
-      if (data.category) {
-        setCurrentCategory(data.category.slug);
-        setCurrentCategoryName(data.category.name);
-      }
       setCurrentScore(data.score !== undefined ? data.score : null);
       setIsCurrentAssessed(Boolean(data.assessmentCompleted));
       if (data.levelBadge) setLevelBadge(data.levelBadge);
@@ -215,26 +224,9 @@ export function WellnessScoreProvider({ children }: { children: ReactNode }) {
       if (Array.isArray(data.allCategories) && data.allCategories.length > 0) {
         setAllCategories(data.allCategories);
       }
-
-      // Check if user just switched category and it has not been assessed yet
-      if (
-        hasInitializedCategoryRef.current &&
-        prevCategoryRef.current &&
-        prevCategoryRef.current !== currentCategory &&
-        !data.assessmentCompleted
-      ) {
-        // Automatically open the assessment for the unassessed new category
-        setActiveAssessmentCategory(currentCategory);
-        setIsAssessmentModalOpen(true);
-      }
-
-      prevCategoryRef.current = currentCategory;
-      hasInitializedCategoryRef.current = true;
     } catch (err: any) {
       console.warn("Wellness score fetch warning:", err.message);
       setError(err.message);
-    } finally {
-      setIsLoading(false);
     }
   }, [currentCategory]);
 
@@ -242,34 +234,31 @@ export function WellnessScoreProvider({ children }: { children: ReactNode }) {
     fetchScores();
   }, [fetchScores]);
 
-  // 60-Second Login Prompt: Check if user's CURRENT category has never been assessed
-  useEffect(() => {
-    const session = getClientSession();
-    if (!session?.user) return;
-
-    // Check if dismissed in this session
-    const isDismissed = sessionStorage.getItem(`manraah_wellness_prompt_dismissed_${currentCategory}`);
-    if (isDismissed) return;
-
-    const timer = setTimeout(() => {
-      // Re-verify if current category has no score
-      if (!isCurrentAssessed && currentScore === null) {
-        setIsLoginPromptOpen(true);
-      }
-    }, 60000); // 60 seconds
-
-    return () => clearTimeout(timer);
-  }, [currentCategory, isCurrentAssessed, currentScore]);
-
   const openAssessment = (categorySlug?: string) => {
     const targetSlug = normalizeSlug(categorySlug || currentCategory);
     setActiveAssessmentCategory(targetSlug);
     setIsAssessmentModalOpen(true);
     setIsLoginPromptOpen(false);
+    setIsReattemptModalOpen(false);
   };
 
   const closeAssessment = () => {
     setIsAssessmentModalOpen(false);
+  };
+
+  const openReattemptModal = (categorySlug?: string) => {
+    const targetSlug = normalizeSlug(categorySlug || currentCategory);
+    setActiveAssessmentCategory(targetSlug);
+    setIsReattemptModalOpen(true);
+  };
+
+  const closeReattemptModal = () => {
+    setIsReattemptModalOpen(false);
+  };
+
+  const confirmReattempt = () => {
+    setIsReattemptModalOpen(false);
+    setIsAssessmentModalOpen(true);
   };
 
   const openBreakdownModal = () => {
@@ -325,71 +314,12 @@ export function WellnessScoreProvider({ children }: { children: ReactNode }) {
       )
     );
 
-    // Full background sync
+    // Background sync
     await fetchScores();
 
     return {
       success: true,
       score: result.score,
-    };
-  };
-
-  const submitFullCheckIn = async (
-    mood: string,
-    note: string,
-    categoryId: string,
-    answers: { questionId: number; answer: number }[]
-  ) => {
-    const canonical = normalizeSlug(categoryId);
-    const res = await fetch("/api/checkins", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        mood,
-        note,
-        reflection: note,
-        categoryId: canonical,
-        answers,
-      }),
-    });
-
-    if (!res.ok) {
-      const errData = await res.json().catch(() => ({}));
-      throw new Error(errData.error || "Your check-in couldn't be saved. Please try again.");
-    }
-
-    const result = await res.json();
-    const finalScore = typeof result.wellnessScore === "number" ? result.wellnessScore : 75;
-
-    // Immediately update local state
-    if (canonical === currentCategory) {
-      setCurrentScore(finalScore);
-      setIsCurrentAssessed(true);
-      if (result.levelBadge) setLevelBadge(result.levelBadge);
-      if (result.levelDescription) setLevelDescription(result.levelDescription);
-    }
-
-    setAllCategories((prev) =>
-      prev.map((c) =>
-        c.id === canonical
-          ? {
-              ...c,
-              score: finalScore,
-              completed: true,
-              completedAt: new Date().toISOString(),
-              assessmentCount: c.assessmentCount + 1,
-            }
-          : c
-      )
-    );
-
-    // Full background sync
-    await fetchScores();
-
-    return {
-      success: true,
-      score: finalScore,
-      currentStreak: result.currentStreak || 1,
     };
   };
 
@@ -409,15 +339,18 @@ export function WellnessScoreProvider({ children }: { children: ReactNode }) {
         isAssessmentModalOpen,
         activeAssessmentCategory,
         isBreakdownModalOpen,
+        isReattemptModalOpen,
         isLoginPromptOpen,
         openAssessment,
         closeAssessment,
+        openReattemptModal,
+        closeReattemptModal,
+        confirmReattempt,
         openBreakdownModal,
         closeBreakdownModal,
         dismissLoginPrompt,
         refetchScores: fetchScores,
         submitAssessment,
-        submitFullCheckIn,
       }}
     >
       {children}

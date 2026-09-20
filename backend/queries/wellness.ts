@@ -47,41 +47,76 @@ export interface AssessmentHistoryItem {
   completedAt: string;
 }
 
+let wellnessSchemaEnsured = false;
+
+export async function ensureWellnessAssessmentSchema() {
+  if (wellnessSchemaEnsured || (globalThis as any).__wellnessSchemaEnsured) return;
+  wellnessSchemaEnsured = true;
+  (globalThis as any).__wellnessSchemaEnsured = true;
+
+  try {
+    // 1. Ensure table exists
+    await sql`
+      CREATE TABLE IF NOT EXISTS wellness_assessments (
+        id SERIAL PRIMARY KEY,
+        user_id VARCHAR(100) REFERENCES users(id) ON DELETE CASCADE,
+        category_id VARCHAR(100) REFERENCES wellness_categories(id) ON DELETE CASCADE,
+        raw_score INT NOT NULL CHECK (raw_score BETWEEN 5 AND 25),
+        score INT NOT NULL CHECK (score BETWEEN 0 AND 100),
+        completed_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      )
+    `;
+
+    // 2. Deduplicate older rows if any exist before creating unique index
+    await sql`
+      DELETE FROM wellness_assessments a
+      USING wellness_assessments b
+      WHERE a.user_id = b.user_id 
+        AND a.category_id = b.category_id 
+        AND a.id < b.id
+    `;
+
+    // 3. Ensure Unique Index on (user_id, category_id)
+    await sql`
+      CREATE UNIQUE INDEX IF NOT EXISTS idx_user_category_assessment 
+      ON wellness_assessments(user_id, category_id)
+    `;
+  } catch (err) {
+    // Non-fatal if index already exists or table already configured
+  }
+}
+
 /**
  * Returns the 5 canonical life-stage wellness categories along with user's latest scores.
+ * Only returns a score for categories the user has actually completed.
  */
 export async function getAll5WellnessCategoriesWithScores(
   userId?: string | null
 ): Promise<LifeStageWellnessCategory[]> {
+  await ensureWellnessAssessmentSchema();
+
   try {
-    if (!userId) {
-      return CANONICAL_CATEGORIES.map((c) => ({
-        id: c.id,
-        name: c.name,
-        description: c.description,
-        icon: c.icon,
-        colorTheme: c.colorTheme,
-        active: true,
-        score: null,
-        completedAt: null,
-        completed: false,
-        assessmentCount: 0,
-      }));
+    if (!userId || userId === "guest" || userId === "demo-user") {
+      // Return default unassessed state unless database has entries
+      if (!userId || userId === "guest") {
+        return CANONICAL_CATEGORIES.map((c) => ({
+          id: c.id,
+          name: c.name,
+          description: c.description,
+          icon: c.icon,
+          colorTheme: c.colorTheme,
+          active: true,
+          score: null,
+          completedAt: null,
+          completed: false,
+          assessmentCount: 0,
+        }));
+      }
     }
 
-    // Query distinct latest assessment per category for the authenticated user
+    // Query single assessment per category for this user
     const rows = await sql`
-      WITH latest_assessments AS (
-        SELECT DISTINCT ON (category_id)
-          id,
-          category_id,
-          score,
-          completed_at,
-          COUNT(*) OVER (PARTITION BY category_id) as cat_count
-        FROM wellness_assessments
-        WHERE user_id = ${userId}
-        ORDER BY category_id, completed_at DESC
-      )
       SELECT 
         c.id,
         c.name,
@@ -89,11 +124,12 @@ export async function getAll5WellnessCategoriesWithScores(
         c.icon,
         c.color_theme as "colorTheme",
         c.active,
-        la.score,
-        la.completed_at as "completedAt",
-        la.cat_count as "assessmentCount"
+        wa.score,
+        wa.completed_at as "completedAt",
+        CASE WHEN wa.id IS NOT NULL THEN 1 ELSE 0 END as "assessmentCount"
       FROM wellness_categories c
-      LEFT JOIN latest_assessments la ON c.id = la.category_id
+      LEFT JOIN wellness_assessments wa 
+        ON c.id = wa.category_id AND wa.user_id = ${userId}
       WHERE c.id IN ('student', 'parent', 'couple', 'working-professional', 'other')
       ORDER BY 
         CASE c.id
@@ -132,18 +168,23 @@ export async function getAll5WellnessCategoriesWithScores(
 }
 
 /**
- * Returns the authenticated user's current category details and wellness score.
+ * Returns the authenticated user's current category details and stored wellness score.
+ * If the category has never been assessed by this user, score is null and assessmentCompleted is false.
  */
 export async function getUserCurrentWellness(
   userId: string,
   rawCategory?: string | null
 ): Promise<CurrentWellnessResponse> {
+  await ensureWellnessAssessmentSchema();
   const normalizedCategory = normalizeCategorySlug(rawCategory);
   const allCategories = await getAll5WellnessCategoriesWithScores(userId);
 
   const currentCategoryData = allCategories.find((c) => c.id === normalizedCategory) || {
     id: normalizedCategory,
-    name: normalizedCategory === "working-professional" ? "Working Professional" : normalizedCategory.charAt(0).toUpperCase() + normalizedCategory.slice(1),
+    name:
+      normalizedCategory === "working-professional"
+        ? "Working Professional"
+        : normalizedCategory.charAt(0).toUpperCase() + normalizedCategory.slice(1),
     description: "",
     icon: "spa",
     colorTheme: "emerald",
@@ -213,13 +254,14 @@ export async function getQuestionsForCategory(
 
 /**
  * Submits a 5-question wellness assessment for a user's category.
- * Calculates score on the server and saves the record in Neon DB.
+ * Calculates score on the server and UPSERTS the single record for (userId, categoryId) in Neon DB.
  */
 export async function submitWellnessAssessment(
   userId: string,
   rawCategory: string,
   submittedAnswers: RawAnswerInput[]
 ) {
+  await ensureWellnessAssessmentSchema();
   const categoryId = normalizeCategorySlug(rawCategory);
   const questions = await getQuestionsForCategory(categoryId);
 
@@ -232,8 +274,8 @@ export async function submitWellnessAssessment(
   // 1. Calculate Score Server-Side
   const calculated = calculateCategoryScore(categoryId, submittedAnswers, questions);
 
-  // 2. Insert into wellness_assessments table
-  const insertAssessmentResult = await sql`
+  // 2. Upsert into wellness_assessments table (one active record per user and category)
+  const upsertAssessmentResult = await sql`
     INSERT INTO wellness_assessments (
       user_id,
       category_id,
@@ -250,30 +292,39 @@ export async function submitWellnessAssessment(
       CURRENT_TIMESTAMP,
       CURRENT_TIMESTAMP
     )
+    ON CONFLICT (user_id, category_id) DO UPDATE SET
+      raw_score = EXCLUDED.raw_score,
+      score = EXCLUDED.score,
+      completed_at = CURRENT_TIMESTAMP
     RETURNING id, category_id, raw_score, score, completed_at;
   `;
 
-  const newAssessment = insertAssessmentResult[0];
-  const assessmentId = Number(newAssessment.id);
+  const assessmentRecord = upsertAssessmentResult[0];
+  const assessmentId = Number(assessmentRecord.id);
 
-  // 3. Insert into wellness_answers table
-  for (const ans of calculated.answers) {
-    await sql`
-      INSERT INTO wellness_answers (
-        assessment_id,
-        question_id,
-        answer,
-        normalized_answer,
-        created_at
-      )
-      VALUES (
-        ${assessmentId},
-        ${ans.questionId},
-        ${ans.answer},
-        ${ans.normalizedAnswer},
-        CURRENT_TIMESTAMP
-      )
-    `;
+  // 3. Clear and insert updated responses into wellness_answers
+  try {
+    await sql`DELETE FROM wellness_answers WHERE assessment_id = ${assessmentId}`;
+    for (const ans of calculated.answers) {
+      await sql`
+        INSERT INTO wellness_answers (
+          assessment_id,
+          question_id,
+          answer,
+          normalized_answer,
+          created_at
+        )
+        VALUES (
+          ${assessmentId},
+          ${ans.questionId},
+          ${ans.answer},
+          ${ans.normalizedAnswer},
+          CURRENT_TIMESTAMP
+        )
+      `;
+    }
+  } catch (ansErr) {
+    console.warn("Non-fatal answer log warning:", ansErr);
   }
 
   // 4. Fetch updated wellness state
@@ -285,7 +336,7 @@ export async function submitWellnessAssessment(
     categoryId,
     score: calculated.score,
     rawScore: calculated.rawScore,
-    completedAt: new Date(newAssessment.completed_at).toISOString(),
+    completedAt: new Date(assessmentRecord.completed_at).toISOString(),
     levelBadge: calculated.levelBadge,
     levelDescription: calculated.levelDescription,
     currentWellness: updatedWellness,

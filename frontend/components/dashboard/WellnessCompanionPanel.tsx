@@ -31,8 +31,7 @@ const MOOD_EMOJIS: Record<string, string> = {
 export default function WellnessCompanionPanel({ onCheckCondition }: WellnessCompanionPanelProps) {
   const { theme } = useTheme();
   const isDark = theme === "dark";
-  const { hasCheckedInToday, todayMood, isCheckingIn } = useWellness();
-  const { openAssessment } = useWellnessScore();
+  const { hasCheckedInToday, todayMood, isCheckingIn, openCheckInModal } = useWellness();
   const { user } = useAuth();
 
   const [checkInError, setCheckInError] = useState<string | null>(null);
@@ -51,11 +50,7 @@ export default function WellnessCompanionPanel({ onCheckCondition }: WellnessCom
 
   const handleCheckInClick = () => {
     if (hasCheckedInToday) return;
-    if (onCheckCondition) {
-      onCheckCondition();
-    } else {
-      openAssessment();
-    }
+    openCheckInModal();
   };
 
   // Determine today's mood label & emoji
@@ -84,7 +79,7 @@ export default function WellnessCompanionPanel({ onCheckCondition }: WellnessCom
   }
 
   return (
-    <aside className="w-full flex flex-col gap-4.5 select-none pointer-events-auto shrink-0">
+    <aside className="w-full flex flex-col gap-3.5 sm:gap-4 select-none pointer-events-auto shrink-0">
       {/* 1. Check Your Condition Card */}
       <div className="bg-[#EAF5EF] dark:bg-[#102F27] rounded-3xl p-6 border border-[#D2E8DC] dark:border-[#23483E] text-center flex flex-col items-center space-y-3 shadow-2xs transition-colors">
         {/* Circular Avatar / Profile Icon with check badge */}

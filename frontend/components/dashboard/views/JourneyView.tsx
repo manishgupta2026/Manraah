@@ -44,6 +44,7 @@ export default function JourneyView() {
     allCategories,
     openBreakdownModal,
     openAssessment,
+    openReattemptModal,
   } = useWellnessScore();
 
   const { category } = useCategory();
@@ -162,7 +163,13 @@ export default function JourneyView() {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 pt-2">
           {/* Card 1: Life-Stage Wellness Score */}
           <div
-            onClick={() => openBreakdownModal()}
+            onClick={() => {
+              if (isCurrentAssessed && currentScore !== null) {
+                openReattemptModal(currentCategory);
+              } else {
+                openAssessment(currentCategory);
+              }
+            }}
             className="p-4 rounded-2xl bg-[#F2FAF6] dark:bg-[#14382F] border border-[#E2ECE6] dark:border-[#23483E] flex items-center justify-between cursor-pointer hover:border-[#008968]/60 transition-all group"
           >
             <div className="flex items-center gap-3.5">
@@ -181,7 +188,7 @@ export default function JourneyView() {
               </div>
             </div>
             <span className="text-[10px] font-bold text-[#006C56] dark:text-[#00A982] opacity-80 group-hover:opacity-100">
-              Overview →
+              {isCurrentAssessed && currentScore !== null ? "Re-attempt →" : "Start Check →"}
             </span>
           </div>
 
@@ -457,7 +464,7 @@ export default function JourneyView() {
             return (
               <div
                 key={cat.id}
-                onClick={() => (hasScore ? openBreakdownModal() : openAssessment(cat.id))}
+                onClick={() => (hasScore ? openReattemptModal(cat.id) : openAssessment(cat.id))}
                 className={`p-4 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between gap-3 group ${
                   isCurrent
                     ? "bg-[#EAF6F0]/60 dark:bg-[#14382F]/70 border-[#008968]/60 dark:border-[#00A982]/60"

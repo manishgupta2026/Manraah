@@ -80,67 +80,117 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
 
   return (
     <header
-      className={`sticky top-0 z-50 transition-all select-none w-full ${
-        mobileMenuOpen
+      className={`sticky top-0 z-50 select-none w-full shrink-0 h-14 sm:h-16 ${
+        isAuthView
+          ? "bg-[#004D3D] dark:bg-[#06261E] border-b border-[#00382C] dark:border-[#133D32] shadow-xs text-white"
+          : mobileMenuOpen
           ? "bg-surface-container-lowest shadow-xl"
-          : "bg-surface/95 backdrop-blur-md border-b border-surface-variant/30"
+          : "bg-surface/95 backdrop-blur-md border-b border-surface-variant/30 text-on-surface"
       }`}
     >
-      <div className="h-14 sm:h-16 max-w-7xl mx-auto px-4 sm:px-6 w-full flex items-center justify-between relative z-30">
-        {/* Brand Logo (Exact Home Navbar Dimensions & Position) */}
-        <Link href="/" className="flex items-center gap-2 group hover:opacity-90 transition-opacity shrink-0">
-          <Logo size="md" priority />
-        </Link>
+      <div className="h-full max-w-7xl mx-auto px-4 sm:px-6 w-full flex items-center justify-between lg:grid lg:grid-cols-[1fr_auto_1fr] relative z-30">
+        {/* Brand Logo (Left Section - justify-self-start) */}
+        <div className="flex items-center justify-start shrink-0 lg:justify-self-start">
+          <Link href="/" className="flex items-center gap-2 group hover:opacity-90 transition-opacity shrink-0">
+            <Logo size="md" variant={isAuthView ? "white" : "default"} priority />
+          </Link>
+        </div>
 
-        {/* Navigation Links (Desktop - Exact Home Navbar Typography, Spacing & Gap) */}
-        <nav className="hidden lg:flex items-center gap-3 xl:gap-5 text-xs xl:text-sm font-heading font-semibold text-on-surface-variant">
+        {/* Navigation Links (Center Section - Exactly 50% Centered via justify-self-center) */}
+        <nav
+          className={`hidden lg:flex items-center gap-4 xl:gap-6 text-xs xl:text-sm font-heading font-semibold justify-self-center ${
+            isAuthView ? "text-white/90" : "text-on-surface-variant"
+          }`}
+        >
           <Link
             href="/how-it-works"
-            className={`transition-colors hover:text-primary ${
-              pathname === "/how-it-works" ? "text-primary font-bold" : ""
+            className={`transition-colors shrink-0 ${
+              isAuthView
+                ? pathname === "/how-it-works"
+                  ? "text-white font-bold"
+                  : "hover:text-white text-white/85"
+                : pathname === "/how-it-works"
+                ? "text-primary font-bold"
+                : "hover:text-primary"
             }`}
           >
             How it Works
           </Link>
           <Link
             href="/our-solution"
-            className={`transition-colors hover:text-primary flex items-center gap-1 ${
-              pathname === "/our-solution" ? "text-primary font-bold" : ""
+            className={`transition-colors flex items-center gap-1 shrink-0 ${
+              isAuthView
+                ? pathname === "/our-solution"
+                  ? "text-white font-bold"
+                  : "hover:text-white text-white/85"
+                : pathname === "/our-solution"
+                ? "text-primary font-bold"
+                : "hover:text-primary"
             }`}
           >
             <span>Our Solution</span>
-            <span className="px-1.5 py-0.5 rounded-full text-[9px] font-heading font-extrabold bg-primary/10 text-primary border border-primary/20 leading-none">
+            <span
+              className={`px-1.5 py-0.5 rounded-full text-[9px] font-heading font-extrabold leading-none ${
+                isAuthView
+                  ? "bg-white/20 text-white border border-white/30"
+                  : "bg-primary/10 text-primary border border-primary/20"
+              }`}
+            >
               Soon
             </span>
           </Link>
           <Link
             href="/features"
-            className={`transition-colors hover:text-primary ${
-              pathname === "/features" ? "text-primary font-bold" : ""
+            className={`transition-colors shrink-0 ${
+              isAuthView
+                ? pathname === "/features"
+                  ? "text-white font-bold"
+                  : "hover:text-white text-white/85"
+                : pathname === "/features"
+                ? "text-primary font-bold"
+                : "hover:text-primary"
             }`}
           >
             Features
           </Link>
           <Link
             href="/stories"
-            className={`transition-colors hover:text-primary ${
-              pathname === "/stories" ? "text-primary font-bold" : ""
+            className={`transition-colors shrink-0 ${
+              isAuthView
+                ? pathname === "/stories"
+                  ? "text-white font-bold"
+                  : "hover:text-white text-white/85"
+                : pathname === "/stories"
+                ? "text-primary font-bold"
+                : "hover:text-primary"
             }`}
           >
             Stories
           </Link>
           <Link
             href="/for-you"
-            className={`transition-colors hover:text-primary ${
-              pathname === "/for-you" ? "text-primary font-bold" : ""
+            className={`transition-colors shrink-0 ${
+              isAuthView
+                ? pathname === "/for-you"
+                  ? "text-white font-bold"
+                  : "hover:text-white text-white/85"
+                : pathname === "/for-you"
+                ? "text-primary font-bold"
+                : "hover:text-primary"
             }`}
           >
             For You
           </Link>
           <Link
             href="/blog"
-            className={`transition-colors hover:text-primary ${
-              pathname === "/blog" ? "text-primary font-bold" : ""
+            className={`transition-colors shrink-0 ${
+              isAuthView
+                ? pathname === "/blog"
+                  ? "text-white font-bold"
+                  : "hover:text-white text-white/85"
+                : pathname === "/blog"
+                ? "text-primary font-bold"
+                : "hover:text-primary"
             }`}
           >
             Blog
@@ -148,14 +198,20 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
 
           {/* About Dropdown Menu (Desktop) */}
           <div
-            className="relative"
+            className="relative shrink-0"
             onMouseEnter={() => setAboutDropdownOpen(true)}
             onMouseLeave={() => setAboutDropdownOpen(false)}
           >
             <button
               onClick={() => setAboutDropdownOpen((prev) => !prev)}
-              className={`transition-colors hover:text-primary flex items-center gap-0.5 cursor-pointer py-1 ${
-                isAboutActive ? "text-primary font-bold" : ""
+              className={`transition-colors flex items-center gap-0.5 cursor-pointer py-1 ${
+                isAuthView
+                  ? isAboutActive
+                    ? "text-white font-bold"
+                    : "text-white/85 hover:text-white"
+                  : isAboutActive
+                  ? "text-primary font-bold"
+                  : "hover:text-primary"
               }`}
               aria-expanded={aboutDropdownOpen}
               aria-haspopup="true"
@@ -164,7 +220,7 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
               <span
                 className={`material-symbols-outlined text-base transition-transform duration-200 ${
                   aboutDropdownOpen ? "rotate-180" : ""
-                }`}
+                } ${isAuthView ? "text-white/80" : ""}`}
               >
                 expand_more
               </span>
@@ -178,13 +234,21 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 6, scale: 0.97 }}
                   transition={{ duration: 0.15, ease: "easeOut" }}
-                  className="absolute top-full right-0 mt-1.5 w-60 rounded-2xl bg-surface-container-lowest/95 backdrop-blur-xl border border-surface-variant/40 shadow-xl p-2 z-50 flex flex-col gap-1"
+                  className={`absolute top-full right-0 mt-1.5 w-60 rounded-2xl shadow-xl p-2 z-50 flex flex-col gap-1 ${
+                    isAuthView
+                      ? "bg-[#0D2821] border border-[#23483E] text-white"
+                      : "bg-surface-container-lowest/95 backdrop-blur-xl border border-surface-variant/40"
+                  }`}
                 >
                   <Link
                     href="/about"
                     onClick={() => setAboutDropdownOpen(false)}
                     className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-colors ${
-                      pathname === "/about"
+                      isAuthView
+                        ? pathname === "/about"
+                          ? "bg-white/15 text-white font-bold"
+                          : "text-white/90 hover:bg-white/10 hover:text-white"
+                        : pathname === "/about"
                         ? "bg-primary/10 text-primary font-bold"
                         : "text-on-surface hover:bg-surface-container hover:text-primary"
                     }`}
@@ -192,7 +256,7 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                     <span className="material-symbols-outlined text-lg text-primary/70">info</span>
                     <div>
                       <div className="text-xs font-heading font-bold leading-tight">About Us</div>
-                      <div className="text-[10px] text-on-surface-variant font-normal leading-tight">
+                      <div className={`text-[10px] font-normal leading-tight ${isAuthView ? "text-white/60" : "text-on-surface-variant"}`}>
                         Our story, pillars &amp; mission
                       </div>
                     </div>
@@ -202,15 +266,19 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                     href="/faq"
                     onClick={() => setAboutDropdownOpen(false)}
                     className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-colors ${
-                      pathname === "/faq"
+                      isAuthView
+                        ? pathname === "/faq"
+                          ? "bg-white/15 text-white font-bold"
+                          : "text-white/90 hover:bg-white/10 hover:text-white"
+                        : pathname === "/faq"
                         ? "bg-primary/10 text-primary font-bold"
                         : "text-on-surface hover:bg-surface-container hover:text-primary"
                     }`}
                   >
-                    <span className="material-symbols-outlined text-lg text-[#006B56]/70">quiz</span>
+                    <span className="material-symbols-outlined text-lg text-[#00A982]/90">quiz</span>
                     <div>
                       <div className="text-xs font-heading font-bold leading-tight">FAQ</div>
-                      <div className="text-[10px] text-on-surface-variant font-normal leading-tight">
+                      <div className={`text-[10px] font-normal leading-tight ${isAuthView ? "text-white/60" : "text-on-surface-variant"}`}>
                         Frequently asked questions
                       </div>
                     </div>
@@ -220,15 +288,19 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                     href="/privacy-and-trust"
                     onClick={() => setAboutDropdownOpen(false)}
                     className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-colors ${
-                      pathname === "/privacy-and-trust"
+                      isAuthView
+                        ? pathname === "/privacy-and-trust"
+                          ? "bg-white/15 text-white font-bold"
+                          : "text-white/90 hover:bg-white/10 hover:text-white"
+                        : pathname === "/privacy-and-trust"
                         ? "bg-primary/10 text-primary font-bold"
                         : "text-on-surface hover:bg-surface-container hover:text-primary"
                     }`}
                   >
-                    <span className="material-symbols-outlined text-lg text-[#874959]/70">verified_user</span>
+                    <span className="material-symbols-outlined text-lg text-rose-300">verified_user</span>
                     <div>
                       <div className="text-xs font-heading font-bold leading-tight">Privacy &amp; Trust</div>
-                      <div className="text-[10px] text-on-surface-variant font-normal leading-tight">
+                      <div className={`text-[10px] font-normal leading-tight ${isAuthView ? "text-white/60" : "text-on-surface-variant"}`}>
                         Security &amp; confidentiality
                       </div>
                     </div>
@@ -239,137 +311,129 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
           </div>
         </nav>
 
-        {/* Action CTAs (Exact Alignment with Home Navbar) */}
-        {isAuthView ? (
-          /* Authenticated Header Controls Styled to Match Home Navbar Proportions */
-          <div className="flex items-center gap-2 sm:gap-3">
-            {/* Theme / Dark Mode Toggle */}
-            <button
-              onClick={toggleTheme}
-              className="w-9 h-9 rounded-full bg-surface-container hover:bg-surface-variant/50 flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors cursor-pointer select-none"
-              title={isDark ? "Switch to light mode" : "Switch to dark mode"}
-              aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
-            >
-              <span className="material-symbols-outlined text-lg">
-                {isDark ? "light_mode" : "dark_mode"}
-              </span>
-            </button>
-
-            {/* Notifications */}
-            <div className="relative">
+        {/* Right: Actions & Mobile Toggle (justify-self-end) */}
+        <div className="flex items-center justify-end gap-2 sm:gap-3 lg:justify-self-end shrink-0">
+          {isAuthView ? (
+            /* Authenticated Header Controls Styled for Green Theme */
+            <div className="flex items-center gap-2 sm:gap-3">
+              {/* Theme / Dark Mode Toggle */}
               <button
-                className="w-9 h-9 rounded-full bg-surface-container hover:bg-surface-variant/50 flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors cursor-pointer"
-                title="Notifications"
-                aria-label="Notifications"
+                onClick={toggleTheme}
+                className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors cursor-pointer select-none"
+                title={isDark ? "Switch to light mode" : "Switch to dark mode"}
+                aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
               >
-                <span className="material-symbols-outlined text-lg">notifications</span>
-              </button>
-              <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-primary text-white text-[9px] font-heading font-bold rounded-full flex items-center justify-center border-2 border-surface">
-                3
-              </span>
-            </div>
-
-            {/* User Profile Chip */}
-            <div className="relative">
-              <button
-                onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
-                className="flex items-center gap-2 p-1 pl-1.5 rounded-full bg-surface-container border border-surface-variant/40 hover:bg-surface-variant/50 transition-colors cursor-pointer select-none"
-              >
-                <UserAvatar user={user} sizeClass="w-8 h-8 text-xs" />
-                <div className="text-left hidden sm:block pr-1">
-                  <p className="text-xs font-heading font-bold text-on-surface leading-tight">
-                    Hi, {userName}
-                  </p>
-                  <p className="text-[9px] text-on-surface-variant font-medium leading-none mt-0.5">
-                    Take care today
-                  </p>
-                </div>
-                <span className="material-symbols-outlined text-base text-on-surface-variant pr-1">
-                  expand_more
+                <span className="material-symbols-outlined text-lg">
+                  {isDark ? "light_mode" : "dark_mode"}
                 </span>
               </button>
 
-              {/* Profile Dropdown Card */}
-              <AnimatePresence>
-                {isProfileMenuOpen && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 6, scale: 0.96 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: 6, scale: 0.96 }}
-                    transition={{ duration: 0.15 }}
-                    className="absolute right-0 mt-2 w-52 rounded-2xl bg-surface-container-lowest/95 backdrop-blur-xl border border-surface-variant/40 shadow-xl py-2 z-50 text-xs transition-colors"
-                  >
-                    <div className="px-3.5 py-2 border-b border-surface-variant/30">
-                      <p className="font-heading font-bold text-on-surface text-sm">{userName}</p>
-                      <p className="text-[10px] text-on-surface-variant">Manraah Member</p>
-                    </div>
-                    <Link
-                      href="/profile"
-                      onClick={() => setIsProfileMenuOpen(false)}
-                      className="flex items-center gap-2.5 px-3.5 py-2.5 text-on-surface hover:bg-surface-container hover:text-primary font-heading font-semibold transition-colors"
+              {/* User Profile Chip */}
+              <div className="relative">
+                <button
+                  onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
+                  className="flex items-center gap-2 p-1 pl-1.5 rounded-full bg-white/10 border border-white/15 hover:bg-white/20 transition-colors cursor-pointer select-none text-white"
+                >
+                  <UserAvatar user={user} sizeClass="w-8 h-8 text-xs" />
+                  <div className="text-left hidden sm:block pr-1">
+                    <p className="text-xs font-heading font-bold text-white leading-tight">
+                      Hi, {userName}
+                    </p>
+                    <p className="text-[9px] text-white/70 font-medium leading-none mt-0.5">
+                      Take care today
+                    </p>
+                  </div>
+                  <span className="material-symbols-outlined text-base text-white/80 pr-1">
+                    expand_more
+                  </span>
+                </button>
+
+                {/* Profile Dropdown Card */}
+                <AnimatePresence>
+                  {isProfileMenuOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 6, scale: 0.96 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 6, scale: 0.96 }}
+                      transition={{ duration: 0.15 }}
+                      className="absolute right-0 mt-2 w-52 rounded-2xl bg-[#0D2821] border border-[#23483E] shadow-xl py-2 z-50 text-xs transition-colors text-white"
                     >
-                      <span className="material-symbols-outlined text-base text-primary">person</span>
-                      <span>My Profile</span>
-                    </Link>
-                    <Link
-                      href="/journey"
-                      onClick={() => setIsProfileMenuOpen(false)}
-                      className="flex items-center gap-2.5 px-3.5 py-2.5 text-on-surface hover:bg-surface-container hover:text-primary font-heading font-semibold transition-colors"
-                    >
-                      <span className="material-symbols-outlined text-base text-[#006B56]">explore</span>
-                      <span>My Journey</span>
-                    </Link>
-                    <div className="my-1 border-t border-surface-variant/30" />
-                    <button
-                      onClick={handleLogout}
-                      className="w-full flex items-center gap-2.5 px-3.5 py-2.5 text-error hover:bg-error/10 font-heading font-bold text-left cursor-pointer transition-colors"
-                    >
-                      <span className="material-symbols-outlined text-base">logout</span>
-                      <span>Log Out</span>
-                    </button>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+                      <div className="px-3.5 py-2 border-b border-white/10">
+                        <p className="font-heading font-bold text-white text-sm">{userName}</p>
+                        <p className="text-[10px] text-white/60">Manraah Member</p>
+                      </div>
+                      <Link
+                        href="/profile"
+                        onClick={() => setIsProfileMenuOpen(false)}
+                        className="flex items-center gap-2.5 px-3.5 py-2.5 text-white/90 hover:bg-white/10 hover:text-white font-heading font-semibold transition-colors"
+                      >
+                        <span className="material-symbols-outlined text-base text-[#00A982]">person</span>
+                        <span>My Profile</span>
+                      </Link>
+                      <Link
+                        href="/journey"
+                        onClick={() => setIsProfileMenuOpen(false)}
+                        className="flex items-center gap-2.5 px-3.5 py-2.5 text-white/90 hover:bg-white/10 hover:text-white font-heading font-semibold transition-colors"
+                      >
+                        <span className="material-symbols-outlined text-base text-[#00A982]">explore</span>
+                        <span>My Journey</span>
+                      </Link>
+                      <div className="my-1 border-t border-white/10" />
+                      <button
+                        onClick={handleLogout}
+                        className="w-full flex items-center gap-2.5 px-3.5 py-2.5 text-rose-300 hover:bg-rose-950/30 font-heading font-bold text-left cursor-pointer transition-colors"
+                      >
+                        <span className="material-symbols-outlined text-base">logout</span>
+                        <span>Log Out</span>
+                      </button>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             </div>
-          </div>
-        ) : (
-          /* Public Action Buttons (Exact Home Navbar styling) */
-          <div className="hidden sm:flex items-center gap-2.5">
-            <Link
-              href="/login"
-              className={`px-4 sm:px-5 py-2 rounded-full text-xs font-heading font-bold transition-all ${
-                isLoginPage
-                  ? "bg-primary-container/20 text-primary border border-primary/30"
-                  : "bg-surface-container border border-surface-variant/40 text-on-surface hover:bg-primary/5"
-              }`}
-            >
-              Log In
-            </Link>
+          ) : (
+            /* Public Action Buttons (Exact Home Navbar styling) */
+            <div className="hidden sm:flex items-center gap-2.5">
+              <Link
+                href="/login"
+                className={`px-4 sm:px-5 py-2 rounded-full text-xs font-heading font-bold transition-all ${
+                  isLoginPage
+                    ? "bg-primary-container/20 text-primary border border-primary/30"
+                    : "bg-surface-container border border-surface-variant/40 text-on-surface hover:bg-primary/5"
+                }`}
+              >
+                Log In
+              </Link>
 
-            <button
-              onClick={handleGetStarted}
-              className={`px-4 sm:px-5 py-2 rounded-full font-heading font-bold text-xs shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all flex items-center gap-1.5 cursor-pointer ${
-                isSignupPage || pathname === "/category-selection"
-                  ? "bg-primary-purple text-white ring-2 ring-primary/20"
-                  : "bg-primary hover:bg-primary-purple text-white"
-              }`}
-            >
-              <span>Get Started</span>
-            </button>
-          </div>
-        )}
+              <button
+                onClick={handleGetStarted}
+                className={`px-4 sm:px-5 py-2 rounded-full font-heading font-bold text-xs shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all flex items-center gap-1.5 cursor-pointer ${
+                  isSignupPage || pathname === "/category-selection"
+                    ? "bg-primary-purple text-white ring-2 ring-primary/20"
+                    : "bg-primary hover:bg-primary-purple text-white"
+                }`}
+              >
+                <span>Get Started</span>
+              </button>
+            </div>
+          )}
 
-        {/* Mobile Hamburger Menu Toggle */}
-        <button
-          onClick={handleToggleMobile}
-          className="lg:hidden p-2 rounded-xl bg-surface-container text-on-surface hover:bg-surface-variant/50 transition-colors cursor-pointer flex items-center justify-center shrink-0"
-          aria-label="Toggle navigation menu"
-          aria-expanded={mobileMenuOpen}
-        >
-          <span className="material-symbols-outlined text-2xl font-bold">
-            {mobileMenuOpen ? "close" : "menu"}
-          </span>
-        </button>
+          {/* Mobile Hamburger Menu Toggle */}
+          <button
+            onClick={handleToggleMobile}
+            className={`lg:hidden p-2 rounded-xl transition-colors cursor-pointer flex items-center justify-center shrink-0 ${
+              isAuthView
+                ? "bg-white/10 text-white hover:bg-white/20"
+                : "bg-surface-container text-on-surface hover:bg-surface-variant/50"
+            }`}
+            aria-label="Toggle navigation menu"
+            aria-expanded={mobileMenuOpen}
+          >
+            <span className="material-symbols-outlined text-2xl font-bold">
+              {mobileMenuOpen ? "close" : "menu"}
+            </span>
+          </button>
+        </div>
       </div>
 
       {/* Mobile Animated Dropdown Drawer & Dimmed Backdrop */}
