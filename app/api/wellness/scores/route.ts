@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 export async function GET(request: NextRequest) {
   try {
     const session = getAuthSessionFromRequest();
-    const userId = session.user?.id || "guest";
+    const userId = session.user?.id || null;
     const rawCategory =
       request.nextUrl.searchParams.get("category") ||
       session.user?.selectedCategory ||

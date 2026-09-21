@@ -209,6 +209,18 @@ export function WellnessScoreProvider({ children }: { children: ReactNode }) {
 
   // Fetch wellness scores strictly for current category
   const fetchScores = useCallback(async () => {
+    const session = getClientSession();
+    if (!session?.isAuthenticated || !session?.user?.id) {
+      setCurrentScore(null);
+      setIsCurrentAssessed(false);
+      setLevelBadge("Gentle Care");
+      setLevelDescription("Ready to check in");
+      setAllCategories(DEFAULT_CATEGORIES);
+      setRecentHistory([]);
+      setIsLoading(false);
+      return;
+    }
+
     try {
       setError(null);
       const res = await fetch(`/api/wellness/current?category=${currentCategory}`);
@@ -216,8 +228,18 @@ export function WellnessScoreProvider({ children }: { children: ReactNode }) {
         throw new Error("Failed to load wellness metrics.");
       }
       const data = await res.json();
+      const currentSession = getClientSession();
+      if (!currentSession?.isAuthenticated || !currentSession?.user?.id) {
+        setCurrentScore(null);
+        setIsCurrentAssessed(false);
+        setLevelBadge("Gentle Care");
+        setLevelDescription("Ready to check in");
+        setAllCategories(DEFAULT_CATEGORIES);
+        setRecentHistory([]);
+        return;
+      }
 
-      setCurrentScore(data.score !== undefined ? data.score : null);
+      setCurrentScore(data.score !== undefined && data.score !== null ? data.score : null);
       setIsCurrentAssessed(Boolean(data.assessmentCompleted));
       if (data.levelBadge) setLevelBadge(data.levelBadge);
       if (data.levelDescription) setLevelDescription(data.levelDescription);
@@ -227,11 +249,41 @@ export function WellnessScoreProvider({ children }: { children: ReactNode }) {
     } catch (err: any) {
       console.warn("Wellness score fetch warning:", err.message);
       setError(err.message);
+    } finally {
+      setIsLoading(false);
     }
   }, [currentCategory]);
 
   useEffect(() => {
     fetchScores();
+
+    const handleAuthChange = (event: Event) => {
+      const customEvent = event as CustomEvent<{ session: any | null }>;
+      const s = customEvent.detail?.session;
+      if (!s?.isAuthenticated || !s?.user?.id) {
+        // Immediately reset all user scores on logout
+        setCurrentScore(null);
+        setIsCurrentAssessed(false);
+        setLevelBadge("Gentle Care");
+        setLevelDescription("Ready to check in");
+        setAllCategories(DEFAULT_CATEGORIES);
+        setRecentHistory([]);
+        setIsAssessmentModalOpen(false);
+        setIsBreakdownModalOpen(false);
+        setIsReattemptModalOpen(false);
+        setIsLoginPromptOpen(false);
+      } else {
+        fetchScores();
+      }
+    };
+
+    window.addEventListener("manraah_auth_changed", handleAuthChange);
+    window.addEventListener("storage", fetchScores);
+
+    return () => {
+      window.removeEventListener("manraah_auth_changed", handleAuthChange);
+      window.removeEventListener("storage", fetchScores);
+    };
   }, [fetchScores]);
 
   const openAssessment = (categorySlug?: string) => {

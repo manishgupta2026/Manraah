@@ -122,10 +122,25 @@ export function CategoryProvider({ children }: { children: ReactNode }) {
   // Sync category with user session if changed
   useEffect(() => {
     if (typeof window !== "undefined") {
+      const handleAuthChange = (event: Event) => {
+        const customEvent = event as CustomEvent<{ session: any | null }>;
+        const s = customEvent.detail?.session;
+        if (s?.user?.selectedCategory) {
+          setCategory(s.user.selectedCategory as UserCategory);
+        } else if (!s?.isAuthenticated) {
+          setCategory("working_professional" as UserCategory);
+        }
+      };
+
       const session = getClientSession();
       if (session?.user?.selectedCategory && session.user.selectedCategory !== category) {
         setCategory(session.user.selectedCategory as UserCategory);
       }
+
+      window.addEventListener("manraah_auth_changed", handleAuthChange);
+      return () => {
+        window.removeEventListener("manraah_auth_changed", handleAuthChange);
+      };
     }
   }, []);
 

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react";
 import { getClientSession } from "@/backend/auth/client";
 
 export interface WellnessState {
@@ -96,13 +96,29 @@ export function WellnessProvider({ children }: { children: ReactNode }) {
   const openCheckInModal = () => setIsCheckInModalOpen(true);
   const closeCheckInModal = () => setIsCheckInModalOpen(false);
 
-  const fetchWellness = async () => {
+  const fetchWellness = useCallback(async () => {
+    const session = getClientSession();
+    if (!session?.isAuthenticated || !session?.user?.id) {
+      setWellnessData(null);
+      setHistoryList([]);
+      setJourneyInsights(null);
+      setIsLoading(false);
+      return;
+    }
+
     try {
       const res = await fetch("/api/checkins");
       if (res.ok) {
         const data = await res.json();
-        const session = getClientSession();
-        const u = session?.user;
+        const currentSession = getClientSession();
+        const u = currentSession?.user;
+        if (!currentSession?.isAuthenticated || !u?.id) {
+          setWellnessData(null);
+          setHistoryList([]);
+          setJourneyInsights(null);
+          return;
+        }
+
         const currentStreak = typeof data.currentStreak === "number" ? data.currentStreak : (u?.streakDays ?? 0);
         const longestStreak = typeof data.longestStreak === "number" ? data.longestStreak : currentStreak;
         const hasCheckedInToday = Boolean(data.hasCheckedInToday || data.todayCheckin);
@@ -110,8 +126,8 @@ export function WellnessProvider({ children }: { children: ReactNode }) {
         setHistoryList(data.history || []);
         setJourneyInsights(data.insights || null);
 
-        setWellnessData((prev) => ({
-          user: u ? {
+        setWellnessData({
+          user: {
             id: u.id || "",
             name: u.name || u.sanctuaryName || "",
             sanctuaryName: u.sanctuaryName || u.name || "",
@@ -120,7 +136,7 @@ export function WellnessProvider({ children }: { children: ReactNode }) {
             streakDays: currentStreak,
             mindfulnessMinutes: u.mindfulnessMinutes || 0,
             currentMood: data.todayCheckin?.mood || u.currentMood || "Calm",
-          } : (prev?.user || null),
+          },
           todayMood: data.todayCheckin || null,
           hasCheckedInToday,
           history: data.history || [],
@@ -132,18 +148,45 @@ export function WellnessProvider({ children }: { children: ReactNode }) {
           insights: data.insights ? [data.insights] : [],
           streak: { currentStreak, longestStreak },
           recommendation: "Focus on matching your pace with slow cycles to restore internal alignment.",
-        }));
+        });
+      } else if (res.status === 401) {
+        setWellnessData(null);
+        setHistoryList([]);
+        setJourneyInsights(null);
       }
     } catch (err) {
       console.error("Failed to fetch checkin data:", err);
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchWellness();
-  }, []);
+
+    const handleAuthChange = (event: Event) => {
+      const customEvent = event as CustomEvent<{ session: any | null }>;
+      const s = customEvent.detail?.session;
+      if (!s?.isAuthenticated || !s?.user?.id) {
+        // Complete state clear on logout
+        setWellnessData(null);
+        setHistoryList([]);
+        setJourneyInsights(null);
+        setIsCheckingIn(false);
+        setIsCheckInModalOpen(false);
+      } else {
+        fetchWellness();
+      }
+    };
+
+    window.addEventListener("manraah_auth_changed", handleAuthChange);
+    window.addEventListener("storage", fetchWellness);
+
+    return () => {
+      window.removeEventListener("manraah_auth_changed", handleAuthChange);
+      window.removeEventListener("storage", fetchWellness);
+    };
+  }, [fetchWellness]);
 
   const refetchWellnessData = async () => {
     setIsLoading(true);

@@ -76,6 +76,23 @@ export default function UserAvatar({
     );
   }
 
+  // Neutral Guest Silhouette Avatar when no authenticated user or name is present
+  if (!displayName && !avatarUrl) {
+    return (
+      <div
+        className={`${sizeClass} rounded-full bg-[#0E342B] dark:bg-[#14382F] text-[#8EAAA1] dark:text-[#78958C] flex items-center justify-center shrink-0 select-none shadow-xs ${
+          showBorder ? "border-2 border-white/20 dark:border-white/10" : ""
+        } ${className}`}
+        title="Guest Sanctuary Member"
+        aria-label="Guest"
+      >
+        <svg className="w-[55%] h-[55%]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+        </svg>
+      </div>
+    );
+  }
+
   // Consistent Fallback Initials Badge using deterministic avatar color palette
   const initials = getInitials(displayName, firstName, lastName);
   const palette = getAvatarPalette(displayName);

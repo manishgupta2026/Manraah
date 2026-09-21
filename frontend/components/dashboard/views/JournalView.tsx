@@ -56,7 +56,7 @@ const PROMPT_SUGGESTIONS = [
 const MOOD_TAGS = ["Reflective", "Grateful", "Calm", "Overwhelmed", "Hopeful", "Peaceful"];
 
 export default function JournalView() {
-  const [entries, setEntries] = useState<JournalEntryItem[]>(INITIAL_ENTRIES);
+  const [entries, setEntries] = useState<JournalEntryItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [newTitle, setNewTitle] = useState("");
   const [newContent, setNewContent] = useState("");
@@ -66,15 +66,22 @@ export default function JournalView() {
   const [saving, setSaving] = useState(false);
   const [activeEntryModal, setActiveEntryModal] = useState<JournalEntryItem | null>(null);
 
-  // Load from API on mount
+  // Load from API on mount only when authenticated
   useEffect(() => {
+    const session = getClientSession();
+    if (!session?.isAuthenticated || !session?.user?.id) {
+      setEntries([]);
+      setLoading(false);
+      return;
+    }
+
     async function loadEntries() {
       try {
         setLoading(true);
         const res = await fetch("/api/journal");
         if (res.ok) {
           const data = await res.json();
-          if (Array.isArray(data) && data.length > 0) {
+          if (Array.isArray(data)) {
             const formatted = data.map((d: any) => ({
               id: d.id,
               title: d.title,
@@ -94,12 +101,27 @@ export default function JournalView() {
           }
         }
       } catch (err) {
-        console.warn("Could not load backend journal entries, using local storage:", err);
+        console.warn("Could not load backend journal entries:", err);
       } finally {
         setLoading(false);
       }
     }
     loadEntries();
+
+    const handleAuthChange = (event: Event) => {
+      const customEvent = event as CustomEvent<{ session: any | null }>;
+      const s = customEvent.detail?.session;
+      if (!s?.isAuthenticated || !s?.user?.id) {
+        setEntries([]);
+      } else {
+        loadEntries();
+      }
+    };
+
+    window.addEventListener("manraah_auth_changed", handleAuthChange);
+    return () => {
+      window.removeEventListener("manraah_auth_changed", handleAuthChange);
+    };
   }, []);
 
   const handleSaveEntry = async (e: React.FormEvent) => {

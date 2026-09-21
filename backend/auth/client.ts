@@ -97,20 +97,50 @@ export async function signOut(): Promise<void> {
   }
 
   if (typeof window !== "undefined") {
+    // 1. Clear session key and dashboard cache
     localStorage.removeItem(SESSION_KEY);
     localStorage.removeItem("manraah_dashboard_cache");
-    localStorage.removeItem("parent_assessment_completed");
-    localStorage.removeItem("parent_show_security_immediately");
-    localStorage.removeItem("parent_security_popup_shown_once");
-    localStorage.removeItem("parent_last_security_popup");
-    localStorage.removeItem("parent_assessment_modal_dismissed");
-    sessionStorage.removeItem("manraah_student_privacy_acknowledged");
-    sessionStorage.removeItem("manraah_student_assessment_dismissed");
-    sessionStorage.removeItem("manraah_student_assessment_completed");
+
+    // 2. Clear all category assessment completion & security flags from localStorage
+    const localKeysToRemove = [
+      "parent_assessment_completed",
+      "parent_show_security_immediately",
+      "parent_security_popup_shown_once",
+      "parent_last_security_popup",
+      "parent_assessment_modal_dismissed",
+      "parent_reset_assessment_flow",
+      "couple_assessment_completed",
+      "couple_show_security_immediately",
+      "working_professional_assessment_completed",
+      "working_professional_show_security_immediately",
+      "student_assessment_completed",
+      "student_show_security_immediately",
+      "other_assessment_completed",
+      "other_show_security_immediately",
+    ];
+    localKeysToRemove.forEach((key) => localStorage.removeItem(key));
+
+    // 3. Clear all sessionStorage keys
+    try {
+      sessionStorage.clear();
+    } catch {
+      const sessionKeysToRemove = [
+        "manraah_student_privacy_acknowledged",
+        "manraah_student_assessment_dismissed",
+        "manraah_student_assessment_completed",
+        "manraah_onboarding_assessment",
+      ];
+      sessionKeysToRemove.forEach((key) => sessionStorage.removeItem(key));
+    }
+
+    // 4. Expire cookies
     document.cookie = "manraah_session=; path=/; max-age=0";
     document.cookie = "userType=; path=/; max-age=0";
     document.cookie = "manraah_userType=; path=/; max-age=0";
+
+    // 5. Notify all components & providers immediately
     window.dispatchEvent(new CustomEvent("manraah_auth_changed", { detail: { session: null } }));
+    window.dispatchEvent(new Event("storage"));
   }
 }
 

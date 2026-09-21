@@ -32,9 +32,12 @@ export default function WellnessCompanionPanel({ onCheckCondition }: WellnessCom
   const { theme } = useTheme();
   const isDark = theme === "dark";
   const { hasCheckedInToday, todayMood, isCheckingIn, openCheckInModal } = useWellness();
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
 
   const [checkInError, setCheckInError] = useState<string | null>(null);
+
+  const isUserAuthenticated = Boolean(isAuthenticated && user?.id);
+  const isCheckedIn = isUserAuthenticated && Boolean(hasCheckedInToday && todayMood);
 
   const cat = (user?.selectedCategory || "student").toLowerCase();
   const userCategoryLabel =
@@ -49,19 +52,19 @@ export default function WellnessCompanionPanel({ onCheckCondition }: WellnessCom
       : "academic";
 
   const handleCheckInClick = () => {
-    if (hasCheckedInToday) return;
+    if (isCheckedIn) return;
     openCheckInModal();
   };
 
-  // Determine today's mood label & emoji
-  const rawMood = (todayMood?.mood || user?.currentMood || "Calm").trim();
+  // Determine today's mood label & emoji (Only when authenticated & checked in)
+  const rawMood = isCheckedIn ? (todayMood?.mood || user?.currentMood || "").trim() : "";
   const moodKey = rawMood.toLowerCase();
   const moodEmoji = MOOD_EMOJIS[moodKey] || "🌿";
-  const moodLabel = rawMood.charAt(0).toUpperCase() + rawMood.slice(1);
+  const moodLabel = rawMood ? rawMood.charAt(0).toUpperCase() + rawMood.slice(1) : "";
 
   // Formatted completed time
   let completedTimeStr = "";
-  if (todayMood?.updatedAt || todayMood?.createdAt) {
+  if (isCheckedIn && (todayMood?.updatedAt || todayMood?.createdAt)) {
     try {
       const dt = new Date(todayMood.updatedAt || todayMood.createdAt);
       if (!isNaN(dt.getTime())) {
@@ -74,7 +77,7 @@ export default function WellnessCompanionPanel({ onCheckCondition }: WellnessCom
     } catch {
       completedTimeStr = "Completed today";
     }
-  } else {
+  } else if (isCheckedIn) {
     completedTimeStr = "Completed today";
   }
 
@@ -82,16 +85,18 @@ export default function WellnessCompanionPanel({ onCheckCondition }: WellnessCom
     <aside className="w-full flex flex-col gap-3.5 sm:gap-4 select-none pointer-events-auto shrink-0">
       {/* 1. Check Your Condition Card */}
       <div className="bg-[#EAF5EF] dark:bg-[#102F27] rounded-3xl p-6 border border-[#D2E8DC] dark:border-[#23483E] text-center flex flex-col items-center space-y-3 shadow-2xs transition-colors">
-        {/* Circular Avatar / Profile Icon with check badge */}
+        {/* Circular Avatar / Profile Icon with check badge (only when checked in) */}
         <div className="relative">
           <UserAvatar
-            user={user}
+            user={isUserAuthenticated ? user : null}
             sizeClass="w-16 h-16 text-lg"
             className="border-2 border-white dark:border-[#102F27] shadow-inner"
           />
-          <div className="absolute bottom-0 right-0 w-4.5 h-4.5 rounded-full bg-[#006C56] dark:bg-[#00A982] text-white dark:text-[#071C17] flex items-center justify-center text-[9px] font-bold border-2 border-white dark:border-[#102F27] shadow-xs">
-            ✓
-          </div>
+          {isCheckedIn && (
+            <div className="absolute bottom-0 right-0 w-4.5 h-4.5 rounded-full bg-[#006C56] dark:bg-[#00A982] text-white dark:text-[#071C17] flex items-center justify-center text-[9px] font-bold border-2 border-white dark:border-[#102F27] shadow-xs">
+              ✓
+            </div>
+          )}
         </div>
 
         {/* Subtitle / Badge */}
@@ -101,11 +106,11 @@ export default function WellnessCompanionPanel({ onCheckCondition }: WellnessCom
 
         {/* Main Heading */}
         <h2 className="text-lg font-heading font-black text-[#19332A] dark:text-[#F4FAF7] leading-tight">
-          {hasCheckedInToday ? "Today's Check-In Complete" : "Check Your Condition"}
+          {isCheckedIn ? "Today's Check-In Complete" : "Check Your Condition"}
         </h2>
 
         {/* Description / Mood status */}
-        {hasCheckedInToday ? (
+        {isCheckedIn ? (
           <div className="space-y-1">
             <div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#D8EFE3] dark:bg-[#154639] text-[#006C56] dark:text-[#88F7D6] text-xs font-bold">
               <span>Mood: {moodEmoji} {moodLabel}</span>
@@ -116,7 +121,9 @@ export default function WellnessCompanionPanel({ onCheckCondition }: WellnessCom
           </div>
         ) : (
           <p className="text-[11px] text-[#4F685F] dark:text-[#A9C5BC] font-medium leading-relaxed max-w-[220px]">
-            Check your every situation, stress factors, and {userCategoryLabel} activities.
+            {isUserAuthenticated
+              ? `Check your every situation, stress factors, and ${userCategoryLabel} activities.`
+              : "Track your emotional situation, stress factors, and mindful wellness activities."}
           </p>
         )}
 
@@ -127,7 +134,7 @@ export default function WellnessCompanionPanel({ onCheckCondition }: WellnessCom
         )}
 
         {/* Dynamic Action Button */}
-        {hasCheckedInToday ? (
+        {isCheckedIn ? (
           <button
             type="button"
             disabled

@@ -52,7 +52,8 @@ function formatAppointmentDisplay(isoDateStr: string): string {
 }
 
 export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
+  const isUserAuthenticated = Boolean(isAuthenticated && user?.id);
   const { currentStreak, hasCheckedInToday } = useWellness();
   const {
     currentCategory,
@@ -69,55 +70,43 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
     if (typeof window !== "undefined") {
       try {
         const session = getClientSession();
-        return session?.user?.name || session?.user?.sanctuaryName || "";
-      } catch {
-        // ignore
-      }
-    }
-    return "";
-  });
-
-  const [isFirstLoginState, setIsFirstLoginState] = useState<boolean>(() => {
-    if (typeof window !== "undefined") {
-      try {
-        const session = getClientSession();
-        if (session?.isFirstLogin === true || session?.user?.isFirstLogin === true || session?.user?.hasLoggedInBefore === false) {
-          return true;
+        if (session?.isAuthenticated && session.user?.id) {
+          return session.user.name || session.user.sanctuaryName || "Sanctuary Member";
         }
       } catch {
         // ignore
       }
     }
-    return false;
+    return "Guest";
   });
 
+  const [isFirstLoginState, setIsFirstLoginState] = useState<boolean>(false);
   const [upcomingAppointment, setUpcomingAppointment] = useState<UpcomingAppointmentData | null>(null);
-  const [isLoadingAppointment, setIsLoadingAppointment] = useState(true);
+  const [isLoadingAppointment, setIsLoadingAppointment] = useState(false);
   const [quoteIndex, setQuoteIndex] = useState(0);
 
   useEffect(() => {
-    const session = getClientSession();
-    if (session?.user) {
-      const rawName = session.user.name || session.user.sanctuaryName || "";
-      setUserName(rawName);
-
-      const isFirst =
-        session.isFirstLogin === true ||
-        session.user.isFirstLogin === true ||
-        session.user.hasLoggedInBefore === false ||
-        user?.hasLoggedInBefore === false;
-      setIsFirstLoginState(Boolean(isFirst));
-    } else if (user) {
-      const rawName = user.name || user.sanctuaryName || "";
+    if (isUserAuthenticated && user) {
+      const rawName = user.name || user.sanctuaryName || "Sanctuary Member";
       setUserName(rawName);
       if (typeof user.hasLoggedInBefore === "boolean") {
         setIsFirstLoginState(!user.hasLoggedInBefore);
       }
+    } else {
+      setUserName("Guest");
+      setIsFirstLoginState(false);
+      setUpcomingAppointment(null);
     }
-  }, [user]);
+  }, [user, isUserAuthenticated]);
 
-  // Fetch real upcoming appointment from backend
+  // Fetch real upcoming appointment from backend only when authenticated
   useEffect(() => {
+    if (!isUserAuthenticated) {
+      setUpcomingAppointment(null);
+      setIsLoadingAppointment(false);
+      return;
+    }
+
     let isMounted = true;
 
     async function loadUpcomingAppointment() {
@@ -157,7 +146,7 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
       isMounted = false;
       window.removeEventListener("appointments-updated", handleAppointmentsChange);
     };
-  }, []);
+  }, [isUserAuthenticated]);
 
   const handleNextQuote = () => {
     setQuoteIndex((prev) => (prev + 1) % MOTIVATIONAL_QUOTES.length);

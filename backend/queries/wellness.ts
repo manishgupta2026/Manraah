@@ -172,7 +172,7 @@ export async function getAll5WellnessCategoriesWithScores(
  * If the category has never been assessed by this user, score is null and assessmentCompleted is false.
  */
 export async function getUserCurrentWellness(
-  userId: string,
+  userId: string | null,
   rawCategory?: string | null
 ): Promise<CurrentWellnessResponse> {
   await ensureWellnessAssessmentSchema();
@@ -347,9 +347,12 @@ export async function submitWellnessAssessment(
  * Returns assessment history for a specific category.
  */
 export async function getAssessmentHistoryForCategory(
-  userId: string,
+  userId: string | null,
   rawCategory: string
 ): Promise<AssessmentHistoryItem[]> {
+  if (!userId || userId === "guest" || userId === "demo-user") {
+    return [];
+  }
   try {
     const categoryId = normalizeCategorySlug(rawCategory);
     const rows = await sql`

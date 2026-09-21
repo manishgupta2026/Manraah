@@ -14,7 +14,7 @@ export async function GET(
   try {
     const { categoryId } = await params;
     const session = getAuthSessionFromRequest();
-    const userId = session.user?.id || "guest";
+    const userId = session.user?.id || null;
 
     if (!categoryId) {
       return NextResponse.json({ error: "Category ID is required" }, { status: 400 });

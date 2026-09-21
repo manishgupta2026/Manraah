@@ -100,6 +100,15 @@ export default function AppointmentsView() {
 
   useEffect(() => {
     fetchAppointments();
+
+    const handleAuthChange = () => {
+      fetchAppointments();
+    };
+
+    window.addEventListener("manraah_auth_changed", handleAuthChange);
+    return () => {
+      window.removeEventListener("manraah_auth_changed", handleAuthChange);
+    };
   }, []);
 
   const filteredTherapists = selectedSpecialty === "All"

@@ -6,7 +6,11 @@ export const dynamic = "force-dynamic";
 
 export async function GET(req: Request) {
   const session = getAuthSessionFromRequest();
-  const userId = session.user?.id || "demo-user";
+  const userId = session.user?.id;
+
+  if (!userId) {
+    return NextResponse.json([]);
+  }
 
   try {
     const entries = await sql`
@@ -33,7 +37,11 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   const session = getAuthSessionFromRequest();
-  const userId = session.user?.id || "demo-user";
+  const userId = session.user?.id;
+
+  if (!userId) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
   try {
     const body = await req.json();

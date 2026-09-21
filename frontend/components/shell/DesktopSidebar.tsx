@@ -8,7 +8,8 @@ import UserAvatar from "@/frontend/components/ui/UserAvatar";
 
 export default function DesktopSidebar() {
   const pathname = usePathname();
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
+  const isUserAuthenticated = Boolean(isAuthenticated && user?.id);
   const userName = user?.name || user?.sanctuaryName || "";
 
   const navItems = [
@@ -122,18 +123,39 @@ export default function DesktopSidebar() {
         ))}
       </nav>
 
-      {/* Bottom Avatar + Profile Name + View Profile */}
+      {/* Bottom Avatar + Profile Name + View Profile / Sign In */}
       <div className="flex flex-col items-center text-center space-y-1">
-        <Link href="/profile" className="hover:opacity-90 transition-opacity">
-          <UserAvatar user={user} sizeClass="w-9 h-9 text-xs" />
-        </Link>
-        <p className="text-[11px] font-bold text-white leading-tight mt-1 truncate max-w-[76px] px-0.5">{userName.split(" ")[0]}</p>
-        <Link
-          href="/profile"
-          className="text-[9px] text-[#8EAAA1] dark:text-[#78958C] hover:text-white transition-colors"
-        >
-          View Profile
-        </Link>
+        {isUserAuthenticated ? (
+          <>
+            <Link href="/profile" className="hover:opacity-90 transition-opacity">
+              <UserAvatar user={user} sizeClass="w-9 h-9 text-xs" />
+            </Link>
+            <p className="text-[11px] font-bold text-white leading-tight mt-1 truncate max-w-[76px] px-0.5">
+              {userName.split(" ")[0]}
+            </p>
+            <Link
+              href="/profile"
+              className="text-[9px] text-[#8EAAA1] dark:text-[#78958C] hover:text-white transition-colors"
+            >
+              View Profile
+            </Link>
+          </>
+        ) : (
+          <>
+            <Link href="/login" className="hover:opacity-90 transition-opacity">
+              <UserAvatar user={null} sizeClass="w-9 h-9 text-xs" />
+            </Link>
+            <p className="text-[11px] font-bold text-white/90 leading-tight mt-1 truncate max-w-[76px] px-0.5">
+              Guest
+            </p>
+            <Link
+              href="/login"
+              className="text-[9px] text-[#88F7D6] dark:text-[#00A982] font-bold hover:underline transition-colors"
+            >
+              Log In
+            </Link>
+          </>
+        )}
       </div>
     </aside>
   );

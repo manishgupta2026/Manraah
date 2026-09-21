@@ -14,7 +14,7 @@ export async function GET(
   try {
     const { categorySlug } = await params;
     const session = getAuthSessionFromRequest();
-    const userId = session.user?.id || "guest";
+    const userId = session.user?.id || null;
 
     const wellness = await getUserCurrentWellness(userId, categorySlug);
     const history = await getAssessmentHistoryForCategory(userId, categorySlug);
