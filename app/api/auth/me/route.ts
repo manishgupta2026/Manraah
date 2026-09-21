@@ -26,10 +26,10 @@ export async function GET() {
 
         session.user = {
           ...session.user,
-          name: u.sanctuary_name || u.name || session.user.name,
-          sanctuaryName: u.sanctuary_name || session.user.sanctuaryName,
-          selectedCategory: u.selected_category || session.user.selectedCategory,
-          currentMood: u.current_mood || session.user.currentMood,
+          name: u.name || u.sanctuary_name || session.user.name || "",
+          sanctuaryName: u.sanctuary_name || u.name || session.user.sanctuaryName || "",
+          selectedCategory: u.selected_category || session.user.selectedCategory || "student",
+          currentMood: u.current_mood || session.user.currentMood || "Calm",
           streakDays: u.streak_days ?? session.user.streakDays,
           hasLoggedInBefore: previouslyLoggedIn,
           loginCount: count,

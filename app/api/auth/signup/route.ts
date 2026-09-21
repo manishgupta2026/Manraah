@@ -187,7 +187,7 @@ export async function POST(request: Request) {
       profileImage: "/images/user_avatar.jpg",
       streakDays: streakInfo.currentStreak,
       mindfulnessMinutes: 0,
-      currentMood: "Sanctuary Member",
+      currentMood: "Calm",
       selectedCategory: validatedCategory,
       onboardingCompleted: false,
       isFirstLogin: true,

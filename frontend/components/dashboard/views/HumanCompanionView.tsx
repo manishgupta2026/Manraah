@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
+import { useAuth } from "@/frontend/lib/context/AuthContext";
 import { getClientSession } from "@/backend/auth/client";
 
 type FlowStep = "ENTRY" | "SEARCHING" | "MATCHED" | "CHAT" | "CALL" | "FEEDBACK";
@@ -21,8 +22,9 @@ const PRESET_TOPICS = [
 ];
 
 export default function HumanCompanionView() {
+  const { user } = useAuth();
   const session = getClientSession();
-  const userName = session?.user?.name || session?.user?.sanctuaryName || "Sanctuary Member";
+  const userName = user?.name || user?.sanctuaryName || session?.user?.name || session?.user?.sanctuaryName || "";
 
   const [step, setStep] = useState<FlowStep>("ENTRY");
   const [activeTopic, setActiveTopic] = useState("Emotional Venting & Guidance");

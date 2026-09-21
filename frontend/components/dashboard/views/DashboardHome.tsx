@@ -69,12 +69,12 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
     if (typeof window !== "undefined") {
       try {
         const session = getClientSession();
-        return session?.user?.name || session?.user?.sanctuaryName || "Sanctuary Member";
+        return session?.user?.name || session?.user?.sanctuaryName || "";
       } catch {
         // ignore
       }
     }
-    return "Sanctuary Member";
+    return "";
   });
 
   const [isFirstLoginState, setIsFirstLoginState] = useState<boolean>(() => {
@@ -98,7 +98,7 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
   useEffect(() => {
     const session = getClientSession();
     if (session?.user) {
-      const rawName = session.user.name || session.user.sanctuaryName || "Sanctuary Member";
+      const rawName = session.user.name || session.user.sanctuaryName || "";
       setUserName(rawName);
 
       const isFirst =
@@ -108,7 +108,7 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
         user?.hasLoggedInBefore === false;
       setIsFirstLoginState(Boolean(isFirst));
     } else if (user) {
-      const rawName = user.name || user.sanctuaryName || "Sanctuary Member";
+      const rawName = user.name || user.sanctuaryName || "";
       setUserName(rawName);
       if (typeof user.hasLoggedInBefore === "boolean") {
         setIsFirstLoginState(!user.hasLoggedInBefore);

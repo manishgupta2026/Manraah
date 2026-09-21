@@ -79,7 +79,7 @@ const COMMUNITY_CATEGORIES = [
 
 export default function CommunityView() {
   const { user } = useAuth();
-  const userName = user?.sanctuaryName || user?.name || "Sanctuary Member";
+  const userName = user?.name || user?.sanctuaryName || "";
 
   const [posts, setPosts] = useState<CommunityPostItem[]>(INITIAL_POSTS);
   const [selectedCategory, setSelectedCategory] = useState("All Circles");

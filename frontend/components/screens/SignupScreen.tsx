@@ -574,7 +574,7 @@ export default function SignupScreen() {
                     {loading ? (
                       <>
                         <span className="material-symbols-outlined animate-spin text-base">progress_activity</span>
-                        <span>Creating Your Sanctuary...</span>
+                        <span>Creating Your Manraah Account...</span>
                       </>
                     ) : (
                       <>

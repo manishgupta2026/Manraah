@@ -23,7 +23,7 @@ const SUGGESTED_PROMPTS = [
 export default function AICompanionView() {
   const { categoryDetails, category } = useCategory();
   const { user } = useAuth();
-  const userName = user?.sanctuaryName || user?.name || "Sanctuary Member";
+  const userName = user?.name || user?.sanctuaryName || "";
   const userCategory = user?.selectedCategory || category || "General";
 
   const [inputMessage, setInputMessage] = useState("");

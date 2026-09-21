@@ -9,7 +9,7 @@ import UserAvatar from "@/frontend/components/ui/UserAvatar";
 export default function DesktopSidebar() {
   const pathname = usePathname();
   const { user } = useAuth();
-  const userName = user?.sanctuaryName || user?.name || "Sanctuary Member";
+  const userName = user?.name || user?.sanctuaryName || "";
 
   const navItems = [
     {

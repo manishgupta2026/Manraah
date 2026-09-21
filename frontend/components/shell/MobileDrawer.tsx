@@ -22,7 +22,7 @@ export default function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
 
   if (!isOpen) return null;
 
-  const displayName = user?.sanctuaryName || user?.name || "Sanctuary Member";
+  const displayName = user?.name || user?.sanctuaryName || "";
 
   return (
     <div className="fixed inset-0 z-50 md:hidden flex">

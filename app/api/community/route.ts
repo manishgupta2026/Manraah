@@ -32,7 +32,7 @@ export async function GET() {
 export async function POST(req: Request) {
   const session = getAuthSessionFromRequest();
   const userId = session.user?.id || null;
-  const authorName = session.user?.sanctuaryName || session.user?.name || "Sanctuary Member";
+  const authorName = session.user?.name || session.user?.sanctuaryName || "Member";
   const avatar = session.user?.avatar || "/images/user_avatar.jpg";
 
   try {

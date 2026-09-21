@@ -56,7 +56,7 @@ export default function UserAvatar({
     rawAvatarUrl.includes("default-professional");
 
   const avatarUrl = isPlaceholder ? null : rawAvatarUrl;
-  const displayName = explicitName || user?.sanctuaryName || user?.name || "Sanctuary Member";
+  const displayName = explicitName || user?.name || user?.sanctuaryName || "";
   const firstName = explicitFirstName || user?.firstName;
   const lastName = explicitLastName || user?.lastName;
 

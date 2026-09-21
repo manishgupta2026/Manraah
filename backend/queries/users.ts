@@ -132,7 +132,22 @@ export async function createUser(
 export async function updateUserSanctuaryName(userId: string, sanctuaryName: string) {
   const trimmed = sanctuaryName.trim();
   return await sql`
-    UPDATE users SET sanctuary_name = ${trimmed}, name = ${trimmed} WHERE id = ${userId}
+    UPDATE users SET sanctuary_name = ${trimmed} WHERE id = ${userId}
+  `;
+}
+
+export async function updateUserName(userId: string, name: string) {
+  const trimmed = name.trim();
+  return await sql`
+    UPDATE users SET name = ${trimmed} WHERE id = ${userId}
+  `;
+}
+
+export async function updateUserProfileNames(userId: string, name: string, sanctuaryName?: string) {
+  const trimmedName = name.trim();
+  const trimmedSanctuary = (sanctuaryName || name).trim();
+  return await sql`
+    UPDATE users SET name = ${trimmedName}, sanctuary_name = ${trimmedSanctuary} WHERE id = ${userId}
   `;
 }
 

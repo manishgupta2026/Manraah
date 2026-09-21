@@ -112,9 +112,9 @@ export function WellnessProvider({ children }: { children: ReactNode }) {
 
         setWellnessData((prev) => ({
           user: u ? {
-            id: u.id || "demo-user",
-            name: u.sanctuaryName || u.name || "Sanctuary Member",
-            sanctuaryName: u.sanctuaryName || u.name || "Sanctuary Member",
+            id: u.id || "",
+            name: u.name || u.sanctuaryName || "",
+            sanctuaryName: u.sanctuaryName || u.name || "",
             email: u.email || "",
             selectedCategory: u.selectedCategory || "student",
             streakDays: currentStreak,

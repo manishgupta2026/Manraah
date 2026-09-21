@@ -26,7 +26,7 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
   const [aboutDropdownOpen, setAboutDropdownOpen] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
 
-  const userName = user?.sanctuaryName || user?.name || "Sanctuary Member";
+  const userName = user?.name || user?.sanctuaryName || "";
 
   // Determine if this instance should display authenticated or public action CTAs
   const isExplicitAuth = variant === "authenticated";

@@ -66,14 +66,14 @@ export async function POST(request: Request) {
     const userAvatarUrl = user.avatar || user.image || "/images/user_avatar.jpg";
     const userProfile = {
       id: user.id,
-      name: sanctuaryName,
-      sanctuaryName: sanctuaryName,
+      name: user.name || sanctuaryName || "",
+      sanctuaryName: sanctuaryName || user.name || "",
       email: user.email,
       avatar: userAvatarUrl,
       profileImage: userAvatarUrl,
       streakDays: streakInfo.currentStreak,
       mindfulnessMinutes: user.mindfulness_minutes || 0,
-      currentMood: user.current_mood || "Sanctuary Member",
+      currentMood: user.current_mood || "Calm",
       selectedCategory: rawCategory,
       onboardingCompleted: !!user.onboarding_completed,
       isFirstLogin: loginStatus.isFirstLogin,

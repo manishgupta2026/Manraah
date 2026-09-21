@@ -28,7 +28,7 @@ const FOCUS_AREAS_OPTIONS = [
 
 export default function ProfileView() {
   const router = useRouter();
-  const { user, updateUser, logout } = useAuth();
+  const { user, isAuthenticated, loading, updateUser, logout } = useAuth();
   const { currentStreak, refetchWellnessData } = useWellness();
   const { setCategory } = useCategory();
 
@@ -43,7 +43,7 @@ export default function ProfileView() {
   // Edit Modal State
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editName, setEditName] = useState("");
-  const [editCategory, setEditCategory] = useState("parent");
+  const [editCategory, setEditCategory] = useState("student");
   const [editAvatar, setEditAvatar] = useState("/images/user_avatar.jpg");
   const [editFocusAreas, setEditFocusAreas] = useState<string[]>([]);
   const [isSaving, setIsSaving] = useState(false);
@@ -51,15 +51,16 @@ export default function ProfileView() {
   const [saveErrorMsg, setSaveErrorMsg] = useState<string | null>(null);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-  const userName = user?.sanctuaryName || user?.name || "Sanctuary Member";
-  const userEmail = user?.email || "member@manraah.com";
-  const userCategory = (user?.selectedCategory || "parent").toLowerCase();
-  const userAvatar = user?.profileImage || user?.avatar || "/images/user_avatar.jpg";
+  // Authenticated User values (authoritative from user object)
+  const userName = user?.name || user?.sanctuaryName || "";
+  const userEmail = user?.email || "";
+  const userCategory = (user?.selectedCategory || "student").toLowerCase();
+  const userAvatar = user?.profileImage || user?.avatar || "";
 
   const openEditModal = () => {
-    setEditName(userName);
+    setEditName(user?.name || user?.sanctuaryName || "");
     setEditCategory(userCategory);
-    setEditAvatar(userAvatar);
+    setEditAvatar(userAvatar || "/images/user_avatar.jpg");
     setEditFocusAreas([...selectedFocusAreas]);
     setSaveSuccessMsg(null);
     setSaveErrorMsg(null);
@@ -108,8 +109,8 @@ export default function ProfileView() {
 
     try {
       await updateUser({
-        sanctuaryName: editName.trim(),
         name: editName.trim(),
+        sanctuaryName: editName.trim(),
         selectedCategory: editCategory as any,
         avatar: editAvatar,
         profileImage: editAvatar,
@@ -151,6 +152,50 @@ export default function ProfileView() {
     if (cat.includes("other")) return "General Wellness";
     return "Student";
   };
+
+  // 1. Loading Skeleton: While session/user data is still resolving, show explicit skeleton to prevent demo fallback flash
+  if (loading && !user) {
+    return (
+      <div className="w-full min-w-0 flex flex-col gap-6 animate-pulse">
+        <div className="w-full bg-white dark:bg-[#102F27] rounded-3xl p-6 sm:p-7 border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs">
+          <div className="flex items-center gap-5">
+            <div className="w-[76px] h-[76px] rounded-full bg-slate-200 dark:bg-[#14382F]" />
+            <div className="space-y-2.5 flex-1">
+              <div className="h-6 w-48 bg-slate-200 dark:bg-[#14382F] rounded-md" />
+              <div className="h-3.5 w-32 bg-slate-200 dark:bg-[#14382F] rounded-md" />
+            </div>
+          </div>
+        </div>
+        <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="h-48 bg-white dark:bg-[#102F27] rounded-3xl p-6 border border-[#E2ECE6] dark:border-[#23483E]" />
+          <div className="h-48 bg-white dark:bg-[#102F27] rounded-3xl p-6 border border-[#E2ECE6] dark:border-[#23483E]" />
+        </div>
+      </div>
+    );
+  }
+
+  // 2. Unauthenticated State: If user is not authenticated after load completes
+  if (!user && !loading) {
+    return (
+      <div className="w-full bg-white dark:bg-[#102F27] rounded-3xl p-8 border border-[#E2ECE6] dark:border-[#23483E] text-center space-y-4 shadow-2xs">
+        <div className="w-12 h-12 rounded-full bg-[#EAF6F0] dark:bg-[#14382F] text-[#006C56] dark:text-[#00A982] flex items-center justify-center mx-auto text-xl font-bold">
+          🔒
+        </div>
+        <h2 className="text-lg font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
+          Authentication Required
+        </h2>
+        <p className="text-xs text-[#5A756C] dark:text-[#A9C5BC] max-w-sm mx-auto">
+          Please sign in to view and manage your confidential wellness profile.
+        </p>
+        <button
+          onClick={() => router.push("/login")}
+          className="px-5 py-2 rounded-full bg-[#004D3D] dark:bg-[#00A982] text-white dark:text-[#071C17] text-xs font-bold shadow-md cursor-pointer transition-transform active:scale-95"
+        >
+          Sign In
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full min-w-0 flex flex-col gap-6">

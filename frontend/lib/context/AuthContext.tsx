@@ -20,8 +20,34 @@ const DEFAULT_AVATAR = "";
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<UserProfile | null>(null);
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [user, setUser] = useState<UserProfile | null>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const session = getClientSession();
+        if (session?.user && session.isAuthenticated) {
+          return {
+            ...session.user,
+            avatar: session.user.avatar || session.user.profileImage || "",
+            profileImage: session.user.profileImage || session.user.avatar || "",
+          };
+        }
+      } catch {
+        // ignore
+      }
+    }
+    return null;
+  });
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const session = getClientSession();
+        return Boolean(session?.isAuthenticated && session?.user?.id);
+      } catch {
+        // ignore
+      }
+    }
+    return false;
+  });
   const [loading, setLoading] = useState<boolean>(true);
 
   // Sync state from client session & backend API
@@ -44,7 +70,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
 
       // Fetch fresh profile from API to ensure DB synchronization
-      if (session?.isAuthenticated) {
+      if (session?.isAuthenticated && session.user?.id) {
         try {
           const res = await fetch("/api/profile");
           if (res.ok) {
@@ -52,15 +78,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             if (data && !data.error && data.id) {
               const freshUser: UserProfile = {
                 id: data.id,
-                name: data.sanctuaryName || data.name || session.user?.name || "Member",
-                sanctuaryName: data.sanctuaryName || data.name || session.user?.sanctuaryName || "Member",
+                name: data.name || data.sanctuaryName || session.user?.name || "",
+                sanctuaryName: data.sanctuaryName || data.name || session.user?.sanctuaryName || "",
                 email: data.email || session.user?.email || "",
                 avatar: data.avatar || data.profileImage || session.user?.avatar || "",
                 profileImage: data.profileImage || data.avatar || session.user?.profileImage || "",
                 selectedCategory: data.category || data.selectedCategory || session.user?.selectedCategory || "student",
-                streakDays: typeof data.streakDays === "number" ? data.streakDays : (session.user?.streakDays || 1),
-                mindfulnessMinutes: typeof data.mindfulnessMinutes === "number" ? data.mindfulnessMinutes : (session.user?.mindfulnessMinutes || 0),
-                currentMood: data.currentMood || session.user?.currentMood || "Sanctuary Member",
+                streakDays: typeof data.streakDays === "number" ? data.streakDays : (session.user?.streakDays ?? 1),
+                mindfulnessMinutes: typeof data.mindfulnessMinutes === "number" ? data.mindfulnessMinutes : (session.user?.mindfulnessMinutes ?? 0),
+                currentMood: data.currentMood || session.user?.currentMood || "Calm",
                 role: session.user?.role,
                 onboardingCompleted: session.user?.onboardingCompleted,
                 hasLoggedInBefore: typeof data.hasLoggedInBefore === "boolean" ? data.hasLoggedInBefore : session.user?.hasLoggedInBefore,
@@ -77,7 +103,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 user: freshUser,
                 isAuthenticated: true,
               });
+            } else if (res.status === 401) {
+              setUser(null);
+              setIsAuthenticated(false);
             }
+          } else if (res.status === 401) {
+            setUser(null);
+            setIsAuthenticated(false);
           }
         } catch (err) {
           console.error("[AuthContext] API sync error:", err);
@@ -129,6 +161,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
+        name: updates.name || updates.sanctuaryName || current.name || current.sanctuaryName,
         sanctuaryName: updates.sanctuaryName || updates.name || current.sanctuaryName || current.name,
         category: updates.selectedCategory || current.selectedCategory,
         avatar: targetAvatar,
@@ -148,7 +181,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       ...(resData.user || {}),
       avatar: targetAvatar,
       profileImage: targetAvatar,
-      sanctuaryName: updates.sanctuaryName || updates.name || current.sanctuaryName || current.name,
+      name: updates.name || (resData.user && resData.user.name) || current.name,
+      sanctuaryName: updates.sanctuaryName || (resData.user && resData.user.sanctuaryName) || current.sanctuaryName,
     };
 
     setUser(updatedUserObj);
@@ -174,7 +208,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const profileImage = user?.profileImage || user?.avatar || DEFAULT_AVATAR;
-  const displayName = user?.sanctuaryName || user?.name || "Sanctuary Member";
+  const displayName = user?.name || user?.sanctuaryName || "";
 
   const value = {
     user,
