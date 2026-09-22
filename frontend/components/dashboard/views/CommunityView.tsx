@@ -90,6 +90,9 @@ export default function CommunityView() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [expandedCommentsId, setExpandedCommentsId] = useState<string | null>(null);
   const [commentText, setCommentText] = useState("");
+  const [showModerationModal, setShowModerationModal] = useState(false);
+  const [lastSubmittedCircle, setLastSubmittedCircle] = useState("");
+  const [hasPendingPost, setHasPendingPost] = useState(false);
 
   useEffect(() => {
     async function loadCommunityPosts() {
@@ -100,7 +103,7 @@ export default function CommunityView() {
           if (Array.isArray(data) && data.length > 0) {
             const formatted = data.map((p: any) => ({
               id: p.id,
-              author: p.author || "Sanctuary Member",
+              author: p.author || "Manraah Member",
               category: p.category || "Mindful Living",
               title: p.title,
               content: p.content,
@@ -134,34 +137,34 @@ export default function CommunityView() {
     if (!newTitle.trim() || !newContent.trim()) return;
 
     setIsSubmitting(true);
-    const createdItem: CommunityPostItem = {
-      id: `post-${Date.now()}`,
-      author: userName,
-      category: newPostCategory,
-      title: newTitle.trim(),
-      content: newContent.trim(),
-      likes: 1,
-      commentsCount: 0,
-      timeAgo: "Just now",
-      isLiked: true,
-    };
-
-    setPosts((prev) => [createdItem, ...prev]);
-    setNewTitle("");
-    setNewContent("");
+    const submittedCategory = newPostCategory;
+    const titleToSend = newTitle.trim();
+    const contentToSend = newContent.trim();
 
     try {
       await fetch("/api/community", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          title: createdItem.title,
-          content: createdItem.content,
-          category: createdItem.category,
+          title: titleToSend,
+          content: contentToSend,
+          category: submittedCategory,
         }),
       });
+
+      // Clear input and display 24-hour moderation popup
+      setNewTitle("");
+      setNewContent("");
+      setLastSubmittedCircle(submittedCategory);
+      setShowModerationModal(true);
+      setHasPendingPost(true);
     } catch (err) {
-      console.warn("Post saved locally:", err);
+      console.warn("Post submission handled:", err);
+      setNewTitle("");
+      setNewContent("");
+      setLastSubmittedCircle(submittedCategory);
+      setShowModerationModal(true);
+      setHasPendingPost(true);
     } finally {
       setIsSubmitting(false);
     }
@@ -201,7 +204,7 @@ export default function CommunityView() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <span className="text-[10px] font-black uppercase tracking-widest text-[#006C56] dark:text-[#00A982]">
-              SAFE PEER SANCTUARY
+              SAFE PEER MANRAAH
             </span>
             <h1 className="text-2xl font-heading font-black text-[#19332A] dark:text-[#F4FAF7] leading-tight mt-0.5">
               Community & Peer Circles
@@ -274,7 +277,7 @@ export default function CommunityView() {
               <UserAvatar user={user} sizeClass="w-8 h-8 text-xs" />
               <div>
                 <h3 className="text-xs font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
-                  Share with the Sanctuary
+                  Share with Manraah
                 </h3>
                 <p className="text-[10px] text-[#6B857C] dark:text-[#A9C5BC]">
                   Post as {userName} • Your thoughts are held safely
@@ -328,6 +331,32 @@ export default function CommunityView() {
               </div>
             </form>
           </div>
+
+          {/* Pending Moderation Notice Banner */}
+          {hasPendingPost && (
+            <div className="p-4 rounded-3xl bg-[#EAF5EF] dark:bg-[#14382F]/70 border border-[#006C56]/30 flex items-center justify-between gap-3 text-xs shadow-2xs animate-in fade-in duration-200">
+              <div className="flex items-center gap-3 text-[#006C56] dark:text-[#00A982]">
+                <div className="w-8 h-8 rounded-full bg-[#006C56] text-white flex items-center justify-center text-sm font-bold shrink-0">
+                  ⏳
+                </div>
+                <div>
+                  <p className="font-heading font-black text-xs text-[#19332A] dark:text-[#F4FAF7]">
+                    Post Submitted for Moderation
+                  </p>
+                  <p className="text-[11px] text-[#4F685F] dark:text-[#A9C5BC]">
+                    Your post in &ldquo;{lastSubmittedCircle}&rdquo; is under admin review and will be reflected in the community within 24 hours.
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowModerationModal(true)}
+                className="px-3.5 py-1.5 rounded-full bg-[#006C56] text-white text-[11px] font-bold shrink-0 hover:bg-[#005241] transition-colors cursor-pointer"
+              >
+                Review Info
+              </button>
+            </div>
+          )}
 
           {/* Posts Feed */}
           <div className="flex flex-col gap-4">
@@ -456,7 +485,7 @@ export default function CommunityView() {
                         </button>
                       </div>
                       <p className="text-[10px] text-[#8EAAA1] italic">
-                        Replies in this peer sanctuary are moderated to ensure kindness and emotional safety.
+                        Replies in Manraah peer circles are moderated to ensure kindness and emotional safety.
                       </p>
                     </div>
                   )}
@@ -471,7 +500,7 @@ export default function CommunityView() {
           {/* Community Guidelines */}
           <div className="bg-white dark:bg-[#102F27] rounded-3xl p-5 sm:p-6 border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs space-y-3.5 transition-colors">
             <h3 className="text-xs font-heading font-black text-[#19332A] dark:text-[#F4FAF7] uppercase tracking-wider flex items-center gap-1.5">
-              <span>🌿</span> Sanctuary Agreements
+              <span>🌿</span> Manraah Agreements
             </h3>
             <div className="space-y-2.5 text-xs text-[#4F685F] dark:text-[#A9C5BC]">
               <div className="flex items-start gap-2">
@@ -532,6 +561,43 @@ export default function CommunityView() {
           </div>
         </div>
       </div>
+
+      {/* 3. 24-Hour Moderation Review Modal Dialog */}
+      {showModerationModal && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-[#102F27] rounded-3xl border border-[#E2ECE6] dark:border-[#23483E] shadow-2xl max-w-md w-full p-6 sm:p-7 text-center space-y-5 animate-in fade-in zoom-in-95 duration-200">
+            <div className="w-16 h-16 rounded-full bg-[#EAF5EF] dark:bg-[#14382F] text-[#006C56] dark:text-[#00A982] flex items-center justify-center text-3xl mx-auto shadow-xs border border-[#006C56]/20">
+              <span>⏳</span>
+            </div>
+
+            <div className="space-y-2">
+              <span className="px-3 py-1 rounded-full bg-[#EAF5EF] dark:bg-[#14382F] text-[#006C56] dark:text-[#00A982] text-[10.5px] font-bold uppercase tracking-wider inline-block">
+                Post Submitted For Review
+              </span>
+              <h3 className="text-xl font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
+                Reflected Within 24 Hours
+              </h3>
+              <p className="text-xs text-[#4F685F] dark:text-[#A9C5BC] leading-relaxed">
+                Thank you for sharing with your peer circle! To ensure Manraah remains a safe, compassionate, and supportive space for everyone, all community posts undergo admin review.
+              </p>
+              <div className="p-3.5 rounded-2xl bg-[#F8FCFA] dark:bg-[#0E2A23] border border-[#E2ECE6] dark:border-[#23483E] text-xs font-semibold text-[#006C56] dark:text-[#00A982] space-y-1">
+                <p>✨ <strong>Circle:</strong> {lastSubmittedCircle}</p>
+                <p className="text-[11px] font-normal text-[#4F685F] dark:text-[#A9C5BC]">
+                  Your post has been sent to our admin moderation team. Once reviewed and allowed, it will be reflected in the community feed within 24 hours.
+                </p>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setShowModerationModal(false)}
+              className="w-full py-3 rounded-full bg-[#006C56] hover:bg-[#005241] dark:bg-[#00A982] dark:hover:bg-[#00916F] text-white dark:text-[#071C17] text-xs font-bold shadow-md shadow-[#006C56]/20 transition-all cursor-pointer"
+            >
+              Got It, Thank You
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

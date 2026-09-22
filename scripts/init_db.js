@@ -103,10 +103,16 @@ async function initDB() {
           content TEXT NOT NULL,
           likes INT DEFAULT 0,
           comments_count INT DEFAULT 0,
+          status VARCHAR(50) DEFAULT 'approved',
           created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
       );
     `;
-    console.log("✓ Table 'community_posts' ready");
+    try {
+      await sql`ALTER TABLE community_posts ADD COLUMN IF NOT EXISTS status VARCHAR(50) DEFAULT 'approved'`;
+    } catch (e) {
+      // Ignored if column already exists
+    }
+    console.log("✓ Table 'community_posts' ready with status column");
 
     await sql`
       CREATE TABLE IF NOT EXISTS resources (

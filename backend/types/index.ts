@@ -107,6 +107,7 @@ export interface CommunityPost {
   content: string;
   likes: number;
   commentsCount: number;
+  status?: "pending" | "approved" | "rejected";
 }
 
 export interface ResourceArticle {

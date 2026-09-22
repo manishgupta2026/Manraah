@@ -73,6 +73,7 @@ export const communityPosts = pgTable("community_posts", {
   content: text("content").notNull(),
   likes: integer("likes").default(0),
   commentsCount: integer("comments_count").default(0),
+  status: text("status").default("pending"),
   createdAt: timestamp("created_at").defaultNow(),
 });
 

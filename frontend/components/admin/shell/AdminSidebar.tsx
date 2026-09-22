@@ -5,6 +5,7 @@ import React from "react";
 export type AdminTab =
   | "OVERVIEW"
   | "COMPANION"
+  | "COMMUNITY"
   | "USERS"
   | "CONTENT"
   | "THERAPISTS"
@@ -15,6 +16,7 @@ interface AdminSidebarProps {
   onSelectTab: (tab: AdminTab) => void;
   queueCount?: number;
   pendingTherapistsCount?: number;
+  pendingPostsCount?: number;
 }
 
 export default function AdminSidebar({
@@ -22,6 +24,7 @@ export default function AdminSidebar({
   onSelectTab,
   queueCount = 0,
   pendingTherapistsCount = 2,
+  pendingPostsCount = 0,
 }: AdminSidebarProps) {
   const navItems = [
     {
@@ -36,6 +39,13 @@ export default function AdminSidebar({
       icon: "record_voice_over",
       badge: queueCount > 0 ? `${queueCount} Live` : null,
       badgeColor: "bg-emerald-500 text-white animate-pulse",
+    },
+    {
+      id: "COMMUNITY" as AdminTab,
+      label: "Community Moderation",
+      icon: "forum",
+      badge: pendingPostsCount > 0 ? `${pendingPostsCount} Pending` : null,
+      badgeColor: "bg-amber-500 text-white",
     },
     {
       id: "USERS" as AdminTab,

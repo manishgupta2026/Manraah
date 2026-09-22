@@ -17,8 +17,10 @@ export async function GET() {
         content,
         likes,
         comments_count as "commentsCount",
+        status,
         created_at as "createdAt"
       FROM community_posts
+      WHERE COALESCE(status, 'approved') = 'approved'
       ORDER BY created_at DESC
       LIMIT 50
     `;
@@ -32,7 +34,7 @@ export async function GET() {
 export async function POST(req: Request) {
   const session = getAuthSessionFromRequest();
   const userId = session.user?.id || null;
-  const authorName = session.user?.name || session.user?.sanctuaryName || "Member";
+  const authorName = session.user?.name || session.user?.sanctuaryName || "Manraah Member";
   const avatar = session.user?.avatar || "/images/user_avatar.jpg";
 
   try {
@@ -46,12 +48,17 @@ export async function POST(req: Request) {
     const id = `post-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
 
     const result = await sql`
-      INSERT INTO community_posts (id, user_id, author_name, avatar, category, title, content, likes, comments_count)
-      VALUES (${id}, ${userId}, ${authorName}, ${avatar}, ${category || "General Discussion"}, ${title}, ${content}, 1, 0)
-      RETURNING id, user_id as "userId", author_name as "author", avatar, category, title, content, likes, comments_count as "commentsCount"
+      INSERT INTO community_posts (id, user_id, author_name, avatar, category, title, content, likes, comments_count, status)
+      VALUES (${id}, ${userId}, ${authorName}, ${avatar}, ${category || "General Discussion"}, ${title}, ${content}, 1, 0, 'pending')
+      RETURNING id, user_id as "userId", author_name as "author", avatar, category, title, content, likes, comments_count as "commentsCount", status
     `;
 
-    return NextResponse.json(result[0]);
+    return NextResponse.json({
+      success: true,
+      pendingApproval: true,
+      message: "Your post has been submitted for moderation review and will be reflected within 24 hours.",
+      post: result[0],
+    });
   } catch (err: any) {
     console.error("Failed to create community post:", err);
     return NextResponse.json({ error: err.message || "Failed to create post" }, { status: 500 });
