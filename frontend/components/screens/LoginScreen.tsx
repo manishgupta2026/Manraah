@@ -93,7 +93,7 @@ export default function LoginScreen() {
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/80 dark:bg-surface-container-low border border-primary/20 shadow-xs w-fit">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
             <span className="text-xs font-heading font-bold text-primary">
-              WELCOME BACK • MANRAAH
+              WELCOME • MANRAAH
             </span>
           </div>
 
@@ -179,7 +179,7 @@ export default function LoginScreen() {
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/90 border border-primary/20 shadow-xs">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
               <span className="text-[11px] font-heading font-bold text-primary">
-                WELCOME BACK • MANRAAH
+                WELCOME • MANRAAH
               </span>
             </div>
             <h2 className="text-2xl font-heading font-black text-on-surface tracking-tight">
@@ -299,7 +299,7 @@ export default function LoginScreen() {
                   href="/signup"
                   className="font-heading font-bold text-primary hover:underline"
                 >
-                  Create Free Account
+                  Create Manraah Account
                 </Link>
               </p>
             </div>
