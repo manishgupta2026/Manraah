@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
@@ -24,6 +24,8 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
   const { user, logout, isAuthenticated } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [aboutDropdownOpen, setAboutDropdownOpen] = useState(false);
+  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+  const profileDropdownRef = useRef<HTMLDivElement>(null);
 
   const userName = user?.name || user?.sanctuaryName || "";
   const isUserAuthenticated = Boolean(isAuthenticated && user?.id);
@@ -79,11 +81,40 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
   const isSignupPage = pathname === "/signup";
   const isAboutActive = ["/about", "/faq", "/privacy-and-trust"].includes(pathname);
 
-  // Close mobile drawer & dropdown whenever route changes
+  // Close mobile drawer, about dropdown & profile dropdown whenever route changes
   useEffect(() => {
     setMobileMenuOpen(false);
     setAboutDropdownOpen(false);
+    setProfileDropdownOpen(false);
   }, [pathname]);
+
+  // Click outside & Escape key listeners for profile dropdown
+  useEffect(() => {
+    if (!profileDropdownOpen) return;
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        profileDropdownRef.current &&
+        !profileDropdownRef.current.contains(event.target as Node)
+      ) {
+        setProfileDropdownOpen(false);
+      }
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setProfileDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [profileDropdownOpen]);
 
   const handleToggleMobile = () => {
     if (onOpenMenu) {
@@ -355,9 +386,51 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                 </span>
               </button>
 
-              {/* User Profile Avatar (Static Visual Indicator) */}
-              <div className="shrink-0 flex items-center select-none pointer-events-none" aria-hidden="true">
-                <UserAvatar user={user} sizeClass="w-9 h-9 text-xs" />
+              {/* User Profile Avatar with Clickable Dropdown Menu */}
+              <div ref={profileDropdownRef} className="relative shrink-0 flex items-center">
+                <button
+                  type="button"
+                  onClick={() => setProfileDropdownOpen((prev) => !prev)}
+                  className="rounded-full focus:outline-none focus:ring-2 focus:ring-white/40 cursor-pointer transition-transform active:scale-95"
+                  aria-label="User profile menu"
+                  aria-haspopup="true"
+                  aria-expanded={profileDropdownOpen}
+                >
+                  <UserAvatar user={user} sizeClass="w-9 h-9 text-xs" />
+                </button>
+
+                <AnimatePresence>
+                  {profileDropdownOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 6, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 6, scale: 0.95 }}
+                      transition={{ duration: 0.15, ease: "easeOut" }}
+                      className="absolute top-full right-0 mt-2 w-48 rounded-2xl bg-[#0D2821] border border-[#23483E] text-white shadow-2xl p-1.5 z-50 flex flex-col gap-1"
+                    >
+                      <Link
+                        href="/profile"
+                        onClick={() => setProfileDropdownOpen(false)}
+                        className="flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-white/90 hover:text-white hover:bg-white/10 transition-colors text-xs font-heading font-semibold cursor-pointer"
+                      >
+                        <span className="material-symbols-outlined text-lg text-emerald-400">person</span>
+                        <span>My Profile</span>
+                      </Link>
+
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          setProfileDropdownOpen(false);
+                          await handleLogout();
+                        }}
+                        className="w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-rose-300 hover:text-rose-200 hover:bg-rose-500/15 transition-colors text-xs font-heading font-semibold cursor-pointer text-left"
+                      >
+                        <span className="material-symbols-outlined text-lg text-rose-400">logout</span>
+                        <span>Log Out</span>
+                      </button>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             </div>
           ) : (
