@@ -94,7 +94,7 @@ function formatCategoryDisplayName(raw?: string | null): string {
 }
 
 export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, loading: authLoading } = useAuth();
   const isUserAuthenticated = Boolean(isAuthenticated && user?.id);
   const { currentStreak, hasCheckedInToday } = useWellness();
   const {
@@ -108,38 +108,17 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
     openReattemptModal,
   } = useWellnessScore();
 
-  const [userName, setUserName] = useState(() => {
-    if (typeof window !== "undefined") {
-      try {
-        const session = getClientSession();
-        if (session?.isAuthenticated && session.user?.id) {
-          return session.user.name || session.user.sanctuaryName || "Sanctuary Member";
-        }
-      } catch {
-        // ignore
-      }
-    }
-    return "Guest";
-  });
+  const userName = isUserAuthenticated
+    ? user?.name || user?.sanctuaryName || "Sanctuary Member"
+    : "Guest";
 
-  const [isFirstLoginState, setIsFirstLoginState] = useState<boolean>(false);
+  const isFirstLoginState = isUserAuthenticated && typeof user?.hasLoggedInBefore === "boolean"
+    ? !user.hasLoggedInBefore
+    : false;
+
   const [upcomingAppointment, setUpcomingAppointment] = useState<UpcomingAppointmentData | null>(null);
   const [isLoadingAppointment, setIsLoadingAppointment] = useState(false);
   const [quoteIndex, setQuoteIndex] = useState(0);
-
-  useEffect(() => {
-    if (isUserAuthenticated && user) {
-      const rawName = user.name || user.sanctuaryName || "Sanctuary Member";
-      setUserName(rawName);
-      if (typeof user.hasLoggedInBefore === "boolean") {
-        setIsFirstLoginState(!user.hasLoggedInBefore);
-      }
-    } else {
-      setUserName("Guest");
-      setIsFirstLoginState(false);
-      setUpcomingAppointment(null);
-    }
-  }, [user, isUserAuthenticated]);
 
   // Fetch real upcoming appointment from backend only when authenticated
   useEffect(() => {
@@ -244,6 +223,25 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
       ),
     },
   ];
+
+  if (authLoading && !user) {
+    return (
+      <div className="w-full min-w-0 flex flex-col gap-5 animate-pulse">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-0.5">
+          <div className="space-y-2">
+            <div className="h-3 w-28 bg-slate-200 dark:bg-[#14382F] rounded-full" />
+            <div className="h-8 w-48 bg-slate-200 dark:bg-[#14382F] rounded-xl" />
+            <div className="h-5 w-24 bg-slate-200 dark:bg-[#14382F] rounded-full" />
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="h-14 w-36 bg-slate-200 dark:bg-[#14382F] rounded-2xl" />
+            <div className="h-14 w-44 bg-slate-200 dark:bg-[#14382F] rounded-2xl" />
+          </div>
+        </div>
+        <div className="h-44 w-full bg-slate-200 dark:bg-[#14382F] rounded-3xl" />
+      </div>
+    );
+  }
 
   return (
     <div className="w-full min-w-0 flex flex-col gap-5">

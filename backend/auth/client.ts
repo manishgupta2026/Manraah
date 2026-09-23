@@ -47,6 +47,11 @@ export async function signUp(
   if (typeof window !== "undefined") {
     localStorage.setItem(SESSION_KEY, JSON.stringify(session));
     document.cookie = `manraah_session=${JSON.stringify(session)}; path=/; max-age=2592000`;
+    if (session.user?.selectedCategory) {
+      document.cookie = `userType=${session.user.selectedCategory}; path=/; max-age=2592000`;
+    }
+    window.dispatchEvent(new CustomEvent("manraah_auth_changed", { detail: { session } }));
+    window.dispatchEvent(new Event("storage"));
   }
 
   return session;
@@ -84,6 +89,11 @@ export async function signIn(
   if (typeof window !== "undefined") {
     localStorage.setItem(SESSION_KEY, JSON.stringify(session));
     document.cookie = `manraah_session=${JSON.stringify(session)}; path=/; max-age=2592000`;
+    if (session.user?.selectedCategory) {
+      document.cookie = `userType=${session.user.selectedCategory}; path=/; max-age=2592000`;
+    }
+    window.dispatchEvent(new CustomEvent("manraah_auth_changed", { detail: { session } }));
+    window.dispatchEvent(new Event("storage"));
   }
 
   return session;

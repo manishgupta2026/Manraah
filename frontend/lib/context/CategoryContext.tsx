@@ -103,7 +103,10 @@ interface CategoryContextType {
 
 const CategoryContext = createContext<CategoryContextType | undefined>(undefined);
 
+import { useAuth } from "@/frontend/lib/context/AuthContext";
+
 export function CategoryProvider({ children }: { children: ReactNode }) {
+  const { user, isAuthenticated } = useAuth();
   const [category, setCategory] = useState<UserCategory>(() => {
     if (typeof window !== "undefined") {
       try {
@@ -115,11 +118,17 @@ export function CategoryProvider({ children }: { children: ReactNode }) {
         // ignore
       }
     }
-    return "working_professional" as UserCategory;
+    return "student" as UserCategory;
   });
-  const pathname = usePathname();
 
-  // Sync category with user session if changed
+  // Authoritatively sync category whenever authenticated user changes
+  useEffect(() => {
+    if (user?.selectedCategory) {
+      setCategory(user.selectedCategory as UserCategory);
+    }
+  }, [user?.selectedCategory]);
+
+  // Sync category with user session events
   useEffect(() => {
     if (typeof window !== "undefined") {
       const handleAuthChange = (event: Event) => {
@@ -127,8 +136,6 @@ export function CategoryProvider({ children }: { children: ReactNode }) {
         const s = customEvent.detail?.session;
         if (s?.user?.selectedCategory) {
           setCategory(s.user.selectedCategory as UserCategory);
-        } else if (!s?.isAuthenticated) {
-          setCategory("working_professional" as UserCategory);
         }
       };
 
@@ -142,7 +149,7 @@ export function CategoryProvider({ children }: { children: ReactNode }) {
         window.removeEventListener("manraah_auth_changed", handleAuthChange);
       };
     }
-  }, []);
+  }, [category]);
 
   const categoryDetails = CATEGORIES[category] || DEFAULT_CATEGORY;
 

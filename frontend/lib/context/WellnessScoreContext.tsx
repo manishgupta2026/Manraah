@@ -162,27 +162,32 @@ function normalizeSlug(raw?: string | null): CanonicalCategorySlug {
   return "other";
 }
 
+import { useAuth } from "@/frontend/lib/context/AuthContext";
+
 const WellnessScoreContext = createContext<WellnessScoreContextType | undefined>(undefined);
 
 export function WellnessScoreProvider({ children }: { children: ReactNode }) {
+  const { user, isAuthenticated } = useAuth();
   const { category: contextCategory } = useCategory();
 
-  // Stable category initialized synchronously from session/context immediately
+  const targetCategorySlug = user?.selectedCategory || contextCategory;
+
+  // Stable category initialized synchronously from session/user/context immediately
   const [currentCategory, setCurrentCategory] = useState<CanonicalCategorySlug>(() => {
     if (typeof window !== "undefined") {
       try {
         const session = getClientSession();
-        const raw = session?.user?.selectedCategory || contextCategory;
+        const raw = session?.user?.selectedCategory || targetCategorySlug;
         if (raw) return normalizeSlug(raw);
       } catch {
         // ignore
       }
     }
-    return normalizeSlug(contextCategory || "working-professional");
+    return normalizeSlug(targetCategorySlug || "student");
   });
 
   // currentCategoryName derived stably and synchronously (no blinking or lagging state)
-  const currentCategoryName = CATEGORY_DISPLAY_NAMES[currentCategory] || "Working Professional";
+  const currentCategoryName = CATEGORY_DISPLAY_NAMES[currentCategory] || "Student";
 
   const [currentScore, setCurrentScore] = useState<number | null>(null);
   const [isCurrentAssessed, setIsCurrentAssessed] = useState<boolean>(false);
@@ -195,15 +200,16 @@ export function WellnessScoreProvider({ children }: { children: ReactNode }) {
 
   // Modals
   const [isAssessmentModalOpen, setIsAssessmentModalOpen] = useState(false);
-  const [activeAssessmentCategory, setActiveAssessmentCategory] = useState<CanonicalCategorySlug>("working-professional");
+  const [activeAssessmentCategory, setActiveAssessmentCategory] = useState<CanonicalCategorySlug>("student");
   const [isBreakdownModalOpen, setIsBreakdownModalOpen] = useState(false);
   const [isReattemptModalOpen, setIsReattemptModalOpen] = useState(false);
   const [isLoginPromptOpen, setIsLoginPromptOpen] = useState(false);
 
-  // Update currentCategory ONLY when contextCategory actually changes
+  // Update currentCategory whenever user's selected category or contextCategory changes
   useEffect(() => {
-    if (!contextCategory) return;
-    const nextCanonical = normalizeSlug(contextCategory);
+    const rawTarget = user?.selectedCategory || contextCategory;
+    if (!rawTarget) return;
+    const nextCanonical = normalizeSlug(rawTarget);
     setCurrentCategory((prev) => {
       if (prev !== nextCanonical) {
         // Immediately sync currentScore / isCurrentAssessed to avoid stale score flashing
@@ -221,7 +227,7 @@ export function WellnessScoreProvider({ children }: { children: ReactNode }) {
       }
       return prev;
     });
-  }, [contextCategory, allCategories]);
+  }, [user?.selectedCategory, contextCategory, allCategories]);
 
   // Fetch wellness scores strictly for current category
   const fetchScores = useCallback(async () => {

@@ -7,6 +7,7 @@ import { signIn } from "@/backend/auth/client";
 import { FormInput } from "@/frontend/components/ui/FormInput";
 import { motion } from "framer-motion";
 import { useAssessment } from "@/frontend/lib/context/AssessmentContext";
+import { useAuth } from "@/frontend/lib/context/AuthContext";
 
 function readCookie(name: string): string | null {
   if (typeof document === "undefined") return null;
@@ -18,6 +19,7 @@ export default function LoginScreen() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { selectedCategory, detailedAnswers, computedScore, assessmentResult } = useAssessment();
+  const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(true);
@@ -43,7 +45,7 @@ export default function LoginScreen() {
       const cookieCat = readCookie("userType") || readCookie("manraah_userType") || "";
       const effectiveCategory = queryCat || selectedCategory || cookieCat || "";
 
-      await signIn(
+      await login(
         email.trim().toLowerCase(),
         password,
         effectiveCategory || "",

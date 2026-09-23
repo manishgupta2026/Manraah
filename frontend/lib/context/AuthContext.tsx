@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from "react";
 import { UserProfile, AuthSession } from "@/backend/types";
-import { getClientSession, updateClientSession, signOut } from "@/backend/auth/client";
+import { getClientSession, updateClientSession, signOut, signIn as apiSignIn, signUp as apiSignUp } from "@/backend/auth/client";
 
 interface AuthContextType {
   user: UserProfile | null;
@@ -10,6 +10,30 @@ interface AuthContextType {
   loading: boolean;
   profileImage: string;
   displayName: string;
+  login: (
+    email: string,
+    pass: string,
+    category?: string,
+    answers?: any,
+    computedScore?: number,
+    percentage?: number,
+    wellnessLevel?: string
+  ) => Promise<AuthSession>;
+  signUp: (
+    name: string,
+    email: string,
+    pass: string,
+    category?: string,
+    initialAnswers?: any,
+    answers?: any,
+    computedScore?: number,
+    percentage?: number,
+    wellnessLevel?: string,
+    phone?: string,
+    dob?: string,
+    country?: string,
+    gender?: string
+  ) => Promise<AuthSession>;
   updateUser: (updates: Partial<UserProfile>) => Promise<UserProfile>;
   refreshUser: () => Promise<void>;
   logout: () => Promise<void>;
@@ -48,7 +72,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
     return false;
   });
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const session = getClientSession();
+        if (session?.isAuthenticated && session?.user?.id) {
+          return false;
+        }
+      } catch {
+        // ignore
+      }
+    }
+    return true;
+  });
 
   // Sync state from client session & backend API
   const syncSession = useCallback(async () => {
@@ -150,6 +186,96 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, [syncSession]);
 
+  const login = useCallback(
+    async (
+      email: string,
+      pass: string,
+      category?: string,
+      answers?: any,
+      computedScore?: number,
+      percentage?: number,
+      wellnessLevel?: string
+    ): Promise<AuthSession> => {
+      setLoading(true);
+      try {
+        const session = await apiSignIn(
+          email,
+          pass,
+          category,
+          answers,
+          computedScore,
+          percentage,
+          wellnessLevel
+        );
+
+        if (session?.user && session.isAuthenticated) {
+          const normalizedUser: UserProfile = {
+            ...session.user,
+            avatar: session.user.avatar || session.user.profileImage || "",
+            profileImage: session.user.profileImage || session.user.avatar || "",
+          };
+          setUser(normalizedUser);
+          setIsAuthenticated(true);
+        }
+        return session;
+      } finally {
+        setLoading(false);
+      }
+    },
+    []
+  );
+
+  const signUp = useCallback(
+    async (
+      name: string,
+      email: string,
+      pass: string,
+      category?: string,
+      initialAnswers?: any,
+      answers?: any,
+      computedScore?: number,
+      percentage?: number,
+      wellnessLevel?: string,
+      phone?: string,
+      dob?: string,
+      country?: string,
+      gender?: string
+    ): Promise<AuthSession> => {
+      setLoading(true);
+      try {
+        const session = await apiSignUp(
+          name,
+          email,
+          pass,
+          category,
+          initialAnswers,
+          answers,
+          computedScore,
+          percentage,
+          wellnessLevel,
+          phone,
+          dob,
+          country,
+          gender
+        );
+
+        if (session?.user && session.isAuthenticated) {
+          const normalizedUser: UserProfile = {
+            ...session.user,
+            avatar: session.user.avatar || session.user.profileImage || "",
+            profileImage: session.user.profileImage || session.user.avatar || "",
+          };
+          setUser(normalizedUser);
+          setIsAuthenticated(true);
+        }
+        return session;
+      } finally {
+        setLoading(false);
+      }
+    },
+    []
+  );
+
   const updateUser = useCallback(async (updates: Partial<UserProfile>): Promise<UserProfile> => {
     const current = user || getClientSession().user;
     if (!current) throw new Error("No active user session to update.");
@@ -216,6 +342,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     loading,
     profileImage,
     displayName,
+    login,
+    signUp,
     updateUser,
     refreshUser,
     logout,

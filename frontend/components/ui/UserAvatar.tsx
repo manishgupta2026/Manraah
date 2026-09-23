@@ -36,10 +36,12 @@ export default function UserAvatar({
 }: UserAvatarProps) {
   // Use auth context for fallback if explicit props not provided
   let authUser = null;
+  let authLoading = false;
   try {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const auth = useAuth();
     authUser = auth.user;
+    authLoading = auth.loading;
   } catch {
     // Context may not be mounted in standalone isolated pages
   }
@@ -61,6 +63,18 @@ export default function UserAvatar({
   const lastName = explicitLastName || user?.lastName;
 
   const [hasError, setHasError] = useState(false);
+
+  // If auth is still loading and no explicit identity provided, show smooth placeholder
+  if (authLoading && !user && !explicitName && !explicitUser) {
+    return (
+      <div
+        className={`${sizeClass} rounded-full bg-white/10 dark:bg-[#14382F] animate-pulse shrink-0 select-none ${
+          showBorder ? "border-2 border-white/20 dark:border-white/10" : ""
+        } ${className}`}
+        aria-hidden="true"
+      />
+    );
+  }
 
   // If valid custom uploaded image URL is available and hasn't errored, render clean circular img
   if (avatarUrl && !hasError) {
