@@ -279,7 +279,7 @@ export default function CommunityView() {
                 <h3 className="text-xs font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
                   Share with Manraah
                 </h3>
-                <p className="text-[10px] text-[#6B857C] dark:text-[#A9C5BC]">
+                <p className="text-[10px] text-[#6B857C] dark:text-[#A9C5BC]" suppressHydrationWarning>
                   Post as {userName} • Your thoughts are held safely
                 </p>
               </div>

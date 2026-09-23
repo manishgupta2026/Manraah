@@ -29,6 +29,7 @@ async function initDB() {
     `;
     try {
       await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS sanctuary_name VARCHAR(255) UNIQUE`;
+      await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS emergency_contact JSONB DEFAULT '{}'::jsonb`;
       await sql`ALTER TABLE users ALTER COLUMN name DROP NOT NULL`;
     } catch (e) {
       // Ignored if tables are clean

@@ -61,6 +61,21 @@ export async function POST(request: Request) {
       return c;
     }
 
+function parseEmergencyContact(raw: any) {
+  if (!raw) return null;
+  if (typeof raw === "string") {
+    try {
+      const p = JSON.parse(raw);
+      if (p && typeof p === "object" && (p.name || p.phone)) return p;
+      return null;
+    } catch {
+      return null;
+    }
+  }
+  if (typeof raw === "object" && (raw.name || raw.phone)) return raw;
+  return null;
+}
+
     const rawCategory = normalizeCat(user.selected_category);
 
     const userAvatarUrl = user.avatar || user.image || "/images/user_avatar.jpg";
@@ -79,6 +94,7 @@ export async function POST(request: Request) {
       isFirstLogin: loginStatus.isFirstLogin,
       hasLoggedInBefore: loginStatus.hasLoggedInBefore,
       loginCount: loginStatus.loginCount,
+      emergencyContact: parseEmergencyContact(user.emergencyContact || (user as any).emergency_contact),
     };
 
     if (category) {

@@ -44,47 +44,9 @@ const DEFAULT_AVATAR = "";
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<UserProfile | null>(() => {
-    if (typeof window !== "undefined") {
-      try {
-        const session = getClientSession();
-        if (session?.user && session.isAuthenticated) {
-          return {
-            ...session.user,
-            avatar: session.user.avatar || session.user.profileImage || "",
-            profileImage: session.user.profileImage || session.user.avatar || "",
-          };
-        }
-      } catch {
-        // ignore
-      }
-    }
-    return null;
-  });
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
-    if (typeof window !== "undefined") {
-      try {
-        const session = getClientSession();
-        return Boolean(session?.isAuthenticated && session?.user?.id);
-      } catch {
-        // ignore
-      }
-    }
-    return false;
-  });
-  const [loading, setLoading] = useState<boolean>(() => {
-    if (typeof window !== "undefined") {
-      try {
-        const session = getClientSession();
-        if (session?.isAuthenticated && session?.user?.id) {
-          return false;
-        }
-      } catch {
-        // ignore
-      }
-    }
-    return true;
-  });
+  const [user, setUser] = useState<UserProfile | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
 
   // Sync state from client session & backend API
   const syncSession = useCallback(async () => {
@@ -128,6 +90,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 hasLoggedInBefore: typeof data.hasLoggedInBefore === "boolean" ? data.hasLoggedInBefore : session.user?.hasLoggedInBefore,
                 loginCount: typeof data.loginCount === "number" ? data.loginCount : session.user?.loginCount,
                 isFirstLogin: typeof data.isFirstLogin === "boolean" ? data.isFirstLogin : session.user?.isFirstLogin,
+                emergencyContact: data.emergencyContact !== undefined ? data.emergencyContact : session.user?.emergencyContact,
               };
 
               setUser(freshUser);
@@ -292,6 +255,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         category: updates.selectedCategory || current.selectedCategory,
         avatar: targetAvatar,
         profileImage: targetAvatar,
+        emergencyContact: updates.emergencyContact !== undefined ? updates.emergencyContact : current.emergencyContact,
       }),
     });
 

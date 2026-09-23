@@ -9,6 +9,7 @@ import { useAuth } from "@/frontend/lib/context/AuthContext";
 import { useTheme } from "@/frontend/lib/context/ThemeContext";
 import Logo from "@/frontend/components/ui/Logo";
 import UserAvatar from "@/frontend/components/ui/UserAvatar";
+import CrisisSupportModal from "@/frontend/components/crisis/CrisisSupportModal";
 
 export interface NavbarProps {
   variant?: "auto" | "public" | "authenticated";
@@ -22,13 +23,19 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
   const isDark = theme === "dark";
 
   const { user, logout, isAuthenticated } = useAuth();
+  const [mounted, setMounted] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [aboutDropdownOpen, setAboutDropdownOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const profileDropdownRef = useRef<HTMLDivElement>(null);
+  const [isCrisisModalOpen, setIsCrisisModalOpen] = useState(false);
 
-  const userName = user?.name || user?.sanctuaryName || "";
-  const isUserAuthenticated = Boolean(isAuthenticated && user?.id);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const userName = (mounted ? (user?.name || user?.sanctuaryName) : "") || "";
+  const isUserAuthenticated = Boolean(mounted && isAuthenticated && user?.id);
 
   const formatCategoryLabel = (cat?: string) => {
     if (!cat) return "Manraah Member";
@@ -51,11 +58,12 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
     pathname.startsWith("/resources") ||
     pathname.startsWith("/ai-companion") ||
     pathname.startsWith("/human-companion") ||
-    pathname.startsWith("/community") ||
-    pathname.startsWith("/profile") ||
     pathname.startsWith("/journal") ||
+    pathname.startsWith("/community") ||
+    pathname.startsWith("/sleep-meditation") ||
     pathname.startsWith("/meditation") ||
     pathname.startsWith("/sleep") ||
+    pathname.startsWith("/profile") ||
     pathname.startsWith("/checkin");
 
   const isAuthExempt = pathname === "/login" || pathname === "/signup" || pathname === "/forgot-password";
@@ -391,12 +399,23 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                 <button
                   type="button"
                   onClick={() => setProfileDropdownOpen((prev) => !prev)}
-                  className="rounded-full focus:outline-none focus:ring-2 focus:ring-white/40 cursor-pointer transition-transform active:scale-95"
+                  className="flex items-center gap-2 px-1.5 py-1 rounded-full bg-white/10 hover:bg-white/15 border border-white/15 focus:outline-none focus:ring-2 focus:ring-white/40 cursor-pointer transition-all"
                   aria-label="User profile menu"
                   aria-haspopup="true"
                   aria-expanded={profileDropdownOpen}
                 >
-                  <UserAvatar user={user} sizeClass="w-9 h-9 text-xs" />
+                  <UserAvatar user={user} sizeClass="w-8 h-8 text-xs" />
+                  <div className="text-left hidden sm:block pr-1">
+                    <p className="text-xs font-heading font-bold text-white leading-tight" suppressHydrationWarning>
+                      Hi, {userName}
+                    </p>
+                    <p className="text-[9px] text-white/70 font-medium leading-none mt-0.5">
+                      Take care today
+                    </p>
+                  </div>
+                  <span className="material-symbols-outlined text-base text-white/80 pr-1">
+                    expand_more
+                  </span>
                 </button>
 
                 <AnimatePresence>
@@ -408,6 +427,10 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                       transition={{ duration: 0.15, ease: "easeOut" }}
                       className="absolute top-full right-0 mt-2 w-48 rounded-2xl bg-[#0D2821] border border-[#23483E] text-white shadow-2xl p-1.5 z-50 flex flex-col gap-1"
                     >
+                      <div className="px-3.5 py-2 border-b border-white/10">
+                        <p className="font-heading font-bold text-white text-sm" suppressHydrationWarning>{userName}</p>
+                        <p className="text-[10px] text-white/60">Manraah Member</p>
+                      </div>
                       <Link
                         href="/profile"
                         onClick={() => setProfileDropdownOpen(false)}
@@ -432,6 +455,20 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                   )}
                 </AnimatePresence>
               </div>
+
+              {/* Crisis Button (on the right side of profile, shifted to the right) */}
+              <button
+                type="button"
+                onClick={() => setIsCrisisModalOpen(true)}
+                className="flex items-center gap-1.5 px-3 py-1.5 ml-1 sm:ml-2.5 rounded-full font-heading font-bold text-xs transition-all cursor-pointer select-none shrink-0 bg-red-600/90 hover:bg-red-600 text-white border border-red-400/40 shadow-xs hover:shadow-sm"
+                title="Crisis & 24/7 Helplines"
+                aria-label="Crisis"
+              >
+                <span className="material-symbols-outlined text-base animate-pulse text-red-200 sm:text-inherit">
+                  emergency
+                </span>
+                <span>Crisis</span>
+              </button>
             </div>
           ) : (
             /* Public Action Buttons (Exact Home Navbar styling) */
@@ -456,6 +493,20 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                 }`}
               >
                 <span>Get Started</span>
+              </button>
+
+              {/* Crisis Button (Public View - shifted to the right) */}
+              <button
+                type="button"
+                onClick={() => setIsCrisisModalOpen(true)}
+                className="flex items-center gap-1.5 px-3 py-1.5 ml-1 sm:ml-2 rounded-full font-heading font-bold text-xs transition-all cursor-pointer select-none shrink-0 bg-red-50 hover:bg-red-100 dark:bg-red-950/40 dark:hover:bg-red-900/50 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-900/60 shadow-2xs hover:shadow-xs"
+                title="Crisis & 24/7 Helplines"
+                aria-label="Crisis"
+              >
+                <span className="material-symbols-outlined text-base animate-pulse text-red-500">
+                  emergency
+                </span>
+                <span>Crisis</span>
               </button>
             </div>
           )}
@@ -504,6 +555,22 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
               className="relative z-20 lg:hidden w-full bg-surface-container-lowest border-t border-surface-variant/30 px-5 sm:px-6 pt-4 pb-8 flex flex-col gap-4 shadow-2xl max-h-[calc(100dvh-4.5rem)] overflow-y-auto no-scrollbar"
             >
               <nav className="flex flex-col gap-1 font-heading font-semibold text-sm text-on-surface">
+                {/* Mobile Quick Crisis Support Access */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    setIsCrisisModalOpen(true);
+                  }}
+                  className="w-full py-2.5 px-3.5 rounded-xl bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-900/50 font-heading font-bold text-xs flex items-center justify-between transition-colors mb-1 cursor-pointer"
+                >
+                  <span className="flex items-center gap-2">
+                    <span className="material-symbols-outlined text-base text-red-500 animate-pulse">emergency</span>
+                    <span>Crisis Support &amp; Helplines</span>
+                  </span>
+                  <span className="px-2 py-0.5 rounded-full text-[10px] bg-red-500/10 text-red-600 dark:text-red-400 font-extrabold">24/7</span>
+                </button>
+
                 <Link
                   href="/how-it-works"
                   onClick={() => setMobileMenuOpen(false)}
@@ -669,6 +736,12 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
           </>
         )}
       </AnimatePresence>
+
+      {/* Universal 24/7 Crisis Support Modal */}
+      <CrisisSupportModal
+        isOpen={isCrisisModalOpen}
+        onClose={() => setIsCrisisModalOpen(false)}
+      />
     </header>
   );
 }

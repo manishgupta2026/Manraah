@@ -22,6 +22,7 @@ import WellnessBreakdownModal from "../wellness/WellnessBreakdownModal";
 import WellnessReattemptModal from "../wellness/WellnessReattemptModal";
 import DailyCheckInModal from "../wellness/DailyCheckInModal";
 import LoginWellnessPrompt from "../wellness/LoginWellnessPrompt";
+import ProfileChangeAssessmentPrompt from "../wellness/ProfileChangeAssessmentPrompt";
 
 const STANDALONE_ROUTES = [
   "/",
@@ -144,6 +145,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
                   <WellnessBreakdownModal />
                   <WellnessReattemptModal />
                   <LoginWellnessPrompt />
+                  <ProfileChangeAssessmentPrompt />
                 </HeaderProvider>
               </WellnessScoreProvider>
             </WellnessProvider>

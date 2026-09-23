@@ -11,6 +11,7 @@ import AICompanionView from "./views/AICompanionView";
 import HumanCompanionView from "./views/HumanCompanionView";
 import JournalView from "./views/JournalView";
 import CommunityView from "./views/CommunityView";
+import SleepMeditationView from "./views/SleepMeditationView";
 import ProfileView from "./views/ProfileView";
 
 export type DashboardSection =
@@ -22,6 +23,7 @@ export type DashboardSection =
   | "human-companion"
   | "journal"
   | "community"
+  | "sleep-meditation"
   | "profile";
 
 interface UnifiedDashboardProps {
@@ -47,9 +49,14 @@ function DashboardContent({ initialSection }: UnifiedDashboardProps) {
       tabParam === "human-companion" ||
       tabParam === "journal" ||
       tabParam === "community" ||
+      tabParam === "sleep-meditation" ||
+      tabParam === "sleep" ||
+      tabParam === "meditation" ||
       tabParam === "profile"
     ) {
-      return tabParam === "my-journey" ? "journey" : tabParam;
+      if (tabParam === "my-journey") return "journey";
+      if (tabParam === "sleep" || tabParam === "meditation") return "sleep-meditation";
+      return tabParam;
     }
 
     if (pathname.includes("/appointments")) return "appointments";
@@ -59,6 +66,13 @@ function DashboardContent({ initialSection }: UnifiedDashboardProps) {
     if (pathname.includes("/human-companion")) return "human-companion";
     if (pathname.includes("/journal")) return "journal";
     if (pathname.includes("/community")) return "community";
+    if (
+      pathname.includes("/sleep-meditation") ||
+      pathname.includes("/sleep") ||
+      pathname.includes("/meditation")
+    ) {
+      return "sleep-meditation";
+    }
     if (pathname.includes("/profile")) return "profile";
 
     return "dashboard";
@@ -108,6 +122,7 @@ function DashboardContent({ initialSection }: UnifiedDashboardProps) {
           {activeSection === "human-companion" && <HumanCompanionView />}
           {activeSection === "journal" && <JournalView />}
           {activeSection === "community" && <CommunityView />}
+          {activeSection === "sleep-meditation" && <SleepMeditationView />}
           {activeSection === "profile" && <ProfileView />}
         </div>
       )}

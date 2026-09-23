@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/frontend/lib/context/AuthContext";
 import { useWellness } from "@/frontend/lib/context/WellnessContext";
 import { useCategory } from "@/frontend/lib/context/CategoryContext";
+import { useWellnessScore } from "@/frontend/lib/context/WellnessScoreContext";
 import UserAvatar from "@/frontend/components/ui/UserAvatar";
 
 const CATEGORY_OPTIONS = [
@@ -31,6 +32,7 @@ export default function ProfileView() {
   const { user, isAuthenticated, loading, updateUser, logout } = useAuth();
   const { currentStreak, refetchWellnessData } = useWellness();
   const { setCategory } = useCategory();
+  const { triggerProfilePrompt } = useWellnessScore();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -126,7 +128,8 @@ export default function ProfileView() {
       setTimeout(() => {
         setIsEditModalOpen(false);
         setSaveSuccessMsg(null);
-      }, 800);
+        triggerProfilePrompt(editCategory);
+      }, 500);
     } catch (err: any) {
       setSaveErrorMsg(err.message || "Unable to save profile changes.");
     } finally {
@@ -225,10 +228,10 @@ export default function ProfileView() {
             <div className="flex flex-col justify-center min-w-0 flex-1 space-y-1">
               {/* Row 1: Name + Category Badge */}
               <div className="flex items-center gap-2.5 flex-wrap">
-                <h1 className="text-xl sm:text-2xl font-heading font-black text-[#19332A] dark:text-[#F4FAF7] leading-tight break-words">
+                <h1 className="text-xl sm:text-2xl font-heading font-black text-[#19332A] dark:text-[#F4FAF7] leading-tight break-words" suppressHydrationWarning>
                   {userName}
                 </h1>
-                <span className="px-2.5 py-0.5 rounded-full bg-[#EAF6F0] dark:bg-[#14382F] text-[#006C56] dark:text-[#00A982] text-[10.5px] font-extrabold whitespace-nowrap">
+                <span className="px-2.5 py-0.5 rounded-full bg-[#EAF6F0] dark:bg-[#14382F] text-[#006C56] dark:text-[#00A982] text-[10.5px] font-extrabold whitespace-nowrap" suppressHydrationWarning>
                   {formatCategoryLabel(userCategory)}
                 </span>
               </div>
@@ -290,7 +293,7 @@ export default function ProfileView() {
                 <p className="text-[10px] font-extrabold text-[#789389] dark:text-[#78958C] uppercase tracking-wider">
                   Full Name
                 </p>
-                <p className="text-xs sm:text-[13px] font-bold text-[#19332A] dark:text-[#F4FAF7] mt-1">
+                <p className="text-xs sm:text-[13px] font-bold text-[#19332A] dark:text-[#F4FAF7] mt-1" suppressHydrationWarning>
                   {userName}
                 </p>
               </div>
@@ -299,7 +302,7 @@ export default function ProfileView() {
                 <p className="text-[10px] font-extrabold text-[#789389] dark:text-[#78958C] uppercase tracking-wider">
                   Email Address
                 </p>
-                <p className="text-xs sm:text-[13px] font-bold text-[#19332A] dark:text-[#F4FAF7] mt-1">
+                <p className="text-xs sm:text-[13px] font-bold text-[#19332A] dark:text-[#F4FAF7] mt-1" suppressHydrationWarning>
                   {userEmail}
                 </p>
               </div>

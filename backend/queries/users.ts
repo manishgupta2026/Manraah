@@ -1,4 +1,5 @@
 import { sql } from "@/backend/db/client";
+import { EmergencyContact } from "@/backend/types";
 
 let userLoginSchemaEnsured = false;
 
@@ -12,7 +13,8 @@ export async function ensureUserLoginSchema() {
       ALTER TABLE users 
       ADD COLUMN IF NOT EXISTS has_logged_in_before BOOLEAN DEFAULT FALSE,
       ADD COLUMN IF NOT EXISTS login_count INT DEFAULT 0,
-      ADD COLUMN IF NOT EXISTS last_login_at TIMESTAMP WITH TIME ZONE;
+      ADD COLUMN IF NOT EXISTS last_login_at TIMESTAMP WITH TIME ZONE,
+      ADD COLUMN IF NOT EXISTS emergency_contact JSONB DEFAULT '{}'::jsonb;
     `;
   } catch (err) {
     // ignore
@@ -24,7 +26,7 @@ export async function getUserByEmail(email: string) {
   const cleanEmail = email.trim().toLowerCase();
 
   const results = await sql`
-    SELECT id, name, email, password_hash, sanctuary_name, avatar, selected_category, streak_days, mindfulness_minutes, current_mood, onboarding_completed, has_logged_in_before, login_count, last_login_at
+    SELECT id, name, email, password_hash, sanctuary_name, avatar, selected_category, streak_days, mindfulness_minutes, current_mood, onboarding_completed, has_logged_in_before, login_count, last_login_at, emergency_contact as "emergencyContact"
     FROM users
     WHERE LOWER(email) = ${cleanEmail}
     LIMIT 1
@@ -35,7 +37,7 @@ export async function getUserByEmail(email: string) {
 export async function getUserById(id: string) {
   await ensureUserLoginSchema();
   const results = await sql`
-    SELECT id, name, email, sanctuary_name, avatar, selected_category, streak_days, mindfulness_minutes, current_mood, onboarding_completed, has_logged_in_before, login_count, last_login_at
+    SELECT id, name, email, sanctuary_name, avatar, selected_category, streak_days, mindfulness_minutes, current_mood, onboarding_completed, has_logged_in_before, login_count, last_login_at, emergency_contact as "emergencyContact"
     FROM users
     WHERE id = ${id}
     LIMIT 1
@@ -244,4 +246,15 @@ export async function deleteUserById(userId: string): Promise<void> {
     // ignore
   }
 }
+
+export async function updateUserEmergencyContact(userId: string, contact: EmergencyContact | null) {
+  await ensureUserLoginSchema();
+  const contactJson = contact ? JSON.stringify(contact) : JSON.stringify({});
+  return await sql`
+    UPDATE users 
+    SET emergency_contact = ${contactJson}::jsonb 
+    WHERE id = ${userId}
+  `;
+}
+
 

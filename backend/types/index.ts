@@ -39,6 +39,13 @@ export interface UserProfile {
   loginCount?: number;
   isFirstLogin?: boolean;
   lastLoginAt?: string;
+  emergencyContact?: EmergencyContact | null;
+}
+
+export interface EmergencyContact {
+  name: string;
+  phone: string;
+  relation: string;
 }
 
 export interface AssessmentAnswers {

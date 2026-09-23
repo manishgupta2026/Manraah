@@ -11,8 +11,24 @@ import {
   updateUserCategory,
   updateUserAvatar,
   updateUserStreak,
+  updateUserEmergencyContact,
 } from "@/backend/queries/users";
 import { sql } from "@/backend/db/client";
+
+function parseEmergencyContact(raw: any) {
+  if (!raw) return null;
+  if (typeof raw === "string") {
+    try {
+      const p = JSON.parse(raw);
+      if (p && typeof p === "object" && (p.name || p.phone)) return p;
+      return null;
+    } catch {
+      return null;
+    }
+  }
+  if (typeof raw === "object" && (raw.name || raw.phone)) return raw;
+  return null;
+}
 
 export const dynamic = "force-dynamic";
 
@@ -44,6 +60,7 @@ export async function GET(request: Request) {
     const previouslyLoggedIn = Boolean(user.has_logged_in_before);
     const count = Number(user.login_count || 0);
     const isFirst = !previouslyLoggedIn && count <= 1;
+    const emergencyContact = parseEmergencyContact(user.emergencyContact || (user as any).emergency_contact);
 
     return NextResponse.json({
       id: user.id,
@@ -64,6 +81,7 @@ export async function GET(request: Request) {
       hasLoggedInBefore: previouslyLoggedIn,
       loginCount: count,
       isFirstLogin: isFirst,
+      emergencyContact,
     });
   } catch (err: any) {
     console.error("[API GET /api/profile error]:", err);
@@ -81,7 +99,7 @@ export async function PUT(request: Request) {
 
   try {
     const body = await request.json();
-    const { name, sanctuaryName, category, avatar, profileImage } = body;
+    const { name, sanctuaryName, category, avatar, profileImage, emergencyContact } = body;
 
     // 1. Verify user exists
     const existingUsers = await getUserById(userId);
@@ -145,11 +163,18 @@ export async function PUT(request: Request) {
       await updateUserAvatar(userId, newAvatar);
     }
 
-    // 5. Fetch updated user details
+    // 5. Update emergency contact if provided
+    if (emergencyContact !== undefined) {
+      const parsedContact = parseEmergencyContact(emergencyContact);
+      await updateUserEmergencyContact(userId, parsedContact);
+    }
+
+    // 6. Fetch updated user details
     const updatedUsers = await getUserById(userId);
     const updatedUser = updatedUsers[0];
 
     const finalAvatar = updatedUser.avatar || updatedUser.image || newAvatar || "/images/user_avatar.jpg";
+    const savedEmergencyContact = parseEmergencyContact(updatedUser.emergencyContact || (updatedUser as any).emergency_contact);
 
     const userProfile = {
       id: updatedUser.id,
@@ -162,6 +187,7 @@ export async function PUT(request: Request) {
       streakDays: updatedUser.streak_days,
       mindfulnessMinutes: updatedUser.mindfulness_minutes,
       currentMood: updatedUser.current_mood || "Calm",
+      emergencyContact: savedEmergencyContact,
     };
 
     const sessionData = {

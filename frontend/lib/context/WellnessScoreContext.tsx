@@ -7,6 +7,7 @@ import React, {
   useEffect,
   useCallback,
   useMemo,
+  useRef,
   ReactNode,
 } from "react";
 import { getClientSession } from "@/backend/auth/client";
@@ -57,6 +58,9 @@ interface WellnessScoreContextType {
   isBreakdownModalOpen: boolean;
   isReattemptModalOpen: boolean;
   isLoginPromptOpen: boolean;
+  isProfilePromptOpen: boolean;
+  profilePromptType: "immediate" | "reminder_1min";
+  profilePromptCategory: CanonicalCategorySlug;
   openAssessment: (categorySlug?: string) => void;
   closeAssessment: () => void;
   openReattemptModal: (categorySlug?: string) => void;
@@ -65,6 +69,8 @@ interface WellnessScoreContextType {
   openBreakdownModal: () => void;
   closeBreakdownModal: () => void;
   dismissLoginPrompt: () => void;
+  triggerProfilePrompt: (categorySlug?: string) => void;
+  dismissProfilePrompt: () => void;
   refetchScores: () => Promise<void>;
   submitAssessment: (
     categoryId: string,
@@ -172,19 +178,8 @@ export function WellnessScoreProvider({ children }: { children: ReactNode }) {
 
   const targetCategorySlug = user?.selectedCategory || contextCategory;
 
-  // Stable category initialized synchronously from session/user/context immediately
-  const [currentCategory, setCurrentCategory] = useState<CanonicalCategorySlug>(() => {
-    if (typeof window !== "undefined") {
-      try {
-        const session = getClientSession();
-        const raw = session?.user?.selectedCategory || targetCategorySlug;
-        if (raw) return normalizeSlug(raw);
-      } catch {
-        // ignore
-      }
-    }
-    return normalizeSlug(targetCategorySlug || "student");
-  });
+  // Stable category initialized consistently across server and initial client hydration
+  const [currentCategory, setCurrentCategory] = useState<CanonicalCategorySlug>("student");
 
   // currentCategoryName derived stably and synchronously (no blinking or lagging state)
   const currentCategoryName = CATEGORY_DISPLAY_NAMES[currentCategory] || "Student";
@@ -204,6 +199,12 @@ export function WellnessScoreProvider({ children }: { children: ReactNode }) {
   const [isBreakdownModalOpen, setIsBreakdownModalOpen] = useState(false);
   const [isReattemptModalOpen, setIsReattemptModalOpen] = useState(false);
   const [isLoginPromptOpen, setIsLoginPromptOpen] = useState(false);
+
+  // Profile update assessment prompts & 1-minute reminder
+  const [isProfilePromptOpen, setIsProfilePromptOpen] = useState(false);
+  const [profilePromptType, setProfilePromptType] = useState<"immediate" | "reminder_1min">("immediate");
+  const [profilePromptCategory, setProfilePromptCategory] = useState<CanonicalCategorySlug>("student");
+  const reminderTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Update currentCategory whenever user's selected category or contextCategory changes
   useEffect(() => {
@@ -312,12 +313,79 @@ export function WellnessScoreProvider({ children }: { children: ReactNode }) {
     };
   }, [fetchScores]);
 
+  const clearReminderTimer = useCallback(() => {
+    if (reminderTimerRef.current) {
+      clearTimeout(reminderTimerRef.current);
+      reminderTimerRef.current = null;
+    }
+  }, []);
+
+  const dismissProfilePrompt = useCallback(() => {
+    setIsProfilePromptOpen(false);
+  }, []);
+
+  const triggerProfilePrompt = useCallback(
+    (categorySlug?: string) => {
+      const targetSlug = normalizeSlug(categorySlug || currentCategory);
+      setProfilePromptCategory(targetSlug);
+      setProfilePromptType("immediate");
+      setIsProfilePromptOpen(true);
+
+      clearReminderTimer();
+
+      // Check if user has already completed the assessment for this category
+      const targetCatInfo = allCategories.find((c) => c.id === targetSlug);
+      const isAlreadyAssessed = Boolean(targetCatInfo?.completed);
+
+      // If assessment is not done yet for that category, schedule reminder popup after 1 minute (60s)
+      if (!isAlreadyAssessed) {
+        reminderTimerRef.current = setTimeout(async () => {
+          try {
+            const res = await fetch(`/api/wellness/current?category=${targetSlug}`);
+            if (res.ok) {
+              const data = await res.json();
+              if (!data.assessmentCompleted) {
+                setProfilePromptCategory(targetSlug);
+                setProfilePromptType("reminder_1min");
+                setIsProfilePromptOpen(true);
+              }
+            }
+          } catch {
+            const localCat = allCategories.find((c) => c.id === targetSlug);
+            if (!localCat?.completed) {
+              setProfilePromptCategory(targetSlug);
+              setProfilePromptType("reminder_1min");
+              setIsProfilePromptOpen(true);
+            }
+          }
+        }, 60000);
+      }
+    },
+    [currentCategory, allCategories, clearReminderTimer]
+  );
+
+  useEffect(() => {
+    const handleProfileChanged = (event: Event) => {
+      const customEvent = event as CustomEvent<{ category?: string }>;
+      const cat = customEvent.detail?.category;
+      triggerProfilePrompt(cat);
+    };
+
+    window.addEventListener("manraah_profile_changed", handleProfileChanged);
+    return () => {
+      window.removeEventListener("manraah_profile_changed", handleProfileChanged);
+      clearReminderTimer();
+    };
+  }, [triggerProfilePrompt, clearReminderTimer]);
+
   const openAssessment = (categorySlug?: string) => {
     const targetSlug = normalizeSlug(categorySlug || currentCategory);
     setActiveAssessmentCategory(targetSlug);
     setIsAssessmentModalOpen(true);
     setIsLoginPromptOpen(false);
     setIsReattemptModalOpen(false);
+    setIsProfilePromptOpen(false);
+    clearReminderTimer();
   };
 
   const closeAssessment = () => {
@@ -392,6 +460,10 @@ export function WellnessScoreProvider({ children }: { children: ReactNode }) {
       )
     );
 
+    // Clear any profile change assessment reminder timer upon successful completion
+    clearReminderTimer();
+    setIsProfilePromptOpen(false);
+
     // Background sync
     await fetchScores();
 
@@ -419,6 +491,9 @@ export function WellnessScoreProvider({ children }: { children: ReactNode }) {
         isBreakdownModalOpen,
         isReattemptModalOpen,
         isLoginPromptOpen,
+        isProfilePromptOpen,
+        profilePromptType,
+        profilePromptCategory,
         openAssessment,
         closeAssessment,
         openReattemptModal,
@@ -427,6 +502,8 @@ export function WellnessScoreProvider({ children }: { children: ReactNode }) {
         openBreakdownModal,
         closeBreakdownModal,
         dismissLoginPrompt,
+        triggerProfilePrompt,
+        dismissProfilePrompt,
         refetchScores: fetchScores,
         submitAssessment,
       }}

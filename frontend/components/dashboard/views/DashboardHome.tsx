@@ -249,14 +249,14 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-0.5">
         {/* Greeting: WELCOME for first-time login vs WELCOME BACK for returning logins */}
         <div className="space-y-0.5">
-          <span className="text-[10px] font-black uppercase tracking-widest text-[#006C56] dark:text-[#00A982]">
+          <span className="text-[10px] font-black uppercase tracking-widest text-[#006C56] dark:text-[#00A982]" suppressHydrationWarning>
             {isFirstLoginState ? "WELCOME" : "WELCOME BACK"}
           </span>
-          <h1 className="text-2xl font-heading font-black text-[#19332A] dark:text-[#F4FAF7] leading-tight">
+          <h1 className="text-2xl font-heading font-black text-[#19332A] dark:text-[#F4FAF7] leading-tight" suppressHydrationWarning>
             Hi, {userName}! 👋
           </h1>
           <div className="pt-0.5">
-            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-[#EAF6F0] dark:bg-[#14382F] text-[#006C56] dark:text-[#88F7D6] border border-[#D2EAE0] dark:border-[#23483E]">
+            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-[#EAF6F0] dark:bg-[#14382F] text-[#006C56] dark:text-[#88F7D6] border border-[#D2EAE0] dark:border-[#23483E]" suppressHydrationWarning>
               {formatCategoryDisplayName(user?.selectedCategory || currentCategory)}
             </span>
           </div>

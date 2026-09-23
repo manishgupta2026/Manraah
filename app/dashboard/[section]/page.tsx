@@ -16,6 +16,7 @@ const VALID_SECTIONS: DashboardSection[] = [
   "human-companion",
   "journal",
   "community",
+  "sleep-meditation",
 ];
 
 export default function DashboardSectionPage({ params }: DashboardSectionPageProps) {

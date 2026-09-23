@@ -14,6 +14,21 @@ export async function GET() {
   }
 
   try {
+function parseEmergencyContact(raw: any) {
+  if (!raw) return null;
+  if (typeof raw === "string") {
+    try {
+      const p = JSON.parse(raw);
+      if (p && typeof p === "object" && (p.name || p.phone)) return p;
+      return null;
+    } catch {
+      return null;
+    }
+  }
+  if (typeof raw === "object" && (raw.name || raw.phone)) return raw;
+  return null;
+}
+
     let session = JSON.parse(decodeURIComponent(sessionCookie));
     if (session?.user?.id) {
       const dbUsers = await getUserById(session.user.id);
@@ -23,6 +38,7 @@ export async function GET() {
         const count = Number(u.login_count || 0);
         // If login count > 1 or has_logged_in_before is true, not first login
         const isFirst = !previouslyLoggedIn && count <= 1;
+        const savedContact = parseEmergencyContact(u.emergencyContact || (u as any).emergency_contact) || session.user.emergencyContact || null;
 
         session.user = {
           ...session.user,
@@ -34,6 +50,7 @@ export async function GET() {
           hasLoggedInBefore: previouslyLoggedIn,
           loginCount: count,
           isFirstLogin: isFirst,
+          emergencyContact: savedContact,
         };
         session.isFirstLogin = isFirst;
         session.hasLoggedInBefore = previouslyLoggedIn;

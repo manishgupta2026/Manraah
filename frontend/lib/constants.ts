@@ -17,6 +17,7 @@ export const MAIN_NAV_ITEMS: NavItem[] = [
   { label: "Community", href: "/community", icon: "forum" },
   { label: "Resources", href: "/resources", icon: "menu_book" },
   { label: "Journal", href: "/journal", icon: "edit_note" },
+  { label: "Sleep & Meditation", href: "/sleep-meditation", icon: "bedtime" },
 ];
 
 export const MOBILE_TAB_ITEMS: NavItem[] = [

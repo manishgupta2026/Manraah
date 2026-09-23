@@ -200,7 +200,7 @@ export default function AICompanionView() {
                     : "bg-[#F4FAF7] dark:bg-[#0E2A23] text-[#19332A] dark:text-[#F4FAF7] border border-[#E2ECE6] dark:border-[#23483E] rounded-tl-xs"
                 }`}
               >
-                <p className="whitespace-pre-wrap">{msg.text}</p>
+                <p className="whitespace-pre-wrap" suppressHydrationWarning>{msg.text}</p>
                 <p
                   className={`text-[9px] font-medium text-right ${
                     msg.sender === "user"

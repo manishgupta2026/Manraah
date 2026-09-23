@@ -9,8 +9,14 @@ import UserAvatar from "@/frontend/components/ui/UserAvatar";
 export default function DesktopSidebar() {
   const pathname = usePathname();
   const { user, isAuthenticated } = useAuth();
-  const isUserAuthenticated = Boolean(isAuthenticated && user?.id);
-  const userName = user?.name || user?.sanctuaryName || "";
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const isUserAuthenticated = Boolean(mounted && isAuthenticated && user?.id);
+  const userName = (mounted ? (user?.name || user?.sanctuaryName) : "") || "";
 
   const navItems = [
     {
@@ -101,6 +107,22 @@ export default function DesktopSidebar() {
         </svg>
       ),
     },
+    {
+      id: "sleep-meditation",
+      label: "Sleep & Meditation",
+      href: "/sleep-meditation",
+      isActive:
+        pathname === "/sleep-meditation" ||
+        pathname.startsWith("/sleep-meditation/") ||
+        pathname === "/dashboard/sleep-meditation" ||
+        pathname === "/sleep" ||
+        pathname === "/meditation",
+      icon: (
+        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+        </svg>
+      ),
+    },
   ];
 
   return (
@@ -130,7 +152,7 @@ export default function DesktopSidebar() {
             <Link href="/profile" className="hover:opacity-90 transition-opacity">
               <UserAvatar user={user} sizeClass="w-9 h-9 text-xs" />
             </Link>
-            <p className="text-[11px] font-bold text-white leading-tight mt-1 truncate max-w-[76px] px-0.5">
+            <p className="text-[11px] font-bold text-white leading-tight mt-1 truncate max-w-[76px] px-0.5" suppressHydrationWarning>
               {userName.split(" ")[0]}
             </p>
             <Link

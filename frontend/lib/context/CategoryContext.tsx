@@ -107,19 +107,7 @@ import { useAuth } from "@/frontend/lib/context/AuthContext";
 
 export function CategoryProvider({ children }: { children: ReactNode }) {
   const { user, isAuthenticated } = useAuth();
-  const [category, setCategory] = useState<UserCategory>(() => {
-    if (typeof window !== "undefined") {
-      try {
-        const session = getClientSession();
-        if (session?.user?.selectedCategory) {
-          return session.user.selectedCategory as UserCategory;
-        }
-      } catch {
-        // ignore
-      }
-    }
-    return "student" as UserCategory;
-  });
+  const [category, setCategory] = useState<UserCategory>("student");
 
   // Authoritatively sync category whenever authenticated user changes
   useEffect(() => {

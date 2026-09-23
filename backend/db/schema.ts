@@ -20,6 +20,7 @@ export const users = pgTable("users", {
   workSituation: text("work_situation"),
   wellnessGoals: jsonb("wellness_goals").default([]),
   onboardingCompleted: boolean("onboarding_completed").default(false),
+  emergencyContact: jsonb("emergency_contact").default({}),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
