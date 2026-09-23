@@ -8,8 +8,22 @@ import * as schema from "./schema";
  * Provides a provider-independent SQL query helper connected to Neon.
  */
 
-// Enable fetch caching control if needed
-neonConfig.fetchConnectionCache = true;
+// Resilient fetch wrapper with automatic retry for serverless database connection
+const resilientFetch = async (url: any, options: any) => {
+  let attempts = 0;
+  const maxAttempts = 3;
+  while (attempts < maxAttempts) {
+    try {
+      attempts++;
+      return await fetch(url, options);
+    } catch (err: any) {
+      if (attempts >= maxAttempts) throw err;
+      await new Promise((resolve) => setTimeout(resolve, 150 * attempts));
+    }
+  }
+};
+
+neonConfig.fetchFunction = resilientFetch;
 
 const connectionString = process.env.DATABASE_URL;
 

@@ -287,8 +287,8 @@ export default function AppointmentsView() {
         </div>
       </div>
 
-      {/* 2. Upcoming Appointment Highlight Card */}
-      {(activeTab === "all" || activeTab === "upcoming") && (
+      {/* 2. Upcoming Appointment Highlight Card (Shown ONLY on Upcoming tab) */}
+      {activeTab === "upcoming" && (
         <div className="bg-white dark:bg-[#102F27] rounded-3xl p-6 border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs space-y-4 transition-colors">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2.5">
@@ -385,10 +385,11 @@ export default function AppointmentsView() {
         </div>
       )}
 
-      {/* 3. Book a New Session Section */}
-      {(activeTab === "all" || activeTab === "upcoming") && (
+      {/* 3. Book a New Session Section (Shown ONLY on All tab) */}
+      {activeTab === "all" && (
         <div className="bg-white dark:bg-[#102F27] rounded-3xl p-6 border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs space-y-4 transition-colors">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          {/* Header */}
+          <div>
             <div className="flex items-center gap-2.5">
               <div className="w-8 h-8 rounded-2xl bg-[#EAF6F0] dark:bg-[#14382F] text-[#006C56] dark:text-[#00A982] flex items-center justify-center">
                 <span className="font-bold text-sm">+</span>
@@ -402,29 +403,54 @@ export default function AppointmentsView() {
                 </p>
               </div>
             </div>
+          </div>
 
-            {/* Specialty Filter Chips */}
-            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 max-w-full">
-              {SPECIALTY_FILTERS.map((filter) => (
-                <button
-                  key={filter}
-                  onClick={() => setSelectedSpecialty(filter)}
-                  className={`px-3 py-1 rounded-full text-[10.5px] font-bold transition-all whitespace-nowrap cursor-pointer ${
-                    selectedSpecialty === filter
-                      ? "bg-[#006C56] dark:bg-[#00A982] text-white dark:text-[#071C17] shadow-xs"
-                      : "bg-[#F4F9F6] dark:bg-[#14382F] text-[#4F685F] dark:text-[#A9C5BC] hover:bg-[#EAF6F0]"
-                  }`}
-                >
-                  {filter}
-                </button>
-              ))}
+          {/* Privacy & Confidentiality Reassurance Banner */}
+          <div className="p-3.5 sm:px-4.5 sm:py-3.5 rounded-2xl bg-[#EDF8F3] dark:bg-[#0C2B22] border border-[#BBE5D4] dark:border-[#1E5244] shadow-[0_4px_14px_rgba(0,80,65,0.06)] dark:shadow-none flex items-start sm:items-center gap-3 sm:gap-3.5 transition-all">
+            {/* Prominent Lock Icon Container */}
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#D6EFE3] dark:bg-[#16473A] border border-[#A4DEC7] dark:border-[#225F4E] flex items-center justify-center shrink-0 shadow-xs mt-0.5 sm:mt-0">
+              <svg className="w-4.5 h-4.5 sm:w-5 sm:h-5 text-[#006C56] dark:text-[#88F7D6]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+            </div>
+
+            {/* Content */}
+            <div className="flex-1 min-w-0">
+              <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
+                <span className="text-xs sm:text-sm font-heading font-black text-[#004D3D] dark:text-[#88F7D6] tracking-tight">
+                  100% Confidential
+                </span>
+                <span className="inline-flex items-center gap-0.5 text-[9.5px] sm:text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#D4EFE4] dark:bg-[#18483B] text-[#006C56] dark:text-[#88F7D6] border border-[#B3E2CF] dark:border-[#245C4B]">
+                  ✓ Private &amp; Secure
+                </span>
+              </div>
+              <p className="text-[11px] sm:text-xs text-[#265345] dark:text-[#A8C7BD] font-medium leading-snug mt-0.5">
+                Your sessions, wellness information, and personal details remain private and secure.
+              </p>
             </div>
           </div>
 
-          {/* Therapists Cards Grid (2-column responsive grid reusing TherapistCard) */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
+          {/* Specialty Filter Chips */}
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 max-w-full">
+            {SPECIALTY_FILTERS.map((filter) => (
+              <button
+                key={filter}
+                onClick={() => setSelectedSpecialty(filter)}
+                className={`px-3 py-1 rounded-full text-[10.5px] font-bold transition-all whitespace-nowrap cursor-pointer ${
+                  selectedSpecialty === filter
+                    ? "bg-[#006C56] dark:bg-[#00A982] text-white dark:text-[#071C17] shadow-xs"
+                    : "bg-[#F4F9F6] dark:bg-[#14382F] text-[#4F685F] dark:text-[#A9C5BC] hover:bg-[#EAF6F0]"
+                }`}
+              >
+                {filter}
+              </button>
+            ))}
+          </div>
+
+          {/* Therapists Cards Grid (Responsive grid reusing TherapistCard) */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-1">
             {filteredTherapists.map((therapist) => (
-              <div key={therapist.id} className="w-full flex flex-col h-full min-w-0">
+              <div key={therapist.id} className="w-full flex flex-col h-full min-w-0 relative hover:z-50">
                 <TherapistCard
                   therapist={therapist}
                   onBook={handleBookSession}
@@ -435,8 +461,8 @@ export default function AppointmentsView() {
         </div>
       )}
 
-      {/* 4. Past Appointments */}
-      {(activeTab === "all" || activeTab === "past") && (
+      {/* 4. Past Appointments (Shown ONLY on Past tab) */}
+      {activeTab === "past" && (
         <div className="bg-white dark:bg-[#102F27] rounded-3xl p-6 border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs space-y-4 transition-colors">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-2xl bg-[#EAF6F0] dark:bg-[#14382F] text-[#006C56] dark:text-[#00A982] flex items-center justify-center">

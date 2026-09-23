@@ -204,8 +204,24 @@ export function WellnessScoreProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!contextCategory) return;
     const nextCanonical = normalizeSlug(contextCategory);
-    setCurrentCategory((prev) => (prev !== nextCanonical ? nextCanonical : prev));
-  }, [contextCategory]);
+    setCurrentCategory((prev) => {
+      if (prev !== nextCanonical) {
+        // Immediately sync currentScore / isCurrentAssessed to avoid stale score flashing
+        const match = allCategories.find((c) => c.id === nextCanonical);
+        if (match && match.completed && typeof match.score === "number") {
+          setCurrentScore(match.score);
+          setIsCurrentAssessed(true);
+        } else {
+          setCurrentScore(null);
+          setIsCurrentAssessed(false);
+          setLevelBadge("Gentle Care");
+          setLevelDescription("Ready to check in");
+        }
+        return nextCanonical;
+      }
+      return prev;
+    });
+  }, [contextCategory, allCategories]);
 
   // Fetch wellness scores strictly for current category
   const fetchScores = useCallback(async () => {
@@ -222,6 +238,7 @@ export function WellnessScoreProvider({ children }: { children: ReactNode }) {
     }
 
     try {
+      setIsLoading(true);
       setError(null);
       const res = await fetch(`/api/wellness/current?category=${currentCategory}`);
       if (!res.ok) {
@@ -245,6 +262,9 @@ export function WellnessScoreProvider({ children }: { children: ReactNode }) {
       if (data.levelDescription) setLevelDescription(data.levelDescription);
       if (Array.isArray(data.allCategories) && data.allCategories.length > 0) {
         setAllCategories(data.allCategories);
+      }
+      if (Array.isArray(data.history)) {
+        setRecentHistory(data.history);
       }
     } catch (err: any) {
       console.warn("Wellness score fetch warning:", err.message);

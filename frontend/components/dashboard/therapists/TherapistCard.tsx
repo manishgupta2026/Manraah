@@ -8,12 +8,16 @@ interface TherapistCardProps {
   therapist: UnifiedTherapist;
   onNavigate?: (section: "dashboard" | "appointments" | "journey" | "resources" | "ai-companion") => void;
   onBook?: (therapist: UnifiedTherapist) => void;
+  isFirstCard?: boolean;
+  isLastCard?: boolean;
 }
 
 export default function TherapistCard({
   therapist,
   onNavigate,
   onBook,
+  isFirstCard = false,
+  isLastCard = false,
 }: TherapistCardProps) {
   const handleClick = (e: React.MouseEvent) => {
     if (onBook) {
@@ -25,9 +29,15 @@ export default function TherapistCard({
     }
   };
 
+  const hoverTransformClass = isFirstCard
+    ? "hover:translate-x-[30px] hover:-translate-y-[10px] hover:scale-[1.08]"
+    : isLastCard
+    ? "hover:-translate-x-[30px] hover:-translate-y-[10px] hover:scale-[1.08]"
+    : "hover:-translate-y-[10px] hover:scale-[1.08]";
+
   return (
     <div
-      className={`${therapist.bgTint} ${therapist.borderClass} rounded-3xl p-5 flex flex-col justify-between shadow-2xs hover:shadow-md transition-all duration-200 group h-full min-w-0 overflow-hidden select-none`}
+      className={`${therapist.bgTint} ${therapist.borderClass} rounded-3xl p-5 flex flex-col justify-between shadow-2xs hover:shadow-[0_18px_40px_rgba(0,0,0,0.16)] dark:hover:shadow-[0_18px_40px_rgba(0,0,0,0.35)] hover:border-[#006C56]/40 dark:hover:border-[#387060] ${hoverTransformClass} transition-[transform,box-shadow,border-color] duration-[250ms] ease-out group h-full min-w-0 overflow-hidden select-none relative z-1 hover:z-50 transform-gpu cursor-pointer`}
     >
       {/* Top Row: Avatar + Info Header + Status Badge (Fixed 52px Header) */}
       <div className="flex items-start justify-between gap-2.5 h-[52px] shrink-0">

@@ -4,5 +4,5 @@ import React from "react";
 import Navbar, { NavbarProps } from "./Navbar";
 
 export default function PublicNavbar(props: NavbarProps) {
-  return <Navbar variant="public" {...props} />;
+  return <Navbar variant="auto" {...props} />;
 }

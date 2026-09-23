@@ -62,7 +62,7 @@ export default function TherapistCarousel({
 
   return (
     <div
-      className="w-full overflow-hidden relative select-none group/carousel py-1"
+      className="w-full overflow-hidden relative select-none group/carousel py-9 -my-6"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
       onTouchStart={() => setIsPaused(true)}
@@ -78,7 +78,7 @@ export default function TherapistCarousel({
 
       {/* Infinite Seamless Moving Track */}
       <div
-        className="flex gap-4 items-stretch will-change-transform"
+        className="flex gap-4 items-stretch will-change-transform py-4 pl-6 sm:pl-8 pr-6"
         style={{
           width: "max-content",
           animation: `therapistContinuousScroll ${animationDuration}s linear infinite`,
@@ -88,12 +88,14 @@ export default function TherapistCarousel({
         {displayList.map((therapist, idx) => (
           <div
             key={`${therapist.id}-${idx}`}
-            className="w-[290px] sm:w-[330px] lg:w-[348px] shrink-0 flex flex-col h-[238px]"
+            className="w-[290px] sm:w-[330px] lg:w-[348px] shrink-0 flex flex-col h-[238px] relative hover:z-50"
           >
             <TherapistCard
               therapist={therapist}
               onNavigate={onNavigate}
               onBook={onBook}
+              isFirstCard={idx === 0 || idx === baseList.length}
+              isLastCard={idx === baseList.length - 1 || idx === displayList.length - 1}
             />
           </div>
         ))}

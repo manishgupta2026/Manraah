@@ -285,7 +285,7 @@ export default function ProfileView() {
               </h3>
             </div>
 
-            <div className="space-y-4.5 pt-4 text-xs">
+            <div className="space-y-4 pt-4 text-xs">
               <div>
                 <p className="text-[10px] font-extrabold text-[#789389] dark:text-[#78958C] uppercase tracking-wider">
                   Full Name
@@ -301,15 +301,6 @@ export default function ProfileView() {
                 </p>
                 <p className="text-xs sm:text-[13px] font-bold text-[#19332A] dark:text-[#F4FAF7] mt-1">
                   {userEmail}
-                </p>
-              </div>
-
-              <div>
-                <p className="text-[10px] font-extrabold text-[#789389] dark:text-[#78958C] uppercase tracking-wider">
-                  Account Type
-                </p>
-                <p className="text-xs sm:text-[13px] font-bold text-[#006C56] dark:text-[#00A982] mt-1">
-                  Personal Sanctuary Member (Active)
                 </p>
               </div>
             </div>

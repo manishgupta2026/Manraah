@@ -16,14 +16,40 @@ async function ensureCheckinSchema() {
   (globalThis as any).__checkinSchemaInitialized = true;
 
   try {
-    await sql`ALTER TABLE daily_checkins ADD COLUMN IF NOT EXISTS checkin_date DATE DEFAULT CURRENT_DATE`;
-    await sql`ALTER TABLE daily_checkins ADD COLUMN IF NOT EXISTS category TEXT DEFAULT 'student'`;
-    await sql`ALTER TABLE daily_checkins ADD COLUMN IF NOT EXISTS wellness_score INTEGER`;
-    await sql`ALTER TABLE daily_checkins ADD COLUMN IF NOT EXISTS answers_json JSONB DEFAULT '[]'::jsonb`;
-    await sql`ALTER TABLE daily_checkins ADD COLUMN IF NOT EXISTS note TEXT`;
-    await sql`ALTER TABLE daily_checkins ADD COLUMN IF NOT EXISTS reflection TEXT`;
-    await sql`ALTER TABLE daily_checkins ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP`;
-    await sql`CREATE UNIQUE INDEX IF NOT EXISTS idx_user_checkin_date ON daily_checkins(user_id, checkin_date)`;
+    await sql`
+      CREATE TABLE IF NOT EXISTS daily_checkins (
+        id SERIAL PRIMARY KEY,
+        user_id VARCHAR(100) NOT NULL,
+        category TEXT,
+        mood VARCHAR(50) NOT NULL,
+        energy_level INT DEFAULT 3,
+        sleep_quality INT DEFAULT 3,
+        stress VARCHAR(50) DEFAULT 'Manageable',
+        work_life_balance INT DEFAULT 3,
+        note TEXT,
+        reflection TEXT,
+        answers_json JSONB DEFAULT '[]'::jsonb,
+        wellness_score INTEGER,
+        checkin_date DATE DEFAULT CURRENT_DATE,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      )
+    `;
+
+    await sql`
+      ALTER TABLE daily_checkins 
+        ADD COLUMN IF NOT EXISTS checkin_date DATE DEFAULT CURRENT_DATE,
+        ADD COLUMN IF NOT EXISTS category TEXT,
+        ADD COLUMN IF NOT EXISTS wellness_score INTEGER,
+        ADD COLUMN IF NOT EXISTS answers_json JSONB DEFAULT '[]'::jsonb,
+        ADD COLUMN IF NOT EXISTS note TEXT,
+        ADD COLUMN IF NOT EXISTS reflection TEXT,
+        ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    `;
+
+    await sql`
+      CREATE UNIQUE INDEX IF NOT EXISTS idx_user_checkin_date ON daily_checkins(user_id, checkin_date)
+    `;
   } catch (e) {
     // Non-fatal
   }
@@ -84,10 +110,17 @@ export async function GET(req: Request) {
 
     const formattedHistory = checkins.map((c: any) => {
       let score = c.wellnessScore;
-      if (typeof score !== "number") {
+      const rawCat = c.category && String(c.category).trim() ? String(c.category).trim() : null;
+      const checkinCat = rawCat ? normalizeCategorySlug(rawCat) : null;
+
+      if (typeof score !== "number" && checkinCat) {
         const matchingAssess = latestAssessments.find((a: any) => {
           if (!a.completed_at || !c.createdAt) return false;
-          return getCalendarDayString(a.completed_at) === getCalendarDayString(c.checkinDate || c.createdAt);
+          const assessCat = normalizeCategorySlug(a.category_id);
+          return (
+            assessCat === checkinCat &&
+            getCalendarDayString(a.completed_at) === getCalendarDayString(c.checkinDate || c.createdAt)
+          );
         });
         if (matchingAssess) {
           score = Number(matchingAssess.score);
@@ -98,7 +131,7 @@ export async function GET(req: Request) {
         id: String(c.id),
         userId: c.user_id,
         mood: c.mood || "Calm",
-        category: normalizeCategorySlug(c.category || "student"),
+        category: checkinCat,
         wellnessScore: typeof score === "number" ? score : null,
         note: c.note || c.reflection || "",
         reflection: c.reflection || c.note || "",
@@ -133,7 +166,7 @@ export async function GET(req: Request) {
       }
     }
 
-    const averageWellness = scoredCount > 0 ? Math.round(totalScore / scoredCount) : 75;
+    const averageWellness = scoredCount > 0 ? Math.round(totalScore / scoredCount) : null;
 
     // Generate 7-day trend
     const sevenDayTrend = [];
@@ -147,7 +180,7 @@ export async function GET(req: Request) {
       sevenDayTrend.push({
         date: dStr,
         day: dayName,
-        score: dayEntry?.wellnessScore || (dayEntry ? 70 : null),
+        score: typeof dayEntry?.wellnessScore === "number" ? dayEntry.wellnessScore : null,
         mood: dayEntry?.mood || null,
         completed: Boolean(dayEntry),
       });
@@ -207,96 +240,111 @@ export async function POST(req: Request) {
 
     const rawMood = body.mood || "Calm";
     const noteText = (body.note || body.reflection || "").trim();
+    const rawCategory = body.category || body.categoryId || session.user?.selectedCategory || null;
+    const checkinCategory = rawCategory ? normalizeCategorySlug(rawCategory) : null;
     const todayDateStr = getCalendarDayString(new Date());
 
-    // 1. Upsert into daily_checkins for today
-    const existingCheckin = await sql`
-      SELECT id, mood, note, created_at, checkin_date
-      FROM daily_checkins
-      WHERE user_id = ${userId} AND checkin_date = ${todayDateStr}
-      LIMIT 1
+    // Ensure user exists in users table to prevent FK constraint errors
+    try {
+      const userExists = await sql`SELECT id FROM users WHERE id = ${userId} LIMIT 1`;
+      if (userExists.length === 0) {
+        await sql`
+          INSERT INTO users (id, name, email, selected_category)
+          VALUES (
+            ${userId}, 
+            ${session.user?.name || "Manraah Member"}, 
+            ${session.user?.email || `${userId}@manraah.app`}, 
+            ${checkinCategory || "working-professional"}
+          )
+          ON CONFLICT (id) DO NOTHING
+        `;
+      }
+    } catch (userCheckErr) {
+      // Non-fatal
+    }
+
+    // 1. Single atomic upsert into daily_checkins for today
+    const upsertRes = await sql`
+      INSERT INTO daily_checkins (
+        user_id, 
+        category,
+        mood, 
+        energy_level,
+        sleep_quality,
+        stress,
+        work_life_balance,
+        note, 
+        reflection, 
+        checkin_date, 
+        created_at, 
+        updated_at
+      ) VALUES (
+        ${userId}, 
+        ${checkinCategory},
+        ${rawMood}, 
+        4,
+        4,
+        'Manageable',
+        3,
+        ${noteText || null}, 
+        ${noteText || null}, 
+        ${todayDateStr}, 
+        CURRENT_TIMESTAMP, 
+        CURRENT_TIMESTAMP
+      )
+      ON CONFLICT (user_id, checkin_date) DO UPDATE SET
+        mood = EXCLUDED.mood,
+        category = COALESCE(EXCLUDED.category, daily_checkins.category),
+        note = COALESCE(EXCLUDED.note, daily_checkins.note),
+        reflection = COALESCE(EXCLUDED.reflection, daily_checkins.reflection),
+        updated_at = CURRENT_TIMESTAMP
+      RETURNING id, user_id, category, mood, note, reflection, checkin_date, created_at, updated_at
     `;
 
-    let savedId: string | number;
-    let createdAt: string | Date;
-
-    if (existingCheckin.length > 0) {
-      savedId = existingCheckin[0].id;
-      createdAt = existingCheckin[0].created_at;
-
-      await sql`
-        UPDATE daily_checkins
-        SET mood = ${rawMood},
-            note = ${noteText || null},
-            reflection = ${noteText || null},
-            updated_at = CURRENT_TIMESTAMP
-        WHERE id = ${savedId}
-      `;
-    } else {
-      const insertRes = await sql`
-        INSERT INTO daily_checkins (
-          user_id, 
-          mood, 
-          energy_level,
-          sleep_quality,
-          stress,
-          work_life_balance,
-          note, 
-          reflection, 
-          checkin_date, 
-          created_at, 
-          updated_at
-        ) VALUES (
-          ${userId}, 
-          ${rawMood}, 
-          4,
-          4,
-          'Manageable',
-          3,
-          ${noteText || null}, 
-          ${noteText || null}, 
-          ${todayDateStr}, 
-          CURRENT_TIMESTAMP, 
-          CURRENT_TIMESTAMP
-        ) RETURNING id, created_at
-      `;
-
-      savedId = insertRes[0]?.id;
-      createdAt = insertRes[0]?.created_at || new Date();
-    }
+    const savedRecord = upsertRes[0];
+    const savedId = savedRecord?.id;
+    const createdAt = savedRecord?.created_at || new Date();
+    const savedCategory = savedRecord?.category || checkinCategory;
 
     // 2. Deterministically recalculate streak from all check-in dates
     const allDatesRes = await sql`
-      SELECT DISTINCT checkin_date, created_at
+      SELECT DISTINCT checkin_date
       FROM daily_checkins
       WHERE user_id = ${userId}
       ORDER BY checkin_date DESC
+      LIMIT 100
     `;
 
-    const allDates = allDatesRes.map((r: any) => r.checkin_date || r.created_at);
+    const allDates = allDatesRes.map((r: any) => r.checkin_date);
     const { currentStreak, longestStreak } = calculateCheckinStreak(allDates);
 
-    // 3. Update users table and user_streaks table
-    await sql`
-      UPDATE users SET
-        current_mood = ${rawMood},
-        streak_days = ${currentStreak}
-      WHERE id = ${userId}
-    `;
-
-    await sql`
-      INSERT INTO user_streaks (id, user_id, current_streak, longest_streak, last_checkin_date)
-      VALUES (${'strk_' + userId}, ${userId}, ${currentStreak}, ${longestStreak}, CURRENT_TIMESTAMP)
-      ON CONFLICT (user_id) DO UPDATE SET
-        current_streak = ${currentStreak},
-        longest_streak = GREATEST(user_streaks.longest_streak, ${longestStreak}),
-        last_checkin_date = CURRENT_TIMESTAMP
-    `;
+    // 3. Update users table and user_streaks table concurrently
+    try {
+      await Promise.all([
+        sql`
+          UPDATE users SET
+            current_mood = ${rawMood},
+            streak_days = ${currentStreak}
+          WHERE id = ${userId}
+        `,
+        sql`
+          INSERT INTO user_streaks (id, user_id, current_streak, longest_streak, last_checkin_date)
+          VALUES (${'strk_' + userId}, ${userId}, ${currentStreak}, ${longestStreak}, CURRENT_TIMESTAMP)
+          ON CONFLICT (user_id) DO UPDATE SET
+            current_streak = ${currentStreak},
+            longest_streak = GREATEST(user_streaks.longest_streak, ${longestStreak}),
+            last_checkin_date = CURRENT_TIMESTAMP
+        `,
+      ]);
+    } catch (syncErr) {
+      console.warn("Non-fatal streak sync notice:", syncErr);
+    }
 
     const checkInRecord = {
       id: String(savedId),
       userId,
       mood: rawMood,
+      category: savedCategory,
       note: noteText,
       reflection: noteText,
       checkinDate: todayDateStr,

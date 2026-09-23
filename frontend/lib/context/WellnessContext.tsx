@@ -79,6 +79,7 @@ interface WellnessContextType {
     note?: string;
     factors?: string;
     gratitude?: string;
+    category?: string;
     categoryId?: string;
   }) => Promise<any>;
 }
@@ -202,15 +203,28 @@ export function WellnessProvider({ children }: { children: ReactNode }) {
     note?: string;
     factors?: string;
     gratitude?: string;
+    category?: string;
     categoryId?: string;
     answers?: { questionId: number; answer: number }[];
   }) => {
     setIsCheckingIn(true);
     try {
+      const session = getClientSession();
+      const currentCategory =
+        checkInData.category ||
+        checkInData.categoryId ||
+        session?.user?.selectedCategory ||
+        null;
+
+      const payload = {
+        ...checkInData,
+        category: currentCategory,
+      };
+
       const res = await fetch("/api/checkins", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(checkInData),
+        body: JSON.stringify(payload),
       });
 
       if (!res.ok) {
@@ -224,7 +238,7 @@ export function WellnessProvider({ children }: { children: ReactNode }) {
       const checkInObj = updatedRecord.checkIn || updatedRecord.todayCheckin || {
         mood: checkInData.mood,
         note: checkInData.note || checkInData.reflection || "",
-        category: checkInData.categoryId || "student",
+        category: currentCategory,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };

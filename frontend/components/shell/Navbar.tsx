@@ -21,12 +21,23 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
   const { theme, toggleTheme } = useTheme();
   const isDark = theme === "dark";
 
-  const { user, logout } = useAuth();
+  const { user, logout, isAuthenticated } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [aboutDropdownOpen, setAboutDropdownOpen] = useState(false);
-  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
 
   const userName = user?.name || user?.sanctuaryName || "";
+  const isUserAuthenticated = Boolean(isAuthenticated && user?.id);
+
+  const formatCategoryLabel = (cat?: string) => {
+    if (!cat) return "Manraah Member";
+    const s = cat.toLowerCase().replace(/_/g, "-");
+    if (s === "working-professional" || s === "young-pro" || s === "career") return "Working Professional";
+    if (s === "student" || s === "academic") return "Student";
+    if (s === "parent" || s === "parents") return "Parent";
+    if (s === "couple" || s === "couples") return "Couples & Relationships";
+    if (s === "other") return "Other / General";
+    return cat.charAt(0).toUpperCase() + cat.slice(1);
+  };
 
   // Determine if this instance should display authenticated or public action CTAs
   const isExplicitAuth = variant === "authenticated";
@@ -37,21 +48,26 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
     pathname.startsWith("/journey") ||
     pathname.startsWith("/resources") ||
     pathname.startsWith("/ai-companion") ||
+    pathname.startsWith("/human-companion") ||
+    pathname.startsWith("/community") ||
     pathname.startsWith("/profile") ||
     pathname.startsWith("/journal") ||
     pathname.startsWith("/meditation") ||
     pathname.startsWith("/sleep") ||
     pathname.startsWith("/checkin");
 
-  const isAuthView = isExplicitAuth || (!isExplicitPublic && isAuthRoute);
+  const isAuthExempt = pathname === "/login" || pathname === "/signup" || pathname === "/forgot-password";
+
+  const isAuthView =
+    !isAuthExempt &&
+    (isExplicitAuth || isAuthRoute || (isUserAuthenticated && !isExplicitPublic) || (variant === "auto" && isUserAuthenticated));
 
   const handleGetStarted = async () => {
-    try {
-      await logout();
-    } catch {
-      // ignore
+    if (isUserAuthenticated) {
+      router.push("/dashboard");
+    } else {
+      router.push("/signup");
     }
-    router.push("/signup");
   };
 
   const handleLogout = async () => {
@@ -67,7 +83,6 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
   useEffect(() => {
     setMobileMenuOpen(false);
     setAboutDropdownOpen(false);
-    setIsProfileMenuOpen(false);
   }, [pathname]);
 
   const handleToggleMobile = () => {
@@ -314,12 +329,24 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
         {/* Right: Actions & Mobile Toggle (justify-self-end) */}
         <div className="flex items-center justify-end gap-2 sm:gap-3 lg:justify-self-end shrink-0">
           {isAuthView ? (
-            /* Authenticated Header Controls Styled for Green Theme */
-            <div className="flex items-center gap-2 sm:gap-3">
+            /* Authenticated Header Controls (Dashboard, Dark Mode, Profile) */
+            <div className="flex items-center gap-2.5 sm:gap-3.5">
+              {/* Dashboard Navigation Link */}
+              <Link
+                href="/dashboard"
+                className={`text-xs xl:text-sm font-heading font-semibold px-2.5 py-1 rounded-lg transition-colors shrink-0 ${
+                  pathname === "/dashboard"
+                    ? "text-white font-bold bg-white/15"
+                    : "text-white/85 hover:text-white hover:bg-white/10"
+                }`}
+              >
+                Dashboard
+              </Link>
+
               {/* Theme / Dark Mode Toggle */}
               <button
                 onClick={toggleTheme}
-                className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors cursor-pointer select-none"
+                className="w-8.5 h-8.5 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors cursor-pointer select-none shrink-0"
                 title={isDark ? "Switch to light mode" : "Switch to dark mode"}
                 aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
               >
@@ -328,67 +355,9 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                 </span>
               </button>
 
-              {/* User Profile Chip */}
-              <div className="relative">
-                <button
-                  onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
-                  className="flex items-center gap-2 p-1 pl-1.5 rounded-full bg-white/10 border border-white/15 hover:bg-white/20 transition-colors cursor-pointer select-none text-white"
-                >
-                  <UserAvatar user={user} sizeClass="w-8 h-8 text-xs" />
-                  <div className="text-left hidden sm:block pr-1">
-                    <p className="text-xs font-heading font-bold text-white leading-tight">
-                      Hi, {userName}
-                    </p>
-                    <p className="text-[9px] text-white/70 font-medium leading-none mt-0.5">
-                      Take care today
-                    </p>
-                  </div>
-                  <span className="material-symbols-outlined text-base text-white/80 pr-1">
-                    expand_more
-                  </span>
-                </button>
-
-                {/* Profile Dropdown Card */}
-                <AnimatePresence>
-                  {isProfileMenuOpen && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 6, scale: 0.96 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: 6, scale: 0.96 }}
-                      transition={{ duration: 0.15 }}
-                      className="absolute right-0 mt-2 w-52 rounded-2xl bg-[#0D2821] border border-[#23483E] shadow-xl py-2 z-50 text-xs transition-colors text-white"
-                    >
-                      <div className="px-3.5 py-2 border-b border-white/10">
-                        <p className="font-heading font-bold text-white text-sm">{userName}</p>
-                        <p className="text-[10px] text-white/60">Manraah Member</p>
-                      </div>
-                      <Link
-                        href="/profile"
-                        onClick={() => setIsProfileMenuOpen(false)}
-                        className="flex items-center gap-2.5 px-3.5 py-2.5 text-white/90 hover:bg-white/10 hover:text-white font-heading font-semibold transition-colors"
-                      >
-                        <span className="material-symbols-outlined text-base text-[#00A982]">person</span>
-                        <span>My Profile</span>
-                      </Link>
-                      <Link
-                        href="/journey"
-                        onClick={() => setIsProfileMenuOpen(false)}
-                        className="flex items-center gap-2.5 px-3.5 py-2.5 text-white/90 hover:bg-white/10 hover:text-white font-heading font-semibold transition-colors"
-                      >
-                        <span className="material-symbols-outlined text-base text-[#00A982]">explore</span>
-                        <span>My Journey</span>
-                      </Link>
-                      <div className="my-1 border-t border-white/10" />
-                      <button
-                        onClick={handleLogout}
-                        className="w-full flex items-center gap-2.5 px-3.5 py-2.5 text-rose-300 hover:bg-rose-950/30 font-heading font-bold text-left cursor-pointer transition-colors"
-                      >
-                        <span className="material-symbols-outlined text-base">logout</span>
-                        <span>Log Out</span>
-                      </button>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+              {/* User Profile Avatar (Static Visual Indicator) */}
+              <div className="shrink-0 flex items-center select-none pointer-events-none" aria-hidden="true">
+                <UserAvatar user={user} sizeClass="w-9 h-9 text-xs" />
               </div>
             </div>
           ) : (
@@ -472,6 +441,18 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                   <span>How it Works</span>
                   <span className="material-symbols-outlined text-base text-on-surface-variant/40">chevron_right</span>
                 </Link>
+                {isUserAuthenticated && (
+                  <Link
+                    href="/dashboard"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`py-3 px-3.5 rounded-xl hover:bg-surface-container hover:text-primary transition-colors flex items-center justify-between ${
+                      pathname === "/dashboard" ? "bg-primary/10 text-primary font-bold" : ""
+                    }`}
+                  >
+                    <span>Dashboard</span>
+                    <span className="material-symbols-outlined text-base text-on-surface-variant/40">chevron_right</span>
+                  </Link>
+                )}
                 <Link
                   href="/our-solution"
                   onClick={() => setMobileMenuOpen(false)}
@@ -569,23 +550,47 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
               </nav>
 
               <div className="flex flex-col gap-2.5 pt-2 border-t border-surface-variant/20">
-                <button
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    handleGetStarted();
-                  }}
-                  className="w-full py-3.5 rounded-full bg-primary text-white font-heading font-bold text-sm shadow-md hover:bg-primary-purple transition-all flex items-center justify-center gap-2 cursor-pointer"
-                >
-                  <span>Get Started</span>
-                  <span className="material-symbols-outlined text-lg">arrow_forward</span>
-                </button>
-                <Link
-                  href="/login"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="w-full text-center py-3 rounded-full bg-surface-container hover:bg-surface-variant/50 border border-surface-variant/40 font-heading font-semibold text-sm text-on-surface transition-colors"
-                >
-                  Log In to Account
-                </Link>
+                {isAuthView ? (
+                  <>
+                    <Link
+                      href="/dashboard"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="w-full py-3.5 rounded-full bg-[#006C56] dark:bg-[#00A982] text-white dark:text-[#071C17] font-heading font-bold text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
+                    >
+                      <span>Go to Dashboard</span>
+                      <span className="material-symbols-outlined text-lg">arrow_forward</span>
+                    </Link>
+                    <button
+                      onClick={() => {
+                        setMobileMenuOpen(false);
+                        handleLogout();
+                      }}
+                      className="w-full text-center py-2.5 rounded-full bg-rose-500/15 dark:bg-rose-950/30 text-rose-600 dark:text-rose-300 font-heading font-semibold text-xs transition-colors cursor-pointer"
+                    >
+                      Log Out
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      onClick={() => {
+                        setMobileMenuOpen(false);
+                        handleGetStarted();
+                      }}
+                      className="w-full py-3.5 rounded-full bg-primary text-white font-heading font-bold text-sm shadow-md hover:bg-primary-purple transition-all flex items-center justify-center gap-2 cursor-pointer"
+                    >
+                      <span>Get Started</span>
+                      <span className="material-symbols-outlined text-lg">arrow_forward</span>
+                    </button>
+                    <Link
+                      href="/login"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="w-full text-center py-3 rounded-full bg-surface-container hover:bg-surface-variant/50 border border-surface-variant/40 font-heading font-semibold text-sm text-on-surface transition-colors"
+                    >
+                      Log In to Account
+                    </Link>
+                  </>
+                )}
               </div>
             </motion.div>
           </>

@@ -51,6 +51,48 @@ function formatAppointmentDisplay(isoDateStr: string): string {
   }
 }
 
+function formatCategoryDisplayName(raw?: string | null): string {
+  if (!raw) return "Working Professional";
+  const s = raw.trim();
+  const lower = s.toLowerCase().replace(/_/g, "-");
+
+  if (lower === "student" || lower === "academic" || lower === "student & academics" || lower.startsWith("student")) {
+    return "Student";
+  }
+  if (
+    lower === "working-professional" ||
+    lower === "workingprofessional" ||
+    lower === "young-pro" ||
+    lower === "youngpro" ||
+    lower === "work" ||
+    lower === "career"
+  ) {
+    return "Working Professional";
+  }
+  if (lower === "parent" || lower === "parents" || lower === "parents & families" || lower.startsWith("parent")) {
+    return "Parent";
+  }
+  if (lower === "couple" || lower === "couples" || lower === "couples & relationships" || lower.startsWith("couple")) {
+    return "Couple";
+  }
+  if (
+    lower === "other" ||
+    lower === "others" ||
+    lower === "other / general" ||
+    lower === "other/general" ||
+    lower === "general" ||
+    lower === "other-general"
+  ) {
+    return "Other / General";
+  }
+  if (lower === "women") return "Women";
+  if (lower === "men") return "Men";
+  if (lower === "family" || lower === "families") return "Family";
+  if (lower === "senior-citizen" || lower === "seniorcitizen") return "Senior Citizen";
+
+  return s;
+}
+
 export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
   const { user, isAuthenticated } = useAuth();
   const isUserAuthenticated = Boolean(isAuthenticated && user?.id);
@@ -215,9 +257,11 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
           <h1 className="text-2xl font-heading font-black text-[#19332A] dark:text-[#F4FAF7] leading-tight">
             Hi, {userName}! 👋
           </h1>
-          <p className="text-xs text-[#6B857C] dark:text-[#A9C5BC] font-medium">
-            Let&apos;s track your health &amp; {currentCategoryName} wellness daily!
-          </p>
+          <div className="pt-0.5">
+            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-[#EAF6F0] dark:bg-[#14382F] text-[#006C56] dark:text-[#88F7D6] border border-[#D2EAE0] dark:border-[#23483E]">
+              {formatCategoryDisplayName(user?.selectedCategory || currentCategory)}
+            </span>
+          </div>
         </div>
 
         {/* Right: Streak & Next Appointment Cards */}

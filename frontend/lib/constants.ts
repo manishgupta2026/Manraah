@@ -11,9 +11,12 @@ export interface NavItem {
 export const MAIN_NAV_ITEMS: NavItem[] = [
   { label: "Dashboard", href: "/dashboard", icon: "grid_view" },
   { label: "Appointments", href: "/appointments", icon: "calendar_month" },
-  { label: "My Journey", href: "/journey", icon: "explore" },
-  { label: "Resources", href: "/resources", icon: "menu_book" },
   { label: "AI Companion", href: "/ai-companion", icon: "auto_awesome" },
+  { label: "Human Companion", href: "/human-companion", icon: "support_agent" },
+  { label: "My Journey", href: "/journey", icon: "explore" },
+  { label: "Community", href: "/community", icon: "forum" },
+  { label: "Resources", href: "/resources", icon: "menu_book" },
+  { label: "Journal", href: "/journal", icon: "edit_note" },
 ];
 
 export const MOBILE_TAB_ITEMS: NavItem[] = [

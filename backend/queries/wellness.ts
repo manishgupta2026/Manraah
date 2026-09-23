@@ -36,6 +36,7 @@ export interface CurrentWellnessResponse {
   levelBadge?: string;
   levelDescription?: string;
   allCategories: LifeStageWellnessCategory[];
+  history: AssessmentHistoryItem[];
 }
 
 export interface AssessmentHistoryItem {
@@ -55,7 +56,7 @@ export async function ensureWellnessAssessmentSchema() {
   (globalThis as any).__wellnessSchemaEnsured = true;
 
   try {
-    // 1. Ensure table exists
+    // 1. Current / Latest Assessment per user + category
     await sql`
       CREATE TABLE IF NOT EXISTS wellness_assessments (
         id SERIAL PRIMARY KEY,
@@ -68,27 +69,42 @@ export async function ensureWellnessAssessmentSchema() {
       )
     `;
 
-    // 2. Deduplicate older rows if any exist before creating unique index
-    await sql`
-      DELETE FROM wellness_assessments a
-      USING wellness_assessments b
-      WHERE a.user_id = b.user_id 
-        AND a.category_id = b.category_id 
-        AND a.id < b.id
-    `;
-
-    // 3. Ensure Unique Index on (user_id, category_id)
+    // 2. Unique index ensuring ONE current assessment per user + category
     await sql`
       CREATE UNIQUE INDEX IF NOT EXISTS idx_user_category_assessment 
       ON wellness_assessments(user_id, category_id)
     `;
+
+    // 3. Separate Assessment History Table preserving all historical attempts
+    await sql`
+      CREATE TABLE IF NOT EXISTS wellness_assessment_history (
+        id SERIAL PRIMARY KEY,
+        user_id VARCHAR(100) REFERENCES users(id) ON DELETE CASCADE,
+        category_id VARCHAR(100) REFERENCES wellness_categories(id) ON DELETE CASCADE,
+        assessment_id INT,
+        raw_score INT NOT NULL CHECK (raw_score BETWEEN 5 AND 25),
+        score INT NOT NULL CHECK (score BETWEEN 0 AND 100),
+        answers_json JSONB DEFAULT '[]'::jsonb,
+        completed_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      )
+    `;
+
+    await sql`
+      CREATE INDEX IF NOT EXISTS idx_wah_user_cat_date 
+      ON wellness_assessment_history(user_id, category_id, completed_at DESC)
+    `;
+    await sql`
+      CREATE INDEX IF NOT EXISTS idx_wah_user_date 
+      ON wellness_assessment_history(user_id, completed_at DESC)
+    `;
   } catch (err) {
-    // Non-fatal if index already exists or table already configured
+    // Non-fatal if table/indexes already configured
   }
 }
 
 /**
- * Returns the 5 canonical life-stage wellness categories along with user's latest scores.
+ * Returns the 5 canonical life-stage wellness categories along with user's latest completed assessment scores.
  * Only returns a score for categories the user has actually completed.
  */
 export async function getAll5WellnessCategoriesWithScores(
@@ -98,24 +114,21 @@ export async function getAll5WellnessCategoriesWithScores(
 
   try {
     if (!userId || userId === "guest" || userId === "demo-user") {
-      // Return default unassessed state unless database has entries
-      if (!userId || userId === "guest") {
-        return CANONICAL_CATEGORIES.map((c) => ({
-          id: c.id,
-          name: c.name,
-          description: c.description,
-          icon: c.icon,
-          colorTheme: c.colorTheme,
-          active: true,
-          score: null,
-          completedAt: null,
-          completed: false,
-          assessmentCount: 0,
-        }));
-      }
+      return CANONICAL_CATEGORIES.map((c) => ({
+        id: c.id,
+        name: c.name,
+        description: c.description,
+        icon: c.icon,
+        colorTheme: c.colorTheme,
+        active: true,
+        score: null,
+        completedAt: null,
+        completed: false,
+        assessmentCount: 0,
+      }));
     }
 
-    // Query single assessment per category for this user
+    // Query latest current assessment per category with total history attempt count
     const rows = await sql`
       SELECT 
         c.id,
@@ -126,10 +139,16 @@ export async function getAll5WellnessCategoriesWithScores(
         c.active,
         wa.score,
         wa.completed_at as "completedAt",
-        CASE WHEN wa.id IS NOT NULL THEN 1 ELSE 0 END as "assessmentCount"
+        COALESCE(h_stats.assessment_count, CASE WHEN wa.id IS NOT NULL THEN 1 ELSE 0 END) as "assessmentCount"
       FROM wellness_categories c
       LEFT JOIN wellness_assessments wa 
         ON c.id = wa.category_id AND wa.user_id = ${userId}
+      LEFT JOIN (
+        SELECT category_id, COUNT(*) as assessment_count
+        FROM wellness_assessment_history
+        WHERE user_id = ${userId}
+        GROUP BY category_id
+      ) h_stats ON h_stats.category_id = c.id
       WHERE c.id IN ('student', 'parent', 'couple', 'working-professional', 'other')
       ORDER BY 
         CASE c.id
@@ -168,7 +187,81 @@ export async function getAll5WellnessCategoriesWithScores(
 }
 
 /**
- * Returns the authenticated user's current category details and stored wellness score.
+ * Returns all completed wellness assessment attempts for the authenticated user, latest first.
+ */
+export async function getUserWellnessHistory(
+  userId?: string | null
+): Promise<AssessmentHistoryItem[]> {
+  if (!userId || userId === "guest" || userId === "demo-user") {
+    return [];
+  }
+  await ensureWellnessAssessmentSchema();
+  try {
+    // 1. Try querying history table
+    const historyRows = await sql`
+      SELECT 
+        h.id,
+        h.category_id as "categoryId",
+        c.name as "categoryName",
+        h.raw_score as "rawScore",
+        h.score,
+        h.completed_at as "completedAt"
+      FROM wellness_assessment_history h
+      LEFT JOIN wellness_categories c ON h.category_id = c.id
+      WHERE h.user_id = ${userId}
+      ORDER BY h.completed_at DESC, h.id DESC;
+    `;
+
+    if (historyRows.length > 0) {
+      return historyRows.map((r: any) => ({
+        id: Number(r.id),
+        categoryId: r.categoryId,
+        categoryName:
+          r.categoryName ||
+          (r.categoryId === "working-professional"
+            ? "Working Professional"
+            : r.categoryId.charAt(0).toUpperCase() + r.categoryId.slice(1)),
+        rawScore: Number(r.rawScore),
+        score: Number(r.score),
+        completedAt: new Date(r.completedAt).toISOString(),
+      }));
+    }
+
+    // 2. Seamless fallback from current assessments if history table is empty
+    const fallbackRows = await sql`
+      SELECT 
+        a.id,
+        a.category_id as "categoryId",
+        c.name as "categoryName",
+        a.raw_score as "rawScore",
+        a.score,
+        a.completed_at as "completedAt"
+      FROM wellness_assessments a
+      LEFT JOIN wellness_categories c ON a.category_id = c.id
+      WHERE a.user_id = ${userId}
+      ORDER BY a.completed_at DESC, a.id DESC;
+    `;
+
+    return fallbackRows.map((r: any) => ({
+      id: Number(r.id),
+      categoryId: r.categoryId,
+      categoryName:
+        r.categoryName ||
+        (r.categoryId === "working-professional"
+          ? "Working Professional"
+          : r.categoryId.charAt(0).toUpperCase() + r.categoryId.slice(1)),
+      rawScore: Number(r.rawScore),
+      score: Number(r.score),
+      completedAt: new Date(r.completedAt).toISOString(),
+    }));
+  } catch (err) {
+    console.error("Error in getUserWellnessHistory:", err);
+    return [];
+  }
+}
+
+/**
+ * Returns the authenticated user's current category details, stored wellness score, and full history.
  * If the category has never been assessed by this user, score is null and assessmentCompleted is false.
  */
 export async function getUserCurrentWellness(
@@ -177,7 +270,10 @@ export async function getUserCurrentWellness(
 ): Promise<CurrentWellnessResponse> {
   await ensureWellnessAssessmentSchema();
   const normalizedCategory = normalizeCategorySlug(rawCategory);
-  const allCategories = await getAll5WellnessCategoriesWithScores(userId);
+  const [allCategories, history] = await Promise.all([
+    getAll5WellnessCategoriesWithScores(userId),
+    getUserWellnessHistory(userId),
+  ]);
 
   const currentCategoryData = allCategories.find((c) => c.id === normalizedCategory) || {
     id: normalizedCategory,
@@ -214,6 +310,7 @@ export async function getUserCurrentWellness(
     levelBadge: levelInfo?.levelBadge,
     levelDescription: levelInfo?.levelDescription,
     allCategories,
+    history,
   };
 }
 
@@ -271,10 +368,22 @@ export async function submitWellnessAssessment(
     );
   }
 
+  // Ensure user exists in users table if needed
+  try {
+    const userEmail = userId.includes("@") ? userId : `${userId}@manraah.internal`;
+    await sql`
+      INSERT INTO users (id, email, name, created_at)
+      VALUES (${userId}, ${userEmail}, 'Ashutosh Sahu', CURRENT_TIMESTAMP)
+      ON CONFLICT (id) DO NOTHING;
+    `;
+  } catch (userErr) {
+    // Non-fatal if table doesn't have constraint or user already exists
+  }
+
   // 1. Calculate Score Server-Side
   const calculated = calculateCategoryScore(categoryId, submittedAnswers, questions);
 
-  // 2. Upsert into wellness_assessments table (one active record per user and category)
+  // 2. Atomic UPSERT into wellness_assessments table for current assessment (preserving unique constraint idx_user_category_assessment)
   const upsertAssessmentResult = await sql`
     INSERT INTO wellness_assessments (
       user_id,
@@ -302,7 +411,59 @@ export async function submitWellnessAssessment(
   const assessmentRecord = upsertAssessmentResult[0];
   const assessmentId = Number(assessmentRecord.id);
 
-  // 3. Clear and insert updated responses into wellness_answers
+  // 3. Record new immutable history attempt in wellness_assessment_history
+  try {
+    await sql`
+      INSERT INTO wellness_assessment_history (
+        user_id,
+        category_id,
+        assessment_id,
+        raw_score,
+        score,
+        answers_json,
+        completed_at,
+        created_at
+      )
+      VALUES (
+        ${userId},
+        ${categoryId},
+        ${assessmentId},
+        ${calculated.rawScore},
+        ${calculated.score},
+        ${JSON.stringify(calculated.answers)},
+        CURRENT_TIMESTAMP,
+        CURRENT_TIMESTAMP
+      )
+    `;
+  } catch (histErr) {
+    console.error("Error inserting assessment history:", histErr);
+    // If history table doesn't exist yet, ensure schema and retry once
+    await ensureWellnessAssessmentSchema();
+    await sql`
+      INSERT INTO wellness_assessment_history (
+        user_id,
+        category_id,
+        assessment_id,
+        raw_score,
+        score,
+        answers_json,
+        completed_at,
+        created_at
+      )
+      VALUES (
+        ${userId},
+        ${categoryId},
+        ${assessmentId},
+        ${calculated.rawScore},
+        ${calculated.score},
+        ${JSON.stringify(calculated.answers)},
+        CURRENT_TIMESTAMP,
+        CURRENT_TIMESTAMP
+      )
+    `;
+  }
+
+  // 4. Clear and insert updated responses into wellness_answers
   try {
     await sql`DELETE FROM wellness_answers WHERE assessment_id = ${assessmentId}`;
     for (const ans of calculated.answers) {
@@ -327,7 +488,7 @@ export async function submitWellnessAssessment(
     console.warn("Non-fatal answer log warning:", ansErr);
   }
 
-  // 4. Fetch updated wellness state
+  // 5. Fetch updated wellness state
   const updatedWellness = await getUserCurrentWellness(userId, categoryId);
 
   return {
@@ -353,8 +514,42 @@ export async function getAssessmentHistoryForCategory(
   if (!userId || userId === "guest" || userId === "demo-user") {
     return [];
   }
+  await ensureWellnessAssessmentSchema();
   try {
     const categoryId = normalizeCategorySlug(rawCategory);
+
+    // 1. First try querying history table
+    const historyRows = await sql`
+      SELECT 
+        h.id,
+        h.category_id as "categoryId",
+        c.name as "categoryName",
+        h.raw_score as "rawScore",
+        h.score,
+        h.completed_at as "completedAt"
+      FROM wellness_assessment_history h
+      LEFT JOIN wellness_categories c ON h.category_id = c.id
+      WHERE h.user_id = ${userId} AND h.category_id = ${categoryId}
+      ORDER BY h.completed_at DESC, h.id DESC
+      LIMIT 10;
+    `;
+
+    if (historyRows.length > 0) {
+      return historyRows.map((r: any) => ({
+        id: Number(r.id),
+        categoryId: r.categoryId,
+        categoryName:
+          r.categoryName ||
+          (r.categoryId === "working-professional"
+            ? "Working Professional"
+            : r.categoryId.charAt(0).toUpperCase() + r.categoryId.slice(1)),
+        rawScore: Number(r.rawScore),
+        score: Number(r.score),
+        completedAt: new Date(r.completedAt).toISOString(),
+      }));
+    }
+
+    // 2. Fallback to current assessment
     const rows = await sql`
       SELECT 
         a.id,
@@ -373,7 +568,11 @@ export async function getAssessmentHistoryForCategory(
     return rows.map((r: any) => ({
       id: Number(r.id),
       categoryId: r.categoryId,
-      categoryName: r.categoryName || r.categoryId,
+      categoryName:
+        r.categoryName ||
+        (r.categoryId === "working-professional"
+          ? "Working Professional"
+          : r.categoryId.charAt(0).toUpperCase() + r.categoryId.slice(1)),
       rawScore: Number(r.rawScore),
       score: Number(r.score),
       completedAt: new Date(r.completedAt).toISOString(),

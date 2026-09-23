@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useWellness } from "@/frontend/lib/context/WellnessContext";
+import { useCategory } from "@/frontend/lib/context/CategoryContext";
 
 const MOOD_OPTIONS = [
   { id: "Happy", label: "Happy / Great", emoji: "😊", color: "from-amber-400/20 to-emerald-400/20" },
@@ -22,6 +23,7 @@ export default function DailyCheckInModal() {
     submitCheckIn,
     hasCheckedInToday,
   } = useWellness();
+  const { category } = useCategory();
 
   const [selectedMood, setSelectedMood] = useState<string>("Calm");
   const [note, setNote] = useState<string>("");
@@ -46,6 +48,7 @@ export default function DailyCheckInModal() {
         mood: selectedMood,
         note: note.trim(),
         reflection: note.trim(),
+        category,
       });
 
       setIsSuccess(true);
