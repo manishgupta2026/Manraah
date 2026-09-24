@@ -23,6 +23,8 @@ export type DashboardSection =
   | "human-companion"
   | "journal"
   | "community"
+  | "meditation"
+  | "sleep"
   | "sleep-meditation"
   | "profile";
 
@@ -49,14 +51,14 @@ function DashboardContent({ initialSection }: UnifiedDashboardProps) {
       tabParam === "human-companion" ||
       tabParam === "journal" ||
       tabParam === "community" ||
-      tabParam === "sleep-meditation" ||
-      tabParam === "sleep" ||
       tabParam === "meditation" ||
+      tabParam === "sleep" ||
+      tabParam === "sleep-meditation" ||
       tabParam === "profile"
     ) {
       if (tabParam === "my-journey") return "journey";
       if (tabParam === "sleep" || tabParam === "meditation") return "sleep-meditation";
-      return tabParam;
+      return tabParam as DashboardSection;
     }
 
     if (pathname.includes("/appointments")) return "appointments";
@@ -123,6 +125,8 @@ function DashboardContent({ initialSection }: UnifiedDashboardProps) {
           {activeSection === "journal" && <JournalView />}
           {activeSection === "community" && <CommunityView />}
           {activeSection === "sleep-meditation" && <SleepMeditationView />}
+          {activeSection === "meditation" && <SleepMeditationView defaultTab="meditation" />}
+          {activeSection === "sleep" && <SleepMeditationView defaultTab="sleep" />}
           {activeSection === "profile" && <ProfileView />}
         </div>
       )}

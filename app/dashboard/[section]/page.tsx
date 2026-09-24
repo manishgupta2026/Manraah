@@ -16,6 +16,8 @@ const VALID_SECTIONS: DashboardSection[] = [
   "human-companion",
   "journal",
   "community",
+  "meditation",
+  "sleep",
   "sleep-meditation",
 ];
 
