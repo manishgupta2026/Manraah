@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useCategory } from "@/frontend/lib/context/CategoryContext";
 import { getClientSession } from "@/backend/auth/client";
 import TherapistCard from "@/frontend/components/dashboard/therapists/TherapistCard";
@@ -47,6 +47,7 @@ const SPECIALTY_FILTERS = [
 
 export default function AppointmentsView() {
   const [selectedSpecialty, setSelectedSpecialty] = useState("All");
+  const [searchQuery, setSearchQuery] = useState("");
   const [therapistsList, setTherapistsList] = useState<UnifiedTherapist[]>(FALLBACK_THERAPISTS);
   const [showBookingModal, setShowBookingModal] = useState<UnifiedTherapist | null>(null);
   const [selectedSlot, setSelectedSlot] = useState<string>("tomorrow");
@@ -59,12 +60,13 @@ export default function AppointmentsView() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    let isMounted = true;
     async function loadTherapists() {
       try {
         const res = await fetch("/api/therapists");
         if (res.ok) {
           const data = await res.json();
-          if (Array.isArray(data) && data.length > 0) {
+          if (isMounted && Array.isArray(data) && data.length > 0) {
             const normalized = data.map((t: any, i: number) => normalizeTherapist(t, i));
             if (normalized.length < 3) {
               const existingIds = new Set(normalized.map((t: UnifiedTherapist) => t.id));
@@ -80,6 +82,9 @@ export default function AppointmentsView() {
       }
     }
     loadTherapists();
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const fetchAppointments = async () => {
@@ -111,13 +116,58 @@ export default function AppointmentsView() {
     };
   }, []);
 
-  const filteredTherapists = selectedSpecialty === "All"
-    ? therapistsList
-    : therapistsList.filter((t) =>
-        t.tags.some((tag) =>
-          (typeof tag === "string" ? tag : tag.text).toLowerCase().includes(selectedSpecialty.toLowerCase())
+  const filteredTherapists = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
+    const queryNormalized = query.replace(/[-_]/g, " ");
+    const queryWords = query.split(/\s+/).filter(Boolean);
+
+    return therapistsList.filter((doctor) => {
+      // 1. Specialty / Category filter
+      const matchesCategory =
+        selectedSpecialty === "All" ||
+        doctor.tags.some((tag) => {
+          const tagText = (typeof tag === "string" ? tag : tag.text).toLowerCase();
+          const spec = selectedSpecialty.toLowerCase();
+          return tagText.includes(spec) || spec.includes(tagText);
+        });
+
+      if (!matchesCategory) return false;
+
+      // 2. Search query filter
+      if (!query) return true;
+
+      const name = doctor.name.toLowerCase();
+      const role = doctor.role.toLowerCase();
+      const description = (doctor.description || "").toLowerCase();
+      const tagsText = doctor.tags
+        .map((tag) => (typeof tag === "string" ? tag : tag.text).toLowerCase())
+        .join(" ");
+
+      const fullContent = `${name} ${role} ${description} ${tagsText}`;
+      const fullContentNormalized = fullContent.replace(/[-_]/g, " ");
+
+      // Direct substring match on original or normalized text
+      if (
+        fullContent.includes(query) ||
+        fullContentNormalized.includes(queryNormalized)
+      ) {
+        return true;
+      }
+
+      // Check multi-word query: all words in search query must appear in doctor content
+      if (
+        queryWords.length > 1 &&
+        queryWords.every(
+          (word) =>
+            fullContent.includes(word) || fullContentNormalized.includes(word)
         )
-      );
+      ) {
+        return true;
+      }
+
+      return false;
+    });
+  }, [therapistsList, searchQuery, selectedSpecialty]);
 
   const handleBookSession = (therapist: UnifiedTherapist) => {
     setShowBookingModal(therapist);
@@ -405,6 +455,34 @@ export default function AppointmentsView() {
             </div>
           </div>
 
+          {/* Search Input Bar */}
+          <div className="relative w-full">
+            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#6B857C] dark:text-[#78958C]">
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search practitioners by name, specialty, or focus area..."
+              className="w-full pl-10 pr-10 py-2.5 bg-[#F8FCFA] dark:bg-[#14382F] hover:bg-white dark:hover:bg-[#163F35] focus:bg-white dark:focus:bg-[#102F27] border border-[#E2ECE6] dark:border-[#23483E] rounded-2xl text-xs text-[#19332A] dark:text-[#F4FAF7] placeholder-[#789389] dark:placeholder-[#78958C] focus:outline-none focus:ring-2 focus:ring-[#006C56]/20 focus:border-[#006C56] dark:focus:border-[#00A982] transition-all"
+            />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery("")}
+                className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-[#789389] hover:text-[#19332A] dark:text-[#78958C] dark:hover:text-[#F4FAF7] cursor-pointer transition-colors"
+                aria-label="Clear search"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            )}
+          </div>
+
           {/* Privacy & Confidentiality Reassurance Banner */}
           <div className="p-3.5 sm:px-4.5 sm:py-3.5 rounded-2xl bg-[#EDF8F3] dark:bg-[#0C2B22] border border-[#BBE5D4] dark:border-[#1E5244] shadow-[0_4px_14px_rgba(0,80,65,0.06)] dark:shadow-none flex items-start sm:items-center gap-3 sm:gap-3.5 transition-all">
             {/* Prominent Lock Icon Container */}
@@ -430,34 +508,97 @@ export default function AppointmentsView() {
             </div>
           </div>
 
-          {/* Specialty Filter Chips */}
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 max-w-full">
-            {SPECIALTY_FILTERS.map((filter) => (
-              <button
-                key={filter}
-                onClick={() => setSelectedSpecialty(filter)}
-                className={`px-3 py-1 rounded-full text-[10.5px] font-bold transition-all whitespace-nowrap cursor-pointer ${
-                  selectedSpecialty === filter
-                    ? "bg-[#006C56] dark:bg-[#00A982] text-white dark:text-[#071C17] shadow-xs"
-                    : "bg-[#F4F9F6] dark:bg-[#14382F] text-[#4F685F] dark:text-[#A9C5BC] hover:bg-[#EAF6F0]"
-                }`}
-              >
-                {filter}
-              </button>
-            ))}
+          {/* Specialty Filter Chips & Active Search Count */}
+          <div className="space-y-2">
+            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 max-w-full">
+              {SPECIALTY_FILTERS.map((filter) => (
+                <button
+                  key={filter}
+                  onClick={() => setSelectedSpecialty(filter)}
+                  className={`px-3 py-1 rounded-full text-[10.5px] font-bold transition-all whitespace-nowrap cursor-pointer ${
+                    selectedSpecialty === filter
+                      ? "bg-[#006C56] dark:bg-[#00A982] text-white dark:text-[#071C17] shadow-xs"
+                      : "bg-[#F4F9F6] dark:bg-[#14382F] text-[#4F685F] dark:text-[#A9C5BC] hover:bg-[#EAF6F0]"
+                  }`}
+                >
+                  {filter}
+                </button>
+              ))}
+            </div>
+
+            {/* Active search count */}
+            {searchQuery.trim() && (
+              <div className="flex items-center justify-between text-xs text-[#6B857C] dark:text-[#A9C5BC] pt-1">
+                <span>
+                  <strong className="font-bold text-[#19332A] dark:text-[#F4FAF7]">
+                    {filteredTherapists.length}
+                  </strong>{" "}
+                  {filteredTherapists.length === 1 ? "practitioner" : "practitioners"} found
+                  {selectedSpecialty !== "All" && (
+                    <span> in &ldquo;{selectedSpecialty}&rdquo;</span>
+                  )}
+                </span>
+              </div>
+            )}
           </div>
 
-          {/* Therapists Cards Grid (Responsive grid reusing TherapistCard) */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-1">
-            {filteredTherapists.map((therapist) => (
-              <div key={therapist.id} className="w-full flex flex-col h-full min-w-0 relative hover:z-50">
-                <TherapistCard
-                  therapist={therapist}
-                  onBook={handleBookSession}
-                />
+          {/* Therapists Cards Grid or Empty State */}
+          {filteredTherapists.length === 0 ? (
+            <div className="py-12 px-6 rounded-2xl bg-[#F8FCFA] dark:bg-[#0E2A23] border border-dashed border-[#CEE4DB] dark:border-[#23483E] text-center flex flex-col items-center justify-center space-y-3.5 transition-colors">
+              <div className="w-12 h-12 rounded-2xl bg-[#EAF6F0] dark:bg-[#14382F] text-[#006C56] dark:text-[#00A982] flex items-center justify-center shadow-xs">
+                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
               </div>
-            ))}
-          </div>
+              <div className="space-y-1 max-w-sm">
+                <h3 className="text-sm font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
+                  No practitioners found
+                </h3>
+                <p className="text-xs text-[#6B857C] dark:text-[#A9C5BC] font-medium leading-relaxed">
+                  {searchQuery.trim() ? (
+                    <>
+                      We couldn&apos;t find anyone matching &ldquo;<span className="font-semibold text-[#19332A] dark:text-[#F4FAF7]">{searchQuery.trim()}</span>&rdquo;.
+                      <br />
+                      Try searching by name, specialty, or focus area.
+                    </>
+                  ) : (
+                    `No practitioners found matching the "${selectedSpecialty}" category.`
+                  )}
+                </p>
+              </div>
+              <div className="flex flex-wrap items-center justify-center gap-2 pt-1">
+                {searchQuery.trim() && (
+                  <button
+                    type="button"
+                    onClick={() => setSearchQuery("")}
+                    className="px-4 py-2 rounded-xl bg-[#004D3D] hover:bg-[#003B2E] dark:bg-[#00A982] dark:hover:bg-[#00916F] text-white dark:text-[#071C17] text-xs font-bold shadow-xs transition-all cursor-pointer"
+                  >
+                    Clear Search
+                  </button>
+                )}
+                {selectedSpecialty !== "All" && (
+                  <button
+                    type="button"
+                    onClick={() => setSelectedSpecialty("All")}
+                    className="px-4 py-2 rounded-xl bg-white dark:bg-[#14382F] hover:bg-[#F2FAF6] dark:hover:bg-[#19463B] text-[#19332A] dark:text-[#F4FAF7] text-xs font-bold border border-[#E2ECE6] dark:border-[#23483E] transition-all cursor-pointer"
+                  >
+                    Show All Specialties
+                  </button>
+                )}
+              </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-1">
+              {filteredTherapists.map((therapist) => (
+                <div key={therapist.id} className="w-full flex flex-col h-full min-w-0 relative hover:z-50">
+                  <TherapistCard
+                    therapist={therapist}
+                    onBook={handleBookSession}
+                  />
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
 
