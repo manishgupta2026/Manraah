@@ -83,7 +83,7 @@ function formatCategoryDisplayName(raw?: string | null): string {
     lower === "general" ||
     lower === "other-general"
   ) {
-    return "Other / General";
+    return "Other";
   }
   if (lower === "women") return "Women";
   if (lower === "men") return "Men";
@@ -257,7 +257,7 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
           </h1>
           <div className="pt-0.5">
             <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-[#EAF6F0] dark:bg-[#14382F] text-[#006C56] dark:text-[#88F7D6] border border-[#D2EAE0] dark:border-[#23483E]" suppressHydrationWarning>
-              {formatCategoryDisplayName(user?.selectedCategory || currentCategory)}
+              Active Profile: {formatCategoryDisplayName(user?.selectedCategory || currentCategory)}
             </span>
           </div>
         </div>

@@ -438,10 +438,10 @@ export default function AppointmentsView() {
       {/* 3. Book a New Session Section (Shown ONLY on All tab) */}
       {activeTab === "all" && (
         <div className="bg-white dark:bg-[#102F27] rounded-3xl p-6 border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs space-y-4 transition-colors">
-          {/* Header */}
-          <div>
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-2xl bg-[#EAF6F0] dark:bg-[#14382F] text-[#006C56] dark:text-[#00A982] flex items-center justify-center">
+          {/* Header & Inline Search Bar */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3.5 sm:gap-4">
+            <div className="flex items-center gap-2.5 min-w-0">
+              <div className="w-8 h-8 rounded-2xl bg-[#EAF6F0] dark:bg-[#14382F] text-[#006C56] dark:text-[#00A982] flex items-center justify-center shrink-0">
                 <span className="font-bold text-sm">+</span>
               </div>
               <div>
@@ -453,34 +453,34 @@ export default function AppointmentsView() {
                 </p>
               </div>
             </div>
-          </div>
 
-          {/* Search Input Bar */}
-          <div className="relative w-full">
-            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#6B857C] dark:text-[#78958C]">
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-            </div>
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search practitioners by name, specialty, or focus area..."
-              className="w-full pl-10 pr-10 py-2.5 bg-[#F8FCFA] dark:bg-[#14382F] hover:bg-white dark:hover:bg-[#163F35] focus:bg-white dark:focus:bg-[#102F27] border border-[#E2ECE6] dark:border-[#23483E] rounded-2xl text-xs text-[#19332A] dark:text-[#F4FAF7] placeholder-[#789389] dark:placeholder-[#78958C] focus:outline-none focus:ring-2 focus:ring-[#006C56]/20 focus:border-[#006C56] dark:focus:border-[#00A982] transition-all"
-            />
-            {searchQuery && (
-              <button
-                type="button"
-                onClick={() => setSearchQuery("")}
-                className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-[#789389] hover:text-[#19332A] dark:text-[#78958C] dark:hover:text-[#F4FAF7] cursor-pointer transition-colors"
-                aria-label="Clear search"
-              >
+            {/* Search Input Bar (Inline on the Right) */}
+            <div className="relative w-full sm:w-[380px] md:w-[420px] shrink-0">
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#6B857C] dark:text-[#78958C]">
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
-              </button>
-            )}
+              </div>
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search practitioners..."
+                className="w-full h-10 sm:h-11 pl-10 pr-10 bg-[#F8FCFA] dark:bg-[#14382F] hover:bg-white dark:hover:bg-[#163F35] focus:bg-white dark:focus:bg-[#102F27] border border-[#E2ECE6] dark:border-[#23483E] rounded-2xl text-xs text-[#19332A] dark:text-[#F4FAF7] placeholder-[#789389] dark:placeholder-[#78958C] focus:outline-none focus:ring-2 focus:ring-[#006C56]/20 focus:border-[#006C56] dark:focus:border-[#00A982] transition-all"
+              />
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery("")}
+                  className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-[#789389] hover:text-[#19332A] dark:text-[#78958C] dark:hover:text-[#F4FAF7] cursor-pointer transition-colors"
+                  aria-label="Clear search"
+                >
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              )}
+            </div>
           </div>
 
           {/* Privacy & Confidentiality Reassurance Banner */}
