@@ -12,6 +12,9 @@ const PROTECTED_ROUTES = [
   "/human-companion",
   "/journal",
   "/community",
+  "/sleep-meditation",
+  "/sleep",
+  "/meditation",
   "/profile",
   "/admin",
 ];

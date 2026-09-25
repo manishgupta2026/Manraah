@@ -88,7 +88,7 @@ export function AssessmentProvider({ children }: { children: ReactNode }) {
   const [assessmentCompleted, setAssessmentCompleted] = useState<boolean>(false);
   const [isHydrated, setIsHydrated] = useState<boolean>(false);
 
-  // Hydrate from sessionStorage on mount
+  // Hydrate from sessionStorage on mount and listen to auth changes
   useEffect(() => {
     if (typeof window !== "undefined") {
       try {
@@ -106,6 +106,27 @@ export function AssessmentProvider({ children }: { children: ReactNode }) {
       } finally {
         setIsHydrated(true);
       }
+
+      const handleAuthChange = (event: Event) => {
+        const customEvent = event as CustomEvent<{ session: any | null }>;
+        const s = customEvent.detail?.session;
+        if (!s?.isAuthenticated || !s?.user?.id) {
+          // Clear all onboarding assessment state
+          setSelectedCategoryState(null);
+          setCurrentQuestionIndex(0);
+          setDetailedAnswers([]);
+          setAssessmentResult(null);
+          setAssessmentCompleted(false);
+          try {
+            sessionStorage.removeItem(STORAGE_KEY);
+          } catch {}
+        }
+      };
+
+      window.addEventListener("manraah_auth_changed", handleAuthChange);
+      return () => {
+        window.removeEventListener("manraah_auth_changed", handleAuthChange);
+      };
     }
   }, []);
 

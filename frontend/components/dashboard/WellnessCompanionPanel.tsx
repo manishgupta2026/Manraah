@@ -1,66 +1,102 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
-import { getClientSession } from "@/backend/auth/client";
+import { useAuth } from "@/frontend/lib/context/AuthContext";
 import { useTheme } from "@/frontend/lib/context/ThemeContext";
-
 import { useWellness } from "@/frontend/lib/context/WellnessContext";
+import { useWellnessScore } from "@/frontend/lib/context/WellnessScoreContext";
+import UserAvatar from "@/frontend/components/ui/UserAvatar";
 
 interface WellnessCompanionPanelProps {
   onCheckCondition?: () => void;
 }
 
+const MOOD_EMOJIS: Record<string, string> = {
+  happy: "😊",
+  calm: "😌",
+  neutral: "😐",
+  anxious: "😟",
+  sad: "😔",
+  stressed: "😤",
+  tired: "😴",
+  motivated: "💪",
+  good: "😊",
+  energetic: "⚡",
+  focused: "🎯",
+  relaxed: "🌿",
+  serene: "✨",
+};
+
 export default function WellnessCompanionPanel({ onCheckCondition }: WellnessCompanionPanelProps) {
   const { theme } = useTheme();
   const isDark = theme === "dark";
-  const { hasCheckedInToday, performDailyCheckIn, isCheckingIn } = useWellness();
+  const { hasCheckedInToday, todayMood, isCheckingIn, openCheckInModal } = useWellness();
+  const { user, isAuthenticated } = useAuth();
 
-  const [userCategoryLabel, setUserCategoryLabel] = useState("parenting");
   const [checkInError, setCheckInError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const session = getClientSession();
-    if (session?.user) {
-      const cat = (session.user.selectedCategory || "student").toLowerCase();
-      if (cat.includes("work") || cat.includes("young_pro")) {
-        setUserCategoryLabel("career");
-      } else if (cat.includes("parent")) {
-        setUserCategoryLabel("parenting");
-      } else if (cat.includes("couple")) {
-        setUserCategoryLabel("relationship");
-      } else if (cat.includes("other")) {
-        setUserCategoryLabel("mindfulness");
-      } else {
-        setUserCategoryLabel("academic");
-      }
-    }
-  }, []);
+  const isUserAuthenticated = Boolean(isAuthenticated && user?.id);
+  const isCheckedIn = isUserAuthenticated && Boolean(hasCheckedInToday && todayMood);
 
-  const handleCheckInClick = async () => {
-    if (isCheckingIn || hasCheckedInToday) return;
-    setCheckInError(null);
-    try {
-      await performDailyCheckIn();
-    } catch (err: any) {
-      setCheckInError(err.message || "Failed to check in. Please try again.");
-    }
+  const cat = (user?.selectedCategory || "student").toLowerCase();
+  const userCategoryLabel =
+    cat.includes("work") || cat.includes("young_pro")
+      ? "career"
+      : cat.includes("parent")
+      ? "parenting"
+      : cat.includes("couple")
+      ? "relationship"
+      : cat.includes("other")
+      ? "mindfulness"
+      : "academic";
+
+  const handleCheckInClick = () => {
+    if (isCheckedIn) return;
+    openCheckInModal();
   };
 
+  // Determine today's mood label & emoji (Only when authenticated & checked in)
+  const rawMood = isCheckedIn ? (todayMood?.mood || user?.currentMood || "").trim() : "";
+  const moodKey = rawMood.toLowerCase();
+  const moodEmoji = MOOD_EMOJIS[moodKey] || "🌿";
+  const moodLabel = rawMood ? rawMood.charAt(0).toUpperCase() + rawMood.slice(1) : "";
+
+  // Formatted completed time
+  let completedTimeStr = "";
+  if (isCheckedIn && (todayMood?.updatedAt || todayMood?.createdAt)) {
+    try {
+      const dt = new Date(todayMood.updatedAt || todayMood.createdAt);
+      if (!isNaN(dt.getTime())) {
+        completedTimeStr = `Completed today • ${dt.toLocaleTimeString("en-US", {
+          hour: "numeric",
+          minute: "2-digit",
+          hour12: true,
+        })}`;
+      }
+    } catch {
+      completedTimeStr = "Completed today";
+    }
+  } else if (isCheckedIn) {
+    completedTimeStr = "Completed today";
+  }
+
   return (
-    <aside className="w-full flex flex-col gap-4.5 select-none pointer-events-auto shrink-0">
+    <aside className="w-full flex flex-col gap-3.5 sm:gap-4 select-none pointer-events-auto shrink-0">
       {/* 1. Check Your Condition Card */}
       <div className="bg-[#EAF5EF] dark:bg-[#102F27] rounded-3xl p-6 border border-[#D2E8DC] dark:border-[#23483E] text-center flex flex-col items-center space-y-3 shadow-2xs transition-colors">
-        {/* Circular Avatar / Profile Icon with check badge */}
+        {/* Circular Avatar / Profile Icon with check badge (only when checked in) */}
         <div className="relative">
-          <div className="w-16 h-16 rounded-full bg-[#D6ECE0] dark:bg-[#14382F] border-2 border-white dark:border-[#102F27] flex items-center justify-center text-slate-400 dark:text-[#78958C] shadow-inner">
-            <svg className="w-9 h-9 text-slate-400 dark:text-[#78958C]" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-            </svg>
-          </div>
-          <div className="absolute bottom-0 right-0 w-4 h-4 rounded-full bg-[#006C56] dark:bg-[#00A982] text-white dark:text-[#071C17] flex items-center justify-center text-[9px] font-bold border-2 border-white dark:border-[#102F27] shadow-xs">
-            ✓
-          </div>
+          <UserAvatar
+            user={isUserAuthenticated ? user : null}
+            sizeClass="w-16 h-16 text-lg"
+            className="border-2 border-white dark:border-[#102F27] shadow-inner"
+          />
+          {isCheckedIn && (
+            <div className="absolute bottom-0 right-0 w-4.5 h-4.5 rounded-full bg-[#006C56] dark:bg-[#00A982] text-white dark:text-[#071C17] flex items-center justify-center text-[9px] font-bold border-2 border-white dark:border-[#102F27] shadow-xs">
+              ✓
+            </div>
+          )}
         </div>
 
         {/* Subtitle / Badge */}
@@ -70,15 +106,26 @@ export default function WellnessCompanionPanel({ onCheckCondition }: WellnessCom
 
         {/* Main Heading */}
         <h2 className="text-lg font-heading font-black text-[#19332A] dark:text-[#F4FAF7] leading-tight">
-          {hasCheckedInToday ? "Today's Check-In Complete" : "Check Your Condition"}
+          {isCheckedIn ? "Today's Check-In Complete" : "Check Your Condition"}
         </h2>
 
-        {/* Description */}
-        <p className="text-[11px] text-[#4F685F] dark:text-[#A9C5BC] font-medium leading-relaxed max-w-[220px]">
-          {hasCheckedInToday
-            ? "Your wellness check-in is complete for today."
-            : `Check your every situation, stress factors, and ${userCategoryLabel} activities.`}
-        </p>
+        {/* Description / Mood status */}
+        {isCheckedIn ? (
+          <div className="space-y-1">
+            <div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#D8EFE3] dark:bg-[#154639] text-[#006C56] dark:text-[#88F7D6] text-xs font-bold">
+              <span>Mood: {moodEmoji} {moodLabel}</span>
+            </div>
+            <p className="text-[10px] text-[#6B857C] dark:text-[#A9C5BC] font-medium leading-tight">
+              {completedTimeStr}
+            </p>
+          </div>
+        ) : (
+          <p className="text-[11px] text-[#4F685F] dark:text-[#A9C5BC] font-medium leading-relaxed max-w-[220px]">
+            {isUserAuthenticated
+              ? `Check your every situation, stress factors, and ${userCategoryLabel} activities.`
+              : "Track your emotional situation, stress factors, and mindful wellness activities."}
+          </p>
+        )}
 
         {checkInError && (
           <p className="text-[10px] font-bold text-red-500 dark:text-red-400 leading-tight">
@@ -87,7 +134,7 @@ export default function WellnessCompanionPanel({ onCheckCondition }: WellnessCom
         )}
 
         {/* Dynamic Action Button */}
-        {hasCheckedInToday ? (
+        {isCheckedIn ? (
           <button
             type="button"
             disabled
@@ -105,20 +152,11 @@ export default function WellnessCompanionPanel({ onCheckCondition }: WellnessCom
             type="button"
             className="w-full py-3 px-4 rounded-full bg-[#004D3D] hover:bg-[#003B2E] dark:bg-[#00A982] dark:hover:bg-[#00916F] text-white dark:text-[#071C17] text-[11px] font-bold shadow-md shadow-[#004D3D]/20 dark:shadow-[#00A982]/20 transition-all flex items-center justify-center gap-2 group cursor-pointer mt-1 disabled:opacity-80 disabled:cursor-not-allowed"
           >
-            {isCheckingIn ? (
-              <>
-                <span className="w-3.5 h-3.5 border-2 border-white/40 border-t-white dark:border-[#071C17]/40 dark:border-t-[#071C17] rounded-full animate-spin" />
-                <span>Checking...</span>
-              </>
-            ) : (
-              <>
-                <span className="w-4 h-4 rounded-full border border-white/60 dark:border-[#071C17]/60 flex items-center justify-center text-[8px]">
-                  ✦
-                </span>
-                <span>CHECK IT NOW</span>
-                <span className="transition-transform group-hover:translate-x-1">→</span>
-              </>
-            )}
+            <span className="w-4 h-4 rounded-full border border-white/60 dark:border-[#071C17]/60 flex items-center justify-center text-[8px]">
+              ✦
+            </span>
+            <span>CHECK IT NOW</span>
+            <span className="transition-transform group-hover:translate-x-1">→</span>
           </button>
         )}
       </div>

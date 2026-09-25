@@ -3,10 +3,11 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { signIn } from "@/backend/auth/client";
+import { signIn, updateClientSession } from "@/backend/auth/client";
 import { FormInput } from "@/frontend/components/ui/FormInput";
 import { motion } from "framer-motion";
 import { useAssessment } from "@/frontend/lib/context/AssessmentContext";
+import { useAuth } from "@/frontend/lib/context/AuthContext";
 
 function readCookie(name: string): string | null {
   if (typeof document === "undefined") return null;
@@ -18,11 +19,21 @@ export default function LoginScreen() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { selectedCategory, detailedAnswers, computedScore, assessmentResult } = useAssessment();
+  const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Emergency contact intake step state
+  const [showEmergencyContactStep, setShowEmergencyContactStep] = useState(false);
+  const [loggedInSession, setLoggedInSession] = useState<any>(null);
+  const [ecName, setEcName] = useState("");
+  const [ecPhone, setEcPhone] = useState("");
+  const [ecRelation, setEcRelation] = useState("Parent");
+  const [ecSaving, setEcSaving] = useState(false);
+  const [ecError, setEcError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,7 +54,7 @@ export default function LoginScreen() {
       const cookieCat = readCookie("userType") || readCookie("manraah_userType") || "";
       const effectiveCategory = queryCat || selectedCategory || cookieCat || "";
 
-      await signIn(
+      const session = await login(
         email.trim().toLowerCase(),
         password,
         effectiveCategory || "",
@@ -57,7 +68,18 @@ export default function LoginScreen() {
       document.cookie = "userType=; path=/; max-age=0";
       document.cookie = "manraah_userType=; path=/; max-age=0";
 
-      router.push("/dashboard");
+      const hasEmergencyContact = Boolean(
+        session?.user?.emergencyContact &&
+        (typeof session.user.emergencyContact === "object" ? session.user.emergencyContact.phone : false)
+      );
+
+      if (!hasEmergencyContact) {
+        setLoggedInSession(session);
+        setShowEmergencyContactStep(true);
+        setLoading(false);
+      } else {
+        router.push("/dashboard");
+      }
     } catch (err: any) {
       console.error("Login authentication error:", err);
       setError(
@@ -66,6 +88,57 @@ export default function LoginScreen() {
       );
       setLoading(false);
     }
+  };
+
+  const handleSaveEmergencyContact = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setEcError(null);
+
+    const name = ecName.trim();
+    const phone = ecPhone.trim();
+
+    if (!name) {
+      setEcError("Please enter your contact's name.");
+      return;
+    }
+    if (!phone || phone.length < 5) {
+      setEcError("Please enter a valid phone number.");
+      return;
+    }
+
+    setEcSaving(true);
+    try {
+      const contactObj = {
+        name,
+        phone,
+        relation: ecRelation || "Family",
+      };
+
+      await fetch("/api/profile", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ emergencyContact: contactObj }),
+      });
+
+      if (loggedInSession) {
+        updateClientSession({
+          ...loggedInSession,
+          user: {
+            ...loggedInSession.user,
+            emergencyContact: contactObj,
+          },
+        });
+      }
+
+      router.push("/dashboard");
+    } catch (err: any) {
+      setEcError(err.message || "Failed to save contact. You can continue and set this up later.");
+      setEcSaving(false);
+    }
+  };
+
+  const handleSkipEmergencyContact = () => {
+    router.push("/dashboard");
   };
 
   return (
@@ -91,7 +164,7 @@ export default function LoginScreen() {
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/80 dark:bg-surface-container-low border border-primary/20 shadow-xs w-fit">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
             <span className="text-xs font-heading font-bold text-primary">
-              WELCOME BACK • MANRAAH
+              WELCOME • MANRAAH
             </span>
           </div>
 
@@ -177,7 +250,7 @@ export default function LoginScreen() {
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/90 border border-primary/20 shadow-xs">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
               <span className="text-[11px] font-heading font-bold text-primary">
-                WELCOME BACK • MANRAAH
+                WELCOME • MANRAAH
               </span>
             </div>
             <h2 className="text-2xl font-heading font-black text-on-surface tracking-tight">
@@ -191,116 +264,208 @@ export default function LoginScreen() {
           {/* Main Card Container */}
           <div className="p-5 sm:p-8 rounded-[28px] sm:rounded-[36px] bg-white/90 dark:bg-surface-container-lowest/95 backdrop-blur-xl border border-surface-variant/40 shadow-card-lift">
             
-            {/* Desktop Card Header */}
-            <div className="space-y-1 pb-4 border-b border-surface-variant/30 text-left">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-[11px] font-heading font-bold text-primary uppercase tracking-wider">
-                    Account Access
-                  </p>
-                  <h3 className="text-2xl font-heading font-extrabold text-on-surface">
-                    Sign In
+            {showEmergencyContactStep ? (
+              /* Emergency Contact Intake Step (Safety First) */
+              <div className="space-y-4">
+                <div className="space-y-1.5 pb-4 border-b border-surface-variant/30 text-left">
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 text-red-600 dark:text-red-400 text-[11px] font-heading font-bold">
+                    <span className="material-symbols-outlined text-sm animate-pulse">health_and_safety</span>
+                    <span>SAFETY FIRST</span>
+                  </div>
+                  <h3 className="text-xl sm:text-2xl font-heading font-extrabold text-on-surface">
+                    Add an Emergency Contact
                   </h3>
+                  <p className="text-xs text-on-surface-variant leading-relaxed">
+                    In moments of overwhelming distress, who should we help connect you to in a single tap? This is private to you and accessible anytime from your crisis tab.
+                  </p>
                 </div>
-                {/* <div className="px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-[11px] font-heading font-bold text-primary flex items-center gap-1.5">
-                  <span className="material-symbols-outlined text-sm">lock</span>
-                  <span>Confidential Space</span>
-                </div> */}
+
+                {ecError && (
+                  <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-xs font-semibold text-red-600 flex items-start gap-2 text-left">
+                    <span className="material-symbols-outlined text-base shrink-0 mt-0.5">error</span>
+                    <span>{ecError}</span>
+                  </div>
+                )}
+
+                <form onSubmit={handleSaveEmergencyContact} className="space-y-4 text-left">
+                  <FormInput
+                    label="Contact Full Name *"
+                    type="text"
+                    required
+                    icon="person"
+                    placeholder="e.g. Priya Sharma, Mom, Rahul"
+                    value={ecName}
+                    onChange={(e) => setEcName(e.target.value)}
+                  />
+
+                  <FormInput
+                    label="Phone Number *"
+                    type="tel"
+                    required
+                    icon="call"
+                    placeholder="e.g. +91 98765 43210"
+                    value={ecPhone}
+                    onChange={(e) => setEcPhone(e.target.value)}
+                  />
+
+                  <div>
+                    <label className="block text-xs font-heading font-semibold text-on-surface mb-1.5">
+                      Relationship
+                    </label>
+                    <select
+                      value={ecRelation}
+                      onChange={(e) => setEcRelation(e.target.value)}
+                      className="w-full px-4 py-3 rounded-2xl bg-surface border border-surface-variant/50 text-xs font-medium text-on-surface focus:outline-hidden focus:ring-2 focus:ring-primary cursor-pointer"
+                    >
+                      <option value="Parent">Parent</option>
+                      <option value="Partner / Spouse">Partner / Spouse</option>
+                      <option value="Family / Sibling">Family / Sibling</option>
+                      <option value="Close Friend">Close Friend</option>
+                      <option value="Doctor / Therapist">Doctor / Therapist</option>
+                      <option value="Guardian">Guardian</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </div>
+
+                  <div className="pt-2 space-y-2.5">
+                    <button
+                      type="submit"
+                      disabled={ecSaving}
+                      className="w-full py-3.5 sm:py-4 rounded-2xl bg-primary hover:bg-primary-purple text-white font-heading font-bold text-sm shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
+                    >
+                      {ecSaving ? (
+                        <>
+                          <div className="w-4 h-4 rounded-full border-2 border-white border-t-transparent animate-spin" />
+                          <span>Saving Contact...</span>
+                        </>
+                      ) : (
+                        <>
+                          <span>Save &amp; Continue to Dashboard</span>
+                          <span className="material-symbols-outlined text-base">arrow_forward</span>
+                        </>
+                      )}
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={handleSkipEmergencyContact}
+                      className="w-full py-2.5 rounded-xl hover:bg-surface-container text-on-surface-variant hover:text-on-surface text-xs font-heading font-semibold transition-colors cursor-pointer text-center"
+                    >
+                      Skip for now — I&apos;ll set this up later
+                    </button>
+                  </div>
+                </form>
               </div>
-              <p className="text-xs text-on-surface-variant pt-1">
-                Enter your registered credentials below to access your account.
-              </p>
-            </div>
+            ) : (
+              <>
+                {/* Desktop Card Header */}
+                <div className="space-y-1 pb-4 border-b border-surface-variant/30 text-left">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-[11px] font-heading font-bold text-primary uppercase tracking-wider">
+                        Account Access
+                      </p>
+                      <h3 className="text-2xl font-heading font-extrabold text-on-surface">
+                        Sign In
+                      </h3>
+                    </div>
+                  </div>
+                  <p className="text-xs text-on-surface-variant pt-1">
+                    Enter your registered credentials below to access your account.
+                  </p>
+                </div>
 
-            {/* Error Callout */}
-            {error && (
-              <motion.div
-                initial={{ opacity: 0, y: -6 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="p-3.5 my-4 rounded-2xl bg-red-500/10 border border-red-500/20 text-xs font-semibold text-red-600 flex items-start gap-2.5 text-left"
-              >
-                <span className="material-symbols-outlined text-lg shrink-0 mt-0.5">error</span>
-                <span className="leading-relaxed">{error}</span>
-              </motion.div>
-            )}
-
-            {/* Login Form */}
-            <form onSubmit={handleSubmit} className="mt-4 space-y-4">
-              <FormInput
-                label="Email Address"
-                type="email"
-                required
-                icon="mail"
-                placeholder="you@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-
-              <div>
-                <FormInput
-                  label="Password"
-                  isPassword={true}
-                  required
-                  icon="lock"
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-                
-                <div className="flex items-center justify-between pt-2">
-                  <label className="flex items-center gap-2 cursor-pointer select-none">
-                    <input
-                      type="checkbox"
-                      checked={rememberMe}
-                      onChange={(e) => setRememberMe(e.target.checked)}
-                      className="w-3.5 h-3.5 rounded border-surface-variant text-primary focus:ring-primary/40 accent-primary cursor-pointer"
-                    />
-                    <span className="text-xs text-on-surface-variant">Remember me</span>
-                  </label>
-
-                  <Link
-                    href="/forgot-password"
-                    className="text-xs font-heading font-bold text-primary hover:underline"
+                {/* Error Callout */}
+                {error && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="p-3.5 my-4 rounded-2xl bg-red-500/10 border border-red-500/20 text-xs font-semibold text-red-600 flex items-start gap-2.5 text-left"
                   >
-                    Forgot password?
-                  </Link>
+                    <span className="material-symbols-outlined text-lg shrink-0 mt-0.5">error</span>
+                    <span className="leading-relaxed">{error}</span>
+                  </motion.div>
+                )}
+
+                {/* Login Form */}
+                <form onSubmit={handleSubmit} className="mt-4 space-y-4">
+                  <FormInput
+                    label="Email Address"
+                    type="email"
+                    required
+                    icon="mail"
+                    placeholder="you@example.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+
+                  <div>
+                    <FormInput
+                      label="Password"
+                      isPassword={true}
+                      required
+                      icon="lock"
+                      placeholder="••••••••"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                    />
+
+                    <div className="flex items-center justify-between pt-2">
+                      <label className="flex items-center gap-2 cursor-pointer select-none">
+                        <input
+                          type="checkbox"
+                          checked={rememberMe}
+                          onChange={(e) => setRememberMe(e.target.checked)}
+                          className="w-3.5 h-3.5 rounded border-surface-variant text-primary focus:ring-primary/40 accent-primary cursor-pointer"
+                        />
+                        <span className="text-xs text-on-surface-variant">Remember me</span>
+                      </label>
+
+                      <Link
+                        href="/forgot-password"
+                        className="text-xs font-heading font-bold text-primary hover:underline"
+                      >
+                        Forgot password?
+                      </Link>
+                    </div>
+                  </div>
+
+                  {/* Action Button */}
+                  <div className="pt-2">
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      className="w-full py-3.5 sm:py-4 rounded-2xl bg-primary hover:bg-primary-purple text-white font-heading font-bold text-sm shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed active:scale-[0.99] cursor-pointer"
+                    >
+                      {loading ? (
+                        <>
+                          <div className="w-4 h-4 rounded-full border-2 border-white border-t-transparent animate-spin" />
+                          <span>Signing in...</span>
+                        </>
+                      ) : (
+                        <>
+                          <span>Sign In to Manraah</span>
+                          <span className="material-symbols-outlined text-base">arrow_forward</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </form>
+
+                {/* Bottom link to Signup */}
+                <div className="text-center pt-4 mt-4 border-t border-surface-variant/30">
+                  <p className="text-xs text-on-surface-variant font-normal">
+                    Don&apos;t have an account yet?{" "}
+                    <Link
+                      href="/signup"
+                      className="font-heading font-bold text-primary hover:underline"
+                    >
+                      Create Manraah Account
+                    </Link>
+                  </p>
                 </div>
-              </div>
-
-              {/* Action Button */}
-              <div className="pt-2">
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full py-3.5 sm:py-4 rounded-2xl bg-primary hover:bg-primary-purple text-white font-heading font-bold text-sm shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed active:scale-[0.99] cursor-pointer"
-                >
-                  {loading ? (
-                    <>
-                      <div className="w-4 h-4 rounded-full border-2 border-white border-t-transparent animate-spin" />
-                      <span>Signing in...</span>
-                    </>
-                  ) : (
-                    <>
-                      <span>Sign In to Manraah</span>
-                      <span className="material-symbols-outlined text-base">arrow_forward</span>
-                    </>
-                  )}
-                </button>
-              </div>
-            </form>
-
-            {/* Bottom link to Signup */}
-            <div className="text-center pt-4 mt-4 border-t border-surface-variant/30">
-              <p className="text-xs text-on-surface-variant font-normal">
-                Don&apos;t have an account yet?{" "}
-                <Link
-                  href="/signup"
-                  className="font-heading font-bold text-primary hover:underline"
-                >
-                  Create Free Account
-                </Link>
-              </p>
-            </div>
+              </>
+            )}
 
           </div>
 

@@ -29,6 +29,7 @@ async function initDB() {
     `;
     try {
       await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS sanctuary_name VARCHAR(255) UNIQUE`;
+      await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS emergency_contact JSONB DEFAULT '{}'::jsonb`;
       await sql`ALTER TABLE users ALTER COLUMN name DROP NOT NULL`;
     } catch (e) {
       // Ignored if tables are clean
@@ -103,10 +104,16 @@ async function initDB() {
           content TEXT NOT NULL,
           likes INT DEFAULT 0,
           comments_count INT DEFAULT 0,
+          status VARCHAR(50) DEFAULT 'approved',
           created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
       );
     `;
-    console.log("✓ Table 'community_posts' ready");
+    try {
+      await sql`ALTER TABLE community_posts ADD COLUMN IF NOT EXISTS status VARCHAR(50) DEFAULT 'approved'`;
+    } catch (e) {
+      // Ignored if column already exists
+    }
+    console.log("✓ Table 'community_posts' ready with status column");
 
     await sql`
       CREATE TABLE IF NOT EXISTS resources (

@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import AdminHeader from "./shell/AdminHeader";
 import AdminSidebar, { AdminTab } from "./shell/AdminSidebar";
 import AdminOverviewTab from "./overview/AdminOverviewTab";
 import AdminCompanionController from "./companion/AdminCompanionController";
+import CommunityModerationTab from "./community/CommunityModerationTab";
 import UserManagementTab from "./users/UserManagementTab";
 import ContentManagementTab from "./content/ContentManagementTab";
 import TherapistVerificationTab from "./therapists/TherapistVerificationTab";
@@ -16,6 +17,24 @@ interface AdminMainDashboardProps {
 
 export default function AdminMainDashboard({ initialTab = "COMPANION" }: AdminMainDashboardProps) {
   const [activeTab, setActiveTab] = useState<AdminTab>(initialTab);
+  const [pendingPostsCount, setPendingPostsCount] = useState(0);
+
+  useEffect(() => {
+    async function loadPendingCount() {
+      try {
+        const res = await fetch("/api/admin/community");
+        if (res.ok) {
+          const data = await res.json();
+          if (data.stats && typeof data.stats.pendingCount === "number") {
+            setPendingPostsCount(data.stats.pendingCount);
+          }
+        }
+      } catch (err) {
+        // Silently handle
+      }
+    }
+    loadPendingCount();
+  }, [activeTab]);
 
   return (
     <div className="min-h-screen bg-background text-on-background flex flex-col font-sans select-none">
@@ -25,7 +44,11 @@ export default function AdminMainDashboard({ initialTab = "COMPANION" }: AdminMa
       {/* Main Layout Area: Sidebar + Content */}
       <div className="flex-1 flex overflow-hidden">
         {/* Admin Sidebar Navigation */}
-        <AdminSidebar activeTab={activeTab} onSelectTab={setActiveTab} />
+        <AdminSidebar
+          activeTab={activeTab}
+          onSelectTab={setActiveTab}
+          pendingPostsCount={pendingPostsCount}
+        />
 
         {/* Dynamic Tab Content Viewport */}
         <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto max-w-7xl mx-auto w-full space-y-6">
@@ -34,6 +57,7 @@ export default function AdminMainDashboard({ initialTab = "COMPANION" }: AdminMa
             {(
               [
                 { id: "COMPANION", label: "Human Companion", icon: "record_voice_over" },
+                { id: "COMMUNITY", label: "Community Moderation", icon: "forum" },
                 { id: "OVERVIEW", label: "Overview", icon: "monitoring" },
                 { id: "USERS", label: "Users", icon: "group" },
                 { id: "CONTENT", label: "Content", icon: "spa" },
@@ -59,6 +83,7 @@ export default function AdminMainDashboard({ initialTab = "COMPANION" }: AdminMa
           {/* Active Tab View Rendering */}
           {activeTab === "OVERVIEW" && <AdminOverviewTab />}
           {activeTab === "COMPANION" && <AdminCompanionController />}
+          {activeTab === "COMMUNITY" && <CommunityModerationTab />}
           {activeTab === "USERS" && <UserManagementTab />}
           {activeTab === "CONTENT" && <ContentManagementTab />}
           {activeTab === "THERAPISTS" && <TherapistVerificationTab />}

@@ -20,6 +20,7 @@ export const users = pgTable("users", {
   workSituation: text("work_situation"),
   wellnessGoals: jsonb("wellness_goals").default([]),
   onboardingCompleted: boolean("onboarding_completed").default(false),
+  emergencyContact: jsonb("emergency_contact").default({}),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
@@ -54,6 +55,7 @@ export const therapists = pgTable("therapists", {
   name: text("name").notNull(),
   title: text("title").notNull(),
   avatar: text("avatar").notNull(),
+  profileImage: text("profile_image"),
   specialties: text("specialties").array(),
   rating: numeric("rating", { precision: 3, scale: 2 }).default("4.9"),
   reviewCount: integer("review_count").default(0),
@@ -72,6 +74,7 @@ export const communityPosts = pgTable("community_posts", {
   content: text("content").notNull(),
   likes: integer("likes").default(0),
   commentsCount: integer("comments_count").default(0),
+  status: text("status").default("pending"),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
@@ -188,6 +191,48 @@ export const assessmentAnswers = pgTable("assessment_answers", {
   selectedText: text("selected_text").notNull(),
   score: integer("score").notNull(),
   answeredAt: timestamp("answered_at").defaultNow().notNull(),
+});
+
+export const wellnessCategories = pgTable("wellness_categories", {
+  id: text("id").primaryKey(), // slug e.g. "anxiety-stress"
+  name: text("name").notNull(),
+  description: text("description"),
+  icon: text("icon").default("spa"),
+  colorTheme: text("color_theme").default("emerald"),
+  active: boolean("active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const wellnessQuestions = pgTable("wellness_questions", {
+  id: serial("id").primaryKey(),
+  categoryId: text("category_id").references(() => wellnessCategories.id, { onDelete: "cascade" }),
+  questionText: text("question_text").notNull(),
+  questionOrder: integer("question_order").notNull(),
+  reverseScored: boolean("reverse_scored").default(false),
+  optionsJson: jsonb("options_json").default([]),
+  active: boolean("active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const wellnessAssessments = pgTable("wellness_assessments", {
+  id: serial("id").primaryKey(),
+  userId: text("user_id").references(() => users.id, { onDelete: "cascade" }),
+  categoryId: text("category_id").references(() => wellnessCategories.id, { onDelete: "cascade" }),
+  rawScore: integer("raw_score").notNull(),
+  score: integer("score").notNull(),
+  completedAt: timestamp("completed_at").defaultNow(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const wellnessAnswers = pgTable("wellness_answers", {
+  id: serial("id").primaryKey(),
+  assessmentId: integer("assessment_id").references(() => wellnessAssessments.id, { onDelete: "cascade" }),
+  questionId: integer("question_id").references(() => wellnessQuestions.id, { onDelete: "cascade" }),
+  answer: integer("answer").notNull(),
+  normalizedAnswer: integer("normalized_answer").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
 });
 
 

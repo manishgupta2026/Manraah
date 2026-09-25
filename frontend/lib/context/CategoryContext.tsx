@@ -103,19 +103,41 @@ interface CategoryContextType {
 
 const CategoryContext = createContext<CategoryContextType | undefined>(undefined);
 
-export function CategoryProvider({ children }: { children: ReactNode }) {
-  const [category, setCategory] = useState<UserCategory>("student");
-  const pathname = usePathname();
+import { useAuth } from "@/frontend/lib/context/AuthContext";
 
-  // Sync category with user session on mount
+export function CategoryProvider({ children }: { children: ReactNode }) {
+  const { user, isAuthenticated } = useAuth();
+  const [category, setCategory] = useState<UserCategory>("student");
+
+  // Authoritatively sync category whenever authenticated user changes
+  useEffect(() => {
+    if (user?.selectedCategory) {
+      setCategory(user.selectedCategory as UserCategory);
+    }
+  }, [user?.selectedCategory]);
+
+  // Sync category with user session events
   useEffect(() => {
     if (typeof window !== "undefined") {
+      const handleAuthChange = (event: Event) => {
+        const customEvent = event as CustomEvent<{ session: any | null }>;
+        const s = customEvent.detail?.session;
+        if (s?.user?.selectedCategory) {
+          setCategory(s.user.selectedCategory as UserCategory);
+        }
+      };
+
       const session = getClientSession();
-      if (session?.user?.selectedCategory) {
+      if (session?.user?.selectedCategory && session.user.selectedCategory !== category) {
         setCategory(session.user.selectedCategory as UserCategory);
       }
+
+      window.addEventListener("manraah_auth_changed", handleAuthChange);
+      return () => {
+        window.removeEventListener("manraah_auth_changed", handleAuthChange);
+      };
     }
-  }, []);
+  }, [category]);
 
   const categoryDetails = CATEGORIES[category] || DEFAULT_CATEGORY;
 

@@ -184,11 +184,15 @@ export async function POST(request: Request) {
       country: cleanCountry || undefined,
       gender: cleanGender || undefined,
       avatar: "/images/user_avatar.jpg",
+      profileImage: "/images/user_avatar.jpg",
       streakDays: streakInfo.currentStreak,
       mindfulnessMinutes: 0,
-      currentMood: "Sanctuary Member",
+      currentMood: "Calm",
       selectedCategory: validatedCategory,
       onboardingCompleted: false,
+      isFirstLogin: true,
+      hasLoggedInBefore: false,
+      loginCount: 1,
     };
 
     const sessionData = {
@@ -199,6 +203,9 @@ export async function POST(request: Request) {
       currentStreak: streakInfo.currentStreak,
       longestStreak: streakInfo.longestStreak,
       lastLoginAt: streakInfo.lastLoginAt,
+      isFirstLogin: true,
+      hasLoggedInBefore: false,
+      loginCount: 1,
     };
 
     // 8. Create HTTP session cookies

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { saveUserAssessment } from "@/backend/queries/assessment";
 import { generateUniqueSanctuaryName } from "@/backend/auth/sanctuary";
-import { getUserByEmail, updateUserSanctuaryName, updateUserCategory } from "@/backend/queries/users";
+import { getUserByEmail, updateUserSanctuaryName, updateUserCategory, recordUserLoginSuccess } from "@/backend/queries/users";
 import { recordUserLogin } from "@/backend/queries/streak";
 import { verifyPassword } from "@/backend/auth/crypto";
 
@@ -45,8 +45,9 @@ export async function POST(request: Request) {
       await updateUserSanctuaryName(user.id, sanctuaryName);
     }
 
-    // Record login streak activity
+    // Record login streak activity and track first-login vs returning-user status in DB
     const streakInfo = await recordUserLogin(user.id);
+    const loginStatus = await recordUserLoginSuccess(user.id);
 
     function normalizeCat(c: string | undefined): string {
       if (!c) return "student";
@@ -60,19 +61,40 @@ export async function POST(request: Request) {
       return c;
     }
 
+function parseEmergencyContact(raw: any) {
+  if (!raw) return null;
+  if (typeof raw === "string") {
+    try {
+      const p = JSON.parse(raw);
+      if (p && typeof p === "object" && (p.name || p.phone)) return p;
+      return null;
+    } catch {
+      return null;
+    }
+  }
+  if (typeof raw === "object" && (raw.name || raw.phone)) return raw;
+  return null;
+}
+
     const rawCategory = normalizeCat(user.selected_category);
 
+    const userAvatarUrl = user.avatar || user.image || "/images/user_avatar.jpg";
     const userProfile = {
       id: user.id,
-      name: sanctuaryName,
-      sanctuaryName: sanctuaryName,
+      name: user.name || sanctuaryName || "",
+      sanctuaryName: sanctuaryName || user.name || "",
       email: user.email,
-      avatar: user.avatar || "/images/user_avatar.jpg",
+      avatar: userAvatarUrl,
+      profileImage: userAvatarUrl,
       streakDays: streakInfo.currentStreak,
       mindfulnessMinutes: user.mindfulness_minutes || 0,
-      currentMood: user.current_mood || "Sanctuary Member",
+      currentMood: user.current_mood || "Calm",
       selectedCategory: rawCategory,
       onboardingCompleted: !!user.onboarding_completed,
+      isFirstLogin: loginStatus.isFirstLogin,
+      hasLoggedInBefore: loginStatus.hasLoggedInBefore,
+      loginCount: loginStatus.loginCount,
+      emergencyContact: parseEmergencyContact(user.emergencyContact || (user as any).emergency_contact),
     };
 
     if (category) {
@@ -105,6 +127,9 @@ export async function POST(request: Request) {
       currentStreak: streakInfo.currentStreak,
       longestStreak: streakInfo.longestStreak,
       lastLoginAt: streakInfo.lastLoginAt,
+      isFirstLogin: loginStatus.isFirstLogin,
+      hasLoggedInBefore: loginStatus.hasLoggedInBefore,
+      loginCount: loginStatus.loginCount,
     };
 
     // Set session cookie

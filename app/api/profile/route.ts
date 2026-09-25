@@ -2,8 +2,33 @@ import { NextResponse } from "next/server";
 import { getAuthSessionFromRequest } from "@/backend/auth/session";
 import { generateUniqueSanctuaryName } from "@/backend/auth/sanctuary";
 import { saveUserAssessment } from "@/backend/queries/assessment";
-import { getUserById, updateUserSanctuaryName, checkSanctuaryNameDuplicate, updateUserCategory, updateUserAvatar, updateUserStreak } from "@/backend/queries/users";
+import {
+  getUserById,
+  updateUserSanctuaryName,
+  updateUserName,
+  updateUserProfileNames,
+  checkSanctuaryNameDuplicate,
+  updateUserCategory,
+  updateUserAvatar,
+  updateUserStreak,
+  updateUserEmergencyContact,
+} from "@/backend/queries/users";
 import { sql } from "@/backend/db/client";
+
+function parseEmergencyContact(raw: any) {
+  if (!raw) return null;
+  if (typeof raw === "string") {
+    try {
+      const p = JSON.parse(raw);
+      if (p && typeof p === "object" && (p.name || p.phone)) return p;
+      return null;
+    } catch {
+      return null;
+    }
+  }
+  if (typeof raw === "object" && (raw.name || raw.phone)) return raw;
+  return null;
+}
 
 export const dynamic = "force-dynamic";
 
@@ -19,7 +44,7 @@ export async function GET(request: Request) {
     const users = await getUserById(userId);
 
     if (users.length === 0) {
-      return NextResponse.json({ category: "student" });
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
     const user = users[0];
@@ -27,28 +52,40 @@ export async function GET(request: Request) {
     // Migrate/generate sanctuary name if missing
     let sanctuaryName = user.sanctuary_name;
     if (!sanctuaryName) {
-      sanctuaryName = await generateUniqueSanctuaryName();
+      sanctuaryName = user.name || (await generateUniqueSanctuaryName());
       await updateUserSanctuaryName(user.id, sanctuaryName);
     }
 
+    const avatarUrl = user.avatar || user.image || "";
+    const previouslyLoggedIn = Boolean(user.has_logged_in_before);
+    const count = Number(user.login_count || 0);
+    const isFirst = !previouslyLoggedIn && count <= 1;
+    const emergencyContact = parseEmergencyContact(user.emergencyContact || (user as any).emergency_contact);
+
     return NextResponse.json({
       id: user.id,
-      name: sanctuaryName,
-      sanctuaryName: sanctuaryName,
+      name: user.name || sanctuaryName || "",
+      sanctuaryName: sanctuaryName || user.name || "",
       email: user.email,
+      avatar: avatarUrl,
+      profileImage: avatarUrl,
       category: (
         user.selected_category === "working_professional" || user.selected_category === "working-professional" || user.selected_category === "young_pro" || user.selected_category === "youngprofessional" ? "working-professional" :
         user.selected_category === "couples" || user.selected_category === "couple" ? "couple" :
         user.selected_category === "parents" || user.selected_category === "parent" ? "parent" :
         user.selected_category || "student"
       ),
-      streakDays: user.streak_days,
-      mindfulnessMinutes: user.mindfulness_minutes,
-      currentMood: user.current_mood
+      streakDays: user.streak_days ?? 1,
+      mindfulnessMinutes: user.mindfulness_minutes ?? 0,
+      currentMood: user.current_mood || "Calm",
+      hasLoggedInBefore: previouslyLoggedIn,
+      loginCount: count,
+      isFirstLogin: isFirst,
+      emergencyContact,
     });
   } catch (err: any) {
     console.error("[API GET /api/profile error]:", err);
-    return NextResponse.json({ category: "student" });
+    return NextResponse.json({ error: "Failed to fetch profile data." }, { status: 500 });
   }
 }
 
@@ -62,7 +99,7 @@ export async function PUT(request: Request) {
 
   try {
     const body = await request.json();
-    const { sanctuaryName, category, avatar } = body;
+    const { name, sanctuaryName, category, avatar, profileImage, emergencyContact } = body;
 
     // 1. Verify user exists
     const existingUsers = await getUserById(userId);
@@ -71,25 +108,27 @@ export async function PUT(request: Request) {
     }
     const currentUser = existingUsers[0];
 
-    // 2. Validate sanctuaryName if changed
-    if (sanctuaryName && sanctuaryName.trim() !== currentUser.sanctuary_name) {
-      const trimmedName = sanctuaryName.trim();
-      if (trimmedName.length < 2 || trimmedName.length > 30) {
+    // 2. Update name and/or sanctuaryName
+    const newName = name !== undefined ? name.trim() : (sanctuaryName !== undefined ? sanctuaryName.trim() : null);
+    const newSanctuary = sanctuaryName !== undefined ? sanctuaryName.trim() : newName;
+
+    if (newName) {
+      if (newName.length < 2 || newName.length > 50) {
         return NextResponse.json(
-          { error: "Sanctuary Name must be between 2 and 30 characters." },
+          { error: "Name must be between 2 and 50 characters." },
           { status: 400 }
         );
       }
-
-      const duplicate = await checkSanctuaryNameDuplicate(trimmedName, userId);
+      await updateUserProfileNames(userId, newName, newSanctuary || newName);
+    } else if (newSanctuary && newSanctuary !== currentUser.sanctuary_name) {
+      const duplicate = await checkSanctuaryNameDuplicate(newSanctuary, userId);
       if (duplicate.length > 0) {
         return NextResponse.json(
           { error: "This Sanctuary Name is already taken." },
           { status: 400 }
         );
       }
-
-      await updateUserSanctuaryName(userId, trimmedName);
+      await updateUserSanctuaryName(userId, newSanctuary);
     }
 
     // 3. Update category if provided
@@ -103,7 +142,7 @@ export async function PUT(request: Request) {
       await updateUserCategory(userId, normalizedCat);
     }
 
-    // Save assessment if provided in PUT payload (e.g. when retaking assessment on active session)
+    // Save assessment if provided in PUT payload
     const { answers, computedScore, percentage, wellnessLevel, maxScore } = body;
     if (answers && Array.isArray(answers) && answers.length > 0) {
       const targetCategory = category === "couples" || category === "couple" ? "couple" : (category === "parents" || category === "parent" ? "parent" : category || "student");
@@ -119,24 +158,36 @@ export async function PUT(request: Request) {
     }
 
     // 4. Update avatar if provided
-    if (avatar) {
-      await updateUserAvatar(userId, avatar);
+    const newAvatar = avatar || profileImage;
+    if (newAvatar) {
+      await updateUserAvatar(userId, newAvatar);
     }
 
-    // 5. Fetch updated user details
+    // 5. Update emergency contact if provided
+    if (emergencyContact !== undefined) {
+      const parsedContact = parseEmergencyContact(emergencyContact);
+      await updateUserEmergencyContact(userId, parsedContact);
+    }
+
+    // 6. Fetch updated user details
     const updatedUsers = await getUserById(userId);
     const updatedUser = updatedUsers[0];
 
+    const finalAvatar = updatedUser.avatar || updatedUser.image || newAvatar || "/images/user_avatar.jpg";
+    const savedEmergencyContact = parseEmergencyContact(updatedUser.emergencyContact || (updatedUser as any).emergency_contact);
+
     const userProfile = {
       id: updatedUser.id,
-      name: updatedUser.sanctuary_name || updatedUser.name,
-      sanctuaryName: updatedUser.sanctuary_name || updatedUser.name,
+      name: updatedUser.name || updatedUser.sanctuary_name || "",
+      sanctuaryName: updatedUser.sanctuary_name || updatedUser.name || "",
       email: updatedUser.email,
-      avatar: updatedUser.avatar,
+      avatar: finalAvatar,
+      profileImage: finalAvatar,
       selectedCategory: updatedUser.selected_category || "student",
       streakDays: updatedUser.streak_days,
       mindfulnessMinutes: updatedUser.mindfulness_minutes,
-      currentMood: updatedUser.current_mood,
+      currentMood: updatedUser.current_mood || "Calm",
+      emergencyContact: savedEmergencyContact,
     };
 
     const sessionData = {

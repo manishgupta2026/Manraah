@@ -3,12 +3,12 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { signUp } from "@/backend/auth/client";
 import { FormInput } from "@/frontend/components/ui/FormInput";
 import { CustomSelect, CustomSelectOption } from "@/frontend/components/ui/CustomSelect";
 import { DobPicker } from "@/frontend/components/ui/DobPicker";
 import { GenderSelect } from "@/frontend/components/ui/GenderSelect";
 import { motion, AnimatePresence } from "framer-motion";
+import { useAuth } from "@/frontend/lib/context/AuthContext";
 
 const COUNTRY_OPTIONS: CustomSelectOption[] = [
   { value: "India", label: "India" },
@@ -70,6 +70,7 @@ const CATEGORY_CHOICES: CategoryChoice[] = [
 
 export default function SignupScreen() {
   const router = useRouter();
+  const { signUp } = useAuth();
 
   // Wizard Step: 1 = Create Account, 2 = Personal Details, 3 = Category Selection
   const [step, setStep] = useState<1 | 2 | 3>(1);
@@ -574,7 +575,7 @@ export default function SignupScreen() {
                     {loading ? (
                       <>
                         <span className="material-symbols-outlined animate-spin text-base">progress_activity</span>
-                        <span>Creating Your Sanctuary...</span>
+                        <span>Creating Your Manraah Account...</span>
                       </>
                     ) : (
                       <>

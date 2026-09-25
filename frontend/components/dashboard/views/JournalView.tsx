@@ -56,7 +56,7 @@ const PROMPT_SUGGESTIONS = [
 const MOOD_TAGS = ["Reflective", "Grateful", "Calm", "Overwhelmed", "Hopeful", "Peaceful"];
 
 export default function JournalView() {
-  const [entries, setEntries] = useState<JournalEntryItem[]>(INITIAL_ENTRIES);
+  const [entries, setEntries] = useState<JournalEntryItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [newTitle, setNewTitle] = useState("");
   const [newContent, setNewContent] = useState("");
@@ -65,16 +65,24 @@ export default function JournalView() {
   const [searchTerm, setSearchTerm] = useState("");
   const [saving, setSaving] = useState(false);
   const [activeEntryModal, setActiveEntryModal] = useState<JournalEntryItem | null>(null);
+  const [showPrivacyPopup, setShowPrivacyPopup] = useState(true);
 
-  // Load from API on mount
+  // Load from API on mount only when authenticated
   useEffect(() => {
+    const session = getClientSession();
+    if (!session?.isAuthenticated || !session?.user?.id) {
+      setEntries([]);
+      setLoading(false);
+      return;
+    }
+
     async function loadEntries() {
       try {
         setLoading(true);
         const res = await fetch("/api/journal");
         if (res.ok) {
           const data = await res.json();
-          if (Array.isArray(data) && data.length > 0) {
+          if (Array.isArray(data)) {
             const formatted = data.map((d: any) => ({
               id: d.id,
               title: d.title,
@@ -94,12 +102,27 @@ export default function JournalView() {
           }
         }
       } catch (err) {
-        console.warn("Could not load backend journal entries, using local storage:", err);
+        console.warn("Could not load backend journal entries:", err);
       } finally {
         setLoading(false);
       }
     }
     loadEntries();
+
+    const handleAuthChange = (event: Event) => {
+      const customEvent = event as CustomEvent<{ session: any | null }>;
+      const s = customEvent.detail?.session;
+      if (!s?.isAuthenticated || !s?.user?.id) {
+        setEntries([]);
+      } else {
+        loadEntries();
+      }
+    };
+
+    window.addEventListener("manraah_auth_changed", handleAuthChange);
+    return () => {
+      window.removeEventListener("manraah_auth_changed", handleAuthChange);
+    };
   }, []);
 
   const handleSaveEntry = async (e: React.FormEvent) => {
@@ -165,7 +188,7 @@ export default function JournalView() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <span className="text-[10px] font-black uppercase tracking-widest text-[#006C56] dark:text-[#00A982]">
-              REFLECTIVE SANCTUARY
+              REFLECTIVE MANRAAH
             </span>
             <h1 className="text-2xl font-heading font-black text-[#19332A] dark:text-[#F4FAF7] leading-tight mt-0.5">
               Journal & Reflections
@@ -184,14 +207,19 @@ export default function JournalView() {
                 Entries
               </span>
             </div>
-            <div className="px-4 py-2 rounded-2xl bg-[#F4F9F6] dark:bg-[#14382F] border border-[#E2ECE6] dark:border-[#23483E] text-center">
+            <button
+              type="button"
+              onClick={() => setShowPrivacyPopup(true)}
+              className="px-4 py-2 rounded-2xl bg-[#F4F9F6] dark:bg-[#14382F] border border-[#E2ECE6] dark:border-[#23483E] text-center hover:border-[#006C56]/40 transition-colors cursor-pointer"
+              title="Click to view privacy agreement"
+            >
               <span className="block text-xs font-black text-[#006C56] dark:text-[#00A982]">
                 100%
               </span>
-              <span className="text-[10px] font-medium text-[#6B857C] dark:text-[#A9C5BC]">
-                Encrypted
+              <span className="text-[10px] font-medium text-[#6B857C] dark:text-[#A9C5BC] flex items-center justify-center gap-1">
+                <span>🔒</span> Private
               </span>
-            </div>
+            </button>
           </div>
         </div>
 
@@ -435,6 +463,40 @@ export default function JournalView() {
                 Close Reflection
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* 4. Journal Privacy Notice Modal Dialog */}
+      {showPrivacyPopup && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-[#102F27] rounded-3xl border border-[#E2ECE6] dark:border-[#23483E] shadow-2xl max-w-md w-full p-6 sm:p-7 text-center space-y-5 animate-in fade-in zoom-in-95 duration-200">
+            <div className="w-16 h-16 rounded-full bg-[#EAF5EF] dark:bg-[#14382F] text-[#006C56] dark:text-[#00A982] flex items-center justify-center text-3xl mx-auto shadow-xs border border-[#006C56]/20">
+              <span>✍️</span>
+            </div>
+
+            <div className="space-y-2.5">
+              <span className="px-3 py-1 rounded-full bg-[#EAF5EF] dark:bg-[#14382F] text-[#006C56] dark:text-[#00A982] text-[10.5px] font-bold uppercase tracking-wider inline-block">
+                Personal &amp; Private Space
+              </span>
+              <h3 className="text-xl font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
+                Your Private Space
+              </h3>
+              <p className="text-sm font-semibold text-[#006C56] dark:text-[#00A982] leading-relaxed">
+                This is your space to write your thoughts, this would be just for you.
+              </p>
+              <p className="text-xs text-[#4F685F] dark:text-[#A9C5BC] leading-relaxed">
+                Whatever you write here stays completely confidential and private to you. Feel free to unpack your feelings, celebrate gentle milestones, or release today&apos;s worries without judgment.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setShowPrivacyPopup(false)}
+              className="w-full py-3 rounded-full bg-[#006C56] hover:bg-[#005241] dark:bg-[#00A982] dark:hover:bg-[#00916F] text-white dark:text-[#071C17] text-xs font-bold shadow-md shadow-[#006C56]/20 transition-all cursor-pointer"
+            >
+              Start Writing →
+            </button>
           </div>
         </div>
       )}

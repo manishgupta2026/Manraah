@@ -20,7 +20,10 @@ export interface UserProfile {
   id: string;
   name?: string;
   sanctuaryName?: string;
+  firstName?: string;
+  lastName?: string;
   avatar: string;
+  profileImage?: string;
   email: string;
   phone?: string;
   dob?: string;
@@ -32,6 +35,17 @@ export interface UserProfile {
   selectedCategory: UserCategory;
   role?: "user" | "admin";
   onboardingCompleted?: boolean;
+  hasLoggedInBefore?: boolean;
+  loginCount?: number;
+  isFirstLogin?: boolean;
+  lastLoginAt?: string;
+  emergencyContact?: EmergencyContact | null;
+}
+
+export interface EmergencyContact {
+  name: string;
+  phone: string;
+  relation: string;
 }
 
 export interface AssessmentAnswers {
@@ -53,6 +67,9 @@ export interface AuthSession {
   token: string | null;
   isAuthenticated: boolean;
   role?: "user" | "admin";
+  isFirstLogin?: boolean;
+  hasLoggedInBefore?: boolean;
+  loginCount?: number;
 }
 
 export interface MoodEntry {
@@ -78,6 +95,7 @@ export interface Therapist {
   name: string;
   title: string;
   avatar: string;
+  profileImage?: string;
   specialties: string[];
   rating: number;
   reviewCount: number;
@@ -96,6 +114,7 @@ export interface CommunityPost {
   content: string;
   likes: number;
   commentsCount: number;
+  status?: "pending" | "approved" | "rejected";
 }
 
 export interface ResourceArticle {

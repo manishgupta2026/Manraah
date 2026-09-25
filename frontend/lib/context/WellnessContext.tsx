@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react";
 import { getClientSession } from "@/backend/auth/client";
 
 export interface WellnessState {
@@ -59,19 +59,28 @@ interface WellnessContextType {
   dashboardData: WellnessState | null;
   isLoading: boolean;
   isCheckingIn: boolean;
+  isCheckInModalOpen: boolean;
   hasCheckedInToday: boolean;
   currentStreak: number;
+  todayMood: any | null;
+  history: any[];
+  insights: any | null;
+  openCheckInModal: () => void;
+  closeCheckInModal: () => void;
   refetchWellnessData: () => Promise<void>;
   refetchDashboardData: () => Promise<void>;
   performDailyCheckIn: () => Promise<any>;
   submitCheckIn: (data: {
     mood: string;
-    energy: number;
-    stress: string;
+    energy?: number;
+    stress?: string;
     sleep?: number;
     reflection?: string;
+    note?: string;
     factors?: string;
     gratitude?: string;
+    category?: string;
+    categoryId?: string;
   }) => Promise<any>;
 }
 
@@ -79,31 +88,56 @@ const WellnessContext = createContext<WellnessContextType | undefined>(undefined
 
 export function WellnessProvider({ children }: { children: ReactNode }) {
   const [wellnessData, setWellnessData] = useState<WellnessState | null>(null);
+  const [historyList, setHistoryList] = useState<any[]>([]);
+  const [journeyInsights, setJourneyInsights] = useState<any | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isCheckingIn, setIsCheckingIn] = useState<boolean>(false);
+  const [isCheckInModalOpen, setIsCheckInModalOpen] = useState<boolean>(false);
 
-  const fetchWellness = async () => {
+  const openCheckInModal = () => setIsCheckInModalOpen(true);
+  const closeCheckInModal = () => setIsCheckInModalOpen(false);
+
+  const fetchWellness = useCallback(async () => {
+    const session = getClientSession();
+    if (!session?.isAuthenticated || !session?.user?.id) {
+      setWellnessData(null);
+      setHistoryList([]);
+      setJourneyInsights(null);
+      setIsLoading(false);
+      return;
+    }
+
     try {
       const res = await fetch("/api/checkins");
       if (res.ok) {
         const data = await res.json();
-        const session = getClientSession();
-        const u = session?.user;
+        const currentSession = getClientSession();
+        const u = currentSession?.user;
+        if (!currentSession?.isAuthenticated || !u?.id) {
+          setWellnessData(null);
+          setHistoryList([]);
+          setJourneyInsights(null);
+          return;
+        }
+
         const currentStreak = typeof data.currentStreak === "number" ? data.currentStreak : (u?.streakDays ?? 0);
         const longestStreak = typeof data.longestStreak === "number" ? data.longestStreak : currentStreak;
         const hasCheckedInToday = Boolean(data.hasCheckedInToday || data.todayCheckin);
 
-        setWellnessData((prev) => ({
-          user: u ? {
-            id: u.id || "demo-user",
-            name: u.sanctuaryName || u.name || "Sanctuary Member",
-            sanctuaryName: u.sanctuaryName || u.name || "Sanctuary Member",
+        setHistoryList(data.history || []);
+        setJourneyInsights(data.insights || null);
+
+        setWellnessData({
+          user: {
+            id: u.id || "",
+            name: u.name || u.sanctuaryName || "",
+            sanctuaryName: u.sanctuaryName || u.name || "",
             email: u.email || "",
             selectedCategory: u.selectedCategory || "student",
             streakDays: currentStreak,
             mindfulnessMinutes: u.mindfulnessMinutes || 0,
-            currentMood: data.todayCheckin?.mood || u.currentMood || "Good",
-          } : (prev?.user || null),
+            currentMood: data.todayCheckin?.mood || u.currentMood || "Calm",
+          },
           todayMood: data.todayCheckin || null,
           hasCheckedInToday,
           history: data.history || [],
@@ -112,92 +146,85 @@ export function WellnessProvider({ children }: { children: ReactNode }) {
           journalEntries: [],
           weeklySummary: null,
           monthlySummary: null,
-          insights: [],
+          insights: data.insights ? [data.insights] : [],
           streak: { currentStreak, longestStreak },
           recommendation: "Focus on matching your pace with slow cycles to restore internal alignment.",
-        }));
+        });
+      } else if (res.status === 401) {
+        setWellnessData(null);
+        setHistoryList([]);
+        setJourneyInsights(null);
       }
     } catch (err) {
       console.error("Failed to fetch checkin data:", err);
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchWellness();
-  }, []);
+
+    const handleAuthChange = (event: Event) => {
+      const customEvent = event as CustomEvent<{ session: any | null }>;
+      const s = customEvent.detail?.session;
+      if (!s?.isAuthenticated || !s?.user?.id) {
+        // Complete state clear on logout
+        setWellnessData(null);
+        setHistoryList([]);
+        setJourneyInsights(null);
+        setIsCheckingIn(false);
+        setIsCheckInModalOpen(false);
+      } else {
+        fetchWellness();
+      }
+    };
+
+    window.addEventListener("manraah_auth_changed", handleAuthChange);
+    window.addEventListener("storage", fetchWellness);
+
+    return () => {
+      window.removeEventListener("manraah_auth_changed", handleAuthChange);
+      window.removeEventListener("storage", fetchWellness);
+    };
+  }, [fetchWellness]);
 
   const refetchWellnessData = async () => {
     setIsLoading(true);
     await fetchWellness();
   };
 
-  const performDailyCheckIn = async () => {
-    setIsCheckingIn(true);
-    try {
-      const res = await fetch("/api/checkins", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          mood: "Good",
-          energy: 4,
-          stress: "Manageable",
-          sleep: 4,
-          reflection: "Daily wellness check-in completed from companion panel.",
-        }),
-      });
-
-      if (!res.ok) {
-        const errData = await res.json().catch(() => ({}));
-        throw new Error(errData.error || "Failed to complete check-in");
-      }
-
-      const result = await res.json();
-      const nextStreak = typeof result.currentStreak === "number" ? result.currentStreak : 1;
-      const longest = typeof result.longestStreak === "number" ? result.longestStreak : nextStreak;
-
-      // Immediately update local context state
-      setWellnessData((prev) => {
-        if (!prev) return prev;
-        return {
-          ...prev,
-          todayMood: result.checkIn || prev.todayMood,
-          hasCheckedInToday: true,
-          streak: {
-            currentStreak: nextStreak,
-            longestStreak: longest,
-          },
-          user: prev.user ? {
-            ...prev.user,
-            streakDays: nextStreak,
-          } : null,
-        };
-      });
-
-      return result;
-    } catch (err) {
-      console.error("Error performing daily check-in:", err);
-      throw err;
-    } finally {
-      setIsCheckingIn(false);
-    }
-  };
-
   const submitCheckIn = async (checkInData: {
     mood: string;
-    energy: number;
-    stress: string;
+    energy?: number;
+    stress?: string;
     sleep?: number;
     reflection?: string;
+    note?: string;
     factors?: string;
+    gratitude?: string;
+    category?: string;
+    categoryId?: string;
+    answers?: { questionId: number; answer: number }[];
   }) => {
     setIsCheckingIn(true);
     try {
+      const session = getClientSession();
+      const currentCategory =
+        checkInData.category ||
+        checkInData.categoryId ||
+        session?.user?.selectedCategory ||
+        null;
+
+      const payload = {
+        ...checkInData,
+        category: currentCategory,
+      };
+
       const res = await fetch("/api/checkins", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(checkInData),
+        body: JSON.stringify(payload),
       });
 
       if (!res.ok) {
@@ -208,12 +235,19 @@ export function WellnessProvider({ children }: { children: ReactNode }) {
       const updatedRecord = await res.json();
       const nextStreak = typeof updatedRecord.currentStreak === "number" ? updatedRecord.currentStreak : 1;
       const longest = typeof updatedRecord.longestStreak === "number" ? updatedRecord.longestStreak : nextStreak;
+      const checkInObj = updatedRecord.checkIn || updatedRecord.todayCheckin || {
+        mood: checkInData.mood,
+        note: checkInData.note || checkInData.reflection || "",
+        category: currentCategory,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
 
       setWellnessData((prev) => {
         if (!prev) return prev;
         return {
           ...prev,
-          todayMood: updatedRecord.checkIn || prev.todayMood,
+          todayMood: checkInObj,
           hasCheckedInToday: true,
           streak: {
             currentStreak: nextStreak,
@@ -222,9 +256,19 @@ export function WellnessProvider({ children }: { children: ReactNode }) {
           user: prev.user ? {
             ...prev.user,
             streakDays: nextStreak,
+            currentMood: checkInData.mood,
           } : null,
         };
       });
+
+      // Update history list locally immediately
+      setHistoryList((prev) => {
+        const filtered = prev.filter((h) => h.checkinDate !== checkInObj.checkinDate);
+        return [checkInObj, ...filtered];
+      });
+
+      // Background refetch to sync all metrics
+      fetchWellness();
 
       return updatedRecord;
     } catch (err) {
@@ -235,8 +279,19 @@ export function WellnessProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const performDailyCheckIn = async () => {
+    return submitCheckIn({
+      mood: "Calm",
+      energy: 4,
+      stress: "Manageable",
+      sleep: 4,
+      reflection: "Daily wellness check-in completed from companion panel.",
+    });
+  };
+
   const hasCheckedInToday = Boolean(wellnessData?.hasCheckedInToday || wellnessData?.todayMood);
   const currentStreak = wellnessData?.streak?.currentStreak ?? 0;
+  const todayMood = wellnessData?.todayMood || null;
 
   return (
     <WellnessContext.Provider
@@ -245,8 +300,14 @@ export function WellnessProvider({ children }: { children: ReactNode }) {
         dashboardData: wellnessData,
         isLoading,
         isCheckingIn,
+        isCheckInModalOpen,
         hasCheckedInToday,
         currentStreak,
+        todayMood,
+        history: historyList,
+        insights: journeyInsights,
+        openCheckInModal,
+        closeCheckInModal,
         refetchWellnessData,
         refetchDashboardData: refetchWellnessData,
         performDailyCheckIn,

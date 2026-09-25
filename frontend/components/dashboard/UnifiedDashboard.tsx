@@ -11,6 +11,7 @@ import AICompanionView from "./views/AICompanionView";
 import HumanCompanionView from "./views/HumanCompanionView";
 import JournalView from "./views/JournalView";
 import CommunityView from "./views/CommunityView";
+import SleepMeditationView from "./views/SleepMeditationView";
 import ProfileView from "./views/ProfileView";
 
 export type DashboardSection =
@@ -22,6 +23,7 @@ export type DashboardSection =
   | "human-companion"
   | "journal"
   | "community"
+  | "sleep-meditation"
   | "profile";
 
 interface UnifiedDashboardProps {
@@ -47,9 +49,14 @@ function DashboardContent({ initialSection }: UnifiedDashboardProps) {
       tabParam === "human-companion" ||
       tabParam === "journal" ||
       tabParam === "community" ||
+      tabParam === "sleep-meditation" ||
+      tabParam === "sleep" ||
+      tabParam === "meditation" ||
       tabParam === "profile"
     ) {
-      return tabParam === "my-journey" ? "journey" : tabParam;
+      if (tabParam === "my-journey") return "journey";
+      if (tabParam === "sleep" || tabParam === "meditation") return "sleep-meditation";
+      return tabParam;
     }
 
     if (pathname.includes("/appointments")) return "appointments";
@@ -59,6 +66,13 @@ function DashboardContent({ initialSection }: UnifiedDashboardProps) {
     if (pathname.includes("/human-companion")) return "human-companion";
     if (pathname.includes("/journal")) return "journal";
     if (pathname.includes("/community")) return "community";
+    if (
+      pathname.includes("/sleep-meditation") ||
+      pathname.includes("/sleep") ||
+      pathname.includes("/meditation")
+    ) {
+      return "sleep-meditation";
+    }
     if (pathname.includes("/profile")) return "profile";
 
     return "dashboard";
@@ -82,32 +96,25 @@ function DashboardContent({ initialSection }: UnifiedDashboardProps) {
 
   return (
     <main className="flex-1 min-w-0 p-4 sm:p-6 lg:p-7 max-w-[1440px] mx-auto space-y-6">
-      {/* ===================================================================== */}
-      {/* TWO-COLUMN GRID: FIXED LEFT COLUMN (320px) + MAIN CONTENT COLUMN      */}
-      {/* ===================================================================== */}
-      <div className="grid grid-cols-1 lg:grid-cols-[320px_minmax(0,1fr)] gap-6 items-start">
-        {/* =================================================================== */}
-        {/* PERSISTENT STICKY LEFT COMPANION PANEL (Constant across all sections)*/}
-        {/* =================================================================== */}
-        <aside className="w-full lg:w-[320px] lg:min-w-[320px] lg:max-w-[320px] shrink-0 select-none pointer-events-auto lg:sticky lg:top-[78px] self-start z-10">
-          <WellnessCompanionPanel
-            onCheckCondition={() => handleNavigate("journey")}
-          />
-        </aside>
-
-        {/* =================================================================== */}
-        {/* DYNAMIC RIGHT MAIN CONTENT AREA                                     */}
-        {/* 1. DashboardHome                                                    */}
-        {/* 2. AppointmentsView                                                 */}
-        {/* 3. JourneyView                                                      */}
-        {/* 4. ResourcesView                                                    */}
-        {/* 5. AICompanionView                                                  */}
-        {/* 6. ProfileView                                                      */}
-        {/* =================================================================== */}
-        <div className="w-full min-w-0">
-          {activeSection === "dashboard" && (
+      {activeSection === "dashboard" ? (
+        /* ===================================================================== */
+        /* TWO-COLUMN DASHBOARD: 320px WELLNESS PANEL + MAIN DASHBOARD CONTENT   */
+        /* ===================================================================== */
+        <div className="grid grid-cols-1 lg:grid-cols-[320px_minmax(0,1fr)] gap-6 items-start">
+          <aside className="w-full lg:w-[320px] lg:min-w-[320px] lg:max-w-[320px] shrink-0 select-none pointer-events-auto lg:sticky lg:top-[88px] self-start z-10">
+            <WellnessCompanionPanel
+              onCheckCondition={() => handleNavigate("journey")}
+            />
+          </aside>
+          <div className="w-full min-w-0">
             <DashboardHome onNavigate={handleNavigate} />
-          )}
+          </div>
+        </div>
+      ) : (
+        /* ===================================================================== */
+        /* FULL-WIDTH PAGE CONTENT (Appointments, Journey, Resources, etc.)      */
+        /* ===================================================================== */
+        <div className="w-full min-w-0">
           {activeSection === "appointments" && <AppointmentsView />}
           {activeSection === "journey" && <JourneyView />}
           {activeSection === "resources" && <ResourcesView />}
@@ -115,9 +122,10 @@ function DashboardContent({ initialSection }: UnifiedDashboardProps) {
           {activeSection === "human-companion" && <HumanCompanionView />}
           {activeSection === "journal" && <JournalView />}
           {activeSection === "community" && <CommunityView />}
+          {activeSection === "sleep-meditation" && <SleepMeditationView />}
           {activeSection === "profile" && <ProfileView />}
         </div>
-      </div>
+      )}
     </main>
   );
 }

@@ -1,67 +1,10 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useCategory } from "@/frontend/lib/context/CategoryContext";
 import { getClientSession } from "@/backend/auth/client";
-
-interface Therapist {
-  id: string;
-  name: string;
-  role: string;
-  rating: string;
-  reviewCount: string;
-  image: string;
-  price: string;
-  experience: string;
-  tags: string[];
-}
-
-const ALL_THERAPISTS: Therapist[] = [
-  {
-    id: "dr-sarah-jenkins",
-    name: "Dr. Sarah Jenkins",
-    role: "Clinical Psychologist (Ph.D.)",
-    rating: "4.9",
-    reviewCount: "120+",
-    image: "/images/therapist_sarah.jpg",
-    price: "₹1,500 / session",
-    experience: "12+ yrs experience",
-    tags: ["Anxiety & Stress", "Self-Esteem", "Emotional Well-being", "CBT"],
-  },
-  {
-    id: "dr-arjun-mehta",
-    name: "Dr. Arjun Mehta",
-    role: "Career & Executive Counselor",
-    rating: "4.8",
-    reviewCount: "98+",
-    image: "/images/therapist_arjun.jpg",
-    price: "₹1,400 / session",
-    experience: "9+ yrs experience",
-    tags: ["Work-Life Balance", "Career Growth", "Burnout Prevention", "Goal Setting"],
-  },
-  {
-    id: "dr-neha-kapoor",
-    name: "Dr. Neha Kapoor",
-    role: "Relationship & Family Therapist",
-    rating: "4.9",
-    reviewCount: "140+",
-    image: "/images/user_avatar.jpg",
-    price: "₹1,600 / session",
-    experience: "14+ yrs experience",
-    tags: ["Relationships", "Communication", "Family Well-being", "Couples Therapy"],
-  },
-  {
-    id: "dr-ananya-sen",
-    name: "Dr. Ananya Sen",
-    role: "Mindfulness & Youth Specialist",
-    rating: "4.9",
-    reviewCount: "85+",
-    image: "/images/therapist_sarah.jpg",
-    price: "₹1,350 / session",
-    experience: "8+ yrs experience",
-    tags: ["Student Wellness", "Exam Anxiety", "Mindfulness", "Sleep Health"],
-  },
-];
+import TherapistCard from "@/frontend/components/dashboard/therapists/TherapistCard";
+import { UnifiedTherapist, FALLBACK_THERAPISTS, normalizeTherapist } from "@/frontend/components/dashboard/therapists/types";
 
 const PAST_SESSIONS = [
   {
@@ -104,26 +47,202 @@ const SPECIALTY_FILTERS = [
 
 export default function AppointmentsView() {
   const [selectedSpecialty, setSelectedSpecialty] = useState("All");
-  const [showBookingModal, setShowBookingModal] = useState<Therapist | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [therapistsList, setTherapistsList] = useState<UnifiedTherapist[]>(FALLBACK_THERAPISTS);
+  const [showBookingModal, setShowBookingModal] = useState<UnifiedTherapist | null>(null);
+  const [selectedSlot, setSelectedSlot] = useState<string>("tomorrow");
+  const [isSubmittingBooking, setIsSubmittingBooking] = useState(false);
   const [bookingSuccess, setBookingSuccess] = useState(false);
-  const [appointmentStatus, setAppointmentStatus] = useState("Confirmed");
   const [activeTab, setActiveTab] = useState<"all" | "upcoming" | "past">("all");
 
-  const filteredTherapists = selectedSpecialty === "All"
-    ? ALL_THERAPISTS
-    : ALL_THERAPISTS.filter((t) => t.tags.some((tag) => tag.toLowerCase().includes(selectedSpecialty.toLowerCase())));
+  const [upcomingList, setUpcomingList] = useState<any[]>([]);
+  const [pastList, setPastList] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const handleBookSession = (therapist: Therapist) => {
+  useEffect(() => {
+    let isMounted = true;
+    async function loadTherapists() {
+      try {
+        const res = await fetch("/api/therapists");
+        if (res.ok) {
+          const data = await res.json();
+          if (isMounted && Array.isArray(data) && data.length > 0) {
+            const normalized = data.map((t: any, i: number) => normalizeTherapist(t, i));
+            if (normalized.length < 3) {
+              const existingIds = new Set(normalized.map((t: UnifiedTherapist) => t.id));
+              const additions = FALLBACK_THERAPISTS.filter((t) => !existingIds.has(t.id));
+              setTherapistsList([...normalized, ...additions]);
+            } else {
+              setTherapistsList(normalized);
+            }
+          }
+        }
+      } catch (err) {
+        // Use fallback therapists
+      }
+    }
+    loadTherapists();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const fetchAppointments = async () => {
+    try {
+      setIsLoading(true);
+      const res = await fetch("/api/appointments");
+      if (res.ok) {
+        const data = await res.json();
+        setUpcomingList(data.upcoming || []);
+        setPastList(data.past || []);
+      }
+    } catch (err) {
+      console.error("Failed to load appointments:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchAppointments();
+
+    const handleAuthChange = () => {
+      fetchAppointments();
+    };
+
+    window.addEventListener("manraah_auth_changed", handleAuthChange);
+    return () => {
+      window.removeEventListener("manraah_auth_changed", handleAuthChange);
+    };
+  }, []);
+
+  const filteredTherapists = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
+    const queryNormalized = query.replace(/[-_]/g, " ");
+    const queryWords = query.split(/\s+/).filter(Boolean);
+
+    return therapistsList.filter((doctor) => {
+      // 1. Specialty / Category filter
+      const matchesCategory =
+        selectedSpecialty === "All" ||
+        doctor.tags.some((tag) => {
+          const tagText = (typeof tag === "string" ? tag : tag.text).toLowerCase();
+          const spec = selectedSpecialty.toLowerCase();
+          return tagText.includes(spec) || spec.includes(tagText);
+        });
+
+      if (!matchesCategory) return false;
+
+      // 2. Search query filter
+      if (!query) return true;
+
+      const name = doctor.name.toLowerCase();
+      const role = doctor.role.toLowerCase();
+      const description = (doctor.description || "").toLowerCase();
+      const tagsText = doctor.tags
+        .map((tag) => (typeof tag === "string" ? tag : tag.text).toLowerCase())
+        .join(" ");
+
+      const fullContent = `${name} ${role} ${description} ${tagsText}`;
+      const fullContentNormalized = fullContent.replace(/[-_]/g, " ");
+
+      // Direct substring match on original or normalized text
+      if (
+        fullContent.includes(query) ||
+        fullContentNormalized.includes(queryNormalized)
+      ) {
+        return true;
+      }
+
+      // Check multi-word query: all words in search query must appear in doctor content
+      if (
+        queryWords.length > 1 &&
+        queryWords.every(
+          (word) =>
+            fullContent.includes(word) || fullContentNormalized.includes(word)
+        )
+      ) {
+        return true;
+      }
+
+      return false;
+    });
+  }, [therapistsList, searchQuery, selectedSpecialty]);
+
+  const handleBookSession = (therapist: UnifiedTherapist) => {
     setShowBookingModal(therapist);
+    setSelectedSlot("tomorrow");
     setBookingSuccess(false);
   };
 
-  const handleConfirmBooking = () => {
-    setBookingSuccess(true);
-    setTimeout(() => {
-      setShowBookingModal(null);
-      setBookingSuccess(false);
-    }, 1800);
+  const handleConfirmBooking = async () => {
+    if (!showBookingModal) return;
+
+    try {
+      setIsSubmittingBooking(true);
+      
+      const aptDate = new Date();
+      if (selectedSlot === "tomorrow") {
+        aptDate.setDate(aptDate.getDate() + 1);
+        aptDate.setHours(18, 0, 0, 0);
+      } else {
+        aptDate.setDate(aptDate.getDate() + 3);
+        aptDate.setHours(20, 30, 0, 0);
+      }
+
+      const focusTag = typeof showBookingModal.tags[0] === "string"
+        ? showBookingModal.tags[0]
+        : showBookingModal.tags[0]?.text || "General Mental Health";
+
+      const res = await fetch("/api/appointments", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          therapistId: showBookingModal.id,
+          therapistName: showBookingModal.name,
+          therapistRole: showBookingModal.role,
+          therapistImage: showBookingModal.profileImage || showBookingModal.image,
+          appointmentDate: aptDate.toISOString(),
+          focusArea: focusTag,
+        }),
+      });
+
+      if (res.ok) {
+        setBookingSuccess(true);
+        await fetchAppointments();
+        window.dispatchEvent(new Event("appointments-updated"));
+        setTimeout(() => {
+          setShowBookingModal(null);
+          setBookingSuccess(false);
+        }, 1500);
+      } else {
+        alert("Failed to book session. Please try again.");
+      }
+    } catch (err) {
+      console.error("Booking error:", err);
+      alert("Error booking appointment.");
+    } finally {
+      setIsSubmittingBooking(false);
+    }
+  };
+
+  const handleCancelAppointment = async (appointmentId: string) => {
+    if (!confirm("Are you sure you want to cancel this scheduled session?")) return;
+
+    try {
+      const res = await fetch(`/api/appointments/${appointmentId}/cancel`, {
+        method: "POST",
+      });
+
+      if (res.ok) {
+        await fetchAppointments();
+        window.dispatchEvent(new Event("appointments-updated"));
+      } else {
+        alert("Unable to cancel appointment.");
+      }
+    } catch (err) {
+      console.error("Cancel appointment error:", err);
+    }
   };
 
   return (
@@ -182,20 +301,26 @@ export default function AppointmentsView() {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
           <div className="p-3.5 rounded-2xl bg-[#F2FAF6] dark:bg-[#14382F] border border-[#E2ECE6] dark:border-[#23483E] flex items-center gap-3">
             <div className="w-8 h-8 rounded-xl bg-[#006C56] text-white flex items-center justify-center font-bold text-xs">
-              1
+              {upcomingList.length}
             </div>
             <div>
-              <p className="text-[10px] text-[#789389] dark:text-[#78958C] font-semibold">Upcoming Session</p>
-              <p className="text-xs font-black text-[#19332A] dark:text-[#F4FAF7]">Oct 6, 09:00 PM</p>
+              <p className="text-[10px] text-[#789389] dark:text-[#78958C] font-semibold">Upcoming Sessions</p>
+              <p className="text-xs font-black text-[#19332A] dark:text-[#F4FAF7]">
+                {upcomingList.length > 0
+                  ? new Date(upcomingList[0].appointmentDate).toLocaleDateString("en-US", { month: "short", day: "numeric" })
+                  : "None Scheduled"}
+              </p>
             </div>
           </div>
           <div className="p-3.5 rounded-2xl bg-[#F1F7FB] dark:bg-[#14382F] border border-[#E2ECE6] dark:border-[#23483E] flex items-center gap-3">
             <div className="w-8 h-8 rounded-xl bg-[#1C92D2] text-white flex items-center justify-center font-bold text-xs">
-              3
+              {pastList.length || 0}
             </div>
             <div>
-              <p className="text-[10px] text-[#789389] dark:text-[#78958C] font-semibold">Completed Sessions</p>
-              <p className="text-xs font-black text-[#19332A] dark:text-[#F4FAF7]">100% Attended</p>
+              <p className="text-[10px] text-[#789389] dark:text-[#78958C] font-semibold">Past Sessions</p>
+              <p className="text-xs font-black text-[#19332A] dark:text-[#F4FAF7]">
+                {pastList.length > 0 ? `${pastList.length} Attended` : "0 Sessions"}
+              </p>
             </div>
           </div>
           <div className="p-3.5 rounded-2xl bg-[#FAF3F8] dark:bg-[#14382F] border border-[#E2ECE6] dark:border-[#23483E] flex items-center gap-3">
@@ -204,14 +329,16 @@ export default function AppointmentsView() {
             </div>
             <div>
               <p className="text-[10px] text-[#789389] dark:text-[#78958C] font-semibold">Assigned Care</p>
-              <p className="text-xs font-black text-[#19332A] dark:text-[#F4FAF7]">Dr. Sarah Jenkins</p>
+              <p className="text-xs font-black text-[#19332A] dark:text-[#F4FAF7] truncate max-w-[120px]">
+                {upcomingList[0]?.therapistName || "Verified Practitioner"}
+              </p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* 2. Upcoming Appointment Highlight Card */}
-      {(activeTab === "all" || activeTab === "upcoming") && (
+      {/* 2. Upcoming Appointment Highlight Card (Shown ONLY on Upcoming tab) */}
+      {activeTab === "upcoming" && (
         <div className="bg-white dark:bg-[#102F27] rounded-3xl p-6 border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs space-y-4 transition-colors">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2.5">
@@ -231,75 +358,90 @@ export default function AppointmentsView() {
             </div>
 
             <span className="px-3 py-1 rounded-full bg-[#E6F4EA] dark:bg-[#14382F] text-[#137333] dark:text-[#88F7D6] text-[10px] font-extrabold tracking-wide uppercase border border-[#CEEAD6] dark:border-[#23483E]">
-              {appointmentStatus}
+              {upcomingList.length > 0 ? "Confirmed" : "No Appointments"}
             </span>
           </div>
 
-          <div className="p-5 rounded-2xl bg-[#F8FCFA] dark:bg-[#0E2A23] border border-[#E2ECE6] dark:border-[#23483E] flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div className="flex items-center gap-4">
-              <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-white dark:border-[#23483E] shadow-xs shrink-0">
-                <img
-                  src="/images/therapist_sarah.jpg"
-                  alt="Dr. Sarah Jenkins"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="min-w-0">
-                <h3 className="text-base font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
-                  Dr. Sarah Jenkins
-                </h3>
-                <p className="text-xs text-[#6B857C] dark:text-[#A9C5BC] font-medium">
-                  Clinical Psychologist • 45 min 1-on-1 Video Session
-                </p>
-                <div className="flex items-center gap-3 mt-1.5 text-xs text-[#19332A] dark:text-[#F4FAF7] font-bold">
-                  <span className="flex items-center gap-1 text-[#006C56] dark:text-[#00A982]">
-                    📅 Tuesday, 6 Oct 2026
-                  </span>
-                  <span className="flex items-center gap-1 text-[#006C56] dark:text-[#00A982]">
-                    ⏰ 09:00 PM IST
-                  </span>
+          {isLoading ? (
+            <div className="p-8 text-center text-xs text-[#789389] dark:text-[#78958C]">
+              <div className="w-6 h-6 border-2 border-[#006C56] border-t-transparent rounded-full animate-spin mx-auto mb-2" />
+              Loading appointments...
+            </div>
+          ) : upcomingList.length > 0 ? (
+            <div className="p-5 rounded-2xl bg-[#F8FCFA] dark:bg-[#0E2A23] border border-[#E2ECE6] dark:border-[#23483E] flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-white dark:border-[#23483E] shadow-xs shrink-0">
+                  <img
+                    src={upcomingList[0].therapistImage || "/images/therapist_sarah.jpg"}
+                    alt={upcomingList[0].therapistName}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="min-w-0">
+                  <h3 className="text-base font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
+                    {upcomingList[0].therapistName}
+                  </h3>
+                  <p className="text-xs text-[#6B857C] dark:text-[#A9C5BC] font-medium">
+                    {upcomingList[0].therapistRole || "Clinical Psychologist"} • {upcomingList[0].durationMinutes || 45} min {upcomingList[0].sessionType || "1-on-1 Video Session"}
+                  </p>
+                  <div className="flex items-center gap-3 mt-1.5 text-xs text-[#19332A] dark:text-[#F4FAF7] font-bold">
+                    <span className="flex items-center gap-1 text-[#006C56] dark:text-[#00A982]">
+                      📅 {new Date(upcomingList[0].appointmentDate).toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "short", day: "numeric" })}
+                    </span>
+                    <span className="flex items-center gap-1 text-[#006C56] dark:text-[#00A982]">
+                      ⏰ {new Date(upcomingList[0].appointmentDate).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: true })}
+                    </span>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            {/* Actions */}
-            <div className="flex flex-wrap items-center gap-2 pt-2 md:pt-0">
-              <button
-                type="button"
-                className="py-2.5 px-4 rounded-xl bg-[#004D3D] hover:bg-[#003B2E] dark:bg-[#00A982] dark:hover:bg-[#00916F] text-white dark:text-[#071C17] text-xs font-bold shadow-sm transition-all flex items-center gap-1.5 cursor-pointer"
-              >
-                <span>📹</span>
-                <span>Join Session</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => alert("Reschedule requested. Our care coordinator will contact you.")}
-                className="py-2.5 px-3.5 rounded-xl bg-white dark:bg-[#14382F] hover:bg-[#F2FAF6] dark:hover:bg-[#19463B] text-[#19332A] dark:text-[#F4FAF7] text-xs font-bold border border-[#E2ECE6] dark:border-[#23483E] transition-all cursor-pointer"
-              >
-                Reschedule
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  if (confirm("Are you sure you want to cancel this session?")) {
-                    setAppointmentStatus("Cancelled");
-                  }
-                }}
-                className="py-2.5 px-3.5 rounded-xl bg-white dark:bg-[#14382F] hover:bg-rose-50 dark:hover:bg-rose-950/20 text-rose-600 dark:text-rose-400 text-xs font-bold border border-[#E2ECE6] dark:border-[#23483E] transition-all cursor-pointer"
-              >
-                Cancel
-              </button>
+              {/* Actions */}
+              <div className="flex flex-wrap items-center gap-2 pt-2 md:pt-0">
+                <a
+                  href={upcomingList[0].meetingLink || "#"}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="py-2.5 px-4 rounded-xl bg-[#004D3D] hover:bg-[#003B2E] dark:bg-[#00A982] dark:hover:bg-[#00916F] text-white dark:text-[#071C17] text-xs font-bold shadow-sm transition-all flex items-center gap-1.5 cursor-pointer"
+                >
+                  <span>📹</span>
+                  <span>Join Session</span>
+                </a>
+                <button
+                  type="button"
+                  onClick={() => alert("Reschedule requested. Our care coordinator will contact you.")}
+                  className="py-2.5 px-3.5 rounded-xl bg-white dark:bg-[#14382F] hover:bg-[#F2FAF6] dark:hover:bg-[#19463B] text-[#19332A] dark:text-[#F4FAF7] text-xs font-bold border border-[#E2ECE6] dark:border-[#23483E] transition-all cursor-pointer"
+                >
+                  Reschedule
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleCancelAppointment(upcomingList[0].id)}
+                  className="py-2.5 px-3.5 rounded-xl bg-white dark:bg-[#14382F] hover:bg-rose-50 dark:hover:bg-rose-950/20 text-rose-600 dark:text-rose-400 text-xs font-bold border border-[#E2ECE6] dark:border-[#23483E] transition-all cursor-pointer"
+                >
+                  Cancel
+                </button>
+              </div>
             </div>
-          </div>
+          ) : (
+            <div className="p-8 rounded-2xl bg-[#F8FCFA] dark:bg-[#0E2A23] border border-[#E2ECE6] dark:border-[#23483E] text-center space-y-2">
+              <p className="text-sm font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
+                No upcoming appointment scheduled
+              </p>
+              <p className="text-xs text-[#789389] dark:text-[#78958C] max-w-sm mx-auto">
+                Explore our recommended therapists below and book a 1-on-1 confidential session whenever you are ready.
+              </p>
+            </div>
+          )}
         </div>
       )}
 
-      {/* 3. Book a New Session Section */}
-      {(activeTab === "all" || activeTab === "upcoming") && (
+      {/* 3. Book a New Session Section (Shown ONLY on All tab) */}
+      {activeTab === "all" && (
         <div className="bg-white dark:bg-[#102F27] rounded-3xl p-6 border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs space-y-4 transition-colors">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-2xl bg-[#EAF6F0] dark:bg-[#14382F] text-[#006C56] dark:text-[#00A982] flex items-center justify-center">
+          {/* Header & Inline Search Bar */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3.5 sm:gap-4">
+            <div className="flex items-center gap-2.5 min-w-0">
+              <div className="w-8 h-8 rounded-2xl bg-[#EAF6F0] dark:bg-[#14382F] text-[#006C56] dark:text-[#00A982] flex items-center justify-center shrink-0">
                 <span className="font-bold text-sm">+</span>
               </div>
               <div>
@@ -312,7 +454,62 @@ export default function AppointmentsView() {
               </div>
             </div>
 
-            {/* Specialty Filter Chips */}
+            {/* Search Input Bar (Inline on the Right) */}
+            <div className="relative w-full sm:w-[380px] md:w-[420px] shrink-0">
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#6B857C] dark:text-[#78958C]">
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </div>
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search practitioners..."
+                className="w-full h-10 sm:h-11 pl-10 pr-10 bg-[#F8FCFA] dark:bg-[#14382F] hover:bg-white dark:hover:bg-[#163F35] focus:bg-white dark:focus:bg-[#102F27] border border-[#E2ECE6] dark:border-[#23483E] rounded-2xl text-xs text-[#19332A] dark:text-[#F4FAF7] placeholder-[#789389] dark:placeholder-[#78958C] focus:outline-none focus:ring-2 focus:ring-[#006C56]/20 focus:border-[#006C56] dark:focus:border-[#00A982] transition-all"
+              />
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery("")}
+                  className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-[#789389] hover:text-[#19332A] dark:text-[#78958C] dark:hover:text-[#F4FAF7] cursor-pointer transition-colors"
+                  aria-label="Clear search"
+                >
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Privacy & Confidentiality Reassurance Banner */}
+          <div className="p-3.5 sm:px-4.5 sm:py-3.5 rounded-2xl bg-[#EDF8F3] dark:bg-[#0C2B22] border border-[#BBE5D4] dark:border-[#1E5244] shadow-[0_4px_14px_rgba(0,80,65,0.06)] dark:shadow-none flex items-start sm:items-center gap-3 sm:gap-3.5 transition-all">
+            {/* Prominent Lock Icon Container */}
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#D6EFE3] dark:bg-[#16473A] border border-[#A4DEC7] dark:border-[#225F4E] flex items-center justify-center shrink-0 shadow-xs mt-0.5 sm:mt-0">
+              <svg className="w-4.5 h-4.5 sm:w-5 sm:h-5 text-[#006C56] dark:text-[#88F7D6]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+            </div>
+
+            {/* Content */}
+            <div className="flex-1 min-w-0">
+              <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
+                <span className="text-xs sm:text-sm font-heading font-black text-[#004D3D] dark:text-[#88F7D6] tracking-tight">
+                  100% Confidential
+                </span>
+                <span className="inline-flex items-center gap-0.5 text-[9.5px] sm:text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#D4EFE4] dark:bg-[#18483B] text-[#006C56] dark:text-[#88F7D6] border border-[#B3E2CF] dark:border-[#245C4B]">
+                  ✓ Private &amp; Secure
+                </span>
+              </div>
+              <p className="text-[11px] sm:text-xs text-[#265345] dark:text-[#A8C7BD] font-medium leading-snug mt-0.5">
+                Your sessions, wellness information, and personal details remain private and secure.
+              </p>
+            </div>
+          </div>
+
+          {/* Specialty Filter Chips & Active Search Count */}
+          <div className="space-y-2">
             <div className="flex items-center gap-1.5 overflow-x-auto pb-1 max-w-full">
               {SPECIALTY_FILTERS.map((filter) => (
                 <button
@@ -328,71 +525,85 @@ export default function AppointmentsView() {
                 </button>
               ))}
             </div>
+
+            {/* Active search count */}
+            {searchQuery.trim() && (
+              <div className="flex items-center justify-between text-xs text-[#6B857C] dark:text-[#A9C5BC] pt-1">
+                <span>
+                  <strong className="font-bold text-[#19332A] dark:text-[#F4FAF7]">
+                    {filteredTherapists.length}
+                  </strong>{" "}
+                  {filteredTherapists.length === 1 ? "practitioner" : "practitioners"} found
+                  {selectedSpecialty !== "All" && (
+                    <span> in &ldquo;{selectedSpecialty}&rdquo;</span>
+                  )}
+                </span>
+              </div>
+            )}
           </div>
 
-          {/* Therapists Cards Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
-            {filteredTherapists.map((therapist) => (
-              <div
-                key={therapist.id}
-                className="p-4.5 rounded-2xl bg-[#FAFDFB] dark:bg-[#0E2A23] border border-[#E2ECE6] dark:border-[#23483E] flex flex-col justify-between space-y-4 hover:shadow-md transition-all group"
-              >
-                <div className="flex items-start gap-3.5">
-                  <div className="w-14 h-14 rounded-full overflow-hidden shrink-0 border-2 border-white dark:border-[#23483E] shadow-xs">
-                    <img
-                      src={therapist.image}
-                      alt={therapist.name}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center justify-between gap-1">
-                      <h3 className="text-sm font-heading font-black text-[#19332A] dark:text-[#F4FAF7] truncate">
-                        {therapist.name}
-                      </h3>
-                      <span className="text-[10px] font-bold text-amber-500 bg-amber-50 dark:bg-amber-950/30 px-2 py-0.5 rounded-full shrink-0">
-                        ⭐ {therapist.rating}
-                      </span>
-                    </div>
-                    <p className="text-[11px] text-[#6B857C] dark:text-[#A9C5BC] font-medium leading-tight mt-0.5">
-                      {therapist.role}
-                    </p>
-                    <p className="text-[10px] text-[#006C56] dark:text-[#00A982] font-bold mt-1">
-                      {therapist.experience} • {therapist.price}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Tags & Action */}
-                <div className="space-y-3 pt-1 border-t border-[#E2ECE6] dark:border-[#23483E]/50">
-                  <div className="flex flex-wrap gap-1">
-                    {therapist.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="text-[9px] font-semibold px-2 py-0.5 rounded-full bg-[#EAF6F0] dark:bg-[#14382F] text-[#006C56] dark:text-[#88F7D6]"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-
+          {/* Therapists Cards Grid or Empty State */}
+          {filteredTherapists.length === 0 ? (
+            <div className="py-12 px-6 rounded-2xl bg-[#F8FCFA] dark:bg-[#0E2A23] border border-dashed border-[#CEE4DB] dark:border-[#23483E] text-center flex flex-col items-center justify-center space-y-3.5 transition-colors">
+              <div className="w-12 h-12 rounded-2xl bg-[#EAF6F0] dark:bg-[#14382F] text-[#006C56] dark:text-[#00A982] flex items-center justify-center shadow-xs">
+                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </div>
+              <div className="space-y-1 max-w-sm">
+                <h3 className="text-sm font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
+                  No practitioners found
+                </h3>
+                <p className="text-xs text-[#6B857C] dark:text-[#A9C5BC] font-medium leading-relaxed">
+                  {searchQuery.trim() ? (
+                    <>
+                      We couldn&apos;t find anyone matching &ldquo;<span className="font-semibold text-[#19332A] dark:text-[#F4FAF7]">{searchQuery.trim()}</span>&rdquo;.
+                      <br />
+                      Try searching by name, specialty, or focus area.
+                    </>
+                  ) : (
+                    `No practitioners found matching the "${selectedSpecialty}" category.`
+                  )}
+                </p>
+              </div>
+              <div className="flex flex-wrap items-center justify-center gap-2 pt-1">
+                {searchQuery.trim() && (
                   <button
                     type="button"
-                    onClick={() => handleBookSession(therapist)}
-                    className="w-full py-2.5 px-4 rounded-xl bg-[#004D3D] hover:bg-[#003B2E] dark:bg-[#00A982] dark:hover:bg-[#00916F] text-white dark:text-[#071C17] text-xs font-bold shadow-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                    onClick={() => setSearchQuery("")}
+                    className="px-4 py-2 rounded-xl bg-[#004D3D] hover:bg-[#003B2E] dark:bg-[#00A982] dark:hover:bg-[#00916F] text-white dark:text-[#071C17] text-xs font-bold shadow-xs transition-all cursor-pointer"
                   >
-                    <span>Book Session</span>
-                    <span>→</span>
+                    Clear Search
                   </button>
-                </div>
+                )}
+                {selectedSpecialty !== "All" && (
+                  <button
+                    type="button"
+                    onClick={() => setSelectedSpecialty("All")}
+                    className="px-4 py-2 rounded-xl bg-white dark:bg-[#14382F] hover:bg-[#F2FAF6] dark:hover:bg-[#19463B] text-[#19332A] dark:text-[#F4FAF7] text-xs font-bold border border-[#E2ECE6] dark:border-[#23483E] transition-all cursor-pointer"
+                  >
+                    Show All Specialties
+                  </button>
+                )}
               </div>
-            ))}
-          </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-1">
+              {filteredTherapists.map((therapist) => (
+                <div key={therapist.id} className="w-full flex flex-col h-full min-w-0 relative hover:z-50">
+                  <TherapistCard
+                    therapist={therapist}
+                    onBook={handleBookSession}
+                  />
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
 
-      {/* 4. Past Appointments */}
-      {(activeTab === "all" || activeTab === "past") && (
+      {/* 4. Past Appointments (Shown ONLY on Past tab) */}
+      {activeTab === "past" && (
         <div className="bg-white dark:bg-[#102F27] rounded-3xl p-6 border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs space-y-4 transition-colors">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-2xl bg-[#EAF6F0] dark:bg-[#14382F] text-[#006C56] dark:text-[#00A982] flex items-center justify-center">
@@ -476,9 +687,9 @@ export default function AppointmentsView() {
               <>
                 <div className="flex items-center gap-3.5 p-3 rounded-2xl bg-[#F8FCFA] dark:bg-[#0E2A23] border border-[#E2ECE6] dark:border-[#23483E]">
                   <img
-                    src={showBookingModal.image}
+                    src={showBookingModal.profileImage || showBookingModal.image}
                     alt={showBookingModal.name}
-                    className="w-12 h-12 rounded-full object-cover"
+                    className="w-12 h-12 rounded-full object-cover shrink-0"
                   />
                   <div>
                     <h4 className="text-xs font-black text-[#19332A] dark:text-[#F4FAF7]">
@@ -488,7 +699,7 @@ export default function AppointmentsView() {
                       {showBookingModal.role}
                     </p>
                     <p className="text-[10px] font-bold text-[#006C56] dark:text-[#00A982] mt-0.5">
-                      {showBookingModal.price}
+                      {showBookingModal.hourlyRate || "₹1,800 / session"}
                     </p>
                   </div>
                 </div>
@@ -496,10 +707,26 @@ export default function AppointmentsView() {
                 <div className="space-y-2 text-xs">
                   <p className="font-bold text-[#19332A] dark:text-[#F4FAF7]">Select Date &amp; Time:</p>
                   <div className="grid grid-cols-2 gap-2">
-                    <button className="p-2 rounded-xl bg-[#EAF6F0] dark:bg-[#00A982] text-[#006C56] dark:text-[#071C17] font-bold text-center border border-[#006C56]/20">
+                    <button
+                      type="button"
+                      onClick={() => setSelectedSlot("tomorrow")}
+                      className={`p-2 rounded-xl text-center cursor-pointer transition-all ${
+                        selectedSlot === "tomorrow"
+                          ? "bg-[#EAF6F0] dark:bg-[#00A982] text-[#006C56] dark:text-[#071C17] font-bold border border-[#006C56]/20"
+                          : "bg-[#F4F9F6] dark:bg-[#14382F] text-[#4F685F] dark:text-[#A9C5BC] font-medium border border-[#E2ECE6] dark:border-[#23483E]"
+                      }`}
+                    >
                       Tomorrow, 06:00 PM
                     </button>
-                    <button className="p-2 rounded-xl bg-[#F4F9F6] dark:bg-[#14382F] text-[#4F685F] dark:text-[#A9C5BC] font-medium text-center border border-[#E2ECE6] dark:border-[#23483E]">
+                    <button
+                      type="button"
+                      onClick={() => setSelectedSlot("friday")}
+                      className={`p-2 rounded-xl text-center cursor-pointer transition-all ${
+                        selectedSlot === "friday"
+                          ? "bg-[#EAF6F0] dark:bg-[#00A982] text-[#006C56] dark:text-[#071C17] font-bold border border-[#006C56]/20"
+                          : "bg-[#F4F9F6] dark:bg-[#14382F] text-[#4F685F] dark:text-[#A9C5BC] font-medium border border-[#E2ECE6] dark:border-[#23483E]"
+                      }`}
+                    >
                       Friday, 08:30 PM
                     </button>
                   </div>
@@ -507,16 +734,20 @@ export default function AppointmentsView() {
 
                 <div className="pt-2 flex items-center justify-end gap-2">
                   <button
+                    type="button"
                     onClick={() => setShowBookingModal(null)}
-                    className="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#14382F]"
+                    disabled={isSubmittingBooking}
+                    className="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#14382F] cursor-pointer"
                   >
                     Cancel
                   </button>
                   <button
+                    type="button"
                     onClick={handleConfirmBooking}
-                    className="px-5 py-2.5 rounded-xl bg-[#004D3D] dark:bg-[#00A982] text-white dark:text-[#071C17] text-xs font-bold shadow-sm"
+                    disabled={isSubmittingBooking}
+                    className="px-5 py-2.5 rounded-xl bg-[#004D3D] dark:bg-[#00A982] text-white dark:text-[#071C17] text-xs font-bold shadow-sm cursor-pointer disabled:opacity-50"
                   >
-                    Confirm &amp; Schedule
+                    {isSubmittingBooking ? "Scheduling..." : "Confirm & Schedule"}
                   </button>
                 </div>
               </>

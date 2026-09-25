@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
+import { useAuth } from "@/frontend/lib/context/AuthContext";
 import { getClientSession } from "@/backend/auth/client";
 
 type FlowStep = "ENTRY" | "SEARCHING" | "MATCHED" | "CHAT" | "CALL" | "FEEDBACK";
@@ -21,8 +22,9 @@ const PRESET_TOPICS = [
 ];
 
 export default function HumanCompanionView() {
+  const { user } = useAuth();
   const session = getClientSession();
-  const userName = session?.user?.name || session?.user?.sanctuaryName || "Sanctuary Member";
+  const userName = user?.name || user?.sanctuaryName || session?.user?.name || session?.user?.sanctuaryName || "Manraah Member";
 
   const [step, setStep] = useState<FlowStep>("ENTRY");
   const [activeTopic, setActiveTopic] = useState("Emotional Venting & Guidance");
@@ -168,7 +170,7 @@ export default function HumanCompanionView() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <span className="text-[10px] font-black uppercase tracking-widest text-[#006C56] dark:text-[#00A982]">
-              1-ON-1 ACTIVE LISTENER SANCTUARY
+              1-ON-1 ACTIVE LISTENER MANRAAH
             </span>
             <h1 className="text-2xl font-heading font-black text-[#19332A] dark:text-[#F4FAF7] leading-tight mt-0.5">
               Human Companion
@@ -532,7 +534,7 @@ export default function HumanCompanionView() {
                 Session Completed
               </h3>
               <p className="text-xs text-[#6B857C] dark:text-[#A9C5BC]">
-                How was your conversation with Peer Listener Priya? Your feedback helps maintain sanctuary quality.
+                How was your conversation with Peer Listener Priya? Your feedback helps maintain Manraah quality.
               </p>
             </div>
 

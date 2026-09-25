@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
+import { useAuth } from "@/frontend/lib/context/AuthContext";
 import { useCategory } from "@/frontend/lib/context/CategoryContext";
-import { getClientSession } from "@/backend/auth/client";
+import UserAvatar from "@/frontend/components/ui/UserAvatar";
 
 interface Message {
   id: string;
@@ -21,9 +22,9 @@ const SUGGESTED_PROMPTS = [
 
 export default function AICompanionView() {
   const { categoryDetails, category } = useCategory();
-  const session = getClientSession();
-  const userName = session?.user?.name || session?.user?.sanctuaryName || "Aditi";
-  const userCategory = session?.user?.selectedCategory || category || "General";
+  const { user } = useAuth();
+  const userName = user?.name || user?.sanctuaryName || "";
+  const userCategory = user?.selectedCategory || category || "General";
 
   const [inputMessage, setInputMessage] = useState("");
   const [isVoiceActive, setIsVoiceActive] = useState(false);
@@ -63,13 +64,12 @@ export default function AICompanionView() {
     setIsAiTyping(true);
 
     try {
-      const session = getClientSession();
-      if (session?.user?.id) {
+      if (user?.id) {
         fetch("/api/chat/message", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            roomId: "room_" + session.user.id,
+            roomId: "room_" + user.id,
             senderType: "user",
             message: text,
           }),
@@ -184,15 +184,13 @@ export default function AICompanionView() {
               }`}
             >
               {/* Avatar Icon */}
-              <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs shrink-0 shadow-2xs ${
-                  msg.sender === "user"
-                    ? "bg-[#004D3D] dark:bg-[#00A982] text-white dark:text-[#071C17]"
-                    : "bg-[#EAF6F0] dark:bg-[#14382F] text-[#006C56] dark:text-[#00A982] border border-[#D2E8DC] dark:border-[#23483E]"
-                }`}
-              >
-                {msg.sender === "user" ? userName.charAt(0) : "✦"}
-              </div>
+              {msg.sender === "user" ? (
+                <UserAvatar user={user} sizeClass="w-8 h-8 text-xs" />
+              ) : (
+                <div className="w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs shrink-0 shadow-2xs bg-[#EAF6F0] dark:bg-[#14382F] text-[#006C56] dark:text-[#00A982] border border-[#D2E8DC] dark:border-[#23483E]">
+                  ✦
+                </div>
+              )}
 
               {/* Bubble */}
               <div
@@ -202,7 +200,7 @@ export default function AICompanionView() {
                     : "bg-[#F4FAF7] dark:bg-[#0E2A23] text-[#19332A] dark:text-[#F4FAF7] border border-[#E2ECE6] dark:border-[#23483E] rounded-tl-xs"
                 }`}
               >
-                <p className="whitespace-pre-wrap">{msg.text}</p>
+                <p className="whitespace-pre-wrap" suppressHydrationWarning>{msg.text}</p>
                 <p
                   className={`text-[9px] font-medium text-right ${
                     msg.sender === "user"
