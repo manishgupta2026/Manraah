@@ -80,22 +80,13 @@ const TIMER_PRESETS = [
   { label: "Continuous", minutes: null },
 ];
 
-const DEFAULT_CHECKLIST = [
-  { id: "screens", label: "Screens put away & blue light eliminated", checked: false },
-  { id: "room", label: "Bedroom temperature cooled (18–20°C / 65–68°F)", checked: false },
-  { id: "caffeine", label: "No caffeine consumed in the last 8 hours", checked: true },
-  { id: "tea", label: "Warm chamomile/lavender tea or light hydration", checked: false },
-  { id: "breath", label: "4-7-8 Bedtime breathing exercise completed", checked: false },
-  { id: "reflection", label: "Evening thoughts or gratitude written", checked: false },
-];
-
 export default function SleepSupportView() {
   const { user } = useAuth();
   const { category } = useCategory();
   const [mounted, setMounted] = useState(false);
 
   // Active section tab switcher
-  const [activeSectionTab, setActiveSectionTab] = useState<"all" | "audio" | "breath" | "tracker" | "planner">("all");
+  const [activeSectionTab, setActiveSectionTab] = useState<"all" | "audio" | "breath" | "tracker">("all");
 
   // Single audio playback & mixer state
   const [activeSoundId, setActiveSoundId] = useState<string | null>(null);
@@ -132,9 +123,6 @@ export default function SleepSupportView() {
   const [breathCycleCount, setBreathCycleCount] = useState<number>(1);
   const [isBreathChimeEnabled, setIsBreathChimeEnabled] = useState<boolean>(true);
   const breathIntervalRef = useRef<NodeJS.Timeout | null>(null);
-
-  // Sleep Hygiene Routine Checklist
-  const [checklist, setChecklist] = useState(DEFAULT_CHECKLIST);
 
   // Sleep Duration Stats & History
   const [sleepStats, setSleepStats] = useState<{
@@ -218,10 +206,6 @@ export default function SleepSupportView() {
   const [isSavingSleepLog, setIsSavingSleepLog] = useState<boolean>(false);
   const [sleepLogSuccessToast, setSleepLogSuccessToast] = useState<string | null>(null);
 
-  // Sleep Cycle Calculator state
-  const [calcMode, setCalcMode] = useState<"wake" | "now">("wake");
-  const [calcWakeTime, setCalcWakeTime] = useState<string>("07:00");
-
   // Evening Reflection state
   const [reflectionText, setReflectionText] = useState("");
   const [isSavingNote, setIsSavingNote] = useState(false);
@@ -235,14 +219,6 @@ export default function SleepSupportView() {
   useEffect(() => {
     setMounted(true);
     fetchSleepStats();
-
-    // Load saved checklist from localStorage
-    try {
-      const savedChecklist = localStorage.getItem("manraah_sleep_checklist");
-      if (savedChecklist) {
-        setChecklist(JSON.parse(savedChecklist));
-      }
-    } catch {}
   }, []);
 
   const fetchSleepStats = async () => {
@@ -728,20 +704,6 @@ export default function SleepSupportView() {
     }
   };
 
-  // Toggle checklist item
-  const handleToggleChecklist = (id: string) => {
-    setChecklist((prev) => {
-      const updated = prev.map((item) => (item.id === id ? { ...item, checked: !item.checked } : item));
-      try {
-        localStorage.setItem("manraah_sleep_checklist", JSON.stringify(updated));
-      } catch {}
-      return updated;
-    });
-  };
-
-  const completedChecklistCount = checklist.filter((i) => i.checked).length;
-  const sleepReadinessPercent = Math.round((completedChecklistCount / checklist.length) * 100);
-
   // Compute duration, cycles, efficiency
   const computeCalculatedDuration = (bed: string, wake: string, latency = 15, wakes = 0) => {
     const [bH, bM] = bed.split(":").map(Number);
@@ -842,73 +804,6 @@ export default function SleepSupportView() {
     }
   };
 
-  // 90-Minute Sleep Cycle Recommendations
-  const getCycleRecommendations = () => {
-    const fallAsleepBuffer = 14; // Average 14 mins latency
-
-    if (calcMode === "wake") {
-      const [wH, wM] = calcWakeTime.split(":").map(Number);
-      if (isNaN(wH) || isNaN(wM)) return [];
-      const wakeMinutes = wH * 60 + wM;
-
-      const cycles = [
-        { count: 6, hours: "9h 00m", label: "Extended Recovery", optimal: false, emoji: "🌟" },
-        { count: 5, hours: "7h 30m", label: "Recommended Optimal", optimal: true, emoji: "⭐" },
-        { count: 4, hours: "6h 00m", label: "Minimum Rest", optimal: false, emoji: "⚡" },
-      ];
-
-      return cycles.map((c) => {
-        const sleepDurationMinutes = c.count * 90;
-        let bedTotal = wakeMinutes - sleepDurationMinutes - fallAsleepBuffer;
-        while (bedTotal < 0) bedTotal += 24 * 60;
-
-        const bH = Math.floor(bedTotal / 60) % 24;
-        const bM = bedTotal % 60;
-        const period = bH >= 12 ? "PM" : "AM";
-        const displayH = bH % 12 === 0 ? 12 : bH % 12;
-
-        return {
-          ...c,
-          timeLabel: "Go to bed at:",
-          displayTime: `${displayH}:${bM.toString().padStart(2, "0")} ${period}`,
-          rawBedTime: `${bH.toString().padStart(2, "0")}:${bM.toString().padStart(2, "0")}`,
-          rawWakeTime: calcWakeTime,
-        };
-      });
-    } else {
-      // Calculate from current time if user sleeps now
-      const now = new Date();
-      const currentMinutes = now.getHours() * 60 + now.getMinutes();
-
-      const cycles = [
-        { count: 4, hours: "6h 00m", label: "Early Rise", optimal: false, emoji: "⚡" },
-        { count: 5, hours: "7h 30m", label: "Recommended Optimal", optimal: true, emoji: "⭐" },
-        { count: 6, hours: "9h 00m", label: "Deep Full Recovery", optimal: false, emoji: "🌟" },
-      ];
-
-      return cycles.map((c) => {
-        const sleepDurationMinutes = c.count * 90;
-        const wakeTotal = (currentMinutes + fallAsleepBuffer + sleepDurationMinutes) % (24 * 60);
-
-        const wH = Math.floor(wakeTotal / 60) % 24;
-        const wM = wakeTotal % 60;
-        const period = wH >= 12 ? "PM" : "AM";
-        const displayH = wH % 12 === 0 ? 12 : wH % 12;
-
-        const curH = now.getHours();
-        const curM = now.getMinutes();
-
-        return {
-          ...c,
-          timeLabel: "Wake up at:",
-          displayTime: `${displayH}:${wM.toString().padStart(2, "0")} ${period}`,
-          rawBedTime: `${curH.toString().padStart(2, "0")}:${curM.toString().padStart(2, "0")}`,
-          rawWakeTime: `${wH.toString().padStart(2, "0")}:${wM.toString().padStart(2, "0")}`,
-        };
-      });
-    }
-  };
-
   const activeSoundObj = SOUNDSCAPES.find((s) => s.id === activeSoundId);
 
   const formatTimer = (sec: number | null) => {
@@ -951,7 +846,7 @@ export default function SleepSupportView() {
               Night Sleep Support & Duration Hub
             </h1>
             <p className="text-xs text-[#5A756C] dark:text-[#A9C5BC] max-w-xl font-medium">
-              Achieve deep, restorative sleep with layered ambient soundscapes, auto-stop sleep timers, active 4-7-8 breathing, and science-backed sleep cycle duration tracking.
+              Achieve deep, restorative sleep with layered ambient soundscapes, auto-stop sleep timers, active 4-7-8 breathing, and science-backed sleep duration tracking.
             </p>
           </div>
 
@@ -1070,7 +965,6 @@ export default function SleepSupportView() {
             { id: "audio", label: "🌙 Soundscapes & Mixer", icon: "volume_up" },
             { id: "breath", label: "🌬️ 4-7-8 Breathing", icon: "air" },
             { id: "tracker", label: "📊 Sleep Duration & Logs", icon: "bedtime" },
-            { id: "planner", label: "⏰ 90-Min Cycles & Hygiene", icon: "alarm" },
           ].map((tab) => (
             <button
               key={tab.id}
@@ -1657,178 +1551,7 @@ export default function SleepSupportView() {
         </div>
       )}
 
-      {/* 5. 90-MINUTE SLEEP CYCLE PLANNER & BEDTIME HYGIENE CHECKLIST */}
-      {(activeSectionTab === "all" || activeSectionTab === "planner") && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 items-start">
-          {/* Smart 90-Min Sleep Cycle Calculator */}
-          <div className="bg-white dark:bg-[#102F27] rounded-3xl p-5 sm:p-6 border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs space-y-4 transition-colors">
-            <div className="flex items-center justify-between pb-2 border-b border-[#E2ECE6] dark:border-[#23483E]">
-              <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-[#006C56] dark:text-[#88F7D6] text-xl">
-                  alarm
-                </span>
-                <h3 className="text-xs font-heading font-black text-[#19332A] dark:text-[#F4FAF7] uppercase tracking-wider">
-                  90-Minute Sleep Cycle Calculator
-                </h3>
-              </div>
-
-              {/* Mode Toggle */}
-              <div className="flex items-center gap-1 p-1 rounded-xl bg-[#F4FAF7] dark:bg-[#071C17] border border-[#E2ECE6] dark:border-[#23483E]">
-                <button
-                  type="button"
-                  onClick={() => setCalcMode("wake")}
-                  className={`px-2 py-1 rounded-lg text-[10px] font-heading font-bold transition-all cursor-pointer ${
-                    calcMode === "wake"
-                      ? "bg-[#006C56] text-white"
-                      : "text-[#5A756C] dark:text-[#A9C5BC]"
-                  }`}
-                >
-                  Wake Time
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setCalcMode("now")}
-                  className={`px-2 py-1 rounded-lg text-[10px] font-heading font-bold transition-all cursor-pointer ${
-                    calcMode === "now"
-                      ? "bg-[#006C56] text-white"
-                      : "text-[#5A756C] dark:text-[#A9C5BC]"
-                  }`}
-                >
-                  Sleep Now
-                </button>
-              </div>
-            </div>
-
-            {calcMode === "wake" && (
-              <div className="flex items-center justify-between bg-[#F4FAF7] dark:bg-[#071C17] p-2.5 px-3 rounded-2xl border border-[#E2ECE6] dark:border-[#23483E]">
-                <span className="text-xs font-heading font-bold text-[#19332A] dark:text-[#F4FAF7]">
-                  Target Wake-Up Time:
-                </span>
-                <input
-                  type="time"
-                  value={calcWakeTime}
-                  onChange={(e) => setCalcWakeTime(e.target.value)}
-                  className="px-2.5 py-1 rounded-xl bg-white dark:bg-[#102F27] border border-[#E2ECE6] dark:border-[#23483E] text-xs font-mono font-bold text-[#006C56] dark:text-[#88F7D6] focus:outline-none focus:ring-1 focus:ring-[#006C56] cursor-pointer"
-                />
-              </div>
-            )}
-
-            {/* Calculated Cycle Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-              {getCycleRecommendations().map((c) => (
-                <div
-                  key={c.count}
-                  className={`p-3.5 rounded-2xl border transition-all ${
-                    c.optimal
-                      ? "bg-[#EAF6F0] dark:bg-[#14382F] border-[#006C56] dark:border-[#00A982] ring-1 ring-[#006C56]/30 shadow-xs"
-                      : "bg-[#F4FAF7] dark:bg-[#071C17] border-[#E2ECE6] dark:border-[#23483E]"
-                  }`}
-                >
-                  <div className="flex items-center justify-between">
-                    <span>{c.emoji}</span>
-                    <span
-                      className={`text-[9px] font-heading font-black uppercase px-2 py-0.5 rounded-full ${
-                        c.optimal
-                          ? "bg-[#006C56] text-white"
-                          : "bg-white dark:bg-[#14382F] text-[#5A756C] dark:text-[#A9C5BC] border border-[#E2ECE6] dark:border-[#23483E]"
-                      }`}
-                    >
-                      {c.label}
-                    </span>
-                  </div>
-
-                  <div className="mt-2 space-y-0.5">
-                    <span className="text-[10px] text-[#5A756C] dark:text-[#A9C5BC] font-medium block">
-                      {c.timeLabel}
-                    </span>
-                    <p className="text-lg font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
-                      {c.displayTime}
-                    </p>
-                    <p className="text-[10px] text-[#006C56] dark:text-[#88F7D6] font-semibold">
-                      {c.count} cycles ({c.hours})
-                    </p>
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setLogBedtime(c.rawBedTime);
-                      setLogWakeTime(c.rawWakeTime);
-                      setShowLogModal(true);
-                    }}
-                    className="mt-2.5 w-full py-1.5 rounded-xl bg-white dark:bg-[#102F27] hover:bg-[#F4FAF7] dark:hover:bg-[#14382F] border border-[#E2ECE6] dark:border-[#23483E] text-[10px] font-heading font-bold text-[#19332A] dark:text-[#F4FAF7] transition-colors cursor-pointer text-center"
-                  >
-                    Set Schedule
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Bedtime Sleep Hygiene Routine Checklist */}
-          <div className="bg-white dark:bg-[#102F27] rounded-3xl p-5 sm:p-6 border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs space-y-3.5 transition-colors">
-            <div className="flex items-center justify-between pb-2 border-b border-[#E2ECE6] dark:border-[#23483E]">
-              <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-[#006C56] dark:text-[#88F7D6] text-xl">
-                  task_alt
-                </span>
-                <h3 className="text-xs font-heading font-black text-[#19332A] dark:text-[#F4FAF7] uppercase tracking-wider">
-                  Bedtime Sleep Hygiene Checklist
-                </h3>
-              </div>
-              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#EAF6F0] dark:bg-[#14382F] text-[#006C56] dark:text-[#88F7D6]">
-                {completedChecklistCount}/{checklist.length} Completed
-              </span>
-            </div>
-
-            {/* Sleep Readiness Progress Bar */}
-            <div className="space-y-1">
-              <div className="flex items-center justify-between text-[10.5px]">
-                <span className="text-[#5A756C] dark:text-[#A9C5BC] font-medium">Sleep Readiness Score:</span>
-                <span className="font-heading font-black text-[#006C56] dark:text-[#88F7D6]">
-                  {sleepReadinessPercent}% {sleepReadinessPercent === 100 ? "• Optimal Rest" : ""}
-                </span>
-              </div>
-              <div className="w-full h-2 rounded-full bg-[#E2ECE6] dark:bg-[#23483E] overflow-hidden">
-                <div
-                  className="h-full bg-gradient-to-r from-[#006C56] to-[#00A982] rounded-full transition-all duration-300"
-                  style={{ width: `${sleepReadinessPercent}%` }}
-                />
-              </div>
-            </div>
-
-            {/* Checklist items */}
-            <div className="space-y-2 pt-1">
-              {checklist.map((item) => (
-                <div
-                  key={item.id}
-                  onClick={() => handleToggleChecklist(item.id)}
-                  className={`flex items-center gap-2.5 p-2.5 rounded-2xl border transition-all cursor-pointer ${
-                    item.checked
-                      ? "bg-[#EAF6F0] dark:bg-[#14382F] border-[#006C56]/40 text-[#19332A] dark:text-[#F4FAF7]"
-                      : "bg-[#F4FAF7] dark:bg-[#071C17] border-[#E2ECE6] dark:border-[#23483E] text-[#5A756C] dark:text-[#A9C5BC] hover:border-[#006C56]/30"
-                  }`}
-                >
-                  <div
-                    className={`w-5 h-5 rounded-lg flex items-center justify-center shrink-0 border transition-colors ${
-                      item.checked
-                        ? "bg-[#006C56] text-white border-[#006C56]"
-                        : "bg-white dark:bg-[#102F27] border-[#D2EAE0] dark:border-[#23483E]"
-                    }`}
-                  >
-                    {item.checked && <span className="material-symbols-outlined text-sm">check</span>}
-                  </div>
-                  <span className={`text-xs ${item.checked ? "line-through opacity-80" : "font-medium"}`}>
-                    {item.label}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* 6. EVENING WIND-DOWN REFLECTION JOURNAL NOTE */}
+      {/* 5. EVENING WIND-DOWN REFLECTION JOURNAL NOTE */}
       {(activeSectionTab === "all" || activeSectionTab === "breath") && (
         <div className="bg-white dark:bg-[#102F27] rounded-3xl p-5 sm:p-6 border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs space-y-3 transition-colors">
           <div className="flex items-center gap-2.5">
@@ -1876,7 +1599,7 @@ export default function SleepSupportView() {
         </div>
       )}
 
-      {/* 7. LOG SLEEP DURATION MODAL */}
+      {/* 6. LOG SLEEP DURATION MODAL */}
       {showLogModal && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
           <div className="bg-white dark:bg-[#102F27] rounded-3xl border border-[#E2ECE6] dark:border-[#23483E] shadow-2xl max-w-lg w-full p-6 space-y-4 animate-in fade-in zoom-in-95 duration-200">
