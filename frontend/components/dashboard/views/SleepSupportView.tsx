@@ -11,14 +11,14 @@ interface Soundscape {
   icon: string;
   category: string;
   duration: string;
-  type: "rain" | "waves" | "forest" | "delta" | "fire" | "pink";
+  type: "rain" | "waves" | "forest" | "brown" | "delta" | "fire";
 }
 
 const SOUNDSCAPES: Soundscape[] = [
   {
     id: "rain",
-    title: "Gentle Rain",
-    desc: "Soothing rain patter against the windowpane to relax racing thoughts",
+    title: "Gentle Night Rain",
+    desc: "Soft rain patter on the windowpane to dissolve racing thoughts",
     icon: "water_drop",
     category: "Nature Sound",
     duration: "Continuous",
@@ -27,25 +27,34 @@ const SOUNDSCAPES: Soundscape[] = [
   {
     id: "waves",
     title: "Deep Ocean Waves",
-    desc: "Low-frequency ocean tides rhythmic pulse for deep slow-wave sleep",
+    desc: "Low-frequency rhythmic ocean tides for slow-wave restorative sleep",
     icon: "waves",
-    category: "Ocean Soundscape",
+    category: "Ocean Ambiance",
     duration: "Continuous",
     type: "waves",
   },
   {
     id: "forest",
-    title: "Night Forest Breeze",
-    desc: "Soft crickets and gentle night breeze through tranquil pine trees",
+    title: "Pine Forest & Crickets",
+    desc: "Midnight breeze through pine needles with tranquil cricket chirps",
     icon: "forest",
-    category: "Ambient Nature",
+    category: "Night Nature",
     duration: "Continuous",
     type: "forest",
   },
   {
+    id: "brown",
+    title: "Warm Brown Noise",
+    desc: "Deep warm low-frequency roar that blankets distracting ambient sounds",
+    icon: "air",
+    category: "Frequency Masking",
+    duration: "Continuous",
+    type: "brown",
+  },
+  {
     id: "delta",
-    title: "Binaural Delta Waves",
-    desc: "Scientific 2Hz Delta wave binaural beat to guide brain into REM & restorative sleep",
+    title: "Binaural Delta (2Hz)",
+    desc: "Scientific brainwave beat entrainment to guide brainwaves into deep REM sleep",
     icon: "graphic_eq",
     category: "Brainwave Entrainment",
     duration: "Continuous",
@@ -53,21 +62,12 @@ const SOUNDSCAPES: Soundscape[] = [
   },
   {
     id: "fire",
-    title: "Cozy Hearth Fire",
-    desc: "Warm crackling fireplace ambiance that induces comforting sleepy warmth",
+    title: "Cozy Fireside Embers",
+    desc: "Soft crackling fireplace embers that induce soothing bedtime warmth",
     icon: "local_fire_department",
     category: "Cozy Ambiance",
     duration: "Continuous",
     type: "fire",
-  },
-  {
-    id: "pink",
-    title: "Deep Pink Noise",
-    desc: "Balanced frequency spectrum that masks disruptive sudden night noises",
-    icon: "air",
-    category: "Frequency Masking",
-    duration: "Continuous",
-    type: "pink",
   },
 ];
 
@@ -80,54 +80,118 @@ const TIMER_PRESETS = [
   { label: "Continuous", minutes: null },
 ];
 
+const DEFAULT_CHECKLIST = [
+  { id: "screens", label: "Screens put away & blue light eliminated", checked: false },
+  { id: "room", label: "Bedroom temperature cooled (18–20°C / 65–68°F)", checked: false },
+  { id: "caffeine", label: "No caffeine consumed in the last 8 hours", checked: true },
+  { id: "tea", label: "Warm chamomile/lavender tea or light hydration", checked: false },
+  { id: "breath", label: "4-7-8 Bedtime breathing exercise completed", checked: false },
+  { id: "reflection", label: "Evening thoughts or gratitude written", checked: false },
+];
+
 export default function SleepSupportView() {
   const { user } = useAuth();
   const { category } = useCategory();
   const [mounted, setMounted] = useState(false);
 
-  // Audio Playback state
+  // Active section tab switcher
+  const [activeSectionTab, setActiveSectionTab] = useState<"all" | "audio" | "breath" | "tracker" | "planner">("all");
+
+  // Single audio playback & mixer state
   const [activeSoundId, setActiveSoundId] = useState<string | null>(null);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [volume, setVolume] = useState<number>(0.5);
+  const [isMuted, setIsMuted] = useState<boolean>(false);
 
-  // Audio Sleep Timer (Auto-Off Duration) state
+  // Multi-track mixer mode
+  const [isMixerMode, setIsMixerMode] = useState<boolean>(false);
+  const [mixerTracks, setMixerTracks] = useState<Record<string, { enabled: boolean; volume: number }>>({
+    rain: { enabled: true, volume: 0.6 },
+    forest: { enabled: true, volume: 0.3 },
+    brown: { enabled: false, volume: 0.4 },
+    delta: { enabled: false, volume: 0.5 },
+    waves: { enabled: false, volume: 0.5 },
+    fire: { enabled: false, volume: 0.4 },
+  });
+
+  // Audio Sleep Timer (Auto-Off Duration)
   const [sleepTimerMinutes, setSleepTimerMinutes] = useState<number | null>(null);
   const [timerSecondsLeft, setTimerSecondsLeft] = useState<number | null>(null);
   const timerIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Active Live Sleep Session state
+  // Active Live Sleep Session Stopwatch
   const [isLiveSleepActive, setIsLiveSleepActive] = useState<boolean>(false);
   const [liveSleepStartTime, setLiveSleepStartTime] = useState<number | null>(null);
   const [liveSleepElapsedSeconds, setLiveSleepElapsedSeconds] = useState<number>(0);
   const liveSleepIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Sleep Duration Stats & History state
+  // Interactive 4-7-8 Breathing Guide state
+  const [isBreathingActive, setIsBreathingActive] = useState<boolean>(false);
+  const [breathPhase, setBreathPhase] = useState<"INHALE" | "HOLD" | "EXHALE">("INHALE");
+  const [breathSecondsLeft, setBreathSecondsLeft] = useState<number>(4);
+  const [breathCycleCount, setBreathCycleCount] = useState<number>(1);
+  const [isBreathChimeEnabled, setIsBreathChimeEnabled] = useState<boolean>(true);
+  const breathIntervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Sleep Hygiene Routine Checklist
+  const [checklist, setChecklist] = useState(DEFAULT_CHECKLIST);
+
+  // Sleep Duration Stats & History
   const [sleepStats, setSleepStats] = useState<{
     averageDurationMinutes: number;
     averageCycles: number;
     averageQuality: number;
     totalLogs: number;
+    sleepDebtHours: number;
+    averageLatencyMinutes: number;
+    averageEfficiency: number;
     lastSleep: {
+      id: number;
       durationMinutes: number;
       durationFormatted: string;
       cycles: number;
       quality: number;
       bedtime: string;
       wakeTime: string;
+      latencyMinutes: number;
+      awakenings: number;
+      notes: string;
+      createdAt: string;
     };
     weeklyTrend: Array<{ day: string; minutes: number; quality: number }>;
+    logs: Array<{
+      id: number;
+      durationMinutes: number;
+      durationFormatted: string;
+      cycles: number;
+      quality: number;
+      bedtime: string;
+      wakeTime: string;
+      latencyMinutes: number;
+      awakenings: number;
+      notes: string;
+      createdAt: string;
+    }>;
   }>({
-    averageDurationMinutes: 454,
-    averageCycles: 5.0,
-    averageQuality: 4.1,
+    averageDurationMinutes: 465,
+    averageCycles: 5.2,
+    averageQuality: 4.2,
     totalLogs: 7,
+    sleepDebtHours: 0.5,
+    averageLatencyMinutes: 14,
+    averageEfficiency: 91,
     lastSleep: {
+      id: 0,
       durationMinutes: 465,
       durationFormatted: "7h 45m",
       cycles: 5.2,
       quality: 4,
       bedtime: "23:00",
       wakeTime: "06:45",
+      latencyMinutes: 14,
+      awakenings: 0,
+      notes: "Deep restorative sleep",
+      createdAt: new Date().toISOString(),
     },
     weeklyTrend: [
       { day: "Mon", minutes: 450, quality: 4 },
@@ -138,12 +202,16 @@ export default function SleepSupportView() {
       { day: "Sat", minutes: 510, quality: 5 },
       { day: "Sun", minutes: 465, quality: 4 },
     ],
+    logs: [],
   });
 
   // Log Sleep Duration Modal state
   const [showLogModal, setShowLogModal] = useState<boolean>(false);
+  const [showHistoryDrawer, setShowHistoryDrawer] = useState<boolean>(false);
   const [logBedtime, setLogBedtime] = useState<string>("23:00");
   const [logWakeTime, setLogWakeTime] = useState<string>("07:15");
+  const [logLatency, setLogLatency] = useState<number>(15);
+  const [logAwakenings, setLogAwakenings] = useState<number>(0);
   const [logQuality, setLogQuality] = useState<number>(4);
   const [logNotes, setLogNotes] = useState<string>("");
   const [selectedTags, setSelectedTags] = useState<string[]>(["Ambient Sounds", "Deep Rest"]);
@@ -151,7 +219,7 @@ export default function SleepSupportView() {
   const [sleepLogSuccessToast, setSleepLogSuccessToast] = useState<string | null>(null);
 
   // Sleep Cycle Calculator state
-  const [calcMode, setCalcMode] = useState<"wake" | "bed">("wake");
+  const [calcMode, setCalcMode] = useState<"wake" | "now">("wake");
   const [calcWakeTime, setCalcWakeTime] = useState<string>("07:00");
 
   // Evening Reflection state
@@ -161,12 +229,20 @@ export default function SleepSupportView() {
 
   // Web Audio Synth references
   const audioCtxRef = useRef<AudioContext | null>(null);
-  const gainNodeRef = useRef<GainNode | null>(null);
-  const soundNodesRef = useRef<any[]>([]);
+  const masterGainRef = useRef<GainNode | null>(null);
+  const activeNodesRef = useRef<Map<string, { nodes: any[]; gain: GainNode }>>(new Map());
 
   useEffect(() => {
     setMounted(true);
     fetchSleepStats();
+
+    // Load saved checklist from localStorage
+    try {
+      const savedChecklist = localStorage.getItem("manraah_sleep_checklist");
+      if (savedChecklist) {
+        setChecklist(JSON.parse(savedChecklist));
+      }
+    } catch {}
   }, []);
 
   const fetchSleepStats = async () => {
@@ -177,203 +253,343 @@ export default function SleepSupportView() {
         setSleepStats(data);
       }
     } catch (e) {
-      console.warn("Could not load sleep stats from API:", e);
+      console.warn("Could not load sleep stats:", e);
     }
   };
 
   const userName = mounted ? (user?.name || user?.sanctuaryName || "Friend") : "Friend";
 
-  // Stop current Web Audio synthesis
-  const stopAudio = () => {
-    soundNodesRef.current.forEach((node) => {
-      try {
-        if (node.stop) node.stop();
-        if (node.disconnect) node.disconnect();
-      } catch (e) {}
-    });
-    soundNodesRef.current = [];
-  };
-
-  // Start soundscape Web Audio synthesis
-  const startAudio = (type: Soundscape["type"]) => {
-    stopAudio();
-    try {
+  // Ensure AudioContext
+  const getAudioContext = (): AudioContext => {
+    if (!audioCtxRef.current || audioCtxRef.current.state === "closed") {
       const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
-      if (!audioCtxRef.current) {
-        audioCtxRef.current = new AudioCtx();
+      audioCtxRef.current = new AudioCtx();
+    }
+    if (audioCtxRef.current.state === "suspended") {
+      audioCtxRef.current.resume();
+    }
+    return audioCtxRef.current;
+  };
+
+  // Play gentle bell sound for breathing cues
+  const playBreathChime = (freq = 440) => {
+    if (!isBreathChimeEnabled) return;
+    try {
+      const ctx = getAudioContext();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(freq, ctx.currentTime);
+      gain.gain.setValueAtTime(0.04, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 1.2);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 1.2);
+    } catch {}
+  };
+
+  // Build sound synthesis node
+  const createSoundNode = (ctx: AudioContext, type: Soundscape["type"], outGain: GainNode) => {
+    const nodes: any[] = [];
+    if (type === "rain") {
+      const bufferSize = ctx.sampleRate * 2;
+      const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const output = noiseBuffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        output[i] = Math.random() * 2 - 1;
       }
-      const ctx = audioCtxRef.current;
-      if (ctx.state === "suspended") {
-        ctx.resume();
+      const whiteNoise = ctx.createBufferSource();
+      whiteNoise.buffer = noiseBuffer;
+      whiteNoise.loop = true;
+
+      const filter = ctx.createBiquadFilter();
+      filter.type = "lowpass";
+      filter.frequency.setValueAtTime(750, ctx.currentTime);
+
+      whiteNoise.connect(filter);
+      filter.connect(outGain);
+      whiteNoise.start();
+      nodes.push(whiteNoise, filter);
+    } else if (type === "waves") {
+      const bufferSize = ctx.sampleRate * 4;
+      const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const output = noiseBuffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        output[i] = Math.random() * 2 - 1;
       }
+      const noise = ctx.createBufferSource();
+      noise.buffer = noiseBuffer;
+      noise.loop = true;
 
-      const masterGain = ctx.createGain();
-      masterGain.gain.setValueAtTime(volume * 0.15, ctx.currentTime);
-      masterGain.connect(ctx.destination);
-      gainNodeRef.current = masterGain;
+      const filter = ctx.createBiquadFilter();
+      filter.type = "bandpass";
+      filter.frequency.setValueAtTime(320, ctx.currentTime);
 
-      if (type === "rain") {
-        const bufferSize = ctx.sampleRate * 2;
-        const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-        const output = noiseBuffer.getChannelData(0);
-        for (let i = 0; i < bufferSize; i++) {
-          output[i] = Math.random() * 2 - 1;
-        }
+      const lfo = ctx.createOscillator();
+      lfo.frequency.setValueAtTime(0.1, ctx.currentTime);
+      const lfoGain = ctx.createGain();
+      lfoGain.gain.setValueAtTime(220, ctx.currentTime);
 
-        const whiteNoise = ctx.createBufferSource();
-        whiteNoise.buffer = noiseBuffer;
-        whiteNoise.loop = true;
+      lfo.connect(filter.frequency);
+      noise.connect(filter);
+      filter.connect(outGain);
 
-        const filter = ctx.createBiquadFilter();
-        filter.type = "lowpass";
-        filter.frequency.setValueAtTime(800, ctx.currentTime);
-
-        whiteNoise.connect(filter);
-        filter.connect(masterGain);
-        whiteNoise.start();
-        soundNodesRef.current.push(whiteNoise, filter);
-      } else if (type === "waves") {
-        const bufferSize = ctx.sampleRate * 4;
-        const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-        const output = noiseBuffer.getChannelData(0);
-        for (let i = 0; i < bufferSize; i++) {
-          output[i] = Math.random() * 2 - 1;
-        }
-
-        const noise = ctx.createBufferSource();
-        noise.buffer = noiseBuffer;
-        noise.loop = true;
-
-        const filter = ctx.createBiquadFilter();
-        filter.type = "bandpass";
-        filter.frequency.setValueAtTime(350, ctx.currentTime);
-
-        const lfo = ctx.createOscillator();
-        lfo.frequency.setValueAtTime(0.12, ctx.currentTime);
-        const lfoGain = ctx.createGain();
-        lfoGain.gain.setValueAtTime(250, ctx.currentTime);
-
-        lfo.connect(filter.frequency);
-        noise.connect(filter);
-        filter.connect(masterGain);
-
-        noise.start();
-        lfo.start();
-        soundNodesRef.current.push(noise, filter, lfo, lfoGain);
-      } else if (type === "forest") {
-        const bufferSize = ctx.sampleRate * 2;
-        const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-        const output = noiseBuffer.getChannelData(0);
-        for (let i = 0; i < bufferSize; i++) {
-          output[i] = Math.random() * 2 - 1;
-        }
-
-        const noise = ctx.createBufferSource();
-        noise.buffer = noiseBuffer;
-        noise.loop = true;
-
-        const filter = ctx.createBiquadFilter();
-        filter.type = "lowpass";
-        filter.frequency.setValueAtTime(500, ctx.currentTime);
-
-        const cricketOsc = ctx.createOscillator();
-        cricketOsc.type = "sine";
-        cricketOsc.frequency.setValueAtTime(4500, ctx.currentTime);
-        const cricketGain = ctx.createGain();
-        cricketGain.gain.setValueAtTime(0.003, ctx.currentTime);
-
-        noise.connect(filter);
-        filter.connect(masterGain);
-        cricketOsc.connect(cricketGain);
-        cricketGain.connect(masterGain);
-
-        noise.start();
-        cricketOsc.start();
-        soundNodesRef.current.push(noise, filter, cricketOsc, cricketGain);
-      } else if (type === "delta") {
-        const osc1 = ctx.createOscillator();
-        const osc2 = ctx.createOscillator();
-        osc1.type = "sine";
-        osc1.frequency.setValueAtTime(100, ctx.currentTime);
-        osc2.type = "sine";
-        osc2.frequency.setValueAtTime(102, ctx.currentTime);
-
-        osc1.connect(masterGain);
-        osc2.connect(masterGain);
-        osc1.start();
-        osc2.start();
-        soundNodesRef.current.push(osc1, osc2);
-      } else if (type === "fire") {
-        const bufferSize = ctx.sampleRate * 2;
-        const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-        const output = noiseBuffer.getChannelData(0);
-        for (let i = 0; i < bufferSize; i++) {
-          output[i] = (Math.random() * 2 - 1) * (Math.random() > 0.95 ? 2.5 : 0.4);
-        }
-
-        const noise = ctx.createBufferSource();
-        noise.buffer = noiseBuffer;
-        noise.loop = true;
-
-        const filter = ctx.createBiquadFilter();
-        filter.type = "bandpass";
-        filter.frequency.setValueAtTime(700, ctx.currentTime);
-
-        noise.connect(filter);
-        filter.connect(masterGain);
-        noise.start();
-        soundNodesRef.current.push(noise, filter);
-      } else {
-        const bufferSize = ctx.sampleRate * 2;
-        const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-        const output = noiseBuffer.getChannelData(0);
-        let b0 = 0, b1 = 0, b2 = 0;
-        for (let i = 0; i < bufferSize; i++) {
-          const white = Math.random() * 2 - 1;
-          b0 = 0.99886 * b0 + white * 0.0555179;
-          b1 = 0.99332 * b1 + white * 0.0750759;
-          b2 = 0.96900 * b2 + white * 0.1538520;
-          output[i] = (b0 + b1 + b2) * 0.5;
-        }
-
-        const pink = ctx.createBufferSource();
-        pink.buffer = noiseBuffer;
-        pink.loop = true;
-
-        pink.connect(masterGain);
-        pink.start();
-        soundNodesRef.current.push(pink);
+      noise.start();
+      lfo.start();
+      nodes.push(noise, filter, lfo, lfoGain);
+    } else if (type === "forest") {
+      const bufferSize = ctx.sampleRate * 2;
+      const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const output = noiseBuffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        output[i] = Math.random() * 2 - 1;
       }
+      const noise = ctx.createBufferSource();
+      noise.buffer = noiseBuffer;
+      noise.loop = true;
+
+      const filter = ctx.createBiquadFilter();
+      filter.type = "lowpass";
+      filter.frequency.setValueAtTime(450, ctx.currentTime);
+
+      const cricketOsc = ctx.createOscillator();
+      cricketOsc.type = "sine";
+      cricketOsc.frequency.setValueAtTime(4400, ctx.currentTime);
+      const cricketGain = ctx.createGain();
+      cricketGain.gain.setValueAtTime(0.0035, ctx.currentTime);
+
+      noise.connect(filter);
+      filter.connect(outGain);
+      cricketOsc.connect(cricketGain);
+      cricketGain.connect(outGain);
+
+      noise.start();
+      cricketOsc.start();
+      nodes.push(noise, filter, cricketOsc, cricketGain);
+    } else if (type === "brown") {
+      const bufferSize = ctx.sampleRate * 2;
+      const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const output = noiseBuffer.getChannelData(0);
+      let lastOut = 0.0;
+      for (let i = 0; i < bufferSize; i++) {
+        const white = Math.random() * 2 - 1;
+        output[i] = (lastOut + (0.02 * white)) / 1.02;
+        lastOut = output[i];
+        output[i] *= 3.5;
+      }
+      const brown = ctx.createBufferSource();
+      brown.buffer = noiseBuffer;
+      brown.loop = true;
+
+      const filter = ctx.createBiquadFilter();
+      filter.type = "lowpass";
+      filter.frequency.setValueAtTime(400, ctx.currentTime);
+
+      brown.connect(filter);
+      filter.connect(outGain);
+      brown.start();
+      nodes.push(brown, filter);
+    } else if (type === "delta") {
+      const osc1 = ctx.createOscillator();
+      const osc2 = ctx.createOscillator();
+      osc1.type = "sine";
+      osc1.frequency.setValueAtTime(108, ctx.currentTime);
+      osc2.type = "sine";
+      osc2.frequency.setValueAtTime(110, ctx.currentTime); // 2Hz Delta wave difference
+
+      osc1.connect(outGain);
+      osc2.connect(outGain);
+      osc1.start();
+      osc2.start();
+      nodes.push(osc1, osc2);
+    } else {
+      // Fire
+      const bufferSize = ctx.sampleRate * 2;
+      const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const output = noiseBuffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        output[i] = (Math.random() * 2 - 1) * (Math.random() > 0.94 ? 2.5 : 0.35);
+      }
+      const noise = ctx.createBufferSource();
+      noise.buffer = noiseBuffer;
+      noise.loop = true;
+
+      const filter = ctx.createBiquadFilter();
+      filter.type = "bandpass";
+      filter.frequency.setValueAtTime(650, ctx.currentTime);
+
+      noise.connect(filter);
+      filter.connect(outGain);
+      noise.start();
+      nodes.push(noise, filter);
+    }
+    return nodes;
+  };
+
+  // Stop all audio
+  const stopAllAudio = () => {
+    activeNodesRef.current.forEach(({ nodes, gain }) => {
+      nodes.forEach((n) => {
+        try {
+          if (n.stop) n.stop();
+          if (n.disconnect) n.disconnect();
+        } catch {}
+      });
+      try {
+        gain.disconnect();
+      } catch {}
+    });
+    activeNodesRef.current.clear();
+  };
+
+  // Start single soundscape
+  const startSingleAudio = (sound: Soundscape) => {
+    stopAllAudio();
+    try {
+      const ctx = getAudioContext();
+      if (!masterGainRef.current) {
+        masterGainRef.current = ctx.createGain();
+        masterGainRef.current.connect(ctx.destination);
+      }
+      masterGainRef.current.gain.setValueAtTime(isMuted ? 0 : volume * 0.18, ctx.currentTime);
+
+      const trackGain = ctx.createGain();
+      trackGain.gain.setValueAtTime(1, ctx.currentTime);
+      trackGain.connect(masterGainRef.current);
+
+      const nodes = createSoundNode(ctx, sound.type, trackGain);
+      activeNodesRef.current.set(sound.id, { nodes, gain: trackGain });
     } catch (e) {
-      console.warn("Sleep audio start warning:", e);
+      console.warn("Audio start error:", e);
     }
   };
 
-  // Update volume live
-  useEffect(() => {
-    if (gainNodeRef.current && audioCtxRef.current) {
-      gainNodeRef.current.gain.setValueAtTime(
-        volume * 0.15,
-        audioCtxRef.current.currentTime
-      );
+  // Start mixer audio with multiple enabled tracks
+  const startMixerAudio = () => {
+    stopAllAudio();
+    try {
+      const ctx = getAudioContext();
+      if (!masterGainRef.current) {
+        masterGainRef.current = ctx.createGain();
+        masterGainRef.current.connect(ctx.destination);
+      }
+      masterGainRef.current.gain.setValueAtTime(isMuted ? 0 : volume * 0.18, ctx.currentTime);
+
+      Object.entries(mixerTracks).forEach(([id, config]) => {
+        if (config.enabled) {
+          const sound = SOUNDSCAPES.find((s) => s.id === id);
+          if (sound) {
+            const trackGain = ctx.createGain();
+            trackGain.gain.setValueAtTime(config.volume, ctx.currentTime);
+            trackGain.connect(masterGainRef.current!);
+            const nodes = createSoundNode(ctx, sound.type, trackGain);
+            activeNodesRef.current.set(id, { nodes, gain: trackGain });
+          }
+        }
+      });
+    } catch (e) {
+      console.warn("Mixer audio error:", e);
     }
-  }, [volume]);
+  };
+
+  // Toggle play/pause
+  const handleTogglePlay = () => {
+    if (isPlaying) {
+      stopAllAudio();
+      setIsPlaying(false);
+    } else {
+      setIsPlaying(true);
+      if (isMixerMode) {
+        startMixerAudio();
+      } else {
+        const targetId = activeSoundId || "rain";
+        const sound = SOUNDSCAPES.find((s) => s.id === targetId) || SOUNDSCAPES[0];
+        setActiveSoundId(sound.id);
+        startSingleAudio(sound);
+      }
+    }
+  };
+
+  // Select single sound
+  const handleSelectSound = (sound: Soundscape) => {
+    if (isMixerMode) {
+      setIsMixerMode(false);
+    }
+    if (activeSoundId === sound.id && isPlaying) {
+      stopAllAudio();
+      setIsPlaying(false);
+    } else {
+      setActiveSoundId(sound.id);
+      setIsPlaying(true);
+      startSingleAudio(sound);
+    }
+  };
+
+  // Toggle track in mixer
+  const handleToggleMixerTrack = (id: string) => {
+    setMixerTracks((prev) => {
+      const updated = {
+        ...prev,
+        [id]: { ...prev[id], enabled: !prev[id].enabled },
+      };
+      if (isPlaying && isMixerMode) {
+        setTimeout(() => startMixerAudio(), 50);
+      }
+      return updated;
+    });
+  };
+
+  // Change individual track volume in mixer
+  const handleMixerVolumeChange = (id: string, vol: number) => {
+    setMixerTracks((prev) => ({
+      ...prev,
+      [id]: { ...prev[id], volume: vol },
+    }));
+    const track = activeNodesRef.current.get(id);
+    if (track && audioCtxRef.current) {
+      track.gain.gain.setValueAtTime(vol, audioCtxRef.current.currentTime);
+    }
+  };
+
+  // Switch to mixer mode
+  const handleToggleMixerMode = () => {
+    const nextMode = !isMixerMode;
+    setIsMixerMode(nextMode);
+    if (isPlaying) {
+      if (nextMode) {
+        startMixerAudio();
+      } else {
+        const sound = SOUNDSCAPES.find((s) => s.id === (activeSoundId || "rain")) || SOUNDSCAPES[0];
+        startSingleAudio(sound);
+      }
+    }
+  };
+
+  // Master volume and mute change
+  useEffect(() => {
+    if (masterGainRef.current && audioCtxRef.current) {
+      const effectiveVol = isMuted ? 0 : volume * 0.18;
+      masterGainRef.current.gain.setValueAtTime(effectiveVol, audioCtxRef.current.currentTime);
+    }
+  }, [volume, isMuted]);
 
   // Clean up audio on unmount
   useEffect(() => {
     return () => {
-      stopAudio();
+      stopAllAudio();
       if (audioCtxRef.current && audioCtxRef.current.state !== "closed") {
         try {
           audioCtxRef.current.close();
-        } catch (e) {}
+        } catch {}
       }
       if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
       if (liveSleepIntervalRef.current) clearInterval(liveSleepIntervalRef.current);
+      if (breathIntervalRef.current) clearInterval(breathIntervalRef.current);
     };
   }, []);
 
-  // Audio Sleep Timer Countdown logic
+  // Sleep Timer countdown
   useEffect(() => {
     if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
 
@@ -381,18 +597,18 @@ export default function SleepSupportView() {
       timerIntervalRef.current = setInterval(() => {
         setTimerSecondsLeft((prev) => {
           if (prev === null || prev <= 1) {
-            // Fade out audio smoothly over 3 seconds
-            if (gainNodeRef.current && audioCtxRef.current) {
+            // Smooth 3s fade out
+            if (masterGainRef.current && audioCtxRef.current) {
               try {
-                gainNodeRef.current.gain.linearRampToValueAtTime(0, audioCtxRef.current.currentTime + 3);
-              } catch (e) {}
+                masterGainRef.current.gain.linearRampToValueAtTime(0, audioCtxRef.current.currentTime + 3);
+              } catch {}
             }
             setTimeout(() => {
-              stopAudio();
+              stopAllAudio();
               setIsPlaying(false);
             }, 3000);
             setSleepTimerMinutes(null);
-            setSleepLogSuccessToast("🌙 Sleep timer ended. Rest peacefully!");
+            setSleepLogSuccessToast("🌙 Sleep timer finished. Rest peacefully!");
             setTimeout(() => setSleepLogSuccessToast(null), 4000);
             return null;
           }
@@ -400,11 +616,81 @@ export default function SleepSupportView() {
         });
       }, 1000);
     }
-
     return () => {
       if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
     };
   }, [isPlaying, timerSecondsLeft]);
+
+  const handleSetTimer = (minutes: number | null) => {
+    setSleepTimerMinutes(minutes);
+    if (minutes === null) {
+      setTimerSecondsLeft(null);
+    } else {
+      setTimerSecondsLeft(minutes * 60);
+      if (!isPlaying) {
+        handleTogglePlay();
+      }
+    }
+  };
+
+  // 4-7-8 Breathing Guide Loop
+  useEffect(() => {
+    if (isBreathingActive) {
+      breathIntervalRef.current = setInterval(() => {
+        setBreathSecondsLeft((prev) => {
+          if (prev <= 1) {
+            if (breathPhase === "INHALE") {
+              setBreathPhase("HOLD");
+              playBreathChime(523); // C5 bell
+              return 7;
+            } else if (breathPhase === "HOLD") {
+              setBreathPhase("EXHALE");
+              playBreathChime(392); // G4 bell
+              return 8;
+            } else {
+              // Finish EXHALE -> Next cycle
+              setBreathPhase("INHALE");
+              playBreathChime(440); // A4 bell
+              setBreathCycleCount((c) => {
+                if (c >= 4) {
+                  setIsBreathingActive(false);
+                  setSleepLogSuccessToast("✨ 4 Bedtime cycles complete. Body is in parasympathetic recovery mode.");
+                  setTimeout(() => setSleepLogSuccessToast(null), 5000);
+                  return 1;
+                }
+                return c + 1;
+              });
+              return 4;
+            }
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    } else {
+      if (breathIntervalRef.current) clearInterval(breathIntervalRef.current);
+    }
+    return () => {
+      if (breathIntervalRef.current) clearInterval(breathIntervalRef.current);
+    };
+  }, [isBreathingActive, breathPhase, breathCycleCount]);
+
+  const handleStartBreath = () => {
+    setIsBreathingActive(true);
+    setBreathPhase("INHALE");
+    setBreathSecondsLeft(4);
+    playBreathChime(440);
+  };
+
+  const handlePauseBreath = () => {
+    setIsBreathingActive(false);
+  };
+
+  const handleResetBreath = () => {
+    setIsBreathingActive(false);
+    setBreathPhase("INHALE");
+    setBreathSecondsLeft(4);
+    setBreathCycleCount(1);
+  };
 
   // Live Sleep Session Timer
   useEffect(() => {
@@ -423,42 +709,115 @@ export default function SleepSupportView() {
     };
   }, [isLiveSleepActive, liveSleepStartTime]);
 
-  const handleSetTimer = (minutes: number | null) => {
-    setSleepTimerMinutes(minutes);
-    if (minutes === null) {
-      setTimerSecondsLeft(null);
+  const handleToggleLiveSleep = () => {
+    if (!isLiveSleepActive) {
+      setIsLiveSleepActive(true);
+      setLiveSleepStartTime(Date.now());
+      setLiveSleepElapsedSeconds(0);
     } else {
-      setTimerSecondsLeft(minutes * 60);
-      if (!isPlaying) {
-        handleToggleMasterPlay();
+      setIsLiveSleepActive(false);
+      const elapsedMins = Math.max(15, Math.round(liveSleepElapsedSeconds / 60));
+      const now = new Date();
+      const wakeStr = `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`;
+      const bedDate = new Date(now.getTime() - elapsedMins * 60000);
+      const bedStr = `${bedDate.getHours().toString().padStart(2, "0")}:${bedDate.getMinutes().toString().padStart(2, "0")}`;
+
+      setLogBedtime(bedStr);
+      setLogWakeTime(wakeStr);
+      setShowLogModal(true);
+    }
+  };
+
+  // Toggle checklist item
+  const handleToggleChecklist = (id: string) => {
+    setChecklist((prev) => {
+      const updated = prev.map((item) => (item.id === id ? { ...item, checked: !item.checked } : item));
+      try {
+        localStorage.setItem("manraah_sleep_checklist", JSON.stringify(updated));
+      } catch {}
+      return updated;
+    });
+  };
+
+  const completedChecklistCount = checklist.filter((i) => i.checked).length;
+  const sleepReadinessPercent = Math.round((completedChecklistCount / checklist.length) * 100);
+
+  // Compute duration, cycles, efficiency
+  const computeCalculatedDuration = (bed: string, wake: string, latency = 15, wakes = 0) => {
+    const [bH, bM] = bed.split(":").map(Number);
+    const [wH, wM] = wake.split(":").map(Number);
+    if (isNaN(bH) || isNaN(bM) || isNaN(wH) || isNaN(wM)) {
+      return { totalMinutes: 480, hours: 8, mins: 0, cycles: 5.3, efficiency: 92 };
+    }
+
+    let bTotal = bH * 60 + bM;
+    let wTotal = wH * 60 + wM;
+    if (wTotal <= bTotal) {
+      wTotal += 24 * 60; // crossed midnight
+    }
+
+    const totalMinutes = wTotal - bTotal;
+    const hours = Math.floor(totalMinutes / 60);
+    const mins = totalMinutes % 60;
+    const cycles = parseFloat((totalMinutes / 90).toFixed(1));
+
+    // Efficiency: totalMinutes / (totalMinutes + latency + wakes * 15)
+    const timeInBed = totalMinutes + latency + wakes * 15;
+    const efficiency = Math.min(100, Math.round((totalMinutes / Math.max(1, timeInBed)) * 100));
+
+    return { totalMinutes, hours, mins, cycles, efficiency };
+  };
+
+  const currentDurationCalc = computeCalculatedDuration(logBedtime, logWakeTime, logLatency, logAwakenings);
+
+  // Submit Sleep Duration Log
+  const handleSaveSleepLog = async () => {
+    setIsSavingSleepLog(true);
+    try {
+      const res = await fetch("/api/sleep/log", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          bedtime: logBedtime,
+          wakeTime: logWakeTime,
+          durationMinutes: currentDurationCalc.totalMinutes,
+          quality: logQuality,
+          latencyMinutes: logLatency,
+          awakenings: logAwakenings,
+          notes: logNotes,
+          tags: selectedTags,
+        }),
+      });
+
+      if (res.ok) {
+        setSleepLogSuccessToast(`Logged ${currentDurationCalc.hours}h ${currentDurationCalc.mins > 0 ? `${currentDurationCalc.mins}m` : ""} of sleep!`);
+        setShowLogModal(false);
+        fetchSleepStats();
+        setTimeout(() => setSleepLogSuccessToast(null), 4500);
       }
+    } catch (e) {
+      console.error("Failed to submit sleep log:", e);
+    } finally {
+      setIsSavingSleepLog(false);
     }
   };
 
-  const handleSelectSound = (sound: Soundscape) => {
-    if (activeSoundId === sound.id && isPlaying) {
-      stopAudio();
-      setIsPlaying(false);
-    } else {
-      setActiveSoundId(sound.id);
-      setIsPlaying(true);
-      startAudio(sound.type);
+  // Delete a sleep log entry
+  const handleDeleteSleepLog = async (id: number) => {
+    if (!confirm("Are you sure you want to delete this sleep entry?")) return;
+    try {
+      const res = await fetch(`/api/sleep/log?id=${id}`, { method: "DELETE" });
+      if (res.ok) {
+        setSleepLogSuccessToast("Entry removed");
+        fetchSleepStats();
+        setTimeout(() => setSleepLogSuccessToast(null), 3000);
+      }
+    } catch (e) {
+      console.error("Failed to delete log:", e);
     }
   };
 
-  const handleToggleMasterPlay = () => {
-    if (isPlaying) {
-      stopAudio();
-      setIsPlaying(false);
-    } else {
-      const targetId = activeSoundId || "rain";
-      const sound = SOUNDSCAPES.find((s) => s.id === targetId) || SOUNDSCAPES[0];
-      setActiveSoundId(sound.id);
-      setIsPlaying(true);
-      startAudio(sound.type);
-    }
-  };
-
+  // Save Evening Reflection
   const handleSaveReflection = async () => {
     if (!reflectionText.trim()) return;
     setIsSavingNote(true);
@@ -483,118 +842,75 @@ export default function SleepSupportView() {
     }
   };
 
-  // Calculate sleep duration from bedtime & wakeTime
-  const computeCalculatedDuration = (bed: string, wake: string): { minutes: number; hours: number; mins: number; cycles: number } => {
-    const [bH, bM] = bed.split(":").map(Number);
-    const [wH, wM] = wake.split(":").map(Number);
-    if (isNaN(bH) || isNaN(bM) || isNaN(wH) || isNaN(wM)) {
-      return { minutes: 480, hours: 8, mins: 0, cycles: 5.3 };
-    }
-
-    let bTotal = bH * 60 + bM;
-    let wTotal = wH * 60 + wM;
-    if (wTotal <= bTotal) {
-      wTotal += 24 * 60; // crossed midnight
-    }
-
-    const diff = wTotal - bTotal;
-    const hours = Math.floor(diff / 60);
-    const mins = diff % 60;
-    const cycles = parseFloat((diff / 90).toFixed(1));
-    return { minutes: diff, hours, mins, cycles };
-  };
-
-  const currentDurationCalc = computeCalculatedDuration(logBedtime, logWakeTime);
-
-  // Submit Sleep Duration Log
-  const handleSaveSleepLog = async () => {
-    setIsSavingSleepLog(true);
-    try {
-      const res = await fetch("/api/sleep/log", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          bedtime: logBedtime,
-          wakeTime: logWakeTime,
-          durationMinutes: currentDurationCalc.minutes,
-          quality: logQuality,
-          notes: logNotes,
-          tags: selectedTags,
-        }),
-      });
-
-      if (res.ok) {
-        setSleepLogSuccessToast(`Logged ${currentDurationCalc.hours}h ${currentDurationCalc.mins > 0 ? `${currentDurationCalc.mins}m` : ""} of sleep!`);
-        setShowLogModal(false);
-        fetchSleepStats();
-        setTimeout(() => setSleepLogSuccessToast(null), 4500);
-      }
-    } catch (e) {
-      console.error("Failed to submit sleep log:", e);
-    } finally {
-      setIsSavingSleepLog(false);
-    }
-  };
-
-  // Toggle Live Sleep Tracking Session
-  const handleToggleLiveSleep = () => {
-    if (!isLiveSleepActive) {
-      setIsLiveSleepActive(true);
-      setLiveSleepStartTime(Date.now());
-      setLiveSleepElapsedSeconds(0);
-    } else {
-      // Wake up & open logger prefilled with elapsed duration
-      setIsLiveSleepActive(false);
-      const elapsedMins = Math.max(15, Math.round(liveSleepElapsedSeconds / 60));
-      const now = new Date();
-      const wakeStr = `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`;
-
-      const bedDate = new Date(now.getTime() - elapsedMins * 60000);
-      const bedStr = `${bedDate.getHours().toString().padStart(2, "0")}:${bedDate.getMinutes().toString().padStart(2, "0")}`;
-
-      setLogBedtime(bedStr);
-      setLogWakeTime(wakeStr);
-      setShowLogModal(true);
-    }
-  };
-
-  // 90-Minute Sleep Cycle Calculator recommendations
+  // 90-Minute Sleep Cycle Recommendations
   const getCycleRecommendations = () => {
-    const [wH, wM] = calcWakeTime.split(":").map(Number);
-    if (isNaN(wH) || isNaN(wM)) return [];
+    const fallAsleepBuffer = 14; // Average 14 mins latency
 
-    const wakeMinutes = wH * 60 + wM;
-    const fallAsleepBuffer = 14; // Average 14 mins to fall asleep
+    if (calcMode === "wake") {
+      const [wH, wM] = calcWakeTime.split(":").map(Number);
+      if (isNaN(wH) || isNaN(wM)) return [];
+      const wakeMinutes = wH * 60 + wM;
 
-    // Calculate bedtime for 6, 5, and 4 cycles
-    const cycles = [
-      { count: 6, hours: "9h 00m", label: "Extended Recovery", optimal: false, emoji: "🌟" },
-      { count: 5, hours: "7h 30m", label: "Recommended Optimal", optimal: true, emoji: "⭐" },
-      { count: 4, hours: "6h 00m", label: "Minimum Rest", optimal: false, emoji: "⚡" },
-    ];
+      const cycles = [
+        { count: 6, hours: "9h 00m", label: "Extended Recovery", optimal: false, emoji: "🌟" },
+        { count: 5, hours: "7h 30m", label: "Recommended Optimal", optimal: true, emoji: "⭐" },
+        { count: 4, hours: "6h 00m", label: "Minimum Rest", optimal: false, emoji: "⚡" },
+      ];
 
-    return cycles.map((c) => {
-      const sleepDurationMinutes = c.count * 90;
-      let bedTotal = wakeMinutes - sleepDurationMinutes - fallAsleepBuffer;
-      while (bedTotal < 0) bedTotal += 24 * 60;
+      return cycles.map((c) => {
+        const sleepDurationMinutes = c.count * 90;
+        let bedTotal = wakeMinutes - sleepDurationMinutes - fallAsleepBuffer;
+        while (bedTotal < 0) bedTotal += 24 * 60;
 
-      const bH = Math.floor(bedTotal / 60) % 24;
-      const bM = bedTotal % 60;
-      const period = bH >= 12 ? "PM" : "AM";
-      const displayH = bH % 12 === 0 ? 12 : bH % 12;
-      const timeStr = `${displayH}:${bM.toString().padStart(2, "0")} ${period}`;
+        const bH = Math.floor(bedTotal / 60) % 24;
+        const bM = bedTotal % 60;
+        const period = bH >= 12 ? "PM" : "AM";
+        const displayH = bH % 12 === 0 ? 12 : bH % 12;
 
-      return {
-        ...c,
-        bedtimeStr: timeStr,
-        rawTime: `${bH.toString().padStart(2, "0")}:${bM.toString().padStart(2, "0")}`,
-      };
-    });
+        return {
+          ...c,
+          timeLabel: "Go to bed at:",
+          displayTime: `${displayH}:${bM.toString().padStart(2, "0")} ${period}`,
+          rawBedTime: `${bH.toString().padStart(2, "0")}:${bM.toString().padStart(2, "0")}`,
+          rawWakeTime: calcWakeTime,
+        };
+      });
+    } else {
+      // Calculate from current time if user sleeps now
+      const now = new Date();
+      const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+      const cycles = [
+        { count: 4, hours: "6h 00m", label: "Early Rise", optimal: false, emoji: "⚡" },
+        { count: 5, hours: "7h 30m", label: "Recommended Optimal", optimal: true, emoji: "⭐" },
+        { count: 6, hours: "9h 00m", label: "Deep Full Recovery", optimal: false, emoji: "🌟" },
+      ];
+
+      return cycles.map((c) => {
+        const sleepDurationMinutes = c.count * 90;
+        const wakeTotal = (currentMinutes + fallAsleepBuffer + sleepDurationMinutes) % (24 * 60);
+
+        const wH = Math.floor(wakeTotal / 60) % 24;
+        const wM = wakeTotal % 60;
+        const period = wH >= 12 ? "PM" : "AM";
+        const displayH = wH % 12 === 0 ? 12 : wH % 12;
+
+        const curH = now.getHours();
+        const curM = now.getMinutes();
+
+        return {
+          ...c,
+          timeLabel: "Wake up at:",
+          displayTime: `${displayH}:${wM.toString().padStart(2, "0")} ${period}`,
+          rawBedTime: `${curH.toString().padStart(2, "0")}:${curM.toString().padStart(2, "0")}`,
+          rawWakeTime: `${wH.toString().padStart(2, "0")}:${wM.toString().padStart(2, "0")}`,
+        };
+      });
+    }
   };
 
   const activeSoundObj = SOUNDSCAPES.find((s) => s.id === activeSoundId);
 
-  // Format seconds to mm:ss
   const formatTimer = (sec: number | null) => {
     if (sec === null) return "--:--";
     const m = Math.floor(sec / 60);
@@ -602,7 +918,6 @@ export default function SleepSupportView() {
     return `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
   };
 
-  // Format live sleep seconds to 00h 00m 00s
   const formatLiveSleep = (sec: number) => {
     const h = Math.floor(sec / 3600);
     const m = Math.floor((sec % 3600) / 60);
@@ -623,12 +938,12 @@ export default function SleepSupportView() {
         </div>
       )}
 
-      {/* 1. Full-Width Header Banner with Integrated Player Controller & Sleep Timer */}
+      {/* 1. Header Banner & Integrated Master Audio Controller */}
       <div className="bg-white dark:bg-[#102F27] rounded-3xl p-5 sm:p-6 border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs transition-colors">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div className="space-y-1">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EAF6F0] dark:bg-[#14382F] text-[#006C56] dark:text-[#88F7D6] text-[10.5px] font-heading font-black tracking-wider uppercase border border-[#D2EAE0] dark:border-[#23483E]">
-              <span>🌙 REST & SLEEP RECOVERY</span>
+              <span>🌙 REST & RECOVERY</span>
               <span>•</span>
               <span>WIND-DOWN MANRAAH</span>
             </div>
@@ -636,16 +951,16 @@ export default function SleepSupportView() {
               Night Sleep Support & Duration Hub
             </h1>
             <p className="text-xs text-[#5A756C] dark:text-[#A9C5BC] max-w-xl font-medium">
-              Track your sleep duration, calculate restorative 90-minute sleep cycles, and wind down with continuous ambient soundscapes and auto-stop sleep timers.
+              Achieve deep, restorative sleep with layered ambient soundscapes, auto-stop sleep timers, active 4-7-8 breathing, and science-backed sleep cycle duration tracking.
             </p>
           </div>
 
-          {/* Master Audio Controller Pill */}
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 bg-[#F4F9F6] dark:bg-[#14382F] p-3 px-4 rounded-2xl border border-[#E2ECE6] dark:border-[#23483E] self-start lg:self-auto min-w-[310px]">
+          {/* Master Soundscape Player Controller */}
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 bg-[#F4F9F6] dark:bg-[#14382F] p-3 px-4 rounded-2xl border border-[#E2ECE6] dark:border-[#23483E] self-start lg:self-auto min-w-[320px]">
             <div className="flex items-center gap-3 min-w-0 flex-1">
               <button
                 type="button"
-                onClick={handleToggleMasterPlay}
+                onClick={handleTogglePlay}
                 className="w-10 h-10 rounded-full bg-[#006C56] hover:bg-[#005241] dark:bg-[#00A982] dark:hover:bg-[#00916F] text-white dark:text-[#071C17] flex items-center justify-center shadow-xs cursor-pointer transition-all shrink-0"
                 title={isPlaying ? "Pause audio" : "Play audio"}
               >
@@ -655,12 +970,22 @@ export default function SleepSupportView() {
               </button>
 
               <div className="min-w-0 flex-1">
-                <p className="text-xs font-heading font-bold text-[#19332A] dark:text-[#F4FAF7] truncate">
-                  {activeSoundObj ? activeSoundObj.title : "Gentle Rain"}
-                </p>
                 <div className="flex items-center gap-1.5">
+                  <p className="text-xs font-heading font-bold text-[#19332A] dark:text-[#F4FAF7] truncate">
+                    {isMixerMode
+                      ? "Custom Layered Soundscape"
+                      : activeSoundObj ? activeSoundObj.title : "Gentle Night Rain"}
+                  </p>
+                  {isMixerMode && (
+                    <span className="px-1.5 py-0.2 rounded-md bg-[#006C56] text-white text-[8.5px] font-bold">
+                      MIXER
+                    </span>
+                  )}
+                </div>
+
+                <div className="flex items-center gap-1.5 mt-0.5">
                   <span className="text-[10px] text-[#006C56] dark:text-[#88F7D6] font-semibold">
-                    {isPlaying ? "Playing soundscape" : "Ready to play"}
+                    {isPlaying ? "Playing ambient audio" : "Ready to play"}
                   </span>
                   {timerSecondsLeft !== null && isPlaying && (
                     <span className="px-1.5 py-0.2 rounded-full bg-[#006C56]/10 text-[#006C56] dark:text-[#88F7D6] text-[9.5px] font-mono font-bold">
@@ -671,25 +996,35 @@ export default function SleepSupportView() {
               </div>
             </div>
 
-            {/* Volume & Quick Sleep Timer Action */}
+            {/* Volume & Sleep Timer Controls */}
             <div className="flex items-center justify-between sm:justify-end gap-2.5 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 sm:border-l border-[#E2ECE6] dark:border-[#23483E] sm:pl-3">
               <div className="flex items-center gap-1.5">
-                <span className="material-symbols-outlined text-sm text-[#5A756C] dark:text-[#A9C5BC]">
-                  volume_down
-                </span>
+                <button
+                  type="button"
+                  onClick={() => setIsMuted(!isMuted)}
+                  className="text-[#5A756C] dark:text-[#A9C5BC] hover:text-[#006C56] cursor-pointer"
+                  title={isMuted ? "Unmute" : "Mute"}
+                >
+                  <span className="material-symbols-outlined text-sm">
+                    {isMuted || volume === 0 ? "volume_off" : "volume_down"}
+                  </span>
+                </button>
                 <input
                   type="range"
                   min="0"
                   max="1"
                   step="0.05"
-                  value={volume}
-                  onChange={(e) => setVolume(parseFloat(e.target.value))}
+                  value={isMuted ? 0 : volume}
+                  onChange={(e) => {
+                    setVolume(parseFloat(e.target.value));
+                    if (isMuted) setIsMuted(false);
+                  }}
                   className="w-14 sm:w-16 accent-[#006C56] dark:accent-[#00A982] cursor-pointer h-1"
-                  title={`Volume: ${Math.round(volume * 100)}%`}
+                  title={`Volume: ${Math.round((isMuted ? 0 : volume) * 100)}%`}
                 />
               </div>
 
-              {/* Sleep Timer Selector */}
+              {/* Sleep Timer Preset Dropdown */}
               <div className="relative group">
                 <button
                   type="button"
@@ -698,13 +1033,12 @@ export default function SleepSupportView() {
                       ? "bg-[#006C56] text-white border-[#006C56]"
                       : "bg-white dark:bg-[#102F27] text-[#5A756C] dark:text-[#A9C5BC] border-[#E2ECE6] dark:border-[#23483E] hover:border-[#006C56]"
                   }`}
-                  title="Set Sleep Timer Duration"
+                  title="Auto-Off Sleep Duration Timer"
                 >
                   <span className="material-symbols-outlined text-xs">timer</span>
                   <span>{sleepTimerMinutes ? `${sleepTimerMinutes}m` : "Timer"}</span>
                 </button>
 
-                {/* Dropdown presets */}
                 <div className="absolute right-0 top-full mt-1.5 w-36 bg-white dark:bg-[#102F27] border border-[#E2ECE6] dark:border-[#23483E] rounded-2xl shadow-xl p-1.5 hidden group-hover:flex flex-col gap-1 z-30">
                   <span className="text-[9px] font-heading font-black text-[#5A756C] dark:text-[#A9C5BC] uppercase px-2 py-1">
                     Auto-Off Duration
@@ -728,333 +1062,774 @@ export default function SleepSupportView() {
             </div>
           </div>
         </div>
-      </div>
 
-      {/* 2. SLEEP DURATION METRICS & QUICK LOGGING HUB */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {/* Card 1: Average Sleep Duration */}
-        <div className="bg-white dark:bg-[#102F27] rounded-3xl p-5 border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs flex flex-col justify-between gap-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-xl bg-[#EAF6F0] dark:bg-[#14382F] text-[#006C56] dark:text-[#88F7D6] flex items-center justify-center">
-                <span className="material-symbols-outlined text-base">bedtime</span>
-              </div>
-              <div>
-                <span className="text-[10px] font-heading font-bold uppercase tracking-wider text-[#5A756C] dark:text-[#A9C5BC]">
-                  Sleep Duration
-                </span>
-                <h3 className="text-xs font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
-                  7-Day Average
-                </h3>
-              </div>
-            </div>
-            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#EAF6F0] dark:bg-[#14382F] text-[#006C56] dark:text-[#88F7D6] border border-[#D2EAE0] dark:border-[#23483E]">
-              Target: 7-9h
-            </span>
-          </div>
-
-          <div className="my-1">
-            <div className="flex items-baseline gap-2">
-              <span className="text-3xl font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
-                {avgH}h {avgM > 0 ? `${avgM}m` : ""}
-              </span>
-              <span className="text-xs text-[#006C56] dark:text-[#88F7D6] font-semibold">
-                • {sleepStats.averageCycles} cycles
-              </span>
-            </div>
-            <p className="text-[11px] text-[#5A756C] dark:text-[#A9C5BC] mt-1 font-medium">
-              Last night: {sleepStats.lastSleep.durationFormatted} ({sleepStats.lastSleep.bedtime} - {sleepStats.lastSleep.wakeTime})
-            </p>
-          </div>
-
-          <button
-            type="button"
-            onClick={() => setShowLogModal(true)}
-            className="w-full py-2.5 rounded-2xl bg-[#006C56] hover:bg-[#005241] dark:bg-[#00A982] dark:hover:bg-[#00916F] text-white dark:text-[#071C17] text-xs font-heading font-black transition-all cursor-pointer shadow-xs flex items-center justify-center gap-1.5"
-          >
-            <span className="material-symbols-outlined text-base">add_circle</span>
-            <span>Log Sleep Duration</span>
-          </button>
-        </div>
-
-        {/* Card 2: Sleep Quality & Live Session */}
-        <div className="bg-white dark:bg-[#102F27] rounded-3xl p-5 border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs flex flex-col justify-between gap-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-xl bg-[#EAF6F0] dark:bg-[#14382F] text-[#006C56] dark:text-[#88F7D6] flex items-center justify-center">
-                <span className="material-symbols-outlined text-base">health_metrics</span>
-              </div>
-              <div>
-                <span className="text-[10px] font-heading font-bold uppercase tracking-wider text-[#5A756C] dark:text-[#A9C5BC]">
-                  Sleep Quality
-                </span>
-                <h3 className="text-xs font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
-                  Recovery Index
-                </h3>
-              </div>
-            </div>
-            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#F4FAF7] dark:bg-[#071C17] text-[#006C56] dark:text-[#88F7D6] border border-[#E2ECE6] dark:border-[#23483E]">
-              {sleepStats.averageQuality} / 5.0
-            </span>
-          </div>
-
-          <div className="my-1">
-            <div className="flex items-center gap-1 text-amber-500">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <span key={i} className="material-symbols-outlined text-lg">
-                  {i < Math.round(sleepStats.averageQuality) ? "star" : "star_border"}
-                </span>
-              ))}
-              <span className="text-xs font-heading font-black text-[#19332A] dark:text-[#F4FAF7] ml-1.5">
-                {Math.round((sleepStats.averageQuality / 5) * 100)}% Restful
-              </span>
-            </div>
-            <p className="text-[11px] text-[#5A756C] dark:text-[#A9C5BC] mt-1 font-medium">
-              {isLiveSleepActive
-                ? `Active sleep tracking: ${formatLiveSleep(liveSleepElapsedSeconds)}`
-                : "Tracking consistent sleep timing & restorative sleep cycles"}
-            </p>
-          </div>
-
-          {/* Live Sleep Tracker Button */}
-          <button
-            type="button"
-            onClick={handleToggleLiveSleep}
-            className={`w-full py-2.5 rounded-2xl text-xs font-heading font-black transition-all cursor-pointer shadow-xs flex items-center justify-center gap-1.5 ${
-              isLiveSleepActive
-                ? "bg-[#D97706] hover:bg-[#B45309] text-white animate-pulse"
-                : "bg-[#F4FAF7] dark:bg-[#14382F] hover:bg-[#E2ECE6] dark:hover:bg-[#1b4439] text-[#006C56] dark:text-[#88F7D6] border border-[#D2EAE0] dark:border-[#23483E]"
-            }`}
-          >
-            <span className="material-symbols-outlined text-base">
-              {isLiveSleepActive ? "alarm_on" : "bed"}
-            </span>
-            <span>{isLiveSleepActive ? "☀️ Wake Up & Save Sleep" : "🌙 Start Sleep Tracker"}</span>
-          </button>
-        </div>
-
-        {/* Card 3: 7-Day Sleep Duration Trend Bar Chart */}
-        <div className="bg-white dark:bg-[#102F27] rounded-3xl p-5 border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs flex flex-col justify-between gap-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-xl bg-[#EAF6F0] dark:bg-[#14382F] text-[#006C56] dark:text-[#88F7D6] flex items-center justify-center">
-                <span className="material-symbols-outlined text-base">monitoring</span>
-              </div>
-              <div>
-                <span className="text-[10px] font-heading font-bold uppercase tracking-wider text-[#5A756C] dark:text-[#A9C5BC]">
-                  Duration Trend
-                </span>
-                <h3 className="text-xs font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
-                  Last 7 Nights
-                </h3>
-              </div>
-            </div>
-            <span className="text-[10px] text-[#5A756C] dark:text-[#A9C5BC] font-semibold">
-              Goal 8h
-            </span>
-          </div>
-
-          {/* Symmetrical Mini Bar Chart */}
-          <div className="flex items-end justify-between gap-1.5 h-16 pt-2 px-1">
-            {sleepStats.weeklyTrend.map((item, idx) => {
-              const hours = (item.minutes / 60).toFixed(1);
-              // Max height 10 hours = 600m
-              const heightPercent = Math.min(100, Math.max(20, Math.round((item.minutes / 600) * 100)));
-              const isTargetMet = item.minutes >= 420; // 7+ hours
-
-              return (
-                <div key={idx} className="flex-1 flex flex-col items-center gap-1 h-full justify-end group relative">
-                  {/* Tooltip on hover */}
-                  <div className="absolute -top-7 hidden group-hover:flex items-center px-1.5 py-0.5 rounded-lg bg-[#19332A] text-white text-[9px] font-mono whitespace-nowrap z-20 pointer-events-none shadow-md">
-                    {hours}h
-                  </div>
-
-                  <div
-                    className={`w-full rounded-t-lg transition-all ${
-                      isTargetMet
-                        ? "bg-[#006C56] dark:bg-[#00A982] group-hover:opacity-85"
-                        : "bg-[#D97706]/70 group-hover:bg-[#D97706]"
-                    }`}
-                    style={{ height: `${heightPercent}%` }}
-                  />
-                  <span className="text-[9.5px] font-heading font-bold text-[#5A756C] dark:text-[#A9C5BC]">
-                    {item.day}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-
-          <div className="flex items-center justify-between text-[10px] text-[#5A756C] dark:text-[#A9C5BC] pt-1 border-t border-[#E2ECE6] dark:border-[#23483E]">
-            <span className="flex items-center gap-1">
-              <span className="w-2 h-2 rounded-full bg-[#006C56] dark:bg-[#00A982]"></span>
-              Optimal (7h+)
-            </span>
-            <span className="flex items-center gap-1">
-              <span className="w-2 h-2 rounded-full bg-[#D97706]/80"></span>
-              Under 7h
-            </span>
-          </div>
-        </div>
-      </div>
-
-      {/* 3. SMART 90-MINUTE SLEEP CYCLE DURATION CALCULATOR */}
-      <div className="bg-white dark:bg-[#102F27] rounded-3xl p-5 sm:p-6 border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs space-y-4 transition-colors">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-[#E2ECE6] dark:border-[#23483E]">
-          <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-2xl bg-[#EAF6F0] dark:bg-[#14382F] text-[#006C56] dark:text-[#88F7D6] flex items-center justify-center">
-              <span className="material-symbols-outlined text-lg">alarm</span>
-            </div>
-            <div>
-              <h2 className="text-sm font-heading font-black text-[#19332A] dark:text-[#F4FAF7] uppercase tracking-wider">
-                90-Minute Sleep Cycle & Bedtime Calculator
-              </h2>
-              <p className="text-[11px] text-[#5A756C] dark:text-[#A9C5BC]">
-                Wake up at the end of a sleep cycle to avoid sleep inertia and wake refreshed.
-              </p>
-            </div>
-          </div>
-
-          {/* Wake-Up Time Selector */}
-          <div className="flex items-center gap-2 self-start sm:self-auto">
-            <span className="text-xs font-heading font-bold text-[#19332A] dark:text-[#F4FAF7]">
-              Wake up at:
-            </span>
-            <input
-              type="time"
-              value={calcWakeTime}
-              onChange={(e) => setCalcWakeTime(e.target.value)}
-              className="px-3 py-1.5 rounded-xl bg-[#F4FAF7] dark:bg-[#071C17] border border-[#E2ECE6] dark:border-[#23483E] text-xs font-mono font-bold text-[#006C56] dark:text-[#88F7D6] focus:outline-none focus:ring-1 focus:ring-[#006C56] cursor-pointer"
-            />
-          </div>
-        </div>
-
-        {/* Calculated Cycle Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          {getCycleRecommendations().map((c) => (
-            <div
-              key={c.count}
-              className={`p-4 rounded-2xl border transition-all ${
-                c.optimal
-                  ? "bg-[#EAF6F0] dark:bg-[#14382F] border-[#006C56] dark:border-[#00A982] ring-1 ring-[#006C56]/30 shadow-xs"
-                  : "bg-[#F4FAF7] dark:bg-[#071C17] border-[#E2ECE6] dark:border-[#23483E]"
+        {/* Section Navigation Quick Filter Tabs */}
+        <div className="flex items-center gap-2 mt-4 pt-3 border-t border-[#E2ECE6] dark:border-[#23483E] overflow-x-auto scrollbar-none">
+          {[
+            { id: "all", label: "🌟 Complete Suite", icon: "dashboard" },
+            { id: "audio", label: "🌙 Soundscapes & Mixer", icon: "volume_up" },
+            { id: "breath", label: "🌬️ 4-7-8 Breathing", icon: "air" },
+            { id: "tracker", label: "📊 Sleep Duration & Logs", icon: "bedtime" },
+            { id: "planner", label: "⏰ 90-Min Cycles & Hygiene", icon: "alarm" },
+          ].map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              onClick={() => setActiveSectionTab(tab.id as any)}
+              className={`px-3 py-1.5 rounded-xl text-xs font-heading font-bold whitespace-nowrap transition-all cursor-pointer flex items-center gap-1.5 ${
+                activeSectionTab === tab.id
+                  ? "bg-[#006C56] text-white shadow-xs"
+                  : "bg-[#F4FAF7] dark:bg-[#14382F] text-[#5A756C] dark:text-[#A9C5BC] hover:bg-[#E2ECE6] dark:hover:bg-[#1c4439]"
               }`}
             >
-              <div className="flex items-center justify-between">
-                <span className="text-lg">{c.emoji}</span>
-                <span
-                  className={`text-[9.5px] font-heading font-black uppercase px-2 py-0.5 rounded-full ${
-                    c.optimal
-                      ? "bg-[#006C56] text-white"
-                      : "bg-white dark:bg-[#14382F] text-[#5A756C] dark:text-[#A9C5BC] border border-[#E2ECE6] dark:border-[#23483E]"
-                  }`}
-                >
-                  {c.label}
-                </span>
-              </div>
-
-              <div className="mt-2 space-y-0.5">
-                <span className="text-xs text-[#5A756C] dark:text-[#A9C5BC] font-medium block">
-                  Go to bed at:
-                </span>
-                <p className="text-xl font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
-                  {c.bedtimeStr}
-                </p>
-                <p className="text-[10.5px] text-[#006C56] dark:text-[#88F7D6] font-semibold">
-                  {c.count} cycles • {c.hours} duration
-                </p>
-              </div>
-
-              <button
-                type="button"
-                onClick={() => {
-                  setLogBedtime(c.rawTime);
-                  setLogWakeTime(calcWakeTime);
-                  setShowLogModal(true);
-                }}
-                className="mt-3 w-full py-1.5 rounded-xl bg-white dark:bg-[#102F27] hover:bg-[#F4FAF7] dark:hover:bg-[#14382F] border border-[#E2ECE6] dark:border-[#23483E] text-[10.5px] font-heading font-bold text-[#19332A] dark:text-[#F4FAF7] transition-colors cursor-pointer"
-              >
-                Set this Schedule
-              </button>
-            </div>
+              <span>{tab.label}</span>
+            </button>
           ))}
         </div>
       </div>
 
-      {/* 4. Ambient Soundscape Cards (3-Column Balanced Grid) */}
-      <div className="space-y-3">
-        <div className="flex items-center justify-between px-1">
-          <h2 className="text-sm font-heading font-black text-[#19332A] dark:text-[#F4FAF7] uppercase tracking-wider">
-            Ambient Soundscape Tracks
-          </h2>
-          <span className="text-xs text-[#5A756C] dark:text-[#A9C5BC] font-medium">
-            Continuous Web Audio synthesis • Click to play with sleep timer
-          </span>
-        </div>
+      {/* 2. SLEEP DURATION & RECOVERY METRICS BAR */}
+      {(activeSectionTab === "all" || activeSectionTab === "tracker") && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+          {/* Card 1: 7-Day Average Duration */}
+          <div className="bg-white dark:bg-[#102F27] rounded-3xl p-4 sm:p-5 border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs flex flex-col justify-between gap-3">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-heading font-bold uppercase tracking-wider text-[#5A756C] dark:text-[#A9C5BC]">
+                Sleep Duration
+              </span>
+              <span className="px-2 py-0.5 rounded-full text-[9.5px] font-bold bg-[#EAF6F0] dark:bg-[#14382F] text-[#006C56] dark:text-[#88F7D6] border border-[#D2EAE0] dark:border-[#23483E]">
+                Target: 7–9h
+              </span>
+            </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
-          {SOUNDSCAPES.map((sound) => {
-            const isSelected = activeSoundId === sound.id;
-            const isThisPlaying = isSelected && isPlaying;
+            <div>
+              <div className="flex items-baseline gap-2">
+                <span className="text-2xl sm:text-3xl font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
+                  {avgH}h {avgM > 0 ? `${avgM}m` : ""}
+                </span>
+                <span className="text-xs text-[#006C56] dark:text-[#88F7D6] font-semibold">
+                  • {sleepStats.averageCycles} cycles
+                </span>
+              </div>
+              <p className="text-[11px] text-[#5A756C] dark:text-[#A9C5BC] mt-0.5">
+                Last night: {sleepStats.lastSleep.durationFormatted} ({sleepStats.lastSleep.bedtime} - {sleepStats.lastSleep.wakeTime})
+              </p>
+            </div>
 
-            return (
-              <div
-                key={sound.id}
-                onClick={() => handleSelectSound(sound)}
-                className={`p-4 rounded-3xl border transition-all cursor-pointer flex items-center justify-between gap-3 ${
-                  isThisPlaying
-                    ? "bg-[#EAF6F0] dark:bg-[#14382F] border-[#006C56] dark:border-[#00A982] shadow-xs ring-1 ring-[#006C56]/40"
-                    : isSelected
-                    ? "bg-white dark:bg-[#102F27] border-[#006C56]/40 dark:border-[#00A982]/40 shadow-2xs"
-                    : "bg-white dark:bg-[#102F27] border-[#E2ECE6] dark:border-[#23483E] hover:border-[#006C56]/30 dark:hover:border-[#00A982]/30 shadow-2xs"
+            <button
+              type="button"
+              onClick={() => setShowLogModal(true)}
+              className="w-full py-2 rounded-xl bg-[#006C56] hover:bg-[#005241] dark:bg-[#00A982] dark:hover:bg-[#00916F] text-white dark:text-[#071C17] text-xs font-heading font-bold transition-all cursor-pointer shadow-xs flex items-center justify-center gap-1.5"
+            >
+              <span className="material-symbols-outlined text-sm">add_circle</span>
+              <span>Log Sleep Duration</span>
+            </button>
+          </div>
+
+          {/* Card 2: Sleep Quality & Latency */}
+          <div className="bg-white dark:bg-[#102F27] rounded-3xl p-4 sm:p-5 border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs flex flex-col justify-between gap-3">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-heading font-bold uppercase tracking-wider text-[#5A756C] dark:text-[#A9C5BC]">
+                Sleep Quality
+              </span>
+              <span className="px-2 py-0.5 rounded-full text-[9.5px] font-bold bg-[#F4FAF7] dark:bg-[#071C17] text-[#006C56] dark:text-[#88F7D6] border border-[#E2ECE6] dark:border-[#23483E]">
+                {sleepStats.averageQuality} / 5.0
+              </span>
+            </div>
+
+            <div>
+              <div className="flex items-center gap-1 text-amber-500">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <span key={i} className="material-symbols-outlined text-base">
+                    {i < Math.round(sleepStats.averageQuality) ? "star" : "star_border"}
+                  </span>
+                ))}
+                <span className="text-xs font-heading font-black text-[#19332A] dark:text-[#F4FAF7] ml-1">
+                  {Math.round((sleepStats.averageQuality / 5) * 100)}% Restful
+                </span>
+              </div>
+              <p className="text-[11px] text-[#5A756C] dark:text-[#A9C5BC] mt-1">
+                Avg time to fall asleep: <strong>{sleepStats.averageLatencyMinutes} mins</strong>
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleToggleLiveSleep}
+              className={`w-full py-2 rounded-xl text-xs font-heading font-bold transition-all cursor-pointer shadow-xs flex items-center justify-center gap-1.5 ${
+                isLiveSleepActive
+                  ? "bg-[#D97706] hover:bg-[#B45309] text-white animate-pulse"
+                  : "bg-[#F4FAF7] dark:bg-[#14382F] hover:bg-[#E2ECE6] dark:hover:bg-[#1c4439] text-[#006C56] dark:text-[#88F7D6] border border-[#D2EAE0] dark:border-[#23483E]"
+              }`}
+            >
+              <span className="material-symbols-outlined text-sm">
+                {isLiveSleepActive ? "alarm_on" : "bed"}
+              </span>
+              <span>{isLiveSleepActive ? `☀️ Wake Up (${formatLiveSleep(liveSleepElapsedSeconds)})` : "🌙 Start Live Tracker"}</span>
+            </button>
+          </div>
+
+          {/* Card 3: Sleep Debt & Recovery Status */}
+          <div className="bg-white dark:bg-[#102F27] rounded-3xl p-4 sm:p-5 border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs flex flex-col justify-between gap-3">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-heading font-bold uppercase tracking-wider text-[#5A756C] dark:text-[#A9C5BC]">
+                Sleep Debt & Bank
+              </span>
+              <span
+                className={`px-2 py-0.5 rounded-full text-[9.5px] font-bold border ${
+                  sleepStats.sleepDebtHours >= 0
+                    ? "bg-[#EAF6F0] text-[#006C56] dark:bg-[#14382F] dark:text-[#88F7D6] border-[#D2EAE0]"
+                    : "bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-400 border-amber-200"
                 }`}
               >
-                <div className="flex items-center gap-3 min-w-0">
-                  <div
-                    className={`w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 border transition-colors ${
-                      isThisPlaying
-                        ? "bg-[#006C56] text-white border-[#006C56]"
-                        : "bg-[#F4FAF7] dark:bg-[#071C17] text-[#006C56] dark:text-[#88F7D6] border-[#D2EAE0] dark:border-[#23483E]"
-                    }`}
-                  >
-                    <span className="material-symbols-outlined text-xl">{sound.icon}</span>
+                {sleepStats.sleepDebtHours >= 0 ? "Well-Rested" : "Deficit"}
+              </span>
+            </div>
+
+            <div>
+              <div className="flex items-baseline gap-1.5">
+                <span className="text-2xl sm:text-3xl font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
+                  {sleepStats.sleepDebtHours >= 0 ? `+${sleepStats.sleepDebtHours}h` : `${sleepStats.sleepDebtHours}h`}
+                </span>
+                <span className="text-xs text-[#5A756C] dark:text-[#A9C5BC]">this week</span>
+              </div>
+              <p className="text-[11px] text-[#5A756C] dark:text-[#A9C5BC] mt-0.5">
+                Sleep Efficiency: <strong>{sleepStats.averageEfficiency}%</strong> of time in bed asleep
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setShowHistoryDrawer(!showHistoryDrawer)}
+              className="w-full py-2 rounded-xl bg-[#F4FAF7] dark:bg-[#14382F] hover:bg-[#E2ECE6] dark:hover:bg-[#1c4439] text-[#19332A] dark:text-[#F4FAF7] text-xs font-heading font-bold border border-[#E2ECE6] dark:border-[#23483E] transition-colors cursor-pointer flex items-center justify-center gap-1.5"
+            >
+              <span className="material-symbols-outlined text-sm">history</span>
+              <span>{showHistoryDrawer ? "Hide History" : "View Sleep History"}</span>
+            </button>
+          </div>
+
+          {/* Card 4: 7-Day Trend Chart */}
+          <div className="bg-white dark:bg-[#102F27] rounded-3xl p-4 sm:p-5 border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs flex flex-col justify-between gap-2">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-heading font-bold uppercase tracking-wider text-[#5A756C] dark:text-[#A9C5BC]">
+                7-Night Trend
+              </span>
+              <span className="text-[9.5px] text-[#5A756C] dark:text-[#A9C5BC] font-semibold">
+                Goal: 8.0h
+              </span>
+            </div>
+
+            <div className="flex items-end justify-between gap-1.5 h-14 pt-1 px-1">
+              {sleepStats.weeklyTrend.map((item, idx) => {
+                const hours = (item.minutes / 60).toFixed(1);
+                const heightPercent = Math.min(100, Math.max(22, Math.round((item.minutes / 600) * 100)));
+                const isTargetMet = item.minutes >= 420;
+
+                return (
+                  <div key={idx} className="flex-1 flex flex-col items-center gap-1 h-full justify-end group relative">
+                    <div className="absolute -top-7 hidden group-hover:flex items-center px-1.5 py-0.5 rounded-lg bg-[#19332A] text-white text-[9px] font-mono whitespace-nowrap z-20 pointer-events-none shadow-md">
+                      {hours}h • {item.day}
+                    </div>
+
+                    <div
+                      className={`w-full rounded-t-md transition-all ${
+                        isTargetMet
+                          ? "bg-[#006C56] dark:bg-[#00A982] group-hover:opacity-85"
+                          : "bg-[#D97706]/75 group-hover:bg-[#D97706]"
+                      }`}
+                      style={{ height: `${heightPercent}%` }}
+                    />
+                    <span className="text-[9px] font-heading font-bold text-[#5A756C] dark:text-[#A9C5BC]">
+                      {item.day[0]}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="flex items-center justify-between text-[9.5px] text-[#5A756C] dark:text-[#A9C5BC] pt-1 border-t border-[#E2ECE6] dark:border-[#23483E]">
+              <span className="flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#006C56] dark:bg-[#00A982]" /> 7h+ Optimal
+              </span>
+              <span className="flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#D97706]" /> &lt;7h
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Sleep History Logs Drawer / Table */}
+      {showHistoryDrawer && (
+        <div className="bg-white dark:bg-[#102F27] rounded-3xl p-5 border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs space-y-3 animate-in fade-in duration-200">
+          <div className="flex items-center justify-between">
+            <h3 className="text-xs font-heading font-black text-[#19332A] dark:text-[#F4FAF7] uppercase tracking-wider flex items-center gap-2">
+              <span className="material-symbols-outlined text-base text-[#006C56] dark:text-[#88F7D6]">
+                history_toggle_off
+              </span>
+              <span>Recent Sleep Duration Logs ({sleepStats.logs.length})</span>
+            </h3>
+            <button
+              type="button"
+              onClick={() => setShowHistoryDrawer(false)}
+              className="text-xs text-[#5A756C] dark:text-[#A9C5BC] hover:text-[#19332A] cursor-pointer"
+            >
+              Close
+            </button>
+          </div>
+
+          {sleepStats.logs.length === 0 ? (
+            <p className="text-xs text-[#5A756C] dark:text-[#A9C5BC] py-4 text-center">
+              No custom sleep logs yet. Click &ldquo;Log Sleep Duration&rdquo; to add your first night!
+            </p>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs">
+                <thead>
+                  <tr className="border-b border-[#E2ECE6] dark:border-[#23483E] text-[#5A756C] dark:text-[#A9C5BC] text-[10.5px]">
+                    <th className="py-2 font-bold">DATE</th>
+                    <th className="py-2 font-bold">BEDTIME - WAKE</th>
+                    <th className="py-2 font-bold">DURATION</th>
+                    <th className="py-2 font-bold">CYCLES</th>
+                    <th className="py-2 font-bold">QUALITY</th>
+                    <th className="py-2 font-bold">NOTES</th>
+                    <th className="py-2 text-right font-bold">ACTION</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[#E2ECE6] dark:divide-[#23483E]">
+                  {sleepStats.logs.map((log) => (
+                    <tr key={log.id} className="text-[#19332A] dark:text-[#F4FAF7]">
+                      <td className="py-2.5 font-medium">
+                        {new Date(log.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                      </td>
+                      <td className="py-2.5 font-mono text-[11px] text-[#5A756C] dark:text-[#A9C5BC]">
+                        {log.bedtime} - {log.wakeTime}
+                      </td>
+                      <td className="py-2.5 font-bold text-[#006C56] dark:text-[#88F7D6]">
+                        {log.durationFormatted}
+                      </td>
+                      <td className="py-2.5 font-semibold text-xs">
+                        {log.cycles}
+                      </td>
+                      <td className="py-2.5">
+                        <span className="text-amber-500">{"★".repeat(log.quality)}</span>
+                      </td>
+                      <td className="py-2.5 text-[11px] text-[#5A756C] dark:text-[#A9C5BC] max-w-[200px] truncate">
+                        {log.notes || "—"}
+                      </td>
+                      <td className="py-2.5 text-right">
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteSleepLog(log.id)}
+                          className="px-2 py-1 rounded-lg text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 text-[11px] font-bold cursor-pointer transition-colors"
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* 3. SOUNDSCAPES & MULTI-TRACK MIXER SECTION */}
+      {(activeSectionTab === "all" || activeSectionTab === "audio") && (
+        <div className="bg-white dark:bg-[#102F27] rounded-3xl p-5 sm:p-6 border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs space-y-4 transition-colors">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-[#E2ECE6] dark:border-[#23483E]">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="material-symbols-outlined text-[#006C56] dark:text-[#88F7D6] text-xl">
+                  headphones
+                </span>
+                <h2 className="text-sm font-heading font-black text-[#19332A] dark:text-[#F4FAF7] uppercase tracking-wider">
+                  Ambient Sleep Soundscapes &amp; Mixer
+                </h2>
+              </div>
+              <p className="text-[11px] text-[#5A756C] dark:text-[#A9C5BC] mt-0.5">
+                Listen to single restorative tracks or switch on Layer Mode to blend rain, crickets, and delta waves.
+              </p>
+            </div>
+
+            {/* Mixer Layer Mode Toggle */}
+            <div className="flex items-center gap-2 self-start sm:self-auto">
+              <span className="text-xs font-heading font-bold text-[#19332A] dark:text-[#F4FAF7]">
+                Layer Mode:
+              </span>
+              <button
+                type="button"
+                onClick={handleToggleMixerMode}
+                className={`px-3 py-1.5 rounded-xl text-xs font-heading font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                  isMixerMode
+                    ? "bg-[#006C56] text-white shadow-xs"
+                    : "bg-[#F4FAF7] dark:bg-[#14382F] text-[#5A756C] dark:text-[#A9C5BC] border border-[#E2ECE6] dark:border-[#23483E]"
+                }`}
+              >
+                <span className="material-symbols-outlined text-sm">tune</span>
+                <span>{isMixerMode ? "Multi-Track Mixer Active" : "Enable Multi-Track Mixer"}</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Sound Cards Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
+            {SOUNDSCAPES.map((sound) => {
+              const isSelected = activeSoundId === sound.id;
+              const isThisPlaying = !isMixerMode && isSelected && isPlaying;
+              const isMixerActive = isMixerMode && mixerTracks[sound.id]?.enabled;
+              const mixerVol = mixerTracks[sound.id]?.volume ?? 0.5;
+
+              return (
+                <div
+                  key={sound.id}
+                  onClick={() => {
+                    if (!isMixerMode) handleSelectSound(sound);
+                  }}
+                  className={`p-4 rounded-3xl border transition-all ${
+                    !isMixerMode ? "cursor-pointer" : ""
+                  } ${
+                    isThisPlaying || isMixerActive
+                      ? "bg-[#EAF6F0] dark:bg-[#14382F] border-[#006C56] dark:border-[#00A982] shadow-xs ring-1 ring-[#006C56]/40"
+                      : isSelected
+                      ? "bg-white dark:bg-[#102F27] border-[#006C56]/40 dark:border-[#00A982]/40 shadow-2xs"
+                      : "bg-white dark:bg-[#102F27] border-[#E2ECE6] dark:border-[#23483E] hover:border-[#006C56]/30 dark:hover:border-[#00A982]/30 shadow-2xs"
+                  }`}
+                >
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div
+                        className={`w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 border transition-colors ${
+                          isThisPlaying || isMixerActive
+                            ? "bg-[#006C56] text-white border-[#006C56]"
+                            : "bg-[#F4FAF7] dark:bg-[#071C17] text-[#006C56] dark:text-[#88F7D6] border-[#D2EAE0] dark:border-[#23483E]"
+                        }`}
+                      >
+                        <span className="material-symbols-outlined text-xl">{sound.icon}</span>
+                      </div>
+
+                      <div className="min-w-0 space-y-0.5">
+                        <div className="flex items-center gap-1.5">
+                          <h3 className="font-heading font-bold text-xs text-[#19332A] dark:text-[#F4FAF7] truncate">
+                            {sound.title}
+                          </h3>
+                        </div>
+                        <p className="text-[11px] text-[#5A756C] dark:text-[#A9C5BC] line-clamp-1 leading-snug">
+                          {sound.desc}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Action in Card: Play/Pause in single mode, Checkbox in mixer mode */}
+                    {isMixerMode ? (
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleToggleMixerTrack(sound.id);
+                        }}
+                        className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all cursor-pointer shrink-0 border ${
+                          isMixerActive
+                            ? "bg-[#006C56] text-white border-[#006C56]"
+                            : "bg-[#F4FAF7] dark:bg-[#071C17] text-[#5A756C] dark:text-[#A9C5BC] border-[#E2ECE6] dark:border-[#23483E]"
+                        }`}
+                        title={isMixerActive ? "Disable layer" : "Enable layer"}
+                      >
+                        <span className="material-symbols-outlined text-base">
+                          {isMixerActive ? "check" : "add"}
+                        </span>
+                      </button>
+                    ) : (
+                      <div
+                        className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 transition-all ${
+                          isThisPlaying
+                            ? "bg-[#006C56] text-white shadow-xs"
+                            : "bg-[#F4FAF7] dark:bg-[#071C17] text-[#4F685F] dark:text-[#A9C5BC] border border-[#E2ECE6] dark:border-[#23483E]"
+                        }`}
+                      >
+                        <span className="material-symbols-outlined text-lg">
+                          {isThisPlaying ? "pause" : "play_arrow"}
+                        </span>
+                      </div>
+                    )}
                   </div>
 
-                  <div className="min-w-0 space-y-0.5">
-                    <div className="flex items-center gap-1.5">
-                      <h3 className="font-heading font-bold text-xs text-[#19332A] dark:text-[#F4FAF7] truncate">
-                        {sound.title}
-                      </h3>
-                      <span className="px-1.5 py-0.5 rounded-full text-[9px] font-semibold bg-[#F4FAF7] dark:bg-[#071C17] text-[#5A756C] dark:text-[#A9C5BC] shrink-0 border border-[#E2ECE6] dark:border-[#23483E]">
-                        {sound.duration}
+                  {/* Mixer mode individual volume slider */}
+                  {isMixerMode && (
+                    <div className="mt-3 pt-2.5 border-t border-[#E2ECE6] dark:border-[#23483E] flex items-center justify-between gap-2">
+                      <span className="text-[10px] text-[#5A756C] dark:text-[#A9C5BC] font-semibold">
+                        Layer Vol: {Math.round(mixerVol * 100)}%
                       </span>
+                      <input
+                        type="range"
+                        min="0"
+                        max="1"
+                        step="0.05"
+                        value={mixerVol}
+                        disabled={!isMixerActive}
+                        onChange={(e) => handleMixerVolumeChange(sound.id, parseFloat(e.target.value))}
+                        className="w-24 sm:w-32 accent-[#006C56] dark:accent-[#00A982] cursor-pointer h-1 disabled:opacity-30"
+                      />
                     </div>
-                    <p className="text-[11px] text-[#5A756C] dark:text-[#A9C5BC] line-clamp-1 leading-snug">
-                      {sound.desc}
-                    </p>
-                  </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* 4. ACTIVE 4-7-8 BEDTIME BREATHWORK TRAINER */}
+      {(activeSectionTab === "all" || activeSectionTab === "breath") && (
+        <div className="bg-white dark:bg-[#102F27] rounded-3xl p-5 sm:p-6 border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs space-y-5 transition-colors">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-[#E2ECE6] dark:border-[#23483E]">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="material-symbols-outlined text-[#006C56] dark:text-[#88F7D6] text-xl">
+                  air
+                </span>
+                <h2 className="text-sm font-heading font-black text-[#19332A] dark:text-[#F4FAF7] uppercase tracking-wider">
+                  The 4-7-8 Bedtime Breathwork Trainer
+                </h2>
+              </div>
+              <p className="text-[11px] text-[#5A756C] dark:text-[#A9C5BC] mt-0.5">
+                Science-backed natural nervous system tranquilizer: 4s inhale, 7s hold, 8s exhale.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => setIsBreathChimeEnabled(!isBreathChimeEnabled)}
+                className={`text-[11px] font-heading font-bold flex items-center gap-1 cursor-pointer transition-colors ${
+                  isBreathChimeEnabled ? "text-[#006C56] dark:text-[#88F7D6]" : "text-[#5A756C] dark:text-[#A9C5BC]"
+                }`}
+              >
+                <span className="material-symbols-outlined text-sm">
+                  {isBreathChimeEnabled ? "notifications_active" : "notifications_off"}
+                </span>
+                <span>{isBreathChimeEnabled ? "Chime On" : "Chime Muted"}</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Interactive Breathing Visualizer Center */}
+          <div className="flex flex-col md:flex-row items-center justify-around gap-6 py-2">
+            {/* Pulsating Visual Guide */}
+            <div className="relative w-48 h-48 sm:w-56 sm:h-56 flex items-center justify-center shrink-0">
+              <div
+                className={`absolute inset-0 rounded-full transition-all duration-1000 ${
+                  breathPhase === "INHALE"
+                    ? "bg-[#88F7D6]/35 dark:bg-[#00A982]/25 scale-125 blur-xl"
+                    : breathPhase === "HOLD"
+                    ? "bg-amber-400/30 dark:bg-amber-500/20 scale-115 blur-lg"
+                    : "bg-[#006C56]/20 dark:bg-[#00A982]/15 scale-90 blur-md"
+                }`}
+              />
+
+              <div
+                className={`z-10 flex flex-col items-center justify-center w-36 h-36 rounded-full bg-white dark:bg-[#14382F] border-2 shadow-md transition-all duration-700 ${
+                  breathPhase === "INHALE"
+                    ? "border-[#006C56] dark:border-[#88F7D6] scale-110"
+                    : breathPhase === "HOLD"
+                    ? "border-amber-500 scale-105"
+                    : "border-[#006C56]/40 scale-95"
+                }`}
+              >
+                <span
+                  className={`text-xs font-heading font-black tracking-widest uppercase transition-colors ${
+                    breathPhase === "INHALE"
+                      ? "text-[#006C56] dark:text-[#88F7D6]"
+                      : breathPhase === "HOLD"
+                      ? "text-amber-500 dark:text-amber-400"
+                      : "text-[#19332A] dark:text-[#F4FAF7]"
+                  }`}
+                >
+                  {isBreathingActive ? breathPhase : "READY"}
+                </span>
+
+                <span className="text-3xl font-heading font-black text-[#19332A] dark:text-[#F4FAF7] mt-0.5">
+                  {isBreathingActive ? breathSecondsLeft : "4-7-8"}
+                </span>
+
+                <span className="text-[10px] text-[#5A756C] dark:text-[#A9C5BC] font-medium mt-0.5">
+                  Cycle {breathCycleCount} of 4
+                </span>
+              </div>
+            </div>
+
+            {/* Breathing Controls & Instruction Cards */}
+            <div className="flex-1 max-w-md space-y-4">
+              <div className="grid grid-cols-3 gap-2.5 text-center">
+                <div
+                  className={`p-3 rounded-2xl border transition-all ${
+                    isBreathingActive && breathPhase === "INHALE"
+                      ? "bg-[#EAF6F0] dark:bg-[#14382F] border-[#006C56] ring-1 ring-[#006C56]"
+                      : "bg-[#F4FAF7] dark:bg-[#071C17] border-[#E2ECE6] dark:border-[#23483E]"
+                  }`}
+                >
+                  <span className="text-xs font-mono font-bold text-[#006C56] dark:text-[#88F7D6] block">
+                    4 SEC
+                  </span>
+                  <span className="text-xs font-heading font-bold text-[#19332A] dark:text-[#F4FAF7]">
+                    Inhale
+                  </span>
+                  <span className="text-[9.5px] text-[#5A756C] dark:text-[#A9C5BC] block mt-0.5">
+                    Quiet nose
+                  </span>
                 </div>
 
                 <div
-                  className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 transition-all ${
-                    isThisPlaying
-                      ? "bg-[#006C56] text-white shadow-xs"
-                      : "bg-[#F4FAF7] dark:bg-[#071C17] text-[#4F685F] dark:text-[#A9C5BC] border border-[#E2ECE6] dark:border-[#23483E]"
+                  className={`p-3 rounded-2xl border transition-all ${
+                    isBreathingActive && breathPhase === "HOLD"
+                      ? "bg-amber-50 dark:bg-amber-950/30 border-amber-500 ring-1 ring-amber-500"
+                      : "bg-[#F4FAF7] dark:bg-[#071C17] border-[#E2ECE6] dark:border-[#23483E]"
                   }`}
                 >
-                  <span className="material-symbols-outlined text-lg">
-                    {isThisPlaying ? "pause" : "play_arrow"}
+                  <span className="text-xs font-mono font-bold text-[#D97706] dark:text-[#FBBF24] block">
+                    7 SEC
+                  </span>
+                  <span className="text-xs font-heading font-bold text-[#19332A] dark:text-[#F4FAF7]">
+                    Hold
+                  </span>
+                  <span className="text-[9.5px] text-[#5A756C] dark:text-[#A9C5BC] block mt-0.5">
+                    Calm retain
+                  </span>
+                </div>
+
+                <div
+                  className={`p-3 rounded-2xl border transition-all ${
+                    isBreathingActive && breathPhase === "EXHALE"
+                      ? "bg-[#EAF6F0] dark:bg-[#14382F] border-[#006C56] ring-1 ring-[#006C56]"
+                      : "bg-[#F4FAF7] dark:bg-[#071C17] border-[#E2ECE6] dark:border-[#23483E]"
+                  }`}
+                >
+                  <span className="text-xs font-mono font-bold text-[#006C56] dark:text-[#88F7D6] block">
+                    8 SEC
+                  </span>
+                  <span className="text-xs font-heading font-bold text-[#19332A] dark:text-[#F4FAF7]">
+                    Exhale
+                  </span>
+                  <span className="text-[9.5px] text-[#5A756C] dark:text-[#A9C5BC] block mt-0.5">
+                    Gentle whoosh
                   </span>
                 </div>
               </div>
-            );
-          })}
-        </div>
-      </div>
 
-      {/* 5. Bottom Two-Column Balanced Layout: Evening Reflection + 4-7-8 Technique */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 items-start">
-        {/* Evening Wind-Down Journal Note */}
+              {/* Action Buttons */}
+              <div className="flex items-center gap-2.5">
+                {!isBreathingActive ? (
+                  <button
+                    type="button"
+                    onClick={handleStartBreath}
+                    className="flex-1 py-2.5 rounded-2xl bg-[#006C56] hover:bg-[#005241] dark:bg-[#00A982] dark:hover:bg-[#00916F] text-white dark:text-[#071C17] text-xs font-heading font-black transition-all cursor-pointer shadow-xs flex items-center justify-center gap-1.5"
+                  >
+                    <span className="material-symbols-outlined text-base">play_arrow</span>
+                    <span>Start 4-7-8 Breathing Guide</span>
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={handlePauseBreath}
+                    className="flex-1 py-2.5 rounded-2xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-heading font-black transition-all cursor-pointer shadow-xs flex items-center justify-center gap-1.5"
+                  >
+                    <span className="material-symbols-outlined text-base">pause</span>
+                    <span>Pause Exercise</span>
+                  </button>
+                )}
+
+                <button
+                  type="button"
+                  onClick={handleResetBreath}
+                  className="px-3.5 py-2.5 rounded-2xl bg-[#F4FAF7] dark:bg-[#14382F] hover:bg-[#E2ECE6] dark:hover:bg-[#1c4439] text-[#5A756C] dark:text-[#A9C5BC] text-xs font-heading font-bold border border-[#E2ECE6] dark:border-[#23483E] transition-colors cursor-pointer"
+                  title="Reset Counter"
+                >
+                  <span className="material-symbols-outlined text-base">replay</span>
+                </button>
+              </div>
+
+              <p className="text-[11px] text-[#5A756C] dark:text-[#A9C5BC] leading-relaxed">
+                💡 Repeat 4 complete cycles as your head touches the pillow. The extended 8-second exhale stimulates the vagus nerve and triggers rapid sleep onset.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 5. 90-MINUTE SLEEP CYCLE PLANNER & BEDTIME HYGIENE CHECKLIST */}
+      {(activeSectionTab === "all" || activeSectionTab === "planner") && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 items-start">
+          {/* Smart 90-Min Sleep Cycle Calculator */}
+          <div className="bg-white dark:bg-[#102F27] rounded-3xl p-5 sm:p-6 border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs space-y-4 transition-colors">
+            <div className="flex items-center justify-between pb-2 border-b border-[#E2ECE6] dark:border-[#23483E]">
+              <div className="flex items-center gap-2">
+                <span className="material-symbols-outlined text-[#006C56] dark:text-[#88F7D6] text-xl">
+                  alarm
+                </span>
+                <h3 className="text-xs font-heading font-black text-[#19332A] dark:text-[#F4FAF7] uppercase tracking-wider">
+                  90-Minute Sleep Cycle Calculator
+                </h3>
+              </div>
+
+              {/* Mode Toggle */}
+              <div className="flex items-center gap-1 p-1 rounded-xl bg-[#F4FAF7] dark:bg-[#071C17] border border-[#E2ECE6] dark:border-[#23483E]">
+                <button
+                  type="button"
+                  onClick={() => setCalcMode("wake")}
+                  className={`px-2 py-1 rounded-lg text-[10px] font-heading font-bold transition-all cursor-pointer ${
+                    calcMode === "wake"
+                      ? "bg-[#006C56] text-white"
+                      : "text-[#5A756C] dark:text-[#A9C5BC]"
+                  }`}
+                >
+                  Wake Time
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setCalcMode("now")}
+                  className={`px-2 py-1 rounded-lg text-[10px] font-heading font-bold transition-all cursor-pointer ${
+                    calcMode === "now"
+                      ? "bg-[#006C56] text-white"
+                      : "text-[#5A756C] dark:text-[#A9C5BC]"
+                  }`}
+                >
+                  Sleep Now
+                </button>
+              </div>
+            </div>
+
+            {calcMode === "wake" && (
+              <div className="flex items-center justify-between bg-[#F4FAF7] dark:bg-[#071C17] p-2.5 px-3 rounded-2xl border border-[#E2ECE6] dark:border-[#23483E]">
+                <span className="text-xs font-heading font-bold text-[#19332A] dark:text-[#F4FAF7]">
+                  Target Wake-Up Time:
+                </span>
+                <input
+                  type="time"
+                  value={calcWakeTime}
+                  onChange={(e) => setCalcWakeTime(e.target.value)}
+                  className="px-2.5 py-1 rounded-xl bg-white dark:bg-[#102F27] border border-[#E2ECE6] dark:border-[#23483E] text-xs font-mono font-bold text-[#006C56] dark:text-[#88F7D6] focus:outline-none focus:ring-1 focus:ring-[#006C56] cursor-pointer"
+                />
+              </div>
+            )}
+
+            {/* Calculated Cycle Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+              {getCycleRecommendations().map((c) => (
+                <div
+                  key={c.count}
+                  className={`p-3.5 rounded-2xl border transition-all ${
+                    c.optimal
+                      ? "bg-[#EAF6F0] dark:bg-[#14382F] border-[#006C56] dark:border-[#00A982] ring-1 ring-[#006C56]/30 shadow-xs"
+                      : "bg-[#F4FAF7] dark:bg-[#071C17] border-[#E2ECE6] dark:border-[#23483E]"
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <span>{c.emoji}</span>
+                    <span
+                      className={`text-[9px] font-heading font-black uppercase px-2 py-0.5 rounded-full ${
+                        c.optimal
+                          ? "bg-[#006C56] text-white"
+                          : "bg-white dark:bg-[#14382F] text-[#5A756C] dark:text-[#A9C5BC] border border-[#E2ECE6] dark:border-[#23483E]"
+                      }`}
+                    >
+                      {c.label}
+                    </span>
+                  </div>
+
+                  <div className="mt-2 space-y-0.5">
+                    <span className="text-[10px] text-[#5A756C] dark:text-[#A9C5BC] font-medium block">
+                      {c.timeLabel}
+                    </span>
+                    <p className="text-lg font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
+                      {c.displayTime}
+                    </p>
+                    <p className="text-[10px] text-[#006C56] dark:text-[#88F7D6] font-semibold">
+                      {c.count} cycles ({c.hours})
+                    </p>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setLogBedtime(c.rawBedTime);
+                      setLogWakeTime(c.rawWakeTime);
+                      setShowLogModal(true);
+                    }}
+                    className="mt-2.5 w-full py-1.5 rounded-xl bg-white dark:bg-[#102F27] hover:bg-[#F4FAF7] dark:hover:bg-[#14382F] border border-[#E2ECE6] dark:border-[#23483E] text-[10px] font-heading font-bold text-[#19332A] dark:text-[#F4FAF7] transition-colors cursor-pointer text-center"
+                  >
+                    Set Schedule
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Bedtime Sleep Hygiene Routine Checklist */}
+          <div className="bg-white dark:bg-[#102F27] rounded-3xl p-5 sm:p-6 border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs space-y-3.5 transition-colors">
+            <div className="flex items-center justify-between pb-2 border-b border-[#E2ECE6] dark:border-[#23483E]">
+              <div className="flex items-center gap-2">
+                <span className="material-symbols-outlined text-[#006C56] dark:text-[#88F7D6] text-xl">
+                  task_alt
+                </span>
+                <h3 className="text-xs font-heading font-black text-[#19332A] dark:text-[#F4FAF7] uppercase tracking-wider">
+                  Bedtime Sleep Hygiene Checklist
+                </h3>
+              </div>
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#EAF6F0] dark:bg-[#14382F] text-[#006C56] dark:text-[#88F7D6]">
+                {completedChecklistCount}/{checklist.length} Completed
+              </span>
+            </div>
+
+            {/* Sleep Readiness Progress Bar */}
+            <div className="space-y-1">
+              <div className="flex items-center justify-between text-[10.5px]">
+                <span className="text-[#5A756C] dark:text-[#A9C5BC] font-medium">Sleep Readiness Score:</span>
+                <span className="font-heading font-black text-[#006C56] dark:text-[#88F7D6]">
+                  {sleepReadinessPercent}% {sleepReadinessPercent === 100 ? "• Optimal Rest" : ""}
+                </span>
+              </div>
+              <div className="w-full h-2 rounded-full bg-[#E2ECE6] dark:bg-[#23483E] overflow-hidden">
+                <div
+                  className="h-full bg-gradient-to-r from-[#006C56] to-[#00A982] rounded-full transition-all duration-300"
+                  style={{ width: `${sleepReadinessPercent}%` }}
+                />
+              </div>
+            </div>
+
+            {/* Checklist items */}
+            <div className="space-y-2 pt-1">
+              {checklist.map((item) => (
+                <div
+                  key={item.id}
+                  onClick={() => handleToggleChecklist(item.id)}
+                  className={`flex items-center gap-2.5 p-2.5 rounded-2xl border transition-all cursor-pointer ${
+                    item.checked
+                      ? "bg-[#EAF6F0] dark:bg-[#14382F] border-[#006C56]/40 text-[#19332A] dark:text-[#F4FAF7]"
+                      : "bg-[#F4FAF7] dark:bg-[#071C17] border-[#E2ECE6] dark:border-[#23483E] text-[#5A756C] dark:text-[#A9C5BC] hover:border-[#006C56]/30"
+                  }`}
+                >
+                  <div
+                    className={`w-5 h-5 rounded-lg flex items-center justify-center shrink-0 border transition-colors ${
+                      item.checked
+                        ? "bg-[#006C56] text-white border-[#006C56]"
+                        : "bg-white dark:bg-[#102F27] border-[#D2EAE0] dark:border-[#23483E]"
+                    }`}
+                  >
+                    {item.checked && <span className="material-symbols-outlined text-sm">check</span>}
+                  </div>
+                  <span className={`text-xs ${item.checked ? "line-through opacity-80" : "font-medium"}`}>
+                    {item.label}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 6. EVENING WIND-DOWN REFLECTION JOURNAL NOTE */}
+      {(activeSectionTab === "all" || activeSectionTab === "breath") && (
         <div className="bg-white dark:bg-[#102F27] rounded-3xl p-5 sm:p-6 border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs space-y-3 transition-colors">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-xl bg-[#EAF6F0] dark:bg-[#14382F] text-[#006C56] dark:text-[#88F7D6] flex items-center justify-center">
@@ -1085,7 +1860,7 @@ export default function SleepSupportView() {
               </span>
             ) : (
               <span className="text-[10px] text-[#5A756C] dark:text-[#A9C5BC]">
-                🔒 Private & encrypted
+                🔒 Private &amp; encrypted
               </span>
             )}
 
@@ -1093,77 +1868,15 @@ export default function SleepSupportView() {
               type="button"
               onClick={handleSaveReflection}
               disabled={isSavingNote || !reflectionText.trim()}
-              className="px-3.5 py-1.5 rounded-full bg-[#006C56] hover:bg-[#005241] dark:bg-[#00A982] dark:hover:bg-[#00916F] disabled:opacity-40 text-white dark:text-[#071C17] text-xs font-heading font-bold transition-all cursor-pointer shadow-xs"
+              className="px-4 py-2 rounded-xl bg-[#006C56] hover:bg-[#005241] dark:bg-[#00A982] dark:hover:bg-[#00916F] disabled:opacity-40 text-white dark:text-[#071C17] text-xs font-heading font-bold transition-all cursor-pointer shadow-xs"
             >
               {isSavingNote ? "Saving..." : "Save Reflection"}
             </button>
           </div>
         </div>
+      )}
 
-        {/* 4-7-8 Sleep Breathing Technique Card */}
-        <div className="bg-white dark:bg-[#102F27] rounded-3xl p-5 sm:p-6 border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs space-y-3 transition-colors">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-[#EAF6F0] dark:bg-[#14382F] text-[#006C56] dark:text-[#88F7D6] flex items-center justify-center">
-              <span className="material-symbols-outlined text-base">air</span>
-            </div>
-            <div>
-              <h3 className="text-xs font-heading font-black text-[#19332A] dark:text-[#F4FAF7] uppercase tracking-wider">
-                The 4-7-8 Bedtime Breath
-              </h3>
-              <p className="text-[11px] text-[#5A756C] dark:text-[#A9C5BC]">
-                Natural nervous system tranquilizer
-              </p>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-3 gap-2 text-center">
-            <div className="p-2.5 rounded-2xl bg-[#F4FAF7] dark:bg-[#071C17] border border-[#E2ECE6] dark:border-[#23483E]">
-              <span className="text-xs font-mono font-bold text-[#006C56] dark:text-[#88F7D6] block">
-                4 SEC
-              </span>
-              <span className="text-[10.5px] font-heading font-bold text-[#19332A] dark:text-[#F4FAF7]">
-                Inhale
-              </span>
-              <span className="text-[9px] text-[#5A756C] dark:text-[#A9C5BC] block mt-0.5">
-                Quiet nose
-              </span>
-            </div>
-
-            <div className="p-2.5 rounded-2xl bg-[#F4FAF7] dark:bg-[#071C17] border border-[#E2ECE6] dark:border-[#23483E]">
-              <span className="text-xs font-mono font-bold text-[#D97706] dark:text-[#FBBF24] block">
-                7 SEC
-              </span>
-              <span className="text-[10.5px] font-heading font-bold text-[#19332A] dark:text-[#F4FAF7]">
-                Hold
-              </span>
-              <span className="text-[9px] text-[#5A756C] dark:text-[#A9C5BC] block mt-0.5">
-                Retain breath
-              </span>
-            </div>
-
-            <div className="p-2.5 rounded-2xl bg-[#F4FAF7] dark:bg-[#071C17] border border-[#E2ECE6] dark:border-[#23483E]">
-              <span className="text-xs font-mono font-bold text-[#006C56] dark:text-[#88F7D6] block">
-                8 SEC
-              </span>
-              <span className="text-[10.5px] font-heading font-bold text-[#19332A] dark:text-[#F4FAF7]">
-                Exhale
-              </span>
-              <span className="text-[9px] text-[#5A756C] dark:text-[#A9C5BC] block mt-0.5">
-                Slow mouth
-              </span>
-            </div>
-          </div>
-
-          <div
-            className="p-2.5 rounded-2xl bg-[#EAF6F0] dark:bg-[#14382F] text-[11px] text-[#006C56] dark:text-[#88F7D6] leading-snug border border-[#D2EAE0] dark:border-[#23483E]"
-            suppressHydrationWarning
-          >
-            💡 <strong suppressHydrationWarning>Sleep Tip for {userName}:</strong> Repeat 4 cycles as your head hits the pillow to lower heart rate and switch on parasympathetic recovery.
-          </div>
-        </div>
-      </div>
-
-      {/* 6. LOG SLEEP DURATION MODAL */}
+      {/* 7. LOG SLEEP DURATION MODAL */}
       {showLogModal && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
           <div className="bg-white dark:bg-[#102F27] rounded-3xl border border-[#E2ECE6] dark:border-[#23483E] shadow-2xl max-w-lg w-full p-6 space-y-4 animate-in fade-in zoom-in-95 duration-200">
@@ -1173,7 +1886,7 @@ export default function SleepSupportView() {
                   bedtime
                 </span>
                 <h3 className="text-sm font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
-                  Log Sleep Duration
+                  Log Sleep Duration &amp; Quality
                 </h3>
               </div>
               <button
@@ -1212,23 +1925,58 @@ export default function SleepSupportView() {
               </div>
             </div>
 
-            {/* Auto Calculated Duration Highlight Banner */}
-            <div className="p-3 rounded-2xl bg-[#EAF6F0] dark:bg-[#14382F] border border-[#D2EAE0] dark:border-[#23483E] flex items-center justify-between">
+            {/* Auto Calculated Duration & Efficiency Highlight Banner */}
+            <div className="p-3.5 rounded-2xl bg-[#EAF6F0] dark:bg-[#14382F] border border-[#D2EAE0] dark:border-[#23483E] flex items-center justify-between">
               <div>
                 <span className="text-[10px] font-heading font-bold text-[#006C56] dark:text-[#88F7D6] uppercase tracking-wider block">
-                  Calculated Duration
+                  Total Sleep Duration
                 </span>
                 <span className="text-xl font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
                   {currentDurationCalc.hours}h {currentDurationCalc.mins > 0 ? `${currentDurationCalc.mins}m` : ""}
                 </span>
               </div>
-              <div className="text-right">
+              <div className="text-right space-y-0.5">
                 <span className="text-xs font-heading font-bold text-[#006C56] dark:text-[#88F7D6] block">
                   {currentDurationCalc.cycles} Sleep Cycles
                 </span>
-                <span className="text-[10px] text-[#5A756C] dark:text-[#A9C5BC]">
-                  (approx 90 min/cycle)
+                <span className="text-[10px] text-[#5A756C] dark:text-[#A9C5BC] block">
+                  Efficiency: <strong>{currentDurationCalc.efficiency}%</strong>
                 </span>
+              </div>
+            </div>
+
+            {/* Latency & Night Awakenings */}
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1">
+                <label className="text-[11px] font-heading font-bold text-[#5A756C] dark:text-[#A9C5BC]">
+                  Time to Fall Asleep
+                </label>
+                <select
+                  value={logLatency}
+                  onChange={(e) => setLogLatency(Number(e.target.value))}
+                  className="w-full p-2 rounded-xl bg-[#F4FAF7] dark:bg-[#071C17] border border-[#E2ECE6] dark:border-[#23483E] text-xs text-[#19332A] dark:text-[#F4FAF7] focus:outline-none focus:ring-1 focus:ring-[#006C56]"
+                >
+                  <option value={5}>~5 minutes (Very Fast)</option>
+                  <option value={15}>~15 minutes (Normal)</option>
+                  <option value={30}>~30 minutes</option>
+                  <option value={45}>45+ minutes</option>
+                </select>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[11px] font-heading font-bold text-[#5A756C] dark:text-[#A9C5BC]">
+                  Night Awakenings
+                </label>
+                <select
+                  value={logAwakenings}
+                  onChange={(e) => setLogAwakenings(Number(e.target.value))}
+                  className="w-full p-2 rounded-xl bg-[#F4FAF7] dark:bg-[#071C17] border border-[#E2ECE6] dark:border-[#23483E] text-xs text-[#19332A] dark:text-[#F4FAF7] focus:outline-none focus:ring-1 focus:ring-[#006C56]"
+                >
+                  <option value={0}>0 times (Slept through)</option>
+                  <option value={1}>1 time</option>
+                  <option value={2}>2 times</option>
+                  <option value={3}>3+ times</option>
+                </select>
               </div>
             </div>
 
@@ -1264,10 +2012,10 @@ export default function SleepSupportView() {
               </div>
             </div>
 
-            {/* Sleep Tags */}
+            {/* Sleep Factors & Environment Tags */}
             <div className="space-y-1.5">
               <label className="text-[11px] font-heading font-bold text-[#5A756C] dark:text-[#A9C5BC]">
-                Sleep Factors & Environment
+                Sleep Factors &amp; Environment
               </label>
               <div className="flex flex-wrap gap-1.5">
                 {[

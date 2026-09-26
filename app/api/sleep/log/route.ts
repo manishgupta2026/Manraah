@@ -10,7 +10,7 @@ export async function POST(request: Request) {
 
   try {
     const body = await request.json();
-    const { bedtime, wakeTime, durationMinutes, quality, notes, tags } = body;
+    const { bedtime, wakeTime, durationMinutes, quality, notes, tags, latencyMinutes, awakenings } = body;
 
     const finalMinutes = typeof durationMinutes === "number" && durationMinutes > 0
       ? durationMinutes
@@ -19,6 +19,8 @@ export async function POST(request: Request) {
     const sleepQuality = typeof quality === "number" ? Math.min(5, Math.max(1, quality)) : 4;
     const cycles = parseFloat((finalMinutes / 90).toFixed(1));
     const sleepNotes = notes || (Array.isArray(tags) ? tags.join(", ") : "");
+    const latency = typeof latencyMinutes === "number" ? latencyMinutes : 15;
+    const wakes = typeof awakenings === "number" ? awakenings : 0;
 
     try {
       await sql`
@@ -30,14 +32,22 @@ export async function POST(request: Request) {
           duration_minutes INTEGER NOT NULL,
           quality INTEGER DEFAULT 4,
           cycles NUMERIC(3, 1),
+          latency_minutes INTEGER DEFAULT 15,
+          awakenings INTEGER DEFAULT 0,
           notes TEXT,
           created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
       `;
 
+      // Also ensure latency_minutes and awakenings columns exist if table was already created
+      try {
+        await sql`ALTER TABLE sleep_logs ADD COLUMN IF NOT EXISTS latency_minutes INTEGER DEFAULT 15`;
+        await sql`ALTER TABLE sleep_logs ADD COLUMN IF NOT EXISTS awakenings INTEGER DEFAULT 0`;
+      } catch {}
+
       await sql`
-        INSERT INTO sleep_logs (user_id, bedtime, wake_time, duration_minutes, quality, cycles, notes)
-        VALUES (${userId}, ${bedtime || "23:00"}, ${wakeTime || "07:00"}, ${finalMinutes}, ${sleepQuality}, ${cycles}, ${sleepNotes})
+        INSERT INTO sleep_logs (user_id, bedtime, wake_time, duration_minutes, quality, cycles, latency_minutes, awakenings, notes)
+        VALUES (${userId}, ${bedtime || "23:00"}, ${wakeTime || "07:00"}, ${finalMinutes}, ${sleepQuality}, ${cycles}, ${latency}, ${wakes}, ${sleepNotes})
       `;
     } catch (e) {
       console.warn("Sleep log database write warning:", e);
@@ -75,6 +85,8 @@ export async function POST(request: Request) {
         quality: sleepQuality,
         bedtime,
         wakeTime,
+        latencyMinutes: latency,
+        awakenings: wakes,
       },
       avgDurationMinutes: avgDuration,
       totalLogs: totalLogsCount,
@@ -86,5 +98,32 @@ export async function POST(request: Request) {
       { success: false, error: error.message || "Failed to log sleep duration" },
       { status: 500 }
     );
+  }
+}
+
+export async function DELETE(request: Request) {
+  const session = getAuthSessionFromRequest();
+  const userId = session.user?.id || "demo-user";
+
+  try {
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get("id");
+
+    if (!id) {
+      return NextResponse.json({ success: false, error: "Missing log ID" }, { status: 400 });
+    }
+
+    try {
+      await sql`
+        DELETE FROM sleep_logs
+        WHERE id = ${Number(id)} AND user_id = ${userId}
+      `;
+    } catch (e) {
+      console.warn("Could not delete from sleep_logs table:", e);
+    }
+
+    return NextResponse.json({ success: true, message: "Sleep log deleted" });
+  } catch (error: any) {
+    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
 }
