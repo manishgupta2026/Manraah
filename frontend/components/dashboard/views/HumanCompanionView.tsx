@@ -169,8 +169,8 @@ export default function HumanCompanionView() {
       <div className="bg-white dark:bg-[#102F27] rounded-3xl p-6 sm:p-7 border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs space-y-4 transition-colors">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <span className="text-[10px] font-black uppercase tracking-widest text-[#006C56] dark:text-[#00A982]">
-              1-ON-1 ACTIVE LISTENER MANRAAH
+            <span className="text-[10px] font-black tracking-widest text-[#006C56] dark:text-[#00A982]">
+              1-on-1 Active Listener Manraah
             </span>
             <h1 className="text-2xl font-heading font-black text-[#19332A] dark:text-[#F4FAF7] leading-tight mt-0.5">
               Human Companion
@@ -300,7 +300,7 @@ export default function HumanCompanionView() {
             </div>
 
             <div className="space-y-2">
-              <span className="px-3 py-1 rounded-full bg-[#EAF5EF] dark:bg-[#14382F] text-[#006C56] dark:text-[#00A982] text-xs font-bold uppercase tracking-wider inline-block">
+              <span className="px-3 py-1 rounded-full bg-[#EAF5EF] dark:bg-[#14382F] text-[#006C56] dark:text-[#00A982] text-xs font-bold tracking-wider inline-block">
                 Scanning Peer Network...
               </span>
               <h2 className="text-xl font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
@@ -325,7 +325,7 @@ export default function HumanCompanionView() {
         {/* =================================================================== */}
         {step === "MATCHED" && (
           <div className="max-w-md mx-auto py-8 text-center space-y-6 animate-in zoom-in-95 duration-200">
-            <span className="px-3.5 py-1 rounded-full bg-[#EAF5EF] dark:bg-[#14382F] text-[#006C56] dark:text-[#00A982] text-xs font-bold uppercase tracking-wider inline-block">
+            <span className="px-3.5 py-1 rounded-full bg-[#EAF5EF] dark:bg-[#14382F] text-[#006C56] dark:text-[#00A982] text-xs font-bold tracking-wider inline-block">
               ✓ Listener Connected
             </span>
 

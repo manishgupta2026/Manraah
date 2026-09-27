@@ -112,8 +112,8 @@ export default function ResourcesView() {
       {/* 1. Header Banner */}
       <div className="bg-white dark:bg-[#102F27] rounded-3xl p-6 sm:p-7 border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs space-y-4 transition-colors">
         <div>
-          <span className="text-[10px] font-black uppercase tracking-widest text-[#006C56] dark:text-[#00A982]">
-            EVIDENCE-BASED GUIDES
+          <span className="text-[10px] font-black tracking-widest text-[#006C56] dark:text-[#00A982]">
+            Evidence-based guides
           </span>
           <h1 className="text-2xl font-heading font-black text-[#19332A] dark:text-[#F4FAF7] leading-tight mt-0.5">
             Resources
@@ -160,7 +160,7 @@ export default function ResourcesView() {
         <div className="bg-gradient-to-br from-[#EAF5EF] to-[#F4F9F6] dark:from-[#102F27] dark:to-[#0A221C] rounded-3xl p-6 sm:p-7 border border-[#D2E8DC] dark:border-[#23483E] shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-5 transition-colors">
           <div className="space-y-2 max-w-xl">
             <div className="flex items-center gap-2">
-              <span className="px-2.5 py-0.5 rounded-full bg-[#006C56] text-white text-[9.5px] font-extrabold uppercase tracking-wide">
+              <span className="px-2.5 py-0.5 rounded-full bg-[#006C56] text-white text-[9.5px] font-extrabold tracking-wide">
                 Featured Guide
               </span>
               <span className="text-[10.5px] text-[#6B857C] dark:text-[#A9C5BC] font-semibold">

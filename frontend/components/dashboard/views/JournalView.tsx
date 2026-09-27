@@ -187,8 +187,8 @@ export default function JournalView() {
       <div className="bg-white dark:bg-[#102F27] rounded-3xl p-6 sm:p-7 border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs space-y-4 transition-colors">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <span className="text-[10px] font-black uppercase tracking-widest text-[#006C56] dark:text-[#00A982]">
-              REFLECTIVE MANRAAH
+            <span className="text-[10px] font-black tracking-widest text-[#006C56] dark:text-[#00A982]">
+              Reflective Manraah
             </span>
             <h1 className="text-2xl font-heading font-black text-[#19332A] dark:text-[#F4FAF7] leading-tight mt-0.5">
               Journal & Reflections
@@ -476,7 +476,7 @@ export default function JournalView() {
             </div>
 
             <div className="space-y-2.5">
-              <span className="px-3 py-1 rounded-full bg-[#EAF5EF] dark:bg-[#14382F] text-[#006C56] dark:text-[#00A982] text-[10.5px] font-bold uppercase tracking-wider inline-block">
+              <span className="px-3 py-1 rounded-full bg-[#EAF5EF] dark:bg-[#14382F] text-[#006C56] dark:text-[#00A982] text-[10.5px] font-bold tracking-wider inline-block">
                 Personal &amp; Private Space
               </span>
               <h3 className="text-xl font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">

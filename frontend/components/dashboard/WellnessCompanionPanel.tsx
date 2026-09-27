@@ -100,8 +100,8 @@ export default function WellnessCompanionPanel({ onCheckCondition }: WellnessCom
         </div>
 
         {/* Subtitle / Badge */}
-        <span className="text-[9.5px] font-extrabold uppercase tracking-wider text-[#006C56] dark:text-[#00A982]">
-          YOUR WELLNESS COMPANION
+        <span className="text-[9.5px] font-extrabold tracking-wider text-[#006C56] dark:text-[#00A982]">
+          Your wellness companion
         </span>
 
         {/* Main Heading */}

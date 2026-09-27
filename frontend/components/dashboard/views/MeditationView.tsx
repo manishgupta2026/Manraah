@@ -361,10 +361,10 @@ export default function MeditationView() {
       <div className="bg-white dark:bg-[#102F27] rounded-3xl p-5 sm:p-6 border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs transition-colors">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div className="space-y-1">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EAF6F0] dark:bg-[#14382F] text-[#006C56] dark:text-[#88F7D6] text-[10.5px] font-heading font-black tracking-wider uppercase border border-[#D2EAE0] dark:border-[#23483E]">
-              <span>🧘 MINDFULNESS MANRAAH</span>
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EAF6F0] dark:bg-[#14382F] text-[#006C56] dark:text-[#88F7D6] text-[10.5px] font-heading font-black tracking-wider border border-[#D2EAE0] dark:border-[#23483E]">
+              <span>🧘 Mindfulness Manraah</span>
               <span>•</span>
-              <span>BREATHE & RESET</span>
+              <span>Breathe & reset</span>
             </div>
             <h1 className="text-xl sm:text-2xl font-heading font-black text-[#19332A] dark:text-[#F4FAF7] leading-tight">
               Guided Meditation & Soundscapes
@@ -380,7 +380,7 @@ export default function MeditationView() {
               <span className="block text-xs font-heading font-black text-[#006C56] dark:text-[#88F7D6]">
                 {stats.totalMinutes}m
               </span>
-              <span className="text-[10px] font-medium text-[#6B857C] dark:text-[#A9C5BC] uppercase tracking-wider">
+              <span className="text-[10px] font-medium text-[#6B857C] dark:text-[#A9C5BC] tracking-wider">
                 Minutes
               </span>
             </div>
@@ -389,7 +389,7 @@ export default function MeditationView() {
               <span className="block text-xs font-heading font-black text-[#D97706] dark:text-[#FBBF24]">
                 {stats.streakDays}d 🔥
               </span>
-              <span className="text-[10px] font-medium text-[#6B857C] dark:text-[#A9C5BC] uppercase tracking-wider">
+              <span className="text-[10px] font-medium text-[#6B857C] dark:text-[#A9C5BC] tracking-wider">
                 Streak
               </span>
             </div>
@@ -398,7 +398,7 @@ export default function MeditationView() {
               <span className="block text-xs font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
                 {stats.totalSessions}
               </span>
-              <span className="text-[10px] font-medium text-[#6B857C] dark:text-[#A9C5BC] uppercase tracking-wider">
+              <span className="text-[10px] font-medium text-[#6B857C] dark:text-[#A9C5BC] tracking-wider">
                 Sessions
               </span>
             </div>
@@ -486,7 +486,7 @@ export default function MeditationView() {
                 </span>
                 {isPlaying ? (
                   <div className="space-y-0.5">
-                    <span className="font-heading font-bold text-xs sm:text-sm text-[#006C56] dark:text-[#88F7D6] uppercase block tracking-wider">
+                    <span className="font-heading font-bold text-xs sm:text-sm text-[#006C56] dark:text-[#88F7D6] block tracking-wider">
                       {breathPhase}
                     </span>
                     <span className="font-mono font-bold text-xs text-[#5A756C] dark:text-[#A9C5BC] block">
@@ -510,7 +510,7 @@ export default function MeditationView() {
             >
               {selectedDuration}-Minute {mounted ? (categoryDetails?.name || "Mindfulness") : "Mindfulness"} Session
             </h2>
-            <p className="text-[11px] text-[#006C56] dark:text-[#88F7D6] font-semibold tracking-wider uppercase">
+            <p className="text-[11px] text-[#006C56] dark:text-[#88F7D6] font-semibold tracking-wider">
               🎵 Mode: <span className="underline">{selectedMode}</span>{" "}
               {natureSound !== "None" && `+ ${natureSound}`}
             </p>
@@ -573,7 +573,7 @@ export default function MeditationView() {
           {/* Soundscape Mode Card */}
           <div className="bg-white dark:bg-[#102F27] rounded-3xl p-5 border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs space-y-3 transition-colors">
             <div className="flex items-center justify-between">
-              <h3 className="text-xs font-heading font-black text-[#19332A] dark:text-[#F4FAF7] uppercase tracking-wider">
+              <h3 className="text-xs font-heading font-black text-[#19332A] dark:text-[#F4FAF7] tracking-wider">
                 Soundscape Frequency Mode
               </h3>
               <span className="text-[10px] text-[#5A756C] dark:text-[#A9C5BC]">
@@ -637,7 +637,7 @@ export default function MeditationView() {
 
           {/* Ambient Nature Sound Layer */}
           <div className="bg-white dark:bg-[#102F27] rounded-3xl p-5 border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs space-y-2.5 transition-colors">
-            <h3 className="text-xs font-heading font-black text-[#19332A] dark:text-[#F4FAF7] uppercase tracking-wider">
+            <h3 className="text-xs font-heading font-black text-[#19332A] dark:text-[#F4FAF7] tracking-wider">
               Ambient Nature Layer
             </h3>
             <div className="flex flex-wrap items-center gap-2">

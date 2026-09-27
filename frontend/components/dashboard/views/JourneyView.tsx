@@ -340,7 +340,7 @@ export default function JourneyView() {
     <div className="w-full min-w-0 flex flex-col gap-5">
       {/* 1. Header Banner */}
       <div className="bg-white dark:bg-[#102F27] rounded-3xl p-6 sm:p-7 border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs space-y-3 transition-colors">
-        <span className="px-3.5 py-1 rounded-full bg-[#EAF6F0] dark:bg-[#14382F] text-[#006C56] dark:text-[#00A982] text-[10.5px] font-extrabold uppercase tracking-wider">
+        <span className="px-3.5 py-1 rounded-full bg-[#EAF6F0] dark:bg-[#14382F] text-[#006C56] dark:text-[#00A982] text-[10.5px] font-extrabold tracking-wider">
           {p.badgeLabel || "🌿 Wellness Journey"}
         </span>
         <h1 className="text-2xl font-heading font-black text-[#19332A] dark:text-[#F4FAF7] leading-tight">
@@ -415,9 +415,9 @@ export default function JourneyView() {
             <div>
               <div className="flex items-center gap-2">
                 <h2 className="text-sm font-heading font-black text-[#19332A] dark:text-[#F4FAF7] leading-tight">
-                  YOUR CURRENT WELLNESS
+                  Your Current Wellness
                 </h2>
-                <span className="px-2 py-0.5 rounded-full bg-[#EAF6F0] dark:bg-[#14382F] text-[#006C56] dark:text-[#88F7D6] text-[9.5px] font-extrabold uppercase tracking-wider border border-[#D0EADB] dark:border-[#23483E]">
+                <span className="px-2 py-0.5 rounded-full bg-[#EAF6F0] dark:bg-[#14382F] text-[#006C56] dark:text-[#88F7D6] text-[9.5px] font-extrabold tracking-wider border border-[#D0EADB] dark:border-[#23483E]">
                   Active Category
                 </span>
               </div>
@@ -448,7 +448,7 @@ export default function JourneyView() {
                 <h3 className="text-lg font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
                   {currentCategoryName}
                 </h3>
-                <span className="px-2 py-0.5 rounded-md bg-[#006C56] text-white text-[9px] font-extrabold uppercase">
+                <span className="px-2 py-0.5 rounded-md bg-[#006C56] text-white text-[9px] font-extrabold">
                   Active
                 </span>
               </div>
@@ -767,7 +767,7 @@ export default function JourneyView() {
                   {score !== null && (
                     <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-1 shrink-0 pt-1 sm:pt-0 border-t sm:border-t-0 border-[#E2ECE6] dark:border-[#23483E]">
                       <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#EAF6F0] dark:bg-[#14382F] text-[#006C56] dark:text-[#00A982]">
-                        <span className="text-[10px] font-extrabold uppercase">Score</span>
+                        <span className="text-[10px] font-extrabold">Score</span>
                         <span className="text-sm font-heading font-black">{score}%</span>
                       </div>
                     </div>
@@ -841,7 +841,7 @@ export default function JourneyView() {
                             {item.name}
                           </h4>
                           {item.id === currentCategory && (
-                            <span className="px-1.5 py-0.5 rounded-md bg-[#006C56] text-white text-[8px] font-extrabold uppercase">
+                            <span className="px-1.5 py-0.5 rounded-md bg-[#006C56] text-white text-[8px] font-extrabold">
                               Active
                             </span>
                           )}

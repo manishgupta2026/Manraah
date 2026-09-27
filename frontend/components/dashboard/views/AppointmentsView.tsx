@@ -201,8 +201,8 @@ export default function AppointmentsView() {
       <div className="bg-white dark:bg-[#102F27] rounded-3xl p-6 sm:p-7 border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs space-y-3 transition-colors">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <span className="text-[10px] font-black uppercase tracking-widest text-[#006C56] dark:text-[#00A982]">
-              CONFIDENTIAL SESSIONS
+            <span className="text-[10px] font-black tracking-widest text-[#006C56] dark:text-[#00A982]">
+              Confidential sessions
             </span>
             <h1 className="text-2xl font-heading font-black text-[#19332A] dark:text-[#F4FAF7] leading-tight mt-0.5">
               Appointments
@@ -307,7 +307,7 @@ export default function AppointmentsView() {
               </div>
             </div>
 
-            <span className="px-3 py-1 rounded-full bg-[#E6F4EA] dark:bg-[#14382F] text-[#137333] dark:text-[#88F7D6] text-[10px] font-extrabold tracking-wide uppercase border border-[#CEEAD6] dark:border-[#23483E]">
+            <span className="px-3 py-1 rounded-full bg-[#E6F4EA] dark:bg-[#14382F] text-[#137333] dark:text-[#88F7D6] text-[10px] font-extrabold tracking-wide border border-[#CEEAD6] dark:border-[#23483E]">
               {upcomingList.length > 0 ? "Confirmed" : "No Appointments"}
             </span>
           </div>
@@ -420,7 +420,7 @@ export default function AppointmentsView() {
                 <span className="text-xs sm:text-sm font-heading font-black text-[#004D3D] dark:text-[#88F7D6] tracking-tight">
                   100% Confidential
                 </span>
-                <span className="inline-flex items-center gap-0.5 text-[9.5px] sm:text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#D4EFE4] dark:bg-[#18483B] text-[#006C56] dark:text-[#88F7D6] border border-[#B3E2CF] dark:border-[#245C4B]">
+                <span className="inline-flex items-center gap-0.5 text-[9.5px] sm:text-[10px] font-bold tracking-wider px-2 py-0.5 rounded-full bg-[#D4EFE4] dark:bg-[#18483B] text-[#006C56] dark:text-[#88F7D6] border border-[#B3E2CF] dark:border-[#245C4B]">
                   ✓ Private &amp; Secure
                 </span>
               </div>

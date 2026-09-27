@@ -203,8 +203,8 @@ export default function CommunityView() {
       <div className="bg-white dark:bg-[#102F27] rounded-3xl p-6 sm:p-7 border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs space-y-4 transition-colors">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <span className="text-[10px] font-black uppercase tracking-widest text-[#006C56] dark:text-[#00A982]">
-              SAFE PEER MANRAAH
+            <span className="text-[10px] font-black tracking-widest text-[#006C56] dark:text-[#00A982]">
+              Safe Peer Manraah
             </span>
             <h1 className="text-2xl font-heading font-black text-[#19332A] dark:text-[#F4FAF7] leading-tight mt-0.5">
               Community & Peer Circles
@@ -499,7 +499,7 @@ export default function CommunityView() {
         <div className="lg:col-span-4 flex flex-col gap-5">
           {/* Community Guidelines */}
           <div className="bg-white dark:bg-[#102F27] rounded-3xl p-5 sm:p-6 border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs space-y-3.5 transition-colors">
-            <h3 className="text-xs font-heading font-black text-[#19332A] dark:text-[#F4FAF7] uppercase tracking-wider flex items-center gap-1.5">
+            <h3 className="text-xs font-heading font-black text-[#19332A] dark:text-[#F4FAF7] tracking-wider flex items-center gap-1.5">
               <span>🌿</span> Manraah Agreements
             </h3>
             <div className="space-y-2.5 text-xs text-[#4F685F] dark:text-[#A9C5BC]">
@@ -526,7 +526,7 @@ export default function CommunityView() {
 
           {/* Trending Topics */}
           <div className="bg-white dark:bg-[#102F27] rounded-3xl p-5 sm:p-6 border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs space-y-3 transition-colors">
-            <h3 className="text-xs font-heading font-black text-[#19332A] dark:text-[#F4FAF7] uppercase tracking-wider">
+            <h3 className="text-xs font-heading font-black text-[#19332A] dark:text-[#F4FAF7] tracking-wider">
               Trending Circle Topics
             </h3>
             <div className="flex flex-wrap gap-1.5">
@@ -571,7 +571,7 @@ export default function CommunityView() {
             </div>
 
             <div className="space-y-2">
-              <span className="px-3 py-1 rounded-full bg-[#EAF5EF] dark:bg-[#14382F] text-[#006C56] dark:text-[#00A982] text-[10.5px] font-bold uppercase tracking-wider inline-block">
+              <span className="px-3 py-1 rounded-full bg-[#EAF5EF] dark:bg-[#14382F] text-[#006C56] dark:text-[#00A982] text-[10.5px] font-bold tracking-wider inline-block">
                 Post Submitted For Review
               </span>
               <h3 className="text-xl font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">

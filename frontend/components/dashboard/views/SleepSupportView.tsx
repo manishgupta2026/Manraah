@@ -118,7 +118,7 @@ export default function SleepSupportView() {
 
   // Interactive 4-7-8 Breathing Guide state
   const [isBreathingActive, setIsBreathingActive] = useState<boolean>(false);
-  const [breathPhase, setBreathPhase] = useState<"INHALE" | "HOLD" | "EXHALE">("INHALE");
+  const [breathPhase, setBreathPhase] = useState<"Inhale" | "Hold" | "Exhale">("Inhale");
   const [breathSecondsLeft, setBreathSecondsLeft] = useState<number>(4);
   const [breathCycleCount, setBreathCycleCount] = useState<number>(1);
   const [isBreathChimeEnabled, setIsBreathChimeEnabled] = useState<boolean>(true);
@@ -615,17 +615,17 @@ export default function SleepSupportView() {
       breathIntervalRef.current = setInterval(() => {
         setBreathSecondsLeft((prev) => {
           if (prev <= 1) {
-            if (breathPhase === "INHALE") {
-              setBreathPhase("HOLD");
+            if (breathPhase === "Inhale") {
+              setBreathPhase("Hold");
               playBreathChime(523); // C5 bell
               return 7;
-            } else if (breathPhase === "HOLD") {
-              setBreathPhase("EXHALE");
+            } else if (breathPhase === "Hold") {
+              setBreathPhase("Exhale");
               playBreathChime(392); // G4 bell
               return 8;
             } else {
-              // Finish EXHALE -> Next cycle
-              setBreathPhase("INHALE");
+              // Finish Exhale -> Next cycle
+              setBreathPhase("Inhale");
               playBreathChime(440); // A4 bell
               setBreathCycleCount((c) => {
                 if (c >= 4) {
@@ -652,7 +652,7 @@ export default function SleepSupportView() {
 
   const handleStartBreath = () => {
     setIsBreathingActive(true);
-    setBreathPhase("INHALE");
+    setBreathPhase("Inhale");
     setBreathSecondsLeft(4);
     playBreathChime(440);
   };
@@ -663,7 +663,7 @@ export default function SleepSupportView() {
 
   const handleResetBreath = () => {
     setIsBreathingActive(false);
-    setBreathPhase("INHALE");
+    setBreathPhase("Inhale");
     setBreathSecondsLeft(4);
     setBreathCycleCount(1);
   };
@@ -837,10 +837,10 @@ export default function SleepSupportView() {
       <div className="bg-white dark:bg-[#102F27] rounded-3xl p-5 sm:p-6 border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs transition-colors">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div className="space-y-1">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EAF6F0] dark:bg-[#14382F] text-[#006C56] dark:text-[#88F7D6] text-[10.5px] font-heading font-black tracking-wider uppercase border border-[#D2EAE0] dark:border-[#23483E]">
-              <span>🌙 REST & RECOVERY</span>
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EAF6F0] dark:bg-[#14382F] text-[#006C56] dark:text-[#88F7D6] text-[10.5px] font-heading font-black tracking-wider border border-[#D2EAE0] dark:border-[#23483E]">
+              <span>🌙 Rest & recovery</span>
               <span>•</span>
-              <span>WIND-DOWN MANRAAH</span>
+              <span>Wind-down Manraah</span>
             </div>
             <h1 className="text-xl sm:text-2xl font-heading font-black text-[#19332A] dark:text-[#F4FAF7] leading-tight">
               Night Sleep Support & Duration Hub
@@ -873,7 +873,7 @@ export default function SleepSupportView() {
                   </p>
                   {isMixerMode && (
                     <span className="px-1.5 py-0.2 rounded-md bg-[#006C56] text-white text-[8.5px] font-bold">
-                      MIXER
+                      Mixer
                     </span>
                   )}
                 </div>
@@ -935,8 +935,8 @@ export default function SleepSupportView() {
                 </button>
 
                 <div className="absolute right-0 top-full mt-1.5 w-36 bg-white dark:bg-[#102F27] border border-[#E2ECE6] dark:border-[#23483E] rounded-2xl shadow-xl p-1.5 hidden group-hover:flex flex-col gap-1 z-30">
-                  <span className="text-[9px] font-heading font-black text-[#5A756C] dark:text-[#A9C5BC] uppercase px-2 py-1">
-                    Auto-Off Duration
+                  <span className="text-[9px] font-heading font-black text-[#5A756C] dark:text-[#A9C5BC] px-2 py-1">
+                    Auto-off duration
                   </span>
                   {TIMER_PRESETS.map((p) => (
                     <button
@@ -982,14 +982,14 @@ export default function SleepSupportView() {
         </div>
       </div>
 
-      {/* 2. SLEEP DURATION & RECOVERY METRICS BAR */}
+      {/* 2. Sleep Duration & Recovery Metrics Bar */}
       {(activeSectionTab === "all" || activeSectionTab === "tracker") && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
           {/* Card 1: 7-Day Average Duration */}
           <div className="bg-white dark:bg-[#102F27] rounded-3xl p-4 sm:p-5 border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs flex flex-col justify-between gap-3">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-heading font-bold uppercase tracking-wider text-[#5A756C] dark:text-[#A9C5BC]">
-                Sleep Duration
+              <span className="text-[10px] font-heading font-bold tracking-wider text-[#5A756C] dark:text-[#A9C5BC]">
+                Sleep duration
               </span>
               <span className="px-2 py-0.5 rounded-full text-[9.5px] font-bold bg-[#EAF6F0] dark:bg-[#14382F] text-[#006C56] dark:text-[#88F7D6] border border-[#D2EAE0] dark:border-[#23483E]">
                 Target: 7–9h
@@ -1023,8 +1023,8 @@ export default function SleepSupportView() {
           {/* Card 2: Sleep Quality & Latency */}
           <div className="bg-white dark:bg-[#102F27] rounded-3xl p-4 sm:p-5 border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs flex flex-col justify-between gap-3">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-heading font-bold uppercase tracking-wider text-[#5A756C] dark:text-[#A9C5BC]">
-                Sleep Quality
+              <span className="text-[10px] font-heading font-bold tracking-wider text-[#5A756C] dark:text-[#A9C5BC]">
+                Sleep quality
               </span>
               <span className="px-2 py-0.5 rounded-full text-[9.5px] font-bold bg-[#F4FAF7] dark:bg-[#071C17] text-[#006C56] dark:text-[#88F7D6] border border-[#E2ECE6] dark:border-[#23483E]">
                 {sleepStats.averageQuality} / 5.0
@@ -1066,8 +1066,8 @@ export default function SleepSupportView() {
           {/* Card 3: Sleep Debt & Recovery Status */}
           <div className="bg-white dark:bg-[#102F27] rounded-3xl p-4 sm:p-5 border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs flex flex-col justify-between gap-3">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-heading font-bold uppercase tracking-wider text-[#5A756C] dark:text-[#A9C5BC]">
-                Sleep Debt & Bank
+              <span className="text-[10px] font-heading font-bold tracking-wider text-[#5A756C] dark:text-[#A9C5BC]">
+                Sleep debt & bank
               </span>
               <span
                 className={`px-2 py-0.5 rounded-full text-[9.5px] font-bold border ${
@@ -1105,8 +1105,8 @@ export default function SleepSupportView() {
           {/* Card 4: 7-Day Trend Chart */}
           <div className="bg-white dark:bg-[#102F27] rounded-3xl p-4 sm:p-5 border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs flex flex-col justify-between gap-2">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-heading font-bold uppercase tracking-wider text-[#5A756C] dark:text-[#A9C5BC]">
-                7-Night Trend
+              <span className="text-[10px] font-heading font-bold tracking-wider text-[#5A756C] dark:text-[#A9C5BC]">
+                7-Night trend
               </span>
               <span className="text-[9.5px] text-[#5A756C] dark:text-[#A9C5BC] font-semibold">
                 Goal: 8.0h
@@ -1157,11 +1157,11 @@ export default function SleepSupportView() {
       {showHistoryDrawer && (
         <div className="bg-white dark:bg-[#102F27] rounded-3xl p-5 border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs space-y-3 animate-in fade-in duration-200">
           <div className="flex items-center justify-between">
-            <h3 className="text-xs font-heading font-black text-[#19332A] dark:text-[#F4FAF7] uppercase tracking-wider flex items-center gap-2">
+            <h3 className="text-xs font-heading font-black text-[#19332A] dark:text-[#F4FAF7] tracking-wider flex items-center gap-2">
               <span className="material-symbols-outlined text-base text-[#006C56] dark:text-[#88F7D6]">
                 history_toggle_off
               </span>
-              <span>Recent Sleep Duration Logs ({sleepStats.logs.length})</span>
+              <span>Recent sleep duration logs ({sleepStats.logs.length})</span>
             </h3>
             <button
               type="button"
@@ -1181,13 +1181,13 @@ export default function SleepSupportView() {
               <table className="w-full text-left text-xs">
                 <thead>
                   <tr className="border-b border-[#E2ECE6] dark:border-[#23483E] text-[#5A756C] dark:text-[#A9C5BC] text-[10.5px]">
-                    <th className="py-2 font-bold">DATE</th>
-                    <th className="py-2 font-bold">BEDTIME - WAKE</th>
-                    <th className="py-2 font-bold">DURATION</th>
-                    <th className="py-2 font-bold">CYCLES</th>
-                    <th className="py-2 font-bold">QUALITY</th>
-                    <th className="py-2 font-bold">NOTES</th>
-                    <th className="py-2 text-right font-bold">ACTION</th>
+                    <th className="py-2 font-bold">Date</th>
+                    <th className="py-2 font-bold">Bedtime - wake</th>
+                    <th className="py-2 font-bold">Duration</th>
+                    <th className="py-2 font-bold">Cycles</th>
+                    <th className="py-2 font-bold">Quality</th>
+                    <th className="py-2 font-bold">Notes</th>
+                    <th className="py-2 text-right font-bold">Action</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#E2ECE6] dark:divide-[#23483E]">
@@ -1238,8 +1238,8 @@ export default function SleepSupportView() {
                 <span className="material-symbols-outlined text-[#006C56] dark:text-[#88F7D6] text-xl">
                   headphones
                 </span>
-                <h2 className="text-sm font-heading font-black text-[#19332A] dark:text-[#F4FAF7] uppercase tracking-wider">
-                  Ambient Sleep Soundscapes &amp; Mixer
+                <h2 className="text-sm font-heading font-black text-[#19332A] dark:text-[#F4FAF7] tracking-wider">
+                  Ambient sleep soundscapes &amp; mixer
                 </h2>
               </div>
               <p className="text-[11px] text-[#5A756C] dark:text-[#A9C5BC] mt-0.5">
@@ -1383,8 +1383,8 @@ export default function SleepSupportView() {
                 <span className="material-symbols-outlined text-[#006C56] dark:text-[#88F7D6] text-xl">
                   air
                 </span>
-                <h2 className="text-sm font-heading font-black text-[#19332A] dark:text-[#F4FAF7] uppercase tracking-wider">
-                  The 4-7-8 Bedtime Breathwork Trainer
+                <h2 className="text-sm font-heading font-black text-[#19332A] dark:text-[#F4FAF7] tracking-wider">
+                  The 4-7-8 bedtime breathwork trainer
                 </h2>
               </div>
               <p className="text-[11px] text-[#5A756C] dark:text-[#A9C5BC] mt-0.5">
@@ -1414,9 +1414,9 @@ export default function SleepSupportView() {
             <div className="relative w-48 h-48 sm:w-56 sm:h-56 flex items-center justify-center shrink-0">
               <div
                 className={`absolute inset-0 rounded-full transition-all duration-1000 ${
-                  breathPhase === "INHALE"
+                  breathPhase === "Inhale"
                     ? "bg-[#88F7D6]/35 dark:bg-[#00A982]/25 scale-125 blur-xl"
-                    : breathPhase === "HOLD"
+                    : breathPhase === "Hold"
                     ? "bg-amber-400/30 dark:bg-amber-500/20 scale-115 blur-lg"
                     : "bg-[#006C56]/20 dark:bg-[#00A982]/15 scale-90 blur-md"
                 }`}
@@ -1424,23 +1424,23 @@ export default function SleepSupportView() {
 
               <div
                 className={`z-10 flex flex-col items-center justify-center w-36 h-36 rounded-full bg-white dark:bg-[#14382F] border-2 shadow-md transition-all duration-700 ${
-                  breathPhase === "INHALE"
+                  breathPhase === "Inhale"
                     ? "border-[#006C56] dark:border-[#88F7D6] scale-110"
-                    : breathPhase === "HOLD"
+                    : breathPhase === "Hold"
                     ? "border-amber-500 scale-105"
                     : "border-[#006C56]/40 scale-95"
                 }`}
               >
                 <span
-                  className={`text-xs font-heading font-black tracking-widest uppercase transition-colors ${
-                    breathPhase === "INHALE"
+                  className={`text-xs font-heading font-black tracking-widest transition-colors ${
+                    breathPhase === "Inhale"
                       ? "text-[#006C56] dark:text-[#88F7D6]"
-                      : breathPhase === "HOLD"
+                      : breathPhase === "Hold"
                       ? "text-amber-500 dark:text-amber-400"
                       : "text-[#19332A] dark:text-[#F4FAF7]"
                   }`}
                 >
-                  {isBreathingActive ? breathPhase : "READY"}
+                  {isBreathingActive ? breathPhase : "Ready"}
                 </span>
 
                 <span className="text-3xl font-heading font-black text-[#19332A] dark:text-[#F4FAF7] mt-0.5">
@@ -1458,13 +1458,13 @@ export default function SleepSupportView() {
               <div className="grid grid-cols-3 gap-2.5 text-center">
                 <div
                   className={`p-3 rounded-2xl border transition-all ${
-                    isBreathingActive && breathPhase === "INHALE"
+                    isBreathingActive && breathPhase === "Inhale"
                       ? "bg-[#EAF6F0] dark:bg-[#14382F] border-[#006C56] ring-1 ring-[#006C56]"
                       : "bg-[#F4FAF7] dark:bg-[#071C17] border-[#E2ECE6] dark:border-[#23483E]"
                   }`}
                 >
                   <span className="text-xs font-mono font-bold text-[#006C56] dark:text-[#88F7D6] block">
-                    4 SEC
+                    4 sec
                   </span>
                   <span className="text-xs font-heading font-bold text-[#19332A] dark:text-[#F4FAF7]">
                     Inhale
@@ -1476,13 +1476,13 @@ export default function SleepSupportView() {
 
                 <div
                   className={`p-3 rounded-2xl border transition-all ${
-                    isBreathingActive && breathPhase === "HOLD"
+                    isBreathingActive && breathPhase === "Hold"
                       ? "bg-amber-50 dark:bg-amber-950/30 border-amber-500 ring-1 ring-amber-500"
                       : "bg-[#F4FAF7] dark:bg-[#071C17] border-[#E2ECE6] dark:border-[#23483E]"
                   }`}
                 >
                   <span className="text-xs font-mono font-bold text-[#D97706] dark:text-[#FBBF24] block">
-                    7 SEC
+                    7 sec
                   </span>
                   <span className="text-xs font-heading font-bold text-[#19332A] dark:text-[#F4FAF7]">
                     Hold
@@ -1494,13 +1494,13 @@ export default function SleepSupportView() {
 
                 <div
                   className={`p-3 rounded-2xl border transition-all ${
-                    isBreathingActive && breathPhase === "EXHALE"
+                    isBreathingActive && breathPhase === "Exhale"
                       ? "bg-[#EAF6F0] dark:bg-[#14382F] border-[#006C56] ring-1 ring-[#006C56]"
                       : "bg-[#F4FAF7] dark:bg-[#071C17] border-[#E2ECE6] dark:border-[#23483E]"
                   }`}
                 >
                   <span className="text-xs font-mono font-bold text-[#006C56] dark:text-[#88F7D6] block">
-                    8 SEC
+                    8 sec
                   </span>
                   <span className="text-xs font-heading font-bold text-[#19332A] dark:text-[#F4FAF7]">
                     Exhale
@@ -1559,8 +1559,8 @@ export default function SleepSupportView() {
               <span className="material-symbols-outlined text-base">edit_note</span>
             </div>
             <div>
-              <h3 className="text-xs font-heading font-black text-[#19332A] dark:text-[#F4FAF7] uppercase tracking-wider">
-                Evening Wind-Down Reflection
+              <h3 className="text-xs font-heading font-black text-[#19332A] dark:text-[#F4FAF7] tracking-wider">
+                Evening wind-down reflection
               </h3>
               <p className="text-[11px] text-[#5A756C] dark:text-[#A9C5BC]">
                 Release today&apos;s thoughts before heading to sleep
@@ -1651,8 +1651,8 @@ export default function SleepSupportView() {
             {/* Auto Calculated Duration & Efficiency Highlight Banner */}
             <div className="p-3.5 rounded-2xl bg-[#EAF6F0] dark:bg-[#14382F] border border-[#D2EAE0] dark:border-[#23483E] flex items-center justify-between">
               <div>
-                <span className="text-[10px] font-heading font-bold text-[#006C56] dark:text-[#88F7D6] uppercase tracking-wider block">
-                  Total Sleep Duration
+                <span className="text-[10px] font-heading font-bold text-[#006C56] dark:text-[#88F7D6] tracking-wider block">
+                  Total sleep duration
                 </span>
                 <span className="text-xl font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
                   {currentDurationCalc.hours}h {currentDurationCalc.mins > 0 ? `${currentDurationCalc.mins}m` : ""}

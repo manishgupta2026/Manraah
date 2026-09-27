@@ -651,7 +651,7 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
 
                 {/* Mobile About Sub-section */}
                 <div className="pt-2 mt-2 border-t border-surface-variant/20 space-y-1">
-                  <div className="px-3.5 py-1 text-[11px] font-heading font-bold uppercase tracking-wider text-on-surface-variant/70">
+                  <div className="px-3.5 py-1 text-[11px] font-heading font-bold tracking-wider text-on-surface-variant/70">
                     About &amp; Trust
                   </div>
                   <Link

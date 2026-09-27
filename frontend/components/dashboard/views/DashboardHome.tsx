@@ -247,10 +247,10 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
     <div className="w-full min-w-0 flex flex-col gap-5">
       {/* 1. Top Welcome Banner + Streak & Next Appointment Cards */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-0.5">
-        {/* Greeting: WELCOME for first-time login vs WELCOME BACK for returning logins */}
+        {/* Greeting: Welcome for first-time login vs Welcome back for returning logins */}
         <div className="space-y-0.5">
-          <span className="text-[10px] font-black uppercase tracking-widest text-[#006C56] dark:text-[#00A982]" suppressHydrationWarning>
-            {isFirstLoginState ? "WELCOME" : "WELCOME BACK"}
+          <span className="text-[10px] font-black tracking-widest text-[#006C56] dark:text-[#00A982]" suppressHydrationWarning>
+            {isFirstLoginState ? "Welcome" : "Welcome back"}
           </span>
           <h1 className="text-2xl font-heading font-black text-[#19332A] dark:text-[#F4FAF7] leading-tight" suppressHydrationWarning>
             Hi, {userName}! 👋

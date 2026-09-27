@@ -290,7 +290,7 @@ export default function ProfileView() {
 
             <div className="space-y-4 pt-4 text-xs">
               <div>
-                <p className="text-[10px] font-extrabold text-[#789389] dark:text-[#78958C] uppercase tracking-wider">
+                <p className="text-[10px] font-extrabold text-[#789389] dark:text-[#78958C] tracking-wider">
                   Full Name
                 </p>
                 <p className="text-xs sm:text-[13px] font-bold text-[#19332A] dark:text-[#F4FAF7] mt-1" suppressHydrationWarning>
@@ -299,7 +299,7 @@ export default function ProfileView() {
               </div>
 
               <div>
-                <p className="text-[10px] font-extrabold text-[#789389] dark:text-[#78958C] uppercase tracking-wider">
+                <p className="text-[10px] font-extrabold text-[#789389] dark:text-[#78958C] tracking-wider">
                   Email Address
                 </p>
                 <p className="text-xs sm:text-[13px] font-bold text-[#19332A] dark:text-[#F4FAF7] mt-1" suppressHydrationWarning>
@@ -326,7 +326,7 @@ export default function ProfileView() {
 
             <div className="space-y-4.5 pt-4 text-xs">
               <div>
-                <p className="text-[10px] font-extrabold text-[#789389] dark:text-[#78958C] uppercase tracking-wider">
+                <p className="text-[10px] font-extrabold text-[#789389] dark:text-[#78958C] tracking-wider">
                   Primary Category
                 </p>
                 <p className="text-xs sm:text-[13px] font-bold text-[#19332A] dark:text-[#F4FAF7] mt-1">
@@ -335,7 +335,7 @@ export default function ProfileView() {
               </div>
 
               <div>
-                <p className="text-[10px] font-extrabold text-[#789389] dark:text-[#78958C] uppercase tracking-wider mb-1.5">
+                <p className="text-[10px] font-extrabold text-[#789389] dark:text-[#78958C] tracking-wider mb-1.5">
                   Preferred Focus Areas
                 </p>
                 <div className="flex flex-wrap gap-1.5 pt-0.5">
@@ -351,7 +351,7 @@ export default function ProfileView() {
               </div>
 
               <div>
-                <p className="text-[10px] font-extrabold text-[#789389] dark:text-[#78958C] uppercase tracking-wider">
+                <p className="text-[10px] font-extrabold text-[#789389] dark:text-[#78958C] tracking-wider">
                   Current Wellness Goal
                 </p>
                 <p className="text-xs font-medium text-[#4E685F] dark:text-[#A9C5BC] mt-1 leading-relaxed">
