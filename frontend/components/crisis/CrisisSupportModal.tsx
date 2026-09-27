@@ -464,16 +464,10 @@ export default function CrisisSupportModal({ isOpen, onClose }: CrisisSupportMod
             </div>
 
             {/* Modal Footer */}
-            <div className="p-4 bg-surface-container dark:bg-surface-container-high/80 border-t border-surface-variant/30 flex items-center justify-between">
-              <span className="text-[11px] text-on-surface-variant">
+            <div className="py-3 px-4 bg-surface-container dark:bg-surface-container-high/80 border-t border-surface-variant/30 flex items-center justify-center">
+              <span className="text-xs text-on-surface-variant font-medium">
                 Manraah Crisis Support Desk
               </span>
-              <button
-                onClick={onClose}
-                className="px-4 py-2 rounded-xl bg-surface-container-highest hover:bg-surface-variant/60 text-on-surface text-xs font-heading font-bold transition-colors cursor-pointer"
-              >
-                Close
-              </button>
             </div>
           </motion.div>
         </div>

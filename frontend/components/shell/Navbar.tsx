@@ -460,11 +460,11 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
               <button
                 type="button"
                 onClick={() => setIsCrisisModalOpen(true)}
-                className="flex items-center gap-1.5 px-3 py-1.5 ml-1 sm:ml-2.5 rounded-full font-heading font-bold text-xs transition-all cursor-pointer select-none shrink-0 bg-red-600/90 hover:bg-red-600 text-white border border-red-400/40 shadow-xs hover:shadow-sm"
+                className="flex items-center gap-1.5 px-3.5 sm:px-4 py-1.5 sm:py-2 ml-1 sm:ml-2.5 rounded-full font-heading font-extrabold text-sm sm:text-base transition-all cursor-pointer select-none shrink-0 bg-red-600/95 hover:bg-red-600 text-white border border-red-400/50 shadow-xs hover:shadow-sm"
                 title="Crisis & 24/7 Helplines"
                 aria-label="Crisis"
               >
-                <span className="material-symbols-outlined text-base animate-pulse text-red-200 sm:text-inherit">
+                <span className="material-symbols-outlined text-lg sm:text-xl animate-pulse text-red-100 sm:text-inherit">
                   emergency
                 </span>
                 <span>Crisis</span>
@@ -499,11 +499,11 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
               <button
                 type="button"
                 onClick={() => setIsCrisisModalOpen(true)}
-                className="flex items-center gap-1.5 px-3 py-1.5 ml-1 sm:ml-2 rounded-full font-heading font-bold text-xs transition-all cursor-pointer select-none shrink-0 bg-red-50 hover:bg-red-100 dark:bg-red-950/40 dark:hover:bg-red-900/50 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-900/60 shadow-2xs hover:shadow-xs"
+                className="flex items-center gap-1.5 px-3.5 sm:px-4 py-1.5 sm:py-2 ml-1 sm:ml-2 rounded-full font-heading font-extrabold text-sm sm:text-base transition-all cursor-pointer select-none shrink-0 bg-red-50 hover:bg-red-100 dark:bg-red-950/40 dark:hover:bg-red-900/50 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-900/60 shadow-2xs hover:shadow-xs"
                 title="Crisis & 24/7 Helplines"
                 aria-label="Crisis"
               >
-                <span className="material-symbols-outlined text-base animate-pulse text-red-500">
+                <span className="material-symbols-outlined text-lg sm:text-xl animate-pulse text-red-500">
                   emergency
                 </span>
                 <span>Crisis</span>
@@ -562,13 +562,13 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                     setMobileMenuOpen(false);
                     setIsCrisisModalOpen(true);
                   }}
-                  className="w-full py-2.5 px-3.5 rounded-xl bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-900/50 font-heading font-bold text-xs flex items-center justify-between transition-colors mb-1 cursor-pointer"
+                  className="w-full py-3 px-4 rounded-xl bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-900/50 font-heading font-extrabold text-sm sm:text-base flex items-center justify-between transition-colors mb-1 cursor-pointer"
                 >
                   <span className="flex items-center gap-2">
-                    <span className="material-symbols-outlined text-base text-red-500 animate-pulse">emergency</span>
+                    <span className="material-symbols-outlined text-lg sm:text-xl text-red-500 animate-pulse">emergency</span>
                     <span>Crisis Support &amp; Helplines</span>
                   </span>
-                  <span className="px-2 py-0.5 rounded-full text-[10px] bg-red-500/10 text-red-600 dark:text-red-400 font-extrabold">24/7</span>
+                  <span className="px-2.5 py-0.5 rounded-full text-xs bg-red-500/10 text-red-600 dark:text-red-400 font-extrabold">24/7</span>
                 </button>
 
                 <Link
