@@ -34,6 +34,7 @@ Thumbs.db
 
 # Internal execution plans & local documents (Local only)
 MANISH_EXECUTION_PLAN.md
+frontend_design/
 *.pdf
 *.PDF
 *.Pdf

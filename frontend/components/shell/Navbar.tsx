@@ -10,6 +10,7 @@ import { useTheme } from "@/frontend/lib/context/ThemeContext";
 import Logo from "@/frontend/components/ui/Logo";
 import UserAvatar from "@/frontend/components/ui/UserAvatar";
 import CrisisSupportModal from "@/frontend/components/crisis/CrisisSupportModal";
+import RequestCallbackModal from "@/frontend/components/modals/RequestCallbackModal";
 
 export interface NavbarProps {
   variant?: "auto" | "public" | "authenticated";
@@ -26,6 +27,11 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
   const [mounted, setMounted] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [aboutDropdownOpen, setAboutDropdownOpen] = useState(false);
+  const [solutionDropdownOpen, setSolutionDropdownOpen] = useState(false);
+  const [mobileSolutionOpen, setMobileSolutionOpen] = useState(false);
+  const [callbackModalOpen, setCallbackModalOpen] = useState(false);
+  const [callbackDefaultSegment, setCallbackDefaultSegment] = useState<"colleges" | "corporates">("colleges");
+  const solutionDropdownRef = useRef<HTMLDivElement>(null);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const profileDropdownRef = useRef<HTMLDivElement>(null);
   const [isCrisisModalOpen, setIsCrisisModalOpen] = useState(false);
@@ -88,18 +94,31 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
   const isLoginPage = pathname === "/login";
   const isSignupPage = pathname === "/signup";
   const isAboutActive = ["/about", "/faq", "/privacy-and-trust"].includes(pathname);
+  const isSolutionActive = pathname.startsWith("/our-solution");
 
-  // Close mobile drawer, about dropdown & profile dropdown whenever route changes
+  // Close mobile drawer, dropdowns whenever route changes
   useEffect(() => {
     setMobileMenuOpen(false);
     setAboutDropdownOpen(false);
+    setSolutionDropdownOpen(false);
     setProfileDropdownOpen(false);
   }, [pathname]);
 
-  // Click outside & Escape key listeners for profile dropdown
+  // Global listener to trigger callback modal from anywhere
   useEffect(() => {
-    if (!profileDropdownOpen) return;
+    const handleOpenCallback = (e: any) => {
+      if (e.detail?.segment) {
+        setCallbackDefaultSegment(e.detail.segment);
+      }
+      setCallbackModalOpen(true);
+    };
+    window.addEventListener("open-callback-modal", handleOpenCallback as EventListener);
+    return () =>
+      window.removeEventListener("open-callback-modal", handleOpenCallback as EventListener);
+  }, []);
 
+  // Click outside & Escape key listeners for dropdowns
+  useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
         profileDropdownRef.current &&
@@ -107,11 +126,18 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
       ) {
         setProfileDropdownOpen(false);
       }
+      if (
+        solutionDropdownRef.current &&
+        !solutionDropdownRef.current.contains(event.target as Node)
+      ) {
+        setSolutionDropdownOpen(false);
+      }
     };
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         setProfileDropdownOpen(false);
+        setSolutionDropdownOpen(false);
       }
     };
 
@@ -122,7 +148,7 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
       document.removeEventListener("mousedown", handleClickOutside);
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [profileDropdownOpen]);
+  }, [profileDropdownOpen, solutionDropdownOpen]);
 
   const handleToggleMobile = () => {
     if (onOpenMenu) {
@@ -170,29 +196,125 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
           >
             How it Works
           </Link>
-          <Link
-            href="/our-solution"
-            className={`transition-colors flex items-center gap-1 shrink-0 ${
-              isAuthView
-                ? pathname === "/our-solution"
-                  ? "text-white font-bold"
-                  : "hover:text-white text-white/85"
-                : pathname === "/our-solution"
-                ? "text-primary font-bold"
-                : "hover:text-primary"
-            }`}
+          {/* Institutional Mega Dropdown */}
+          <div
+            ref={solutionDropdownRef}
+            className="relative"
+            onMouseEnter={() => setSolutionDropdownOpen(true)}
+            onMouseLeave={() => setSolutionDropdownOpen(false)}
           >
-            <span>Our Solution</span>
-            <span
-              className={`px-1.5 py-0.5 rounded-full text-[9px] font-heading font-extrabold leading-none ${
+            <button
+              type="button"
+              onClick={() => setSolutionDropdownOpen((prev) => !prev)}
+              className={`transition-colors flex items-center gap-1.5 shrink-0 py-1 cursor-pointer ${
                 isAuthView
-                  ? "bg-white/20 text-white border border-white/30"
-                  : "bg-primary/10 text-primary border border-primary/20"
+                  ? isSolutionActive
+                    ? "text-white font-bold"
+                    : "hover:text-white text-white/85"
+                  : isSolutionActive
+                  ? "text-primary font-bold"
+                  : "hover:text-primary"
               }`}
             >
-              Soon
-            </span>
-          </Link>
+              <span>Our Solution</span>
+              <span
+                className={`px-1.5 py-0.5 rounded-full text-[9px] font-heading font-extrabold leading-none ${
+                  isAuthView
+                    ? "bg-white/20 text-white border border-white/30"
+                    : "bg-primary/10 text-primary border border-primary/20"
+                }`}
+              >
+                Institutions
+              </span>
+              <span
+                className={`material-symbols-outlined text-sm transition-transform duration-200 ${
+                  solutionDropdownOpen ? "rotate-180" : ""
+                }`}
+              >
+                expand_more
+              </span>
+            </button>
+
+            <AnimatePresence>
+              {solutionDropdownOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: 8, scale: 0.98 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 6, scale: 0.97 }}
+                  transition={{ duration: 0.15, ease: "easeOut" }}
+                  className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-80 rounded-2xl bg-white dark:bg-[#0f2e26] border border-surface-variant/40 shadow-xl p-2 z-50 flex flex-col gap-1 text-on-surface"
+                >
+                  <div className="px-3 py-1.5 text-[10px] font-heading font-bold uppercase tracking-wider text-on-surface-variant/70 border-b border-surface-variant/20 mb-1">
+                    Institutional Wellness Ecosystems
+                  </div>
+
+                  {/* Colleges / Higher Ed */}
+                  <Link
+                    href="/our-solution?target=colleges"
+                    onClick={() => setSolutionDropdownOpen(false)}
+                    className="p-2.5 rounded-xl hover:bg-surface-container flex items-start gap-3 transition-colors group"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:text-white transition-colors">
+                      <span className="material-symbols-outlined text-lg">school</span>
+                    </div>
+                    <div>
+                      <div className="text-xs font-heading font-bold text-on-surface group-hover:text-primary transition-colors flex items-center gap-1.5">
+                        <span>For Students &amp; Colleges</span>
+                        <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-semibold border border-emerald-500/20">
+                          SC 2025
+                        </span>
+                      </div>
+                      <div className="text-[11px] text-on-surface-variant line-clamp-1">
+                        Campus-wide suicide prevention &amp; UGC guidelines
+                      </div>
+                    </div>
+                  </Link>
+
+                  {/* Corporates & Startups */}
+                  <Link
+                    href="/our-solution?target=corporates"
+                    onClick={() => setSolutionDropdownOpen(false)}
+                    className="p-2.5 rounded-xl hover:bg-surface-container flex items-start gap-3 transition-colors group"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-secondary/10 text-secondary flex items-center justify-center shrink-0 group-hover:bg-secondary group-hover:text-white transition-colors">
+                      <span className="material-symbols-outlined text-lg">corporate_fare</span>
+                    </div>
+                    <div>
+                      <div className="text-xs font-heading font-bold text-on-surface group-hover:text-secondary transition-colors flex items-center gap-1.5">
+                        <span>For Employees &amp; Corporates</span>
+                      </div>
+                      <div className="text-[11px] text-on-surface-variant line-clamp-1">
+                        24/7 confidential EAP, burnout telemetry &amp; ROI
+                      </div>
+                    </div>
+                  </Link>
+
+                  {/* Dropdown Footer CTA */}
+                  <div className="mt-1 pt-2 border-t border-surface-variant/20 flex items-center justify-between px-2 pb-1">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSolutionDropdownOpen(false);
+                        setCallbackDefaultSegment("colleges");
+                        setCallbackModalOpen(true);
+                      }}
+                      className="text-xs font-heading font-bold text-primary hover:text-primary-purple flex items-center gap-1.5 cursor-pointer"
+                    >
+                      <span className="material-symbols-outlined text-base">support_agent</span>
+                      <span>Request a Callback</span>
+                    </button>
+                    <Link
+                      href="/our-solution"
+                      onClick={() => setSolutionDropdownOpen(false)}
+                      className="text-[11px] font-heading font-semibold text-on-surface-variant hover:text-primary transition-colors"
+                    >
+                      Full Overview &rarr;
+                    </Link>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
           <Link
             href="/features"
             className={`transition-colors shrink-0 ${
@@ -593,21 +715,79 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                     <span className="material-symbols-outlined text-base text-on-surface-variant/40">chevron_right</span>
                   </Link>
                 )}
-                <Link
-                  href="/our-solution"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={`py-3 px-3.5 rounded-xl hover:bg-surface-container hover:text-primary transition-colors flex items-center justify-between ${
-                    pathname === "/our-solution" ? "bg-primary/10 text-primary font-bold" : ""
-                  }`}
-                >
-                  <span className="flex items-center gap-2">
-                    <span>Our Solution</span>
-                    <span className="px-2 py-0.5 rounded-full text-[10px] font-heading font-extrabold bg-primary/10 text-primary border border-primary/20">
-                      Soon
+                {/* Mobile Solutions Accordion */}
+                <div className="flex flex-col">
+                  <button
+                    type="button"
+                    onClick={() => setMobileSolutionOpen((prev) => !prev)}
+                    className="py-3 px-3.5 rounded-xl hover:bg-surface-container hover:text-primary transition-colors flex items-center justify-between cursor-pointer"
+                  >
+                    <span className="flex items-center gap-2">
+                      <span className={isSolutionActive ? "text-primary font-bold" : ""}>Our Solution</span>
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-heading font-extrabold bg-primary/10 text-primary border border-primary/20">
+                        Institutions
+                      </span>
                     </span>
-                  </span>
-                  <span className="material-symbols-outlined text-base text-on-surface-variant/40">chevron_right</span>
-                </Link>
+                    <span
+                      className={`material-symbols-outlined text-base text-on-surface-variant/50 transition-transform duration-200 ${
+                        mobileSolutionOpen ? "rotate-180" : ""
+                      }`}
+                    >
+                      expand_more
+                    </span>
+                  </button>
+
+                  <AnimatePresence>
+                    {mobileSolutionOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="pl-3 pr-1 py-1.5 flex flex-col gap-1 bg-surface-container-low/50 rounded-xl mt-1 overflow-hidden"
+                      >
+                        <Link
+                          href="/our-solution?target=colleges"
+                          onClick={() => setMobileMenuOpen(false)}
+                          className="py-2.5 px-3 rounded-lg hover:bg-surface-container text-xs font-heading font-semibold flex items-center gap-2.5 text-on-surface"
+                        >
+                          <span className="material-symbols-outlined text-base text-primary">school</span>
+                          <div>
+                            <div className="leading-tight">For Students &amp; Colleges</div>
+                            <div className="text-[10px] text-on-surface-variant font-normal">
+                              UGC/SC compliance &amp; campus care
+                            </div>
+                          </div>
+                        </Link>
+                        <Link
+                          href="/our-solution?target=corporates"
+                          onClick={() => setMobileMenuOpen(false)}
+                          className="py-2.5 px-3 rounded-lg hover:bg-surface-container text-xs font-heading font-semibold flex items-center gap-2.5 text-on-surface"
+                        >
+                          <span className="material-symbols-outlined text-base text-secondary">corporate_fare</span>
+                          <div>
+                            <div className="leading-tight">For Employees &amp; Corporates</div>
+                            <div className="text-[10px] text-on-surface-variant font-normal">
+                              24/7 EAP &amp; burnout telemetry
+                            </div>
+                          </div>
+                        </Link>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setMobileMenuOpen(false);
+                            setCallbackDefaultSegment("colleges");
+                            setCallbackModalOpen(true);
+                          }}
+                          className="mt-1 py-2.5 px-3 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 text-xs font-heading font-bold flex items-center gap-2 text-left cursor-pointer"
+                        >
+                          <span className="material-symbols-outlined text-base">support_agent</span>
+                          <span>Request a Callback</span>
+                        </button>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
                 <Link
                   href="/features"
                   onClick={() => setMobileMenuOpen(false)}
@@ -741,6 +921,13 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
       <CrisisSupportModal
         isOpen={isCrisisModalOpen}
         onClose={() => setIsCrisisModalOpen(false)}
+      />
+
+      {/* Global Institutional Request Callback Modal */}
+      <RequestCallbackModal
+        isOpen={callbackModalOpen}
+        onClose={() => setCallbackModalOpen(false)}
+        defaultSegment={callbackDefaultSegment}
       />
     </header>
   );
