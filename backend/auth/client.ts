@@ -176,6 +176,29 @@ export function updateClientSession(session: AuthSession): void {
   }
 }
 
+export async function changePassword(
+  currentPassword: string,
+  newPassword: string,
+  confirmPassword: string
+): Promise<{ success: boolean; message: string }> {
+  const res = await fetch("/api/auth/change-password", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      currentPassword,
+      newPassword,
+      confirmPassword,
+    }),
+  });
+
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    throw new Error(data.error || "Failed to change password. Please try again.");
+  }
+
+  return data;
+}
+
 export function getClientSession(): AuthSession {
   if (typeof window === "undefined") {
     return { user: null, token: null, isAuthenticated: false };

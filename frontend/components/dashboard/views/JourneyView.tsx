@@ -43,18 +43,18 @@ const CATEGORY_ICONS: Record<string, string> = {
 
 function getScoreStatusBadge(score: number | null | undefined): { label: string; color: string } {
   if (score === null || score === undefined) {
-    return { label: "Not Assessed", color: "text-slate-500 bg-slate-100 dark:bg-slate-800 dark:text-slate-400" };
+    return { label: "Not Assessed", color: "text-slate-500 bg-slate-100 dark:bg-[#082821] dark:text-[#9DB9B0]" };
   }
   if (score >= 80) {
-    return { label: "Flourishing", color: "text-[#006C56] bg-[#EAF6F0] dark:bg-[#14382F] dark:text-[#88F7D6]" };
+    return { label: "Flourishing", color: "text-[#006C56] bg-[#EAF6F0] dark:bg-[rgba(0,168,137,0.15)] dark:text-[#73D8C4]" };
   }
   if (score >= 65) {
-    return { label: "Good Progress", color: "text-[#008968] bg-[#EAF6F0] dark:bg-[#14382F] dark:text-[#00A982]" };
+    return { label: "Good Progress", color: "text-[#008968] bg-[#EAF6F0] dark:bg-[rgba(0,168,137,0.15)] dark:text-[#00A889]" };
   }
   if (score >= 50) {
-    return { label: "Moderate", color: "text-[#D97706] bg-[#FEF3C7] dark:bg-[#78350F]/30 dark:text-[#FBBF24]" };
+    return { label: "Moderate", color: "text-[#D97706] bg-[#FEF3C7] dark:bg-[rgba(245,160,60,0.14)] dark:text-[#FFC477]" };
   }
-  return { label: "Needs Attention", color: "text-rose-600 bg-rose-50 dark:bg-rose-950/30 dark:text-rose-400" };
+  return { label: "Needs Attention", color: "text-rose-600 bg-rose-50 dark:bg-rose-950/40 dark:text-rose-300" };
 }
 
 export default function JourneyView() {
@@ -339,14 +339,14 @@ export default function JourneyView() {
   return (
     <div className="w-full min-w-0 flex flex-col gap-5">
       {/* 1. Header Banner */}
-      <div className="bg-white dark:bg-[#102F27] rounded-3xl p-6 sm:p-7 border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs space-y-3 transition-colors">
-        <span className="px-3.5 py-1 rounded-full bg-[#EAF6F0] dark:bg-[#14382F] text-[#006C56] dark:text-[#00A982] text-[10.5px] font-extrabold tracking-wider">
+      <div className="bg-white dark:bg-[#0B3029] rounded-3xl p-6 sm:p-7 border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] shadow-2xs space-y-3 transition-colors">
+        <span className="px-3.5 py-1 rounded-full bg-[#EAF6F0] dark:bg-[rgba(0,168,137,0.15)] text-[#006C56] dark:text-[#73D8C4] text-[10.5px] font-extrabold tracking-wider border border-transparent dark:border-[rgba(0,168,137,0.30)]">
           {p.badgeLabel || "🌿 Wellness Journey"}
         </span>
         <h1 className="text-2xl font-heading font-black text-[#19332A] dark:text-[#F4FAF7] leading-tight">
           My Journey
         </h1>
-        <p className="text-xs text-[#6B857C] dark:text-[#A9C5BC] font-medium leading-relaxed max-w-xl">
+        <p className="text-xs text-[#6B857C] dark:text-[#9DB9B0] font-medium leading-relaxed max-w-xl">
           Your personal path toward emotional balance and resilience. Track your active {currentCategoryName} score, progress trend, and consistency.
         </p>
 
@@ -361,44 +361,44 @@ export default function JourneyView() {
                 openAssessment(currentCategory);
               }
             }}
-            className="p-4 rounded-2xl bg-[#F2FAF6] dark:bg-[#14382F] border border-[#E2ECE6] dark:border-[#23483E] flex items-center justify-between cursor-pointer hover:border-[#008968]/60 transition-all group"
+            className="p-4 rounded-2xl bg-[#F2FAF6] dark:bg-[#0E3931] border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] flex items-center justify-between cursor-pointer hover:border-[#008968]/60 dark:hover:border-[#00A889]/60 hover:bg-[#EAF6F0] dark:hover:bg-[#12463C] transition-all group"
           >
             <div className="flex items-center gap-3.5">
-              <div className="w-11 h-11 rounded-2xl bg-[#006C56] text-white flex items-center justify-center font-black text-sm shadow-xs group-hover:scale-105 transition-transform">
+              <div className="w-11 h-11 rounded-2xl bg-[#006C56] dark:bg-[#008F78] text-white flex items-center justify-center font-black text-sm shadow-xs group-hover:scale-105 transition-transform">
                 {isCurrentAssessed && currentScore !== null ? `${currentScore}%` : "--"}
               </div>
               <div>
-                <p className="text-[10px] text-[#789389] dark:text-[#78958C] font-semibold">
+                <p className="text-[10px] text-[#789389] dark:text-[#76968D] font-semibold">
                   {currentCategoryName} Wellness
                 </p>
-                <p className="text-xs font-black text-[#008968] dark:text-[#88F7D6]">
+                <p className="text-xs font-black text-[#008968] dark:text-[#73D8C4]">
                   {isCurrentAssessed && currentScore !== null ? levelBadge : "Not Assessed Yet"}
                 </p>
               </div>
             </div>
-            <span className="text-[10px] font-bold text-[#006C56] dark:text-[#00A982] opacity-80 group-hover:opacity-100">
+            <span className="text-[10px] font-bold text-[#006C56] dark:text-[#00A889] opacity-80 group-hover:opacity-100">
               {isCurrentAssessed && currentScore !== null ? "Retake →" : "Start Check →"}
             </span>
           </div>
 
           {/* Active Streak */}
-          <div className="p-4 rounded-2xl bg-[#FFF8F2] dark:bg-[#14382F] border border-[#E2ECE6] dark:border-[#23483E] flex items-center gap-3.5">
+          <div className="p-4 rounded-2xl bg-[#FFF8F2] dark:bg-[#0E3931] border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] flex items-center gap-3.5">
             <div className="w-11 h-11 rounded-2xl bg-[#F28C4B] text-white flex items-center justify-center text-xl shadow-xs">
               🔥
             </div>
             <div>
-              <p className="text-[10px] text-[#789389] dark:text-[#78958C] font-semibold">Active Streak</p>
+              <p className="text-[10px] text-[#789389] dark:text-[#76968D] font-semibold">Active Streak</p>
               <p className="text-xs font-black text-[#F28C4B]">{currentStreak} Days Consistent</p>
             </div>
           </div>
 
           {/* Mindfulness Time */}
-          <div className="p-4 rounded-2xl bg-[#F3F5FA] dark:bg-[#14382F] border border-[#E2ECE6] dark:border-[#23483E] flex items-center gap-3.5">
+          <div className="p-4 rounded-2xl bg-[#F3F5FA] dark:bg-[#0E3931] border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] flex items-center gap-3.5">
             <div className="w-11 h-11 rounded-2xl bg-[#3D52A0] text-white flex items-center justify-center text-lg shadow-xs">
               🧘
             </div>
             <div>
-              <p className="text-[10px] text-[#789389] dark:text-[#78958C] font-semibold">Mindfulness Time</p>
+              <p className="text-[10px] text-[#789389] dark:text-[#76968D] font-semibold">Mindfulness Time</p>
               <p className="text-xs font-black text-[#19332A] dark:text-[#F4FAF7]">{mindfulnessMinutes} Mins Logged</p>
             </div>
           </div>
@@ -406,10 +406,10 @@ export default function JourneyView() {
       </div>
 
       {/* 2. YOUR CURRENT WELLNESS (Focused Single Active Category Card) */}
-      <div className="bg-white dark:bg-[#102F27] rounded-3xl p-6 sm:p-7 border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs space-y-5 transition-colors">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#E2ECE6] dark:border-[#23483E]">
+      <div className="bg-white dark:bg-[#0B3029] rounded-3xl p-6 sm:p-7 border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] shadow-2xs space-y-5 transition-colors">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)]">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-2xl bg-[#EAF6F0] dark:bg-[#14382F] text-[#006C56] dark:text-[#00A982] flex items-center justify-center font-bold text-xs">
+            <div className="w-8 h-8 rounded-2xl bg-[#EAF6F0] dark:bg-[#0E3931] text-[#006C56] dark:text-[#00A889] flex items-center justify-center font-bold text-xs">
               📊
             </div>
             <div>
@@ -417,11 +417,11 @@ export default function JourneyView() {
                 <h2 className="text-sm font-heading font-black text-[#19332A] dark:text-[#F4FAF7] leading-tight">
                   Your Current Wellness
                 </h2>
-                <span className="px-2 py-0.5 rounded-full bg-[#EAF6F0] dark:bg-[#14382F] text-[#006C56] dark:text-[#88F7D6] text-[9.5px] font-extrabold tracking-wider border border-[#D0EADB] dark:border-[#23483E]">
+                <span className="px-2 py-0.5 rounded-full bg-[#EAF6F0] dark:bg-[rgba(0,168,137,0.15)] text-[#006C56] dark:text-[#73D8C4] text-[9.5px] font-extrabold tracking-wider border border-[#D0EADB] dark:border-[rgba(0,168,137,0.30)]">
                   Active Category
                 </span>
               </div>
-              <p className="text-[10px] text-[#789389] dark:text-[#78958C] font-medium leading-tight mt-0.5">
+              <p className="text-[10px] text-[#789389] dark:text-[#76968D] font-medium leading-tight mt-0.5">
                 Live personalized assessment for your active life-stage
               </p>
             </div>
@@ -430,7 +430,7 @@ export default function JourneyView() {
           <button
             type="button"
             onClick={() => setIsPastModalOpen(true)}
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#F2FAF6] dark:bg-[#14382F] hover:bg-[#EAF6F0] dark:hover:bg-[#1A453A] text-[#006C56] dark:text-[#88F7D6] text-xs font-bold border border-[#D2E8DC] dark:border-[#23483E] transition-all cursor-pointer shadow-2xs self-start sm:self-auto"
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#F2FAF6] dark:bg-[#082821] hover:bg-[#EAF6F0] dark:hover:bg-[#0E3931] text-[#006C56] dark:text-[#73D8C4] text-xs font-bold border border-[#D2E8DC] dark:border-[rgba(150,210,195,0.12)] transition-all cursor-pointer shadow-2xs self-start sm:self-auto"
           >
             <span>🕒</span>
             <span>View Past Activity →</span>
@@ -438,9 +438,9 @@ export default function JourneyView() {
         </div>
 
         {/* Active Category Focused Card */}
-        <div className="p-5 sm:p-6 rounded-2xl bg-[#F8FCFA] dark:bg-[#0E2A23] border border-[#E2ECE6] dark:border-[#23483E] flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="p-5 sm:p-6 rounded-2xl bg-[#F8FCFA] dark:bg-[#0E3931] border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="flex items-start sm:items-center gap-4">
-            <div className="w-16 h-16 rounded-2xl bg-white dark:bg-[#14382F] border border-[#D2E8DC] dark:border-[#23483E] flex items-center justify-center text-3xl shrink-0 shadow-xs">
+            <div className="w-16 h-16 rounded-2xl bg-white dark:bg-[#082821] border border-[#D2E8DC] dark:border-[rgba(150,210,195,0.16)] flex items-center justify-center text-3xl shrink-0 shadow-xs">
               {CATEGORY_ICONS[currentCategory] || "🌱"}
             </div>
             <div className="space-y-1">
@@ -448,11 +448,11 @@ export default function JourneyView() {
                 <h3 className="text-lg font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
                   {currentCategoryName}
                 </h3>
-                <span className="px-2 py-0.5 rounded-md bg-[#006C56] text-white text-[9px] font-extrabold">
+                <span className="px-2 py-0.5 rounded-md bg-[#006C56] dark:bg-[#008F78] text-white text-[9px] font-extrabold">
                   Active
                 </span>
               </div>
-              <p className="text-xs text-[#527065] dark:text-[#9BB8AE] font-medium">
+              <p className="text-xs text-[#527065] dark:text-[#9DB9B0] font-medium">
                 {isCurrentAssessed && currentScore !== null
                   ? "Your current wellness score for this category."
                   : "No assessment recorded for this category yet."}
@@ -463,11 +463,11 @@ export default function JourneyView() {
           <div className="flex flex-wrap items-center gap-4 self-start md:self-auto">
             <div className="text-left md:text-right">
               <div className="flex items-baseline gap-1">
-                <span className="text-3xl sm:text-4xl font-heading font-black text-[#006C56] dark:text-[#88F7D6]">
+                <span className="text-3xl sm:text-4xl font-heading font-black text-[#006C56] dark:text-[#00A889]">
                   {isCurrentAssessed && currentScore !== null ? `${currentScore}%` : "--"}
                 </span>
               </div>
-              <span className="inline-block px-2.5 py-0.5 rounded-full text-[10.5px] font-black bg-[#EAF6F0] dark:bg-[#14382F] text-[#006C56] dark:text-[#00A982] mt-0.5">
+              <span className="inline-block px-2.5 py-0.5 rounded-full text-[10.5px] font-black bg-[#EAF6F0] dark:bg-[rgba(0,168,137,0.15)] text-[#006C56] dark:text-[#73D8C4] border border-transparent dark:border-[rgba(0,168,137,0.30)] mt-0.5">
                 {isCurrentAssessed && currentScore !== null ? levelBadge : "Not Assessed Yet"}
               </span>
             </div>
@@ -478,14 +478,14 @@ export default function JourneyView() {
                   <button
                     type="button"
                     onClick={() => openBreakdownModal()}
-                    className="py-2.5 px-3.5 rounded-xl bg-white dark:bg-[#14382F] hover:bg-[#F2FAF6] text-[#19332A] dark:text-[#F4FAF7] text-xs font-bold border border-[#E2ECE6] dark:border-[#23483E] transition-all cursor-pointer shadow-2xs"
+                    className="py-2.5 px-3.5 rounded-xl bg-white dark:bg-[#082821] hover:bg-[#F2FAF6] dark:hover:bg-[#12463C] text-[#19332A] dark:text-[#F4FAF7] text-xs font-bold border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] transition-all cursor-pointer shadow-2xs"
                   >
                     View Details →
                   </button>
                   <button
                     type="button"
                     onClick={() => openReattemptModal(currentCategory)}
-                    className="py-2.5 px-4 rounded-xl bg-[#006C56] hover:bg-[#005241] text-white text-xs font-bold transition-all cursor-pointer shadow-xs"
+                    className="py-2.5 px-4 rounded-xl bg-[#006C56] hover:bg-[#005241] dark:bg-[#008F78] dark:hover:bg-[#00A889] text-white text-xs font-bold transition-all cursor-pointer shadow-xs"
                   >
                     Retake Assessment
                   </button>
@@ -494,7 +494,7 @@ export default function JourneyView() {
                 <button
                   type="button"
                   onClick={() => openAssessment(currentCategory)}
-                  className="py-2.5 px-4 rounded-xl bg-[#006C56] hover:bg-[#005241] text-white text-xs font-bold transition-all cursor-pointer shadow-xs"
+                  className="py-2.5 px-4 rounded-xl bg-[#006C56] hover:bg-[#005241] dark:bg-[#008F78] dark:hover:bg-[#00A889] text-white text-xs font-bold transition-all cursor-pointer shadow-xs"
                 >
                   Start Wellness Check →
                 </button>
@@ -507,18 +507,18 @@ export default function JourneyView() {
       {/* 3. WELLNESS INSIGHTS (Score Trend & Check-In Consistency) */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Card 1: Wellness Score Trend */}
-        <div className="bg-white dark:bg-[#102F27] rounded-3xl p-6 border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs space-y-4 transition-colors flex flex-col justify-between">
+        <div className="bg-white dark:bg-[#0B3029] rounded-3xl p-6 border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] shadow-2xs space-y-4 transition-colors flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-xl bg-[#EAF6F0] dark:bg-[#14382F] text-[#006C56] dark:text-[#00A982] flex items-center justify-center font-bold text-xs">
+                <div className="w-7 h-7 rounded-xl bg-[#EAF6F0] dark:bg-[#0E3931] text-[#006C56] dark:text-[#00A889] flex items-center justify-center font-bold text-xs">
                   📈
                 </div>
                 <div>
                   <h3 className="text-sm font-heading font-black text-[#19332A] dark:text-[#F4FAF7] leading-tight">
                     Wellness Score Trend
                   </h3>
-                  <p className="text-[10px] text-[#789389] dark:text-[#78958C] font-medium leading-tight">
+                  <p className="text-[10px] text-[#789389] dark:text-[#76968D] font-medium leading-tight">
                     {currentCategoryName} progress over time
                   </p>
                 </div>
@@ -527,8 +527,8 @@ export default function JourneyView() {
                 <span
                   className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold ${
                     scoreDelta.isPositive
-                      ? "bg-[#E6F4EA] dark:bg-[#14382F] text-[#137333] dark:text-[#88F7D6]"
-                      : "bg-rose-50 dark:bg-rose-950/30 text-rose-600"
+                      ? "bg-[#E6F4EA] dark:bg-[rgba(0,168,137,0.15)] text-[#137333] dark:text-[#73D8C4]"
+                      : "bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-300"
                   }`}
                 >
                   {scoreDelta.text}
@@ -544,14 +544,14 @@ export default function JourneyView() {
                       <span className="text-2xl font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
                         {currentScore}%
                       </span>
-                      <span className="text-xs text-[#789389] dark:text-[#78958C] ml-1.5 font-semibold">
+                      <span className="text-xs text-[#789389] dark:text-[#76968D] ml-1.5 font-semibold">
                         Current Score
                       </span>
                     </div>
                   </div>
 
                   {/* Sparkline / Points visualization */}
-                  <div className="h-28 pt-2 pb-1 border-b border-[#E2ECE6] dark:border-[#23483E] flex items-end justify-between gap-2 px-1">
+                  <div className="h-28 pt-2 pb-1 border-b border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] flex items-end justify-between gap-2 px-1">
                     {activeScoreHistory.map((pt, idx) => {
                       const heightPct = Math.max(15, Math.min(100, (pt.score / 100) * 100));
                       const isLast = idx === activeScoreHistory.length - 1;
@@ -560,24 +560,24 @@ export default function JourneyView() {
                           key={pt.date + idx}
                           className="flex-1 flex flex-col items-center gap-1 h-full justify-end group"
                         >
-                          <span className="text-[9px] font-bold text-[#006C56] dark:text-[#88F7D6] opacity-0 group-hover:opacity-100 transition-opacity">
+                          <span className="text-[9px] font-bold text-[#006C56] dark:text-[#00A889] opacity-0 group-hover:opacity-100 transition-opacity">
                             {pt.score}%
                           </span>
-                          <div className="w-full max-w-[28px] bg-[#EAF5EF] dark:bg-[#14382F] rounded-t-lg overflow-hidden h-full flex items-end">
+                          <div className="w-full max-w-[28px] bg-[#EAF5EF] dark:bg-[#082821] rounded-t-lg overflow-hidden h-full flex items-end">
                             <div
                               style={{ height: `${heightPct}%` }}
                               className={`w-full rounded-t-lg transition-all duration-500 ${
                                 isLast
-                                  ? "bg-[#006C56] dark:bg-[#00A982]"
-                                  : "bg-[#71C79E] dark:bg-[#206955]"
+                                  ? "bg-[#006C56] dark:bg-[#00A889]"
+                                  : "bg-[#71C79E] dark:bg-[#008F78]/60"
                               }`}
                             />
                           </div>
                           <span
                             className={`text-[9.5px] font-bold truncate max-w-[45px] ${
                               isLast
-                                ? "text-[#006C56] dark:text-[#88F7D6]"
-                                : "text-[#789389] dark:text-[#78958C]"
+                                ? "text-[#006C56] dark:text-[#00A889]"
+                                : "text-[#789389] dark:text-[#76968D]"
                             }`}
                           >
                             {pt.date}
@@ -588,12 +588,12 @@ export default function JourneyView() {
                   </div>
                 </div>
               ) : (
-                <div className="p-6 rounded-2xl bg-[#F8FCFA] dark:bg-[#0E2A23] border border-[#E2ECE6] dark:border-[#23483E] text-center space-y-2">
+                <div className="p-6 rounded-2xl bg-[#F8FCFA] dark:bg-[#0E3931] border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] text-center space-y-2">
                   <span className="text-2xl">🌱</span>
                   <p className="text-xs font-bold text-[#19332A] dark:text-[#F4FAF7]">
                     Complete another wellness check to start tracking your progress over time.
                   </p>
-                  <p className="text-[10px] text-[#789389] dark:text-[#78958C]">
+                  <p className="text-[10px] text-[#789389] dark:text-[#76968D]">
                     Your score changes and trend graph will appear after multiple assessments.
                   </p>
                 </div>
@@ -603,39 +603,39 @@ export default function JourneyView() {
         </div>
 
         {/* Card 2: Check-In Consistency */}
-        <div className="bg-white dark:bg-[#102F27] rounded-3xl p-6 border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs space-y-4 transition-colors flex flex-col justify-between">
+        <div className="bg-white dark:bg-[#0B3029] rounded-3xl p-6 border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] shadow-2xs space-y-4 transition-colors flex flex-col justify-between">
           <div>
             <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-xl bg-[#FFF4EB] dark:bg-[#14382F] text-[#F28C4B] flex items-center justify-center font-bold text-xs">
+              <div className="w-7 h-7 rounded-xl bg-[#FFF4EB] dark:bg-[#0E3931] text-[#F28C4B] flex items-center justify-center font-bold text-xs">
                 🔥
               </div>
               <div>
                 <h3 className="text-sm font-heading font-black text-[#19332A] dark:text-[#F4FAF7] leading-tight">
                   Check-In Consistency
                 </h3>
-                <p className="text-[10px] text-[#789389] dark:text-[#78958C] font-medium leading-tight">
+                <p className="text-[10px] text-[#789389] dark:text-[#76968D] font-medium leading-tight">
                   Your daily mindfulness and check-in engagement
                 </p>
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-3 mt-4">
-              <div className="p-3.5 rounded-2xl bg-[#F8FCFA] dark:bg-[#0E2A23] border border-[#E2ECE6] dark:border-[#23483E]">
+              <div className="p-3.5 rounded-2xl bg-[#F8FCFA] dark:bg-[#0E3931] border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)]">
                 <span className="text-lg">🔥</span>
                 <p className="text-xl font-heading font-black text-[#F28C4B] mt-1">
                   {consistencyStats.thisMonthCount} {consistencyStats.thisMonthCount === 1 ? "check-in" : "check-ins"}
                 </p>
-                <p className="text-[10.5px] text-[#789389] dark:text-[#78958C] font-semibold">
+                <p className="text-[10.5px] text-[#789389] dark:text-[#76968D] font-semibold">
                   this month
                 </p>
               </div>
 
-              <div className="p-3.5 rounded-2xl bg-[#F8FCFA] dark:bg-[#0E2A23] border border-[#E2ECE6] dark:border-[#23483E]">
+              <div className="p-3.5 rounded-2xl bg-[#F8FCFA] dark:bg-[#0E3931] border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)]">
                 <span className="text-lg">📅</span>
-                <p className="text-xl font-heading font-black text-[#006C56] dark:text-[#88F7D6] mt-1">
+                <p className="text-xl font-heading font-black text-[#006C56] dark:text-[#00A889] mt-1">
                   {consistencyStats.thisWeekCount} / 7 days
                 </p>
-                <p className="text-[10.5px] text-[#789389] dark:text-[#78958C] font-semibold">
+                <p className="text-[10.5px] text-[#789389] dark:text-[#76968D] font-semibold">
                   active this week
                 </p>
               </div>
@@ -643,11 +643,11 @@ export default function JourneyView() {
           </div>
 
           <div className="pt-2">
-            <div className="p-3 rounded-xl bg-[#F2FAF6] dark:bg-[#14382F] border border-[#E2ECE6] dark:border-[#23483E] flex items-center justify-between text-xs">
-              <span className="text-[11px] text-[#4F685F] dark:text-[#A9C5BC] font-medium">
+            <div className="p-3 rounded-xl bg-[#F2FAF6] dark:bg-[#082821] border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] flex items-center justify-between text-xs">
+              <span className="text-[11px] text-[#4F685F] dark:text-[#9DB9B0] font-medium">
                 Total recorded check-ins:
               </span>
-              <span className="font-heading font-black text-[#006C56] dark:text-[#88F7D6]">
+              <span className="font-heading font-black text-[#006C56] dark:text-[#00A889]">
                 {consistencyStats.last30DaysCount} in last 30 days
               </span>
             </div>
@@ -656,13 +656,13 @@ export default function JourneyView() {
       </div>
 
       {/* 4. Daily Check-In Timeline Section with Filters */}
-      <div className="bg-white dark:bg-[#102F27] rounded-3xl p-6 sm:p-7 border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs space-y-5 transition-colors">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-3 border-b border-[#E2ECE6] dark:border-[#23483E]">
+      <div className="bg-white dark:bg-[#0B3029] rounded-3xl p-6 sm:p-7 border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] shadow-2xs space-y-5 transition-colors">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-3 border-b border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)]">
           <div>
             <h2 className="text-base sm:text-lg font-heading font-black text-[#19332A] dark:text-[#F4FAF7] leading-tight">
               Daily Check-In Timeline
             </h2>
-            <p className="text-[11px] text-[#789389] dark:text-[#78958C] font-medium leading-tight mt-0.5">
+            <p className="text-[11px] text-[#789389] dark:text-[#76968D] font-medium leading-tight mt-0.5">
               Review your mood entries, wellness notes, and verified check-ins
             </p>
           </div>
@@ -670,7 +670,7 @@ export default function JourneyView() {
           {/* Time & Mood Filter Controls */}
           <div className="flex flex-wrap items-center gap-2">
             {/* Time Filter */}
-            <div className="flex items-center bg-[#F4FAF7] dark:bg-[#14382F] p-1 rounded-xl border border-[#E2ECE6] dark:border-[#23483E]">
+            <div className="flex items-center bg-[#F4FAF7] dark:bg-[#082821] p-1 rounded-xl border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)]">
               {TIME_FILTER_OPTIONS.map((tf) => (
                 <button
                   key={tf}
@@ -678,8 +678,8 @@ export default function JourneyView() {
                   onClick={() => setTimeFilter(tf)}
                   className={`px-2.5 py-1 rounded-lg text-[10.5px] font-bold transition-all cursor-pointer ${
                     timeFilter === tf
-                      ? "bg-[#006C56] text-white shadow-xs"
-                      : "text-[#4F685F] dark:text-[#A9C5BC] hover:text-[#19332A]"
+                      ? "bg-[#006C56] dark:bg-[#008F78] text-white shadow-xs"
+                      : "text-[#4F685F] dark:text-[#9DB9B0] hover:text-[#19332A] dark:hover:text-[#F4FAF7]"
                   }`}
                 >
                   {tf}
@@ -691,10 +691,10 @@ export default function JourneyView() {
             <select
               value={moodFilter}
               onChange={(e) => setMoodFilter(e.target.value)}
-              className="px-3 py-1.5 rounded-xl bg-[#F4FAF7] dark:bg-[#14382F] text-[#19332A] dark:text-[#F4FAF7] text-[11px] font-bold border border-[#E2ECE6] dark:border-[#23483E] focus:outline-none cursor-pointer"
+              className="px-3 py-1.5 rounded-xl bg-[#F4FAF7] dark:bg-[#082821] text-[#19332A] dark:text-[#F4FAF7] text-[11px] font-bold border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.16)] focus:outline-none cursor-pointer"
             >
               {MOOD_FILTER_OPTIONS.map((mf) => (
-                <option key={mf} value={mf} className="text-black dark:text-white">
+                <option key={mf} value={mf} className="text-black dark:text-white dark:bg-[#082821]">
                   {mf === "All" ? "All Moods" : `${MOOD_EMOJIS[mf.toLowerCase()] || ""} ${mf}`}
                 </option>
               ))}
@@ -706,8 +706,8 @@ export default function JourneyView() {
         <div className="space-y-3">
           {isLoading ? (
             <div className="py-12 text-center space-y-2">
-              <div className="w-7 h-7 border-2 border-[#008968] border-t-transparent rounded-full animate-spin mx-auto" />
-              <p className="text-xs text-[#789389]">Loading check-in history...</p>
+              <div className="w-7 h-7 border-2 border-[#008968] dark:border-[#00A889] border-t-transparent rounded-full animate-spin mx-auto" />
+              <p className="text-xs text-[#789389] dark:text-[#76968D]">Loading check-in history...</p>
             </div>
           ) : filteredHistory.length > 0 ? (
             filteredHistory.map((item, idx) => {
@@ -724,11 +724,11 @@ export default function JourneyView() {
               return (
                 <div
                   key={item.id || idx}
-                  className="p-4 sm:p-5 rounded-2xl bg-[#F8FCFA] dark:bg-[#0E2A23] border border-[#E2ECE6] dark:border-[#23483E] hover:border-[#008968]/50 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 group"
+                  className="p-4 sm:p-5 rounded-2xl bg-[#F8FCFA] dark:bg-[#0E3931] border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] hover:border-[#008968]/50 dark:hover:border-[#00A889]/50 dark:hover:bg-[#12463C] transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 group"
                 >
                   <div className="flex items-start gap-3.5 min-w-0">
                     {/* Large Mood Emoji Badge */}
-                    <div className="w-12 h-12 rounded-2xl bg-white dark:bg-[#14382F] border border-[#D2E8DC] dark:border-[#23483E] flex items-center justify-center text-2xl shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
+                    <div className="w-12 h-12 rounded-2xl bg-white dark:bg-[#082821] border border-[#D2E8DC] dark:border-[rgba(150,210,195,0.16)] flex items-center justify-center text-2xl shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
                       {emoji}
                     </div>
 
@@ -737,14 +737,14 @@ export default function JourneyView() {
                         <span className="text-xs font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
                           {dateLabel}
                         </span>
-                        <span className="px-2 py-0.5 rounded-full bg-[#EAF6F0] dark:bg-[#14382F] text-[#006C56] dark:text-[#00A982] text-[10px] font-bold">
+                        <span className="px-2 py-0.5 rounded-full bg-[#EAF6F0] dark:bg-[rgba(0,168,137,0.15)] text-[#006C56] dark:text-[#73D8C4] text-[10px] font-bold">
                           {emoji} {moodLabel}
                         </span>
-                        <span className="px-2 py-0.5 rounded-full bg-slate-100 dark:bg-[#1A483C] text-[#4F685F] dark:text-[#A9C5BC] text-[9.5px] font-bold">
+                        <span className="px-2 py-0.5 rounded-full bg-slate-100 dark:bg-[#082821] text-[#4F685F] dark:text-[#9DB9B0] text-[9.5px] font-bold border border-transparent dark:border-[rgba(150,210,195,0.12)]">
                           {categoryTitle}
                         </span>
                         {timeLabel && (
-                          <span className="text-[10px] text-[#789389] dark:text-[#78958C]">
+                          <span className="text-[10px] text-[#789389] dark:text-[#76968D]">
                             • {timeLabel}
                           </span>
                         )}
@@ -752,11 +752,11 @@ export default function JourneyView() {
 
                       {/* Note / Reflection Preview */}
                       {noteText ? (
-                        <p className="text-xs text-[#4F685F] dark:text-[#A9C5BC] font-medium leading-relaxed italic line-clamp-2">
+                        <p className="text-xs text-[#4F685F] dark:text-[#D5E6E0] font-medium leading-relaxed italic line-clamp-2">
                           “{noteText}”
                         </p>
                       ) : (
-                        <p className="text-[11px] text-[#789389] dark:text-[#78958C] font-normal">
+                        <p className="text-[11px] text-[#789389] dark:text-[#76968D] font-normal">
                           Daily mood check-in recorded.
                         </p>
                       )}
@@ -765,8 +765,8 @@ export default function JourneyView() {
 
                   {/* Score Ring / Pill */}
                   {score !== null && (
-                    <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-1 shrink-0 pt-1 sm:pt-0 border-t sm:border-t-0 border-[#E2ECE6] dark:border-[#23483E]">
-                      <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#EAF6F0] dark:bg-[#14382F] text-[#006C56] dark:text-[#00A982]">
+                    <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-1 shrink-0 pt-1 sm:pt-0 border-t sm:border-t-0 border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)]">
+                      <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#EAF6F0] dark:bg-[#082821] text-[#006C56] dark:text-[#00A889] border border-transparent dark:border-[rgba(150,210,195,0.12)]">
                         <span className="text-[10px] font-extrabold">Score</span>
                         <span className="text-sm font-heading font-black">{score}%</span>
                       </div>
@@ -782,14 +782,14 @@ export default function JourneyView() {
                 <h4 className="text-xs font-bold text-[#19332A] dark:text-[#F4FAF7]">
                   No check-ins match the selected filters
                 </h4>
-                <p className="text-[11px] text-[#789389] dark:text-[#78958C]">
+                <p className="text-[11px] text-[#789389] dark:text-[#76968D]">
                   Complete your daily check-in from the dashboard to see entries here.
                 </p>
               </div>
               <button
                 type="button"
                 onClick={() => openAssessment(currentCategory)}
-                className="px-4 py-2 rounded-xl bg-[#006C56] hover:bg-[#005241] text-white text-xs font-bold transition-all shadow-xs cursor-pointer"
+                className="px-4 py-2 rounded-xl bg-[#006C56] hover:bg-[#005241] dark:bg-[#008F78] dark:hover:bg-[#00A889] text-white text-xs font-bold transition-all shadow-xs cursor-pointer"
               >
                 Check In Now
               </button>
@@ -800,18 +800,18 @@ export default function JourneyView() {
 
       {/* 5. Past Wellness Activity Modal */}
       {isPastModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
-          <div className="bg-white dark:bg-[#102F27] border border-[#E2ECE6] dark:border-[#23483E] rounded-3xl p-6 sm:p-7 max-w-lg w-full shadow-2xl space-y-4 max-h-[85vh] flex flex-col">
-            <div className="flex items-center justify-between pb-3 border-b border-[#E2ECE6] dark:border-[#23483E]">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-xs animate-in fade-in duration-200">
+          <div className="bg-white dark:bg-[#0B3029] border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.15)] rounded-3xl p-6 sm:p-7 max-w-lg w-full shadow-2xl space-y-4 max-h-[85vh] flex flex-col">
+            <div className="flex items-center justify-between pb-3 border-b border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)]">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-[#EAF6F0] dark:bg-[#14382F] text-[#006C56] dark:text-[#00A982] flex items-center justify-center text-sm">
+                <div className="w-8 h-8 rounded-xl bg-[#EAF6F0] dark:bg-[#0E3931] text-[#006C56] dark:text-[#00A889] flex items-center justify-center text-sm">
                   🕒
                 </div>
                 <div>
                   <h3 className="text-base font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
                     Past Wellness Activity
                   </h3>
-                  <p className="text-[10.5px] text-[#789389] dark:text-[#78958C] font-medium">
+                  <p className="text-[10.5px] text-[#789389] dark:text-[#76968D] font-medium">
                     Categories and assessments you have previously opened
                   </p>
                 </div>
@@ -819,7 +819,7 @@ export default function JourneyView() {
               <button
                 type="button"
                 onClick={() => setIsPastModalOpen(false)}
-                className="w-8 h-8 rounded-xl bg-slate-100 dark:bg-[#14382F] hover:bg-slate-200 dark:hover:bg-[#19483C] text-slate-600 dark:text-slate-300 flex items-center justify-center text-sm font-bold transition-all cursor-pointer"
+                className="w-7 h-7 rounded-full bg-[#F4FAF7] dark:bg-[#0E3931] text-[#4F685F] dark:text-[#9DB9B0] flex items-center justify-center hover:bg-[#E2ECE6] dark:hover:bg-[#12463C] dark:hover:text-[#F4FAF7] transition-colors cursor-pointer text-xs"
               >
                 ✕
               </button>
@@ -831,7 +831,7 @@ export default function JourneyView() {
                 pastActivityList.map((item) => (
                   <div
                     key={item.id}
-                    className="p-4 rounded-2xl bg-[#F8FCFA] dark:bg-[#0E2A23] border border-[#E2ECE6] dark:border-[#23483E] flex items-center justify-between gap-3"
+                    className="p-4 rounded-2xl bg-[#F8FCFA] dark:bg-[#0E3931] border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] flex items-center justify-between gap-3"
                   >
                     <div className="flex items-center gap-3">
                       <span className="text-2xl">{item.icon}</span>
@@ -841,12 +841,12 @@ export default function JourneyView() {
                             {item.name}
                           </h4>
                           {item.id === currentCategory && (
-                            <span className="px-1.5 py-0.5 rounded-md bg-[#006C56] text-white text-[8px] font-extrabold">
+                            <span className="px-1.5 py-0.5 rounded-md bg-[#006C56] dark:bg-[#008F78] text-white text-[8px] font-extrabold">
                               Active
                             </span>
                           )}
                         </div>
-                        <p className="text-[10px] text-[#789389] dark:text-[#78958C] font-medium mt-0.5">
+                        <p className="text-[10px] text-[#789389] dark:text-[#76968D] font-medium mt-0.5">
                           Last active: {item.date}
                         </p>
                       </div>
@@ -855,12 +855,12 @@ export default function JourneyView() {
                     <div className="text-right">
                       <span
                         className={`text-xs font-heading font-black ${
-                          item.score !== null ? "text-[#006C56] dark:text-[#88F7D6]" : "text-[#789389] dark:text-[#78958C]"
+                          item.score !== null ? "text-[#006C56] dark:text-[#00A889]" : "text-[#789389] dark:text-[#76968D]"
                         }`}
                       >
                         {item.score !== null ? `${item.score}%` : "--"}
                       </span>
-                      <p className="text-[9.5px] font-bold text-[#527065] dark:text-[#9BB8AE]">
+                      <p className="text-[9.5px] font-bold text-[#527065] dark:text-[#9DB9B0]">
                         {item.status}
                       </p>
                     </div>
@@ -872,18 +872,18 @@ export default function JourneyView() {
                   <p className="text-xs font-bold text-[#19332A] dark:text-[#F4FAF7]">
                     No past wellness activity yet.
                   </p>
-                  <p className="text-[11px] text-[#789389] dark:text-[#78958C] max-w-xs mx-auto">
+                  <p className="text-[11px] text-[#789389] dark:text-[#76968D] max-w-xs mx-auto">
                     Your previous category activity and check-in records will appear here as you engage.
                   </p>
                 </div>
               )}
             </div>
 
-            <div className="pt-2 border-t border-[#E2ECE6] dark:border-[#23483E] flex justify-end">
+            <div className="pt-2 border-t border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] flex justify-end">
               <button
                 type="button"
                 onClick={() => setIsPastModalOpen(false)}
-                className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-[#14382F] dark:hover:bg-[#19483C] text-[#19332A] dark:text-[#F4FAF7] text-xs font-bold transition-all cursor-pointer"
+                className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-[#0E3931] dark:hover:bg-[#12463C] text-[#19332A] dark:text-[#F4FAF7] text-xs font-bold transition-all cursor-pointer"
               >
                 Close
               </button>

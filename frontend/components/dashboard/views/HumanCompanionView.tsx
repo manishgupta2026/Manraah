@@ -166,22 +166,22 @@ export default function HumanCompanionView() {
   return (
     <div className="w-full min-w-0 flex flex-col gap-5">
       {/* 1. Header Banner */}
-      <div className="bg-white dark:bg-[#102F27] rounded-3xl p-6 sm:p-7 border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs space-y-4 transition-colors">
+      <div className="bg-white dark:bg-[#0B3029] rounded-3xl p-6 sm:p-7 border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] shadow-2xs space-y-4 transition-colors">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <span className="text-[10px] font-black tracking-widest text-[#006C56] dark:text-[#00A982]">
+            <span className="text-[10px] font-black tracking-widest text-[#006C56] dark:text-[#00A889]">
               1-on-1 Active Listener Manraah
             </span>
             <h1 className="text-2xl font-heading font-black text-[#19332A] dark:text-[#F4FAF7] leading-tight mt-0.5">
               Human Companion
             </h1>
-            <p className="text-xs text-[#6B857C] dark:text-[#A9C5BC] font-medium mt-1">
+            <p className="text-xs text-[#6B857C] dark:text-[#9DB9B0] font-medium mt-1">
               Connect anonymously 1-on-1 with trained, compassionate peer listeners for genuine warmth and understanding.
             </p>
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="px-3 py-1 rounded-full bg-[#EAF5EF] dark:bg-[#14382F] text-[#006C56] dark:text-[#00A982] text-xs font-bold flex items-center gap-1.5">
+            <span className="px-3 py-1 rounded-full bg-[#EAF5EF] dark:bg-[rgba(0,168,137,0.15)] text-[#006C56] dark:text-[#73D8C4] border border-[#D5E8DF] dark:border-[rgba(0,168,137,0.30)] text-xs font-bold flex items-center gap-1.5">
               <span>🛡️</span> 100% Anonymous & Masked
             </span>
           </div>
@@ -189,7 +189,7 @@ export default function HumanCompanionView() {
       </div>
 
       {/* 2. Multi-Step Controller Container */}
-      <div className="bg-white dark:bg-[#102F27] rounded-3xl border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs p-6 sm:p-8 transition-colors">
+      <div className="bg-white dark:bg-[#0B3029] rounded-3xl border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] shadow-2xs p-6 sm:p-8 transition-colors">
         {/* =================================================================== */}
         {/* STEP 1: ENTRY & TOPIC SELECTION                                     */}
         {/* =================================================================== */}
@@ -201,7 +201,7 @@ export default function HumanCompanionView() {
                 <h2 className="text-base font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
                   What would you like to speak about today?
                 </h2>
-                <p className="text-xs text-[#6B857C] dark:text-[#A9C5BC]">
+                <p className="text-xs text-[#6B857C] dark:text-[#9DB9B0]">
                   Pick a topic or type your own. Our peer listeners are trained across emotional well-being areas.
                 </p>
               </div>
@@ -220,8 +220,8 @@ export default function HumanCompanionView() {
                       }}
                       className={`px-3.5 py-2 rounded-2xl text-xs font-bold transition-all border cursor-pointer ${
                         isSelected
-                          ? "bg-[#006C56] text-white border-[#006C56] shadow-xs"
-                          : "bg-[#F8FCFA] dark:bg-[#14382F] border-[#D5E3DB] dark:border-[#23483E] text-[#4F685F] dark:text-[#A9C5BC] hover:border-[#006C56]/40"
+                          ? "bg-[#006C56] dark:bg-[#008F78] text-white border-[#006C56] dark:border-[#008F78] shadow-xs"
+                          : "bg-[#F8FCFA] dark:bg-[#082821] border-[#D5E3DB] dark:border-[rgba(150,210,195,0.12)] text-[#4F685F] dark:text-[#9DB9B0] hover:border-[#006C56]/40 dark:hover:border-[rgba(150,210,195,0.25)]"
                       }`}
                     >
                       {t}
@@ -237,7 +237,7 @@ export default function HumanCompanionView() {
                   value={customTopic}
                   onChange={(e) => setCustomTopic(e.target.value)}
                   placeholder="Or enter a custom topic (e.g. Navigating exam anxiety, feeling unheard)..."
-                  className="w-full py-2.5 px-4 rounded-2xl bg-[#F8FCFA] dark:bg-[#0E2A23] border border-[#D5E3DB] dark:border-[#23483E] text-xs font-bold text-[#19332A] dark:text-[#F4FAF7] focus:outline-none focus:ring-2 focus:ring-[#006C56]/40 placeholder:text-[#8EAAA1]"
+                  className="w-full py-2.5 px-4 rounded-2xl bg-[#F8FCFA] dark:bg-[#082821] border border-[#D5E3DB] dark:border-[rgba(150,210,195,0.16)] text-xs font-bold text-[#19332A] dark:text-[#F4FAF7] focus:outline-none focus:ring-2 focus:ring-[#006C56]/40 dark:focus:ring-[#00A889]/30 placeholder:text-[#8EAAA1] dark:placeholder:text-[#789990]"
                 />
               </div>
             </div>
@@ -246,7 +246,7 @@ export default function HumanCompanionView() {
             <div className="py-4">
               <button
                 onClick={handleStartSearch}
-                className="w-44 h-44 mx-auto rounded-full bg-gradient-to-br from-[#006C56] via-[#008968] to-[#00A982] text-white font-heading font-black text-sm shadow-xl shadow-[#006C56]/30 hover:scale-105 active:scale-95 transition-all flex flex-col items-center justify-center gap-2 cursor-pointer border-4 border-white dark:border-[#14382F]"
+                className="w-44 h-44 mx-auto rounded-full bg-gradient-to-br from-[#006C56] via-[#008968] to-[#00A982] text-white font-heading font-black text-sm shadow-xl shadow-[#006C56]/30 hover:scale-105 active:scale-95 transition-all flex flex-col items-center justify-center gap-2 cursor-pointer border-4 border-white dark:border-[#0E3931]"
               >
                 <span className="text-3xl">🎙️</span>
                 <span>Find a Listener</span>
@@ -255,30 +255,30 @@ export default function HumanCompanionView() {
             </div>
 
             {/* Privacy Commitments */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-4 border-t border-[#E2ECE6] dark:border-[#23483E] text-left">
-              <div className="p-3.5 rounded-2xl bg-[#F8FCFA] dark:bg-[#14382F]/40 border border-[#E2ECE6] dark:border-[#23483E] space-y-1">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-4 border-t border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] text-left">
+              <div className="p-3.5 rounded-2xl bg-[#F8FCFA] dark:bg-[#0E3931] border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] space-y-1">
                 <span className="text-xs font-bold text-[#19332A] dark:text-[#F4FAF7] flex items-center gap-1.5">
                   <span>🔒</span> Zero Identifiers
                 </span>
-                <p className="text-[10.5px] text-[#6B857C] dark:text-[#A9C5BC] leading-relaxed">
+                <p className="text-[10.5px] text-[#6B857C] dark:text-[#9DB9B0] leading-relaxed">
                   Real names, numbers, or emails are never shared with listeners.
                 </p>
               </div>
 
-              <div className="p-3.5 rounded-2xl bg-[#F8FCFA] dark:bg-[#14382F]/40 border border-[#E2ECE6] dark:border-[#23483E] space-y-1">
+              <div className="p-3.5 rounded-2xl bg-[#F8FCFA] dark:bg-[#0E3931] border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] space-y-1">
                 <span className="text-xs font-bold text-[#19332A] dark:text-[#F4FAF7] flex items-center gap-1.5">
                   <span>🕊️</span> Active Listening
                 </span>
-                <p className="text-[10.5px] text-[#6B857C] dark:text-[#A9C5BC] leading-relaxed">
+                <p className="text-[10.5px] text-[#6B857C] dark:text-[#9DB9B0] leading-relaxed">
                   No unsolicited advice or judgment. Just warm, present companionship.
                 </p>
               </div>
 
-              <div className="p-3.5 rounded-2xl bg-[#F8FCFA] dark:bg-[#14382F]/40 border border-[#E2ECE6] dark:border-[#23483E] space-y-1">
+              <div className="p-3.5 rounded-2xl bg-[#F8FCFA] dark:bg-[#0E3931] border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] space-y-1">
                 <span className="text-xs font-bold text-[#19332A] dark:text-[#F4FAF7] flex items-center gap-1.5">
                   <span>🛑</span> Full Control
                 </span>
-                <p className="text-[10.5px] text-[#6B857C] dark:text-[#A9C5BC] leading-relaxed">
+                <p className="text-[10.5px] text-[#6B857C] dark:text-[#9DB9B0] leading-relaxed">
                   You can end the session or switch modes anytime with a single tap.
                 </p>
               </div>
@@ -292,28 +292,28 @@ export default function HumanCompanionView() {
         {step === "SEARCHING" && (
           <div className="max-w-md mx-auto py-12 text-center space-y-8 animate-in fade-in duration-200">
             <div className="relative w-36 h-36 mx-auto flex items-center justify-center">
-              <div className="absolute inset-0 rounded-full bg-[#006C56]/15 dark:bg-[#00A982]/15 animate-ping" />
-              <div className="absolute inset-3 rounded-full bg-[#006C56]/20 dark:bg-[#00A982]/20 animate-pulse" />
-              <div className="relative w-20 h-20 rounded-full bg-[#006C56] text-white flex items-center justify-center text-3xl shadow-lg">
+              <div className="absolute inset-0 rounded-full bg-[#006C56]/15 dark:bg-[#00A889]/15 animate-ping" />
+              <div className="absolute inset-3 rounded-full bg-[#006C56]/20 dark:bg-[#00A889]/20 animate-pulse" />
+              <div className="relative w-20 h-20 rounded-full bg-[#006C56] dark:bg-[#008F78] text-white flex items-center justify-center text-3xl shadow-lg">
                 <span>📡</span>
               </div>
             </div>
 
             <div className="space-y-2">
-              <span className="px-3 py-1 rounded-full bg-[#EAF5EF] dark:bg-[#14382F] text-[#006C56] dark:text-[#00A982] text-xs font-bold tracking-wider inline-block">
+              <span className="px-3 py-1 rounded-full bg-[#EAF5EF] dark:bg-[rgba(0,168,137,0.15)] text-[#006C56] dark:text-[#73D8C4] border border-[#D5E8DF] dark:border-[rgba(0,168,137,0.30)] text-xs font-bold tracking-wider inline-block">
                 Scanning Peer Network...
               </span>
               <h2 className="text-xl font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
                 Matching with an Available Peer Listener
               </h2>
-              <p className="text-xs text-[#6B857C] dark:text-[#A9C5BC] max-w-xs mx-auto leading-relaxed">
+              <p className="text-xs text-[#6B857C] dark:text-[#9DB9B0] max-w-xs mx-auto leading-relaxed">
                 Topic: <em>&quot;{customTopic || activeTopic}&quot;</em>
               </p>
             </div>
 
             <button
               onClick={handleCancelSearch}
-              className="px-6 py-2 rounded-full bg-[#F4F9F6] dark:bg-[#14382F] hover:bg-[#E2ECE6] text-[#4F685F] dark:text-[#A9C5BC] text-xs font-bold border border-[#D5E3DB] dark:border-[#23483E] transition-all cursor-pointer"
+              className="px-6 py-2 rounded-full bg-[#F4F9F6] dark:bg-[#082821] hover:bg-[#E2ECE6] dark:hover:bg-[#0E3931] text-[#4F685F] dark:text-[#9DB9B0] text-xs font-bold border border-[#D5E3DB] dark:border-[rgba(150,210,195,0.12)] transition-all cursor-pointer"
             >
               Cancel Search
             </button>
@@ -325,23 +325,23 @@ export default function HumanCompanionView() {
         {/* =================================================================== */}
         {step === "MATCHED" && (
           <div className="max-w-md mx-auto py-8 text-center space-y-6 animate-in zoom-in-95 duration-200">
-            <span className="px-3.5 py-1 rounded-full bg-[#EAF5EF] dark:bg-[#14382F] text-[#006C56] dark:text-[#00A982] text-xs font-bold tracking-wider inline-block">
+            <span className="px-3.5 py-1 rounded-full bg-[#EAF5EF] dark:bg-[rgba(0,168,137,0.15)] text-[#006C56] dark:text-[#73D8C4] border border-[#D5E8DF] dark:border-[rgba(0,168,137,0.30)] text-xs font-bold tracking-wider inline-block">
               ✓ Listener Connected
             </span>
 
             {/* Listener Card */}
-            <div className="p-6 rounded-3xl bg-[#F8FCFA] dark:bg-[#14382F]/60 border border-[#E2ECE6] dark:border-[#23483E] space-y-4">
-              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#006C56] to-[#00A982] text-white flex items-center justify-center font-bold text-lg mx-auto shadow-md">
+            <div className="p-6 rounded-3xl bg-[#F8FCFA] dark:bg-[#0E3931] border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] space-y-4">
+              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#006C56] to-[#00A889] text-white flex items-center justify-center font-bold text-lg mx-auto shadow-md">
                 PL
               </div>
               <div>
                 <h3 className="text-base font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
                   Peer Listener Priya (#104)
                 </h3>
-                <p className="text-xs text-[#6B857C] dark:text-[#A9C5BC] mt-0.5">
+                <p className="text-xs text-[#6B857C] dark:text-[#9DB9B0] mt-0.5">
                   Trained Active Listener • Empathy & Anxiety Support
                 </p>
-                <div className="flex items-center justify-center gap-3 mt-2 text-xs font-bold text-[#006C56] dark:text-[#00A982]">
+                <div className="flex items-center justify-center gap-3 mt-2 text-xs font-bold text-[#006C56] dark:text-[#00A889]">
                   <span>★ 4.9 Rating</span>
                   <span>•</span>
                   <span>140+ Support Sessions</span>
@@ -349,14 +349,14 @@ export default function HumanCompanionView() {
               </div>
             </div>
 
-            <p className="text-xs text-[#4F685F] dark:text-[#A9C5BC]">
+            <p className="text-xs text-[#4F685F] dark:text-[#9DB9B0]">
               Choose how you would like to connect with Priya right now:
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <button
                 onClick={() => setStep("CHAT")}
-                className="py-3 px-5 rounded-2xl bg-[#006C56] hover:bg-[#005241] dark:bg-[#00A982] dark:hover:bg-[#00916F] text-white dark:text-[#071C17] text-xs font-bold shadow-md shadow-[#006C56]/20 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                className="py-3 px-5 rounded-2xl bg-[#006C56] hover:bg-[#005241] dark:bg-[#008F78] dark:hover:bg-[#00A889] text-white text-xs font-bold shadow-md shadow-[#006C56]/20 transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
                 <span>💬</span>
                 <span>Start Text Chat</span>
@@ -364,7 +364,7 @@ export default function HumanCompanionView() {
 
               <button
                 onClick={() => setStep("CALL")}
-                className="py-3 px-5 rounded-2xl bg-[#F4F9F6] dark:bg-[#14382F] hover:bg-[#EAF6F0] text-[#006C56] dark:text-[#00A982] text-xs font-bold border border-[#006C56]/30 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                className="py-3 px-5 rounded-2xl bg-[#F4F9F6] dark:bg-[#082821] hover:bg-[#EAF6F0] dark:hover:bg-[#0E3931] text-[#006C56] dark:text-[#73D8C4] text-xs font-bold border border-[#006C56]/30 dark:border-[rgba(0,168,137,0.30)] transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
                 <span>📞</span>
                 <span>Start Voice Call</span>
@@ -377,11 +377,11 @@ export default function HumanCompanionView() {
         {/* STEP 4: CHAT SESSION                                               */}
         {/* =================================================================== */}
         {step === "CHAT" && (
-          <div className="flex flex-col h-[560px] max-w-2xl mx-auto border border-[#E2ECE6] dark:border-[#23483E] rounded-3xl overflow-hidden bg-[#F8FCFA] dark:bg-[#0E2A23]">
+          <div className="flex flex-col h-[560px] max-w-2xl mx-auto border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] rounded-3xl overflow-hidden bg-[#F8FCFA] dark:bg-[#082821]">
             {/* Chat Session Header */}
-            <div className="p-4 bg-white dark:bg-[#102F27] border-b border-[#E2ECE6] dark:border-[#23483E] flex items-center justify-between">
+            <div className="p-4 bg-white dark:bg-[#0B3029] border-b border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-full bg-[#006C56] text-white flex items-center justify-center font-bold text-xs">
+                <div className="w-8 h-8 rounded-full bg-[#006C56] dark:bg-[#008F78] text-white flex items-center justify-center font-bold text-xs">
                   PL
                 </div>
                 <div>
@@ -398,7 +398,7 @@ export default function HumanCompanionView() {
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setStep("CALL")}
-                  className="px-3 py-1.5 rounded-full bg-[#F4F9F6] dark:bg-[#14382F] text-[#006C56] dark:text-[#00A982] text-xs font-bold cursor-pointer hover:bg-[#EAF6F0]"
+                  className="px-3 py-1.5 rounded-full bg-[#F4F9F6] dark:bg-[#082821] text-[#006C56] dark:text-[#73D8C4] border border-transparent dark:border-[rgba(150,210,195,0.12)] text-xs font-bold cursor-pointer hover:bg-[#EAF6F0] dark:hover:bg-[#0E3931]"
                 >
                   📞 Call
                 </button>
@@ -423,21 +423,21 @@ export default function HumanCompanionView() {
                   <div
                     className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-xs leading-relaxed ${
                       msg.sender === "user"
-                        ? "bg-[#006C56] text-white rounded-br-none"
-                        : "bg-white dark:bg-[#14382F] text-[#19332A] dark:text-[#F4FAF7] border border-[#E2ECE6] dark:border-[#23483E] rounded-bl-none shadow-2xs"
+                        ? "bg-[#006C56] dark:bg-[#008F78] text-white rounded-br-none"
+                        : "bg-white dark:bg-[#0E3931] text-[#19332A] dark:text-[#F4FAF7] border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] rounded-bl-none shadow-2xs"
                     }`}
                   >
                     {msg.text}
                   </div>
-                  <span className="text-[9.5px] text-[#8EAAA1] mt-1 px-1">
+                  <span className="text-[9.5px] text-[#8EAAA1] dark:text-[#76968D] mt-1 px-1">
                     {msg.time}
                   </span>
                 </div>
               ))}
 
               {isListenerTyping && (
-                <div className="flex items-center gap-1.5 text-xs text-[#8EAAA1] italic p-1">
-                  <span className="w-2 h-2 rounded-full bg-[#006C56] animate-bounce" />
+                <div className="flex items-center gap-1.5 text-xs text-[#8EAAA1] dark:text-[#76968D] italic p-1">
+                  <span className="w-2 h-2 rounded-full bg-[#006C56] dark:bg-[#00A889] animate-bounce" />
                   <span>Priya is listening and typing...</span>
                 </div>
               )}
@@ -447,19 +447,19 @@ export default function HumanCompanionView() {
             {/* Chat Input */}
             <form
               onSubmit={handleSendMessage}
-              className="p-3 bg-white dark:bg-[#102F27] border-t border-[#E2ECE6] dark:border-[#23483E] flex items-center gap-2"
+              className="p-3 bg-white dark:bg-[#0B3029] border-t border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] flex items-center gap-2"
             >
               <input
                 type="text"
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
                 placeholder="Type your message with complete anonymity..."
-                className="flex-1 py-2 px-4 rounded-full bg-[#F8FCFA] dark:bg-[#0E2A23] border border-[#D5E3DB] dark:border-[#23483E] text-xs text-[#19332A] dark:text-[#F4FAF7] focus:outline-none focus:ring-2 focus:ring-[#006C56]/40"
+                className="flex-1 py-2 px-4 rounded-full bg-[#F8FCFA] dark:bg-[#082821] border border-[#D5E3DB] dark:border-[rgba(150,210,195,0.16)] text-xs text-[#19332A] dark:text-[#F4FAF7] focus:outline-none focus:ring-2 focus:ring-[#006C56]/40 dark:focus:ring-[#00A889]/30 placeholder:text-[#8EAAA1] dark:placeholder:text-[#789990]"
               />
               <button
                 type="submit"
                 disabled={!inputMessage.trim()}
-                className="w-9 h-9 rounded-full bg-[#006C56] text-white flex items-center justify-center text-sm disabled:opacity-40 cursor-pointer shadow-xs"
+                className="w-9 h-9 rounded-full bg-[#006C56] dark:bg-[#008F78] text-white flex items-center justify-center text-sm disabled:opacity-40 cursor-pointer shadow-xs"
               >
                 ↑
               </button>
@@ -473,21 +473,21 @@ export default function HumanCompanionView() {
         {step === "CALL" && (
           <div className="max-w-md mx-auto py-8 text-center space-y-8 animate-in fade-in duration-200">
             <div className="space-y-1">
-              <span className="px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 text-xs font-bold">
+              <span className="px-3 py-1 rounded-full bg-emerald-100 dark:bg-[rgba(0,168,137,0.15)] text-emerald-700 dark:text-[#73D8C4] border border-transparent dark:border-[rgba(0,168,137,0.30)] text-xs font-bold">
                 ● Live Voice Session
               </span>
               <h3 className="text-xl font-heading font-black text-[#19332A] dark:text-[#F4FAF7] pt-2">
                 Peer Listener Priya
               </h3>
-              <p className="text-xs font-mono font-bold text-[#006C56] dark:text-[#00A982]">
+              <p className="text-xs font-mono font-bold text-[#006C56] dark:text-[#00A889]">
                 {formatTimer(sessionSeconds)}
               </p>
             </div>
 
             {/* Pulsing Voice Avatar */}
             <div className="relative w-36 h-36 mx-auto flex items-center justify-center">
-              <div className="absolute inset-0 rounded-full bg-[#006C56]/15 animate-ping" />
-              <div className="w-28 h-28 rounded-full bg-gradient-to-br from-[#006C56] to-[#00A982] text-white flex items-center justify-center text-4xl shadow-xl">
+              <div className="absolute inset-0 rounded-full bg-[#006C56]/15 dark:bg-[#00A889]/15 animate-ping" />
+              <div className="w-28 h-28 rounded-full bg-gradient-to-br from-[#006C56] to-[#00A889] text-white flex items-center justify-center text-4xl shadow-xl">
                 <span>🎙️</span>
               </div>
             </div>
@@ -499,7 +499,7 @@ export default function HumanCompanionView() {
                 className={`p-3.5 rounded-full border text-xs font-bold transition-all cursor-pointer ${
                   isMuted
                     ? "bg-rose-500 text-white border-rose-600"
-                    : "bg-[#F4F9F6] dark:bg-[#14382F] text-[#19332A] dark:text-[#F4FAF7] border-[#D5E3DB] dark:border-[#23483E]"
+                    : "bg-[#F4F9F6] dark:bg-[#082821] text-[#19332A] dark:text-[#F4FAF7] border-[#D5E3DB] dark:border-[rgba(150,210,195,0.16)]"
                 }`}
                 title={isMuted ? "Unmute mic" : "Mute mic"}
               >
@@ -508,7 +508,7 @@ export default function HumanCompanionView() {
 
               <button
                 onClick={() => setStep("CHAT")}
-                className="p-3.5 rounded-full bg-[#F4F9F6] dark:bg-[#14382F] text-[#006C56] dark:text-[#00A982] border border-[#D5E3DB] dark:border-[#23483E] text-xs font-bold cursor-pointer"
+                className="p-3.5 rounded-full bg-[#F4F9F6] dark:bg-[#082821] text-[#006C56] dark:text-[#73D8C4] border border-[#D5E3DB] dark:border-[rgba(150,210,195,0.16)] text-xs font-bold cursor-pointer"
               >
                 💬 Switch to Chat
               </button>
@@ -533,7 +533,7 @@ export default function HumanCompanionView() {
               <h3 className="text-xl font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
                 Session Completed
               </h3>
-              <p className="text-xs text-[#6B857C] dark:text-[#A9C5BC]">
+              <p className="text-xs text-[#6B857C] dark:text-[#9DB9B0]">
                 How was your conversation with Peer Listener Priya? Your feedback helps maintain Manraah quality.
               </p>
             </div>
@@ -545,7 +545,7 @@ export default function HumanCompanionView() {
                   key={star}
                   onClick={() => setRating(star)}
                   className={`text-2xl cursor-pointer transition-transform hover:scale-110 ${
-                    rating >= star ? "text-amber-400" : "text-slate-300 dark:text-slate-600"
+                    rating >= star ? "text-amber-400" : "text-slate-300 dark:text-[#76968D]/40"
                   }`}
                 >
                   ★
@@ -571,10 +571,10 @@ export default function HumanCompanionView() {
                         isSelected ? prev.filter((t) => t !== tag) : [...prev, tag]
                       )
                     }
-                    className={`px-3 py-1 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                    className={`px-3 py-1 rounded-full text-xs font-bold transition-all cursor-pointer border ${
                       isSelected
-                        ? "bg-[#006C56] text-white"
-                        : "bg-[#F4F9F6] dark:bg-[#14382F] text-[#4F685F] dark:text-[#A9C5BC]"
+                        ? "bg-[#006C56] dark:bg-[#008F78] text-white border-[#006C56] dark:border-[#008F78]"
+                        : "bg-[#F4F9F6] dark:bg-[#082821] text-[#4F685F] dark:text-[#9DB9B0] border-[#D5E3DB] dark:border-[rgba(150,210,195,0.12)]"
                     }`}
                   >
                     {tag}
@@ -585,7 +585,7 @@ export default function HumanCompanionView() {
 
             <button
               onClick={handleFinishFeedback}
-              className="px-8 py-2.5 rounded-full bg-[#006C56] hover:bg-[#005241] dark:bg-[#00A982] dark:hover:bg-[#00916F] text-white dark:text-[#071C17] text-xs font-bold shadow-md shadow-[#006C56]/20 transition-all cursor-pointer"
+              className="px-8 py-2.5 rounded-full bg-[#006C56] hover:bg-[#005241] dark:bg-[#008F78] dark:hover:bg-[#00A889] text-white text-xs font-bold shadow-md shadow-[#006C56]/20 transition-all cursor-pointer"
             >
               Finish & Return to Companion →
             </button>

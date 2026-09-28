@@ -86,19 +86,35 @@ export default function WellnessAssessmentModal() {
 
   const currentQ = questions[questionStep];
   const isCurrentQAnswered = currentQ && answers[currentQ.id] !== undefined;
+  const advanceTimerRef = React.useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (advanceTimerRef.current) {
+        clearTimeout(advanceTimerRef.current);
+      }
+    };
+  }, []);
 
   const handleSelectOption = (score: number) => {
     if (!currentQ) return;
     setAnswers((prev) => ({ ...prev, [currentQ.id]: score }));
-  };
 
-  const handleNextQuestion = () => {
+    // Automatically advance to the next question for questions 1 through 4
     if (questionStep < questions.length - 1) {
-      setQuestionStep((prev) => prev + 1);
+      if (advanceTimerRef.current) {
+        clearTimeout(advanceTimerRef.current);
+      }
+      advanceTimerRef.current = setTimeout(() => {
+        setQuestionStep((prev) => Math.min(prev + 1, questions.length - 1));
+      }, 190);
     }
   };
 
   const handlePrevQuestion = () => {
+    if (advanceTimerRef.current) {
+      clearTimeout(advanceTimerRef.current);
+    }
     if (questionStep > 0) {
       setQuestionStep((prev) => prev - 1);
     }
@@ -136,32 +152,32 @@ export default function WellnessAssessmentModal() {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/65 backdrop-blur-md animate-fade-in">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md animate-fade-in">
       <motion.div
         initial={{ opacity: 0, scale: 0.96, y: 12 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.96, y: 12 }}
         transition={{ type: "spring", damping: 25, stiffness: 300 }}
-        className="bg-white dark:bg-[#102F27] border border-[#E2ECE6] dark:border-[#23483E] rounded-3xl w-full max-w-xl p-6 sm:p-8 shadow-2xl relative overflow-hidden flex flex-col max-h-[92vh]"
+        className="bg-white dark:bg-[#0B3029] border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.15)] rounded-3xl w-full max-w-xl p-6 sm:p-8 shadow-2xl relative overflow-hidden flex flex-col max-h-[92vh]"
       >
         {/* Top Header */}
-        <div className="flex items-center justify-between pb-4 border-b border-[#E2ECE6] dark:border-[#23483E]">
+        <div className="flex items-center justify-between pb-4 border-b border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)]">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-[#EAF6F0] dark:bg-[#14382F] text-[#006C56] dark:text-[#00A982] flex items-center justify-center text-xl shadow-xs">
+            <div className="w-10 h-10 rounded-2xl bg-[#EAF6F0] dark:bg-[rgba(0,168,137,0.15)] text-[#006C56] dark:text-[#00A889] flex items-center justify-center text-xl shadow-xs">
               ✦
             </div>
             <div>
               <h2 className="text-base sm:text-lg font-heading font-black text-[#19332A] dark:text-[#F4FAF7] leading-tight">
                 {activeCategoryInfo.name} Wellness Assessment
               </h2>
-              <p className="text-[11.5px] text-[#789389] dark:text-[#78958C] font-medium">
+              <p className="text-[11.5px] text-[#789389] dark:text-[#9DB9B0] font-medium">
                 5 targeted questions to calculate your category wellness score.
               </p>
             </div>
           </div>
           <button
             onClick={closeAssessment}
-            className="w-8 h-8 rounded-full bg-[#F4FAF7] dark:bg-[#14382F] text-[#4F685F] dark:text-[#A9C5BC] flex items-center justify-center hover:bg-[#E2ECE6] dark:hover:bg-[#1A483C] transition-colors cursor-pointer"
+            className="w-8 h-8 rounded-full bg-[#F4FAF7] dark:bg-[#0E3931] text-[#4F685F] dark:text-[#9DB9B0] flex items-center justify-center hover:bg-[#E2ECE6] dark:hover:bg-[#12463C] dark:hover:text-[#F4FAF7] transition-colors cursor-pointer"
             aria-label="Close"
           >
             ✕
@@ -172,8 +188,8 @@ export default function WellnessAssessmentModal() {
         <div className="flex-1 overflow-y-auto py-5 pr-1">
           {loadingQuestions ? (
             <div className="py-20 text-center space-y-3">
-              <div className="w-9 h-9 border-3 border-[#008968] border-t-transparent rounded-full animate-spin mx-auto" />
-              <p className="text-xs text-[#789389] dark:text-[#78958C] font-medium">
+              <div className="w-9 h-9 border-3 border-[#00A889] border-t-transparent rounded-full animate-spin mx-auto" />
+              <p className="text-xs text-[#789389] dark:text-[#9DB9B0] font-medium">
                 Loading assessment questions...
               </p>
             </div>
@@ -191,7 +207,7 @@ export default function WellnessAssessmentModal() {
                     cx="50"
                     cy="50"
                     r="40"
-                    className="text-[#E9F3EE] dark:text-[#14382F]"
+                    className="text-[#E9F3EE] dark:text-[rgba(150,210,195,0.12)]"
                     strokeWidth="8"
                     fill="none"
                   />
@@ -199,7 +215,7 @@ export default function WellnessAssessmentModal() {
                     cx="50"
                     cy="50"
                     r="40"
-                    className="text-[#008968] dark:text-[#00A982]"
+                    className="text-[#008968] dark:text-[#00A889]"
                     strokeWidth="8"
                     strokeDasharray={251.2}
                     initial={{ strokeDashoffset: 251.2 }}
@@ -212,31 +228,31 @@ export default function WellnessAssessmentModal() {
                   />
                 </svg>
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <span className="text-3xl font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
+                  <span className="text-3xl font-heading font-black text-[#19332A] dark:text-[#E8F8F3]">
                     {submittedScore}%
                   </span>
-                  <span className="text-[9px] font-bold text-[#789389] dark:text-[#78958C] uppercase tracking-wider">
+                  <span className="text-[9px] font-bold text-[#789389] dark:text-[#9DB9B0] uppercase tracking-wider">
                     Score
                   </span>
                 </div>
               </motion.div>
 
               <div className="space-y-2">
-                <span className="inline-block px-3 py-1 rounded-full text-xs font-bold bg-[#EAF6F0] dark:bg-[#14382F] text-[#006C56] dark:text-[#00A982] border border-[#008968]/20">
+                <span className="inline-block px-3 py-1 rounded-full text-xs font-bold bg-[#EAF6F0] dark:bg-[rgba(0,168,137,0.15)] text-[#006C56] dark:text-[#73D8C4] border border-[#008968]/20 dark:border-[rgba(0,168,137,0.30)]">
                   Assessment Complete
                 </span>
                 <h3 className="text-xl font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
                   {activeCategoryInfo.name} Wellness Score Saved!
                 </h3>
-                <p className="text-xs text-[#6B857C] dark:text-[#A9C5BC] max-w-sm mx-auto leading-relaxed">
+                <p className="text-xs text-[#6B857C] dark:text-[#9DB9B0] max-w-sm mx-auto leading-relaxed">
                   Your wellness baseline is calculated and stored. It will remain saved on your dashboard and won&apos;t recalculate unless you choose to re-attempt.
                 </p>
               </div>
 
-              <div className="pt-4 border-t border-[#E2ECE6] dark:border-[#23483E] flex items-center justify-center">
+              <div className="pt-4 border-t border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] flex items-center justify-center">
                 <button
                   onClick={closeAssessment}
-                  className="px-8 py-3 rounded-full bg-[#004D3D] hover:bg-[#003B2E] dark:bg-[#00A982] dark:hover:bg-[#00916F] text-white dark:text-[#071C17] text-xs font-bold shadow-md shadow-[#004D3D]/20 transition-all cursor-pointer"
+                  className="px-8 py-3 rounded-full bg-[#004D3D] hover:bg-[#003B2E] dark:bg-[#008F78] dark:hover:bg-[#00A889] text-white text-xs font-bold shadow-md shadow-[#004D3D]/20 dark:shadow-[#008F78]/25 transition-all cursor-pointer"
                 >
                   View on Dashboard →
                 </button>
@@ -247,73 +263,82 @@ export default function WellnessAssessmentModal() {
             <div className="space-y-5">
               {/* Progress & Breadcrumb */}
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#006C56] dark:text-[#00A982]">
+                <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#006C56] dark:text-[#00A889]">
                   Question {questionStep + 1} of 5
                 </span>
-                <span className="text-xs font-bold text-[#789389] dark:text-[#78958C]">
+                <span className="text-xs font-bold text-[#789389] dark:text-[#9DB9B0]">
                   {Math.round(((questionStep + 1) / 5) * 100)}%
                 </span>
               </div>
 
               {/* Progress Bar */}
-              <div className="w-full h-1.5 rounded-full bg-[#EAF6F0] dark:bg-[#14382F] overflow-hidden">
+              <div className="w-full h-1.5 rounded-full bg-[#EAF6F0] dark:bg-[#12463C] overflow-hidden">
                 <motion.div
-                  className="h-full bg-[#006C56] dark:bg-[#00A982] rounded-full"
+                  className="h-full bg-[#006C56] dark:bg-[#00A889] rounded-full"
                   initial={{ width: 0 }}
                   animate={{ width: `${((questionStep + 1) / 5) * 100}%` }}
                   transition={{ duration: 0.3 }}
                 />
               </div>
 
-              {/* Question Text */}
-              {currentQ && (
-                <div className="space-y-4 pt-1">
-                  <h3 className="text-base sm:text-lg font-heading font-black text-[#19332A] dark:text-[#F4FAF7] leading-snug">
-                    {currentQ.questionText}
-                  </h3>
+              {/* Question Content with Transition */}
+              <AnimatePresence mode="wait">
+                {currentQ && (
+                  <motion.div
+                    key={currentQ.id}
+                    initial={{ opacity: 0, x: 14 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -14 }}
+                    transition={{ duration: 0.18, ease: "easeOut" }}
+                    className="space-y-4 pt-1"
+                  >
+                    <h3 className="text-base sm:text-lg font-heading font-black text-[#19332A] dark:text-[#F4FAF7] leading-snug">
+                      {currentQ.questionText}
+                    </h3>
 
-                  {/* Likert Scale Options */}
-                  <div className="space-y-2 pt-2">
-                    {(currentQ.optionsJson && currentQ.optionsJson.length > 0
-                      ? currentQ.optionsJson
-                      : DEFAULT_OPTIONS
-                    ).map((opt) => {
-                      const isSelected = answers[currentQ.id] === opt.score;
-                      return (
-                        <button
-                          key={opt.score}
-                          type="button"
-                          onClick={() => handleSelectOption(opt.score)}
-                          className={`w-full p-3.5 rounded-2xl flex items-center justify-between border transition-all text-left cursor-pointer ${
-                            isSelected
-                              ? "bg-[#EAF6F0] dark:bg-[#14382F] border-[#008968] dark:border-[#00A982] ring-2 ring-[#008968]/20 dark:ring-[#00A982]/20"
-                              : "bg-[#F8FCFA] dark:bg-[#0E2A23] border-[#E2ECE6] dark:border-[#23483E] hover:border-[#008968]/40 dark:hover:border-[#00A982]/40"
-                          }`}
-                        >
-                          <span
-                            className={`text-xs font-bold ${
+                    {/* Likert Scale Options */}
+                    <div className="space-y-2 pt-2">
+                      {(currentQ.optionsJson && currentQ.optionsJson.length > 0
+                        ? currentQ.optionsJson
+                        : DEFAULT_OPTIONS
+                      ).map((opt) => {
+                        const isSelected = answers[currentQ.id] === opt.score;
+                        return (
+                          <button
+                            key={opt.score}
+                            type="button"
+                            onClick={() => handleSelectOption(opt.score)}
+                            className={`w-full p-3.5 rounded-2xl flex items-center justify-between border transition-all text-left cursor-pointer ${
                               isSelected
-                                ? "text-[#006C56] dark:text-[#00A982]"
-                                : "text-[#19332A] dark:text-[#F4FAF7]"
+                                ? "bg-[#EAF6F0] dark:bg-[#0E3931] border-[#008968] dark:border-[#00A889] ring-2 ring-[#008968]/20 dark:ring-[#00A889]/20"
+                                : "bg-[#F8FCFA] dark:bg-[#082821] border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] hover:border-[#008968]/40 dark:hover:border-[rgba(150,210,195,0.25)]"
                             }`}
                           >
-                            {opt.text}
-                          </span>
-                          <span
-                            className={`w-5 h-5 rounded-full border flex items-center justify-center text-[10px] font-bold ${
-                              isSelected
-                                ? "bg-[#006C56] border-[#006C56] text-white"
-                                : "border-[#789389]/40 text-transparent"
-                            }`}
-                          >
-                            ✓
-                          </span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
+                            <span
+                              className={`text-xs font-bold ${
+                                isSelected
+                                  ? "text-[#006C56] dark:text-[#00A889]"
+                                  : "text-[#19332A] dark:text-[#F4FAF7]"
+                              }`}
+                            >
+                              {opt.text}
+                            </span>
+                            <span
+                              className={`w-5 h-5 rounded-full border flex items-center justify-center text-[10px] font-bold ${
+                                isSelected
+                                  ? "bg-[#006C56] dark:bg-[#008F78] border-[#006C56] dark:border-[#008F78] text-white"
+                                  : "border-[#789389]/40 dark:border-[rgba(150,210,195,0.20)] text-transparent"
+                              }`}
+                            >
+                              ✓
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
 
               {submissionError && (
                 <p className="text-xs font-bold text-red-500 dark:text-red-400">
@@ -322,31 +347,22 @@ export default function WellnessAssessmentModal() {
               )}
 
               {/* Navigation Controls */}
-              <div className="flex items-center justify-between pt-4 border-t border-[#E2ECE6] dark:border-[#23483E]">
+              <div className="flex items-center justify-between pt-4 border-t border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)]">
                 <button
                   type="button"
                   onClick={handlePrevQuestion}
                   disabled={questionStep === 0}
-                  className="px-4 py-2.5 rounded-xl bg-[#F4FAF7] dark:bg-[#14382F] hover:bg-[#E2ECE6] dark:hover:bg-[#1C4E40] text-[#4F685F] dark:text-[#A9C5BC] text-xs font-bold transition-colors disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+                  className="px-4 py-2.5 rounded-xl bg-[#F4FAF7] dark:bg-white/5 dark:border dark:border-[rgba(150,210,195,0.12)] hover:bg-[#E2ECE6] dark:hover:bg-white/10 text-[#4F685F] dark:text-[#9DB9B0] dark:hover:text-[#F4FAF7] text-xs font-bold transition-colors disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
                 >
                   ← Previous
                 </button>
 
-                {questionStep < 4 ? (
-                  <button
-                    type="button"
-                    onClick={handleNextQuestion}
-                    disabled={!isCurrentQAnswered}
-                    className="px-6 py-2.5 rounded-xl bg-[#006C56] hover:bg-[#005241] dark:bg-[#00A982] dark:hover:bg-[#00916F] text-white dark:text-[#071C17] text-xs font-bold transition-all shadow-md shadow-[#006C56]/20 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-                  >
-                    Next Question →
-                  </button>
-                ) : (
+                {questionStep === questions.length - 1 && (
                   <button
                     type="button"
                     onClick={handleSubmit}
                     disabled={!isCurrentQAnswered || isSubmitting}
-                    className="px-6 py-2.5 rounded-xl bg-[#006C56] hover:bg-[#005241] dark:bg-[#00A982] dark:hover:bg-[#00916F] text-white dark:text-[#071C17] text-xs font-bold transition-all shadow-md shadow-[#006C56]/20 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center gap-2"
+                    className="px-6 py-2.5 rounded-xl bg-[#006C56] hover:bg-[#005241] dark:bg-[#008F78] dark:hover:bg-[#00A889] text-white text-xs font-bold transition-all shadow-md shadow-[#006C56]/20 dark:shadow-[#008F78]/25 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center gap-2"
                   >
                     {isSubmitting ? (
                       <>
@@ -364,7 +380,7 @@ export default function WellnessAssessmentModal() {
               </div>
             </div>
           ) : (
-            <div className="py-12 text-center text-xs text-[#789389] dark:text-[#78958C]">
+            <div className="py-12 text-center text-xs text-[#789389] dark:text-[#9DB9B0]">
               No questions found for this category.
             </div>
           )}

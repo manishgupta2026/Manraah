@@ -41,14 +41,14 @@ export default function SleepMeditationView({ defaultTab }: SleepMeditationViewP
     <div className="w-full min-w-0 flex flex-col gap-5 select-none animate-fade-in">
       {/* Sub-Tab Navigation Header Switcher */}
       <div className="flex items-center justify-between flex-wrap gap-3 pb-1">
-        <div className="flex items-center gap-1.5 p-1.5 rounded-2xl bg-white dark:bg-[#102F27] border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs">
+        <div className="flex items-center gap-1.5 p-1.5 rounded-2xl bg-white dark:bg-[#0B3029] border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] shadow-2xs">
           <button
             type="button"
             onClick={() => handleTabChange("sleep")}
             className={`flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs font-heading font-black transition-all cursor-pointer ${
               activeTab === "sleep"
-                ? "bg-[#006C56] dark:bg-[#00A982] text-white dark:text-[#071C17] shadow-xs"
-                : "text-[#5A756C] dark:text-[#A9C5BC] hover:text-[#006C56] dark:hover:text-[#88F7D6] hover:bg-[#F4FAF7] dark:hover:bg-[#14382F]"
+                ? "bg-[#006C56] dark:bg-[#008F78] text-white shadow-xs"
+                : "text-[#5A756C] dark:text-[#9DB9B0] hover:text-[#006C56] dark:hover:text-[#73D8C4] hover:bg-[#F4FAF7] dark:hover:bg-[#0E3931]"
             }`}
           >
             <span className="material-symbols-outlined text-lg">bedtime</span>
@@ -60,8 +60,8 @@ export default function SleepMeditationView({ defaultTab }: SleepMeditationViewP
             onClick={() => handleTabChange("meditation")}
             className={`flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs font-heading font-black transition-all cursor-pointer ${
               activeTab === "meditation"
-                ? "bg-[#006C56] dark:bg-[#00A982] text-white dark:text-[#071C17] shadow-xs"
-                : "text-[#5A756C] dark:text-[#A9C5BC] hover:text-[#006C56] dark:hover:text-[#88F7D6] hover:bg-[#F4FAF7] dark:hover:bg-[#14382F]"
+                ? "bg-[#006C56] dark:bg-[#008F78] text-white shadow-xs"
+                : "text-[#5A756C] dark:text-[#9DB9B0] hover:text-[#006C56] dark:hover:text-[#73D8C4] hover:bg-[#F4FAF7] dark:hover:bg-[#0E3931]"
             }`}
           >
             <span className="material-symbols-outlined text-lg">self_improvement</span>
@@ -69,8 +69,8 @@ export default function SleepMeditationView({ defaultTab }: SleepMeditationViewP
           </button>
         </div>
 
-        <div className="hidden sm:flex items-center gap-2 text-xs text-[#5A756C] dark:text-[#A9C5BC] font-medium">
-          <span className="inline-block w-2 h-2 rounded-full bg-[#006C56] dark:bg-[#00A982]"></span>
+        <div className="hidden sm:flex items-center gap-2 text-xs text-[#5A756C] dark:text-[#9DB9B0] font-medium">
+          <span className="inline-block w-2 h-2 rounded-full bg-[#006C56] dark:bg-[#00A889]"></span>
           <span>{activeTab === "sleep" ? "Ambient sleep audio & wind-down" : "4-7-8 breathing & Solfeggio soundscapes"}</span>
         </div>
       </div>

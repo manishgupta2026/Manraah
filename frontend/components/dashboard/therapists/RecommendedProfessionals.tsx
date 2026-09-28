@@ -76,12 +76,12 @@ export default function RecommendedProfessionals({
   }, [initialTherapists]);
 
   return (
-    <div className="bg-white dark:bg-[#102F27] rounded-3xl p-5 sm:p-6 border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs flex flex-col gap-4 sm:gap-5 transition-colors w-full min-w-0 overflow-hidden">
+    <div className="bg-white dark:bg-[#0B3029] rounded-3xl p-5 sm:p-6 border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] shadow-2xs flex flex-col gap-4 sm:gap-5 transition-colors w-full min-w-0 overflow-hidden">
       {/* Section Header */}
       <div className="flex items-center justify-between gap-3">
         {/* Left: Icon and Title */}
         <div className="flex items-center gap-3 min-w-0">
-          <div className="w-8.5 h-8.5 rounded-2xl bg-[#EAF6F0] dark:bg-[#14382F] text-[#006C56] dark:text-[#00A982] flex items-center justify-center shrink-0">
+          <div className="w-8.5 h-8.5 rounded-2xl bg-[#EAF6F0] dark:bg-[rgba(0,168,137,0.15)] text-[#006C56] dark:text-[#00A889] flex items-center justify-center shrink-0">
             <svg
               className="w-4.5 h-4.5"
               fill="none"
@@ -100,7 +100,7 @@ export default function RecommendedProfessionals({
             <h2 className="text-sm font-heading font-black text-[#19332A] dark:text-[#F4FAF7] leading-tight truncate">
               Recommended for You
             </h2>
-            <p className="text-[10px] text-[#789389] dark:text-[#78958C] font-medium leading-tight mt-0.5 truncate">
+            <p className="text-[10px] text-[#789389] dark:text-[#9DB9B0] font-medium leading-tight mt-0.5 truncate">
               Curated by our mental health professionals
             </p>
           </div>
@@ -112,7 +112,7 @@ export default function RecommendedProfessionals({
             <button
               onClick={() => onNavigate("appointments")}
               type="button"
-              className="text-xs font-bold text-[#004D3D] dark:text-[#00A982] hover:underline flex items-center gap-1 cursor-pointer shrink-0"
+              className="text-xs font-bold text-[#004D3D] dark:text-[#00A889] hover:underline flex items-center gap-1 cursor-pointer shrink-0"
             >
               <span>View All</span>
               <span>→</span>
@@ -120,7 +120,7 @@ export default function RecommendedProfessionals({
           ) : (
             <Link
               href="/appointments"
-              className="text-xs font-bold text-[#004D3D] dark:text-[#00A982] hover:underline flex items-center gap-1 shrink-0"
+              className="text-xs font-bold text-[#004D3D] dark:text-[#00A889] hover:underline flex items-center gap-1 shrink-0"
             >
               <span>View All</span>
               <span>→</span>

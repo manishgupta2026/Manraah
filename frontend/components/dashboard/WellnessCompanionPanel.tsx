@@ -84,23 +84,23 @@ export default function WellnessCompanionPanel({ onCheckCondition }: WellnessCom
   return (
     <aside className="w-full flex flex-col gap-3.5 sm:gap-4 select-none pointer-events-auto shrink-0">
       {/* 1. Check Your Condition Card */}
-      <div className="bg-[#EAF5EF] dark:bg-[#102F27] rounded-3xl p-6 border border-[#D2E8DC] dark:border-[#23483E] text-center flex flex-col items-center space-y-3 shadow-2xs transition-colors">
+      <div className="bg-[#EAF5EF] dark:bg-[#0B3029] rounded-3xl p-6 border border-[#D2E8DC] dark:border-[rgba(150,210,195,0.12)] text-center flex flex-col items-center space-y-3 shadow-2xs transition-colors">
         {/* Circular Avatar / Profile Icon with check badge (only when checked in) */}
         <div className="relative">
           <UserAvatar
             user={isUserAuthenticated ? user : null}
             sizeClass="w-16 h-16 text-lg"
-            className="border-2 border-white dark:border-[#102F27] shadow-inner"
+            className="border-2 border-white dark:border-[#082821] shadow-inner"
           />
           {isCheckedIn && (
-            <div className="absolute bottom-0 right-0 w-4.5 h-4.5 rounded-full bg-[#006C56] dark:bg-[#00A982] text-white dark:text-[#071C17] flex items-center justify-center text-[9px] font-bold border-2 border-white dark:border-[#102F27] shadow-xs">
+            <div className="absolute bottom-0 right-0 w-4.5 h-4.5 rounded-full bg-[#006C56] dark:bg-[#00A889] text-white dark:text-white flex items-center justify-center text-[9px] font-bold border-2 border-white dark:border-[#082821] shadow-xs">
               ✓
             </div>
           )}
         </div>
 
         {/* Subtitle / Badge */}
-        <span className="text-[9.5px] font-extrabold tracking-wider text-[#006C56] dark:text-[#00A982]">
+        <span className="text-[9.5px] font-extrabold tracking-wider text-[#006C56] dark:text-[#00A889]">
           Your wellness companion
         </span>
 
@@ -112,15 +112,15 @@ export default function WellnessCompanionPanel({ onCheckCondition }: WellnessCom
         {/* Description / Mood status */}
         {isCheckedIn ? (
           <div className="space-y-1">
-            <div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#D8EFE3] dark:bg-[#154639] text-[#006C56] dark:text-[#88F7D6] text-xs font-bold">
+            <div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#D8EFE3] dark:bg-[rgba(0,168,137,0.15)] text-[#006C56] dark:text-[#73D8C4] text-xs font-bold border border-transparent dark:border-[rgba(0,168,137,0.30)]">
               <span>Mood: {moodEmoji} {moodLabel}</span>
             </div>
-            <p className="text-[10px] text-[#6B857C] dark:text-[#A9C5BC] font-medium leading-tight">
+            <p className="text-[10px] text-[#6B857C] dark:text-[#9DB9B0] font-medium leading-tight">
               {completedTimeStr}
             </p>
           </div>
         ) : (
-          <p className="text-[11px] text-[#4F685F] dark:text-[#A9C5BC] font-medium leading-relaxed max-w-[220px]">
+          <p className="text-[11px] text-[#4F685F] dark:text-[#9DB9B0] font-medium leading-relaxed max-w-[220px]">
             {isUserAuthenticated
               ? `Check your every situation, stress factors, and ${userCategoryLabel} activities.`
               : "Track your emotional situation, stress factors, and mindful wellness activities."}
@@ -138,9 +138,9 @@ export default function WellnessCompanionPanel({ onCheckCondition }: WellnessCom
           <button
             type="button"
             disabled
-            className="w-full py-3 px-4 rounded-full bg-[#D8EFE3] dark:bg-[#154639] text-[#006C56] dark:text-[#88F7D6] text-[11px] font-bold border border-[#BCE4D3] dark:border-[#23483E] shadow-2xs flex items-center justify-center gap-2 cursor-default mt-1 select-none"
+            className="w-full py-3 px-4 rounded-full bg-[#D8EFE3] dark:bg-[#0E3931] text-[#006C56] dark:text-[#73D8C4] text-[11px] font-bold border border-[#BCE4D3] dark:border-[rgba(150,210,195,0.12)] shadow-2xs flex items-center justify-center gap-2 cursor-default mt-1 select-none"
           >
-            <span className="w-4 h-4 rounded-full bg-[#006C56] dark:bg-[#00A982] text-white dark:text-[#071C17] flex items-center justify-center text-[9px] font-black">
+            <span className="w-4 h-4 rounded-full bg-[#006C56] dark:bg-[#00A889] text-white dark:text-white flex items-center justify-center text-[9px] font-black">
               ✓
             </span>
             <span>CHECKED IN</span>
@@ -150,9 +150,9 @@ export default function WellnessCompanionPanel({ onCheckCondition }: WellnessCom
             onClick={handleCheckInClick}
             disabled={isCheckingIn}
             type="button"
-            className="w-full py-3 px-4 rounded-full bg-[#004D3D] hover:bg-[#003B2E] dark:bg-[#00A982] dark:hover:bg-[#00916F] text-white dark:text-[#071C17] text-[11px] font-bold shadow-md shadow-[#004D3D]/20 dark:shadow-[#00A982]/20 transition-all flex items-center justify-center gap-2 group cursor-pointer mt-1 disabled:opacity-80 disabled:cursor-not-allowed"
+            className="w-full py-3 px-4 rounded-full bg-[#004D3D] hover:bg-[#003B2E] dark:bg-[#008F78] dark:hover:bg-[#00A889] text-white text-[11px] font-bold shadow-md shadow-[#004D3D]/20 dark:shadow-[#008F78]/25 transition-all flex items-center justify-center gap-2 group cursor-pointer mt-1 disabled:opacity-80 disabled:cursor-not-allowed"
           >
-            <span className="w-4 h-4 rounded-full border border-white/60 dark:border-[#071C17]/60 flex items-center justify-center text-[8px]">
+            <span className="w-4 h-4 rounded-full border border-white/60 flex items-center justify-center text-[8px]">
               ✦
             </span>
             <span>CHECK IT NOW</span>
@@ -162,28 +162,28 @@ export default function WellnessCompanionPanel({ onCheckCondition }: WellnessCom
       </div>
 
       {/* 2. Illustration Card (Calm mind with soft leaves) */}
-      <div className="bg-white dark:bg-[#102F27] rounded-3xl p-5 border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs flex flex-col items-center text-center space-y-3 transition-colors">
+      <div className="bg-white dark:bg-[#0B3029] rounded-3xl p-5 border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] shadow-2xs flex flex-col items-center text-center space-y-3 transition-colors">
         <div className="w-full h-[136px] flex items-center justify-center relative overflow-hidden">
           {/* Calming SVG Vector Illustration */}
           <svg viewBox="0 0 200 160" className="w-[176px] h-[136px]">
             {/* Background Soft Leaves */}
-            <path d="M40 80 Q20 50 40 20 Q60 50 40 80" fill={isDark ? "#14382F" : "#D5EFE3"} opacity="0.85" />
-            <path d="M160 80 Q180 50 160 20 Q140 50 160 80" fill={isDark ? "#14382F" : "#D5EFE3"} opacity="0.85" />
-            <path d="M30 120 Q10 90 30 60 Q50 90 30 120" fill={isDark ? "#00A982" : "#BCE4D3"} opacity={isDark ? "0.3" : "0.75"} />
-            <path d="M170 120 Q190 90 170 60 Q150 90 170 120" fill={isDark ? "#00A982" : "#BCE4D3"} opacity={isDark ? "0.3" : "0.75"} />
+            <path d="M40 80 Q20 50 40 20 Q60 50 40 80" fill={isDark ? "#12463C" : "#D5EFE3"} opacity="0.85" />
+            <path d="M160 80 Q180 50 160 20 Q140 50 160 80" fill={isDark ? "#12463C" : "#D5EFE3"} opacity="0.85" />
+            <path d="M30 120 Q10 90 30 60 Q50 90 30 120" fill={isDark ? "#00A889" : "#BCE4D3"} opacity={isDark ? "0.3" : "0.75"} />
+            <path d="M170 120 Q190 90 170 60 Q150 90 170 120" fill={isDark ? "#00A889" : "#BCE4D3"} opacity={isDark ? "0.3" : "0.75"} />
             
             {/* Character Hair Back */}
-            <path d="M65 80 Q100 30 135 80 Q145 130 135 150 L65 150 Q55 130 65 80 Z" fill={isDark ? "#0A221C" : "#2C3A35"} />
+            <path d="M65 80 Q100 30 135 80 Q145 130 135 150 L65 150 Q55 130 65 80 Z" fill={isDark ? "#032B25" : "#2C3A35"} />
             
             {/* Character Body / Shoulders */}
-            <path d="M55 160 Q100 125 145 160 Z" fill={isDark ? "#00A982" : "#3D7E6B"} />
+            <path d="M55 160 Q100 125 145 160 Z" fill={isDark ? "#00A889" : "#3D7E6B"} />
             
             {/* Character Neck & Face */}
             <rect x="92" y="105" width="16" height="20" fill="#F8D3B8" rx="4" />
             <circle cx="100" cy="85" r="24" fill="#F8D3B8" />
             
             {/* Hair Front Framing */}
-            <path d="M76 80 Q100 65 124 80 Q115 50 100 50 Q85 50 76 80 Z" fill={isDark ? "#0A221C" : "#2C3A35"} />
+            <path d="M76 80 Q100 65 124 80 Q115 50 100 50 Q85 50 76 80 Z" fill={isDark ? "#032B25" : "#2C3A35"} />
             
             {/* Calm Closed Eyes & Smile */}
             <path d="M88 84 Q93 88 98 84" fill="none" stroke="#2C3A35" strokeWidth="2" strokeLinecap="round" />
@@ -201,30 +201,30 @@ export default function WellnessCompanionPanel({ onCheckCondition }: WellnessCom
       </div>
 
       {/* 3. Confidentiality Card */}
-      <div className="bg-white dark:bg-[#102F27] rounded-3xl p-4 px-5 border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs flex items-center gap-3.5 transition-colors">
-        <div className="w-9 h-9 rounded-2xl bg-[#EAF6F0] dark:bg-[#14382F] text-[#006C56] dark:text-[#00A982] flex items-center justify-center shrink-0">
+      <div className="bg-white dark:bg-[#0B3029] rounded-3xl p-4 px-5 border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] shadow-2xs flex items-center gap-3.5 transition-colors">
+        <div className="w-9 h-9 rounded-2xl bg-[#EAF6F0] dark:bg-[rgba(0,168,137,0.15)] text-[#006C56] dark:text-[#00A889] flex items-center justify-center shrink-0">
           <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
           </svg>
         </div>
         <div>
           <h3 className="text-xs font-black text-[#19332A] dark:text-[#F4FAF7] leading-tight">100% Confidential</h3>
-          <p className="text-[10px] text-[#789389] dark:text-[#78958C] font-medium leading-tight mt-0.5">
+          <p className="text-[10px] text-[#789389] dark:text-[#9DB9B0] font-medium leading-tight mt-0.5">
             No data ever leaves this device.
           </p>
         </div>
       </div>
 
       {/* 4. Quote Card */}
-      <div className="bg-white dark:bg-[#102F27] rounded-3xl p-4 px-5 border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs flex items-start gap-3 transition-colors">
-        <span className="font-serif text-2xl font-black text-[#004D3D] dark:text-[#00A982] leading-none shrink-0 -mt-0.5">
+      <div className="bg-white dark:bg-[#0B3029] rounded-3xl p-4 px-5 border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] shadow-2xs flex items-start gap-3 transition-colors">
+        <span className="font-serif text-2xl font-black text-[#004D3D] dark:text-[#00A889] leading-none shrink-0 -mt-0.5">
           “
         </span>
         <div>
-          <p className="text-xs font-bold text-[#19332A] dark:text-[#F4FAF7] leading-snug">
+          <p className="text-xs font-bold text-[#19332A] dark:text-[#E5F3EF] leading-snug">
             “Small steps every day lead to big changes.”
           </p>
-          <p className="text-[10px] text-[#789389] dark:text-[#78958C] font-semibold mt-0.5">
+          <p className="text-[10px] text-[#789389] dark:text-[#9DB9B0] font-semibold mt-0.5">
             — Manraah
           </p>
         </div>

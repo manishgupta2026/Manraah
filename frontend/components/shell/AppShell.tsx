@@ -107,7 +107,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
                     </div>
                   ) : (
                     /* ONE UNIFIED AUTHENTICATED APPLICATION SHELL FOR ALL USER FEATURES */
-                    <div className="min-h-screen bg-[#F4F9F6] dark:bg-[#071C17] text-[#211D26] dark:text-[#F4FAF7] font-sans antialiased flex flex-col transition-colors duration-200">
+                    <div className="min-h-screen bg-[#F4F9F6] dark:bg-[#061F1A] text-[#211D26] dark:text-[#F4FAF7] font-sans antialiased flex flex-col transition-colors duration-200">
                       {/* Top Unified Header / Navbar (Compact 62px Height) */}
                       <Header onOpenMenu={() => setIsMobileDrawerOpen(true)} />
 

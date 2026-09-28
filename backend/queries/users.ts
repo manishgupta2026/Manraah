@@ -45,6 +45,25 @@ export async function getUserById(id: string) {
   return results;
 }
 
+export async function getUserWithPasswordById(id: string) {
+  await ensureUserLoginSchema();
+  const results = await sql`
+    SELECT id, name, email, password_hash, sanctuary_name
+    FROM users
+    WHERE id = ${id}
+    LIMIT 1
+  `;
+  return results;
+}
+
+export async function updateUserPassword(userId: string, newPasswordHash: string) {
+  return await sql`
+    UPDATE users 
+    SET password_hash = ${newPasswordHash} 
+    WHERE id = ${userId}
+  `;
+}
+
 export async function recordUserLoginSuccess(userId: string): Promise<{
   isFirstLogin: boolean;
   hasLoggedInBefore: boolean;

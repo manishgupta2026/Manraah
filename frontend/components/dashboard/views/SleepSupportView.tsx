@@ -834,10 +834,10 @@ export default function SleepSupportView() {
       )}
 
       {/* 1. Header Banner & Integrated Master Audio Controller */}
-      <div className="bg-white dark:bg-[#102F27] rounded-3xl p-5 sm:p-6 border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs transition-colors">
+      <div className="bg-white dark:bg-[#0B3029] rounded-3xl p-5 sm:p-6 border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] shadow-2xs transition-colors">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div className="space-y-1">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EAF6F0] dark:bg-[#14382F] text-[#006C56] dark:text-[#88F7D6] text-[10.5px] font-heading font-black tracking-wider border border-[#D2EAE0] dark:border-[#23483E]">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EAF6F0] dark:bg-[rgba(0,168,137,0.15)] text-[#006C56] dark:text-[#73D8C4] text-[10.5px] font-heading font-black tracking-wider border border-[#D2EAE0] dark:border-[rgba(0,168,137,0.30)]">
               <span>🌙 Rest & recovery</span>
               <span>•</span>
               <span>Wind-down Manraah</span>
@@ -845,18 +845,18 @@ export default function SleepSupportView() {
             <h1 className="text-xl sm:text-2xl font-heading font-black text-[#19332A] dark:text-[#F4FAF7] leading-tight">
               Night Sleep Support & Duration Hub
             </h1>
-            <p className="text-xs text-[#5A756C] dark:text-[#A9C5BC] max-w-xl font-medium">
+            <p className="text-xs text-[#5A756C] dark:text-[#9DB9B0] max-w-xl font-medium">
               Achieve deep, restorative sleep with layered ambient soundscapes, auto-stop sleep timers, active 4-7-8 breathing, and science-backed sleep duration tracking.
             </p>
           </div>
 
           {/* Master Soundscape Player Controller */}
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 bg-[#F4F9F6] dark:bg-[#14382F] p-3 px-4 rounded-2xl border border-[#E2ECE6] dark:border-[#23483E] self-start lg:self-auto min-w-[320px]">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 bg-[#F4F9F6] dark:bg-[#0E3931] p-3 px-4 rounded-2xl border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] self-start lg:self-auto min-w-[320px]">
             <div className="flex items-center gap-3 min-w-0 flex-1">
               <button
                 type="button"
                 onClick={handleTogglePlay}
-                className="w-10 h-10 rounded-full bg-[#006C56] hover:bg-[#005241] dark:bg-[#00A982] dark:hover:bg-[#00916F] text-white dark:text-[#071C17] flex items-center justify-center shadow-xs cursor-pointer transition-all shrink-0"
+                className="w-10 h-10 rounded-full bg-[#006C56] hover:bg-[#005241] dark:bg-[#008F78] dark:hover:bg-[#00A889] text-white flex items-center justify-center shadow-xs cursor-pointer transition-all shrink-0"
                 title={isPlaying ? "Pause audio" : "Play audio"}
               >
                 <span className="material-symbols-outlined text-xl">
@@ -872,18 +872,18 @@ export default function SleepSupportView() {
                       : activeSoundObj ? activeSoundObj.title : "Gentle Night Rain"}
                   </p>
                   {isMixerMode && (
-                    <span className="px-1.5 py-0.2 rounded-md bg-[#006C56] text-white text-[8.5px] font-bold">
+                    <span className="px-1.5 py-0.2 rounded-md bg-[#006C56] dark:bg-[#008F78] text-white text-[8.5px] font-bold">
                       Mixer
                     </span>
                   )}
                 </div>
 
                 <div className="flex items-center gap-1.5 mt-0.5">
-                  <span className="text-[10px] text-[#006C56] dark:text-[#88F7D6] font-semibold">
+                  <span className="text-[10px] text-[#006C56] dark:text-[#73D8C4] font-semibold">
                     {isPlaying ? "Playing ambient audio" : "Ready to play"}
                   </span>
                   {timerSecondsLeft !== null && isPlaying && (
-                    <span className="px-1.5 py-0.2 rounded-full bg-[#006C56]/10 text-[#006C56] dark:text-[#88F7D6] text-[9.5px] font-mono font-bold">
+                    <span className="px-1.5 py-0.2 rounded-full bg-[#006C56]/10 text-[#006C56] dark:text-[#73D8C4] text-[9.5px] font-mono font-bold">
                       ⏳ {formatTimer(timerSecondsLeft)}
                     </span>
                   )}
@@ -892,12 +892,12 @@ export default function SleepSupportView() {
             </div>
 
             {/* Volume & Sleep Timer Controls */}
-            <div className="flex items-center justify-between sm:justify-end gap-2.5 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 sm:border-l border-[#E2ECE6] dark:border-[#23483E] sm:pl-3">
+            <div className="flex items-center justify-between sm:justify-end gap-2.5 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 sm:border-l border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] sm:pl-3">
               <div className="flex items-center gap-1.5">
                 <button
                   type="button"
                   onClick={() => setIsMuted(!isMuted)}
-                  className="text-[#5A756C] dark:text-[#A9C5BC] hover:text-[#006C56] cursor-pointer"
+                  className="text-[#5A756C] dark:text-[#9DB9B0] hover:text-[#006C56] dark:hover:text-[#F4FAF7] cursor-pointer"
                   title={isMuted ? "Unmute" : "Mute"}
                 >
                   <span className="material-symbols-outlined text-sm">
@@ -914,7 +914,7 @@ export default function SleepSupportView() {
                     setVolume(parseFloat(e.target.value));
                     if (isMuted) setIsMuted(false);
                   }}
-                  className="w-14 sm:w-16 accent-[#006C56] dark:accent-[#00A982] cursor-pointer h-1"
+                  className="w-14 sm:w-16 accent-[#006C56] dark:accent-[#00A889] cursor-pointer h-1"
                   title={`Volume: ${Math.round((isMuted ? 0 : volume) * 100)}%`}
                 />
               </div>
@@ -925,8 +925,8 @@ export default function SleepSupportView() {
                   type="button"
                   className={`px-2.5 py-1.5 rounded-xl text-[10.5px] font-heading font-bold flex items-center gap-1 border transition-colors cursor-pointer ${
                     sleepTimerMinutes !== null
-                      ? "bg-[#006C56] text-white border-[#006C56]"
-                      : "bg-white dark:bg-[#102F27] text-[#5A756C] dark:text-[#A9C5BC] border-[#E2ECE6] dark:border-[#23483E] hover:border-[#006C56]"
+                      ? "bg-[#006C56] dark:bg-[#008F78] text-white border-[#006C56] dark:border-[#008F78]"
+                      : "bg-white dark:bg-[#0B3029] text-[#5A756C] dark:text-[#9DB9B0] border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] hover:border-[#006C56] dark:hover:border-[#00A889]"
                   }`}
                   title="Auto-Off Sleep Duration Timer"
                 >
@@ -934,8 +934,8 @@ export default function SleepSupportView() {
                   <span>{sleepTimerMinutes ? `${sleepTimerMinutes}m` : "Timer"}</span>
                 </button>
 
-                <div className="absolute right-0 top-full mt-1.5 w-36 bg-white dark:bg-[#102F27] border border-[#E2ECE6] dark:border-[#23483E] rounded-2xl shadow-xl p-1.5 hidden group-hover:flex flex-col gap-1 z-30">
-                  <span className="text-[9px] font-heading font-black text-[#5A756C] dark:text-[#A9C5BC] px-2 py-1">
+                <div className="absolute right-0 top-full mt-1.5 w-36 bg-white dark:bg-[#0B3029] border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.15)] rounded-2xl shadow-xl p-1.5 hidden group-hover:flex flex-col gap-1 z-30">
+                  <span className="text-[9px] font-heading font-black text-[#5A756C] dark:text-[#76968D] px-2 py-1">
                     Auto-off duration
                   </span>
                   {TIMER_PRESETS.map((p) => (
@@ -945,8 +945,8 @@ export default function SleepSupportView() {
                       onClick={() => handleSetTimer(p.minutes)}
                       className={`text-left px-2.5 py-1.5 rounded-xl text-xs font-medium transition-colors cursor-pointer ${
                         sleepTimerMinutes === p.minutes
-                          ? "bg-[#006C56] text-white font-bold"
-                          : "text-[#19332A] dark:text-[#F4FAF7] hover:bg-[#F4FAF7] dark:hover:bg-[#14382F]"
+                          ? "bg-[#006C56] dark:bg-[#008F78] text-white font-bold"
+                          : "text-[#19332A] dark:text-[#F4FAF7] hover:bg-[#F4FAF7] dark:hover:bg-[#0E3931]"
                       }`}
                     >
                       {p.label}
@@ -959,7 +959,7 @@ export default function SleepSupportView() {
         </div>
 
         {/* Section Navigation Quick Filter Tabs */}
-        <div className="flex items-center gap-2 mt-4 pt-3 border-t border-[#E2ECE6] dark:border-[#23483E] overflow-x-auto scrollbar-none">
+        <div className="flex items-center gap-2 mt-4 pt-3 border-t border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] overflow-x-auto scrollbar-none">
           {[
             { id: "all", label: "🌟 Complete Suite", icon: "dashboard" },
             { id: "audio", label: "🌙 Soundscapes & Mixer", icon: "volume_up" },
@@ -970,10 +970,10 @@ export default function SleepSupportView() {
               key={tab.id}
               type="button"
               onClick={() => setActiveSectionTab(tab.id as any)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-heading font-bold whitespace-nowrap transition-all cursor-pointer flex items-center gap-1.5 ${
+              className={`px-3 py-1.5 rounded-xl text-xs font-heading font-bold whitespace-nowrap transition-all cursor-pointer flex items-center gap-1.5 border ${
                 activeSectionTab === tab.id
-                  ? "bg-[#006C56] text-white shadow-xs"
-                  : "bg-[#F4FAF7] dark:bg-[#14382F] text-[#5A756C] dark:text-[#A9C5BC] hover:bg-[#E2ECE6] dark:hover:bg-[#1c4439]"
+                  ? "bg-[#006C56] dark:bg-[#008F78] text-white border-[#006C56] dark:border-[#008F78] shadow-xs"
+                  : "bg-[#F4FAF7] dark:bg-[#082821] text-[#5A756C] dark:text-[#9DB9B0] border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] hover:bg-[#E2ECE6] dark:hover:bg-[#0E3931]"
               }`}
             >
               <span>{tab.label}</span>
@@ -986,12 +986,12 @@ export default function SleepSupportView() {
       {(activeSectionTab === "all" || activeSectionTab === "tracker") && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
           {/* Card 1: 7-Day Average Duration */}
-          <div className="bg-white dark:bg-[#102F27] rounded-3xl p-4 sm:p-5 border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs flex flex-col justify-between gap-3">
+          <div className="bg-white dark:bg-[#0B3029] rounded-3xl p-4 sm:p-5 border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] shadow-2xs flex flex-col justify-between gap-3">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-heading font-bold tracking-wider text-[#5A756C] dark:text-[#A9C5BC]">
+              <span className="text-[10px] font-heading font-bold tracking-wider text-[#5A756C] dark:text-[#9DB9B0]">
                 Sleep duration
               </span>
-              <span className="px-2 py-0.5 rounded-full text-[9.5px] font-bold bg-[#EAF6F0] dark:bg-[#14382F] text-[#006C56] dark:text-[#88F7D6] border border-[#D2EAE0] dark:border-[#23483E]">
+              <span className="px-2 py-0.5 rounded-full text-[9.5px] font-bold bg-[#EAF6F0] dark:bg-[rgba(0,168,137,0.15)] text-[#006C56] dark:text-[#73D8C4] border border-[#D2EAE0] dark:border-[rgba(0,168,137,0.30)]">
                 Target: 7–9h
               </span>
             </div>
@@ -1001,11 +1001,11 @@ export default function SleepSupportView() {
                 <span className="text-2xl sm:text-3xl font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
                   {avgH}h {avgM > 0 ? `${avgM}m` : ""}
                 </span>
-                <span className="text-xs text-[#006C56] dark:text-[#88F7D6] font-semibold">
+                <span className="text-xs text-[#006C56] dark:text-[#73D8C4] font-semibold">
                   • {sleepStats.averageCycles} cycles
                 </span>
               </div>
-              <p className="text-[11px] text-[#5A756C] dark:text-[#A9C5BC] mt-0.5">
+              <p className="text-[11px] text-[#5A756C] dark:text-[#9DB9B0] mt-0.5">
                 Last night: {sleepStats.lastSleep.durationFormatted} ({sleepStats.lastSleep.bedtime} - {sleepStats.lastSleep.wakeTime})
               </p>
             </div>
@@ -1013,7 +1013,7 @@ export default function SleepSupportView() {
             <button
               type="button"
               onClick={() => setShowLogModal(true)}
-              className="w-full py-2 rounded-xl bg-[#006C56] hover:bg-[#005241] dark:bg-[#00A982] dark:hover:bg-[#00916F] text-white dark:text-[#071C17] text-xs font-heading font-bold transition-all cursor-pointer shadow-xs flex items-center justify-center gap-1.5"
+              className="w-full py-2 rounded-xl bg-[#006C56] hover:bg-[#005241] dark:bg-[#008F78] dark:hover:bg-[#00A889] text-white text-xs font-heading font-bold transition-all cursor-pointer shadow-xs flex items-center justify-center gap-1.5"
             >
               <span className="material-symbols-outlined text-sm">add_circle</span>
               <span>Log Sleep Duration</span>
@@ -1021,12 +1021,12 @@ export default function SleepSupportView() {
           </div>
 
           {/* Card 2: Sleep Quality & Latency */}
-          <div className="bg-white dark:bg-[#102F27] rounded-3xl p-4 sm:p-5 border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs flex flex-col justify-between gap-3">
+          <div className="bg-white dark:bg-[#0B3029] rounded-3xl p-4 sm:p-5 border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] shadow-2xs flex flex-col justify-between gap-3">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-heading font-bold tracking-wider text-[#5A756C] dark:text-[#A9C5BC]">
+              <span className="text-[10px] font-heading font-bold tracking-wider text-[#5A756C] dark:text-[#9DB9B0]">
                 Sleep quality
               </span>
-              <span className="px-2 py-0.5 rounded-full text-[9.5px] font-bold bg-[#F4FAF7] dark:bg-[#071C17] text-[#006C56] dark:text-[#88F7D6] border border-[#E2ECE6] dark:border-[#23483E]">
+              <span className="px-2 py-0.5 rounded-full text-[9.5px] font-bold bg-[#F4FAF7] dark:bg-[#082821] text-[#006C56] dark:text-[#73D8C4] border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)]">
                 {sleepStats.averageQuality} / 5.0
               </span>
             </div>
@@ -1042,7 +1042,7 @@ export default function SleepSupportView() {
                   {Math.round((sleepStats.averageQuality / 5) * 100)}% Restful
                 </span>
               </div>
-              <p className="text-[11px] text-[#5A756C] dark:text-[#A9C5BC] mt-1">
+              <p className="text-[11px] text-[#5A756C] dark:text-[#9DB9B0] mt-1">
                 Avg time to fall asleep: <strong>{sleepStats.averageLatencyMinutes} mins</strong>
               </p>
             </div>
@@ -1053,7 +1053,7 @@ export default function SleepSupportView() {
               className={`w-full py-2 rounded-xl text-xs font-heading font-bold transition-all cursor-pointer shadow-xs flex items-center justify-center gap-1.5 ${
                 isLiveSleepActive
                   ? "bg-[#D97706] hover:bg-[#B45309] text-white animate-pulse"
-                  : "bg-[#F4FAF7] dark:bg-[#14382F] hover:bg-[#E2ECE6] dark:hover:bg-[#1c4439] text-[#006C56] dark:text-[#88F7D6] border border-[#D2EAE0] dark:border-[#23483E]"
+                  : "bg-[#F4FAF7] dark:bg-[#082821] hover:bg-[#E2ECE6] dark:hover:bg-[#0E3931] text-[#006C56] dark:text-[#73D8C4] border border-[#D2EAE0] dark:border-[rgba(150,210,195,0.12)]"
               }`}
             >
               <span className="material-symbols-outlined text-sm">
@@ -1064,16 +1064,16 @@ export default function SleepSupportView() {
           </div>
 
           {/* Card 3: Sleep Debt & Recovery Status */}
-          <div className="bg-white dark:bg-[#102F27] rounded-3xl p-4 sm:p-5 border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs flex flex-col justify-between gap-3">
+          <div className="bg-white dark:bg-[#0B3029] rounded-3xl p-4 sm:p-5 border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] shadow-2xs flex flex-col justify-between gap-3">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-heading font-bold tracking-wider text-[#5A756C] dark:text-[#A9C5BC]">
+              <span className="text-[10px] font-heading font-bold tracking-wider text-[#5A756C] dark:text-[#9DB9B0]">
                 Sleep debt & bank
               </span>
               <span
                 className={`px-2 py-0.5 rounded-full text-[9.5px] font-bold border ${
                   sleepStats.sleepDebtHours >= 0
-                    ? "bg-[#EAF6F0] text-[#006C56] dark:bg-[#14382F] dark:text-[#88F7D6] border-[#D2EAE0]"
-                    : "bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-400 border-amber-200"
+                    ? "bg-[#EAF6F0] text-[#006C56] dark:bg-[rgba(0,168,137,0.15)] dark:text-[#73D8C4] border-[#D2EAE0] dark:border-[rgba(0,168,137,0.30)]"
+                    : "bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-400 border-amber-200 dark:border-amber-800"
                 }`}
               >
                 {sleepStats.sleepDebtHours >= 0 ? "Well-Rested" : "Deficit"}
@@ -1085,9 +1085,9 @@ export default function SleepSupportView() {
                 <span className="text-2xl sm:text-3xl font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
                   {sleepStats.sleepDebtHours >= 0 ? `+${sleepStats.sleepDebtHours}h` : `${sleepStats.sleepDebtHours}h`}
                 </span>
-                <span className="text-xs text-[#5A756C] dark:text-[#A9C5BC]">this week</span>
+                <span className="text-xs text-[#5A756C] dark:text-[#9DB9B0]">this week</span>
               </div>
-              <p className="text-[11px] text-[#5A756C] dark:text-[#A9C5BC] mt-0.5">
+              <p className="text-[11px] text-[#5A756C] dark:text-[#9DB9B0] mt-0.5">
                 Sleep Efficiency: <strong>{sleepStats.averageEfficiency}%</strong> of time in bed asleep
               </p>
             </div>
@@ -1095,7 +1095,7 @@ export default function SleepSupportView() {
             <button
               type="button"
               onClick={() => setShowHistoryDrawer(!showHistoryDrawer)}
-              className="w-full py-2 rounded-xl bg-[#F4FAF7] dark:bg-[#14382F] hover:bg-[#E2ECE6] dark:hover:bg-[#1c4439] text-[#19332A] dark:text-[#F4FAF7] text-xs font-heading font-bold border border-[#E2ECE6] dark:border-[#23483E] transition-colors cursor-pointer flex items-center justify-center gap-1.5"
+              className="w-full py-2 rounded-xl bg-[#F4FAF7] dark:bg-[#082821] hover:bg-[#E2ECE6] dark:hover:bg-[#0E3931] text-[#19332A] dark:text-[#F4FAF7] text-xs font-heading font-bold border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] transition-colors cursor-pointer flex items-center justify-center gap-1.5"
             >
               <span className="material-symbols-outlined text-sm">history</span>
               <span>{showHistoryDrawer ? "Hide History" : "View Sleep History"}</span>
@@ -1103,12 +1103,12 @@ export default function SleepSupportView() {
           </div>
 
           {/* Card 4: 7-Day Trend Chart */}
-          <div className="bg-white dark:bg-[#102F27] rounded-3xl p-4 sm:p-5 border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs flex flex-col justify-between gap-2">
+          <div className="bg-white dark:bg-[#0B3029] rounded-3xl p-4 sm:p-5 border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] shadow-2xs flex flex-col justify-between gap-2">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-heading font-bold tracking-wider text-[#5A756C] dark:text-[#A9C5BC]">
+              <span className="text-[10px] font-heading font-bold tracking-wider text-[#5A756C] dark:text-[#9DB9B0]">
                 7-Night trend
               </span>
-              <span className="text-[9.5px] text-[#5A756C] dark:text-[#A9C5BC] font-semibold">
+              <span className="text-[9.5px] text-[#5A756C] dark:text-[#9DB9B0] font-semibold">
                 Goal: 8.0h
               </span>
             </div>
@@ -1121,19 +1121,19 @@ export default function SleepSupportView() {
 
                 return (
                   <div key={idx} className="flex-1 flex flex-col items-center gap-1 h-full justify-end group relative">
-                    <div className="absolute -top-7 hidden group-hover:flex items-center px-1.5 py-0.5 rounded-lg bg-[#19332A] text-white text-[9px] font-mono whitespace-nowrap z-20 pointer-events-none shadow-md">
+                    <div className="absolute -top-7 hidden group-hover:flex items-center px-1.5 py-0.5 rounded-lg bg-[#19332A] dark:bg-[#0E3931] text-white text-[9px] font-mono whitespace-nowrap z-20 pointer-events-none shadow-md border border-transparent dark:border-[rgba(150,210,195,0.15)]">
                       {hours}h • {item.day}
                     </div>
 
                     <div
                       className={`w-full rounded-t-md transition-all ${
                         isTargetMet
-                          ? "bg-[#006C56] dark:bg-[#00A982] group-hover:opacity-85"
+                          ? "bg-[#006C56] dark:bg-[#00A889] group-hover:opacity-85"
                           : "bg-[#D97706]/75 group-hover:bg-[#D97706]"
                       }`}
                       style={{ height: `${heightPercent}%` }}
                     />
-                    <span className="text-[9px] font-heading font-bold text-[#5A756C] dark:text-[#A9C5BC]">
+                    <span className="text-[9px] font-heading font-bold text-[#5A756C] dark:text-[#9DB9B0]">
                       {item.day[0]}
                     </span>
                   </div>
@@ -1141,9 +1141,9 @@ export default function SleepSupportView() {
               })}
             </div>
 
-            <div className="flex items-center justify-between text-[9.5px] text-[#5A756C] dark:text-[#A9C5BC] pt-1 border-t border-[#E2ECE6] dark:border-[#23483E]">
+            <div className="flex items-center justify-between text-[9.5px] text-[#5A756C] dark:text-[#9DB9B0] pt-1 border-t border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)]">
               <span className="flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#006C56] dark:bg-[#00A982]" /> 7h+ Optimal
+                <span className="w-1.5 h-1.5 rounded-full bg-[#006C56] dark:bg-[#00A889]" /> 7h+ Optimal
               </span>
               <span className="flex items-center gap-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#D97706]" /> &lt;7h
@@ -1155,10 +1155,10 @@ export default function SleepSupportView() {
 
       {/* Sleep History Logs Drawer / Table */}
       {showHistoryDrawer && (
-        <div className="bg-white dark:bg-[#102F27] rounded-3xl p-5 border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs space-y-3 animate-in fade-in duration-200">
+        <div className="bg-white dark:bg-[#0B3029] rounded-3xl p-5 border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] shadow-2xs space-y-3 animate-in fade-in duration-200">
           <div className="flex items-center justify-between">
             <h3 className="text-xs font-heading font-black text-[#19332A] dark:text-[#F4FAF7] tracking-wider flex items-center gap-2">
-              <span className="material-symbols-outlined text-base text-[#006C56] dark:text-[#88F7D6]">
+              <span className="material-symbols-outlined text-base text-[#006C56] dark:text-[#73D8C4]">
                 history_toggle_off
               </span>
               <span>Recent sleep duration logs ({sleepStats.logs.length})</span>
@@ -1166,21 +1166,21 @@ export default function SleepSupportView() {
             <button
               type="button"
               onClick={() => setShowHistoryDrawer(false)}
-              className="text-xs text-[#5A756C] dark:text-[#A9C5BC] hover:text-[#19332A] cursor-pointer"
+              className="text-xs text-[#5A756C] dark:text-[#9DB9B0] hover:text-[#19332A] dark:hover:text-[#F4FAF7] cursor-pointer"
             >
               Close
             </button>
           </div>
 
           {sleepStats.logs.length === 0 ? (
-            <p className="text-xs text-[#5A756C] dark:text-[#A9C5BC] py-4 text-center">
+            <p className="text-xs text-[#5A756C] dark:text-[#9DB9B0] py-4 text-center">
               No custom sleep logs yet. Click &ldquo;Log Sleep Duration&rdquo; to add your first night!
             </p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
                 <thead>
-                  <tr className="border-b border-[#E2ECE6] dark:border-[#23483E] text-[#5A756C] dark:text-[#A9C5BC] text-[10.5px]">
+                  <tr className="border-b border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] text-[#5A756C] dark:text-[#9DB9B0] text-[10.5px]">
                     <th className="py-2 font-bold">Date</th>
                     <th className="py-2 font-bold">Bedtime - wake</th>
                     <th className="py-2 font-bold">Duration</th>
@@ -1190,16 +1190,16 @@ export default function SleepSupportView() {
                     <th className="py-2 text-right font-bold">Action</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#E2ECE6] dark:divide-[#23483E]">
+                <tbody className="divide-y divide-[#E2ECE6] dark:divide-[rgba(150,210,195,0.12)]">
                   {sleepStats.logs.map((log) => (
                     <tr key={log.id} className="text-[#19332A] dark:text-[#F4FAF7]">
                       <td className="py-2.5 font-medium">
                         {new Date(log.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
                       </td>
-                      <td className="py-2.5 font-mono text-[11px] text-[#5A756C] dark:text-[#A9C5BC]">
+                      <td className="py-2.5 font-mono text-[11px] text-[#5A756C] dark:text-[#9DB9B0]">
                         {log.bedtime} - {log.wakeTime}
                       </td>
-                      <td className="py-2.5 font-bold text-[#006C56] dark:text-[#88F7D6]">
+                      <td className="py-2.5 font-bold text-[#006C56] dark:text-[#73D8C4]">
                         {log.durationFormatted}
                       </td>
                       <td className="py-2.5 font-semibold text-xs">
@@ -1208,7 +1208,7 @@ export default function SleepSupportView() {
                       <td className="py-2.5">
                         <span className="text-amber-500">{"★".repeat(log.quality)}</span>
                       </td>
-                      <td className="py-2.5 text-[11px] text-[#5A756C] dark:text-[#A9C5BC] max-w-[200px] truncate">
+                      <td className="py-2.5 text-[11px] text-[#5A756C] dark:text-[#9DB9B0] max-w-[200px] truncate">
                         {log.notes || "—"}
                       </td>
                       <td className="py-2.5 text-right">
@@ -1231,18 +1231,18 @@ export default function SleepSupportView() {
 
       {/* 3. SOUNDSCAPES & MULTI-TRACK MIXER SECTION */}
       {(activeSectionTab === "all" || activeSectionTab === "audio") && (
-        <div className="bg-white dark:bg-[#102F27] rounded-3xl p-5 sm:p-6 border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs space-y-4 transition-colors">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-[#E2ECE6] dark:border-[#23483E]">
+        <div className="bg-white dark:bg-[#0B3029] rounded-3xl p-5 sm:p-6 border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] shadow-2xs space-y-4 transition-colors">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)]">
             <div>
               <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-[#006C56] dark:text-[#88F7D6] text-xl">
+                <span className="material-symbols-outlined text-[#006C56] dark:text-[#73D8C4] text-xl">
                   headphones
                 </span>
                 <h2 className="text-sm font-heading font-black text-[#19332A] dark:text-[#F4FAF7] tracking-wider">
                   Ambient sleep soundscapes &amp; mixer
                 </h2>
               </div>
-              <p className="text-[11px] text-[#5A756C] dark:text-[#A9C5BC] mt-0.5">
+              <p className="text-[11px] text-[#5A756C] dark:text-[#9DB9B0] mt-0.5">
                 Listen to single restorative tracks or switch on Layer Mode to blend rain, crickets, and delta waves.
               </p>
             </div>
@@ -1255,10 +1255,10 @@ export default function SleepSupportView() {
               <button
                 type="button"
                 onClick={handleToggleMixerMode}
-                className={`px-3 py-1.5 rounded-xl text-xs font-heading font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                className={`px-3 py-1.5 rounded-xl text-xs font-heading font-bold transition-all cursor-pointer flex items-center gap-1.5 border ${
                   isMixerMode
-                    ? "bg-[#006C56] text-white shadow-xs"
-                    : "bg-[#F4FAF7] dark:bg-[#14382F] text-[#5A756C] dark:text-[#A9C5BC] border border-[#E2ECE6] dark:border-[#23483E]"
+                    ? "bg-[#006C56] dark:bg-[#008F78] text-white border-[#006C56] dark:border-[#008F78] shadow-xs"
+                    : "bg-[#F4FAF7] dark:bg-[#082821] text-[#5A756C] dark:text-[#9DB9B0] border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] hover:bg-[#E2ECE6] dark:hover:bg-[#0E3931]"
                 }`}
               >
                 <span className="material-symbols-outlined text-sm">tune</span>
@@ -1285,10 +1285,10 @@ export default function SleepSupportView() {
                     !isMixerMode ? "cursor-pointer" : ""
                   } ${
                     isThisPlaying || isMixerActive
-                      ? "bg-[#EAF6F0] dark:bg-[#14382F] border-[#006C56] dark:border-[#00A982] shadow-xs ring-1 ring-[#006C56]/40"
+                      ? "bg-[#EAF6F0] dark:bg-[rgba(0,168,137,0.15)] border-[#006C56] dark:border-[#00A889] shadow-xs ring-1 ring-[#006C56]/40 dark:ring-[#00A889]/30"
                       : isSelected
-                      ? "bg-white dark:bg-[#102F27] border-[#006C56]/40 dark:border-[#00A982]/40 shadow-2xs"
-                      : "bg-white dark:bg-[#102F27] border-[#E2ECE6] dark:border-[#23483E] hover:border-[#006C56]/30 dark:hover:border-[#00A982]/30 shadow-2xs"
+                      ? "bg-white dark:bg-[#0E3931] border-[#006C56]/40 dark:border-[rgba(0,168,137,0.30)] shadow-2xs"
+                      : "bg-white dark:bg-[#0B3029] border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] hover:border-[#006C56]/30 dark:hover:border-[rgba(150,210,195,0.25)] shadow-2xs"
                   }`}
                 >
                   <div className="flex items-center justify-between gap-3">
@@ -1296,8 +1296,8 @@ export default function SleepSupportView() {
                       <div
                         className={`w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 border transition-colors ${
                           isThisPlaying || isMixerActive
-                            ? "bg-[#006C56] text-white border-[#006C56]"
-                            : "bg-[#F4FAF7] dark:bg-[#071C17] text-[#006C56] dark:text-[#88F7D6] border-[#D2EAE0] dark:border-[#23483E]"
+                            ? "bg-[#006C56] dark:bg-[#008F78] text-white border-[#006C56] dark:border-[#008F78]"
+                            : "bg-[#F4FAF7] dark:bg-[#082821] text-[#006C56] dark:text-[#73D8C4] border-[#D2EAE0] dark:border-[rgba(150,210,195,0.12)]"
                         }`}
                       >
                         <span className="material-symbols-outlined text-xl">{sound.icon}</span>
@@ -1309,7 +1309,7 @@ export default function SleepSupportView() {
                             {sound.title}
                           </h3>
                         </div>
-                        <p className="text-[11px] text-[#5A756C] dark:text-[#A9C5BC] line-clamp-1 leading-snug">
+                        <p className="text-[11px] text-[#5A756C] dark:text-[#9DB9B0] line-clamp-1 leading-snug">
                           {sound.desc}
                         </p>
                       </div>
@@ -1325,8 +1325,8 @@ export default function SleepSupportView() {
                         }}
                         className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all cursor-pointer shrink-0 border ${
                           isMixerActive
-                            ? "bg-[#006C56] text-white border-[#006C56]"
-                            : "bg-[#F4FAF7] dark:bg-[#071C17] text-[#5A756C] dark:text-[#A9C5BC] border-[#E2ECE6] dark:border-[#23483E]"
+                            ? "bg-[#006C56] dark:bg-[#008F78] text-white border-[#006C56] dark:border-[#008F78]"
+                            : "bg-[#F4FAF7] dark:bg-[#082821] text-[#5A756C] dark:text-[#9DB9B0] border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)]"
                         }`}
                         title={isMixerActive ? "Disable layer" : "Enable layer"}
                       >
@@ -1338,8 +1338,8 @@ export default function SleepSupportView() {
                       <div
                         className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 transition-all ${
                           isThisPlaying
-                            ? "bg-[#006C56] text-white shadow-xs"
-                            : "bg-[#F4FAF7] dark:bg-[#071C17] text-[#4F685F] dark:text-[#A9C5BC] border border-[#E2ECE6] dark:border-[#23483E]"
+                            ? "bg-[#006C56] dark:bg-[#008F78] text-white shadow-xs"
+                            : "bg-[#F4FAF7] dark:bg-[#082821] text-[#4F685F] dark:text-[#9DB9B0] border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)]"
                         }`}
                       >
                         <span className="material-symbols-outlined text-lg">
@@ -1351,8 +1351,8 @@ export default function SleepSupportView() {
 
                   {/* Mixer mode individual volume slider */}
                   {isMixerMode && (
-                    <div className="mt-3 pt-2.5 border-t border-[#E2ECE6] dark:border-[#23483E] flex items-center justify-between gap-2">
-                      <span className="text-[10px] text-[#5A756C] dark:text-[#A9C5BC] font-semibold">
+                    <div className="mt-3 pt-2.5 border-t border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] flex items-center justify-between gap-2">
+                      <span className="text-[10px] text-[#5A756C] dark:text-[#9DB9B0] font-semibold">
                         Layer Vol: {Math.round(mixerVol * 100)}%
                       </span>
                       <input
@@ -1363,7 +1363,7 @@ export default function SleepSupportView() {
                         value={mixerVol}
                         disabled={!isMixerActive}
                         onChange={(e) => handleMixerVolumeChange(sound.id, parseFloat(e.target.value))}
-                        className="w-24 sm:w-32 accent-[#006C56] dark:accent-[#00A982] cursor-pointer h-1 disabled:opacity-30"
+                        className="w-24 sm:w-32 accent-[#006C56] dark:accent-[#00A889] cursor-pointer h-1 disabled:opacity-30"
                       />
                     </div>
                   )}
@@ -1376,18 +1376,18 @@ export default function SleepSupportView() {
 
       {/* 4. ACTIVE 4-7-8 BEDTIME BREATHWORK TRAINER */}
       {(activeSectionTab === "all" || activeSectionTab === "breath") && (
-        <div className="bg-white dark:bg-[#102F27] rounded-3xl p-5 sm:p-6 border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs space-y-5 transition-colors">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-[#E2ECE6] dark:border-[#23483E]">
+        <div className="bg-white dark:bg-[#0B3029] rounded-3xl p-5 sm:p-6 border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] shadow-2xs space-y-5 transition-colors">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)]">
             <div>
               <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-[#006C56] dark:text-[#88F7D6] text-xl">
+                <span className="material-symbols-outlined text-[#006C56] dark:text-[#73D8C4] text-xl">
                   air
                 </span>
                 <h2 className="text-sm font-heading font-black text-[#19332A] dark:text-[#F4FAF7] tracking-wider">
                   The 4-7-8 bedtime breathwork trainer
                 </h2>
               </div>
-              <p className="text-[11px] text-[#5A756C] dark:text-[#A9C5BC] mt-0.5">
+              <p className="text-[11px] text-[#5A756C] dark:text-[#9DB9B0] mt-0.5">
                 Science-backed natural nervous system tranquilizer: 4s inhale, 7s hold, 8s exhale.
               </p>
             </div>
@@ -1397,7 +1397,7 @@ export default function SleepSupportView() {
                 type="button"
                 onClick={() => setIsBreathChimeEnabled(!isBreathChimeEnabled)}
                 className={`text-[11px] font-heading font-bold flex items-center gap-1 cursor-pointer transition-colors ${
-                  isBreathChimeEnabled ? "text-[#006C56] dark:text-[#88F7D6]" : "text-[#5A756C] dark:text-[#A9C5BC]"
+                  isBreathChimeEnabled ? "text-[#006C56] dark:text-[#73D8C4]" : "text-[#5A756C] dark:text-[#9DB9B0]"
                 }`}
               >
                 <span className="material-symbols-outlined text-sm">
@@ -1415,26 +1415,26 @@ export default function SleepSupportView() {
               <div
                 className={`absolute inset-0 rounded-full transition-all duration-1000 ${
                   breathPhase === "Inhale"
-                    ? "bg-[#88F7D6]/35 dark:bg-[#00A982]/25 scale-125 blur-xl"
+                    ? "bg-[#88F7D6]/35 dark:bg-[#00A889]/25 scale-125 blur-xl"
                     : breathPhase === "Hold"
                     ? "bg-amber-400/30 dark:bg-amber-500/20 scale-115 blur-lg"
-                    : "bg-[#006C56]/20 dark:bg-[#00A982]/15 scale-90 blur-md"
+                    : "bg-[#006C56]/20 dark:bg-[#00A889]/15 scale-90 blur-md"
                 }`}
               />
 
               <div
-                className={`z-10 flex flex-col items-center justify-center w-36 h-36 rounded-full bg-white dark:bg-[#14382F] border-2 shadow-md transition-all duration-700 ${
+                className={`z-10 flex flex-col items-center justify-center w-36 h-36 rounded-full bg-white dark:bg-[#0E3931] border-2 shadow-md transition-all duration-700 ${
                   breathPhase === "Inhale"
-                    ? "border-[#006C56] dark:border-[#88F7D6] scale-110"
+                    ? "border-[#006C56] dark:border-[#73D8C4] scale-110"
                     : breathPhase === "Hold"
                     ? "border-amber-500 scale-105"
-                    : "border-[#006C56]/40 scale-95"
+                    : "border-[#006C56]/40 dark:border-[rgba(0,168,137,0.30)] scale-95"
                 }`}
               >
                 <span
                   className={`text-xs font-heading font-black tracking-widest transition-colors ${
                     breathPhase === "Inhale"
-                      ? "text-[#006C56] dark:text-[#88F7D6]"
+                      ? "text-[#006C56] dark:text-[#73D8C4]"
                       : breathPhase === "Hold"
                       ? "text-amber-500 dark:text-amber-400"
                       : "text-[#19332A] dark:text-[#F4FAF7]"
@@ -1447,7 +1447,7 @@ export default function SleepSupportView() {
                   {isBreathingActive ? breathSecondsLeft : "4-7-8"}
                 </span>
 
-                <span className="text-[10px] text-[#5A756C] dark:text-[#A9C5BC] font-medium mt-0.5">
+                <span className="text-[10px] text-[#5A756C] dark:text-[#9DB9B0] font-medium mt-0.5">
                   Cycle {breathCycleCount} of 4
                 </span>
               </div>
@@ -1459,17 +1459,17 @@ export default function SleepSupportView() {
                 <div
                   className={`p-3 rounded-2xl border transition-all ${
                     isBreathingActive && breathPhase === "Inhale"
-                      ? "bg-[#EAF6F0] dark:bg-[#14382F] border-[#006C56] ring-1 ring-[#006C56]"
-                      : "bg-[#F4FAF7] dark:bg-[#071C17] border-[#E2ECE6] dark:border-[#23483E]"
+                      ? "bg-[#EAF6F0] dark:bg-[rgba(0,168,137,0.15)] border-[#006C56] dark:border-[#00A889] ring-1 ring-[#006C56] dark:ring-[#00A889]"
+                      : "bg-[#F4FAF7] dark:bg-[#082821] border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)]"
                   }`}
                 >
-                  <span className="text-xs font-mono font-bold text-[#006C56] dark:text-[#88F7D6] block">
+                  <span className="text-xs font-mono font-bold text-[#006C56] dark:text-[#73D8C4] block">
                     4 sec
                   </span>
                   <span className="text-xs font-heading font-bold text-[#19332A] dark:text-[#F4FAF7]">
                     Inhale
                   </span>
-                  <span className="text-[9.5px] text-[#5A756C] dark:text-[#A9C5BC] block mt-0.5">
+                  <span className="text-[9.5px] text-[#5A756C] dark:text-[#9DB9B0] block mt-0.5">
                     Quiet nose
                   </span>
                 </div>
@@ -1478,7 +1478,7 @@ export default function SleepSupportView() {
                   className={`p-3 rounded-2xl border transition-all ${
                     isBreathingActive && breathPhase === "Hold"
                       ? "bg-amber-50 dark:bg-amber-950/30 border-amber-500 ring-1 ring-amber-500"
-                      : "bg-[#F4FAF7] dark:bg-[#071C17] border-[#E2ECE6] dark:border-[#23483E]"
+                      : "bg-[#F4FAF7] dark:bg-[#082821] border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)]"
                   }`}
                 >
                   <span className="text-xs font-mono font-bold text-[#D97706] dark:text-[#FBBF24] block">
@@ -1487,7 +1487,7 @@ export default function SleepSupportView() {
                   <span className="text-xs font-heading font-bold text-[#19332A] dark:text-[#F4FAF7]">
                     Hold
                   </span>
-                  <span className="text-[9.5px] text-[#5A756C] dark:text-[#A9C5BC] block mt-0.5">
+                  <span className="text-[9.5px] text-[#5A756C] dark:text-[#9DB9B0] block mt-0.5">
                     Calm retain
                   </span>
                 </div>
@@ -1495,17 +1495,17 @@ export default function SleepSupportView() {
                 <div
                   className={`p-3 rounded-2xl border transition-all ${
                     isBreathingActive && breathPhase === "Exhale"
-                      ? "bg-[#EAF6F0] dark:bg-[#14382F] border-[#006C56] ring-1 ring-[#006C56]"
-                      : "bg-[#F4FAF7] dark:bg-[#071C17] border-[#E2ECE6] dark:border-[#23483E]"
+                      ? "bg-[#EAF6F0] dark:bg-[rgba(0,168,137,0.15)] border-[#006C56] dark:border-[#00A889] ring-1 ring-[#006C56] dark:ring-[#00A889]"
+                      : "bg-[#F4FAF7] dark:bg-[#082821] border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)]"
                   }`}
                 >
-                  <span className="text-xs font-mono font-bold text-[#006C56] dark:text-[#88F7D6] block">
+                  <span className="text-xs font-mono font-bold text-[#006C56] dark:text-[#73D8C4] block">
                     8 sec
                   </span>
                   <span className="text-xs font-heading font-bold text-[#19332A] dark:text-[#F4FAF7]">
                     Exhale
                   </span>
-                  <span className="text-[9.5px] text-[#5A756C] dark:text-[#A9C5BC] block mt-0.5">
+                  <span className="text-[9.5px] text-[#5A756C] dark:text-[#9DB9B0] block mt-0.5">
                     Gentle whoosh
                   </span>
                 </div>
@@ -1517,7 +1517,7 @@ export default function SleepSupportView() {
                   <button
                     type="button"
                     onClick={handleStartBreath}
-                    className="flex-1 py-2.5 rounded-2xl bg-[#006C56] hover:bg-[#005241] dark:bg-[#00A982] dark:hover:bg-[#00916F] text-white dark:text-[#071C17] text-xs font-heading font-black transition-all cursor-pointer shadow-xs flex items-center justify-center gap-1.5"
+                    className="flex-1 py-2.5 rounded-2xl bg-[#006C56] hover:bg-[#005241] dark:bg-[#008F78] dark:hover:bg-[#00A889] text-white text-xs font-heading font-black transition-all cursor-pointer shadow-xs flex items-center justify-center gap-1.5"
                   >
                     <span className="material-symbols-outlined text-base">play_arrow</span>
                     <span>Start 4-7-8 Breathing Guide</span>
@@ -1536,14 +1536,14 @@ export default function SleepSupportView() {
                 <button
                   type="button"
                   onClick={handleResetBreath}
-                  className="px-3.5 py-2.5 rounded-2xl bg-[#F4FAF7] dark:bg-[#14382F] hover:bg-[#E2ECE6] dark:hover:bg-[#1c4439] text-[#5A756C] dark:text-[#A9C5BC] text-xs font-heading font-bold border border-[#E2ECE6] dark:border-[#23483E] transition-colors cursor-pointer"
+                  className="px-3.5 py-2.5 rounded-2xl bg-[#F4FAF7] dark:bg-[#082821] hover:bg-[#E2ECE6] dark:hover:bg-[#0E3931] text-[#5A756C] dark:text-[#9DB9B0] text-xs font-heading font-bold border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] transition-colors cursor-pointer"
                   title="Reset Counter"
                 >
                   <span className="material-symbols-outlined text-base">replay</span>
                 </button>
               </div>
 
-              <p className="text-[11px] text-[#5A756C] dark:text-[#A9C5BC] leading-relaxed">
+              <p className="text-[11px] text-[#5A756C] dark:text-[#9DB9B0] leading-relaxed">
                 💡 Repeat 4 complete cycles as your head touches the pillow. The extended 8-second exhale stimulates the vagus nerve and triggers rapid sleep onset.
               </p>
             </div>
@@ -1553,16 +1553,16 @@ export default function SleepSupportView() {
 
       {/* 5. EVENING WIND-DOWN REFLECTION JOURNAL NOTE */}
       {(activeSectionTab === "all" || activeSectionTab === "breath") && (
-        <div className="bg-white dark:bg-[#102F27] rounded-3xl p-5 sm:p-6 border border-[#E2ECE6] dark:border-[#23483E] shadow-2xs space-y-3 transition-colors">
+        <div className="bg-white dark:bg-[#0B3029] rounded-3xl p-5 sm:p-6 border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] shadow-2xs space-y-3 transition-colors">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-[#EAF6F0] dark:bg-[#14382F] text-[#006C56] dark:text-[#88F7D6] flex items-center justify-center">
+            <div className="w-8 h-8 rounded-xl bg-[#EAF6F0] dark:bg-[#0E3931] text-[#006C56] dark:text-[#73D8C4] flex items-center justify-center">
               <span className="material-symbols-outlined text-base">edit_note</span>
             </div>
             <div>
               <h3 className="text-xs font-heading font-black text-[#19332A] dark:text-[#F4FAF7] tracking-wider">
                 Evening wind-down reflection
               </h3>
-              <p className="text-[11px] text-[#5A756C] dark:text-[#A9C5BC]">
+              <p className="text-[11px] text-[#5A756C] dark:text-[#9DB9B0]">
                 Release today&apos;s thoughts before heading to sleep
               </p>
             </div>
@@ -1573,16 +1573,16 @@ export default function SleepSupportView() {
             value={reflectionText}
             onChange={(e) => setReflectionText(e.target.value)}
             placeholder="Write 1 thing you are grateful for, or a thought you want to let go of tonight..."
-            className="w-full p-3 rounded-2xl bg-[#F4FAF7] dark:bg-[#071C17] border border-[#E2ECE6] dark:border-[#23483E] text-xs text-[#19332A] dark:text-[#F4FAF7] focus:outline-none focus:ring-2 focus:ring-[#006C56] resize-none"
+            className="w-full p-3 rounded-2xl bg-[#F4FAF7] dark:bg-[#082821] border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.16)] text-xs text-[#19332A] dark:text-[#F4FAF7] placeholder:text-[#8EAAA1] dark:placeholder:text-[#789990] focus:outline-none focus:ring-2 focus:ring-[#006C56] dark:focus:ring-[#00A889] resize-none"
           />
 
           <div className="flex items-center justify-between">
             {noteSavedMessage ? (
-              <span className="text-xs text-[#006C56] dark:text-[#88F7D6] font-bold">
+              <span className="text-xs text-[#006C56] dark:text-[#73D8C4] font-bold">
                 ✓ Saved to your Journal!
               </span>
             ) : (
-              <span className="text-[10px] text-[#5A756C] dark:text-[#A9C5BC]">
+              <span className="text-[10px] text-[#5A756C] dark:text-[#76968D]">
                 🔒 Private &amp; encrypted
               </span>
             )}
@@ -1591,7 +1591,7 @@ export default function SleepSupportView() {
               type="button"
               onClick={handleSaveReflection}
               disabled={isSavingNote || !reflectionText.trim()}
-              className="px-4 py-2 rounded-xl bg-[#006C56] hover:bg-[#005241] dark:bg-[#00A982] dark:hover:bg-[#00916F] disabled:opacity-40 text-white dark:text-[#071C17] text-xs font-heading font-bold transition-all cursor-pointer shadow-xs"
+              className="px-4 py-2 rounded-xl bg-[#006C56] hover:bg-[#005241] dark:bg-[#008F78] dark:hover:bg-[#00A889] disabled:opacity-40 text-white text-xs font-heading font-bold transition-all cursor-pointer shadow-xs"
             >
               {isSavingNote ? "Saving..." : "Save Reflection"}
             </button>
@@ -1601,11 +1601,11 @@ export default function SleepSupportView() {
 
       {/* 6. LOG SLEEP DURATION MODAL */}
       {showLogModal && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-[#102F27] rounded-3xl border border-[#E2ECE6] dark:border-[#23483E] shadow-2xl max-w-lg w-full p-6 space-y-4 animate-in fade-in zoom-in-95 duration-200">
-            <div className="flex items-center justify-between pb-3 border-b border-[#E2ECE6] dark:border-[#23483E]">
+        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-[#0B3029] rounded-3xl border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.15)] shadow-2xl max-w-lg w-full p-6 space-y-4 animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between pb-3 border-b border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)]">
               <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-[#006C56] dark:text-[#88F7D6]">
+                <span className="material-symbols-outlined text-[#006C56] dark:text-[#73D8C4]">
                   bedtime
                 </span>
                 <h3 className="text-sm font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
@@ -1615,7 +1615,7 @@ export default function SleepSupportView() {
               <button
                 type="button"
                 onClick={() => setShowLogModal(false)}
-                className="w-8 h-8 rounded-full bg-[#F4FAF7] dark:bg-[#14382F] text-[#5A756C] dark:text-[#A9C5BC] hover:text-[#19332A] dark:hover:text-[#F4FAF7] flex items-center justify-center text-sm cursor-pointer"
+                className="w-8 h-8 rounded-full bg-[#F4FAF7] dark:bg-[#0E3931] text-[#5A756C] dark:text-[#9DB9B0] hover:text-[#19332A] dark:hover:text-[#F4FAF7] flex items-center justify-center text-sm cursor-pointer"
               >
                 ✕
               </button>
@@ -1624,34 +1624,34 @@ export default function SleepSupportView() {
             {/* Time Pickers */}
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <label className="text-[11px] font-heading font-bold text-[#5A756C] dark:text-[#A9C5BC]">
+                <label className="text-[11px] font-heading font-bold text-[#5A756C] dark:text-[#9DB9B0]">
                   Bedtime
                 </label>
                 <input
                   type="time"
                   value={logBedtime}
                   onChange={(e) => setLogBedtime(e.target.value)}
-                  className="w-full p-2.5 rounded-xl bg-[#F4FAF7] dark:bg-[#071C17] border border-[#E2ECE6] dark:border-[#23483E] text-xs font-mono font-bold text-[#19332A] dark:text-[#F4FAF7] focus:outline-none focus:ring-1 focus:ring-[#006C56]"
+                  className="w-full p-2.5 rounded-xl bg-[#F4FAF7] dark:bg-[#082821] border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.16)] text-xs font-mono font-bold text-[#19332A] dark:text-[#F4FAF7] focus:outline-none focus:ring-1 focus:ring-[#006C56] dark:focus:ring-[#00A889]"
                 />
               </div>
 
               <div className="space-y-1">
-                <label className="text-[11px] font-heading font-bold text-[#5A756C] dark:text-[#A9C5BC]">
+                <label className="text-[11px] font-heading font-bold text-[#5A756C] dark:text-[#9DB9B0]">
                   Wake-Up Time
                 </label>
                 <input
                   type="time"
                   value={logWakeTime}
                   onChange={(e) => setLogWakeTime(e.target.value)}
-                  className="w-full p-2.5 rounded-xl bg-[#F4FAF7] dark:bg-[#071C17] border border-[#E2ECE6] dark:border-[#23483E] text-xs font-mono font-bold text-[#19332A] dark:text-[#F4FAF7] focus:outline-none focus:ring-1 focus:ring-[#006C56]"
+                  className="w-full p-2.5 rounded-xl bg-[#F4FAF7] dark:bg-[#082821] border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.16)] text-xs font-mono font-bold text-[#19332A] dark:text-[#F4FAF7] focus:outline-none focus:ring-1 focus:ring-[#006C56] dark:focus:ring-[#00A889]"
                 />
               </div>
             </div>
 
             {/* Auto Calculated Duration & Efficiency Highlight Banner */}
-            <div className="p-3.5 rounded-2xl bg-[#EAF6F0] dark:bg-[#14382F] border border-[#D2EAE0] dark:border-[#23483E] flex items-center justify-between">
+            <div className="p-3.5 rounded-2xl bg-[#EAF6F0] dark:bg-[#0E3931] border border-[#D2EAE0] dark:border-[rgba(150,210,195,0.12)] flex items-center justify-between">
               <div>
-                <span className="text-[10px] font-heading font-bold text-[#006C56] dark:text-[#88F7D6] tracking-wider block">
+                <span className="text-[10px] font-heading font-bold text-[#006C56] dark:text-[#73D8C4] tracking-wider block">
                   Total sleep duration
                 </span>
                 <span className="text-xl font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
@@ -1659,10 +1659,10 @@ export default function SleepSupportView() {
                 </span>
               </div>
               <div className="text-right space-y-0.5">
-                <span className="text-xs font-heading font-bold text-[#006C56] dark:text-[#88F7D6] block">
+                <span className="text-xs font-heading font-bold text-[#006C56] dark:text-[#73D8C4] block">
                   {currentDurationCalc.cycles} Sleep Cycles
                 </span>
-                <span className="text-[10px] text-[#5A756C] dark:text-[#A9C5BC] block">
+                <span className="text-[10px] text-[#5A756C] dark:text-[#9DB9B0] block">
                   Efficiency: <strong>{currentDurationCalc.efficiency}%</strong>
                 </span>
               </div>
@@ -1671,13 +1671,13 @@ export default function SleepSupportView() {
             {/* Latency & Night Awakenings */}
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <label className="text-[11px] font-heading font-bold text-[#5A756C] dark:text-[#A9C5BC]">
+                <label className="text-[11px] font-heading font-bold text-[#5A756C] dark:text-[#9DB9B0]">
                   Time to Fall Asleep
                 </label>
                 <select
                   value={logLatency}
                   onChange={(e) => setLogLatency(Number(e.target.value))}
-                  className="w-full p-2 rounded-xl bg-[#F4FAF7] dark:bg-[#071C17] border border-[#E2ECE6] dark:border-[#23483E] text-xs text-[#19332A] dark:text-[#F4FAF7] focus:outline-none focus:ring-1 focus:ring-[#006C56]"
+                  className="w-full p-2 rounded-xl bg-[#F4FAF7] dark:bg-[#082821] border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.16)] text-xs text-[#19332A] dark:text-[#F4FAF7] focus:outline-none focus:ring-1 focus:ring-[#006C56] dark:focus:ring-[#00A889]"
                 >
                   <option value={5}>~5 minutes (Very Fast)</option>
                   <option value={15}>~15 minutes (Normal)</option>
@@ -1687,13 +1687,13 @@ export default function SleepSupportView() {
               </div>
 
               <div className="space-y-1">
-                <label className="text-[11px] font-heading font-bold text-[#5A756C] dark:text-[#A9C5BC]">
+                <label className="text-[11px] font-heading font-bold text-[#5A756C] dark:text-[#9DB9B0]">
                   Night Awakenings
                 </label>
                 <select
                   value={logAwakenings}
                   onChange={(e) => setLogAwakenings(Number(e.target.value))}
-                  className="w-full p-2 rounded-xl bg-[#F4FAF7] dark:bg-[#071C17] border border-[#E2ECE6] dark:border-[#23483E] text-xs text-[#19332A] dark:text-[#F4FAF7] focus:outline-none focus:ring-1 focus:ring-[#006C56]"
+                  className="w-full p-2 rounded-xl bg-[#F4FAF7] dark:bg-[#082821] border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.16)] text-xs text-[#19332A] dark:text-[#F4FAF7] focus:outline-none focus:ring-1 focus:ring-[#006C56] dark:focus:ring-[#00A889]"
                 >
                   <option value={0}>0 times (Slept through)</option>
                   <option value={1}>1 time</option>
@@ -1705,7 +1705,7 @@ export default function SleepSupportView() {
 
             {/* Sleep Quality Rating */}
             <div className="space-y-1.5">
-              <label className="text-[11px] font-heading font-bold text-[#5A756C] dark:text-[#A9C5BC]">
+              <label className="text-[11px] font-heading font-bold text-[#5A756C] dark:text-[#9DB9B0]">
                 How restorative was your sleep?
               </label>
               <div className="grid grid-cols-5 gap-1.5">
@@ -1722,8 +1722,8 @@ export default function SleepSupportView() {
                     onClick={() => setLogQuality(item.star)}
                     className={`p-2 rounded-xl border flex flex-col items-center gap-1 transition-all cursor-pointer ${
                       logQuality === item.star
-                        ? "bg-[#006C56] text-white border-[#006C56] shadow-xs"
-                        : "bg-[#F4FAF7] dark:bg-[#071C17] text-[#5A756C] dark:text-[#A9C5BC] border-[#E2ECE6] dark:border-[#23483E] hover:border-[#006C56]"
+                        ? "bg-[#006C56] dark:bg-[#008F78] text-white border-[#006C56] dark:border-[#008F78] shadow-xs"
+                        : "bg-[#F4FAF7] dark:bg-[#082821] text-[#5A756C] dark:text-[#9DB9B0] border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] hover:border-[#006C56] dark:hover:border-[#00A889]"
                     }`}
                   >
                     <span className="text-base">{item.emoji}</span>
@@ -1737,7 +1737,7 @@ export default function SleepSupportView() {
 
             {/* Sleep Factors & Environment Tags */}
             <div className="space-y-1.5">
-              <label className="text-[11px] font-heading font-bold text-[#5A756C] dark:text-[#A9C5BC]">
+              <label className="text-[11px] font-heading font-bold text-[#5A756C] dark:text-[#9DB9B0]">
                 Sleep Factors &amp; Environment
               </label>
               <div className="flex flex-wrap gap-1.5">
@@ -1762,8 +1762,8 @@ export default function SleepSupportView() {
                       }}
                       className={`px-2.5 py-1 rounded-full text-[10.5px] font-heading font-bold transition-colors cursor-pointer border ${
                         isSelected
-                          ? "bg-[#006C56] text-white border-[#006C56]"
-                          : "bg-white dark:bg-[#102F27] text-[#5A756C] dark:text-[#A9C5BC] border-[#E2ECE6] dark:border-[#23483E]"
+                          ? "bg-[#006C56] dark:bg-[#008F78] text-white border-[#006C56] dark:border-[#008F78]"
+                          : "bg-white dark:bg-[#082821] text-[#5A756C] dark:text-[#9DB9B0] border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)]"
                       }`}
                     >
                       {tag}
@@ -1774,11 +1774,11 @@ export default function SleepSupportView() {
             </div>
 
             {/* Action Buttons */}
-            <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-[#E2ECE6] dark:border-[#23483E]">
+            <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)]">
               <button
                 type="button"
                 onClick={() => setShowLogModal(false)}
-                className="px-4 py-2 rounded-xl text-xs font-heading font-bold text-[#5A756C] dark:text-[#A9C5BC] hover:bg-[#F4FAF7] dark:hover:bg-[#14382F] transition-colors cursor-pointer"
+                className="px-4 py-2 rounded-xl text-xs font-heading font-bold text-[#5A756C] dark:text-[#9DB9B0] hover:bg-[#F4FAF7] dark:hover:bg-[#0E3931] transition-colors cursor-pointer"
               >
                 Cancel
               </button>
@@ -1786,7 +1786,7 @@ export default function SleepSupportView() {
                 type="button"
                 onClick={handleSaveSleepLog}
                 disabled={isSavingSleepLog}
-                className="px-5 py-2 rounded-xl bg-[#006C56] hover:bg-[#005241] dark:bg-[#00A982] dark:hover:bg-[#00916F] text-white dark:text-[#071C17] text-xs font-heading font-black transition-all cursor-pointer shadow-xs disabled:opacity-50"
+                className="px-5 py-2 rounded-xl bg-[#006C56] hover:bg-[#005241] dark:bg-[#008F78] dark:hover:bg-[#00A889] text-white text-xs font-heading font-black transition-all cursor-pointer shadow-xs disabled:opacity-50"
               >
                 {isSavingSleepLog ? "Saving..." : "Save Sleep Log"}
               </button>

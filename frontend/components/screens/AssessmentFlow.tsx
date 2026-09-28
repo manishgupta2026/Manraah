@@ -81,6 +81,16 @@ export default function AssessmentFlow() {
     }
   }, [safeIndex, detailedAnswers, question?.id]);
 
+  const advanceTimerRef = React.useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (advanceTimerRef.current) {
+        clearTimeout(advanceTimerRef.current);
+      }
+    };
+  }, []);
+
   const handleSelectOption = (optionId: string) => {
     setSelectedOptionId(optionId);
     if (!question) return;
@@ -96,6 +106,17 @@ export default function AssessmentFlow() {
       updatedAnswers.push(newAnswer);
     }
     setDetailedAnswers(updatedAnswers);
+
+    // Auto advance for questions before the last one
+    if (safeIndex < totalQuestions - 1) {
+      if (advanceTimerRef.current) {
+        clearTimeout(advanceTimerRef.current);
+      }
+      advanceTimerRef.current = setTimeout(() => {
+        setDirection(1);
+        setCurrentQuestionIndex(safeIndex + 1);
+      }, 190);
+    }
   };
 
   // Reset assessment flow if retake flag is set
@@ -189,6 +210,9 @@ export default function AssessmentFlow() {
   };
 
   const handleBack = () => {
+    if (advanceTimerRef.current) {
+      clearTimeout(advanceTimerRef.current);
+    }
     if (safeIndex > 0) {
       setDirection(-1);
       setCurrentQuestionIndex(safeIndex - 1);
@@ -338,17 +362,7 @@ export default function AssessmentFlow() {
             </button>
           )}
 
-          {safeIndex < totalQuestions - 1 ? (
-            <button
-              onClick={handleNext}
-              disabled={!selectedOptionId}
-              type="button"
-              className="px-8 py-3.5 rounded-full font-bold text-xs uppercase bg-[#5F4BB6] text-white hover:bg-[#4E3CA3] transition-all flex items-center gap-2 shadow-md hover:scale-105 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
-            >
-              Next
-              <span className="material-symbols-outlined text-sm font-black">arrow_forward</span>
-            </button>
-          ) : (
+          {safeIndex === totalQuestions - 1 && (
             <button
               onClick={handleNext}
               disabled={!selectedOptionId}

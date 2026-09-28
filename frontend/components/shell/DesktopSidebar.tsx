@@ -126,7 +126,7 @@ export default function DesktopSidebar() {
   ];
 
   return (
-    <aside className="w-[88px] shrink-0 bg-[#052820] dark:bg-[#0A221C] border-r border-[#0d3b30] dark:border-[#1d3f35] text-white flex flex-col justify-between items-center py-3.5 sticky top-14 sm:top-16 h-[calc(100vh-3.5rem)] sm:h-[calc(100vh-4rem)] z-40 select-none transition-colors duration-200 overflow-y-auto overflow-x-hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+    <aside className="w-[88px] shrink-0 bg-[#052820] dark:bg-[#032B25] border-r border-[#0d3b30] dark:border-[rgba(150,210,195,0.12)] text-white flex flex-col justify-between items-center py-3.5 sticky top-14 sm:top-16 h-[calc(100vh-3.5rem)] sm:h-[calc(100vh-4rem)] z-40 select-none transition-colors duration-200 overflow-y-auto overflow-x-hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
       {/* Navigation Icons Stack */}
       <nav className="flex flex-col items-center gap-1.5 w-full px-1">
         {navItems.map((item) => (
@@ -135,8 +135,8 @@ export default function DesktopSidebar() {
             href={item.href}
             className={`w-[74px] flex flex-col items-center py-2 px-1 rounded-2xl transition-all ${
               item.isActive
-                ? "bg-[#006C56] dark:bg-[#00A982] text-white dark:text-[#071C17] shadow-sm border border-[#008968]/40 dark:border-[#00A982] font-bold"
-                : "text-[#8EAAA1] dark:text-[#78958C] hover:text-white dark:hover:text-[#F4FAF7] hover:bg-white/5 font-medium"
+                ? "bg-[#006C56] dark:bg-[#008F78] text-white dark:text-white shadow-sm border border-[#008968]/40 dark:border-[#00A889]/60 font-bold"
+                : "text-[#8EAAA1] dark:text-[#76968D] hover:text-white dark:hover:text-[#D5E6E0] hover:bg-white/5 dark:hover:bg-[#0B3029]/80 font-medium"
             }`}
           >
             {item.icon}
@@ -152,12 +152,12 @@ export default function DesktopSidebar() {
             <Link href="/profile" className="hover:opacity-90 transition-opacity">
               <UserAvatar user={user} sizeClass="w-9 h-9 text-xs" />
             </Link>
-            <p className="text-[11px] font-bold text-white leading-tight mt-1 truncate max-w-[76px] px-0.5" suppressHydrationWarning>
+            <p className="text-[11px] font-bold text-white dark:text-[#F4FAF7] leading-tight mt-1 truncate max-w-[76px] px-0.5" suppressHydrationWarning>
               {userName.split(" ")[0]}
             </p>
             <Link
               href="/profile"
-              className="text-[9px] text-[#8EAAA1] dark:text-[#78958C] hover:text-white transition-colors"
+              className="text-[9px] text-[#8EAAA1] dark:text-[#76968D] hover:text-white dark:hover:text-[#D5E6E0] transition-colors"
             >
               View Profile
             </Link>
@@ -167,12 +167,12 @@ export default function DesktopSidebar() {
             <Link href="/login" className="hover:opacity-90 transition-opacity">
               <UserAvatar user={null} sizeClass="w-9 h-9 text-xs" />
             </Link>
-            <p className="text-[11px] font-bold text-white/90 leading-tight mt-1 truncate max-w-[76px] px-0.5">
+            <p className="text-[11px] font-bold text-white/90 dark:text-[#F4FAF7] leading-tight mt-1 truncate max-w-[76px] px-0.5">
               Guest
             </p>
             <Link
               href="/login"
-              className="text-[9px] text-[#88F7D6] dark:text-[#00A982] font-bold hover:underline transition-colors"
+              className="text-[9px] text-[#88F7D6] dark:text-[#00A889] font-bold hover:underline transition-colors"
             >
               Log In
             </Link>
