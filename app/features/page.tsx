@@ -157,13 +157,17 @@ function FeaturesContent() {
   // Auto-scroll active pill into view smoothly
   useEffect(() => {
     if (pillTabsRef.current) {
-      const activePill = pillTabsRef.current.children[selectedPillar] as HTMLElement;
-      if (activePill) {
-        activePill.scrollIntoView({
-          behavior: "smooth",
-          block: "nearest",
-          inline: "center",
-        });
+      if (selectedPillar === 0) {
+        pillTabsRef.current.scrollTo({ left: 0, behavior: "smooth" });
+      } else {
+        const activePill = pillTabsRef.current.children[selectedPillar] as HTMLElement;
+        if (activePill) {
+          activePill.scrollIntoView({
+            behavior: "smooth",
+            block: "nearest",
+            inline: "nearest",
+          });
+        }
       }
     }
   }, [selectedPillar]);
@@ -227,27 +231,29 @@ function FeaturesContent() {
           className="space-y-8"
         >
           {/* Horizontal Scrollable Pill Tabs */}
-          <div
-            ref={pillTabsRef}
-            className="flex items-center gap-2.5 overflow-x-auto pb-2 pt-1 scroll-smooth [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden w-full justify-start md:justify-center"
-          >
-            {FEATURES_DATA.map((feat, idx) => {
-              const isActive = selectedPillar === idx;
-              return (
-                <button
-                  key={feat.id}
-                  onClick={() => setSelectedPillar(idx)}
-                  className={`px-4 sm:px-5 py-2.5 sm:py-3 rounded-full text-xs font-heading font-bold whitespace-nowrap transition-all flex items-center gap-2 cursor-pointer shrink-0 ${
-                    isActive
-                      ? "bg-on-surface text-white shadow-md scale-[1.03]"
-                      : "bg-surface-container-lowest border border-surface-variant/40 text-on-surface-variant hover:bg-surface-container hover:text-on-surface"
-                  }`}
-                >
-                  <span className="material-symbols-outlined text-base">{feat.icon}</span>
-                  <span>{feat.label}</span>
-                </button>
-              );
-            })}
+          <div className="w-full flex justify-start md:justify-center overflow-x-auto pb-2 pt-1 scroll-smooth [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+            <div
+              ref={pillTabsRef}
+              className="flex items-center gap-2 sm:gap-2.5 px-1 shrink-0"
+            >
+              {FEATURES_DATA.map((feat, idx) => {
+                const isActive = selectedPillar === idx;
+                return (
+                  <button
+                    key={feat.id}
+                    onClick={() => setSelectedPillar(idx)}
+                    className={`px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-full text-xs font-heading font-bold whitespace-nowrap transition-all flex items-center gap-1.5 sm:gap-2 cursor-pointer shrink-0 ${
+                      isActive
+                        ? "bg-on-surface text-white shadow-md scale-[1.03]"
+                        : "bg-surface-container-lowest border border-surface-variant/40 text-on-surface-variant hover:bg-surface-container hover:text-on-surface"
+                    }`}
+                  >
+                    <span className="material-symbols-outlined text-base">{feat.icon}</span>
+                    <span>{feat.label}</span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
           {/* Main Slide Carousel Panel with Rich Mockups */}
@@ -589,50 +595,9 @@ function FeaturesContent() {
             })}
           </div>
         </div>
-
-        {/* ═══ 3. ALL 8 CORE PILLARS GRID ═══ */}
-        <div className="space-y-8 text-left">
-          <div className="text-center space-y-2">
-            <h2 className="text-2xl sm:text-3xl font-heading font-extrabold text-on-surface">
-              Explore All 8 Pillars
-            </h2>
-            <p className="text-sm text-on-surface-variant">
-              Tap any pillar to immediately preview its tools and features.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {FEATURES_DATA.map((f, fIdx) => (
-              <div
-                key={f.id}
-                onClick={() => setSelectedPillar(fIdx)}
-                className={`p-6 rounded-[28px] border transition-all cursor-pointer space-y-3 flex flex-col justify-between ${
-                  selectedPillar === fIdx
-                    ? "bg-surface-container-lowest border-primary shadow-card-lift scale-[1.02]"
-                    : "bg-surface-container-lowest border-surface-variant/30 shadow-ambient hover:shadow-card-lift hover:border-primary/40"
-                }`}
-              >
-                <div className="space-y-3">
-                  <div className="w-10 h-10 rounded-2xl bg-primary/10 text-primary flex items-center justify-center font-bold">
-                    <span className="material-symbols-outlined text-xl">{f.icon}</span>
-                  </div>
-                  <h3 className="font-heading font-extrabold text-base text-on-surface">{f.label}</h3>
-                  <p className="text-xs text-on-surface-variant leading-relaxed line-clamp-3">
-                    {f.description}
-                  </p>
-                </div>
-
-                <div className="pt-2 flex items-center gap-1 text-xs font-heading font-bold text-primary">
-                  <span>{selectedPillar === fIdx ? "Currently Viewing" : "Explore Feature"}</span>
-                  <span className="material-symbols-outlined text-sm">arrow_forward</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
       </div>
 
-      {/* ═══ 4. BOTTOM CTA BANNER ═══ */}
+      {/* ═══ 3. BOTTOM CTA BANNER ═══ */}
       <BottomCtaBand
         title="Begin With All Features Free"
         description="Unlock mood tracking, daily reflections, audio meditations, and your empathetic AI companion today."

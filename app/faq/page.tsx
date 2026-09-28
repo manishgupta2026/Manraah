@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import BottomCtaBand from "@/frontend/components/ui/BottomCtaBand";
@@ -141,6 +141,26 @@ export default function FAQPage() {
     p1: true,
   });
 
+  const QUICK_SUGGESTIONS = [
+    "AI Companion",
+    "Therapy",
+    "Privacy & Data",
+    "Free Access",
+    "Crisis Support",
+    "Human Peer",
+  ];
+
+  // Clear on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && searchQuery) {
+        setSearchQuery("");
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [searchQuery]);
+
   const toggleAccordion = (id: string) => {
     setOpenIds((prev) => ({
       ...prev,
@@ -148,20 +168,23 @@ export default function FAQPage() {
     }));
   };
 
+  const isSearchActive = searchQuery.trim().length > 0;
+
   const filteredFaqs = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
     return FAQ_DATA.filter((item) => {
       const matchesCategory =
         selectedCategory === "all" || item.category === selectedCategory;
       const matchesSearch =
-        searchQuery.trim() === "" ||
-        item.q.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.a.toLowerCase().includes(searchQuery.toLowerCase());
+        !query ||
+        item.q.toLowerCase().includes(query) ||
+        item.a.toLowerCase().includes(query);
       return matchesCategory && matchesSearch;
     });
   }, [selectedCategory, searchQuery]);
 
   return (
-    <div className="min-h-screen bg-surface text-on-surface select-none">
+    <div className="min-h-screen bg-surface dark:bg-[#071C17] text-on-surface dark:text-[#F4FAF7]">
       {/* ═══ 1. FAQ HERO HEADER ═══ */}
       <section className="relative pt-12 pb-14 md:pt-16 md:pb-18 px-6 max-w-5xl mx-auto text-center space-y-6">
         {/* Subtle Glow Blobs */}
@@ -173,39 +196,78 @@ export default function FAQPage() {
           <span>Knowledge Base &bull; Help Center</span>
         </div>
 
-        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-heading font-black text-on-surface tracking-tight leading-[1.12]">
+        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-heading font-black text-on-surface dark:text-[#F4FAF7] tracking-tight leading-[1.12]">
           Frequently Asked{" "}
           <span className="text-primary bg-clip-text text-transparent bg-gradient-to-r from-primary via-[#5F4EA5] to-mint">
             Questions
           </span>
         </h1>
 
-        <p className="text-base sm:text-lg text-on-surface-variant max-w-2xl mx-auto leading-relaxed font-normal">
+        <p className="text-base sm:text-lg text-on-surface-variant dark:text-[#A9C5BC] max-w-2xl mx-auto leading-relaxed font-normal">
           Everything you need to know about Manraah, our 24/7 AI companion, privacy standards, and mental wellness care.
         </p>
 
         {/* Live Search Bar */}
-        <div className="max-w-xl mx-auto pt-2">
+        <div className="max-w-2xl mx-auto pt-2 space-y-3">
           <div className="relative flex items-center">
-            <span className="material-symbols-outlined absolute left-4 text-on-surface-variant text-xl">
+            <span className="material-symbols-outlined absolute left-4 text-on-surface-variant dark:text-[#78958C] text-xl pointer-events-none">
               search
             </span>
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search by keyword (e.g. privacy, therapy, AI, free)..."
-              className="w-full pl-12 pr-10 py-3.5 rounded-full bg-surface-container-lowest border border-surface-variant/60 shadow-md text-sm text-on-surface placeholder:text-on-surface-variant/60 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all"
+              placeholder="Search questions, AI companion, therapy, privacy, pricing..."
+              className="w-full pl-12 pr-12 py-4 rounded-full bg-surface-container-lowest dark:bg-[#102F27] border border-surface-variant/60 dark:border-[#23483E] shadow-md hover:shadow-lg text-sm sm:text-base text-on-surface dark:text-[#F4FAF7] placeholder:text-on-surface-variant/60 dark:placeholder-[#78958C] focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all"
             />
             {searchQuery && (
               <button
+                type="button"
                 onClick={() => setSearchQuery("")}
-                className="absolute right-4 text-on-surface-variant hover:text-on-surface"
+                aria-label="Clear search"
+                className="absolute right-4 w-7 h-7 rounded-full bg-surface-container-low dark:bg-[#1A453B] text-on-surface-variant dark:text-[#A9C5BC] hover:text-on-surface dark:hover:text-white flex items-center justify-center transition-colors cursor-pointer"
               >
                 <span className="material-symbols-outlined text-sm">close</span>
               </button>
             )}
           </div>
+
+          {/* Quick Suggestion Search Chips */}
+          <div className="flex items-center justify-center gap-1.5 sm:gap-2 flex-wrap text-xs pt-1">
+            <span className="text-[11px] font-semibold text-on-surface-variant/70 dark:text-[#78958C] mr-1">
+              Popular:
+            </span>
+            {QUICK_SUGGESTIONS.map((tag) => (
+              <button
+                key={tag}
+                type="button"
+                onClick={() => setSearchQuery(tag)}
+                className={`px-3 py-1 rounded-full text-xs font-heading font-medium transition-all cursor-pointer ${
+                  searchQuery.toLowerCase() === tag.toLowerCase()
+                    ? "bg-primary text-white shadow-xs"
+                    : "bg-surface-container-lowest dark:bg-[#102F27] hover:bg-surface-container dark:hover:bg-[#14382F] text-on-surface-variant dark:text-[#A9C5BC] border border-surface-variant/40 dark:border-[#23483E]"
+                }`}
+              >
+                {tag}
+              </button>
+            ))}
+          </div>
+
+          {/* Search Result Feedback Bar */}
+          {isSearchActive && (
+            <div className="flex items-center justify-between px-3 py-1.5 rounded-xl bg-primary/10 dark:bg-[#102F27] border border-primary/20 dark:border-[#23483E] text-xs font-heading font-semibold text-primary dark:text-[#5FCFB0]">
+              <span>
+                Found {filteredFaqs.length} matching {filteredFaqs.length === 1 ? "question" : "questions"}
+              </span>
+              <button
+                type="button"
+                onClick={() => setSearchQuery("")}
+                className="text-[11px] hover:underline cursor-pointer opacity-80 hover:opacity-100"
+              >
+                Clear filter &times;
+              </button>
+            </div>
+          )}
         </div>
       </section>
 
@@ -253,18 +315,27 @@ export default function FAQPage() {
         ) : (
           <div className="space-y-4">
             {filteredFaqs.map((item) => {
-              const isOpen = !!openIds[item.id];
+              const isOpen = isSearchActive ? true : !!openIds[item.id];
+              const catObj = CATEGORY_TABS.find((t) => t.id === item.category);
+
               return (
                 <div
                   key={item.id}
-                  className="rounded-[24px] bg-surface-container-lowest border border-surface-variant/40 shadow-ambient overflow-hidden transition-all hover:border-primary/30"
+                  className="rounded-[24px] bg-surface-container-lowest dark:bg-[#102F27] border border-surface-variant/40 dark:border-[#23483E] shadow-ambient overflow-hidden transition-all hover:border-primary/40 dark:hover:border-primary/40"
                 >
                   <button
                     onClick={() => toggleAccordion(item.id)}
-                    className="w-full p-6 text-left font-heading font-bold text-base sm:text-lg text-on-surface flex items-center justify-between gap-4 cursor-pointer"
+                    className="w-full p-5 sm:p-6 text-left font-heading font-bold text-base sm:text-lg text-on-surface dark:text-[#F4FAF7] flex items-center justify-between gap-4 cursor-pointer"
                   >
-                    <span>{item.q}</span>
-                    <span className="material-symbols-outlined text-primary transition-transform duration-200 shrink-0">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 text-left">
+                      <span>{item.q}</span>
+                      {catObj && (
+                        <span className="self-start sm:self-center px-2.5 py-0.5 rounded-full text-[10px] font-heading font-semibold bg-primary/10 text-primary dark:bg-primary/20 dark:text-[#cbbeff] border border-primary/20 shrink-0">
+                          {catObj.label}
+                        </span>
+                      )}
+                    </div>
+                    <span className="material-symbols-outlined text-primary dark:text-[#cbbeff] transition-transform duration-200 shrink-0">
                       {isOpen ? "expand_less" : "expand_more"}
                     </span>
                   </button>
@@ -276,7 +347,7 @@ export default function FAQPage() {
                         animate={{ opacity: 1, height: "auto" }}
                         exit={{ opacity: 0, height: 0 }}
                         transition={{ duration: 0.2 }}
-                        className="px-6 pb-6 pt-0 text-sm text-on-surface-variant leading-relaxed font-normal border-t border-surface-variant/20 pt-4"
+                        className="px-5 sm:px-6 pb-6 pt-0 text-sm text-on-surface-variant dark:text-[#A9C5BC] leading-relaxed font-normal border-t border-surface-variant/20 dark:border-[#23483E]/60 pt-4"
                       >
                         {item.a}
                       </motion.div>

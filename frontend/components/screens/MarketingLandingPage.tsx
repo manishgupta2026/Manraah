@@ -344,9 +344,9 @@ export default function MarketingLandingPage() {
         </button>
 
         {/* Sleek Floating Glass HUD Control Pill in Safe Bottom-Right Area */}
-        <div className="absolute bottom-2.5 sm:bottom-5 right-2.5 sm:right-6 z-30 flex items-center gap-1.5 sm:gap-2.5 bg-black/80 hover:bg-black/90 backdrop-blur-md px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border border-white/20 text-white shadow-2xl transition-all scale-90 sm:scale-100 origin-bottom-right">
+        <div >
           {/* Slide Indicator Dots */}
-          <div className="flex items-center gap-1 sm:gap-1.5 px-0.5 sm:px-1">
+          {/* <div className="flex items-center gap-1 sm:gap-1.5 px-0.5 sm:px-1">
             {HERO_CAROUSEL_IMAGES.map((_, idx) => {
               const isActive = activeHeroSlide === idx;
               return (
@@ -362,15 +362,10 @@ export default function MarketingLandingPage() {
                 />
               );
             })}
-          </div>
-
-          {/* Slide Counter (e.g. 01 / 07) */}
-          <span className="text-[9px] sm:text-xs font-mono font-bold text-white/80 px-0.5 select-none tracking-wider">
-            {String(activeHeroSlide + 1).padStart(2, "0")} / {String(HERO_CAROUSEL_IMAGES.length).padStart(2, "0")}
-          </span>
+          </div> */}
 
           {/* Pause / Resume Button */}
-          <button
+          {/* <button
             onClick={() => setIsHeroCarouselPaused((prev) => !prev)}
             aria-label={isHeroCarouselPaused ? "Resume auto-advance" : "Pause auto-advance"}
             title={isHeroCarouselPaused ? "Play" : "Pause"}
@@ -379,7 +374,7 @@ export default function MarketingLandingPage() {
             <span className="material-symbols-outlined text-[10px] sm:text-xs">
               {isHeroCarouselPaused ? "play_arrow" : "pause"}
             </span>
-          </button>
+          </button> */}
         </div>
       </section>
 

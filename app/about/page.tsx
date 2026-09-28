@@ -292,7 +292,7 @@ export default function AboutPage() {
               variants={cardHoverVariants}
               initial="rest"
               whileHover="hover"
-              className="p-7 sm:p-8 rounded-[24px] bg-surface-container-low/60 border border-surface-variant/30 hover:border-primary/30 transition-all flex flex-col justify-between space-y-4 text-left cursor-default relative overflow-hidden"
+              className="p-7 sm:p-8 rounded-[24px] bg-surface-container-low/60 border border-surface-variant/30 hover:border-primary/30 transition-all flex flex-col justify-start space-y-4 text-left cursor-default relative overflow-hidden"
             >
               <div className="flex items-center justify-between">
                 <span className="px-3.5 py-1.5 rounded-full text-xs font-heading font-bold bg-primary/10 text-primary border border-primary/20 uppercase tracking-wider">
@@ -300,12 +300,14 @@ export default function AboutPage() {
                 </span>
                 <span className="material-symbols-outlined text-primary/40 text-2xl">visibility</span>
               </div>
-              <h3 className="text-2xl sm:text-3xl font-heading font-extrabold text-on-surface tracking-tight">
-                Our Vision
-              </h3>
-              <p className="text-sm sm:text-base text-on-surface-variant leading-relaxed font-normal">
-                A world where mental health is treated with the same care, openness, and priority as physical health — where seeking support is seen as a sign of strength, not stigma, and where every individual has a safe path toward emotional well-being.
-              </p>
+              <div className="space-y-2.5">
+                <h3 className="text-2xl sm:text-3xl font-heading font-extrabold text-on-surface tracking-tight">
+                  Our Vision
+                </h3>
+                <p className="text-sm sm:text-base text-on-surface-variant leading-relaxed font-normal">
+                  A world where mental health is treated with the same care, openness, and priority as physical health — where seeking support is seen as a sign of strength, not stigma, and where every individual has a safe path toward emotional well-being.
+                </p>
+              </div>
             </motion.div>
 
             {/* MISSION CARD */}
@@ -313,7 +315,7 @@ export default function AboutPage() {
               variants={cardHoverVariants}
               initial="rest"
               whileHover="hover"
-              className="p-7 sm:p-8 rounded-[24px] bg-surface-container-low/60 border border-surface-variant/30 hover:border-[#006B56]/30 transition-all flex flex-col justify-between space-y-4 text-left cursor-default relative overflow-hidden"
+              className="p-7 sm:p-8 rounded-[24px] bg-surface-container-low/60 border border-surface-variant/30 hover:border-[#006B56]/30 transition-all flex flex-col justify-start space-y-4 text-left cursor-default relative overflow-hidden"
             >
               <div className="flex items-center justify-between">
                 <span className="px-3.5 py-1.5 rounded-full text-xs font-heading font-bold bg-[#006B56]/15 text-[#006B56] border border-[#006B56]/20 uppercase tracking-wider">
@@ -321,12 +323,14 @@ export default function AboutPage() {
                 </span>
                 <span className="material-symbols-outlined text-[#006B56]/40 text-2xl">flag</span>
               </div>
-              <h3 className="text-2xl sm:text-3xl font-heading font-extrabold text-on-surface tracking-tight">
-                Our Mission
-              </h3>
-              <p className="text-sm sm:text-base text-on-surface-variant leading-relaxed font-normal">
-                To make mental health support accessible, affordable, and human — by combining professional therapy, practical self-help resources, and a compassionate community, so that no one has to face their struggles in silence or alone.
-              </p>
+              <div className="space-y-2.5">
+                <h3 className="text-2xl sm:text-3xl font-heading font-extrabold text-on-surface tracking-tight">
+                  Our Mission
+                </h3>
+                <p className="text-sm sm:text-base text-on-surface-variant leading-relaxed font-normal">
+                  To make mental health support accessible, affordable, and human — by combining professional therapy, practical self-help resources, and a compassionate community, so that no one has to face their struggles in silence or alone.
+                </p>
+              </div>
             </motion.div>
 
             {/* PROBLEM STATEMENT CARD */}
@@ -334,7 +338,7 @@ export default function AboutPage() {
               variants={cardHoverVariants}
               initial="rest"
               whileHover="hover"
-              className="p-7 sm:p-8 rounded-[24px] bg-surface-container-low/60 border border-surface-variant/30 hover:border-[#874959]/30 transition-all flex flex-col justify-between space-y-4 text-left cursor-default relative overflow-hidden"
+              className="p-7 sm:p-8 rounded-[24px] bg-surface-container-low/60 border border-surface-variant/30 hover:border-[#874959]/30 transition-all flex flex-col justify-start space-y-4 text-left cursor-default relative overflow-hidden"
             >
               <div className="flex items-center justify-between">
                 <span className="px-3.5 py-1.5 rounded-full text-xs font-heading font-bold bg-pink/30 text-[#874959] border border-pink/40 uppercase tracking-wider">
@@ -342,12 +346,14 @@ export default function AboutPage() {
                 </span>
                 <span className="material-symbols-outlined text-[#874959]/40 text-2xl">report_problem</span>
               </div>
-              <h3 className="text-2xl sm:text-3xl font-heading font-extrabold text-on-surface tracking-tight">
-                Problem Statement
-              </h3>
-              <p className="text-sm sm:text-base text-on-surface-variant leading-relaxed font-normal">
-                Millions of people silently carry emotional pain they&apos;ve never spoken about — held back by stigma, high costs, inaccessible services, or simply not knowing where a safe conversation might begin. Existing solutions are often expensive, impersonal, or disconnected from the cultural realities people live in. What&apos;s missing is a space that offers real hope: professional care that&apos;s easy to reach, self-help that actually helps, and a community that reminds people they were never alone in the first place.
-              </p>
+              <div className="space-y-2.5">
+                <h3 className="text-2xl sm:text-3xl font-heading font-extrabold text-on-surface tracking-tight">
+                  Problem Statement
+                </h3>
+                <p className="text-sm sm:text-base text-on-surface-variant leading-relaxed font-normal">
+                  Millions of people silently carry emotional pain they&apos;ve never spoken about — held back by stigma, high costs, inaccessible services, or simply not knowing where a safe conversation might begin. Existing solutions are often expensive, impersonal, or disconnected from the cultural realities people live in. What&apos;s missing is a space that offers real hope: professional care that&apos;s easy to reach, self-help that actually helps, and a community that reminds people they were never alone in the first place.
+                </p>
+              </div>
             </motion.div>
 
             {/* GOAL CARD */}
@@ -355,7 +361,7 @@ export default function AboutPage() {
               variants={cardHoverVariants}
               initial="rest"
               whileHover="hover"
-              className="p-7 sm:p-8 rounded-[24px] bg-surface-container-low/60 border border-surface-variant/30 hover:border-[#9E5D28]/30 transition-all flex flex-col justify-between space-y-4 text-left cursor-default relative overflow-hidden"
+              className="p-7 sm:p-8 rounded-[24px] bg-surface-container-low/60 border border-surface-variant/30 hover:border-[#9E5D28]/30 transition-all flex flex-col justify-start space-y-4 text-left cursor-default relative overflow-hidden"
             >
               <div className="flex items-center justify-between">
                 <span className="px-3.5 py-1.5 rounded-full text-xs font-heading font-bold bg-[#9E5D28]/15 text-[#9E5D28] border border-[#9E5D28]/30 uppercase tracking-wider">
@@ -363,12 +369,14 @@ export default function AboutPage() {
                 </span>
                 <span className="material-symbols-outlined text-[#9E5D28]/40 text-2xl">track_changes</span>
               </div>
-              <h3 className="text-2xl sm:text-3xl font-heading font-extrabold text-on-surface tracking-tight">
-                Our Goal
-              </h3>
-              <p className="text-sm sm:text-base text-on-surface-variant leading-relaxed font-normal">
-                To build a trusted, inclusive platform that empowers individuals at every stage of their mental health journey, from those just starting to explore their emotions, to those actively seeking therapy — through accessible care, meaningful self-help content, and a supportive community that reminds them they are never alone.
-              </p>
+              <div className="space-y-2.5">
+                <h3 className="text-2xl sm:text-3xl font-heading font-extrabold text-on-surface tracking-tight">
+                  Our Goal
+                </h3>
+                <p className="text-sm sm:text-base text-on-surface-variant leading-relaxed font-normal">
+                  To build a trusted, inclusive platform that empowers individuals at every stage of their mental health journey, from those just starting to explore their emotions, to those actively seeking therapy — through accessible care, meaningful self-help content, and a supportive community that reminds them they are never alone.
+                </p>
+              </div>
             </motion.div>
           </div>
         </motion.div>
