@@ -235,5 +235,17 @@ export const wellnessAnswers = pgTable("wellness_answers", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+export const doctorReviews = pgTable("doctor_reviews", {
+  id: serial("id").primaryKey(),
+  doctorId: text("doctor_id").notNull(),
+  patientId: text("patient_id").references(() => users.id, { onDelete: "cascade" }).notNull(),
+  appointmentId: text("appointment_id"),
+  rating: integer("rating").notNull(),
+  feedback: text("feedback"),
+  patientDisplayLabel: text("patient_display_label").default("Verified Patient"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 
 

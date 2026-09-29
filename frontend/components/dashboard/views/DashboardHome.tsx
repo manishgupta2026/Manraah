@@ -113,13 +113,6 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
   const { currentStreak, hasCheckedInToday, refetchDashboardData, refetchWellnessData } = useWellness();
   const {
     currentCategory,
-    currentCategoryName,
-    currentScore,
-    isCurrentAssessed,
-    levelBadge,
-    openBreakdownModal,
-    openAssessment,
-    openReattemptModal,
     triggerProfilePrompt,
     refetchScores,
   } = useWellnessScore();
@@ -441,7 +434,7 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
         </div>
       </div>
 
-      {/* 4. Bottom Row: Quick Tools + Wellness Score (Deliberate 2-Column Grid, Equal Height) */}
+      {/* 4. Bottom Row: Quick Tools + 100% Confidential (Deliberate 2-Column Grid, Equal Height) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
         {/* Left: Quick Tools (7 cols, Full Height) */}
         <div className="lg:col-span-7 bg-white dark:bg-[#0B3029] rounded-3xl p-5 border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] shadow-2xs flex flex-col justify-between gap-3.5 h-full min-h-[204px] transition-colors">
@@ -521,104 +514,44 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
           </div>
         </div>
 
-        {/* Right: Category Wellness Score (5 cols, Full Height) */}
-        <div
-          onClick={() => {
-            if (isCurrentAssessed && currentScore !== null) {
-              openReattemptModal(currentCategory);
-            } else {
-              openAssessment(currentCategory);
-            }
-          }}
-          className="lg:col-span-5 bg-white dark:bg-[#0B3029] rounded-3xl p-5 border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] shadow-2xs flex flex-col justify-between gap-3.5 h-full min-h-[204px] transition-all cursor-pointer hover:border-[#008968]/50 dark:hover:border-[rgba(150,210,195,0.25)] group"
-        >
+        {/* Right: 100% Confidential Card (5 cols, Full Height) */}
+        <div className="lg:col-span-5 bg-white dark:bg-[#0B3029] rounded-3xl p-5 border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] shadow-2xs flex flex-col justify-between gap-3.5 h-full min-h-[204px] transition-colors">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="w-7.5 h-7.5 rounded-xl bg-[#EAF6F0] dark:bg-[rgba(0,168,137,0.15)] text-[#006C56] dark:text-[#00A889] flex items-center justify-center">
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-2xl bg-[#EAF6F0] dark:bg-[rgba(0,168,137,0.15)] text-[#006C56] dark:text-[#00A889] flex items-center justify-center shrink-0">
+                <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                 </svg>
               </div>
               <div>
                 <h3 className="text-xs font-heading font-black text-[#19332A] dark:text-[#F4FAF7] leading-tight">
-                  {currentCategoryName} Wellness
+                  100% Confidential
                 </h3>
                 <p className="text-[9.5px] text-[#789389] dark:text-[#9DB9B0] font-medium leading-tight mt-0.5">
-                  {isCurrentAssessed && currentScore !== null
-                    ? "Based on your wellness assessment"
-                    : "Complete your first wellness check"}
+                  Privacy by design
                 </p>
               </div>
             </div>
-            <span className="text-[10px] font-bold text-[#006C56] dark:text-[#00A889] group-hover:translate-x-0.5 transition-transform">
-              {isCurrentAssessed && currentScore !== null ? "Re-attempt Check →" : "Start Check →"}
+            <span className="inline-flex items-center gap-1 text-[9.5px] font-bold px-2.5 py-0.5 rounded-full bg-[#EAF6F0] dark:bg-[rgba(0,168,137,0.15)] text-[#006C56] dark:text-[#73D8C4] border border-[#D2EAE0] dark:border-[rgba(0,168,137,0.25)]">
+              ✓ Protected
             </span>
           </div>
 
-          {/* Circular Score and Status */}
-          <div className="flex items-center gap-4 my-auto px-1">
-            {/* Ring */}
-            <div className="relative w-[76px] h-[76px] flex items-center justify-center shrink-0">
-              <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
-                <circle
-                  cx="50"
-                  cy="50"
-                  r="40"
-                  className="text-[#E9F3EE] dark:text-[rgba(150,210,195,0.12)]"
-                  strokeWidth="10"
-                  stroke="currentColor"
-                  fill="transparent"
-                />
-                <circle
-                  cx="50"
-                  cy="50"
-                  r="40"
-                  className="text-[#008968] dark:text-[#00A889] transition-all duration-700"
-                  strokeWidth="10"
-                  strokeDasharray={2 * Math.PI * 40}
-                  strokeDashoffset={
-                    isCurrentAssessed && currentScore !== null
-                      ? 2 * Math.PI * 40 * (1 - currentScore / 100)
-                      : 2 * Math.PI * 40
-                  }
-                  strokeLinecap="round"
-                  stroke="currentColor"
-                  fill="transparent"
-                />
-              </svg>
-              <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-base font-heading font-black text-[#19332A] dark:text-[#E8F8F3]">
-                  {isCurrentAssessed && currentScore !== null ? `${currentScore}%` : "--"}
-                </span>
-              </div>
-            </div>
-
-            {/* Text Status */}
-            <div className="space-y-0.5">
-              <div className="flex items-center gap-1.5">
-                <h4 className="text-xs font-black text-[#008968] dark:text-[#00A889] leading-tight">
-                  {isCurrentAssessed && currentScore !== null
-                    ? currentScore >= 80
-                      ? "Flourishing!"
-                      : currentScore >= 60
-                      ? "Good Progress"
-                      : currentScore >= 40
-                      ? "Fair Balance"
-                      : "Needs Attention"
-                    : "Not Assessed Yet"}
-                </h4>
-                {isCurrentAssessed && (
-                  <span className="px-1.5 py-0.2 rounded-md bg-[#008968]/10 dark:bg-[rgba(0,168,137,0.15)] text-[#008968] dark:text-[#73D8C4] text-[8.5px] font-bold">
-                    {levelBadge}
-                  </span>
-                )}
-              </div>
-              <p className="text-[10px] text-[#789389] dark:text-[#9DB9B0] font-medium leading-tight">
-                {isCurrentAssessed && currentScore !== null
-                  ? "Click to re-attempt assessment."
-                  : "Click to start 5-question check."}
+          <div className="my-auto py-1 space-y-1.5">
+            <div className="flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#006C56] dark:bg-[#00A889] shrink-0" />
+              <p className="text-xs font-bold text-[#19332A] dark:text-[#F4FAF7]">
+                No data ever leaves this device.
               </p>
             </div>
+            <p className="text-[11px] text-[#4F685F] dark:text-[#9DB9B0] font-normal leading-relaxed">
+              Your daily check-ins, assessment metrics, and wellness conversations are strictly private and encrypted.
+            </p>
+          </div>
+
+          <div className="pt-2 border-t border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] flex items-center justify-between text-[10px] text-[#789389] dark:text-[#9DB9B0]">
+            <span>End-to-end encrypted</span>
+            <span className="font-bold text-[#006C56] dark:text-[#00A889]">Manraah Trust</span>
           </div>
         </div>
       </div>

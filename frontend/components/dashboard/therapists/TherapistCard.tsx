@@ -3,11 +3,13 @@
 import React from "react";
 import { useRouter } from "next/navigation";
 import { UnifiedTherapist } from "./types";
+import { getRatingColorClasses, formatDoctorRating } from "./ratingUtils";
 
 interface TherapistCardProps {
   therapist: UnifiedTherapist;
   onNavigate?: (section: "dashboard" | "appointments" | "journey" | "resources" | "ai-companion") => void;
   onBook?: (therapist: UnifiedTherapist) => void;
+  onOpenRatingModal?: (therapist: UnifiedTherapist) => void;
   isFirstCard?: boolean;
   isLastCard?: boolean;
 }
@@ -16,6 +18,7 @@ export default function TherapistCard({
   therapist,
   onNavigate,
   onBook,
+  onOpenRatingModal,
 }: TherapistCardProps) {
   const router = useRouter();
 
@@ -36,12 +39,24 @@ export default function TherapistCard({
     router.push(`/appointments?doctor=${encodeURIComponent(therapist.id)}`);
   };
 
+  const handleRatingClick = (e: React.MouseEvent | React.KeyboardEvent) => {
+    // Crucial: Stop card navigation
+    e.stopPropagation();
+    e.preventDefault();
+    if (onOpenRatingModal) {
+      onOpenRatingModal(therapist);
+    }
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" || e.key === " ") {
       e.preventDefault();
       handleCardClick(e);
     }
   };
+
+  const ratingColors = getRatingColorClasses(therapist.rating, therapist.reviewCount);
+  const formattedRating = formatDoctorRating(therapist.rating, therapist.reviewCount);
 
   return (
     <div
@@ -85,11 +100,35 @@ export default function TherapistCard({
             <p className="text-[11px] text-[#5A756C] dark:text-[#D5E6E0] font-semibold truncate mt-0.5 leading-tight">
               {therapist.role}
             </p>
-            <div className="text-[10px] font-medium text-[#789389] dark:text-[#9DB9B0] mt-1 leading-tight flex items-center gap-1 truncate">
-              <span className="text-amber-500 font-bold shrink-0">⭐ {therapist.rating}</span>
-              <span className="shrink-0">({therapist.reviewCount})</span>
-              <span className="text-slate-300 dark:text-slate-600 shrink-0">|</span>
-              <span className="truncate">{therapist.experience}</span>
+
+            {/* Clickable Dynamic Rating Pill */}
+            <div className="mt-1 leading-tight flex items-center gap-1.5 min-w-0">
+              <button
+                type="button"
+                onClick={handleRatingClick}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    handleRatingClick(e);
+                  }
+                }}
+                aria-label={`View feedback and reviews for ${therapist.name}. Current rating ${therapist.rating} stars`}
+                className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-lg border text-[10.5px] transition-all duration-150 cursor-pointer shadow-2xs hover:scale-105 active:scale-95 ${ratingColors.bgPill} ${ratingColors.ring}`}
+              >
+                <span className="shrink-0 text-[10px]">⭐</span>
+                {formattedRating.isUnrated ? (
+                  <span className={`text-[9.5px] ${ratingColors.pillText}`}>No ratings yet</span>
+                ) : (
+                  <>
+                    <span className={ratingColors.pillText}>{formattedRating.displayText}</span>
+                    <span className="text-[9.5px] opacity-75">{formattedRating.subText}</span>
+                  </>
+                )}
+              </button>
+
+              <span className="text-slate-300 dark:text-slate-600 shrink-0 text-[10px]">|</span>
+              <span className="truncate text-[10px] font-medium text-[#789389] dark:text-[#9DB9B0]">
+                {therapist.experience}
+              </span>
             </div>
           </div>
         </div>

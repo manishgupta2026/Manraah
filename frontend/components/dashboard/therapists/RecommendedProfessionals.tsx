@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import TherapistCarousel from "./TherapistCarousel";
+import DoctorRatingModal from "./DoctorRatingModal";
 import { UnifiedTherapist, normalizeTherapist, FALLBACK_THERAPISTS } from "./types";
 
 interface RecommendedProfessionalsProps {
@@ -25,6 +26,48 @@ export default function RecommendedProfessionals({
   const [loading, setLoading] = useState<boolean>(!initialTherapists || initialTherapists.length === 0);
   const [error, setError] = useState<string | null>(null);
 
+  // Rating Modal state
+  const [selectedDoctorForRating, setSelectedDoctorForRating] = useState<UnifiedTherapist | null>(null);
+  const [isRatingModalOpen, setIsRatingModalOpen] = useState<boolean>(false);
+
+  const handleRatingUpdated = useCallback((updated: {
+    doctorId: string;
+    averageRating: number;
+    totalRatings: number;
+  }) => {
+    setItems((prev) =>
+      prev.map((t) => {
+        if (t.id === updated.doctorId) {
+          return {
+            ...t,
+            rating: updated.averageRating,
+            reviewCount: updated.totalRatings,
+          };
+        }
+        return t;
+      })
+    );
+
+    setSelectedDoctorForRating((prev) =>
+      prev && prev.id === updated.doctorId
+        ? { ...prev, rating: updated.averageRating, reviewCount: updated.totalRatings }
+        : prev
+    );
+  }, []);
+
+  // Listen for real-time rating updates from any component/tab
+  useEffect(() => {
+    const handleRatingEvent = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      if (customEvent.detail && customEvent.detail.doctorId) {
+        handleRatingUpdated(customEvent.detail);
+      }
+    };
+
+    window.addEventListener("doctor-rating-updated", handleRatingEvent);
+    return () => window.removeEventListener("doctor-rating-updated", handleRatingEvent);
+  }, [handleRatingUpdated]);
+
   useEffect(() => {
     if (initialTherapists && initialTherapists.length > 0) {
       setItems(initialTherapists.map((t, i) => normalizeTherapist(t, i)));
@@ -44,8 +87,7 @@ export default function RecommendedProfessionals({
         const data = await res.json();
         if (isMounted) {
           if (Array.isArray(data) && data.length > 0) {
-            // If API returns fewer than 3 items (e.g. initial 2 seed records),
-            // augment with fallback therapists to ensure a full sanctuary showcase
+            // If API returns fewer than 3 items, augment with fallback therapists
             const normalized = data.map((t: any, i: number) => normalizeTherapist(t, i));
             if (normalized.length < 3) {
               const existingIds = new Set(normalized.map((t: UnifiedTherapist) => t.id));
@@ -74,6 +116,16 @@ export default function RecommendedProfessionals({
       isMounted = false;
     };
   }, [initialTherapists]);
+
+  const handleOpenRatingModal = (therapist: UnifiedTherapist) => {
+    setSelectedDoctorForRating(therapist);
+    setIsRatingModalOpen(true);
+  };
+
+  const handleCloseRatingModal = () => {
+    setIsRatingModalOpen(false);
+    setSelectedDoctorForRating(null);
+  };
 
   return (
     <div className="bg-white dark:bg-[#0B3029] rounded-3xl p-5 sm:p-6 border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] shadow-2xs flex flex-col gap-4 sm:gap-5 transition-colors w-full min-w-0 overflow-hidden">
@@ -185,8 +237,17 @@ export default function RecommendedProfessionals({
           therapists={items}
           onNavigate={onNavigate}
           onBook={onBook}
+          onOpenRatingModal={handleOpenRatingModal}
         />
       )}
+
+      {/* Doctor Rating & Feedback Modal */}
+      <DoctorRatingModal
+        therapist={selectedDoctorForRating}
+        isOpen={isRatingModalOpen}
+        onClose={handleCloseRatingModal}
+        onRatingSubmitted={handleRatingUpdated}
+      />
     </div>
   );
 }

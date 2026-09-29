@@ -17,12 +17,14 @@ interface TherapistCarouselProps {
   therapists: UnifiedTherapist[];
   onNavigate?: (section: "dashboard" | "appointments" | "journey" | "resources" | "ai-companion") => void;
   onBook?: (therapist: UnifiedTherapist) => void;
+  onOpenRatingModal?: (therapist: UnifiedTherapist) => void;
 }
 
 export default function TherapistCarousel({
   therapists,
   onNavigate,
   onBook,
+  onOpenRatingModal,
 }: TherapistCarouselProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const therapistsRef = useRef<UnifiedTherapist[]>(therapists);
@@ -256,6 +258,7 @@ export default function TherapistCarousel({
           therapist={therapists[0]}
           onNavigate={onNavigate}
           onBook={onBook}
+          onOpenRatingModal={onOpenRatingModal}
         />
       </div>
     );
@@ -263,7 +266,7 @@ export default function TherapistCarousel({
 
   return (
     <div
-      className="w-full relative group/carousel flex flex-col gap-3.5 select-none"
+      className="w-full relative group/carousel flex flex-col gap-2.5 select-none"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onTouchStart={handleUserInteraction}
@@ -271,47 +274,35 @@ export default function TherapistCarousel({
       onTouchEnd={handleUserInteraction}
       onWheel={handleUserInteraction}
     >
-      {/* Top Header Controls Bar */}
+      {/* Subtitle / Counter */}
       <div className="flex items-center justify-between gap-2 px-0.5">
         <span className="text-[11px] font-semibold text-[#5A756C] dark:text-[#9DB9B0]">
           Showing {numItems} mental health specialists
         </span>
-
-        {/* Carousel Prev / Next Controls */}
-        <div className="flex items-center gap-1.5">
-          <button
-            type="button"
-            onClick={() => {
-              handleUserInteraction();
-              stepBackward();
-            }}
-            aria-label="Previous doctors"
-            className="w-8 h-8 rounded-xl bg-[#F0F5F2] dark:bg-[#0E3931] text-[#19332A] dark:text-[#F4FAF7] hover:bg-[#E2ECE6] dark:hover:bg-[#12463C] flex items-center justify-center transition-all cursor-pointer border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] shadow-2xs hover:scale-105 active:scale-95 select-none"
-          >
-            <span className="material-symbols-outlined text-base">chevron_left</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              handleUserInteraction();
-              stepForward();
-            }}
-            aria-label="Next doctors"
-            className="w-8 h-8 rounded-xl bg-[#F0F5F2] dark:bg-[#0E3931] text-[#19332A] dark:text-[#F4FAF7] hover:bg-[#E2ECE6] dark:hover:bg-[#12463C] flex items-center justify-center transition-all cursor-pointer border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] shadow-2xs hover:scale-105 active:scale-95 select-none"
-          >
-            <span className="material-symbols-outlined text-base">chevron_right</span>
-          </button>
-        </div>
       </div>
 
-      {/* Horizontally Scrollable Cards Row */}
-      <div className="w-full relative overflow-hidden">
+      {/* Carousel Viewport Wrapper with Left and Right Controls */}
+      <div className="w-full relative">
+        {/* Left Navigation Button */}
+        <button
+          type="button"
+          onClick={() => {
+            handleUserInteraction();
+            stepBackward();
+          }}
+          aria-label="Previous doctors"
+          className="absolute left-0 sm:left-1 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-10 sm:h-10 min-w-[36px] min-h-[36px] sm:min-w-[40px] sm:min-h-[40px] rounded-full bg-white/95 dark:bg-[#0E3931]/95 text-[#19332A] dark:text-[#F4FAF7] hover:bg-white dark:hover:bg-[#12463C] flex items-center justify-center transition-all cursor-pointer border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.2)] shadow-md hover:shadow-lg hover:scale-105 active:scale-95 select-none backdrop-blur-xs"
+        >
+          <span className="material-symbols-outlined text-lg sm:text-xl leading-none">chevron_left</span>
+        </button>
+
+        {/* Horizontally Scrollable Cards Row */}
         <div
           ref={scrollContainerRef}
           onScroll={handleNativeScroll}
           tabIndex={0}
           aria-label="Recommended doctors carousel"
-          className="flex gap-4 sm:gap-5 items-stretch overflow-x-auto py-2 px-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#006C56] rounded-2xl select-none"
+          className="flex gap-4 sm:gap-5 items-stretch overflow-x-auto py-2 px-4 sm:px-6 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#006C56] rounded-2xl select-none"
           style={{
             scrollbarWidth: "none",
             msOverflowStyle: "none",
@@ -326,10 +317,24 @@ export default function TherapistCarousel({
                 therapist={therapist}
                 onNavigate={onNavigate}
                 onBook={onBook}
+                onOpenRatingModal={onOpenRatingModal}
               />
             </div>
           ))}
         </div>
+
+        {/* Right Navigation Button */}
+        <button
+          type="button"
+          onClick={() => {
+            handleUserInteraction();
+            stepForward();
+          }}
+          aria-label="Next doctors"
+          className="absolute right-0 sm:right-1 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-10 sm:h-10 min-w-[36px] min-h-[36px] sm:min-w-[40px] sm:min-h-[40px] rounded-full bg-white/95 dark:bg-[#0E3931]/95 text-[#19332A] dark:text-[#F4FAF7] hover:bg-white dark:hover:bg-[#12463C] flex items-center justify-center transition-all cursor-pointer border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.2)] shadow-md hover:shadow-lg hover:scale-105 active:scale-95 select-none backdrop-blur-xs"
+        >
+          <span className="material-symbols-outlined text-lg sm:text-xl leading-none">chevron_right</span>
+        </button>
       </div>
     </div>
   );

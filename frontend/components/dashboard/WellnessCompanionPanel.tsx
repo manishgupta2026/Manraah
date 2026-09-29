@@ -1,9 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import Link from "next/link";
 import { useAuth } from "@/frontend/lib/context/AuthContext";
-import { useTheme } from "@/frontend/lib/context/ThemeContext";
 import { useWellness } from "@/frontend/lib/context/WellnessContext";
 import { useWellnessScore } from "@/frontend/lib/context/WellnessScoreContext";
 import UserAvatar from "@/frontend/components/ui/UserAvatar";
@@ -29,27 +27,20 @@ const MOOD_EMOJIS: Record<string, string> = {
 };
 
 export default function WellnessCompanionPanel({ onCheckCondition }: WellnessCompanionPanelProps) {
-  const { theme } = useTheme();
-  const isDark = theme === "dark";
   const { hasCheckedInToday, todayMood, isCheckingIn, openCheckInModal } = useWellness();
   const { user, isAuthenticated } = useAuth();
+  const {
+    currentCategory,
+    currentScore,
+    isCurrentAssessed,
+    openAssessment,
+    openReattemptModal,
+  } = useWellnessScore();
 
   const [checkInError, setCheckInError] = useState<string | null>(null);
 
   const isUserAuthenticated = Boolean(isAuthenticated && user?.id);
   const isCheckedIn = isUserAuthenticated && Boolean(hasCheckedInToday && todayMood);
-
-  const cat = (user?.selectedCategory || "student").toLowerCase();
-  const userCategoryLabel =
-    cat.includes("work") || cat.includes("young_pro")
-      ? "career"
-      : cat.includes("parent")
-      ? "parenting"
-      : cat.includes("couple")
-      ? "relationship"
-      : cat.includes("other")
-      ? "mindfulness"
-      : "academic";
 
   const handleCheckInClick = () => {
     if (isCheckedIn) return;
@@ -82,151 +73,175 @@ export default function WellnessCompanionPanel({ onCheckCondition }: WellnessCom
   }
 
   return (
-    <aside className="w-full flex flex-col gap-3.5 sm:gap-4 select-none pointer-events-auto shrink-0">
+    <aside className="w-full flex flex-col gap-4 select-none pointer-events-auto shrink-0">
       {/* 1. Check Your Condition Card */}
-      <div className="bg-[#EAF5EF] dark:bg-[#0B3029] rounded-3xl p-6 border border-[#D2E8DC] dark:border-[rgba(150,210,195,0.12)] text-center flex flex-col items-center space-y-3 shadow-2xs transition-colors">
-        {/* Circular Avatar / Profile Icon with check badge (only when checked in) */}
-        <div className="relative">
-          <UserAvatar
-            user={isUserAuthenticated ? user : null}
-            sizeClass="w-16 h-16 text-lg"
-            className="border-2 border-white dark:border-[#082821] shadow-inner"
-          />
-          {isCheckedIn && (
-            <div className="absolute bottom-0 right-0 w-4.5 h-4.5 rounded-full bg-[#006C56] dark:bg-[#00A889] text-white dark:text-white flex items-center justify-center text-[9px] font-bold border-2 border-white dark:border-[#082821] shadow-xs">
-              ✓
-            </div>
+      <div className="bg-[#EAF5EF] dark:bg-[#0B3029] rounded-3xl p-4 sm:p-5 border border-[#D2E8DC] dark:border-[rgba(150,210,195,0.12)] text-center flex flex-col justify-between min-h-[330px] sm:min-h-[355px] shadow-2xs transition-colors">
+        {/* Top: Avatar & Heading Group */}
+        <div className="flex flex-col items-center space-y-2 w-full">
+          {/* Circular Avatar */}
+          <div className="relative">
+            <UserAvatar
+              user={isUserAuthenticated ? user : null}
+              sizeClass="w-14 h-14 sm:w-15 sm:h-15 text-xl"
+              className="border-2 border-white dark:border-[#082821] shadow-xs"
+            />
+            {isCheckedIn && (
+              <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full bg-[#006C56] dark:bg-[#00A889] text-white flex items-center justify-center text-[9px] font-bold border-2 border-white dark:border-[#082821] shadow-xs">
+                ✓
+              </div>
+            )}
+          </div>
+
+          {/* Title & Hierarchy */}
+          <div className="space-y-0.5">
+            <span className="text-[9.5px] sm:text-[10px] font-extrabold tracking-widest uppercase text-[#006C56] dark:text-[#00A889]">
+              YOUR WELLNESS COMPANION
+            </span>
+            <h2 className="text-base sm:text-lg font-heading font-black text-[#19332A] dark:text-[#F4FAF7] leading-tight">
+              {isCheckedIn ? "Today's Check-In Complete" : "Check Your Condition"}
+            </h2>
+            {isCheckedIn && (
+              <div className="pt-0.5 space-y-0.5">
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#D8EFE3] dark:bg-[rgba(0,168,137,0.15)] text-[#006C56] dark:text-[#73D8C4] text-[10px] font-bold">
+                  Mood: {moodEmoji} {moodLabel}
+                </span>
+                <p className="text-[9.5px] text-[#6B857C] dark:text-[#9DB9B0] font-medium leading-tight">
+                  {completedTimeStr}
+                </p>
+              </div>
+            )}
+          </div>
+
+          {checkInError && (
+            <p className="text-[10px] font-bold text-red-500 dark:text-red-400 leading-tight">
+              {checkInError}
+            </p>
           )}
         </div>
 
-        {/* Subtitle / Badge */}
-        <span className="text-[9.5px] font-extrabold tracking-wider text-[#006C56] dark:text-[#00A889]">
-          Your wellness companion
-        </span>
+        {/* Middle: 3 Condition Action Items */}
+        <div className="grid grid-cols-3 gap-1.5 sm:gap-2 w-full my-2.5">
+          <div className="flex flex-col items-center text-center p-1.5 sm:p-2 rounded-2xl bg-[#DDF0E6] dark:bg-[#0E3931] border border-[#CDE5D8] dark:border-[rgba(150,210,195,0.12)]">
+            <span className="text-base mb-0.5">😊</span>
+            <span className="text-[9.5px] font-black text-[#19332A] dark:text-[#F4FAF7] leading-tight">
+              Mood Check
+            </span>
+            <span className="text-[8px] text-[#5A756C] dark:text-[#9DB9B0] leading-tight mt-0.5">
+              Track feelings
+            </span>
+          </div>
 
-        {/* Main Heading */}
-        <h2 className="text-lg font-heading font-black text-[#19332A] dark:text-[#F4FAF7] leading-tight">
-          {isCheckedIn ? "Today's Check-In Complete" : "Check Your Condition"}
-        </h2>
+          <div className="flex flex-col items-center text-center p-1.5 sm:p-2 rounded-2xl bg-[#DDF0E6] dark:bg-[#0E3931] border border-[#CDE5D8] dark:border-[rgba(150,210,195,0.12)]">
+            <span className="text-base mb-0.5">📊</span>
+            <span className="text-[9.5px] font-black text-[#19332A] dark:text-[#F4FAF7] leading-tight">
+              Stress Level
+            </span>
+            <span className="text-[8px] text-[#5A756C] dark:text-[#9DB9B0] leading-tight mt-0.5">
+              Track stress
+            </span>
+          </div>
 
-        {/* Description / Mood status */}
-        {isCheckedIn ? (
-          <div className="space-y-1">
-            <div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#D8EFE3] dark:bg-[rgba(0,168,137,0.15)] text-[#006C56] dark:text-[#73D8C4] text-xs font-bold border border-transparent dark:border-[rgba(0,168,137,0.30)]">
-              <span>Mood: {moodEmoji} {moodLabel}</span>
-            </div>
-            <p className="text-[10px] text-[#6B857C] dark:text-[#9DB9B0] font-medium leading-tight">
-              {completedTimeStr}
+          <div className="flex flex-col items-center text-center p-1.5 sm:p-2 rounded-2xl bg-[#DDF0E6] dark:bg-[#0E3931] border border-[#CDE5D8] dark:border-[rgba(150,210,195,0.12)]">
+            <span className="text-base mb-0.5">💚</span>
+            <span className="text-[9.5px] font-black text-[#19332A] dark:text-[#F4FAF7] leading-tight">
+              Guided Support
+            </span>
+            <span className="text-[8px] text-[#5A756C] dark:text-[#9DB9B0] leading-tight mt-0.5">
+              Custom tips
+            </span>
+          </div>
+        </div>
+
+        {/* Bottom: Action Button */}
+        <div className="w-full">
+          {isCheckedIn ? (
+            <button
+              type="button"
+              disabled
+              className="w-full py-2.5 sm:py-3 px-4 rounded-full bg-[#D8EFE3] dark:bg-[#0E3931] text-[#006C56] dark:text-[#73D8C4] text-xs font-bold border border-[#BCE4D3] dark:border-[rgba(150,210,195,0.12)] shadow-2xs flex items-center justify-center gap-2 cursor-default select-none"
+            >
+              <span className="w-4 h-4 rounded-full bg-[#006C56] dark:bg-[#00A889] text-white flex items-center justify-center text-[9px] font-black">
+                ✓
+              </span>
+              <span>CHECKED IN TODAY</span>
+            </button>
+          ) : (
+            <button
+              onClick={handleCheckInClick}
+              disabled={isCheckingIn}
+              type="button"
+              className="w-full py-2.5 sm:py-3 px-4 rounded-full bg-[#004D3D] hover:bg-[#003B2E] dark:bg-[#008F78] dark:hover:bg-[#00A889] text-white text-xs font-bold shadow-sm shadow-[#004D3D]/20 dark:shadow-[#008F78]/25 transition-all flex items-center justify-center gap-2 group cursor-pointer disabled:opacity-80 disabled:cursor-not-allowed"
+            >
+              <span className="w-4 h-4 rounded-full border border-white/60 flex items-center justify-center text-[8.5px]">
+                ✦
+              </span>
+              <span>CHECK IT NOW</span>
+              <span className="transition-transform group-hover:translate-x-1 text-xs">→</span>
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* 2. Your Wellness Score Card */}
+      <div className="bg-white dark:bg-[#0B3029] rounded-3xl p-4 sm:p-5 border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] shadow-2xs flex flex-col justify-between min-h-[320px] sm:min-h-[345px] transition-colors">
+        {/* Top: Compact Header */}
+        <div className="flex items-center gap-2.5">
+          <div className="w-7.5 h-7.5 rounded-2xl bg-[#EAF6F0] dark:bg-[rgba(0,168,137,0.15)] text-[#006C56] dark:text-[#00A889] flex items-center justify-center shrink-0">
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            </svg>
+          </div>
+          <div className="min-w-0">
+            <h3 className="text-xs sm:text-sm font-heading font-black text-[#19332A] dark:text-[#F4FAF7] leading-tight truncate">
+              Your Wellness Score
+            </h3>
+            <p className="text-[9.5px] text-[#789389] dark:text-[#9DB9B0] font-medium leading-tight mt-0.5 truncate">
+              Based on your latest check
             </p>
           </div>
-        ) : (
-          <p className="text-[11px] text-[#4F685F] dark:text-[#9DB9B0] font-medium leading-relaxed max-w-[220px]">
-            {isUserAuthenticated
-              ? `Check your every situation, stress factors, and ${userCategoryLabel} activities.`
-              : "Track your emotional situation, stress factors, and mindful wellness activities."}
-          </p>
-        )}
+        </div>
 
-        {checkInError && (
-          <p className="text-[10px] font-bold text-red-500 dark:text-red-400 leading-tight">
-            {checkInError}
-          </p>
-        )}
+        {/* Center: Main Score as the Primary Visual Focus */}
+        <div className="flex-1 flex flex-col items-center justify-center text-center my-2 space-y-1.5">
+          {/* Main Score Number */}
+          <div className="flex items-baseline justify-center gap-1.5">
+            <span className="text-4xl sm:text-[42px] font-heading font-black text-[#19332A] dark:text-[#E8F8F3] tracking-tight leading-none">
+              {isCurrentAssessed && currentScore !== null ? currentScore : "--"}
+            </span>
+            <span className="text-sm sm:text-base font-bold text-[#789389] dark:text-[#9DB9B0]">
+              /100
+            </span>
+          </div>
 
-        {/* Dynamic Action Button */}
-        {isCheckedIn ? (
+          {/* Status Label & Short Meaning Explanation */}
+          <div className="space-y-0.5 pt-0.5">
+            <h4 className="text-xs sm:text-sm font-black text-[#006C56] dark:text-[#00A889] leading-tight">
+              {isCurrentAssessed && currentScore !== null ? "Overall Wellness Score" : "Not Assessed Yet"}
+            </h4>
+            <p className="text-[11px] text-[#6B857C] dark:text-[#9DB9B0] font-medium leading-relaxed max-w-[240px]">
+              {isCurrentAssessed && currentScore !== null
+                ? "Your overall wellness score based on your latest assessment."
+                : "Complete a wellness check to see your score."}
+            </p>
+          </div>
+        </div>
+
+        {/* Bottom: Action Button */}
+        <div className="w-full">
           <button
             type="button"
-            disabled
-            className="w-full py-3 px-4 rounded-full bg-[#D8EFE3] dark:bg-[#0E3931] text-[#006C56] dark:text-[#73D8C4] text-[11px] font-bold border border-[#BCE4D3] dark:border-[rgba(150,210,195,0.12)] shadow-2xs flex items-center justify-center gap-2 cursor-default mt-1 select-none"
+            onClick={() => {
+              if (isCurrentAssessed && currentScore !== null) {
+                openReattemptModal(currentCategory);
+              } else {
+                openAssessment(currentCategory);
+              }
+            }}
+            className="w-full py-2.5 sm:py-3 px-4 rounded-full bg-[#EAF6F0] hover:bg-[#D9EFE4] dark:bg-[#0E3931] dark:hover:bg-[#12463C] text-[#006C56] dark:text-[#73D8C4] text-xs font-bold transition-all border border-[#CCE7DA] dark:border-[rgba(150,210,195,0.15)] shadow-2xs hover:shadow-xs flex items-center justify-center gap-2 cursor-pointer select-none group"
           >
-            <span className="w-4 h-4 rounded-full bg-[#006C56] dark:bg-[#00A889] text-white dark:text-white flex items-center justify-center text-[9px] font-black">
-              ✓
-            </span>
-            <span>CHECKED IN</span>
+            <span>{isCurrentAssessed && currentScore !== null ? "Re-attempt Check" : "Start Wellness Check"}</span>
+            <span className="transition-transform group-hover:translate-x-1 text-xs">→</span>
           </button>
-        ) : (
-          <button
-            onClick={handleCheckInClick}
-            disabled={isCheckingIn}
-            type="button"
-            className="w-full py-3 px-4 rounded-full bg-[#004D3D] hover:bg-[#003B2E] dark:bg-[#008F78] dark:hover:bg-[#00A889] text-white text-[11px] font-bold shadow-md shadow-[#004D3D]/20 dark:shadow-[#008F78]/25 transition-all flex items-center justify-center gap-2 group cursor-pointer mt-1 disabled:opacity-80 disabled:cursor-not-allowed"
-          >
-            <span className="w-4 h-4 rounded-full border border-white/60 flex items-center justify-center text-[8px]">
-              ✦
-            </span>
-            <span>CHECK IT NOW</span>
-            <span className="transition-transform group-hover:translate-x-1">→</span>
-          </button>
-        )}
-      </div>
-
-      {/* 2. Illustration Card (Calm mind with soft leaves) */}
-      <div className="bg-white dark:bg-[#0B3029] rounded-3xl p-5 border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] shadow-2xs flex flex-col items-center text-center space-y-3 transition-colors">
-        <div className="w-full h-[136px] flex items-center justify-center relative overflow-hidden">
-          {/* Calming SVG Vector Illustration */}
-          <svg viewBox="0 0 200 160" className="w-[176px] h-[136px]">
-            {/* Background Soft Leaves */}
-            <path d="M40 80 Q20 50 40 20 Q60 50 40 80" fill={isDark ? "#12463C" : "#D5EFE3"} opacity="0.85" />
-            <path d="M160 80 Q180 50 160 20 Q140 50 160 80" fill={isDark ? "#12463C" : "#D5EFE3"} opacity="0.85" />
-            <path d="M30 120 Q10 90 30 60 Q50 90 30 120" fill={isDark ? "#00A889" : "#BCE4D3"} opacity={isDark ? "0.3" : "0.75"} />
-            <path d="M170 120 Q190 90 170 60 Q150 90 170 120" fill={isDark ? "#00A889" : "#BCE4D3"} opacity={isDark ? "0.3" : "0.75"} />
-            
-            {/* Character Hair Back */}
-            <path d="M65 80 Q100 30 135 80 Q145 130 135 150 L65 150 Q55 130 65 80 Z" fill={isDark ? "#032B25" : "#2C3A35"} />
-            
-            {/* Character Body / Shoulders */}
-            <path d="M55 160 Q100 125 145 160 Z" fill={isDark ? "#00A889" : "#3D7E6B"} />
-            
-            {/* Character Neck & Face */}
-            <rect x="92" y="105" width="16" height="20" fill="#F8D3B8" rx="4" />
-            <circle cx="100" cy="85" r="24" fill="#F8D3B8" />
-            
-            {/* Hair Front Framing */}
-            <path d="M76 80 Q100 65 124 80 Q115 50 100 50 Q85 50 76 80 Z" fill={isDark ? "#032B25" : "#2C3A35"} />
-            
-            {/* Calm Closed Eyes & Smile */}
-            <path d="M88 84 Q93 88 98 84" fill="none" stroke="#2C3A35" strokeWidth="2" strokeLinecap="round" />
-            <path d="M102 84 Q107 88 112 84" fill="none" stroke="#2C3A35" strokeWidth="2" strokeLinecap="round" />
-            <path d="M96 95 Q100 99 104 95" fill="none" stroke="#2C3A35" strokeWidth="1.5" strokeLinecap="round" />
-            
-            {/* Hands on Heart */}
-            <path d="M80 145 Q100 130 120 145 Q110 155 90 155 Z" fill="#F8D3B8" opacity="0.95" />
-          </svg>
-        </div>
-
-        <p className="text-xs font-heading font-black text-[#19332A] dark:text-[#F4FAF7] leading-snug max-w-[170px]">
-          A healthier mind<br />leads to a brighter you.
-        </p>
-      </div>
-
-      {/* 3. Confidentiality Card */}
-      <div className="bg-white dark:bg-[#0B3029] rounded-3xl p-4 px-5 border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] shadow-2xs flex items-center gap-3.5 transition-colors">
-        <div className="w-9 h-9 rounded-2xl bg-[#EAF6F0] dark:bg-[rgba(0,168,137,0.15)] text-[#006C56] dark:text-[#00A889] flex items-center justify-center shrink-0">
-          <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-          </svg>
-        </div>
-        <div>
-          <h3 className="text-xs font-black text-[#19332A] dark:text-[#F4FAF7] leading-tight">100% Confidential</h3>
-          <p className="text-[10px] text-[#789389] dark:text-[#9DB9B0] font-medium leading-tight mt-0.5">
-            No data ever leaves this device.
-          </p>
-        </div>
-      </div>
-
-      {/* 4. Quote Card */}
-      <div className="bg-white dark:bg-[#0B3029] rounded-3xl p-4 px-5 border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] shadow-2xs flex items-start gap-3 transition-colors">
-        <span className="font-serif text-2xl font-black text-[#004D3D] dark:text-[#00A889] leading-none shrink-0 -mt-0.5">
-          “
-        </span>
-        <div>
-          <p className="text-xs font-bold text-[#19332A] dark:text-[#E5F3EF] leading-snug">
-            “Small steps every day lead to big changes.”
-          </p>
-          <p className="text-[10px] text-[#789389] dark:text-[#9DB9B0] font-semibold mt-0.5">
-            — Manraah
-          </p>
         </div>
       </div>
     </aside>
