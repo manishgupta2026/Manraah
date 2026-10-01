@@ -206,7 +206,7 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
             <button
               type="button"
               onClick={() => setSolutionDropdownOpen((prev) => !prev)}
-              className={`transition-colors flex items-center gap-1.5 shrink-0 py-1 cursor-pointer ${
+              className={`transition-colors flex items-center gap-1 shrink-0 py-1 cursor-pointer ${
                 isAuthView
                   ? isSolutionActive
                     ? "text-white font-bold"
@@ -217,15 +217,6 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
               }`}
             >
               <span>Our Solution</span>
-              <span
-                className={`px-1.5 py-0.5 rounded-full text-[9px] font-heading font-extrabold leading-none ${
-                  isAuthView
-                    ? "bg-white/20 text-white border border-white/30"
-                    : "bg-primary/10 text-primary border border-primary/20"
-                }`}
-              >
-                Institutions
-              </span>
               <span
                 className={`material-symbols-outlined text-sm transition-transform duration-200 ${
                   solutionDropdownOpen ? "rotate-180" : ""
@@ -242,29 +233,54 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 6, scale: 0.97 }}
                   transition={{ duration: 0.15, ease: "easeOut" }}
-                  className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-80 rounded-2xl bg-white dark:bg-[#0B3029] border border-surface-variant/40 dark:border-[rgba(150,210,195,0.15)] shadow-xl p-2 z-50 flex flex-col gap-1 text-on-surface"
+                  className={`absolute top-full left-1/2 -translate-x-1/2 mt-2 w-80 rounded-2xl p-2.5 z-50 flex flex-col gap-1 shadow-2xl border ${
+                    isAuthView
+                      ? "bg-[#0D2821] dark:bg-[#0B3029] border-[#23483E] dark:border-[rgba(150,210,195,0.15)] text-white"
+                      : "bg-white border-surface-variant/50 text-on-surface"
+                  }`}
                 >
-                  <div className="px-3 py-1.5 text-[10px] font-heading font-bold uppercase tracking-wider text-on-surface-variant/70 border-b border-surface-variant/20 mb-1">
-                    Institutional Wellness Ecosystems
-                  </div>
 
                   {/* Colleges / Higher Ed */}
                   <Link
                     href="/our-solution?target=colleges"
                     onClick={() => setSolutionDropdownOpen(false)}
-                    className="p-2.5 rounded-xl hover:bg-surface-container flex items-start gap-3 transition-colors group"
+                    className={`p-2.5 rounded-xl flex items-start gap-3 transition-colors group ${
+                      isAuthView ? "hover:bg-white/10" : "hover:bg-surface-container/70"
+                    }`}
                   >
-                    <div className="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:text-white transition-colors">
+                    <div
+                      className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors ${
+                        isAuthView
+                          ? "bg-white/10 text-emerald-400 group-hover:bg-emerald-500 group-hover:text-white"
+                          : "bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white"
+                      }`}
+                    >
                       <span className="material-symbols-outlined text-lg">school</span>
                     </div>
                     <div>
-                      <div className="text-xs font-heading font-bold text-on-surface group-hover:text-primary transition-colors flex items-center gap-1.5">
+                      <div
+                        className={`text-xs font-heading font-bold transition-colors flex items-center gap-1.5 ${
+                          isAuthView
+                            ? "text-white group-hover:text-emerald-300"
+                            : "text-on-surface group-hover:text-primary"
+                        }`}
+                      >
                         <span>For Students &amp; Colleges</span>
-                        <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-semibold border border-emerald-500/20">
+                        <span
+                          className={`text-[9px] px-1.5 py-0.5 rounded font-semibold border ${
+                            isAuthView
+                              ? "bg-emerald-400/20 text-emerald-300 border-emerald-400/30"
+                              : "bg-emerald-50 text-emerald-700 border-emerald-200"
+                          }`}
+                        >
                           SC 2025
                         </span>
                       </div>
-                      <div className="text-[11px] text-on-surface-variant line-clamp-1">
+                      <div
+                        className={`text-[11px] line-clamp-1 ${
+                          isAuthView ? "text-white/60" : "text-on-surface-variant"
+                        }`}
+                      >
                         Campus-wide suicide prevention &amp; UGC guidelines
                       </div>
                     </div>
@@ -274,23 +290,45 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                   <Link
                     href="/our-solution?target=corporates"
                     onClick={() => setSolutionDropdownOpen(false)}
-                    className="p-2.5 rounded-xl hover:bg-surface-container flex items-start gap-3 transition-colors group"
+                    className={`p-2.5 rounded-xl flex items-start gap-3 transition-colors group ${
+                      isAuthView ? "hover:bg-white/10" : "hover:bg-surface-container/70"
+                    }`}
                   >
-                    <div className="w-8 h-8 rounded-lg bg-secondary/10 text-secondary flex items-center justify-center shrink-0 group-hover:bg-secondary group-hover:text-white transition-colors">
+                    <div
+                      className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors ${
+                        isAuthView
+                          ? "bg-white/10 text-teal-400 group-hover:bg-teal-500 group-hover:text-white"
+                          : "bg-secondary/10 text-secondary group-hover:bg-secondary group-hover:text-white"
+                      }`}
+                    >
                       <span className="material-symbols-outlined text-lg">corporate_fare</span>
                     </div>
                     <div>
-                      <div className="text-xs font-heading font-bold text-on-surface group-hover:text-secondary transition-colors flex items-center gap-1.5">
+                      <div
+                        className={`text-xs font-heading font-bold transition-colors flex items-center gap-1.5 ${
+                          isAuthView
+                            ? "text-white group-hover:text-teal-300"
+                            : "text-on-surface group-hover:text-secondary"
+                        }`}
+                      >
                         <span>For Employees &amp; Corporates</span>
                       </div>
-                      <div className="text-[11px] text-on-surface-variant line-clamp-1">
+                      <div
+                        className={`text-[11px] line-clamp-1 ${
+                          isAuthView ? "text-white/60" : "text-on-surface-variant"
+                        }`}
+                      >
                         24/7 confidential EAP, burnout telemetry &amp; ROI
                       </div>
                     </div>
                   </Link>
 
                   {/* Dropdown Footer CTA */}
-                  <div className="mt-1 pt-2 border-t border-surface-variant/20 flex items-center justify-between px-2 pb-1">
+                  <div
+                    className={`mt-1 pt-2 border-t flex items-center justify-between px-2 pb-1 ${
+                      isAuthView ? "border-white/10" : "border-surface-variant/30"
+                    }`}
+                  >
                     <button
                       type="button"
                       onClick={() => {
@@ -298,7 +336,11 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                         setCallbackDefaultSegment("colleges");
                         setCallbackModalOpen(true);
                       }}
-                      className="text-xs font-heading font-bold text-primary hover:text-primary-purple flex items-center gap-1.5 cursor-pointer"
+                      className={`text-xs font-heading font-bold flex items-center gap-1.5 cursor-pointer ${
+                        isAuthView
+                          ? "text-emerald-400 hover:text-emerald-300"
+                          : "text-primary hover:text-primary-purple"
+                      }`}
                     >
                       <span className="material-symbols-outlined text-base">support_agent</span>
                       <span>Request a Callback</span>
@@ -306,7 +348,11 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                     <Link
                       href="/our-solution"
                       onClick={() => setSolutionDropdownOpen(false)}
-                      className="text-[11px] font-heading font-semibold text-on-surface-variant hover:text-primary transition-colors"
+                      className={`text-[11px] font-heading font-semibold transition-colors ${
+                        isAuthView
+                          ? "text-white/70 hover:text-white"
+                          : "text-on-surface-variant hover:text-primary"
+                      }`}
                     >
                       Full Overview &rarr;
                     </Link>
@@ -741,9 +787,6 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                   >
                     <span className="flex items-center gap-2">
                       <span className={isSolutionActive ? "text-primary font-bold" : ""}>Our Solution</span>
-                      <span className="px-2 py-0.5 rounded-full text-[10px] font-heading font-extrabold bg-primary/10 text-primary border border-primary/20">
-                        Institutions
-                      </span>
                     </span>
                     <span
                       className={`material-symbols-outlined text-base text-on-surface-variant/50 transition-transform duration-200 ${
