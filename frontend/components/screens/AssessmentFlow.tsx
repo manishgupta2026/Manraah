@@ -8,7 +8,8 @@ import { useCategory } from "@/frontend/lib/context/CategoryContext";
 import { assessmentEngine } from "@/frontend/lib/assessment/assessmentEngine";
 import { evaluateWellness } from "@/frontend/lib/assessment/wellness";
 import ScreenHeader from "@/frontend/components/ui/ScreenHeader";
-import { getClientSession } from "@/backend/auth/client";
+import { getClientSession, updateClientSession } from "@/backend/auth/client";
+
 
 function getQuestionEmoji(text: string): string {
   const lower = text.toLowerCase();
@@ -188,13 +189,13 @@ export default function AssessmentFlow() {
             const updatedSession = {
               ...session,
               user: {
-                ...session.user,
+                ...user,
                 selectedCategory: targetCategory,
-              }
+              },
+              isAuthenticated: true,
             };
-            localStorage.setItem("manraah_auth_session", JSON.stringify(updatedSession));
-            document.cookie = `manraah_session=${JSON.stringify(updatedSession)}; path=/; max-age=2592000`;
-            document.cookie = `userType=${targetCategory}; path=/; max-age=2592000`;
+            updateClientSession(updatedSession as any);
+
             
             router.push("/wellness-score");
           } catch (e) {

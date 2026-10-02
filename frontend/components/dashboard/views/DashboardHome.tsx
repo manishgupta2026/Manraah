@@ -186,15 +186,19 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
     }
 
     let isMounted = true;
+    let hasLoadedRef = false;
 
-    async function loadUpcomingAppointment() {
+    async function loadUpcomingAppointment(isInitial = false) {
       try {
-        setIsLoadingAppointment(true);
+        if (isInitial || !hasLoadedRef) {
+          setIsLoadingAppointment(true);
+        }
         const res = await fetch("/api/appointments/upcoming");
         if (res.ok) {
           const data = await res.json();
           if (isMounted) {
             setUpcomingAppointment(data.upcomingAppointment || null);
+            hasLoadedRef = true;
           }
         } else {
           if (isMounted) {
@@ -213,10 +217,10 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
       }
     }
 
-    loadUpcomingAppointment();
+    loadUpcomingAppointment(true);
 
     const handleAppointmentsChange = () => {
-      loadUpcomingAppointment();
+      loadUpcomingAppointment(false);
     };
 
     window.addEventListener("appointments-updated", handleAppointmentsChange);

@@ -87,9 +87,16 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
   };
 
   const handleLogout = async () => {
-    await logout();
-    router.push("/login");
+    try {
+      await logout();
+    } catch (err) {
+      console.error("Logout error:", err);
+    }
+    if (typeof window !== "undefined") {
+      window.location.href = "/login";
+    }
   };
+
 
   const isLoginPage = pathname === "/login";
   const isSignupPage = pathname === "/signup";

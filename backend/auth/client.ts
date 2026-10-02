@@ -99,19 +99,72 @@ export async function signIn(
   return session;
 }
 
+export function clearAllAuthCookies(): void {
+  if (typeof document === "undefined") return;
+
+  const cookieNames = [
+    "manraah_session",
+    "userType",
+    "manraah_userType",
+    "manraah_auth_session",
+    "session",
+    "manraah_companion_session",
+    "next-auth.session-token",
+    "__Secure-next-auth.session-token",
+  ];
+
+  const host = window.location.hostname;
+  const domainVariations = [
+    "",
+    host,
+    `.${host}`,
+    ...(host.includes(".") ? [`.${host.split(".").slice(-2).join(".")}`] : []),
+  ];
+
+  const paths = ["/", ""];
+
+  cookieNames.forEach((name) => {
+    paths.forEach((path) => {
+      const pathAttr = path ? `; path=${path}` : "";
+      
+      // Standard expiry
+      document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; max-age=0${pathAttr}`;
+      document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; max-age=0${pathAttr}; SameSite=Lax`;
+      document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; max-age=0${pathAttr}; SameSite=Lax; Secure`;
+      document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; max-age=0${pathAttr}; SameSite=None; Secure`;
+
+      // Domain-specific expiries
+      domainVariations.forEach((dom) => {
+        if (dom) {
+          document.cookie = `${name}=; domain=${dom}; expires=Thu, 01 Jan 1970 00:00:00 GMT; max-age=0${pathAttr}`;
+          document.cookie = `${name}=; domain=${dom}; expires=Thu, 01 Jan 1970 00:00:00 GMT; max-age=0${pathAttr}; SameSite=Lax`;
+          document.cookie = `${name}=; domain=${dom}; expires=Thu, 01 Jan 1970 00:00:00 GMT; max-age=0${pathAttr}; SameSite=Lax; Secure`;
+          document.cookie = `${name}=; domain=${dom}; expires=Thu, 01 Jan 1970 00:00:00 GMT; max-age=0${pathAttr}; SameSite=None; Secure`;
+        }
+      });
+    });
+  });
+}
+
 export async function signOut(): Promise<void> {
+  // 1. Invalidate server session immediately
   try {
-    await fetch("/api/auth/logout", { method: "POST" });
+    await fetch("/api/auth/logout", {
+      method: "POST",
+      cache: "no-store",
+      headers: { "Cache-Control": "no-cache" },
+    });
   } catch (err) {
     console.error("Logout API call error:", err);
   }
 
   if (typeof window !== "undefined") {
-    // 1. Clear session key and dashboard cache
+    // 2. Clear all authentication localStorage keys
     localStorage.removeItem(SESSION_KEY);
+    localStorage.removeItem("manraah_auth_session");
     localStorage.removeItem("manraah_dashboard_cache");
 
-    // 2. Clear all category assessment completion & security flags from localStorage
+    // 3. Clear all category assessment completion & security flags from localStorage
     const localKeysToRemove = [
       "parent_assessment_completed",
       "parent_show_security_immediately",
@@ -130,7 +183,7 @@ export async function signOut(): Promise<void> {
     ];
     localKeysToRemove.forEach((key) => localStorage.removeItem(key));
 
-    // 3. Clear all sessionStorage keys
+    // 4. Clear all sessionStorage keys
     try {
       sessionStorage.clear();
     } catch {
@@ -143,13 +196,22 @@ export async function signOut(): Promise<void> {
       sessionKeysToRemove.forEach((key) => sessionStorage.removeItem(key));
     }
 
-    // 4. Expire cookies
-    document.cookie = "manraah_session=; path=/; max-age=0";
-    document.cookie = "userType=; path=/; max-age=0";
-    document.cookie = "manraah_userType=; path=/; max-age=0";
+    // 5. Expire all cookies thoroughly
+    clearAllAuthCookies();
 
-    // 5. Notify all components & providers immediately
+    // 6. Notify all components & providers in current window
     window.dispatchEvent(new CustomEvent("manraah_auth_changed", { detail: { session: null } }));
+
+    // 7. Broadcast cross-tab logout synchronization via localStorage storage event
+    try {
+      localStorage.setItem("manraah_logout_broadcast", Date.now().toString());
+      setTimeout(() => {
+        try {
+          localStorage.removeItem("manraah_logout_broadcast");
+        } catch {}
+      }, 500);
+    } catch {}
+
     window.dispatchEvent(new Event("storage"));
   }
 }
@@ -165,10 +227,14 @@ function getCookie(name: string): string | null {
 export function updateClientSession(session: AuthSession): void {
   if (typeof window === "undefined") return;
   try {
+    if (!session || !session.isAuthenticated || !session.user?.id) {
+      signOut();
+      return;
+    }
     localStorage.setItem(SESSION_KEY, JSON.stringify(session));
-    document.cookie = `manraah_session=${JSON.stringify(session)}; path=/; max-age=2592000`;
+    document.cookie = `manraah_session=${JSON.stringify(session)}; path=/; max-age=2592000; SameSite=Lax`;
     if (session.user?.selectedCategory) {
-      document.cookie = `userType=${session.user.selectedCategory}; path=/; max-age=2592000`;
+      document.cookie = `userType=${session.user.selectedCategory}; path=/; max-age=2592000; SameSite=Lax`;
     }
     window.dispatchEvent(new CustomEvent("manraah_auth_changed", { detail: { session } }));
   } catch (err) {
@@ -208,13 +274,47 @@ export function getClientSession(): AuthSession {
     let raw = localStorage.getItem(SESSION_KEY);
     if (!raw) {
       const cookieVal = getCookie("manraah_session");
-      if (cookieVal) {
-        localStorage.setItem(SESSION_KEY, cookieVal);
-        raw = cookieVal;
+      if (cookieVal && cookieVal !== "null" && cookieVal !== "undefined" && cookieVal.trim() !== "") {
+        try {
+          const parsed = JSON.parse(cookieVal);
+          if (
+            parsed &&
+            parsed.isAuthenticated === true &&
+            parsed.user &&
+            parsed.user.id &&
+            typeof parsed.user.id === "string" &&
+            parsed.user.id.trim().length > 0
+          ) {
+            localStorage.setItem(SESSION_KEY, JSON.stringify(parsed));
+            raw = JSON.stringify(parsed);
+          } else {
+            clearAllAuthCookies();
+          }
+        } catch {
+          clearAllAuthCookies();
+        }
       }
     }
-    if (!raw) return { user: null, token: null, isAuthenticated: false };
-    return JSON.parse(raw) as AuthSession;
+
+    if (!raw || raw === "null" || raw === "undefined" || raw.trim() === "") {
+      return { user: null, token: null, isAuthenticated: false };
+    }
+
+    const parsed = JSON.parse(raw) as AuthSession;
+    if (
+      !parsed ||
+      parsed.isAuthenticated !== true ||
+      !parsed.user ||
+      !parsed.user.id ||
+      typeof parsed.user.id !== "string" ||
+      parsed.user.id.trim().length === 0
+    ) {
+      localStorage.removeItem(SESSION_KEY);
+      clearAllAuthCookies();
+      return { user: null, token: null, isAuthenticated: false };
+    }
+
+    return parsed;
   } catch {
     return { user: null, token: null, isAuthenticated: false };
   }

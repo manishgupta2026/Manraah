@@ -35,14 +35,21 @@ export function middleware(request: NextRequest) {
 
   let hasSession = false;
   const manraahSessionCookie = request.cookies.get("manraah_session")?.value;
-  if (manraahSessionCookie) {
+  if (manraahSessionCookie && manraahSessionCookie !== "null" && manraahSessionCookie !== "undefined" && manraahSessionCookie.trim() !== "") {
     try {
       let raw = manraahSessionCookie;
       try {
         raw = decodeURIComponent(raw);
       } catch (e) {}
       const parsed = JSON.parse(raw);
-      if (parsed && (parsed.isAuthenticated || parsed.user?.id) && parsed.user && parsed.user.id) {
+      if (
+        parsed &&
+        parsed.isAuthenticated === true &&
+        parsed.user &&
+        parsed.user.id &&
+        typeof parsed.user.id === "string" &&
+        parsed.user.id.trim().length > 0
+      ) {
         hasSession = true;
       }
     } catch (err) {

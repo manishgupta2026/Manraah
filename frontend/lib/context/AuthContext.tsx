@@ -54,7 +54,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     try {
       const session = getClientSession();
-      if (session?.user && session.isAuthenticated) {
+      if (session?.user && session.isAuthenticated && session.user.id) {
         const normalizedUser: UserProfile = {
           ...session.user,
           avatar: session.user.avatar || session.user.profileImage || "",
@@ -65,12 +65,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } else {
         setUser(null);
         setIsAuthenticated(false);
+        setLoading(false);
+        return;
       }
 
       // Fetch fresh profile from API to ensure DB synchronization
       if (session?.isAuthenticated && session.user?.id) {
         try {
-          const res = await fetch("/api/profile");
+          const res = await fetch("/api/profile", {
+            cache: "no-store",
+            headers: { "Cache-Control": "no-cache" },
+          });
           if (res.ok) {
             const data = await res.json();
             if (data && !data.error && data.id) {
@@ -105,10 +110,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             } else if (res.status === 401) {
               setUser(null);
               setIsAuthenticated(false);
+              await signOut();
             }
           } else if (res.status === 401) {
             setUser(null);
             setIsAuthenticated(false);
+            await signOut();
           }
         } catch (err) {
           console.error("[AuthContext] API sync error:", err);
@@ -126,7 +133,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const handleAuthChange = (event: Event) => {
       const customEvent = event as CustomEvent<{ session: AuthSession | null }>;
       const s = customEvent.detail?.session;
-      if (s?.user && s.isAuthenticated) {
+      if (s?.user && s.isAuthenticated && s.user.id) {
         const u = s.user;
         setUser({
           ...u,
@@ -140,12 +147,49 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     };
 
+    // Listen for cross-tab storage changes & broadcast logout
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key === "manraah_logout_broadcast" || event.key === "manraah_auth_session") {
+        const session = getClientSession();
+        if (!session || !session.isAuthenticated || !session.user?.id) {
+          setUser(null);
+          setIsAuthenticated(false);
+          const currentPath = typeof window !== "undefined" ? window.location.pathname : "";
+          const isProtected = [
+            "/dashboard",
+            "/profile",
+            "/appointments",
+            "/journey",
+            "/my-journey",
+            "/resources",
+            "/ai-companion",
+            "/messages",
+            "/human-companion",
+            "/journal",
+            "/community",
+            "/sleep-meditation",
+            "/sleep",
+            "/meditation",
+            "/admin",
+          ].some((route) => currentPath === route || currentPath.startsWith(`${route}/`));
+
+          if (isProtected && typeof window !== "undefined") {
+            window.location.href = "/login";
+          }
+        } else {
+          syncSession();
+        }
+      } else {
+        syncSession();
+      }
+    };
+
     window.addEventListener("manraah_auth_changed", handleAuthChange);
-    window.addEventListener("storage", syncSession);
+    window.addEventListener("storage", handleStorageChange);
 
     return () => {
       window.removeEventListener("manraah_auth_changed", handleAuthChange);
-      window.removeEventListener("storage", syncSession);
+      window.removeEventListener("storage", handleStorageChange);
     };
   }, [syncSession]);
 

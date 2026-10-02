@@ -154,12 +154,14 @@ export default function ProfileView() {
     setIsLoggingOut(true);
     try {
       await logout();
-      router.push("/login");
     } catch (err) {
       console.error("Logout error:", err);
-      router.push("/login");
+    }
+    if (typeof window !== "undefined") {
+      window.location.href = "/login";
     }
   };
+
 
   const openChangePasswordModal = () => {
     setCurrentPassword("");

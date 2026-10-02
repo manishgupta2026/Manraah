@@ -356,6 +356,9 @@ export default function WellnessScoreScreen() {
                 onClick={async () => {
                   await signOut();
                   setSession(null);
+                  if (typeof window !== "undefined") {
+                    window.location.href = "/login";
+                  }
                 }} 
                 className="underline hover:text-[#7C6BC4] font-bold transition-colors cursor-pointer"
               >

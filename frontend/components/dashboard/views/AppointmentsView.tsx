@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useMemo, useRef } from "react";
+import React, { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import TherapistCard from "@/frontend/components/dashboard/therapists/TherapistCard";
 import { UnifiedTherapist, FALLBACK_THERAPISTS, normalizeTherapist } from "@/frontend/components/dashboard/therapists/types";
 
@@ -51,15 +51,19 @@ export default function AppointmentsView() {
   const [isSubmittingBooking, setIsSubmittingBooking] = useState(false);
   const [bookingSuccess, setBookingSuccess] = useState(false);
 
-  // Tab state: null on initial load (normal browsing view), or "upcoming" | "past"
-  const [activeTab, setActiveTab] = useState<"upcoming" | "past" | null>(null);
+  // Tab state: "upcoming" | "past" | null
+  const [activeTab, setActiveTab] = useState<"upcoming" | "past" | null>("upcoming");
 
   const bookingSectionRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   const [upcomingList, setUpcomingList] = useState<any[]>([]);
   const [pastList, setPastList] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
+
+  const hasLoadedOnceRef = useRef(false);
+  const isFetchingRef = useRef(false);
+  const isMountedRef = useRef(true);
 
   const handleScrollToBooking = () => {
     if (bookingSectionRef.current) {
@@ -120,36 +124,52 @@ export default function AppointmentsView() {
     }
   }, [therapistsList]);
 
-  const fetchAppointments = async () => {
+  const fetchAppointments = useCallback(async (isInitial = false) => {
+    if (isFetchingRef.current) return;
     try {
-      setIsLoading(true);
+      isFetchingRef.current = true;
+      if (isInitial || !hasLoadedOnceRef.current) {
+        setIsInitialLoading(true);
+      }
       const res = await fetch("/api/appointments");
       if (res.ok) {
         const data = await res.json();
-        setUpcomingList(data.upcoming || []);
-        setPastList(data.past || []);
+        if (isMountedRef.current) {
+          setUpcomingList(Array.isArray(data.upcoming) ? data.upcoming : []);
+          setPastList(Array.isArray(data.past) ? data.past : []);
+          hasLoadedOnceRef.current = true;
+        }
       }
     } catch (err) {
       console.error("Failed to load appointments:", err);
     } finally {
-      setIsLoading(false);
+      isFetchingRef.current = false;
+      if (isMountedRef.current) {
+        setIsInitialLoading(false);
+      }
     }
-  };
+  }, []);
 
   useEffect(() => {
-    fetchAppointments();
+    isMountedRef.current = true;
+    fetchAppointments(true);
 
     const handleAuthChange = () => {
-      fetchAppointments();
+      fetchAppointments(false);
+    };
+
+    const handleAppointmentsUpdated = () => {
+      fetchAppointments(false);
     };
 
     window.addEventListener("manraah_auth_changed", handleAuthChange);
-    window.addEventListener("appointments-updated", fetchAppointments);
+    window.addEventListener("appointments-updated", handleAppointmentsUpdated);
     return () => {
+      isMountedRef.current = false;
       window.removeEventListener("manraah_auth_changed", handleAuthChange);
-      window.removeEventListener("appointments-updated", fetchAppointments);
+      window.removeEventListener("appointments-updated", handleAppointmentsUpdated);
     };
-  }, []);
+  }, [fetchAppointments]);
 
   const filteredTherapists = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
@@ -467,24 +487,31 @@ export default function AppointmentsView() {
             </div>
           </div>
 
-          {isLoading ? (
+          {isInitialLoading ? (
             <div className="p-8 text-center text-xs text-[#789389] dark:text-[#76968D]">
               <div className="w-6 h-6 border-2 border-[#006C56] dark:border-[#00A889] border-t-transparent rounded-full animate-spin mx-auto mb-2" />
               Loading upcoming appointments...
             </div>
           ) : upcomingList.length > 0 ? (
             <div className="space-y-3">
-              {upcomingList.map((apt) => (
+              {upcomingList.map((apt, index) => (
                 <div
-                  key={apt.id}
+                  key={apt.id || `upcoming-apt-${index}`}
                   className="p-5 rounded-2xl bg-[#F8FCFA] dark:bg-[#0E3931] border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] flex flex-col md:flex-row md:items-center justify-between gap-4"
                 >
                   <div className="flex items-center gap-4 min-w-0">
-                    <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden border-2 border-white dark:border-[rgba(150,210,195,0.20)] shadow-xs shrink-0">
+                    <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden border-2 border-white dark:border-[rgba(150,210,195,0.20)] shadow-xs shrink-0 bg-slate-100 dark:bg-[#082821]">
                       <img
                         src={apt.therapistImage || "/images/therapist_sarah.jpg"}
-                        alt={apt.therapistName}
+                        alt={apt.therapistName || "Therapist"}
                         className="w-full h-full object-cover"
+                        loading="lazy"
+                        onError={(e) => {
+                          const target = e.currentTarget;
+                          if (!target.src.includes("therapist_sarah.jpg")) {
+                            target.src = "/images/therapist_sarah.jpg";
+                          }
+                        }}
                       />
                     </div>
                     <div className="min-w-0">
@@ -592,24 +619,31 @@ export default function AppointmentsView() {
             </div>
           </div>
 
-          {isLoading ? (
+          {isInitialLoading ? (
             <div className="p-8 text-center text-xs text-[#789389] dark:text-[#76968D]">
               <div className="w-6 h-6 border-2 border-[#006C56] dark:border-[#00A889] border-t-transparent rounded-full animate-spin mx-auto mb-2" />
               Loading past appointments...
             </div>
           ) : pastList.length > 0 ? (
             <div className="space-y-3">
-              {pastList.map((session) => (
+              {pastList.map((session, index) => (
                 <div
-                  key={session.id}
+                  key={session.id || `past-apt-${index}`}
                   className="p-4 sm:p-5 rounded-2xl bg-[#F8FCFA] dark:bg-[#0E3931] border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] flex flex-col sm:flex-row sm:items-center justify-between gap-3.5"
                 >
                   <div className="flex items-center gap-3.5 min-w-0">
-                    <div className="w-12 h-12 rounded-full overflow-hidden border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.20)] shrink-0">
+                    <div className="w-12 h-12 rounded-full overflow-hidden border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.20)] shrink-0 bg-slate-100 dark:bg-[#082821]">
                       <img
                         src={session.therapistImage || "/images/therapist_sarah.jpg"}
-                        alt={session.therapistName}
+                        alt={session.therapistName || "Therapist"}
                         className="w-full h-full object-cover"
+                        loading="lazy"
+                        onError={(e) => {
+                          const target = e.currentTarget;
+                          if (!target.src.includes("therapist_sarah.jpg")) {
+                            target.src = "/images/therapist_sarah.jpg";
+                          }
+                        }}
                       />
                     </div>
                     <div className="min-w-0 space-y-0.5">
