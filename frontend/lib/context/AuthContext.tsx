@@ -2,7 +2,14 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from "react";
 import { UserProfile, AuthSession } from "@/backend/types";
-import { getClientSession, updateClientSession, signOut, signIn as apiSignIn, signUp as apiSignUp } from "@/backend/auth/client";
+import {
+  getClientSession,
+  updateClientSession,
+  signOut,
+  signIn as apiSignIn,
+  signUp as apiSignUp,
+  isLoggingOutState,
+} from "@/backend/auth/client";
 
 interface AuthContextType {
   user: UserProfile | null;
@@ -48,9 +55,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
 
-  // Sync state from client session & backend API
+  // Sync state from client session & authoritative backend API
   const syncSession = useCallback(async () => {
     if (typeof window === "undefined") return;
+
+    if (isLoggingOutState()) {
+      setUser(null);
+      setIsAuthenticated(false);
+      setLoading(false);
+      return;
+    }
 
     try {
       const session = getClientSession();
@@ -69,13 +83,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return;
       }
 
-      // Fetch fresh profile from API to ensure DB synchronization
+      // Fetch fresh profile from API to ensure DB synchronization & valid server cookie
       if (session?.isAuthenticated && session.user?.id) {
         try {
           const res = await fetch("/api/profile", {
             cache: "no-store",
             headers: { "Cache-Control": "no-cache" },
           });
+
+          // Check if logout occurred while profile request was in flight
+          if (isLoggingOutState()) {
+            setUser(null);
+            setIsAuthenticated(false);
+            return;
+          }
+
           if (res.ok) {
             const data = await res.json();
             if (data && !data.error && data.id) {
@@ -107,12 +129,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 user: freshUser,
                 isAuthenticated: true,
               });
-            } else if (res.status === 401) {
+            } else {
               setUser(null);
               setIsAuthenticated(false);
               await signOut();
             }
-          } else if (res.status === 401) {
+          } else if (res.status === 401 || res.status === 403) {
             setUser(null);
             setIsAuthenticated(false);
             await signOut();
@@ -133,7 +155,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const handleAuthChange = (event: Event) => {
       const customEvent = event as CustomEvent<{ session: AuthSession | null }>;
       const s = customEvent.detail?.session;
-      if (s?.user && s.isAuthenticated && s.user.id) {
+      if (s?.user && s.isAuthenticated && s.user.id && !isLoggingOutState()) {
         const u = s.user;
         setUser({
           ...u,
@@ -151,7 +173,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const handleStorageChange = (event: StorageEvent) => {
       if (event.key === "manraah_logout_broadcast" || event.key === "manraah_auth_session") {
         const session = getClientSession();
-        if (!session || !session.isAuthenticated || !session.user?.id) {
+        if (!session || !session.isAuthenticated || !session.user?.id || isLoggingOutState()) {
           setUser(null);
           setIsAuthenticated(false);
           const currentPath = typeof window !== "undefined" ? window.location.pathname : "";
@@ -179,8 +201,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         } else {
           syncSession();
         }
-      } else {
-        syncSession();
       }
     };
 

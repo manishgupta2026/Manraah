@@ -49,16 +49,11 @@ export function CustomSelect({
   }, []);
 
   return (
-    <div ref={dropdownRef} className={`relative text-left w-full ${className}`}>
+    <div ref={dropdownRef} className={`space-y-1.5 text-left w-full relative ${className}`}>
       {label && (
-        <div className="flex items-center justify-between mb-1.5">
-          <label className="block text-xs font-heading font-bold text-on-surface flex items-center gap-1.5">
-            {icon && (
-              <span className="material-symbols-outlined text-sm text-primary">
-                {icon}
-              </span>
-            )}
-            <span>{label}</span>
+        <div className="flex items-center justify-between">
+          <label className="block text-xs font-heading font-bold text-on-surface">
+            {label}
           </label>
           {sublabel && (
             <span className="text-[11px] text-on-surface-variant/70 font-medium">
@@ -72,7 +67,7 @@ export function CustomSelect({
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className={`w-full p-3.5 ${icon ? "pl-11" : "pl-4"} pr-10 rounded-2xl bg-surface-container-low border ${
+        className={`relative w-full h-12 p-3.5 ${icon ? "pl-11" : "pl-4"} pr-10 rounded-2xl bg-surface-container-low border ${
           error
             ? "border-red-400"
             : isOpen
@@ -82,7 +77,7 @@ export function CustomSelect({
       >
         {/* Left Icon */}
         {icon && (
-          <span className="material-symbols-outlined absolute left-3.5 text-on-surface-variant/60 text-xl pointer-events-none select-none">
+          <span className="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-on-surface-variant/60 text-xl pointer-events-none select-none flex items-center justify-center">
             {icon}
           </span>
         )}
@@ -94,16 +89,16 @@ export function CustomSelect({
               {selectedOption.emoji && (
                 <span className="text-base select-none">{selectedOption.emoji}</span>
               )}
-              <span className="font-semibold text-on-surface">{selectedOption.label}</span>
+              <span className="font-medium text-on-surface">{selectedOption.label}</span>
             </>
           ) : (
-            <span className="text-on-surface-variant/50">{placeholder}</span>
+            <span className="text-on-surface-variant/40 font-normal">{placeholder}</span>
           )}
         </span>
 
         {/* Arrow Chevron */}
         <span
-          className={`material-symbols-outlined text-xl text-on-surface-variant/60 transition-transform duration-200 pointer-events-none ${
+          className={`material-symbols-outlined absolute right-3.5 top-1/2 -translate-y-1/2 text-xl text-on-surface-variant/60 transition-transform duration-200 pointer-events-none flex items-center justify-center ${
             isOpen ? "rotate-180 text-primary" : ""
           }`}
         >

@@ -24,18 +24,25 @@ const AUTH_ROUTES = ["/login", "/signup"];
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Skip internal Next.js system routes and assets
+  // Skip internal Next.js system routes, API handlers, static assets
   if (
     pathname.startsWith("/_next") ||
     pathname.startsWith("/api") ||
-    pathname === "/favicon.ico"
+    pathname === "/favicon.ico" ||
+    pathname.startsWith("/images") ||
+    pathname.startsWith("/logo")
   ) {
     return NextResponse.next();
   }
 
   let hasSession = false;
   const manraahSessionCookie = request.cookies.get("manraah_session")?.value;
-  if (manraahSessionCookie && manraahSessionCookie !== "null" && manraahSessionCookie !== "undefined" && manraahSessionCookie.trim() !== "") {
+  if (
+    manraahSessionCookie &&
+    manraahSessionCookie !== "null" &&
+    manraahSessionCookie !== "undefined" &&
+    manraahSessionCookie.trim() !== ""
+  ) {
     try {
       let raw = manraahSessionCookie;
       try {
@@ -52,19 +59,27 @@ export function middleware(request: NextRequest) {
       ) {
         hasSession = true;
       }
-    } catch (err) {
+    } catch {
       hasSession = false;
     }
   }
 
-  // 1. Unauthenticated users trying to access protected features -> redirect to /login
+  // 1. Unauthenticated users trying to access protected features -> redirect immediately to /login
   const isProtected = PROTECTED_ROUTES.some(
     (route) => pathname === route || pathname.startsWith(`${route}/`)
   );
 
   if (isProtected && !hasSession) {
     const loginUrl = new URL("/login", request.url);
-    return NextResponse.redirect(loginUrl);
+    const redirectResponse = NextResponse.redirect(loginUrl);
+    
+    // Clear any invalid or stale cookies if present
+    if (manraahSessionCookie) {
+      redirectResponse.cookies.delete("manraah_session");
+      redirectResponse.cookies.delete("userType");
+    }
+    redirectResponse.headers.set("Cache-Control", "no-store, no-cache, must-revalidate");
+    return redirectResponse;
   }
 
   // 2. Authenticated users trying to access auth routes (/login, /signup) -> redirect to /dashboard
@@ -74,7 +89,9 @@ export function middleware(request: NextRequest) {
 
   if (isAuthRoute && hasSession) {
     const dashboardUrl = new URL("/dashboard", request.url);
-    return NextResponse.redirect(dashboardUrl);
+    const redirectResponse = NextResponse.redirect(dashboardUrl);
+    redirectResponse.headers.set("Cache-Control", "no-store, no-cache, must-revalidate");
+    return redirectResponse;
   }
 
   return NextResponse.next();

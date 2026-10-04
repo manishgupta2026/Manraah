@@ -2,6 +2,28 @@ import { AuthSession } from "@/backend/types";
 
 const SESSION_KEY = "manraah_auth_session";
 
+// Module-level latches to prevent race conditions during logout / session sync
+let _isLoggingOut = false;
+let _lastLogoutTimestamp = 0;
+
+export function isLoggingOutState(): boolean {
+  return _isLoggingOut || (typeof Date !== "undefined" && Date.now() - _lastLogoutTimestamp < 3000);
+}
+
+export function setLogoutStateLatch(): void {
+  _isLoggingOut = true;
+  _lastLogoutTimestamp = Date.now();
+  if (typeof window !== "undefined") {
+    try {
+      sessionStorage.setItem("manraah_logout_ts", _lastLogoutTimestamp.toString());
+    } catch {}
+  }
+}
+
+export function clearLogoutStateLatch(): void {
+  _isLoggingOut = false;
+}
+
 export async function signUp(
   name: string,
   email: string,
@@ -45,10 +67,15 @@ export async function signUp(
 
   const session: AuthSession = data;
   if (typeof window !== "undefined") {
+    _lastLogoutTimestamp = 0;
+    _isLoggingOut = false;
+    try {
+      sessionStorage.removeItem("manraah_logout_ts");
+    } catch {}
     localStorage.setItem(SESSION_KEY, JSON.stringify(session));
-    document.cookie = `manraah_session=${JSON.stringify(session)}; path=/; max-age=2592000`;
+    document.cookie = `manraah_session=${JSON.stringify(session)}; path=/; max-age=2592000; SameSite=Lax`;
     if (session.user?.selectedCategory) {
-      document.cookie = `userType=${session.user.selectedCategory}; path=/; max-age=2592000`;
+      document.cookie = `userType=${session.user.selectedCategory}; path=/; max-age=2592000; SameSite=Lax`;
     }
     window.dispatchEvent(new CustomEvent("manraah_auth_changed", { detail: { session } }));
     window.dispatchEvent(new Event("storage"));
@@ -87,10 +114,15 @@ export async function signIn(
 
   const session: AuthSession = data;
   if (typeof window !== "undefined") {
+    _lastLogoutTimestamp = 0;
+    _isLoggingOut = false;
+    try {
+      sessionStorage.removeItem("manraah_logout_ts");
+    } catch {}
     localStorage.setItem(SESSION_KEY, JSON.stringify(session));
-    document.cookie = `manraah_session=${JSON.stringify(session)}; path=/; max-age=2592000`;
+    document.cookie = `manraah_session=${JSON.stringify(session)}; path=/; max-age=2592000; SameSite=Lax`;
     if (session.user?.selectedCategory) {
-      document.cookie = `userType=${session.user.selectedCategory}; path=/; max-age=2592000`;
+      document.cookie = `userType=${session.user.selectedCategory}; path=/; max-age=2592000; SameSite=Lax`;
     }
     window.dispatchEvent(new CustomEvent("manraah_auth_changed", { detail: { session } }));
     window.dispatchEvent(new Event("storage"));
@@ -113,13 +145,13 @@ export function clearAllAuthCookies(): void {
     "__Secure-next-auth.session-token",
   ];
 
-  const host = window.location.hostname;
+  const host = typeof window !== "undefined" ? window.location.hostname : "";
   const domainVariations = [
     "",
     host,
-    `.${host}`,
-    ...(host.includes(".") ? [`.${host.split(".").slice(-2).join(".")}`] : []),
-  ];
+    host ? `.${host}` : "",
+    ...(host && host.includes(".") ? [`.${host.split(".").slice(-2).join(".")}`] : []),
+  ].filter(Boolean);
 
   const paths = ["/", ""];
 
@@ -127,7 +159,7 @@ export function clearAllAuthCookies(): void {
     paths.forEach((path) => {
       const pathAttr = path ? `; path=${path}` : "";
       
-      // Standard expiry
+      // Standard local expiry
       document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; max-age=0${pathAttr}`;
       document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; max-age=0${pathAttr}; SameSite=Lax`;
       document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; max-age=0${pathAttr}; SameSite=Lax; Secure`;
@@ -139,32 +171,29 @@ export function clearAllAuthCookies(): void {
           document.cookie = `${name}=; domain=${dom}; expires=Thu, 01 Jan 1970 00:00:00 GMT; max-age=0${pathAttr}`;
           document.cookie = `${name}=; domain=${dom}; expires=Thu, 01 Jan 1970 00:00:00 GMT; max-age=0${pathAttr}; SameSite=Lax`;
           document.cookie = `${name}=; domain=${dom}; expires=Thu, 01 Jan 1970 00:00:00 GMT; max-age=0${pathAttr}; SameSite=Lax; Secure`;
-          document.cookie = `${name}=; domain=${dom}; expires=Thu, 01 Jan 1970 00:00:00 GMT; max-age=0${pathAttr}; SameSite=None; Secure`;
+          document.cookie = `${name}=; domain=${dom}; domain=${dom}; expires=Thu, 01 Jan 1970 00:00:00 GMT; max-age=0${pathAttr}; SameSite=None; Secure`;
         }
       });
     });
   });
 }
 
+/**
+ * Idempotent, race-condition-safe logout operation
+ */
 export async function signOut(): Promise<void> {
-  // 1. Invalidate server session immediately
-  try {
-    await fetch("/api/auth/logout", {
-      method: "POST",
-      cache: "no-store",
-      headers: { "Cache-Control": "no-cache" },
-    });
-  } catch (err) {
-    console.error("Logout API call error:", err);
-  }
+  // Set in-memory latch immediately so no in-flight requests can restore state
+  setLogoutStateLatch();
 
   if (typeof window !== "undefined") {
-    // 2. Clear all authentication localStorage keys
-    localStorage.removeItem(SESSION_KEY);
-    localStorage.removeItem("manraah_auth_session");
-    localStorage.removeItem("manraah_dashboard_cache");
+    // 1. Synchronously clear client auth keys from localStorage
+    try {
+      localStorage.removeItem(SESSION_KEY);
+      localStorage.removeItem("manraah_auth_session");
+      localStorage.removeItem("manraah_dashboard_cache");
+    } catch {}
 
-    // 3. Clear all category assessment completion & security flags from localStorage
+    // 2. Synchronously clear assessment & security flags
     const localKeysToRemove = [
       "parent_assessment_completed",
       "parent_show_security_immediately",
@@ -181,9 +210,13 @@ export async function signOut(): Promise<void> {
       "other_assessment_completed",
       "other_show_security_immediately",
     ];
-    localKeysToRemove.forEach((key) => localStorage.removeItem(key));
+    localKeysToRemove.forEach((key) => {
+      try {
+        localStorage.removeItem(key);
+      } catch {}
+    });
 
-    // 4. Clear all sessionStorage keys
+    // 3. Clear auth sessionStorage keys
     try {
       sessionStorage.clear();
     } catch {
@@ -193,26 +226,47 @@ export async function signOut(): Promise<void> {
         "manraah_student_assessment_completed",
         "manraah_onboarding_assessment",
       ];
-      sessionKeysToRemove.forEach((key) => sessionStorage.removeItem(key));
+      sessionKeysToRemove.forEach((key) => {
+        try {
+          sessionStorage.removeItem(key);
+        } catch {}
+      });
     }
 
-    // 5. Expire all cookies thoroughly
+    // 4. Synchronously expire all cookies on client
     clearAllAuthCookies();
 
-    // 6. Notify all components & providers in current window
+    // 5. Notify all components & contexts in current window immediately
     window.dispatchEvent(new CustomEvent("manraah_auth_changed", { detail: { session: null } }));
 
-    // 7. Broadcast cross-tab logout synchronization via localStorage storage event
+    // 6. Broadcast cross-tab logout synchronization via localStorage storage event
     try {
       localStorage.setItem("manraah_logout_broadcast", Date.now().toString());
       setTimeout(() => {
         try {
           localStorage.removeItem("manraah_logout_broadcast");
         } catch {}
-      }, 500);
+      }, 1000);
     } catch {}
 
     window.dispatchEvent(new Event("storage"));
+  }
+
+  // 7. Invalidate server-side session cookie via logout endpoint
+  try {
+    await fetch("/api/auth/logout", {
+      method: "POST",
+      cache: "no-store",
+      headers: { "Cache-Control": "no-cache" },
+      keepalive: true,
+    });
+  } catch (err) {
+    console.error("[signOut] Logout API call error:", err);
+  } finally {
+    // Re-verify cookie expiration
+    if (typeof window !== "undefined") {
+      clearAllAuthCookies();
+    }
   }
 }
 
@@ -226,6 +280,8 @@ function getCookie(name: string): string | null {
 
 export function updateClientSession(session: AuthSession): void {
   if (typeof window === "undefined") return;
+  if (isLoggingOutState()) return;
+
   try {
     if (!session || !session.isAuthenticated || !session.user?.id) {
       signOut();
@@ -266,56 +322,81 @@ export async function changePassword(
 }
 
 export function getClientSession(): AuthSession {
+  const unauthenticated: AuthSession = { user: null, token: null, isAuthenticated: false };
   if (typeof window === "undefined") {
-    return { user: null, token: null, isAuthenticated: false };
+    return unauthenticated;
+  }
+
+  if (isLoggingOutState()) {
+    return unauthenticated;
   }
 
   try {
     let raw = localStorage.getItem(SESSION_KEY);
-    if (!raw) {
-      const cookieVal = getCookie("manraah_session");
-      if (cookieVal && cookieVal !== "null" && cookieVal !== "undefined" && cookieVal.trim() !== "") {
+    const cookieVal = getCookie("manraah_session");
+
+    // Case 1: Both localStorage and cookie are absent -> Clean unauthenticated state
+    if ((!raw || raw === "null" || raw === "undefined" || raw.trim() === "") &&
+        (!cookieVal || cookieVal === "null" || cookieVal === "undefined" || cookieVal.trim() === "")) {
+      return unauthenticated;
+    }
+
+    // Case 2: localStorage has data, but cookie is absent -> Server or logout cleared cookie
+    // Stale localStorage MUST NOT restore authentication!
+    if (raw && (!cookieVal || cookieVal === "null" || cookieVal === "undefined" || cookieVal.trim() === "")) {
+      localStorage.removeItem(SESSION_KEY);
+      clearAllAuthCookies();
+      return unauthenticated;
+    }
+
+    // Case 3: Cookie has data, but localStorage is missing -> Hydrate from validated cookie
+    if ((!raw || raw === "null" || raw === "undefined" || raw.trim() === "") && cookieVal) {
+      try {
+        let cookieRaw = cookieVal;
         try {
-          const parsed = JSON.parse(cookieVal);
-          if (
-            parsed &&
-            parsed.isAuthenticated === true &&
-            parsed.user &&
-            parsed.user.id &&
-            typeof parsed.user.id === "string" &&
-            parsed.user.id.trim().length > 0
-          ) {
-            localStorage.setItem(SESSION_KEY, JSON.stringify(parsed));
-            raw = JSON.stringify(parsed);
-          } else {
-            clearAllAuthCookies();
-          }
-        } catch {
+          cookieRaw = decodeURIComponent(cookieRaw);
+        } catch {}
+        const parsedCookie = JSON.parse(cookieRaw);
+        if (
+          parsedCookie &&
+          parsedCookie.isAuthenticated === true &&
+          parsedCookie.user &&
+          parsedCookie.user.id &&
+          typeof parsedCookie.user.id === "string" &&
+          parsedCookie.user.id.trim().length > 0
+        ) {
+          localStorage.setItem(SESSION_KEY, JSON.stringify(parsedCookie));
+          return parsedCookie;
+        } else {
           clearAllAuthCookies();
+          return unauthenticated;
         }
+      } catch {
+        clearAllAuthCookies();
+        return unauthenticated;
       }
     }
 
-    if (!raw || raw === "null" || raw === "undefined" || raw.trim() === "") {
-      return { user: null, token: null, isAuthenticated: false };
+    // Case 4: Both localStorage and cookie are present -> Validate format
+    if (raw) {
+      const parsed = JSON.parse(raw) as AuthSession;
+      if (
+        !parsed ||
+        parsed.isAuthenticated !== true ||
+        !parsed.user ||
+        !parsed.user.id ||
+        typeof parsed.user.id !== "string" ||
+        parsed.user.id.trim().length === 0
+      ) {
+        localStorage.removeItem(SESSION_KEY);
+        clearAllAuthCookies();
+        return unauthenticated;
+      }
+      return parsed;
     }
 
-    const parsed = JSON.parse(raw) as AuthSession;
-    if (
-      !parsed ||
-      parsed.isAuthenticated !== true ||
-      !parsed.user ||
-      !parsed.user.id ||
-      typeof parsed.user.id !== "string" ||
-      parsed.user.id.trim().length === 0
-    ) {
-      localStorage.removeItem(SESSION_KEY);
-      clearAllAuthCookies();
-      return { user: null, token: null, isAuthenticated: false };
-    }
-
-    return parsed;
+    return unauthenticated;
   } catch {
-    return { user: null, token: null, isAuthenticated: false };
+    return unauthenticated;
   }
 }

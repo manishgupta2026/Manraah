@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import TherapistCard from "@/frontend/components/dashboard/therapists/TherapistCard";
 import { UnifiedTherapist, FALLBACK_THERAPISTS, normalizeTherapist } from "@/frontend/components/dashboard/therapists/types";
+import { useAuth } from "@/frontend/lib/context/AuthContext";
 
 const SPECIALTY_FILTERS = [
   "All",
@@ -43,6 +44,7 @@ function formatAppointmentTime(dateStr: string) {
 }
 
 export default function AppointmentsView() {
+  const { user, isAuthenticated } = useAuth();
   const [selectedSpecialty, setSelectedSpecialty] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [therapistsList, setTherapistsList] = useState<UnifiedTherapist[]>(FALLBACK_THERAPISTS);
@@ -64,6 +66,8 @@ export default function AppointmentsView() {
   const hasLoadedOnceRef = useRef(false);
   const isFetchingRef = useRef(false);
   const isMountedRef = useRef(true);
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const lastDataHashRef = useRef<{ upcoming: string; past: string }>({ upcoming: "", past: "" });
 
   const handleScrollToBooking = () => {
     if (bookingSectionRef.current) {
@@ -128,15 +132,36 @@ export default function AppointmentsView() {
     if (isFetchingRef.current) return;
     try {
       isFetchingRef.current = true;
-      if (isInitial || !hasLoadedOnceRef.current) {
+      // Only show full loading indicator if we haven't loaded any data yet
+      if (isInitial && !hasLoadedOnceRef.current) {
         setIsInitialLoading(true);
       }
-      const res = await fetch("/api/appointments");
+      const res = await fetch("/api/appointments", {
+        cache: "no-store",
+        headers: { "Cache-Control": "no-cache" },
+      });
       if (res.ok) {
         const data = await res.json();
         if (isMountedRef.current) {
-          setUpcomingList(Array.isArray(data.upcoming) ? data.upcoming : []);
-          setPastList(Array.isArray(data.past) ? data.past : []);
+          const newUpcoming = Array.isArray(data.upcoming) ? data.upcoming : [];
+          const newPast = Array.isArray(data.past) ? data.past : [];
+          const upcomingHash = JSON.stringify(newUpcoming);
+          const pastHash = JSON.stringify(newPast);
+
+          if (upcomingHash !== lastDataHashRef.current.upcoming) {
+            setUpcomingList(newUpcoming);
+            lastDataHashRef.current.upcoming = upcomingHash;
+          }
+          if (pastHash !== lastDataHashRef.current.past) {
+            setPastList(newPast);
+            lastDataHashRef.current.past = pastHash;
+          }
+          hasLoadedOnceRef.current = true;
+        }
+      } else if (res.status === 401) {
+        if (isMountedRef.current) {
+          setUpcomingList([]);
+          setPastList([]);
           hasLoadedOnceRef.current = true;
         }
       }
@@ -150,26 +175,40 @@ export default function AppointmentsView() {
     }
   }, []);
 
+  const debouncedFetch = useCallback(() => {
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+    debounceTimerRef.current = setTimeout(() => {
+      if (isMountedRef.current) {
+        fetchAppointments(false);
+      }
+    }, 250);
+  }, [fetchAppointments]);
+
   useEffect(() => {
     isMountedRef.current = true;
     fetchAppointments(true);
 
     const handleAuthChange = () => {
-      fetchAppointments(false);
+      debouncedFetch();
     };
 
     const handleAppointmentsUpdated = () => {
-      fetchAppointments(false);
+      debouncedFetch();
     };
 
     window.addEventListener("manraah_auth_changed", handleAuthChange);
     window.addEventListener("appointments-updated", handleAppointmentsUpdated);
     return () => {
       isMountedRef.current = false;
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
       window.removeEventListener("manraah_auth_changed", handleAuthChange);
       window.removeEventListener("appointments-updated", handleAppointmentsUpdated);
     };
-  }, [fetchAppointments]);
+  }, [fetchAppointments, debouncedFetch]);
 
   const filteredTherapists = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
@@ -291,7 +330,7 @@ export default function AppointmentsView() {
 
       if (res.ok) {
         setBookingSuccess(true);
-        await fetchAppointments();
+        await fetchAppointments(false);
         window.dispatchEvent(new Event("appointments-updated"));
         setTimeout(() => {
           setShowBookingModal(null);
@@ -318,7 +357,7 @@ export default function AppointmentsView() {
       });
 
       if (res.ok) {
-        await fetchAppointments();
+        await fetchAppointments(false);
         window.dispatchEvent(new Event("appointments-updated"));
       } else {
         alert("Unable to cancel appointment.");
@@ -487,89 +526,92 @@ export default function AppointmentsView() {
             </div>
           </div>
 
-          {isInitialLoading ? (
+          {isInitialLoading && !hasLoadedOnceRef.current ? (
             <div className="p-8 text-center text-xs text-[#789389] dark:text-[#76968D]">
               <div className="w-6 h-6 border-2 border-[#006C56] dark:border-[#00A889] border-t-transparent rounded-full animate-spin mx-auto mb-2" />
               Loading upcoming appointments...
             </div>
           ) : upcomingList.length > 0 ? (
             <div className="space-y-3">
-              {upcomingList.map((apt, index) => (
-                <div
-                  key={apt.id || `upcoming-apt-${index}`}
-                  className="p-5 rounded-2xl bg-[#F8FCFA] dark:bg-[#0E3931] border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] flex flex-col md:flex-row md:items-center justify-between gap-4"
-                >
-                  <div className="flex items-center gap-4 min-w-0">
-                    <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden border-2 border-white dark:border-[rgba(150,210,195,0.20)] shadow-xs shrink-0 bg-slate-100 dark:bg-[#082821]">
-                      <img
-                        src={apt.therapistImage || "/images/therapist_sarah.jpg"}
-                        alt={apt.therapistName || "Therapist"}
-                        className="w-full h-full object-cover"
-                        loading="lazy"
-                        onError={(e) => {
-                          const target = e.currentTarget;
-                          if (!target.src.includes("therapist_sarah.jpg")) {
-                            target.src = "/images/therapist_sarah.jpg";
-                          }
-                        }}
-                      />
-                    </div>
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <h3 className="text-sm sm:text-base font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
-                          {apt.therapistName}
-                        </h3>
-                        <span className="text-[9px] px-2 py-0.5 rounded-full bg-[#E6F4EA] dark:bg-[rgba(0,168,137,0.15)] text-[#137333] dark:text-[#73D8C4] font-bold capitalize">
-                          {apt.status || "Confirmed"}
-                        </span>
+              {upcomingList.map((apt, index) => {
+                const stableKey = apt.id || `upcoming-apt-${apt.therapistId || "doc"}-${apt.appointmentDate || index}`;
+                return (
+                  <div
+                    key={stableKey}
+                    id={`upcoming-appointment-card-${apt.id || index}`}
+                    className="p-5 rounded-2xl bg-[#F8FCFA] dark:bg-[#0E3931] border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] flex flex-col md:flex-row md:items-center justify-between gap-4"
+                  >
+                    <div className="flex items-center gap-4 min-w-0">
+                      <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden border-2 border-white dark:border-[rgba(150,210,195,0.20)] shadow-xs shrink-0 bg-slate-100 dark:bg-[#082821]">
+                        <img
+                          src={apt.therapistImage || "/images/therapist_sarah.jpg"}
+                          alt={apt.therapistName || "Therapist"}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            const target = e.currentTarget;
+                            if (!target.src.includes("therapist_sarah.jpg")) {
+                              target.src = "/images/therapist_sarah.jpg";
+                            }
+                          }}
+                        />
                       </div>
-                      <p className="text-xs text-[#6B857C] dark:text-[#9DB9B0] font-medium mt-0.5">
-                        {apt.therapistRole || "Clinical Psychologist"} • {apt.durationMinutes || 45} min {apt.sessionType || "1-on-1 Video Session"}
-                      </p>
-                      {apt.focusArea && (
-                        <p className="text-[11px] text-[#4F685F] dark:text-[#76968D] font-medium mt-0.5">
-                          Focus: {apt.focusArea}
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <h3 className="text-sm sm:text-base font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
+                            {apt.therapistName}
+                          </h3>
+                          <span className="text-[9px] px-2 py-0.5 rounded-full bg-[#E6F4EA] dark:bg-[rgba(0,168,137,0.15)] text-[#137333] dark:text-[#73D8C4] font-bold capitalize">
+                            {apt.status || "Confirmed"}
+                          </span>
+                        </div>
+                        <p className="text-xs text-[#6B857C] dark:text-[#9DB9B0] font-medium mt-0.5">
+                          {apt.therapistRole || "Clinical Psychologist"} • {apt.durationMinutes || 45} min {apt.sessionType || "1-on-1 Video Session"}
                         </p>
-                      )}
-                      <div className="flex flex-wrap items-center gap-3 mt-1.5 text-xs text-[#19332A] dark:text-[#F4FAF7] font-bold">
-                        <span className="flex items-center gap-1 text-[#006C56] dark:text-[#00A889]">
-                          📅 {formatAppointmentDate(apt.appointmentDate)}
-                        </span>
-                        <span className="flex items-center gap-1 text-[#006C56] dark:text-[#00A889]">
-                          ⏰ {formatAppointmentTime(apt.appointmentDate)}
-                        </span>
+                        {apt.focusArea && (
+                          <p className="text-[11px] text-[#4F685F] dark:text-[#76968D] font-medium mt-0.5">
+                            Focus: {apt.focusArea}
+                          </p>
+                        )}
+                        <div className="flex flex-wrap items-center gap-3 mt-1.5 text-xs text-[#19332A] dark:text-[#F4FAF7] font-bold">
+                          <span className="flex items-center gap-1 text-[#006C56] dark:text-[#00A889]">
+                            📅 {formatAppointmentDate(apt.appointmentDate)}
+                          </span>
+                          <span className="flex items-center gap-1 text-[#006C56] dark:text-[#00A889]">
+                            ⏰ {formatAppointmentTime(apt.appointmentDate)}
+                          </span>
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  {/* Actions */}
-                  <div className="flex flex-wrap items-center gap-2 pt-2 md:pt-0 shrink-0">
-                    <a
-                      href={apt.meetingLink || "#"}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="py-2.5 px-4 rounded-xl bg-[#004D3D] hover:bg-[#003B2E] dark:bg-[#008F78] dark:hover:bg-[#00A889] text-white text-xs font-bold shadow-sm transition-all flex items-center gap-1.5 cursor-pointer"
-                    >
-                      <span>📹</span>
-                      <span>Join Session</span>
-                    </a>
-                    <button
-                      type="button"
-                      onClick={() => alert("Reschedule requested. Our care coordinator will contact you shortly.")}
-                      className="py-2.5 px-3.5 rounded-xl bg-white dark:bg-[#082821] hover:bg-[#F2FAF6] dark:hover:bg-[#12463C] text-[#19332A] dark:text-[#F4FAF7] text-xs font-bold border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] transition-all cursor-pointer"
-                    >
-                      Reschedule
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleCancelAppointment(apt.id)}
-                      className="py-2.5 px-3.5 rounded-xl bg-white dark:bg-[#082821] hover:bg-rose-50 dark:hover:bg-rose-950/30 text-rose-600 dark:text-rose-400 text-xs font-bold border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] transition-all cursor-pointer"
-                    >
-                      Cancel
-                    </button>
+                    {/* Actions */}
+                    <div className="flex flex-wrap items-center gap-2 pt-2 md:pt-0 shrink-0">
+                      <a
+                        href={apt.meetingLink || "#"}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="py-2.5 px-4 rounded-xl bg-[#004D3D] hover:bg-[#003B2E] dark:bg-[#008F78] dark:hover:bg-[#00A889] text-white text-xs font-bold shadow-sm transition-all flex items-center gap-1.5 cursor-pointer"
+                      >
+                        <span>📹</span>
+                        <span>Join Session</span>
+                      </a>
+                      <button
+                        type="button"
+                        onClick={() => alert("Reschedule requested. Our care coordinator will contact you shortly.")}
+                        className="py-2.5 px-3.5 rounded-xl bg-white dark:bg-[#082821] hover:bg-[#F2FAF6] dark:hover:bg-[#12463C] text-[#19332A] dark:text-[#F4FAF7] text-xs font-bold border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] transition-all cursor-pointer"
+                      >
+                        Reschedule
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleCancelAppointment(apt.id)}
+                        className="py-2.5 px-3.5 rounded-xl bg-white dark:bg-[#082821] hover:bg-rose-50 dark:hover:bg-rose-950/30 text-rose-600 dark:text-rose-400 text-xs font-bold border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] transition-all cursor-pointer"
+                      >
+                        Cancel
+                      </button>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           ) : (
             <div className="p-8 rounded-2xl bg-[#F8FCFA] dark:bg-[#0E3931] border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] text-center space-y-2">
@@ -619,66 +661,69 @@ export default function AppointmentsView() {
             </div>
           </div>
 
-          {isInitialLoading ? (
+          {isInitialLoading && !hasLoadedOnceRef.current ? (
             <div className="p-8 text-center text-xs text-[#789389] dark:text-[#76968D]">
               <div className="w-6 h-6 border-2 border-[#006C56] dark:border-[#00A889] border-t-transparent rounded-full animate-spin mx-auto mb-2" />
               Loading past appointments...
             </div>
           ) : pastList.length > 0 ? (
             <div className="space-y-3">
-              {pastList.map((session, index) => (
-                <div
-                  key={session.id || `past-apt-${index}`}
-                  className="p-4 sm:p-5 rounded-2xl bg-[#F8FCFA] dark:bg-[#0E3931] border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] flex flex-col sm:flex-row sm:items-center justify-between gap-3.5"
-                >
-                  <div className="flex items-center gap-3.5 min-w-0">
-                    <div className="w-12 h-12 rounded-full overflow-hidden border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.20)] shrink-0 bg-slate-100 dark:bg-[#082821]">
-                      <img
-                        src={session.therapistImage || "/images/therapist_sarah.jpg"}
-                        alt={session.therapistName || "Therapist"}
-                        className="w-full h-full object-cover"
-                        loading="lazy"
-                        onError={(e) => {
-                          const target = e.currentTarget;
-                          if (!target.src.includes("therapist_sarah.jpg")) {
-                            target.src = "/images/therapist_sarah.jpg";
-                          }
-                        }}
-                      />
-                    </div>
-                    <div className="min-w-0 space-y-0.5">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <h3 className="text-xs sm:text-sm font-black text-[#19332A] dark:text-[#F4FAF7]">
-                          {session.therapistName}
-                        </h3>
-                        <span
-                          className={`text-[9px] px-2 py-0.5 rounded-full font-bold capitalize ${
-                            session.status === "cancelled"
-                              ? "bg-rose-100 dark:bg-rose-950/40 text-rose-700 dark:text-rose-400"
-                              : "bg-[#E6F4EA] dark:bg-[rgba(0,168,137,0.15)] text-[#137333] dark:text-[#73D8C4]"
-                          }`}
-                        >
-                          {session.status || "Completed"}
-                        </span>
-                      </div>
-                      <p className="text-[11px] text-[#4F685F] dark:text-[#9DB9B0] font-medium">
-                        {session.therapistRole || "Clinical Psychologist"} {session.focusArea ? `• ${session.focusArea}` : ""}
-                      </p>
-                      <p className="text-[9.5px] text-[#789389] dark:text-[#76968D]">
-                        📅 {formatAppointmentDate(session.appointmentDate)} • ⏰ {formatAppointmentTime(session.appointmentDate)}
-                      </p>
-                    </div>
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={() => handleBookAgain(session)}
-                    className="px-4 py-2 rounded-xl bg-white dark:bg-[#082821] text-[#006C56] dark:text-[#00A889] hover:bg-[#EAF6F0] dark:hover:bg-[#12463C] text-xs font-bold border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] transition-all cursor-pointer self-start sm:self-auto shrink-0 shadow-2xs hover:shadow-xs"
+              {pastList.map((session, index) => {
+                const stableKey = session.id || `past-apt-${session.therapistId || "doc"}-${session.appointmentDate || index}`;
+                return (
+                  <div
+                    key={stableKey}
+                    id={`past-appointment-card-${session.id || index}`}
+                    className="p-4 sm:p-5 rounded-2xl bg-[#F8FCFA] dark:bg-[#0E3931] border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] flex flex-col sm:flex-row sm:items-center justify-between gap-3.5"
                   >
-                    Book Again
-                  </button>
-                </div>
-              ))}
+                    <div className="flex items-center gap-3.5 min-w-0">
+                      <div className="w-12 h-12 rounded-full overflow-hidden border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.20)] shrink-0 bg-slate-100 dark:bg-[#082821]">
+                        <img
+                          src={session.therapistImage || "/images/therapist_sarah.jpg"}
+                          alt={session.therapistName || "Therapist"}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            const target = e.currentTarget;
+                            if (!target.src.includes("therapist_sarah.jpg")) {
+                              target.src = "/images/therapist_sarah.jpg";
+                            }
+                          }}
+                        />
+                      </div>
+                      <div className="min-w-0 space-y-0.5">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <h3 className="text-xs sm:text-sm font-black text-[#19332A] dark:text-[#F4FAF7]">
+                            {session.therapistName}
+                          </h3>
+                          <span
+                            className={`text-[9px] px-2 py-0.5 rounded-full font-bold capitalize ${
+                              session.status === "cancelled"
+                                ? "bg-rose-100 dark:bg-rose-950/40 text-rose-700 dark:text-rose-400"
+                                : "bg-[#E6F4EA] dark:bg-[rgba(0,168,137,0.15)] text-[#137333] dark:text-[#73D8C4]"
+                            }`}
+                          >
+                            {session.status || "Completed"}
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-[#4F685F] dark:text-[#9DB9B0] font-medium">
+                          {session.therapistRole || "Clinical Psychologist"} {session.focusArea ? `• ${session.focusArea}` : ""}
+                        </p>
+                        <p className="text-[9.5px] text-[#789389] dark:text-[#76968D]">
+                          📅 {formatAppointmentDate(session.appointmentDate)} • ⏰ {formatAppointmentTime(session.appointmentDate)}
+                        </p>
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => handleBookAgain(session)}
+                      className="px-4 py-2 rounded-xl bg-white dark:bg-[#082821] text-[#006C56] dark:text-[#00A889] hover:bg-[#EAF6F0] dark:hover:bg-[#12463C] text-xs font-bold border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] transition-all cursor-pointer self-start sm:self-auto shrink-0 shadow-2xs hover:shadow-xs"
+                    >
+                      Book Again
+                    </button>
+                  </div>
+                );
+              })}
             </div>
           ) : (
             <div className="p-8 rounded-2xl bg-[#F8FCFA] dark:bg-[#0E3931] border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] text-center space-y-2">

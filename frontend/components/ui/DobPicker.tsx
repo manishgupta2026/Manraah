@@ -199,9 +199,8 @@ export function DobPicker({
       <button
         type="button"
         onClick={() => setIsOpen(true)}
-        className="w-full p-3.5 pl-4 pr-10 rounded-2xl bg-surface-container-low border border-surface-variant/40 hover:border-primary/40 hover:bg-surface-container-lowest text-sm font-semibold text-on-surface transition-all flex items-center justify-between outline-none cursor-pointer shadow-xs"
+        className="relative w-full h-12 p-3.5 pl-4 pr-10 rounded-2xl bg-surface-container-low border border-surface-variant/40 hover:border-primary/40 hover:bg-surface-container-lowest text-sm font-semibold text-on-surface transition-all flex items-center justify-between outline-none cursor-pointer shadow-xs"
       >
-
         {formatDisplayValue() ? (
           <span className="font-bold text-on-surface flex items-center gap-2">
             <span>{formatDisplayValue()}</span>

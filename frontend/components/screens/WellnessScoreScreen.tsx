@@ -8,7 +8,7 @@ import { useAssessment } from "@/frontend/lib/context/AssessmentContext";
 import { getWellnessLevel, getWellnessMessage } from "@/frontend/lib/assessment/wellness";
 import { motion } from "framer-motion";
 import ScreenHeader from "@/frontend/components/ui/ScreenHeader";
-import { getClientSession, signOut } from "@/backend/auth/client";
+import { getClientSession, signOut, updateClientSession } from "@/backend/auth/client";
 import { AuthSession } from "@/backend/types";
 
 export default function WellnessScoreScreen() {
@@ -97,6 +97,7 @@ export default function WellnessScoreScreen() {
         localStorage.setItem("other_assessment_completed", "true");
         localStorage.setItem("other_show_security_immediately", "true");
       }
+
       const updatedSession = {
         ...session,
         user: {
@@ -104,9 +105,7 @@ export default function WellnessScoreScreen() {
           selectedCategory: targetCategory,
         }
       } as AuthSession;
-      localStorage.setItem("manraah_auth_session", JSON.stringify(updatedSession));
-      document.cookie = `manraah_session=${JSON.stringify(updatedSession)}; path=/; max-age=2592000`;
-      document.cookie = `userType=${targetCategory}; path=/; max-age=2592000`;
+      updateClientSession(updatedSession);
 
       router.push("/");
     } catch (err) {

@@ -6,8 +6,7 @@ import { useCategory } from "@/frontend/lib/context/CategoryContext";
 import { useAssessment } from "@/frontend/lib/context/AssessmentContext";
 import { UserCategory } from "@/backend/types";
 import { USER_CATEGORIES } from "@/frontend/lib/constants";
-import ScreenHeader from "@/frontend/components/ui/ScreenHeader";
-import { getClientSession } from "@/backend/auth/client";
+import { getClientSession, updateClientSession } from "@/backend/auth/client";
 
 export default function CategorySelection() {
   const router = useRouter();
@@ -54,10 +53,10 @@ export default function CategorySelection() {
 
         if (res.ok) {
           const resJson = await res.json();
-          // Update cookie session details in client
+          // Update session details in client
           if (resJson.user) {
             const updatedSession = { ...session, user: resJson.user };
-            document.cookie = `manraah_session=${JSON.stringify(updatedSession)}; path=/; max-age=86400`;
+            updateClientSession(updatedSession);
           }
         }
       } catch (err) {
@@ -157,4 +156,3 @@ export default function CategorySelection() {
     </div>
   );
 }
-

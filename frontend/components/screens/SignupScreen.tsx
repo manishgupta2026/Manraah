@@ -85,6 +85,7 @@ export default function SignupScreen() {
   // Step 2 Details
   const [dob, setDob] = useState("");
   const [gender, setGender] = useState("");
+  const [customGender, setCustomGender] = useState("");
   const [phone, setPhone] = useState("");
   const [country, setCountry] = useState("India");
 
@@ -153,6 +154,10 @@ export default function SignupScreen() {
       setError("Please select your gender identity.");
       return false;
     }
+    if (gender === "Custom" && !customGender.trim()) {
+      setError("Please enter your gender identity.");
+      return false;
+    }
     if (!country.trim()) {
       setError("Please select your country.");
       return false;
@@ -187,6 +192,8 @@ export default function SignupScreen() {
     setError(null);
     setLoading(true);
 
+    const finalGender = gender === "Custom" ? customGender.trim() : gender.trim();
+
     try {
       await signUp(
         fullName.trim(),
@@ -201,7 +208,7 @@ export default function SignupScreen() {
         phone.trim(),
         dob.trim(),
         country.trim(),
-        gender.trim()
+        finalGender
       );
 
       // Clean legacy cookies
@@ -427,7 +434,15 @@ export default function SignupScreen() {
                   <div>
                     <GenderSelect
                       value={gender}
-                      onChange={(val) => setGender(val)}
+                      onChange={(val) => {
+                        setGender(val);
+                        if (error) setError(null);
+                      }}
+                      customValue={customGender}
+                      onCustomChange={(val) => {
+                        setCustomGender(val);
+                        if (error) setError(null);
+                      }}
                     />
                   </div>
                 </div>

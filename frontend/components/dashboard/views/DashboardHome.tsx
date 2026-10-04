@@ -187,17 +187,27 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
 
     let isMounted = true;
     let hasLoadedRef = false;
+    let lastHash = "";
+    let debounceTimer: NodeJS.Timeout | null = null;
 
     async function loadUpcomingAppointment(isInitial = false) {
       try {
-        if (isInitial || !hasLoadedRef) {
+        if (isInitial && !hasLoadedRef) {
           setIsLoadingAppointment(true);
         }
-        const res = await fetch("/api/appointments/upcoming");
+        const res = await fetch("/api/appointments/upcoming", {
+          cache: "no-store",
+          headers: { "Cache-Control": "no-cache" },
+        });
         if (res.ok) {
           const data = await res.json();
           if (isMounted) {
-            setUpcomingAppointment(data.upcomingAppointment || null);
+            const nextApt = data.upcomingAppointment || null;
+            const newHash = JSON.stringify(nextApt);
+            if (newHash !== lastHash) {
+              setUpcomingAppointment(nextApt);
+              lastHash = newHash;
+            }
             hasLoadedRef = true;
           }
         } else {
@@ -220,12 +230,18 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
     loadUpcomingAppointment(true);
 
     const handleAppointmentsChange = () => {
-      loadUpcomingAppointment(false);
+      if (debounceTimer) clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => {
+        if (isMounted) {
+          loadUpcomingAppointment(false);
+        }
+      }, 250);
     };
 
     window.addEventListener("appointments-updated", handleAppointmentsChange);
     return () => {
       isMounted = false;
+      if (debounceTimer) clearTimeout(debounceTimer);
       window.removeEventListener("appointments-updated", handleAppointmentsChange);
     };
   }, [isUserAuthenticated]);
@@ -372,8 +388,8 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
                 Next Appointment
               </p>
               <p className="text-[11px] font-black text-[#19332A] dark:text-[#F4FAF7] leading-tight mt-0.5 truncate">
-                {isLoadingAppointment ? (
-                  <span className="text-[#789389] dark:text-[#9DB9B0] font-medium animate-pulse">Loading...</span>
+                {isLoadingAppointment && !upcomingAppointment ? (
+                  <span className="text-[#789389] dark:text-[#9DB9B0] font-medium">Loading...</span>
                 ) : upcomingAppointment ? (
                   formatAppointmentDisplay(upcomingAppointment.appointmentDate)
                 ) : (

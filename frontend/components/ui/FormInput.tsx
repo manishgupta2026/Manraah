@@ -39,14 +39,14 @@ export function FormInput({
 
       <div className="relative flex items-center">
         {icon && (
-          <span className="material-symbols-outlined absolute left-3.5 text-on-surface-variant/60 text-xl pointer-events-none select-none">
+          <span className="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-on-surface-variant/60 text-xl pointer-events-none select-none flex items-center justify-center">
             {icon}
           </span>
         )}
 
         <input
           type={inputType}
-          className={`w-full p-3.5 ${
+          className={`w-full h-12 p-3.5 ${
             icon ? "pl-11" : "pl-4"
           } ${isPassword ? "pr-11" : "pr-4"} rounded-2xl bg-surface-container-low border ${
             error
@@ -60,7 +60,7 @@ export function FormInput({
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3.5 text-on-surface-variant/70 hover:text-primary transition-colors p-1 rounded-lg focus:outline-none"
+            className="absolute right-3.5 top-1/2 -translate-y-1/2 text-on-surface-variant/70 hover:text-primary transition-colors p-1 rounded-lg focus:outline-none flex items-center justify-center"
             aria-label={showPassword ? "Hide password" : "Show password"}
           >
             <span className="material-symbols-outlined text-xl select-none">

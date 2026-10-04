@@ -138,7 +138,7 @@ export async function POST(request: Request) {
         ADD COLUMN IF NOT EXISTS phone VARCHAR(50),
         ADD COLUMN IF NOT EXISTS dob VARCHAR(50),
         ADD COLUMN IF NOT EXISTS country VARCHAR(100),
-        ADD COLUMN IF NOT EXISTS gender VARCHAR(50);
+        ADD COLUMN IF NOT EXISTS gender VARCHAR(100);
       `;
     } catch {
       // ignore if alter fails due to perms or existing

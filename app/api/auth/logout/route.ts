@@ -1,29 +1,29 @@
 import { NextResponse } from "next/server";
 
-export async function POST() {
+const COOKIE_NAMES = [
+  "manraah_session",
+  "userType",
+  "manraah_userType",
+  "manraah_auth_session",
+  "session",
+  "manraah_companion_session",
+  "next-auth.session-token",
+  "__Secure-next-auth.session-token",
+];
+
+function createLogoutResponse() {
   const response = NextResponse.json(
     { success: true, message: "Logged out successfully." },
     {
       headers: {
-        "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+        "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0",
         Pragma: "no-cache",
         Expires: "0",
       },
     }
   );
 
-  const cookieNames = [
-    "manraah_session",
-    "userType",
-    "manraah_userType",
-    "manraah_auth_session",
-    "session",
-    "manraah_companion_session",
-    "next-auth.session-token",
-    "__Secure-next-auth.session-token",
-  ];
-
-  cookieNames.forEach((name) => {
+  COOKIE_NAMES.forEach((name) => {
     // Delete with secure flag matching production
     response.cookies.set(name, "", {
       httpOnly: false,
@@ -42,10 +42,17 @@ export async function POST() {
       expires: new Date(0),
       path: "/",
     });
-    // Explicit cookie delete
+    // Explicit cookie delete API
     response.cookies.delete(name);
   });
 
   return response;
 }
 
+export async function POST() {
+  return createLogoutResponse();
+}
+
+export async function GET() {
+  return createLogoutResponse();
+}
