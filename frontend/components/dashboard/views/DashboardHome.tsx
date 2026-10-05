@@ -130,29 +130,39 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
   const [quoteIndex, setQuoteIndex] = useState(0);
   const [isSwitchProfileOpen, setIsSwitchProfileOpen] = useState(false);
   const [isSwitchingProfile, setIsSwitchingProfile] = useState(false);
+  const [selectingProfileId, setSelectingProfileId] = useState<string | null>(null);
+  const [switchProfileError, setSwitchProfileError] = useState<string | null>(null);
 
   const activeCategoryKey = normalizeCategoryKey(user?.selectedCategory || currentCategory);
 
   const handleSwitchCategory = async (targetCategoryId: string) => {
     if (isSwitchingProfile) return;
     setIsSwitchingProfile(true);
+    setSelectingProfileId(targetCategoryId);
+    setSwitchProfileError(null);
+
     try {
       const canonicalSlug = targetCategoryId.replace(/_/g, "-");
 
       // 1. Set cookie for SSR/client session sync
       document.cookie = `userType=${targetCategoryId}; path=/; max-age=2592000; SameSite=Lax`;
 
-      // 2. Update CategoryContext
-      setCategory(targetCategoryId as any);
-
-      // 3. Update persistent user profile if logged in
+      // 2. Update persistent user profile if logged in
       if (isUserAuthenticated) {
         await updateUser({
           selectedCategory: targetCategoryId as any,
         });
       }
 
-      // 4. Trigger context updates with the new canonical category slug
+      // 3. Update CategoryContext
+      setCategory(targetCategoryId as any);
+
+      // 4. Close the Switch Profile modal immediately after successful selection
+      setIsSwitchProfileOpen(false);
+      setSelectingProfileId(null);
+      setSwitchProfileError(null);
+
+      // 5. Trigger context updates with the new canonical category slug
       if (refetchScores) {
         await refetchScores(canonicalSlug);
       }
@@ -163,22 +173,22 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
         await refetchWellnessData(canonicalSlug);
       }
 
-      // 5. Dispatch global profile changed event
+      // 6. Dispatch global profile changed event
       if (typeof window !== "undefined") {
         window.dispatchEvent(
           new CustomEvent("manraah_profile_changed", { detail: { category: canonicalSlug } })
         );
       }
 
-      // 6. Close switcher modal
-      setIsSwitchProfileOpen(false);
-
-      // 7. Prompt assessment if needed for the new profile
+      // 7. Check backend status and trigger assessment prompt ONLY IF this specific profile has no assessment
       if (triggerProfilePrompt) {
-        triggerProfilePrompt(canonicalSlug);
+        await triggerProfilePrompt(canonicalSlug);
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error("Failed to switch active profile:", err);
+      // Keep modal open and show clear error message
+      setSwitchProfileError(err?.message || "Unable to switch profile. Please try again.");
+      setSelectingProfileId(null);
     } finally {
       setIsSwitchingProfile(false);
     }
@@ -624,7 +634,12 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
 
                 <button
                   type="button"
-                  onClick={() => !isSwitchingProfile && setIsSwitchProfileOpen(false)}
+                  onClick={() => {
+                    if (!isSwitchingProfile) {
+                      setIsSwitchProfileOpen(false);
+                      setSwitchProfileError(null);
+                    }
+                  }}
                   disabled={isSwitchingProfile}
                   className="w-8 h-8 rounded-full flex items-center justify-center text-[#789389] hover:text-[#19332A] dark:text-[#9DB9B0] dark:hover:text-[#F4FAF7] hover:bg-[#F0F5F2] dark:hover:bg-[#0E3931] transition-colors cursor-pointer shrink-0"
                   aria-label="Close"
@@ -633,10 +648,20 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
                 </button>
               </div>
 
+              {/* Error banner if backend update fails */}
+              {switchProfileError && (
+                <div className="p-3 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/50 text-rose-700 dark:text-rose-300 text-xs font-semibold flex items-center gap-2">
+                  <span className="material-symbols-outlined text-base shrink-0">error</span>
+                  <span>{switchProfileError}</span>
+                </div>
+              )}
+
               {/* Categories list */}
               <div className="space-y-2.5 max-h-[60vh] overflow-y-auto pr-0.5 custom-scrollbar">
                 {USER_CATEGORIES.map((cat) => {
                   const isCurrent = activeCategoryKey === normalizeCategoryKey(cat.id);
+                  const isSelectedForSwitch = selectingProfileId === cat.id;
+
                   return (
                     <button
                       key={cat.id}
@@ -644,16 +669,20 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
                       disabled={isSwitchingProfile}
                       onClick={() => handleSwitchCategory(cat.id)}
                       className={`w-full text-left p-3.5 sm:p-4 rounded-2xl border transition-all flex items-center gap-3.5 group cursor-pointer ${
-                        isCurrent
+                        isSelectedForSwitch
+                          ? "bg-[#EAF6F0] dark:bg-[rgba(0,168,137,0.25)] border-[#008968] dark:border-[#00A889] shadow-md ring-2 ring-[#008968]/30"
+                          : isCurrent
                           ? "bg-[#EAF6F0]/80 dark:bg-[rgba(0,168,137,0.15)] border-[#008968] dark:border-[#00A889] shadow-xs"
+                          : isSwitchingProfile
+                          ? "opacity-50 cursor-not-allowed bg-[#F8FAF9] dark:bg-[#0E3931] border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)]"
                           : "bg-[#F8FAF9] dark:bg-[#0E3931] hover:bg-white dark:hover:bg-[#12463C] border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] hover:border-[#008968]/50 dark:hover:border-[#00A889]/50 shadow-2xs hover:shadow-xs"
                       }`}
                     >
                       <div
-                        className={`w-11 h-11 rounded-xl flex items-center justify-center text-xl shrink-0 border transition-transform group-hover:scale-105 ${
-                          isCurrent
-                            ? "bg-white dark:bg-[#08221D] border-[#008968]/30 dark:border-[#00A889]/30 shadow-xs"
-                            : "bg-white dark:bg-[#0B3029] border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)]"
+                        className={`w-11 h-11 rounded-xl flex items-center justify-center text-xl shrink-0 border transition-transform ${
+                          isSelectedForSwitch || isCurrent
+                            ? "bg-white dark:bg-[#08221D] border-[#008968]/30 dark:border-[#00A889]/30 shadow-xs scale-105"
+                            : "bg-white dark:bg-[#0B3029] border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] group-hover:scale-105"
                         }`}
                       >
                         {cat.emoji}
@@ -664,11 +693,15 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
                           <h4 className="text-sm font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
                             {cat.name}
                           </h4>
-                          {isCurrent && (
+                          {isSelectedForSwitch ? (
+                            <span className="px-2 py-0.5 rounded-full text-[10px] font-heading font-black bg-[#006C56] dark:bg-[#00A889] text-white animate-pulse">
+                              Switching...
+                            </span>
+                          ) : isCurrent ? (
                             <span className="px-2 py-0.5 rounded-full text-[10px] font-heading font-black bg-[#006C56] dark:bg-[#00A889] text-white">
                               Active
                             </span>
-                          )}
+                          ) : null}
                         </div>
                         <p className="text-[11px] text-[#5A756C] dark:text-[#9DB9B0] line-clamp-2 mt-0.5 font-normal leading-relaxed">
                           {cat.desc}
@@ -676,7 +709,9 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
                       </div>
 
                       <div className="shrink-0 text-right">
-                        {isCurrent ? (
+                        {isSelectedForSwitch ? (
+                          <div className="w-5 h-5 border-2 border-[#006C56] dark:border-[#00A889] border-t-transparent rounded-full animate-spin" />
+                        ) : isCurrent ? (
                           <span className="material-symbols-outlined text-[#006C56] dark:text-[#73D8C4] text-xl">
                             check_circle
                           </span>
@@ -694,11 +729,14 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
               {/* Bottom footer notice */}
               <div className="pt-2 border-t border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] flex items-center justify-between text-[11px] text-[#789389] dark:text-[#9DB9B0]">
                 <span>
-                  {isSwitchingProfile ? "Updating active profile..." : "Switching updates your assessments & dashboard."}
+                  {isSwitchingProfile ? "Updating active profile..." : "Click any profile to select and switch automatically."}
                 </span>
                 <button
                   type="button"
-                  onClick={() => setIsSwitchProfileOpen(false)}
+                  onClick={() => {
+                    setIsSwitchProfileOpen(false);
+                    setSwitchProfileError(null);
+                  }}
                   disabled={isSwitchingProfile}
                   className="font-heading font-bold text-[#5A756C] hover:text-[#19332A] dark:text-[#9DB9B0] dark:hover:text-[#F4FAF7] cursor-pointer"
                 >
