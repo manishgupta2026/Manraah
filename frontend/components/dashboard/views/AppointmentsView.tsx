@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import TherapistCard from "@/frontend/components/dashboard/therapists/TherapistCard";
+import DoctorProfileModal from "@/frontend/components/dashboard/therapists/DoctorProfileModal";
 import { UnifiedTherapist, FALLBACK_THERAPISTS, normalizeTherapist } from "@/frontend/components/dashboard/therapists/types";
 import { useAuth } from "@/frontend/lib/context/AuthContext";
 
@@ -48,10 +49,11 @@ export default function AppointmentsView() {
   const [selectedSpecialty, setSelectedSpecialty] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [therapistsList, setTherapistsList] = useState<UnifiedTherapist[]>(FALLBACK_THERAPISTS);
-  const [showBookingModal, setShowBookingModal] = useState<UnifiedTherapist | null>(null);
-  const [selectedSlot, setSelectedSlot] = useState<string>("tomorrow");
-  const [isSubmittingBooking, setIsSubmittingBooking] = useState(false);
-  const [bookingSuccess, setBookingSuccess] = useState(false);
+
+  // Doctor Detail Profile & Booking Modal
+  const [selectedDoctorForProfile, setSelectedDoctorForProfile] = useState<UnifiedTherapist | null>(null);
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [modalInitialTab, setModalInitialTab] = useState<"profile" | "book" | "reviews">("profile");
 
   // Tab state: "upcoming" | "past" | null
   const [activeTab, setActiveTab] = useState<"upcoming" | "past" | null>("upcoming");
@@ -119,7 +121,9 @@ export default function AppointmentsView() {
             t.name.toLowerCase().includes(doctorParam.toLowerCase().replace(/[-_]/g, " "))
         );
         if (found) {
-          setShowBookingModal(found);
+          setSelectedDoctorForProfile(found);
+          setModalInitialTab("profile");
+          setIsProfileModalOpen(true);
           handleScrollToBooking();
         }
       }
@@ -263,10 +267,15 @@ export default function AppointmentsView() {
     });
   }, [therapistsList, searchQuery, selectedSpecialty]);
 
-  const handleBookSession = (therapist: UnifiedTherapist) => {
-    setShowBookingModal(therapist);
-    setSelectedSlot("tomorrow");
-    setBookingSuccess(false);
+  const handleBookSession = (therapist: UnifiedTherapist, tab: "profile" | "book" | "reviews" = "profile") => {
+    setSelectedDoctorForProfile(therapist);
+    setModalInitialTab(tab);
+    setIsProfileModalOpen(true);
+  };
+
+  const handleCloseProfileModal = () => {
+    setIsProfileModalOpen(false);
+    setSelectedDoctorForProfile(null);
   };
 
   const handleBookAgain = (session: any) => {
@@ -276,7 +285,7 @@ export default function AppointmentsView() {
         t.name.toLowerCase() === (session.therapistName || "").toLowerCase()
     );
     if (found) {
-      handleBookSession(found);
+      handleBookSession(found, "book");
     } else {
       handleBookSession(
         normalizeTherapist({
@@ -291,60 +300,9 @@ export default function AppointmentsView() {
           experience: "8+ yrs exp",
           availability: "Available tomorrow",
           hourlyRate: "₹1,800 / session",
-        })
-      );
-    }
-  };
-
-  const handleConfirmBooking = async () => {
-    if (!showBookingModal) return;
-
-    try {
-      setIsSubmittingBooking(true);
-      
-      const aptDate = new Date();
-      if (selectedSlot === "tomorrow") {
-        aptDate.setDate(aptDate.getDate() + 1);
-        aptDate.setHours(18, 0, 0, 0);
-      } else {
-        aptDate.setDate(aptDate.getDate() + 3);
-        aptDate.setHours(20, 30, 0, 0);
-      }
-
-      const focusTag = typeof showBookingModal.tags[0] === "string"
-        ? showBookingModal.tags[0]
-        : showBookingModal.tags[0]?.text || "General Mental Health";
-
-      const res = await fetch("/api/appointments", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          therapistId: showBookingModal.id,
-          therapistName: showBookingModal.name,
-          therapistRole: showBookingModal.role,
-          therapistImage: showBookingModal.profileImage || showBookingModal.image,
-          appointmentDate: aptDate.toISOString(),
-          focusArea: focusTag,
         }),
-      });
-
-      if (res.ok) {
-        setBookingSuccess(true);
-        await fetchAppointments(false);
-        window.dispatchEvent(new Event("appointments-updated"));
-        setTimeout(() => {
-          setShowBookingModal(null);
-          setBookingSuccess(false);
-          setActiveTab("upcoming");
-        }, 1200);
-      } else {
-        alert("Failed to book session. Please try again.");
-      }
-    } catch (err) {
-      console.error("Booking error:", err);
-      alert("Error booking appointment.");
-    } finally {
-      setIsSubmittingBooking(false);
+        "book"
+      );
     }
   };
 
@@ -906,104 +864,20 @@ export default function AppointmentsView() {
         )}
       </div>
 
-      {/* Booking Confirmation Modal */}
-      {showBookingModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-xs">
-          <div className="bg-white dark:bg-[#0B3029] rounded-3xl p-6 max-w-md w-full border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.15)] shadow-2xl space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)]">
-              <h3 className="text-base font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
-                Confirm Session Booking
-              </h3>
-              <button
-                onClick={() => setShowBookingModal(null)}
-                className="w-7 h-7 rounded-full bg-[#F4FAF7] dark:bg-[#0E3931] text-[#4F685F] dark:text-[#9DB9B0] flex items-center justify-center hover:bg-[#E2ECE6] dark:hover:bg-[#12463C] dark:hover:text-[#F4FAF7] transition-colors cursor-pointer text-xs"
-              >
-                ✕
-              </button>
-            </div>
-
-            {bookingSuccess ? (
-              <div className="py-6 text-center space-y-2">
-                <span className="text-4xl">🎉</span>
-                <h4 className="text-base font-black text-[#006C56] dark:text-[#00A889]">
-                  Session Successfully Booked!
-                </h4>
-                <p className="text-xs text-[#4F685F] dark:text-[#9DB9B0]">
-                  Confirmation details sent to your registered email.
-                </p>
-              </div>
-            ) : (
-              <>
-                <div className="flex items-center gap-3.5 p-3 rounded-2xl bg-[#F8FCFA] dark:bg-[#0E3931] border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)]">
-                  <img
-                    src={showBookingModal.profileImage || showBookingModal.image}
-                    alt={showBookingModal.name}
-                    className="w-12 h-12 rounded-full object-cover shrink-0 border border-transparent dark:border-[rgba(150,210,195,0.20)]"
-                  />
-                  <div>
-                    <h4 className="text-xs font-black text-[#19332A] dark:text-[#F4FAF7]">
-                      {showBookingModal.name}
-                    </h4>
-                    <p className="text-[10px] text-[#6B857C] dark:text-[#9DB9B0]">
-                      {showBookingModal.role}
-                    </p>
-                    <p className="text-[10px] font-bold text-[#006C56] dark:text-[#00A889] mt-0.5">
-                      {showBookingModal.hourlyRate || "₹1,800 / session"}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="space-y-2 text-xs">
-                  <p className="font-bold text-[#19332A] dark:text-[#F4FAF7]">Select Date &amp; Time:</p>
-                  <div className="grid grid-cols-2 gap-2">
-                    <button
-                      type="button"
-                      onClick={() => setSelectedSlot("tomorrow")}
-                      className={`p-2 rounded-xl text-center cursor-pointer transition-all ${
-                        selectedSlot === "tomorrow"
-                          ? "bg-[#EAF6F0] dark:bg-[#008F78] text-[#006C56] dark:text-white font-bold border border-[#006C56]/20 dark:border-[#008F78]"
-                          : "bg-[#F4F9F6] dark:bg-[#082821] text-[#4F685F] dark:text-[#9DB9B0] font-medium border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)]"
-                      }`}
-                    >
-                      Tomorrow, 06:00 PM
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setSelectedSlot("friday")}
-                      className={`p-2 rounded-xl text-center cursor-pointer transition-all ${
-                        selectedSlot === "friday"
-                          ? "bg-[#EAF6F0] dark:bg-[#008F78] text-[#006C56] dark:text-white font-bold border border-[#006C56]/20 dark:border-[#008F78]"
-                          : "bg-[#F4F9F6] dark:bg-[#082821] text-[#4F685F] dark:text-[#9DB9B0] font-medium border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)]"
-                      }`}
-                    >
-                      Friday, 08:30 PM
-                    </button>
-                  </div>
-                </div>
-
-                <div className="pt-2 flex items-center justify-end gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setShowBookingModal(null)}
-                    disabled={isSubmittingBooking}
-                    className="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 dark:text-[#9DB9B0] hover:bg-slate-100 dark:hover:bg-[#0E3931] dark:hover:text-[#F4FAF7] cursor-pointer"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleConfirmBooking}
-                    disabled={isSubmittingBooking}
-                    className="px-5 py-2.5 rounded-xl bg-[#004D3D] dark:bg-[#008F78] hover:bg-[#003B2E] dark:hover:bg-[#00A889] text-white text-xs font-bold shadow-sm cursor-pointer disabled:opacity-50"
-                  >
-                    {isSubmittingBooking ? "Scheduling..." : "Confirm & Schedule"}
-                  </button>
-                </div>
-              </>
-            )}
-          </div>
-        </div>
-      )}
+      {/* Comprehensive Doctor Profile, Reviews & Real-Time Booking Modal */}
+      <DoctorProfileModal
+        therapist={selectedDoctorForProfile}
+        isOpen={isProfileModalOpen}
+        initialTab={modalInitialTab}
+        onClose={handleCloseProfileModal}
+        onBookingSuccess={() => {
+          fetchAppointments(false);
+          setActiveTab("upcoming");
+        }}
+        onRatingSubmitted={() => {
+          fetchAppointments(false);
+        }}
+      />
     </div>
   );
 }

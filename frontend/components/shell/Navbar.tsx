@@ -175,7 +175,7 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
           : "bg-surface/95 backdrop-blur-md border-b border-surface-variant/30 text-on-surface"
       }`}
     >
-      <div className="h-full max-w-7xl mx-auto px-4 sm:px-6 w-full flex items-center justify-between lg:grid lg:grid-cols-[1fr_auto_1fr] relative z-30">
+      <div className="h-full max-w-7xl mx-auto px-4 sm:px-6 w-full flex items-center justify-between lg:grid lg:grid-cols-[1fr_auto_1fr] gap-6 xl:gap-8 relative z-30">
         {/* Brand Logo (Left Section - justify-self-start) */}
         <div className="flex items-center justify-start shrink-0 lg:justify-self-start">
           <Link href="/" className="flex items-center gap-2 group hover:opacity-90 transition-opacity shrink-0">
@@ -541,10 +541,10 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
         </nav>
 
         {/* Right: Actions & Mobile Toggle (justify-self-end) */}
-        <div className="flex items-center justify-end gap-2 sm:gap-3 lg:justify-self-end shrink-0">
+        <div className="flex items-center justify-end gap-3 sm:gap-4 lg:justify-self-end shrink-0 pl-3 lg:pl-6 xl:pl-8">
           {isAuthView ? (
-            /* Authenticated Header Controls (Dark Mode, Profile Dropdown, Crisis) */
-            <div className="flex items-center gap-2 sm:gap-2.5">
+            /* Authenticated Header Controls (Dark Mode, Profile Dropdown, Crisis) with consistent 18-24px breathing room */
+            <div className="flex items-center gap-4 sm:gap-5 lg:gap-5.5">
               {/* Theme / Dark Mode Toggle */}
               <button
                 onClick={toggleTheme}
@@ -562,7 +562,7 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                 <button
                   type="button"
                   onClick={() => setProfileDropdownOpen((prev) => !prev)}
-                  className="flex items-center gap-2 px-1.5 py-1 rounded-full bg-white/10 hover:bg-white/15 border border-white/15 focus:outline-none focus:ring-2 focus:ring-white/40 cursor-pointer transition-all"
+                  className="flex items-center gap-2 px-2 py-1 rounded-full bg-white/10 hover:bg-white/15 border border-white/15 focus:outline-none focus:ring-2 focus:ring-white/40 cursor-pointer transition-all"
                   aria-label="User profile menu"
                   aria-haspopup="true"
                   aria-expanded={profileDropdownOpen}
@@ -660,11 +660,11 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                 </AnimatePresence>
               </div>
 
-              {/* Crisis Button (on the right side of profile, shifted to the right) */}
+              {/* Crisis Button */}
               <button
                 type="button"
                 onClick={() => setIsCrisisModalOpen(true)}
-                className="flex items-center gap-1.5 px-3.5 sm:px-4 py-1.5 sm:py-2 ml-1 sm:ml-1.5 rounded-full font-heading font-extrabold text-sm sm:text-base transition-all cursor-pointer select-none shrink-0 bg-red-600/95 hover:bg-red-600 text-white border border-red-400/50 shadow-xs hover:shadow-sm"
+                className="flex items-center gap-1.5 px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full font-heading font-extrabold text-sm sm:text-base transition-all cursor-pointer select-none shrink-0 bg-red-600/95 hover:bg-red-600 text-white border border-red-400/50 shadow-xs hover:shadow-sm"
                 title="Crisis & 24/7 Helplines"
                 aria-label="Crisis"
               >

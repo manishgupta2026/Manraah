@@ -10,7 +10,6 @@ import { evaluateWellness } from "@/frontend/lib/assessment/wellness";
 import ScreenHeader from "@/frontend/components/ui/ScreenHeader";
 import { getClientSession, updateClientSession } from "@/backend/auth/client";
 
-
 function getQuestionEmoji(text: string): string {
   const lower = text.toLowerCase();
   if (lower.includes("happy") || lower.includes("calm") || lower.includes("balance") || lower.includes("emotion")) return "😊";

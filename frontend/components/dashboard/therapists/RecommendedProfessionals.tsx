@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import TherapistCarousel from "./TherapistCarousel";
-import DoctorRatingModal from "./DoctorRatingModal";
+import DoctorProfileModal from "./DoctorProfileModal";
 import { UnifiedTherapist, normalizeTherapist, FALLBACK_THERAPISTS } from "./types";
 
 interface RecommendedProfessionalsProps {
@@ -26,9 +26,10 @@ export default function RecommendedProfessionals({
   const [loading, setLoading] = useState<boolean>(!initialTherapists || initialTherapists.length === 0);
   const [error, setError] = useState<string | null>(null);
 
-  // Rating Modal state
-  const [selectedDoctorForRating, setSelectedDoctorForRating] = useState<UnifiedTherapist | null>(null);
-  const [isRatingModalOpen, setIsRatingModalOpen] = useState<boolean>(false);
+  // Doctor Detail Profile & Booking Modal state
+  const [selectedDoctor, setSelectedDoctor] = useState<UnifiedTherapist | null>(null);
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState<boolean>(false);
+  const [modalInitialTab, setModalInitialTab] = useState<"profile" | "book" | "reviews">("profile");
 
   const handleRatingUpdated = useCallback((updated: {
     doctorId: string;
@@ -48,7 +49,7 @@ export default function RecommendedProfessionals({
       })
     );
 
-    setSelectedDoctorForRating((prev) =>
+    setSelectedDoctor((prev) =>
       prev && prev.id === updated.doctorId
         ? { ...prev, rating: updated.averageRating, reviewCount: updated.totalRatings }
         : prev
@@ -117,18 +118,19 @@ export default function RecommendedProfessionals({
     };
   }, [initialTherapists]);
 
-  const handleOpenRatingModal = (therapist: UnifiedTherapist) => {
-    setSelectedDoctorForRating(therapist);
-    setIsRatingModalOpen(true);
+  const handleOpenDoctorProfile = (therapist: UnifiedTherapist, tab: "profile" | "book" | "reviews" = "profile") => {
+    setSelectedDoctor(therapist);
+    setModalInitialTab(tab);
+    setIsProfileModalOpen(true);
   };
 
-  const handleCloseRatingModal = () => {
-    setIsRatingModalOpen(false);
-    setSelectedDoctorForRating(null);
+  const handleCloseProfileModal = () => {
+    setIsProfileModalOpen(false);
+    setSelectedDoctor(null);
   };
 
   return (
-    <div className="bg-white dark:bg-[#0B3029] rounded-3xl p-5 sm:p-6 border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] shadow-2xs flex flex-col gap-4 sm:gap-5 transition-colors w-full min-w-0 overflow-hidden">
+    <div className="bg-white dark:bg-[#0B3029] rounded-3xl p-5 sm:p-6 border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] shadow-2xs flex flex-col gap-3 sm:gap-3.5 transition-colors w-full min-w-0 overflow-hidden">
       {/* Section Header */}
       <div className="flex items-center justify-between gap-3">
         {/* Left: Icon and Title */}
@@ -183,7 +185,7 @@ export default function RecommendedProfessionals({
 
       {/* Main Content Area */}
       {loading ? (
-        /* Loading Skeleton (3 equal-height placeholder cards) */
+        /* Loading Skeleton */
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-stretch">
           {[1, 2, 3].map((n) => (
             <div
@@ -236,17 +238,23 @@ export default function RecommendedProfessionals({
         <TherapistCarousel
           therapists={items}
           onNavigate={onNavigate}
-          onBook={onBook}
-          onOpenRatingModal={handleOpenRatingModal}
+          onBook={(t) => handleOpenDoctorProfile(t, "profile")}
+          onOpenRatingModal={(t) => handleOpenDoctorProfile(t, "reviews")}
         />
       )}
 
-      {/* Doctor Rating & Feedback Modal */}
-      <DoctorRatingModal
-        therapist={selectedDoctorForRating}
-        isOpen={isRatingModalOpen}
-        onClose={handleCloseRatingModal}
+      {/* Comprehensive Doctor Profile, Reviews & Real-Time Booking Modal */}
+      <DoctorProfileModal
+        therapist={selectedDoctor}
+        isOpen={isProfileModalOpen}
+        initialTab={modalInitialTab}
+        onClose={handleCloseProfileModal}
         onRatingSubmitted={handleRatingUpdated}
+        onBookingSuccess={() => {
+          if (onNavigate) {
+            // Optional callback
+          }
+        }}
       />
     </div>
   );

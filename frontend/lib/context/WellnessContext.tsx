@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react";
 import { getClientSession } from "@/backend/auth/client";
+import { useCategory } from "@/frontend/lib/context/CategoryContext";
 
 export interface WellnessState {
   user: {
@@ -67,8 +68,8 @@ interface WellnessContextType {
   insights: any | null;
   openCheckInModal: () => void;
   closeCheckInModal: () => void;
-  refetchWellnessData: () => Promise<void>;
-  refetchDashboardData: () => Promise<void>;
+  refetchWellnessData: (categorySlug?: string) => Promise<void>;
+  refetchDashboardData: (categorySlug?: string) => Promise<void>;
   performDailyCheckIn: () => Promise<any>;
   submitCheckIn: (data: {
     mood: string;
@@ -86,7 +87,27 @@ interface WellnessContextType {
 
 const WellnessContext = createContext<WellnessContextType | undefined>(undefined);
 
+function normalizeCategorySlug(raw?: string | null): string {
+  if (!raw) return "working-professional";
+  const s = raw.trim().toLowerCase().replace(/_/g, "-");
+  if (s === "student" || s === "academic") return "student";
+  if (s === "parent" || s === "parents") return "parent";
+  if (s === "couple" || s === "couples") return "couple";
+  if (
+    s === "working-professional" ||
+    s === "workingprofessional" ||
+    s === "young-pro" ||
+    s === "youngpro" ||
+    s === "work" ||
+    s === "career"
+  ) {
+    return "working-professional";
+  }
+  return "other";
+}
+
 export function WellnessProvider({ children }: { children: ReactNode }) {
+  const { category: activeContextCategory } = useCategory();
   const [wellnessData, setWellnessData] = useState<WellnessState | null>(null);
   const [historyList, setHistoryList] = useState<any[]>([]);
   const [journeyInsights, setJourneyInsights] = useState<any | null>(null);
@@ -97,7 +118,7 @@ export function WellnessProvider({ children }: { children: ReactNode }) {
   const openCheckInModal = () => setIsCheckInModalOpen(true);
   const closeCheckInModal = () => setIsCheckInModalOpen(false);
 
-  const fetchWellness = useCallback(async () => {
+  const fetchWellness = useCallback(async (overrideCategory?: string) => {
     const session = getClientSession();
     if (!session?.isAuthenticated || !session?.user?.id) {
       setWellnessData(null);
@@ -107,8 +128,12 @@ export function WellnessProvider({ children }: { children: ReactNode }) {
       return;
     }
 
+    const currentCat = normalizeCategorySlug(
+      overrideCategory || session?.user?.selectedCategory || activeContextCategory || "student"
+    );
+
     try {
-      const res = await fetch("/api/checkins");
+      const res = await fetch(`/api/checkins?category=${currentCat}`);
       if (res.ok) {
         const data = await res.json();
         const currentSession = getClientSession();
@@ -120,7 +145,7 @@ export function WellnessProvider({ children }: { children: ReactNode }) {
           return;
         }
 
-        const currentStreak = typeof data.currentStreak === "number" ? data.currentStreak : (u?.streakDays ?? 0);
+        const currentStreak = typeof data.currentStreak === "number" ? data.currentStreak : 0;
         const longestStreak = typeof data.longestStreak === "number" ? data.longestStreak : currentStreak;
         const hasCheckedInToday = Boolean(data.hasCheckedInToday || data.todayCheckin);
 
@@ -133,7 +158,7 @@ export function WellnessProvider({ children }: { children: ReactNode }) {
             name: u.name || u.sanctuaryName || "",
             sanctuaryName: u.sanctuaryName || u.name || "",
             email: u.email || "",
-            selectedCategory: u.selectedCategory || "student",
+            selectedCategory: currentCat,
             streakDays: currentStreak,
             mindfulnessMinutes: u.mindfulnessMinutes || 0,
             currentMood: data.todayCheckin?.mood || u.currentMood || "Calm",
@@ -160,7 +185,7 @@ export function WellnessProvider({ children }: { children: ReactNode }) {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [activeContextCategory]);
 
   useEffect(() => {
     fetchWellness();
@@ -180,18 +205,26 @@ export function WellnessProvider({ children }: { children: ReactNode }) {
       }
     };
 
+    const handleProfileChange = (event: Event) => {
+      const customEvent = event as CustomEvent<{ category?: string }>;
+      const cat = customEvent.detail?.category;
+      fetchWellness(cat);
+    };
+
     window.addEventListener("manraah_auth_changed", handleAuthChange);
-    window.addEventListener("storage", fetchWellness);
+    window.addEventListener("manraah_profile_changed", handleProfileChange);
+    window.addEventListener("storage", () => fetchWellness());
 
     return () => {
       window.removeEventListener("manraah_auth_changed", handleAuthChange);
-      window.removeEventListener("storage", fetchWellness);
+      window.removeEventListener("manraah_profile_changed", handleProfileChange);
+      window.removeEventListener("storage", () => fetchWellness());
     };
   }, [fetchWellness]);
 
-  const refetchWellnessData = async () => {
+  const refetchWellnessData = async (categorySlug?: string) => {
     setIsLoading(true);
-    await fetchWellness();
+    await fetchWellness(categorySlug);
   };
 
   const submitCheckIn = async (checkInData: {
@@ -210,11 +243,13 @@ export function WellnessProvider({ children }: { children: ReactNode }) {
     setIsCheckingIn(true);
     try {
       const session = getClientSession();
-      const currentCategory =
+      const currentCategory = normalizeCategorySlug(
         checkInData.category ||
         checkInData.categoryId ||
         session?.user?.selectedCategory ||
-        null;
+        activeContextCategory ||
+        "working-professional"
+      );
 
       const payload = {
         ...checkInData,
@@ -239,6 +274,7 @@ export function WellnessProvider({ children }: { children: ReactNode }) {
         mood: checkInData.mood,
         note: checkInData.note || checkInData.reflection || "",
         category: currentCategory,
+        checkinDate: new Date().toISOString().split("T")[0],
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
@@ -268,7 +304,7 @@ export function WellnessProvider({ children }: { children: ReactNode }) {
       });
 
       // Background refetch to sync all metrics
-      fetchWellness();
+      fetchWellness(currentCategory);
 
       return updatedRecord;
     } catch (err) {

@@ -3,8 +3,7 @@ import { getAuthSessionFromRequest } from "@/backend/auth/session";
 import { sql } from "@/backend/db/client";
 import { getCalendarDayString } from "@/backend/lib/date-utils";
 import { calculateCheckinStreak } from "@/backend/lib/streak-utils";
-import { normalizeCategorySlug, getWellnessLevelInfo } from "@/backend/lib/wellness-score-calc";
-import { submitWellnessAssessment } from "@/backend/queries/wellness";
+import { normalizeCategorySlug } from "@/backend/lib/wellness-score-calc";
 
 export const dynamic = "force-dynamic";
 
@@ -47,8 +46,19 @@ async function ensureCheckinSchema() {
         ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
     `;
 
+    // Drop legacy non-category constraints/indexes if present and create category-scoped index
+    try {
+      await sql`ALTER TABLE daily_checkins DROP CONSTRAINT IF EXISTS unique_user_daily_checkin_date`;
+      await sql`ALTER TABLE daily_checkins DROP CONSTRAINT IF EXISTS idx_user_checkin_date`;
+      await sql`DROP INDEX IF EXISTS idx_user_checkin_date`;
+      await sql`DROP INDEX IF EXISTS unique_user_daily_checkin_date`;
+    } catch {
+      // ignore
+    }
+
     await sql`
-      CREATE UNIQUE INDEX IF NOT EXISTS idx_user_checkin_date ON daily_checkins(user_id, checkin_date)
+      CREATE UNIQUE INDEX IF NOT EXISTS idx_user_category_checkin_date 
+      ON daily_checkins(user_id, COALESCE(category, 'general'), checkin_date)
     `;
   } catch (e) {
     // Non-fatal
@@ -63,55 +73,104 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const { searchParams } = new URL(req.url);
+  const rawCategory = searchParams.get("category") || searchParams.get("profileId") || null;
+  const targetCategory = rawCategory ? normalizeCategorySlug(rawCategory) : null;
   const todayDateStr = getCalendarDayString(new Date());
 
   try {
     await ensureCheckinSchema();
 
-    // Fetch all distinct check-in dates for deterministic streak calculation
-    const allDatesRes = await sql`
-      SELECT DISTINCT checkin_date, created_at
-      FROM daily_checkins
-      WHERE user_id = ${userId}
-      ORDER BY checkin_date DESC
-    `;
+    // 1. Fetch check-in dates for deterministic streak calculation (filtered by category if requested)
+    let allDatesRes;
+    if (targetCategory) {
+      allDatesRes = await sql`
+        SELECT DISTINCT checkin_date, created_at
+        FROM daily_checkins
+        WHERE user_id = ${userId}
+          AND (category = ${targetCategory} OR category IS NULL)
+        ORDER BY checkin_date DESC
+      `;
+    } else {
+      allDatesRes = await sql`
+        SELECT DISTINCT checkin_date, created_at
+        FROM daily_checkins
+        WHERE user_id = ${userId}
+        ORDER BY checkin_date DESC
+      `;
+    }
 
     const allDates = allDatesRes.map((r: any) => r.checkin_date || r.created_at);
     const { currentStreak, longestStreak, hasCheckedInToday } = calculateCheckinStreak(allDates);
 
-    // Fetch check-in records for history & My Journey
-    const checkins = await sql`
-      SELECT 
-        id, 
-        user_id, 
-        mood, 
-        category,
-        wellness_score as "wellnessScore",
-        note, 
-        reflection,
-        answers_json as answers,
-        checkin_date as "checkinDate",
-        created_at as "createdAt",
-        updated_at as "updatedAt"
-      FROM daily_checkins
-      WHERE user_id = ${userId}
-      ORDER BY checkin_date DESC, created_at DESC
-      LIMIT 60
-    `;
+    // 2. Fetch check-in records for history
+    let checkins;
+    if (targetCategory) {
+      checkins = await sql`
+        SELECT 
+          id, 
+          user_id, 
+          mood, 
+          category,
+          wellness_score as "wellnessScore",
+          note, 
+          reflection,
+          answers_json as answers,
+          checkin_date as "checkinDate",
+          created_at as "createdAt",
+          updated_at as "updatedAt"
+        FROM daily_checkins
+        WHERE user_id = ${userId}
+          AND (category = ${targetCategory} OR category IS NULL)
+        ORDER BY checkin_date DESC, created_at DESC
+        LIMIT 60
+      `;
+    } else {
+      checkins = await sql`
+        SELECT 
+          id, 
+          user_id, 
+          mood, 
+          category,
+          wellness_score as "wellnessScore",
+          note, 
+          reflection,
+          answers_json as answers,
+          checkin_date as "checkinDate",
+          created_at as "createdAt",
+          updated_at as "updatedAt"
+        FROM daily_checkins
+        WHERE user_id = ${userId}
+        ORDER BY checkin_date DESC, created_at DESC
+        LIMIT 60
+      `;
+    }
 
-    // Also check if there are recent category wellness assessments if wellnessScore is null on checkin
-    const latestAssessments = await sql`
-      SELECT category_id, score, completed_at
-      FROM wellness_assessments
-      WHERE user_id = ${userId}
-      ORDER BY completed_at DESC
-      LIMIT 10
-    `;
+    // 3. Category-scoped wellness assessments for attaching scores
+    let latestAssessments;
+    if (targetCategory) {
+      latestAssessments = await sql`
+        SELECT category_id, score, completed_at
+        FROM wellness_assessments
+        WHERE user_id = ${userId}
+          AND category_id = ${targetCategory}
+        ORDER BY completed_at DESC
+        LIMIT 10
+      `;
+    } else {
+      latestAssessments = await sql`
+        SELECT category_id, score, completed_at
+        FROM wellness_assessments
+        WHERE user_id = ${userId}
+        ORDER BY completed_at DESC
+        LIMIT 10
+      `;
+    }
 
     const formattedHistory = checkins.map((c: any) => {
       let score = c.wellnessScore;
       const rawCat = c.category && String(c.category).trim() ? String(c.category).trim() : null;
-      const checkinCat = rawCat ? normalizeCategorySlug(rawCat) : null;
+      const checkinCat = rawCat ? normalizeCategorySlug(rawCat) : (targetCategory || null);
 
       if (typeof score !== "number" && checkinCat) {
         const matchingAssess = latestAssessments.find((a: any) => {
@@ -240,8 +299,8 @@ export async function POST(req: Request) {
 
     const rawMood = body.mood || "Calm";
     const noteText = (body.note || body.reflection || "").trim();
-    const rawCategory = body.category || body.categoryId || session.user?.selectedCategory || null;
-    const checkinCategory = rawCategory ? normalizeCategorySlug(rawCategory) : null;
+    const rawCategory = body.category || body.categoryId || session.user?.selectedCategory || "working-professional";
+    const checkinCategory = normalizeCategorySlug(rawCategory);
     const todayDateStr = getCalendarDayString(new Date());
 
     // Ensure user exists in users table to prevent FK constraint errors
@@ -254,7 +313,7 @@ export async function POST(req: Request) {
             ${userId}, 
             ${session.user?.name || "Manraah Member"}, 
             ${session.user?.email || `${userId}@manraah.app`}, 
-            ${checkinCategory || "working-professional"}
+            ${checkinCategory}
           )
           ON CONFLICT (id) DO NOTHING
         `;
@@ -263,54 +322,73 @@ export async function POST(req: Request) {
       // Non-fatal
     }
 
-    // 1. Single atomic upsert into daily_checkins for today
-    const upsertRes = await sql`
-      INSERT INTO daily_checkins (
-        user_id, 
-        category,
-        mood, 
-        energy_level,
-        sleep_quality,
-        stress,
-        work_life_balance,
-        note, 
-        reflection, 
-        checkin_date, 
-        created_at, 
-        updated_at
-      ) VALUES (
-        ${userId}, 
-        ${checkinCategory},
-        ${rawMood}, 
-        4,
-        4,
-        'Manageable',
-        3,
-        ${noteText || null}, 
-        ${noteText || null}, 
-        ${todayDateStr}, 
-        CURRENT_TIMESTAMP, 
-        CURRENT_TIMESTAMP
-      )
-      ON CONFLICT (user_id, checkin_date) DO UPDATE SET
-        mood = EXCLUDED.mood,
-        category = COALESCE(EXCLUDED.category, daily_checkins.category),
-        note = COALESCE(EXCLUDED.note, daily_checkins.note),
-        reflection = COALESCE(EXCLUDED.reflection, daily_checkins.reflection),
-        updated_at = CURRENT_TIMESTAMP
-      RETURNING id, user_id, category, mood, note, reflection, checkin_date, created_at, updated_at
+    // Check if check-in for this user + category + date already exists
+    const existingCheckin = await sql`
+      SELECT id, user_id, category, mood, note, reflection, checkin_date, created_at, updated_at
+      FROM daily_checkins
+      WHERE user_id = ${userId}
+        AND category = ${checkinCategory}
+        AND checkin_date = ${todayDateStr}
+      LIMIT 1
     `;
 
-    const savedRecord = upsertRes[0];
+    let savedRecord;
+    if (existingCheckin.length > 0) {
+      const updated = await sql`
+        UPDATE daily_checkins
+        SET 
+          mood = ${rawMood},
+          note = COALESCE(${noteText || null}, note),
+          reflection = COALESCE(${noteText || null}, reflection),
+          updated_at = CURRENT_TIMESTAMP
+        WHERE id = ${existingCheckin[0].id}
+        RETURNING id, user_id, category, mood, note, reflection, checkin_date, created_at, updated_at
+      `;
+      savedRecord = updated[0];
+    } else {
+      const inserted = await sql`
+        INSERT INTO daily_checkins (
+          user_id, 
+          category,
+          mood, 
+          energy_level,
+          sleep_quality,
+          stress,
+          work_life_balance,
+          note, 
+          reflection, 
+          checkin_date, 
+          created_at, 
+          updated_at
+        ) VALUES (
+          ${userId}, 
+          ${checkinCategory},
+          ${rawMood}, 
+          4,
+          4,
+          'Manageable',
+          3,
+          ${noteText || null}, 
+          ${noteText || null}, 
+          ${todayDateStr}, 
+          CURRENT_TIMESTAMP, 
+          CURRENT_TIMESTAMP
+        )
+        RETURNING id, user_id, category, mood, note, reflection, checkin_date, created_at, updated_at
+      `;
+      savedRecord = inserted[0];
+    }
+
     const savedId = savedRecord?.id;
     const createdAt = savedRecord?.created_at || new Date();
     const savedCategory = savedRecord?.category || checkinCategory;
 
-    // 2. Deterministically recalculate streak from all check-in dates
+    // Recalculate streak strictly for this category's records
     const allDatesRes = await sql`
       SELECT DISTINCT checkin_date
       FROM daily_checkins
       WHERE user_id = ${userId}
+        AND (category = ${checkinCategory} OR category IS NULL)
       ORDER BY checkin_date DESC
       LIMIT 100
     `;
@@ -318,7 +396,7 @@ export async function POST(req: Request) {
     const allDates = allDatesRes.map((r: any) => r.checkin_date);
     const { currentStreak, longestStreak } = calculateCheckinStreak(allDates);
 
-    // 3. Update users table and user_streaks table concurrently
+    // Sync streak and current mood
     try {
       await Promise.all([
         sql`
@@ -368,4 +446,3 @@ export async function POST(req: Request) {
     );
   }
 }
-

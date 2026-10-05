@@ -183,10 +183,10 @@ export default function WellnessCompanionPanel({ onCheckCondition }: WellnessCom
       </div>
 
       {/* 2. Your Wellness Score Card */}
-      <div className="bg-white dark:bg-[#0B3029] rounded-3xl p-4 sm:p-5 border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] shadow-2xs flex flex-col justify-between min-h-[320px] sm:min-h-[345px] transition-colors">
-        {/* Top: Compact Header */}
-        <div className="flex items-center gap-2.5">
-          <div className="w-7.5 h-7.5 rounded-2xl bg-[#EAF6F0] dark:bg-[rgba(0,168,137,0.15)] text-[#006C56] dark:text-[#00A889] flex items-center justify-center shrink-0">
+      <div className="bg-[#EAF5EF] dark:bg-[#0B3029] rounded-3xl p-4 sm:p-5 border border-[#D2E8DC] dark:border-[rgba(150,210,195,0.12)] text-center flex flex-col justify-between min-h-[330px] sm:min-h-[355px] shadow-2xs transition-colors">
+        {/* Top: Header Group */}
+        <div className="flex items-center gap-2.5 text-left w-full">
+          <div className="w-8 h-8 rounded-2xl bg-[#DDF0E6] dark:bg-[#0E3931] text-[#006C56] dark:text-[#00A889] border border-[#CDE5D8] dark:border-[rgba(150,210,195,0.12)] flex items-center justify-center shrink-0">
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
             </svg>
@@ -195,32 +195,63 @@ export default function WellnessCompanionPanel({ onCheckCondition }: WellnessCom
             <h3 className="text-xs sm:text-sm font-heading font-black text-[#19332A] dark:text-[#F4FAF7] leading-tight truncate">
               Your Wellness Score
             </h3>
-            <p className="text-[9.5px] text-[#789389] dark:text-[#9DB9B0] font-medium leading-tight mt-0.5 truncate">
+            <p className="text-[9.5px] text-[#5A756C] dark:text-[#9DB9B0] font-medium leading-tight mt-0.5 truncate">
               Based on your latest check
             </p>
           </div>
         </div>
 
-        {/* Center: Main Score as the Primary Visual Focus */}
-        <div className="flex-1 flex flex-col items-center justify-center text-center my-2 space-y-1.5">
-          {/* Main Score Number */}
-          <div className="flex items-baseline justify-center gap-1.5">
-            <span className="text-4xl sm:text-[42px] font-heading font-black text-[#19332A] dark:text-[#E8F8F3] tracking-tight leading-none">
-              {isCurrentAssessed && currentScore !== null ? currentScore : "--"}
-            </span>
-            <span className="text-sm sm:text-base font-bold text-[#789389] dark:text-[#9DB9B0]">
-              /100
-            </span>
+        {/* Center: Circular Score Progress Indicator as Primary Visual Focus */}
+        <div className="flex-1 flex flex-col items-center justify-center text-center my-2.5 space-y-2">
+          {/* Circular Score Ring */}
+          <div className="relative w-[114px] h-[114px] sm:w-[124px] sm:h-[124px] flex items-center justify-center shrink-0">
+            <svg className="w-full h-full -rotate-90 transform" viewBox="0 0 120 120">
+              {/* Background Circular Track */}
+              <circle
+                cx="60"
+                cy="60"
+                r="48"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="7.5"
+                className="text-[#D2E8DC] dark:text-[#0E3931]"
+              />
+              {/* Dynamic Progress Ring */}
+              {isCurrentAssessed && currentScore !== null && (
+                <circle
+                  cx="60"
+                  cy="60"
+                  r="48"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="7.5"
+                  strokeLinecap="round"
+                  strokeDasharray={301.59}
+                  strokeDashoffset={301.59 - (Math.min(Math.max(currentScore, 0), 100) / 100) * 301.59}
+                  className="text-[#006C56] dark:text-[#00A889] transition-all duration-1000 ease-out"
+                />
+              )}
+            </svg>
+
+            {/* Centered Score Value */}
+            <div className="absolute inset-0 flex flex-col items-center justify-center text-center select-none pointer-events-none">
+              <span className="text-3xl sm:text-[35px] font-heading font-black text-[#19332A] dark:text-[#F4FAF7] leading-none tracking-tight">
+                {isCurrentAssessed && currentScore !== null ? currentScore : "--"}
+              </span>
+              <span className="text-[11px] sm:text-xs font-bold text-[#5A756C] dark:text-[#9DB9B0] mt-1 leading-none">
+                /100
+              </span>
+            </div>
           </div>
 
-          {/* Status Label & Short Meaning Explanation */}
-          <div className="space-y-0.5 pt-0.5">
+          {/* Status Label & Short Meaning */}
+          <div className="space-y-0.5">
             <h4 className="text-xs sm:text-sm font-black text-[#006C56] dark:text-[#00A889] leading-tight">
-              {isCurrentAssessed && currentScore !== null ? "Overall Wellness Score" : "Not Assessed Yet"}
+              {isCurrentAssessed && currentScore !== null ? "Wellness Score" : "Not Assessed Yet"}
             </h4>
-            <p className="text-[11px] text-[#6B857C] dark:text-[#9DB9B0] font-medium leading-relaxed max-w-[240px]">
+            <p className="text-[10.5px] sm:text-[11px] text-[#5A756C] dark:text-[#9DB9B0] font-medium leading-relaxed max-w-[230px]">
               {isCurrentAssessed && currentScore !== null
-                ? "Your overall wellness score based on your latest assessment."
+                ? "Based on your latest assessment."
                 : "Complete a wellness check to see your score."}
             </p>
           </div>
@@ -237,7 +268,7 @@ export default function WellnessCompanionPanel({ onCheckCondition }: WellnessCom
                 openAssessment(currentCategory);
               }
             }}
-            className="w-full py-2.5 sm:py-3 px-4 rounded-full bg-[#EAF6F0] hover:bg-[#D9EFE4] dark:bg-[#0E3931] dark:hover:bg-[#12463C] text-[#006C56] dark:text-[#73D8C4] text-xs font-bold transition-all border border-[#CCE7DA] dark:border-[rgba(150,210,195,0.15)] shadow-2xs hover:shadow-xs flex items-center justify-center gap-2 cursor-pointer select-none group"
+            className="w-full py-2.5 sm:py-3 px-4 rounded-full bg-[#004D3D] hover:bg-[#003B2E] dark:bg-[#008F78] dark:hover:bg-[#00A889] text-white text-xs font-bold shadow-sm shadow-[#004D3D]/20 dark:shadow-[#008F78]/25 transition-all border border-transparent flex items-center justify-center gap-2 group cursor-pointer select-none"
           >
             <span>{isCurrentAssessed && currentScore !== null ? "Re-attempt Check" : "Start Wellness Check"}</span>
             <span className="transition-transform group-hover:translate-x-1 text-xs">→</span>

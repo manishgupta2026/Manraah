@@ -81,7 +81,7 @@ export default function JourneyView() {
   const [moodFilter, setMoodFilter] = useState<string>("All");
   const [isPastModalOpen, setIsPastModalOpen] = useState<boolean>(false);
 
-  const mindfulnessMinutes = session?.user?.mindfulnessMinutes || 45;
+  const mindfulnessMinutes = session?.user?.mindfulnessMinutes || 0;
 
   const getCategoryTitle = (catSlug?: string | null) => {
     if (!catSlug || !catSlug.trim()) return "Category not recorded";
@@ -591,10 +591,12 @@ export default function JourneyView() {
                 <div className="p-6 rounded-2xl bg-[#F8FCFA] dark:bg-[#0E3931] border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] text-center space-y-2">
                   <span className="text-2xl">🌱</span>
                   <p className="text-xs font-bold text-[#19332A] dark:text-[#F4FAF7]">
-                    Complete another wellness check to start tracking your progress over time.
+                    {isCurrentAssessed ? "Complete another wellness check to start tracking your progress over time." : "No wellness trend yet."}
                   </p>
                   <p className="text-[10px] text-[#789389] dark:text-[#76968D]">
-                    Your score changes and trend graph will appear after multiple assessments.
+                    {isCurrentAssessed
+                      ? "Your score changes and trend graph will appear after multiple assessments."
+                      : "Complete a wellness check to start tracking your progress over time."}
                   </p>
                 </div>
               )}

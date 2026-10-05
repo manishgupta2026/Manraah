@@ -56,7 +56,37 @@ export async function ensureWellnessAssessmentSchema() {
   (globalThis as any).__wellnessSchemaEnsured = true;
 
   try {
-    // 1. Current / Latest Assessment per user + category
+    // 1. Ensure categories table exists
+    await sql`
+      CREATE TABLE IF NOT EXISTS wellness_categories (
+        id VARCHAR(100) PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        description TEXT,
+        icon VARCHAR(100) DEFAULT 'spa',
+        color_theme VARCHAR(50) DEFAULT 'emerald',
+        active BOOLEAN DEFAULT true,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      )
+    `;
+
+    // 2. Ensure questions table exists
+    await sql`
+      CREATE TABLE IF NOT EXISTS wellness_questions (
+        id SERIAL PRIMARY KEY,
+        category_id VARCHAR(100) REFERENCES wellness_categories(id) ON DELETE CASCADE,
+        question_text TEXT NOT NULL,
+        question_order INT NOT NULL,
+        reverse_scored BOOLEAN DEFAULT false,
+        options_json JSONB DEFAULT '[]'::jsonb,
+        active BOOLEAN DEFAULT true,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+        CONSTRAINT unique_category_question_order UNIQUE (category_id, question_order)
+      )
+    `;
+
+    // 3. Current / Latest Assessment per user + category
     await sql`
       CREATE TABLE IF NOT EXISTS wellness_assessments (
         id SERIAL PRIMARY KEY,
@@ -69,13 +99,13 @@ export async function ensureWellnessAssessmentSchema() {
       )
     `;
 
-    // 2. Unique index ensuring ONE current assessment per user + category
+    // 4. Unique index ensuring ONE current assessment per user + category
     await sql`
       CREATE UNIQUE INDEX IF NOT EXISTS idx_user_category_assessment 
       ON wellness_assessments(user_id, category_id)
     `;
 
-    // 3. Separate Assessment History Table preserving all historical attempts
+    // 5. Separate Assessment History Table preserving all historical attempts
     await sql`
       CREATE TABLE IF NOT EXISTS wellness_assessment_history (
         id SERIAL PRIMARY KEY,
@@ -98,8 +128,92 @@ export async function ensureWellnessAssessmentSchema() {
       CREATE INDEX IF NOT EXISTS idx_wah_user_date 
       ON wellness_assessment_history(user_id, completed_at DESC)
     `;
+
+    // 6. Answers breakdown table
+    await sql`
+      CREATE TABLE IF NOT EXISTS wellness_answers (
+        id SERIAL PRIMARY KEY,
+        assessment_id INT REFERENCES wellness_assessments(id) ON DELETE CASCADE,
+        question_id INT REFERENCES wellness_questions(id) ON DELETE CASCADE,
+        answer INT NOT NULL CHECK (answer BETWEEN 1 AND 5),
+        normalized_answer INT NOT NULL CHECK (normalized_answer BETWEEN 1 AND 5),
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      )
+    `;
+
+    // 7. Seed canonical categories if table is empty
+    const catCount = await sql`SELECT COUNT(*) as cnt FROM wellness_categories`;
+    if (Number(catCount[0]?.cnt || 0) === 0) {
+      await sql`
+        INSERT INTO wellness_categories (id, name, description, icon, color_theme, active)
+        VALUES
+          ('student', 'Student', 'Academic balance, exam stress reduction & peer focus', 'school', 'emerald', true),
+          ('parent', 'Parent', 'Family balance, mindful patience & parent support', 'family_restroom', 'peach', true),
+          ('couple', 'Couple', 'Nurturing mutual communication & relationship harmony', 'favorite', 'pink', true),
+          ('working-professional', 'Working Professional', 'Work-life harmony, burnout care & career fulfillment', 'work', 'purple', true),
+          ('other', 'Other', 'Holistic emotional wellbeing & daily balance', 'self_improvement', 'teal', true)
+        ON CONFLICT (id) DO NOTHING;
+      `;
+    }
+
+    // 8. Seed questions if table is empty
+    const questCount = await sql`SELECT COUNT(*) as cnt FROM wellness_questions`;
+    if (Number(questCount[0]?.cnt || 0) === 0) {
+      const defaultOptions = JSON.stringify([
+        { score: 1, text: "Never / Rarely" },
+        { score: 2, text: "Seldom" },
+        { score: 3, text: "Sometimes" },
+        { score: 4, text: "Often" },
+        { score: 5, text: "Almost Always" },
+      ]);
+
+      const seedQuestions = [
+        // Student
+        { category: "student", order: 1, text: "How often do you feel overwhelmed by your academic workload or exam preparation?", reverse: true },
+        { category: "student", order: 2, text: "How consistently are you able to maintain a regular sleep schedule during your studies?", reverse: false },
+        { category: "student", order: 3, text: "How supported do you feel by your peers, mentors, or family when facing academic stress?", reverse: false },
+        { category: "student", order: 4, text: "How confident do you feel in managing your time between academics, rest, and personal life?", reverse: false },
+        { category: "student", order: 5, text: "How effectively are you able to focus and retain information without feeling exhausted?", reverse: false },
+
+        // Parent
+        { category: "parent", order: 1, text: "How often do you feel drained or overwhelmed by daily parenting responsibilities?", reverse: true },
+        { category: "parent", order: 2, text: "How confident are you in responding calmly to stressful family situations?", reverse: false },
+        { category: "parent", order: 3, text: "How consistently do you find time for your own personal rest and emotional recovery?", reverse: false },
+        { category: "parent", order: 4, text: "How supported do you feel by your partner, family, or community in caretaking?", reverse: false },
+        { category: "parent", order: 5, text: "How well are you able to balance family care with your personal goals and well-being?", reverse: false },
+
+        // Couple
+        { category: "couple", order: 1, text: "How often do unresolved disagreements or communication gaps cause tension in your relationship?", reverse: true },
+        { category: "couple", order: 2, text: "How comfortable and emotionally safe do you feel sharing your vulnerable feelings with your partner?", reverse: false },
+        { category: "couple", order: 3, text: "How consistently do you and your partner spend quality, meaningful time together without distractions?", reverse: false },
+        { category: "couple", order: 4, text: "How supported and valued do you feel by your partner in your daily life and ambitions?", reverse: false },
+        { category: "couple", order: 5, text: "How effectively do you and your partner resolve conflicts with mutual empathy and respect?", reverse: false },
+
+        // Working Professional
+        { category: "working-professional", order: 1, text: "How often do workplace demands or long working hours leave you feeling physically and mentally exhausted?", reverse: true },
+        { category: "working-professional", order: 2, text: "How effectively are you able to disconnect from work during your personal and rest hours?", reverse: false },
+        { category: "working-professional", order: 3, text: "How confident do you feel in setting healthy boundaries with colleagues, managers, or clients?", reverse: false },
+        { category: "working-professional", order: 4, text: "How motivated and fulfilled do you feel in your current career journey and daily tasks?", reverse: false },
+        { category: "working-professional", order: 5, text: "How well are you able to manage workplace pressure without feeling chronic burnout?", reverse: false },
+
+        // Other
+        { category: "other", order: 1, text: "How often do you feel anxious, stressed, or emotionally unsettled in your daily life?", reverse: true },
+        { category: "other", order: 2, text: "How consistently do you engage in mindfulness, physical activity, or restorative rest?", reverse: false },
+        { category: "other", order: 3, text: "How satisfied are you with your daily routine and overall sense of personal balance?", reverse: false },
+        { category: "other", order: 4, text: "How connected and supported do you feel by the people around you?", reverse: false },
+        { category: "other", order: 5, text: "How optimistic and resilient do you feel when dealing with unexpected life changes?", reverse: false },
+      ];
+
+      for (const q of seedQuestions) {
+        await sql`
+          INSERT INTO wellness_questions (category_id, question_text, question_order, reverse_scored, options_json, active)
+          VALUES (${q.category}, ${q.text}, ${q.order}, ${q.reverse}, ${defaultOptions}::jsonb, true)
+          ON CONFLICT (category_id, question_order) DO NOTHING;
+        `;
+      }
+    }
   } catch (err) {
-    // Non-fatal if table/indexes already configured
+    console.error("ensureWellnessAssessmentSchema non-fatal note:", err);
   }
 }
 
@@ -140,25 +254,26 @@ export async function getAll5WellnessCategoriesWithScores(
         wa.score,
         wa.completed_at as "completedAt",
         COALESCE(h_stats.assessment_count, CASE WHEN wa.id IS NOT NULL THEN 1 ELSE 0 END) as "assessmentCount"
-      FROM wellness_categories c
+      FROM (
+        VALUES 
+          ('student', 'Student', 'Academic balance, exam stress reduction & peer focus', 'school', 'emerald', true, 1),
+          ('parent', 'Parent', 'Family balance, mindful patience & parent support', 'family_restroom', 'peach', true, 2),
+          ('couple', 'Couple', 'Nurturing mutual communication & relationship harmony', 'favorite', 'pink', true, 3),
+          ('working-professional', 'Working Professional', 'Work-life harmony, burnout care & career fulfillment', 'work', 'purple', true, 4),
+          ('other', 'Other', 'Holistic emotional wellbeing & daily balance', 'self_improvement', 'teal', true, 5)
+      ) AS c(id, name, description, icon, color_theme, active, sort_order)
       LEFT JOIN wellness_assessments wa 
-        ON c.id = wa.category_id AND wa.user_id = ${userId}
+        ON (c.id = wa.category_id OR (c.id = 'working-professional' AND wa.category_id = 'working_professional')) 
+        AND wa.user_id = ${userId}
       LEFT JOIN (
-        SELECT category_id, COUNT(*) as assessment_count
+        SELECT 
+          CASE WHEN category_id = 'working_professional' THEN 'working-professional' ELSE category_id END as normalized_cat_id,
+          COUNT(*) as assessment_count
         FROM wellness_assessment_history
         WHERE user_id = ${userId}
-        GROUP BY category_id
-      ) h_stats ON h_stats.category_id = c.id
-      WHERE c.id IN ('student', 'parent', 'couple', 'working-professional', 'other')
-      ORDER BY 
-        CASE c.id
-          WHEN 'student' THEN 1
-          WHEN 'parent' THEN 2
-          WHEN 'couple' THEN 3
-          WHEN 'working-professional' THEN 4
-          WHEN 'other' THEN 5
-          ELSE 6
-        END ASC
+        GROUP BY normalized_cat_id
+      ) h_stats ON h_stats.normalized_cat_id = c.id
+      ORDER BY c.sort_order ASC
     `;
 
     return rows.map((r: any) => ({
@@ -187,30 +302,51 @@ export async function getAll5WellnessCategoriesWithScores(
 }
 
 /**
- * Returns all completed wellness assessment attempts for the authenticated user, latest first.
+ * Returns completed wellness assessment attempts for the authenticated user.
+ * If rawCategory is provided, strictly filters for that category.
  */
 export async function getUserWellnessHistory(
-  userId?: string | null
+  userId?: string | null,
+  rawCategory?: string | null
 ): Promise<AssessmentHistoryItem[]> {
   if (!userId || userId === "guest" || userId === "demo-user") {
     return [];
   }
   await ensureWellnessAssessmentSchema();
   try {
+    const categoryId = rawCategory ? normalizeCategorySlug(rawCategory) : null;
     // 1. Try querying history table
-    const historyRows = await sql`
-      SELECT 
-        h.id,
-        h.category_id as "categoryId",
-        c.name as "categoryName",
-        h.raw_score as "rawScore",
-        h.score,
-        h.completed_at as "completedAt"
-      FROM wellness_assessment_history h
-      LEFT JOIN wellness_categories c ON h.category_id = c.id
-      WHERE h.user_id = ${userId}
-      ORDER BY h.completed_at DESC, h.id DESC;
-    `;
+    let historyRows;
+    if (categoryId) {
+      historyRows = await sql`
+        SELECT 
+          h.id,
+          CASE WHEN h.category_id = 'working_professional' THEN 'working-professional' ELSE h.category_id END as "categoryId",
+          COALESCE(c.name, h.category_id) as "categoryName",
+          h.raw_score as "rawScore",
+          h.score,
+          h.completed_at as "completedAt"
+        FROM wellness_assessment_history h
+        LEFT JOIN wellness_categories c ON (h.category_id = c.id OR (h.category_id = 'working_professional' AND c.id = 'working-professional'))
+        WHERE h.user_id = ${userId}
+          AND (h.category_id = ${categoryId} OR (h.category_id = 'working_professional' AND ${categoryId} = 'working-professional'))
+        ORDER BY h.completed_at DESC, h.id DESC;
+      `;
+    } else {
+      historyRows = await sql`
+        SELECT 
+          h.id,
+          CASE WHEN h.category_id = 'working_professional' THEN 'working-professional' ELSE h.category_id END as "categoryId",
+          COALESCE(c.name, h.category_id) as "categoryName",
+          h.raw_score as "rawScore",
+          h.score,
+          h.completed_at as "completedAt"
+        FROM wellness_assessment_history h
+        LEFT JOIN wellness_categories c ON (h.category_id = c.id OR (h.category_id = 'working_professional' AND c.id = 'working-professional'))
+        WHERE h.user_id = ${userId}
+        ORDER BY h.completed_at DESC, h.id DESC;
+      `;
+    }
 
     if (historyRows.length > 0) {
       return historyRows.map((r: any) => ({
@@ -228,19 +364,37 @@ export async function getUserWellnessHistory(
     }
 
     // 2. Seamless fallback from current assessments if history table is empty
-    const fallbackRows = await sql`
-      SELECT 
-        a.id,
-        a.category_id as "categoryId",
-        c.name as "categoryName",
-        a.raw_score as "rawScore",
-        a.score,
-        a.completed_at as "completedAt"
-      FROM wellness_assessments a
-      LEFT JOIN wellness_categories c ON a.category_id = c.id
-      WHERE a.user_id = ${userId}
-      ORDER BY a.completed_at DESC, a.id DESC;
-    `;
+    let fallbackRows;
+    if (categoryId) {
+      fallbackRows = await sql`
+        SELECT 
+          a.id,
+          CASE WHEN a.category_id = 'working_professional' THEN 'working-professional' ELSE a.category_id END as "categoryId",
+          COALESCE(c.name, a.category_id) as "categoryName",
+          a.raw_score as "rawScore",
+          a.score,
+          a.completed_at as "completedAt"
+        FROM wellness_assessments a
+        LEFT JOIN wellness_categories c ON (a.category_id = c.id OR (a.category_id = 'working_professional' AND c.id = 'working-professional'))
+        WHERE a.user_id = ${userId}
+          AND (a.category_id = ${categoryId} OR (a.category_id = 'working_professional' AND ${categoryId} = 'working-professional'))
+        ORDER BY a.completed_at DESC, a.id DESC;
+      `;
+    } else {
+      fallbackRows = await sql`
+        SELECT 
+          a.id,
+          CASE WHEN a.category_id = 'working_professional' THEN 'working-professional' ELSE a.category_id END as "categoryId",
+          COALESCE(c.name, a.category_id) as "categoryName",
+          a.raw_score as "rawScore",
+          a.score,
+          a.completed_at as "completedAt"
+        FROM wellness_assessments a
+        LEFT JOIN wellness_categories c ON (a.category_id = c.id OR (a.category_id = 'working_professional' AND c.id = 'working-professional'))
+        WHERE a.user_id = ${userId}
+        ORDER BY a.completed_at DESC, a.id DESC;
+      `;
+    }
 
     return fallbackRows.map((r: any) => ({
       id: Number(r.id),

@@ -152,21 +152,28 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
         });
       }
 
-      // 4. Trigger context updates
+      // 4. Trigger context updates with the new canonical category slug
       if (refetchScores) {
-        await refetchScores();
+        await refetchScores(canonicalSlug);
       }
       if (refetchDashboardData) {
-        await refetchDashboardData();
+        await refetchDashboardData(canonicalSlug);
       }
       if (refetchWellnessData) {
-        await refetchWellnessData();
+        await refetchWellnessData(canonicalSlug);
       }
 
-      // 5. Close switcher modal
+      // 5. Dispatch global profile changed event
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(
+          new CustomEvent("manraah_profile_changed", { detail: { category: canonicalSlug } })
+        );
+      }
+
+      // 6. Close switcher modal
       setIsSwitchProfileOpen(false);
 
-      // 6. Prompt assessment if needed for the new profile
+      // 7. Prompt assessment if needed for the new profile
       if (triggerProfilePrompt) {
         triggerProfilePrompt(canonicalSlug);
       }
@@ -332,20 +339,33 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
           <h1 className="text-2xl font-heading font-black text-[#19332A] dark:text-[#F4FAF7] leading-tight" suppressHydrationWarning>
             Hi, {userName}! 👋
           </h1>
-          <div className="pt-0.5 flex flex-wrap items-center gap-2 sm:gap-2.5">
-            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-[#EAF6F0] dark:bg-[rgba(0,168,137,0.15)] text-[#006C56] dark:text-[#73D8C4] border border-[#D2EAE0] dark:border-[rgba(0,168,137,0.30)]" suppressHydrationWarning>
-              Active Profile: {formatCategoryDisplayName(user?.selectedCategory || currentCategory)}
+          <div className="pt-1 flex flex-wrap items-center gap-2">
+            {/* Active Profile Indicator Pill */}
+            <span
+              className="inline-flex items-center h-7 px-3 rounded-full text-xs font-semibold bg-white dark:bg-[#0B3029] text-[#006C56] dark:text-[#73D8C4] border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.18)] shadow-2xs select-none"
+              suppressHydrationWarning
+            >
+              <span>Active Profile:</span>
+              <span className="ml-1 font-bold">{formatCategoryDisplayName(user?.selectedCategory || currentCategory)}</span>
             </span>
+
+            {/* Switch Profile Action Pill */}
             <button
               type="button"
               onClick={() => setIsSwitchProfileOpen(true)}
-              className="inline-flex items-center gap-1.5 text-xs font-heading font-bold text-[#006C56] hover:text-[#004D3D] dark:text-[#00A889] dark:hover:text-[#73D8C4] transition-all cursor-pointer group py-0.5 px-2 rounded-full hover:bg-[#EAF6F0]/70 dark:hover:bg-[rgba(0,168,137,0.12)] border border-transparent hover:border-[#D2EAE0] dark:hover:border-[rgba(0,168,137,0.25)]"
+              className="inline-flex items-center gap-1.5 h-7 px-3 rounded-full text-xs font-semibold bg-white hover:bg-[#EAF6F0] dark:bg-[#0B3029] dark:hover:bg-[#0E3931] text-[#006C56] hover:text-[#004D3D] dark:text-[#73D8C4] dark:hover:text-[#A6E8D8] border border-[#E2ECE6] hover:border-[#008968]/40 dark:border-[rgba(150,210,195,0.18)] dark:hover:border-[rgba(150,210,195,0.35)] shadow-2xs transition-all duration-180 ease-out cursor-pointer group select-none"
               aria-label="Switch Profile"
             >
               <span>Switch Profile</span>
-              <span className="material-symbols-outlined text-[15px] leading-none transition-transform group-hover:scale-110">
-                swap_horiz
-              </span>
+              <svg
+                className="w-3.5 h-3.5 text-[#006C56] dark:text-[#73D8C4] transition-transform duration-200 group-hover:rotate-180 shrink-0"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2.2}
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+              </svg>
             </button>
           </div>
         </div>

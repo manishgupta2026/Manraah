@@ -266,7 +266,7 @@ export default function TherapistCarousel({
 
   return (
     <div
-      className="w-full relative group/carousel flex flex-col gap-2.5 select-none"
+      className="w-full relative group/carousel select-none"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onTouchStart={handleUserInteraction}
@@ -274,13 +274,6 @@ export default function TherapistCarousel({
       onTouchEnd={handleUserInteraction}
       onWheel={handleUserInteraction}
     >
-      {/* Subtitle / Counter */}
-      <div className="flex items-center justify-between gap-2 px-0.5">
-        <span className="text-[11px] font-semibold text-[#5A756C] dark:text-[#9DB9B0]">
-          Showing {numItems} mental health specialists
-        </span>
-      </div>
-
       {/* Carousel Viewport Wrapper with Left and Right Controls */}
       <div className="w-full relative">
         {/* Left Navigation Button */}
@@ -302,7 +295,7 @@ export default function TherapistCarousel({
           onScroll={handleNativeScroll}
           tabIndex={0}
           aria-label="Recommended doctors carousel"
-          className="flex gap-4 sm:gap-5 items-stretch overflow-x-auto py-2 px-4 sm:px-6 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#006C56] rounded-2xl select-none"
+          className="flex gap-4 sm:gap-5 items-stretch overflow-x-auto py-6 sm:py-7 px-4 sm:px-6 -my-3 sm:-my-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#006C56] rounded-2xl select-none"
           style={{
             scrollbarWidth: "none",
             msOverflowStyle: "none",
@@ -311,7 +304,7 @@ export default function TherapistCarousel({
           {loopedList.map((therapist) => (
             <div
               key={therapist.loopKey}
-              className="therapist-carousel-item w-[280px] sm:w-[325px] lg:w-[340px] shrink-0 flex flex-col h-[240px] relative"
+              className="therapist-carousel-item w-[280px] sm:w-[325px] lg:w-[340px] shrink-0 flex flex-col h-[240px] relative z-0 hover:z-30 focus-within:z-30 transition-[z-index]"
             >
               <TherapistCard
                 therapist={therapist}

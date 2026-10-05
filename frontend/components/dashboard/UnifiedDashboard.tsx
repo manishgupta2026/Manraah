@@ -109,7 +109,7 @@ function DashboardContent({ initialSection }: UnifiedDashboardProps) {
       <div className="flex-1 min-h-[60vh] flex items-center justify-center text-slate-400 dark:text-[#78958C]">
         <div className="flex flex-col items-center gap-3">
           <div className="w-8 h-8 rounded-full border-2 border-emerald-500/30 border-t-emerald-500 animate-spin" />
-          <p className="text-sm font-medium">Validating sanctuary access...</p>
+          <p className="text-sm font-medium">Validating access...</p>
         </div>
       </div>
     );

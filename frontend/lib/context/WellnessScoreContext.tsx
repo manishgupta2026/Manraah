@@ -6,7 +6,6 @@ import React, {
   useState,
   useEffect,
   useCallback,
-  useMemo,
   useRef,
   ReactNode,
 } from "react";
@@ -69,9 +68,9 @@ interface WellnessScoreContextType {
   openBreakdownModal: () => void;
   closeBreakdownModal: () => void;
   dismissLoginPrompt: () => void;
-  triggerProfilePrompt: (categorySlug?: string) => void;
+  triggerProfilePrompt: (categorySlug?: string) => Promise<void>;
   dismissProfilePrompt: () => void;
-  refetchScores: () => Promise<void>;
+  refetchScores: (categorySlug?: string) => Promise<void>;
   submitAssessment: (
     categoryId: string,
     answers: { questionId: number; answer: number }[]
@@ -173,15 +172,13 @@ import { useAuth } from "@/frontend/lib/context/AuthContext";
 const WellnessScoreContext = createContext<WellnessScoreContextType | undefined>(undefined);
 
 export function WellnessScoreProvider({ children }: { children: ReactNode }) {
-  const { user, isAuthenticated } = useAuth();
+  const { user } = useAuth();
   const { category: contextCategory } = useCategory();
 
-  const targetCategorySlug = user?.selectedCategory || contextCategory;
-
-  // Stable category initialized consistently across server and initial client hydration
+  // Stable category initialized consistently
   const [currentCategory, setCurrentCategory] = useState<CanonicalCategorySlug>("student");
 
-  // currentCategoryName derived stably and synchronously (no blinking or lagging state)
+  // currentCategoryName derived stably and synchronously
   const currentCategoryName = CATEGORY_DISPLAY_NAMES[currentCategory] || "Student";
 
   const [currentScore, setCurrentScore] = useState<number | null>(null);
@@ -206,32 +203,11 @@ export function WellnessScoreProvider({ children }: { children: ReactNode }) {
   const [profilePromptCategory, setProfilePromptCategory] = useState<CanonicalCategorySlug>("student");
   const reminderTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Update currentCategory whenever user's selected category or contextCategory changes
-  useEffect(() => {
-    const rawTarget = user?.selectedCategory || contextCategory;
-    if (!rawTarget) return;
-    const nextCanonical = normalizeSlug(rawTarget);
-    setCurrentCategory((prev) => {
-      if (prev !== nextCanonical) {
-        // Immediately sync currentScore / isCurrentAssessed to avoid stale score flashing
-        const match = allCategories.find((c) => c.id === nextCanonical);
-        if (match && match.completed && typeof match.score === "number") {
-          setCurrentScore(match.score);
-          setIsCurrentAssessed(true);
-        } else {
-          setCurrentScore(null);
-          setIsCurrentAssessed(false);
-          setLevelBadge("Gentle Care");
-          setLevelDescription("Ready to check in");
-        }
-        return nextCanonical;
-      }
-      return prev;
-    });
-  }, [user?.selectedCategory, contextCategory, allCategories]);
+  // Request counter to avoid race conditions with rapid switching
+  const reqCountRef = useRef<number>(0);
 
-  // Fetch wellness scores strictly for current category
-  const fetchScores = useCallback(async () => {
+  // Fetch wellness scores strictly for target category
+  const fetchScores = useCallback(async (overrideCategory?: string) => {
     const session = getClientSession();
     if (!session?.isAuthenticated || !session?.user?.id) {
       setCurrentScore(null);
@@ -244,14 +220,21 @@ export function WellnessScoreProvider({ children }: { children: ReactNode }) {
       return;
     }
 
+    const catToFetch = overrideCategory ? normalizeSlug(overrideCategory) : currentCategory;
+    const reqId = ++reqCountRef.current;
+
     try {
       setIsLoading(true);
       setError(null);
-      const res = await fetch(`/api/wellness/current?category=${currentCategory}`);
+      const res = await fetch(`/api/wellness/current?category=${catToFetch}`);
+      if (reqId !== reqCountRef.current) return;
+
       if (!res.ok) {
         throw new Error("Failed to load wellness metrics.");
       }
       const data = await res.json();
+      if (reqId !== reqCountRef.current) return;
+
       const currentSession = getClientSession();
       if (!currentSession?.isAuthenticated || !currentSession?.user?.id) {
         setCurrentScore(null);
@@ -263,23 +246,71 @@ export function WellnessScoreProvider({ children }: { children: ReactNode }) {
         return;
       }
 
-      setCurrentScore(data.score !== undefined && data.score !== null ? data.score : null);
-      setIsCurrentAssessed(Boolean(data.assessmentCompleted));
-      if (data.levelBadge) setLevelBadge(data.levelBadge);
-      if (data.levelDescription) setLevelDescription(data.levelDescription);
+      // Update categories array first
       if (Array.isArray(data.allCategories) && data.allCategories.length > 0) {
         setAllCategories(data.allCategories);
       }
       if (Array.isArray(data.history)) {
         setRecentHistory(data.history);
       }
+
+      // Strictly check score for the target category
+      const targetCatInfo = Array.isArray(data.allCategories)
+        ? data.allCategories.find((c: any) => c.id === catToFetch)
+        : null;
+
+      const isCompleted = Boolean(
+        (targetCatInfo && targetCatInfo.completed && typeof targetCatInfo.score === "number") ||
+        (data.assessmentCompleted && typeof data.score === "number")
+      );
+
+      if (isCompleted) {
+        const resolvedScore =
+          targetCatInfo && typeof targetCatInfo.score === "number"
+            ? targetCatInfo.score
+            : typeof data.score === "number"
+            ? data.score
+            : null;
+        setCurrentScore(resolvedScore);
+        setIsCurrentAssessed(true);
+      } else {
+        setCurrentScore(null);
+        setIsCurrentAssessed(false);
+      }
+
+      if (data.levelBadge) setLevelBadge(data.levelBadge);
+      if (data.levelDescription) setLevelDescription(data.levelDescription);
     } catch (err: any) {
       console.warn("Wellness score fetch warning:", err.message);
       setError(err.message);
     } finally {
-      setIsLoading(false);
+      if (reqId === reqCountRef.current) {
+        setIsLoading(false);
+      }
     }
   }, [currentCategory]);
+
+  // Update currentCategory whenever user's selected category or contextCategory changes
+  useEffect(() => {
+    const rawTarget = user?.selectedCategory || contextCategory;
+    if (!rawTarget) return;
+    const nextCanonical = normalizeSlug(rawTarget);
+    if (nextCanonical !== currentCategory) {
+      setCurrentCategory(nextCanonical);
+      // Immediately verify whether target category has completed score
+      const match = allCategories.find((c) => c.id === nextCanonical);
+      if (match && match.completed && typeof match.score === "number") {
+        setCurrentScore(match.score);
+        setIsCurrentAssessed(true);
+      } else {
+        setCurrentScore(null);
+        setIsCurrentAssessed(false);
+        setLevelBadge("Gentle Care");
+        setLevelDescription("Ready to check in");
+      }
+      fetchScores(nextCanonical);
+    }
+  }, [user?.selectedCategory, contextCategory, currentCategory, allCategories, fetchScores]);
 
   useEffect(() => {
     fetchScores();
@@ -299,17 +330,18 @@ export function WellnessScoreProvider({ children }: { children: ReactNode }) {
         setIsBreakdownModalOpen(false);
         setIsReattemptModalOpen(false);
         setIsLoginPromptOpen(false);
+        setIsProfilePromptOpen(false);
       } else {
         fetchScores();
       }
     };
 
     window.addEventListener("manraah_auth_changed", handleAuthChange);
-    window.addEventListener("storage", fetchScores);
+    window.addEventListener("storage", () => fetchScores());
 
     return () => {
       window.removeEventListener("manraah_auth_changed", handleAuthChange);
-      window.removeEventListener("storage", fetchScores);
+      window.removeEventListener("storage", () => fetchScores());
     };
   }, [fetchScores]);
 
@@ -324,51 +356,81 @@ export function WellnessScoreProvider({ children }: { children: ReactNode }) {
     setIsProfilePromptOpen(false);
   }, []);
 
+  // Check assessment existence directly from backend before deciding whether to show popup
   const triggerProfilePrompt = useCallback(
-    (categorySlug?: string) => {
+    async (categorySlug?: string) => {
       const targetSlug = normalizeSlug(categorySlug || currentCategory);
-      setProfilePromptCategory(targetSlug);
-      setProfilePromptType("immediate");
-      setIsProfilePromptOpen(true);
-
       clearReminderTimer();
 
-      // Check if user has already completed the assessment for this category
-      const targetCatInfo = allCategories.find((c) => c.id === targetSlug);
-      const isAlreadyAssessed = Boolean(targetCatInfo?.completed);
+      // Ensure popup is closed during check to prevent flashing
+      setIsProfilePromptOpen(false);
 
-      // If assessment is not done yet for that category, schedule reminder popup after 1 minute (60s)
-      if (!isAlreadyAssessed) {
-        reminderTimerRef.current = setTimeout(async () => {
-          try {
-            const res = await fetch(`/api/wellness/current?category=${targetSlug}`);
-            if (res.ok) {
-              const data = await res.json();
-              if (!data.assessmentCompleted) {
-                setProfilePromptCategory(targetSlug);
-                setProfilePromptType("reminder_1min");
-                setIsProfilePromptOpen(true);
+      const session = getClientSession();
+      if (!session?.isAuthenticated || !session?.user?.id) {
+        return;
+      }
+
+      try {
+        const res = await fetch(`/api/wellness/current?category=${targetSlug}`);
+        if (res.ok) {
+          const data = await res.json();
+          const targetCatInfo = Array.isArray(data.allCategories)
+            ? data.allCategories.find((c: any) => c.id === targetSlug)
+            : null;
+
+          const isAlreadyAssessed = Boolean(
+            (targetCatInfo && targetCatInfo.completed && typeof targetCatInfo.score === "number") ||
+            (data.assessmentCompleted && typeof data.score === "number")
+          );
+
+          if (!isAlreadyAssessed) {
+            // No assessment for THIS profile -> Show the assessment prompt
+            setProfilePromptCategory(targetSlug);
+            setProfilePromptType("immediate");
+            setIsProfilePromptOpen(true);
+
+            // Schedule a gentle 1-minute reminder if still unassessed
+            reminderTimerRef.current = setTimeout(async () => {
+              try {
+                const remindRes = await fetch(`/api/wellness/current?category=${targetSlug}`);
+                if (remindRes.ok) {
+                  const remindData = await remindRes.json();
+                  const targetCat = Array.isArray(remindData.allCategories)
+                    ? remindData.allCategories.find((c: any) => c.id === targetSlug)
+                    : null;
+                  const stillUnassessed = !remindData.assessmentCompleted && !targetCat?.completed;
+                  if (stillUnassessed) {
+                    setProfilePromptCategory(targetSlug);
+                    setProfilePromptType("reminder_1min");
+                    setIsProfilePromptOpen(true);
+                  }
+                }
+              } catch {
+                // ignore
               }
-            }
-          } catch {
-            const localCat = allCategories.find((c) => c.id === targetSlug);
-            if (!localCat?.completed) {
-              setProfilePromptCategory(targetSlug);
-              setProfilePromptType("reminder_1min");
-              setIsProfilePromptOpen(true);
-            }
+            }, 60000);
+          } else {
+            // Assessment exists for THIS profile -> NEVER show popup
+            setIsProfilePromptOpen(false);
           }
-        }, 60000);
+        }
+      } catch (err) {
+        console.warn("Could not check profile assessment status:", err);
       }
     },
-    [currentCategory, allCategories, clearReminderTimer]
+    [currentCategory, clearReminderTimer]
   );
 
   useEffect(() => {
-    const handleProfileChanged = (event: Event) => {
+    const handleProfileChanged = async (event: Event) => {
       const customEvent = event as CustomEvent<{ category?: string }>;
       const cat = customEvent.detail?.category;
-      triggerProfilePrompt(cat);
+      if (cat) {
+        const canonical = normalizeSlug(cat);
+        setCurrentCategory(canonical);
+        await fetchScores(canonical);
+        await triggerProfilePrompt(canonical);
+      }
     };
 
     window.addEventListener("manraah_profile_changed", handleProfileChanged);
@@ -376,7 +438,7 @@ export function WellnessScoreProvider({ children }: { children: ReactNode }) {
       window.removeEventListener("manraah_profile_changed", handleProfileChanged);
       clearReminderTimer();
     };
-  }, [triggerProfilePrompt, clearReminderTimer]);
+  }, [triggerProfilePrompt, clearReminderTimer, fetchScores]);
 
   const openAssessment = (categorySlug?: string) => {
     const targetSlug = normalizeSlug(categorySlug || currentCategory);
@@ -465,7 +527,7 @@ export function WellnessScoreProvider({ children }: { children: ReactNode }) {
     setIsProfilePromptOpen(false);
 
     // Background sync
-    await fetchScores();
+    await fetchScores(canonical);
 
     return {
       success: true,

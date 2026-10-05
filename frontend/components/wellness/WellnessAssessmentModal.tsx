@@ -50,9 +50,27 @@ export default function WellnessAssessmentModal() {
       description: "Category wellness assessment",
     };
 
+  const advanceTimerRef = React.useRef<NodeJS.Timeout | null>(null);
+
+  // Clean up timer on unmount or whenever modal closes
+  useEffect(() => {
+    return () => {
+      if (advanceTimerRef.current) {
+        clearTimeout(advanceTimerRef.current);
+        advanceTimerRef.current = null;
+      }
+    };
+  }, []);
+
   // Reset state and load questions whenever modal opens
   useEffect(() => {
-    if (!isAssessmentModalOpen) return;
+    if (!isAssessmentModalOpen) {
+      if (advanceTimerRef.current) {
+        clearTimeout(advanceTimerRef.current);
+        advanceTimerRef.current = null;
+      }
+      return;
+    }
 
     setQuestionStep(0);
     setAnswers({});
@@ -86,15 +104,6 @@ export default function WellnessAssessmentModal() {
 
   const currentQ = questions[questionStep];
   const isCurrentQAnswered = currentQ && answers[currentQ.id] !== undefined;
-  const advanceTimerRef = React.useRef<NodeJS.Timeout | null>(null);
-
-  useEffect(() => {
-    return () => {
-      if (advanceTimerRef.current) {
-        clearTimeout(advanceTimerRef.current);
-      }
-    };
-  }, []);
 
   const handleSelectOption = (score: number) => {
     if (!currentQ) return;
