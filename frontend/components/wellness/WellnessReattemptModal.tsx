@@ -39,12 +39,12 @@ export default function WellnessReattemptModal() {
         initial={{ opacity: 0, scale: 0.95, y: 15 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 15 }}
-        className="bg-white dark:bg-[#0B3029] border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.15)] rounded-3xl w-full max-w-md p-6 sm:p-7 shadow-2xl relative overflow-hidden space-y-5"
+        className="bg-white dark:bg-[#131916] border border-[#E2ECE6] dark:border-[#1E2824] rounded-3xl w-full max-w-md p-6 sm:p-7 shadow-2xl relative overflow-hidden space-y-5"
       >
         {/* Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)]">
+        <div className="flex items-center justify-between pb-3 border-b border-[#E2ECE6] dark:border-[#1E2824]">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-[#EAF6F0] dark:bg-[#0E3931] text-[#006C56] dark:text-[#00A889] flex items-center justify-center font-bold text-sm">
+            <div className="w-8 h-8 rounded-xl bg-[#EAF6F0] dark:bg-[#18201C] text-[#006C56] dark:text-[#5FAF8A] flex items-center justify-center font-bold text-sm border border-transparent dark:border-[#22302A]">
               ✦
             </div>
             <div>
@@ -58,7 +58,7 @@ export default function WellnessReattemptModal() {
           </div>
           <button
             onClick={closeReattemptModal}
-            className="w-7 h-7 rounded-full bg-[#F4FAF7] dark:bg-[#0E3931] text-[#4F685F] dark:text-[#9DB9B0] flex items-center justify-center hover:bg-[#E2ECE6] dark:hover:bg-[#12463C] dark:hover:text-[#F4FAF7] transition-colors cursor-pointer text-xs"
+            className="w-7 h-7 rounded-full bg-[#F4FAF7] dark:bg-[#18201C] text-[#4F685F] dark:text-[#9DB9B0] flex items-center justify-center hover:bg-[#E2ECE6] dark:hover:bg-[#22302A] dark:hover:text-[#F4FAF7] transition-colors cursor-pointer text-xs"
           >
             ✕
           </button>
@@ -66,7 +66,7 @@ export default function WellnessReattemptModal() {
 
         {/* Body Message */}
         <div className="space-y-2 py-1 text-center">
-          <div className="w-16 h-16 rounded-full bg-[#EAF6F0] dark:bg-[#0E3931] text-[#006C56] dark:text-[#00A889] flex items-center justify-center text-xl font-heading font-black mx-auto shadow-xs border border-transparent dark:border-[rgba(150,210,195,0.12)]">
+          <div className="w-16 h-16 rounded-full bg-[#EAF6F0] dark:bg-[#18201C] text-[#006C56] dark:text-[#5FAF8A] flex items-center justify-center text-xl font-heading font-black mx-auto shadow-xs border border-transparent dark:border-[#22302A]">
             {scoreDisplay}
           </div>
           <h4 className="text-base font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
@@ -78,18 +78,18 @@ export default function WellnessReattemptModal() {
         </div>
 
         {/* Footer Actions */}
-        <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)]">
+        <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-[#E2ECE6] dark:border-[#1E2824]">
           <button
             type="button"
             onClick={closeReattemptModal}
-            className="px-4 py-2 rounded-xl text-xs font-bold text-[#4F685F] dark:text-[#9DB9B0] hover:bg-[#F4FAF7] dark:hover:bg-[#0E3931] dark:hover:text-[#F4FAF7] transition-colors cursor-pointer"
+            className="px-4 py-2 rounded-xl text-xs font-bold text-[#4F685F] dark:text-[#9DB9B0] bg-transparent dark:bg-[#18201C] dark:border dark:border-[#22302A] hover:bg-[#F4FAF7] dark:hover:bg-[#22302A] dark:hover:text-[#F4FAF7] transition-colors cursor-pointer"
           >
             Cancel
           </button>
           <button
             type="button"
             onClick={confirmReattempt}
-            className="px-5 py-2.5 rounded-xl bg-[#006C56] hover:bg-[#005241] dark:bg-[#008F78] dark:hover:bg-[#00A889] text-white text-xs font-bold shadow-sm transition-all cursor-pointer"
+            className="px-5 py-2.5 rounded-xl bg-[#006C56] hover:bg-[#005241] dark:bg-[#006B56] dark:hover:bg-[#005B48] text-white text-xs font-bold shadow-sm transition-all cursor-pointer"
           >
             Re-attempt Assessment
           </button>

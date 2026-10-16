@@ -110,9 +110,9 @@ export default function ResourcesView() {
   return (
     <div className="w-full min-w-0 flex flex-col gap-5">
       {/* 1. Header Banner */}
-      <div className="bg-white dark:bg-[#0B3029] rounded-3xl p-6 sm:p-7 border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] shadow-2xs space-y-4 transition-colors">
+      <div className="bg-white dark:bg-[#131916] rounded-3xl p-6 sm:p-7 border border-[#CBECE2] dark:border-[#1E2824] shadow-2xs space-y-4 transition-colors">
         <div>
-          <span className="text-[10px] font-black tracking-widest text-[#006C56] dark:text-[#00A889]">
+          <span className="text-[10px] font-black tracking-widest text-[#006B56] dark:text-[#5FAF8A]">
             Evidence-based guides
           </span>
           <h1 className="text-2xl font-heading font-black text-[#19332A] dark:text-[#F4FAF7] leading-tight mt-0.5">
@@ -130,7 +130,7 @@ export default function ResourcesView() {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search articles, CBT guides, sleep science..."
-            className="w-full py-2.5 pl-10 pr-4 rounded-full bg-[#F8FCFA] dark:bg-[#082821] border border-[#D5E3DB] dark:border-[rgba(150,210,195,0.16)] text-xs text-[#19332A] dark:text-[#F4FAF7] focus:outline-none focus:ring-2 focus:ring-[#006C56]/40 dark:focus:ring-[#00A889]/30 placeholder:text-[#8EAAA1] dark:placeholder:text-[#789990]"
+            className="w-full py-2.5 pl-10 pr-4 rounded-full bg-[#F8FCFA] dark:bg-[#18201C] border border-[#CBECE2] dark:border-[#22302A] text-xs text-[#19332A] dark:text-[#F4FAF7] focus:outline-none focus:ring-2 focus:ring-[#006B56]/40 dark:focus:ring-[#5FAF8A]/30 placeholder:text-[#8EAAA1] dark:placeholder:text-[#789990]"
           />
           <svg className="w-4 h-4 absolute left-3.5 top-3 text-[#8EAAA1] dark:text-[#789990]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -143,10 +143,10 @@ export default function ResourcesView() {
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
+              className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all whitespace-nowrap cursor-pointer border ${
                 selectedCategory === cat
-                  ? "bg-[#006C56] dark:bg-[#008F78] text-white shadow-xs"
-                  : "bg-[#F4F9F6] dark:bg-[#082821] text-[#4F685F] dark:text-[#9DB9B0] hover:bg-[#EAF6F0] dark:hover:bg-[#0E3931]"
+                  ? "bg-[#006B56] text-white border-[#006B56] dark:bg-[#006B56] dark:text-white dark:border-[#006B56] shadow-xs"
+                  : "bg-[#F4F9F6] dark:bg-[#18201C] text-[#4F685F] dark:text-[#9DB9B0] border-[#CBECE2] dark:border-[#22302A] hover:bg-[#E6F4F0] dark:hover:bg-[#22302A]"
               }`}
             >
               {cat === "Saved" ? `🔖 Saved (${savedIds.length})` : cat}
@@ -155,19 +155,19 @@ export default function ResourcesView() {
         </div>
       </div>
 
-      {/* 2. Featured Resource Banner (when on "All" or "Stress" and no search active) */}
+      {/* 2. Featured Resource Banner */}
       {selectedCategory === "All" && !searchTerm && (
-        <div className="bg-gradient-to-br from-[#EAF5EF] to-[#F4F9F6] dark:from-[#0E3931] dark:to-[#0B3029] rounded-3xl p-6 sm:p-7 border border-[#D2E8DC] dark:border-[rgba(150,210,195,0.15)] shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-5 transition-colors">
+        <div className="bg-gradient-to-br from-[#E6F4F0] to-[#EAF6F2] dark:from-[#112F28] dark:to-[#131916] rounded-3xl p-6 sm:p-7 border border-[#CBECE2] dark:border-[#1C463C] shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-5 transition-colors">
           <div className="space-y-2 max-w-xl">
             <div className="flex items-center gap-2">
-              <span className="px-2.5 py-0.5 rounded-full bg-[#006C56] dark:bg-[#008F78] text-white text-[9.5px] font-extrabold tracking-wide">
+              <span className="px-2.5 py-0.5 rounded-full bg-[#006B56] text-white dark:bg-[#006B56] dark:text-white text-[9.5px] font-extrabold tracking-wide">
                 Featured Guide
               </span>
               <span className="text-[10.5px] text-[#6B857C] dark:text-[#9DB9B0] font-semibold">
                 {featuredResource.readTime}
               </span>
             </div>
-            <h2 className="text-lg sm:text-xl font-heading font-black text-[#19332A] dark:text-[#F4FAF7] leading-snug">
+            <h2 className="text-lg sm:text-xl font-heading font-black text-[#004D3D] dark:text-[#F4FAF7] leading-snug">
               {featuredResource.title}
             </h2>
             <p className="text-xs text-[#4F685F] dark:text-[#D5E6E0] leading-relaxed">
@@ -180,7 +180,7 @@ export default function ResourcesView() {
 
           <button
             onClick={() => setReadingResource(featuredResource)}
-            className="py-3 px-6 rounded-full bg-[#004D3D] hover:bg-[#003B2E] dark:bg-[#008F78] dark:hover:bg-[#00A889] text-white text-xs font-bold shadow-md shadow-[#004D3D]/20 transition-all flex items-center justify-center gap-2 group cursor-pointer shrink-0 self-start md:self-auto"
+            className="py-3 px-6 rounded-full bg-[#006B56] hover:bg-[#005B48] text-white text-xs font-bold shadow-md shadow-[#006B56]/20 transition-all flex items-center justify-center gap-2 group cursor-pointer shrink-0 self-start md:self-auto"
           >
             <span>Read Guide</span>
             <span className="transition-transform group-hover:translate-x-1">→</span>
@@ -189,18 +189,18 @@ export default function ResourcesView() {
       )}
 
       {/* 3. Resource Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
         {filteredResources.map((res) => {
           const isSaved = savedIds.includes(res.id);
           return (
             <div
               key={res.id}
               onClick={() => setReadingResource(res)}
-              className="p-5 sm:p-6 rounded-3xl bg-white dark:bg-[#0B3029] border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] shadow-2xs flex flex-col justify-between space-y-4 hover:border-[#006C56]/40 dark:hover:border-[#00A889]/40 hover:bg-[#F8FCFA] dark:hover:bg-[#0E3931] hover:shadow-md transition-all cursor-pointer group"
+              className="p-5 sm:p-6 rounded-3xl bg-white dark:bg-[#131916] border border-[#CBECE2] dark:border-[#1E2824] shadow-2xs flex flex-col justify-between space-y-4 hover:border-[#006B56]/50 dark:hover:border-[#5FAF8A]/50 hover:bg-[#F8FCFA] dark:hover:bg-[#18201C] hover:shadow-md transition-all cursor-pointer group"
             >
               <div className="space-y-2.5">
                 <div className="flex items-center justify-between">
-                  <span className="px-2.5 py-0.5 rounded-full bg-[#EAF6F0] dark:bg-[rgba(0,168,137,0.15)] text-[#006C56] dark:text-[#73D8C4] text-[10px] font-bold border border-transparent dark:border-[rgba(0,168,137,0.30)]">
+                  <span className="px-2.5 py-0.5 rounded-full bg-[#E6F4F0] dark:bg-[#18201C] text-[#006B56] dark:text-[#5FAF8A] text-[10px] font-bold border border-transparent dark:border-[#22302A]">
                     {res.category}
                   </span>
                   <div className="flex items-center gap-2">
@@ -220,7 +220,7 @@ export default function ResourcesView() {
                   </div>
                 </div>
 
-                <h3 className="text-sm sm:text-base font-heading font-black text-[#19332A] dark:text-[#F4FAF7] leading-snug group-hover:text-[#006C56] dark:group-hover:text-[#00A889] transition-colors">
+                <h3 className="text-sm sm:text-base font-heading font-black text-[#19332A] dark:text-[#F4FAF7] leading-snug group-hover:text-[#006C56] dark:group-hover:text-[#5FAF8A] transition-colors">
                   {res.title}
                 </h3>
                 <p className="text-xs text-[#4F685F] dark:text-[#D5E6E0] leading-relaxed line-clamp-3">
@@ -228,11 +228,11 @@ export default function ResourcesView() {
                 </p>
               </div>
 
-              <div className="flex items-center justify-between pt-3 border-t border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] text-xs">
+              <div className="flex items-center justify-between pt-3 border-t border-[#E2ECE6] dark:border-[#1E2824] text-xs">
                 <span className="text-[10px] text-[#789389] dark:text-[#76968D] font-medium">
                   By {res.author}
                 </span>
-                <span className="text-xs font-bold text-[#006C56] dark:text-[#00A889] flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
+                <span className="text-xs font-bold text-[#006C56] dark:text-[#5FAF8A] flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
                   <span>Read Guide</span>
                   <span>→</span>
                 </span>
@@ -243,7 +243,7 @@ export default function ResourcesView() {
       </div>
 
       {filteredResources.length === 0 && (
-        <div className="p-12 text-center rounded-3xl bg-white dark:bg-[#0B3029] border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] space-y-2">
+        <div className="p-12 text-center rounded-3xl bg-white dark:bg-[#131916] border border-[#E2ECE6] dark:border-[#1E2824] space-y-2">
           <span className="text-3xl">🔍</span>
           <h3 className="text-sm font-bold text-[#19332A] dark:text-[#F4FAF7]">No guides found</h3>
           <p className="text-xs text-[#6B857C] dark:text-[#9DB9B0]">
@@ -255,14 +255,14 @@ export default function ResourcesView() {
       {/* Reading Modal */}
       {readingResource && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-xs">
-          <div className="bg-white dark:bg-[#0B3029] rounded-3xl p-6 sm:p-8 max-w-2xl w-full max-h-[85vh] overflow-y-auto border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.15)] shadow-2xl space-y-5">
-            <div className="flex items-center justify-between pb-3 border-b border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)]">
-              <span className="px-2.5 py-0.5 rounded-full bg-[#EAF6F0] dark:bg-[rgba(0,168,137,0.15)] text-[#006C56] dark:text-[#73D8C4] text-[10px] font-bold border border-transparent dark:border-[rgba(0,168,137,0.30)]">
+          <div className="bg-white dark:bg-[#131916] rounded-3xl p-6 sm:p-8 max-w-2xl w-full max-h-[85vh] overflow-y-auto border border-[#E2ECE6] dark:border-[#1E2824] shadow-2xl space-y-5">
+            <div className="flex items-center justify-between pb-3 border-b border-[#E2ECE6] dark:border-[#1E2824]">
+              <span className="px-2.5 py-0.5 rounded-full bg-[#EAF6F0] dark:bg-[rgba(95,175,138,0.15)] text-[#006C56] dark:text-[#5FAF8A] text-[10px] font-bold border border-transparent dark:border-[#22302A]">
                 {readingResource.category} • {readingResource.readTime}
               </span>
               <button
                 onClick={() => setReadingResource(null)}
-                className="w-7 h-7 rounded-full bg-[#F4FAF7] dark:bg-[#0E3931] text-[#4F685F] dark:text-[#9DB9B0] flex items-center justify-center hover:bg-[#E2ECE6] dark:hover:bg-[#12463C] dark:hover:text-[#F4FAF7] transition-colors cursor-pointer text-xs"
+                className="w-7 h-7 rounded-full bg-[#F4FAF7] dark:bg-[#18201C] text-[#4F685F] dark:text-[#9DB9B0] flex items-center justify-center hover:bg-[#E2ECE6] dark:hover:bg-[#22302A] dark:hover:text-[#F4FAF7] transition-colors cursor-pointer text-xs"
               >
                 ✕
               </button>
@@ -294,16 +294,16 @@ export default function ResourcesView() {
               </p>
             </div>
 
-            <div className="pt-4 border-t border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] flex items-center justify-between">
+            <div className="pt-4 border-t border-[#E2ECE6] dark:border-[#1E2824] flex items-center justify-between">
               <button
                 onClick={(e) => toggleBookmark(readingResource.id, e)}
-                className="text-xs font-bold text-[#006C56] dark:text-[#00A889] flex items-center gap-1.5 cursor-pointer"
+                className="text-xs font-bold text-[#006C56] dark:text-[#5FAF8A] flex items-center gap-1.5 cursor-pointer"
               >
                 <span>{savedIds.includes(readingResource.id) ? "★ Saved in Bookmarks" : "☆ Save to Bookmarks"}</span>
               </button>
               <button
                 onClick={() => setReadingResource(null)}
-                className="px-5 py-2.5 rounded-xl bg-[#004D3D] dark:bg-[#008F78] hover:bg-[#003B2E] dark:hover:bg-[#00A889] text-white text-xs font-bold shadow-sm cursor-pointer"
+                className="px-5 py-2.5 rounded-xl bg-[#006B56] hover:bg-[#005B48] text-white text-xs font-bold shadow-sm cursor-pointer"
               >
                 Close Guide
               </button>

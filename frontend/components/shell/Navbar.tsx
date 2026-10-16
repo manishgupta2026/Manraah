@@ -165,41 +165,39 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
     }
   };
 
+  const getNavLinkClass = (isActive: boolean) => {
+    return isActive
+      ? "text-[#006B56] dark:text-[#5FAF8A] font-bold"
+      : "text-[#4F685F] dark:text-[#9DB9B0] hover:text-[#006B56] dark:hover:text-[#5FAF8A]";
+  };
+
   return (
     <header
       className={`sticky top-0 z-50 select-none w-full shrink-0 h-14 sm:h-16 ${
-        isAuthView
-          ? "bg-[#004D3D] dark:bg-[#04382F] border-b border-[#00382C] dark:border-[rgba(150,210,195,0.12)] shadow-xs text-white"
-          : mobileMenuOpen
+        mobileMenuOpen
           ? "bg-surface-container-lowest shadow-xl"
-          : "bg-surface/95 backdrop-blur-md border-b border-surface-variant/30 text-on-surface"
+          : "bg-surface/95 dark:bg-[#0E1412] backdrop-blur-md border-b border-surface-variant/30 dark:border-[#1A2420] text-on-surface dark:text-[#F4FAF7] shadow-2xs"
       }`}
     >
-      <div className="h-full max-w-7xl mx-auto px-4 sm:px-6 w-full flex items-center justify-between lg:grid lg:grid-cols-[1fr_auto_1fr] gap-6 xl:gap-8 relative z-30">
+      <div
+        className={`h-full w-full ${
+          isAuthView ? "px-4 sm:px-6 lg:px-8 xl:px-10" : "max-w-7xl mx-auto px-4 sm:px-6"
+        } flex items-center justify-between lg:grid lg:grid-cols-[1fr_auto_1fr] gap-6 xl:gap-8 relative z-30`}
+      >
         {/* Brand Logo (Left Section - justify-self-start) */}
         <div className="flex items-center justify-start shrink-0 lg:justify-self-start">
           <Link href="/" className="flex items-center gap-2 group hover:opacity-90 transition-opacity shrink-0">
-            <Logo size="md" variant={isAuthView ? "white" : "default"} priority />
+            <Logo size="md" variant={isDark ? "white" : "default"} priority />
           </Link>
         </div>
 
         {/* Navigation Links (Center Section - Exactly 50% Centered via justify-self-center) */}
         <nav
-          className={`hidden lg:flex items-center gap-4 xl:gap-6 text-xs xl:text-sm font-heading font-semibold justify-self-center ${
-            isAuthView ? "text-white/90" : "text-on-surface-variant"
-          }`}
+          className="hidden lg:flex items-center gap-4 xl:gap-6 text-xs xl:text-sm font-heading font-semibold justify-self-center text-on-surface-variant dark:text-[#9DB9B0]"
         >
           <Link
             href="/how-it-works"
-            className={`transition-colors shrink-0 ${
-              isAuthView
-                ? pathname === "/how-it-works"
-                  ? "text-white font-bold"
-                  : "hover:text-white text-white/85"
-                : pathname === "/how-it-works"
-                ? "text-primary font-bold"
-                : "hover:text-primary"
-            }`}
+            className={`transition-colors shrink-0 ${getNavLinkClass(pathname === "/how-it-works")}`}
           >
             How it Works
           </Link>
@@ -213,15 +211,9 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
             <button
               type="button"
               onClick={() => setSolutionDropdownOpen((prev) => !prev)}
-              className={`transition-colors flex items-center gap-1 shrink-0 py-1 cursor-pointer ${
-                isAuthView
-                  ? isSolutionActive
-                    ? "text-white font-bold"
-                    : "hover:text-white text-white/85"
-                  : isSolutionActive
-                  ? "text-primary font-bold"
-                  : "hover:text-primary"
-              }`}
+              className={`transition-colors flex items-center gap-1 shrink-0 py-1 cursor-pointer ${getNavLinkClass(
+                isSolutionActive
+              )}`}
             >
               <span>Our Solution</span>
               <span
@@ -240,53 +232,33 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 6, scale: 0.97 }}
                   transition={{ duration: 0.15, ease: "easeOut" }}
-                  className={`absolute top-full left-1/2 -translate-x-1/2 mt-2 w-80 rounded-2xl p-2.5 z-50 flex flex-col gap-1 shadow-2xl border ${
-                    isAuthView
-                      ? "bg-[#0D2821] dark:bg-[#0B3029] border-[#23483E] dark:border-[rgba(150,210,195,0.15)] text-white"
-                      : "bg-white border-surface-variant/50 text-on-surface"
-                  }`}
+                  className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-80 rounded-2xl p-2.5 z-50 flex flex-col gap-1 shadow-2xl border bg-surface-container-lowest/95 dark:bg-[#131916] backdrop-blur-xl border-surface-variant/40 dark:border-[#1E2824] text-on-surface dark:text-[#F4FAF7]"
                 >
 
                   {/* Colleges / Higher Ed */}
                   <Link
                     href="/our-solution?target=colleges"
                     onClick={() => setSolutionDropdownOpen(false)}
-                    className={`p-2.5 rounded-xl flex items-start gap-3 transition-colors group ${
-                      isAuthView ? "hover:bg-white/10" : "hover:bg-surface-container/70"
-                    }`}
+                    className="p-2.5 rounded-xl flex items-start gap-3 transition-colors group hover:bg-surface-container/70 dark:hover:bg-white/10"
                   >
                     <div
-                      className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors ${
-                        isAuthView
-                          ? "bg-white/10 text-emerald-400 group-hover:bg-emerald-500 group-hover:text-white"
-                          : "bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white"
-                      }`}
+                      className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white dark:bg-white/10 dark:text-emerald-400 dark:group-hover:bg-emerald-500 dark:group-hover:text-white"
                     >
                       <span className="material-symbols-outlined text-lg">school</span>
                     </div>
                     <div>
                       <div
-                        className={`text-xs font-heading font-bold transition-colors flex items-center gap-1.5 ${
-                          isAuthView
-                            ? "text-white group-hover:text-emerald-300"
-                            : "text-on-surface group-hover:text-primary"
-                        }`}
+                        className="text-xs font-heading font-bold transition-colors flex items-center gap-1.5 text-on-surface group-hover:text-primary dark:text-white dark:group-hover:text-emerald-300"
                       >
                         <span>For Students &amp; Colleges</span>
                         <span
-                          className={`text-[9px] px-1.5 py-0.5 rounded font-semibold border ${
-                            isAuthView
-                              ? "bg-emerald-400/20 text-emerald-300 border-emerald-400/30"
-                              : "bg-emerald-50 text-emerald-700 border-emerald-200"
-                          }`}
+                          className="text-[9px] px-1.5 py-0.5 rounded font-semibold border bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-400/20 dark:text-emerald-300 dark:border-emerald-400/30"
                         >
                           SC 2025
                         </span>
                       </div>
                       <div
-                        className={`text-[11px] line-clamp-1 ${
-                          isAuthView ? "text-white/60" : "text-on-surface-variant"
-                        }`}
+                        className="text-[11px] line-clamp-1 text-on-surface-variant dark:text-white/60"
                       >
                         Campus-wide suicide prevention &amp; UGC guidelines
                       </div>
@@ -297,33 +269,21 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                   <Link
                     href="/our-solution?target=corporates"
                     onClick={() => setSolutionDropdownOpen(false)}
-                    className={`p-2.5 rounded-xl flex items-start gap-3 transition-colors group ${
-                      isAuthView ? "hover:bg-white/10" : "hover:bg-surface-container/70"
-                    }`}
+                    className="p-2.5 rounded-xl flex items-start gap-3 transition-colors group hover:bg-surface-container/70 dark:hover:bg-white/10"
                   >
                     <div
-                      className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors ${
-                        isAuthView
-                          ? "bg-white/10 text-teal-400 group-hover:bg-teal-500 group-hover:text-white"
-                          : "bg-secondary/10 text-secondary group-hover:bg-secondary group-hover:text-white"
-                      }`}
+                      className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors bg-secondary/10 text-secondary group-hover:bg-secondary group-hover:text-white dark:bg-white/10 dark:text-teal-400 dark:group-hover:bg-teal-500 dark:group-hover:text-white"
                     >
                       <span className="material-symbols-outlined text-lg">corporate_fare</span>
                     </div>
                     <div>
                       <div
-                        className={`text-xs font-heading font-bold transition-colors flex items-center gap-1.5 ${
-                          isAuthView
-                            ? "text-white group-hover:text-teal-300"
-                            : "text-on-surface group-hover:text-secondary"
-                        }`}
+                        className="text-xs font-heading font-bold transition-colors flex items-center gap-1.5 text-on-surface group-hover:text-secondary dark:text-white dark:group-hover:text-teal-300"
                       >
                         <span>For Employees &amp; Corporates</span>
                       </div>
                       <div
-                        className={`text-[11px] line-clamp-1 ${
-                          isAuthView ? "text-white/60" : "text-on-surface-variant"
-                        }`}
+                        className="text-[11px] line-clamp-1 text-on-surface-variant dark:text-white/60"
                       >
                         24/7 confidential EAP, burnout telemetry &amp; ROI
                       </div>
@@ -332,9 +292,7 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
 
                   {/* Dropdown Footer CTA */}
                   <div
-                    className={`mt-1 pt-2 border-t flex items-center justify-between px-2 pb-1 ${
-                      isAuthView ? "border-white/10" : "border-surface-variant/30"
-                    }`}
+                    className="mt-1 pt-2 border-t border-surface-variant/30 dark:border-white/10 flex items-center justify-between px-2 pb-1"
                   >
                     <button
                       type="button"
@@ -343,11 +301,7 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                         setCallbackDefaultSegment("colleges");
                         setCallbackModalOpen(true);
                       }}
-                      className={`text-xs font-heading font-bold flex items-center gap-1.5 cursor-pointer ${
-                        isAuthView
-                          ? "text-emerald-400 hover:text-emerald-300"
-                          : "text-primary hover:text-primary-purple"
-                      }`}
+                      className="text-xs font-heading font-bold flex items-center gap-1.5 cursor-pointer text-primary hover:text-primary-purple dark:text-emerald-400 dark:hover:text-emerald-300"
                     >
                       <span className="material-symbols-outlined text-base">support_agent</span>
                       <span>Request a Callback</span>
@@ -355,11 +309,7 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                     <Link
                       href="/our-solution"
                       onClick={() => setSolutionDropdownOpen(false)}
-                      className={`text-[11px] font-heading font-semibold transition-colors ${
-                        isAuthView
-                          ? "text-white/70 hover:text-white"
-                          : "text-on-surface-variant hover:text-primary"
-                      }`}
+                      className="text-[11px] font-heading font-semibold transition-colors text-on-surface-variant hover:text-primary dark:text-white/70 dark:hover:text-white"
                     >
                       Full Overview &rarr;
                     </Link>
@@ -370,57 +320,25 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
           </div>
           <Link
             href="/features"
-            className={`transition-colors shrink-0 ${
-              isAuthView
-                ? pathname === "/features"
-                  ? "text-white font-bold"
-                  : "hover:text-white text-white/85"
-                : pathname === "/features"
-                ? "text-primary font-bold"
-                : "hover:text-primary"
-            }`}
+            className={`transition-colors shrink-0 ${getNavLinkClass(pathname === "/features")}`}
           >
             Features
           </Link>
           <Link
             href="/stories"
-            className={`transition-colors shrink-0 ${
-              isAuthView
-                ? pathname === "/stories"
-                  ? "text-white font-bold"
-                  : "hover:text-white text-white/85"
-                : pathname === "/stories"
-                ? "text-primary font-bold"
-                : "hover:text-primary"
-            }`}
+            className={`transition-colors shrink-0 ${getNavLinkClass(pathname === "/stories")}`}
           >
             Stories
           </Link>
           <Link
             href="/for-you"
-            className={`transition-colors shrink-0 ${
-              isAuthView
-                ? pathname === "/for-you"
-                  ? "text-white font-bold"
-                  : "hover:text-white text-white/85"
-                : pathname === "/for-you"
-                ? "text-primary font-bold"
-                : "hover:text-primary"
-            }`}
+            className={`transition-colors shrink-0 ${getNavLinkClass(pathname === "/for-you")}`}
           >
             For You
           </Link>
           <Link
             href="/blog"
-            className={`transition-colors shrink-0 ${
-              isAuthView
-                ? pathname === "/blog"
-                  ? "text-white font-bold"
-                  : "hover:text-white text-white/85"
-                : pathname === "/blog"
-                ? "text-primary font-bold"
-                : "hover:text-primary"
-            }`}
+            className={`transition-colors shrink-0 ${getNavLinkClass(pathname === "/blog")}`}
           >
             Blog
           </Link>
@@ -433,15 +351,9 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
           >
             <button
               onClick={() => setAboutDropdownOpen((prev) => !prev)}
-              className={`transition-colors flex items-center gap-0.5 cursor-pointer py-1 ${
-                isAuthView
-                  ? isAboutActive
-                    ? "text-white font-bold"
-                    : "text-white/85 hover:text-white"
-                  : isAboutActive
-                  ? "text-primary font-bold"
-                  : "hover:text-primary"
-              }`}
+              className={`transition-colors flex items-center gap-0.5 cursor-pointer py-1 ${getNavLinkClass(
+                isAboutActive
+              )}`}
               aria-expanded={aboutDropdownOpen}
               aria-haspopup="true"
             >
@@ -463,29 +375,21 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 6, scale: 0.97 }}
                   transition={{ duration: 0.15, ease: "easeOut" }}
-                  className={`absolute top-full right-0 mt-1.5 w-60 rounded-2xl shadow-xl p-2 z-50 flex flex-col gap-1 ${
-                    isAuthView
-                      ? "bg-[#0D2821] dark:bg-[#0B3029] border border-[#23483E] dark:border-[rgba(150,210,195,0.15)] text-white"
-                      : "bg-surface-container-lowest/95 backdrop-blur-xl border border-surface-variant/40"
-                  }`}
+                  className="absolute top-full right-0 mt-1.5 w-60 rounded-2xl shadow-xl p-2 z-50 flex flex-col gap-1 bg-surface-container-lowest/95 dark:bg-[#131916] backdrop-blur-xl border border-surface-variant/40 dark:border-[#1E2824] text-on-surface dark:text-[#F4FAF7]"
                 >
                   <Link
                     href="/about"
                     onClick={() => setAboutDropdownOpen(false)}
                     className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-colors ${
-                      isAuthView
-                        ? pathname === "/about"
-                          ? "bg-white/15 text-white font-bold"
-                          : "text-white/90 hover:bg-white/10 hover:text-white"
-                        : pathname === "/about"
-                        ? "bg-primary/10 text-primary font-bold"
-                        : "text-on-surface hover:bg-surface-container hover:text-primary"
+                      pathname === "/about"
+                        ? "bg-primary/10 text-primary dark:bg-white/15 dark:text-white font-bold"
+                        : "text-on-surface hover:bg-surface-container/70 hover:text-primary dark:text-white/90 dark:hover:bg-white/10 dark:hover:text-white"
                     }`}
                   >
                     <span className="material-symbols-outlined text-lg text-primary/70">info</span>
                     <div>
                       <div className="text-xs font-heading font-bold leading-tight">About Us</div>
-                      <div className={`text-[10px] font-normal leading-tight ${isAuthView ? "text-white/60 dark:text-[#9DB9B0]" : "text-on-surface-variant"}`}>
+                      <div className="text-[10px] font-normal leading-tight text-on-surface-variant dark:text-[#9DB9B0]">
                         Our story, pillars &amp; mission
                       </div>
                     </div>
@@ -495,19 +399,15 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                     href="/faq"
                     onClick={() => setAboutDropdownOpen(false)}
                     className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-colors ${
-                      isAuthView
-                        ? pathname === "/faq"
-                          ? "bg-white/15 text-white font-bold"
-                          : "text-white/90 hover:bg-white/10 hover:text-white"
-                        : pathname === "/faq"
-                        ? "bg-primary/10 text-primary font-bold"
-                        : "text-on-surface hover:bg-surface-container hover:text-primary"
+                      pathname === "/faq"
+                        ? "bg-primary/10 text-primary dark:bg-white/15 dark:text-white font-bold"
+                        : "text-on-surface hover:bg-surface-container/70 hover:text-primary dark:text-white/90 dark:hover:bg-white/10 dark:hover:text-white"
                     }`}
                   >
                     <span className="material-symbols-outlined text-lg text-[#00A889]">quiz</span>
                     <div>
                       <div className="text-xs font-heading font-bold leading-tight">FAQ</div>
-                      <div className={`text-[10px] font-normal leading-tight ${isAuthView ? "text-white/60 dark:text-[#9DB9B0]" : "text-on-surface-variant"}`}>
+                      <div className="text-[10px] font-normal leading-tight text-on-surface-variant dark:text-[#9DB9B0]">
                         Frequently asked questions
                       </div>
                     </div>
@@ -517,19 +417,15 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                     href="/privacy-and-trust"
                     onClick={() => setAboutDropdownOpen(false)}
                     className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-colors ${
-                      isAuthView
-                        ? pathname === "/privacy-and-trust"
-                          ? "bg-white/15 text-white font-bold"
-                          : "text-white/90 hover:bg-white/10 hover:text-white"
-                        : pathname === "/privacy-and-trust"
-                        ? "bg-primary/10 text-primary font-bold"
-                        : "text-on-surface hover:bg-surface-container hover:text-primary"
+                      pathname === "/privacy-and-trust"
+                        ? "bg-primary/10 text-primary dark:bg-white/15 dark:text-white font-bold"
+                        : "text-on-surface hover:bg-surface-container/70 hover:text-primary dark:text-white/90 dark:hover:bg-white/10 dark:hover:text-white"
                     }`}
                   >
-                    <span className="material-symbols-outlined text-lg text-rose-300">verified_user</span>
+                    <span className="material-symbols-outlined text-lg text-rose-400">verified_user</span>
                     <div>
                       <div className="text-xs font-heading font-bold leading-tight">Privacy &amp; Trust</div>
-                      <div className={`text-[10px] font-normal leading-tight ${isAuthView ? "text-white/60 dark:text-[#9DB9B0]" : "text-on-surface-variant"}`}>
+                      <div className="text-[10px] font-normal leading-tight text-on-surface-variant dark:text-[#9DB9B0]">
                         Security &amp; confidentiality
                       </div>
                     </div>
@@ -548,7 +444,7 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
               {/* Theme / Dark Mode Toggle */}
               <button
                 onClick={toggleTheme}
-                className="w-8.5 h-8.5 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors cursor-pointer select-none shrink-0"
+                className="w-8.5 h-8.5 rounded-full bg-surface-container/70 hover:bg-surface-container border border-surface-variant/40 dark:border-white/10 dark:bg-white/10 dark:hover:bg-white/20 text-on-surface dark:text-[#F4FAF7] flex items-center justify-center transition-colors cursor-pointer select-none shrink-0"
                 title={isDark ? "Switch to light mode" : "Switch to dark mode"}
                 aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
               >
@@ -562,21 +458,21 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                 <button
                   type="button"
                   onClick={() => setProfileDropdownOpen((prev) => !prev)}
-                  className="flex items-center gap-2 px-2 py-1 rounded-full bg-white/10 hover:bg-white/15 border border-white/15 focus:outline-none focus:ring-2 focus:ring-white/40 cursor-pointer transition-all"
+                  className="flex items-center gap-2 px-2.5 py-1 rounded-full bg-surface-container/70 hover:bg-surface-container border border-surface-variant/40 dark:border-white/15 dark:bg-white/10 dark:hover:bg-white/15 focus:outline-none focus:ring-2 focus:ring-primary/25 cursor-pointer transition-all"
                   aria-label="User profile menu"
                   aria-haspopup="true"
                   aria-expanded={profileDropdownOpen}
                 >
                   <UserAvatar user={user} sizeClass="w-8 h-8 text-xs" />
                   <div className="text-left hidden sm:block pr-1">
-                    <p className="text-xs font-heading font-bold text-white leading-tight" suppressHydrationWarning>
+                    <p className="text-xs font-heading font-bold text-on-surface dark:text-[#F4FAF7] leading-tight" suppressHydrationWarning>
                       Hi, {userName}
                     </p>
-                    <p className="text-[9px] text-white/70 dark:text-[#9DB9B0] font-medium leading-none mt-0.5">
+                    <p className="text-[9px] text-on-surface-variant/80 dark:text-[#9DB9B0] font-medium leading-none mt-0.5">
                       Take care today
                     </p>
                   </div>
-                  <span className="material-symbols-outlined text-base text-white/80 pr-1">
+                  <span className="material-symbols-outlined text-base text-on-surface-variant dark:text-[#9DB9B0] pr-1">
                     expand_more
                   </span>
                 </button>
@@ -588,13 +484,13 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: 6, scale: 0.95 }}
                       transition={{ duration: 0.15, ease: "easeOut" }}
-                      className="absolute top-full right-0 mt-2 w-56 rounded-2xl bg-[#0D2821] dark:bg-[#0B3029] border border-[#23483E] dark:border-[rgba(150,210,195,0.15)] text-white shadow-2xl p-1.5 z-50 flex flex-col gap-1"
+                      className="absolute top-full right-0 mt-2 w-56 rounded-2xl bg-surface-container-lowest/95 backdrop-blur-xl dark:bg-[#111714] border border-surface-variant/40 dark:border-[#1E2824] text-on-surface dark:text-[#F4FAF7] shadow-2xl p-1.5 z-50 flex flex-col gap-1"
                     >
-                      <div className="px-3.5 py-2 border-b border-white/10">
-                        <p className="font-heading font-bold text-white dark:text-[#F4FAF7] text-sm truncate" suppressHydrationWarning>
+                      <div className="px-3.5 py-2 border-b border-surface-variant/30 dark:border-white/10">
+                        <p className="font-heading font-bold text-on-surface dark:text-[#F4FAF7] text-sm truncate" suppressHydrationWarning>
                           {userName || "Manraah Member"}
                         </p>
-                        <p className="text-[10px] text-white/60 dark:text-[#9DB9B0] font-medium truncate mt-0.5">
+                        <p className="text-[10px] text-on-surface-variant/80 dark:text-[#9DB9B0] font-medium truncate mt-0.5">
                           Active Profile: {formatCategoryLabel(user?.selectedCategory)}
                         </p>
                       </div>
@@ -605,11 +501,11 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                         onClick={() => setProfileDropdownOpen(false)}
                         className={`flex items-center gap-2.5 px-3.5 py-2 rounded-xl transition-colors text-xs font-heading font-semibold cursor-pointer ${
                           pathname === "/dashboard"
-                            ? "bg-white/15 text-white font-bold"
-                            : "text-white/90 hover:text-white hover:bg-white/10"
+                            ? "bg-primary/10 text-primary dark:bg-white/15 dark:text-[#5FAF8A] font-bold"
+                            : "text-on-surface-variant dark:text-[#D5E6E0] hover:bg-surface-container/70 hover:text-primary dark:hover:bg-white/10"
                         }`}
                       >
-                        <span className="material-symbols-outlined text-lg text-emerald-400">dashboard</span>
+                        <span className="material-symbols-outlined text-lg text-primary dark:text-[#5FAF8A]">dashboard</span>
                         <span>Dashboard</span>
                       </Link>
 
@@ -619,11 +515,11 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                         onClick={() => setProfileDropdownOpen(false)}
                         className={`flex items-center gap-2.5 px-3.5 py-2 rounded-xl transition-colors text-xs font-heading font-semibold cursor-pointer ${
                           pathname === "/profile"
-                            ? "bg-white/15 text-white font-bold"
-                            : "text-white/90 hover:text-white hover:bg-white/10"
+                            ? "bg-primary/10 text-primary dark:bg-white/15 dark:text-[#5FAF8A] font-bold"
+                            : "text-on-surface-variant dark:text-[#D5E6E0] hover:bg-surface-container/70 hover:text-primary dark:hover:bg-white/10"
                         }`}
                       >
-                        <span className="material-symbols-outlined text-lg text-teal-400">person</span>
+                        <span className="material-symbols-outlined text-lg text-primary dark:text-[#5FAF8A]">person</span>
                         <span>My Profile</span>
                       </Link>
 
@@ -633,15 +529,15 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                         onClick={() => setProfileDropdownOpen(false)}
                         className={`flex items-center gap-2.5 px-3.5 py-2 rounded-xl transition-colors text-xs font-heading font-semibold cursor-pointer ${
                           pathname === "/journey"
-                            ? "bg-white/15 text-white font-bold"
-                            : "text-white/90 hover:text-white hover:bg-white/10"
+                            ? "bg-primary/10 text-primary dark:bg-white/15 dark:text-[#5FAF8A] font-bold"
+                            : "text-on-surface-variant dark:text-[#D5E6E0] hover:bg-surface-container/70 hover:text-primary dark:hover:bg-white/10"
                         }`}
                       >
-                        <span className="material-symbols-outlined text-lg text-cyan-400">timeline</span>
+                        <span className="material-symbols-outlined text-lg text-primary dark:text-[#5FAF8A]">timeline</span>
                         <span>My Journey</span>
                       </Link>
 
-                      <div className="my-0.5 border-t border-white/10" />
+                      <div className="my-0.5 border-t border-surface-variant/30 dark:border-white/10" />
 
                       {/* Log Out Button */}
                       <button
@@ -650,9 +546,9 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                           setProfileDropdownOpen(false);
                           await handleLogout();
                         }}
-                        className="w-full flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-rose-300 hover:text-rose-200 hover:bg-rose-500/15 transition-colors text-xs font-heading font-semibold cursor-pointer text-left"
+                        className="w-full flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-rose-600 dark:text-rose-300 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors text-xs font-heading font-semibold cursor-pointer text-left"
                       >
-                        <span className="material-symbols-outlined text-lg text-rose-400">logout</span>
+                        <span className="material-symbols-outlined text-lg text-rose-500 dark:text-rose-400">logout</span>
                         <span>Log Out</span>
                       </button>
                     </motion.div>
@@ -664,14 +560,14 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
               <button
                 type="button"
                 onClick={() => setIsCrisisModalOpen(true)}
-                className="flex items-center gap-1.5 px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full font-heading font-extrabold text-sm sm:text-base transition-all cursor-pointer select-none shrink-0 bg-red-600/95 hover:bg-red-600 text-white border border-red-400/50 shadow-xs hover:shadow-sm"
+                className="flex items-center gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-heading font-extrabold text-xs sm:text-sm transition-all cursor-pointer select-none shrink-0 bg-white hover:bg-rose-50 text-rose-600 border border-rose-200 dark:bg-rose-950/30 dark:hover:bg-rose-900/40 dark:border-rose-900/60 dark:text-rose-300 shadow-xs hover:shadow-sm"
                 title="Crisis & 24/7 Helplines"
                 aria-label="Crisis"
               >
-                <span className="material-symbols-outlined text-lg sm:text-xl animate-pulse text-red-100 sm:text-inherit">
+                <span className="material-symbols-outlined text-base sm:text-lg animate-pulse text-rose-500 dark:text-rose-400">
                   emergency
                 </span>
-                <span>Crisis</span>
+                <span>Crisis Help</span>
               </button>
             </div>
           ) : (

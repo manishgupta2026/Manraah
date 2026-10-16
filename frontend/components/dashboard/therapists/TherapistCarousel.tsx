@@ -284,7 +284,7 @@ export default function TherapistCarousel({
             stepBackward();
           }}
           aria-label="Previous doctors"
-          className="absolute left-0 sm:left-1 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-10 sm:h-10 min-w-[36px] min-h-[36px] sm:min-w-[40px] sm:min-h-[40px] rounded-full bg-white/95 dark:bg-[#0E3931]/95 text-[#19332A] dark:text-[#F4FAF7] hover:bg-white dark:hover:bg-[#12463C] flex items-center justify-center transition-all cursor-pointer border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.2)] shadow-md hover:shadow-lg hover:scale-105 active:scale-95 select-none backdrop-blur-xs"
+          className="absolute left-0 sm:left-1 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-10 sm:h-10 min-w-[36px] min-h-[36px] sm:min-w-[40px] sm:min-h-[40px] rounded-full bg-white/95 dark:bg-[#18201C]/95 text-[#19332A] dark:text-[#F4FAF7] hover:bg-white dark:hover:bg-[#25302B] flex items-center justify-center transition-all cursor-pointer border border-[#E2ECE6] dark:border-[#22302A] shadow-md hover:shadow-lg hover:scale-105 active:scale-95 select-none backdrop-blur-xs"
         >
           <span className="material-symbols-outlined text-lg sm:text-xl leading-none">chevron_left</span>
         </button>
@@ -324,7 +324,7 @@ export default function TherapistCarousel({
             stepForward();
           }}
           aria-label="Next doctors"
-          className="absolute right-0 sm:right-1 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-10 sm:h-10 min-w-[36px] min-h-[36px] sm:min-w-[40px] sm:min-h-[40px] rounded-full bg-white/95 dark:bg-[#0E3931]/95 text-[#19332A] dark:text-[#F4FAF7] hover:bg-white dark:hover:bg-[#12463C] flex items-center justify-center transition-all cursor-pointer border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.2)] shadow-md hover:shadow-lg hover:scale-105 active:scale-95 select-none backdrop-blur-xs"
+          className="absolute right-0 sm:right-1 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-10 sm:h-10 min-w-[36px] min-h-[36px] sm:min-w-[40px] sm:min-h-[40px] rounded-full bg-white/95 dark:bg-[#18201C]/95 text-[#19332A] dark:text-[#F4FAF7] hover:bg-white dark:hover:bg-[#25302B] flex items-center justify-center transition-all cursor-pointer border border-[#E2ECE6] dark:border-[#22302A] shadow-md hover:shadow-lg hover:scale-105 active:scale-95 select-none backdrop-blur-xs"
         >
           <span className="material-symbols-outlined text-lg sm:text-xl leading-none">chevron_right</span>
         </button>

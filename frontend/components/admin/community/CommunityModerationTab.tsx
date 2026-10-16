@@ -108,6 +108,36 @@ export default function CommunityModerationTab() {
     }
   };
 
+  const handleDelete = async (postId: string) => {
+    if (!window.confirm("Are you sure you want to permanently delete this post?")) return;
+    try {
+      setActionInProgress(postId);
+      const res = await fetch(`/api/admin/community?postId=${encodeURIComponent(postId)}`, {
+        method: "DELETE",
+      });
+
+      if (res.ok) {
+        setPosts((prev) => prev.filter((p) => p.id !== postId));
+        setStats((prev) => ({
+          ...prev,
+          total: Math.max(0, prev.total - 1),
+        }));
+        setFeedbackMessage({
+          text: "✓ Post deleted permanently.",
+          type: "success",
+        });
+        setTimeout(() => setFeedbackMessage(null), 3000);
+      }
+    } catch (err: any) {
+      setFeedbackMessage({
+        text: err.message || "Failed to delete post.",
+        type: "error",
+      });
+    } finally {
+      setActionInProgress(null);
+    }
+  };
+
   const filteredPosts = posts.filter((post) => {
     if (activeFilter === "all") return true;
     return post.status === activeFilter;
@@ -364,6 +394,16 @@ export default function CommunityModerationTab() {
                       <span>Reject</span>
                     </button>
                   )}
+
+                  <button
+                    onClick={() => handleDelete(post.id)}
+                    disabled={actionInProgress === post.id}
+                    className="px-3.5 py-2 rounded-2xl bg-surface-container hover:bg-rose-600 hover:text-white text-on-surface-variant font-bold text-xs border border-surface-variant/30 transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                    title="Delete post permanently"
+                  >
+                    <span className="material-symbols-outlined text-base">delete</span>
+                    <span>Delete</span>
+                  </button>
                 </div>
               </div>
             </div>

@@ -360,16 +360,16 @@ export default function DoctorProfileModal({
       aria-labelledby="doctor-profile-title"
     >
       <div
-        className="bg-white dark:bg-[#0A2923] text-[#19332A] dark:text-[#F4FAF7] w-full max-w-2xl rounded-3xl shadow-2xl border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.18)] overflow-hidden flex flex-col max-h-[90vh] transition-all transform animate-in zoom-in-95 duration-200"
+        className="bg-white dark:bg-[#131916] text-[#19332A] dark:text-[#F4FAF7] w-full max-w-2xl rounded-3xl shadow-2xl border border-[#CBECE2] dark:border-[#1E2824] overflow-hidden flex flex-col max-h-[90vh] transition-all transform animate-in zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()}
       >
         {/* ================================================================= */}
         {/* MODAL HEADER: Clean Doctor Identity & Navigation Tabs             */}
         {/* ================================================================= */}
-        <div className="p-5 sm:p-6 border-b border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] bg-[#FAFDFB] dark:bg-[#07211C] shrink-0 space-y-4">
+        <div className="p-5 sm:p-6 border-b border-[#CBECE2] dark:border-[#1E2824] bg-[#FAFDFB] dark:bg-[#111714] shrink-0 space-y-4">
           <div className="flex items-start justify-between gap-4">
             <div className="flex items-center gap-4 min-w-0">
-              <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden border-2 border-white dark:border-[#143B33] shadow-xs shrink-0 bg-slate-100 dark:bg-[#0E3931]">
+              <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden border-2 border-[#D0EDE4] dark:border-[#22302A] shadow-xs shrink-0 bg-slate-100 dark:bg-[#18201C]">
                 <img
                   src={therapist.profileImage || therapist.image || "/images/therapists/default-professional.jpg"}
                   alt={therapist.name}
@@ -391,7 +391,7 @@ export default function DoctorProfileModal({
                   >
                     {therapist.name}
                   </h2>
-                  <span className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 dark:bg-emerald-900/50 text-[#006C56] dark:text-[#73D8C4] shrink-0">
+                  <span className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#E6F4F0] dark:bg-[rgba(95,175,138,0.15)] text-[#006B56] dark:text-[#5FAF8A] border border-[#CBECE2] dark:border-[#22302A] shrink-0">
                     <span className="material-symbols-outlined text-xs">verified</span>
                     <span>Verified</span>
                   </span>
@@ -406,7 +406,7 @@ export default function DoctorProfileModal({
                   <span>·</span>
                   <span>{currentCount} verified review{currentCount === 1 ? "" : "s"}</span>
                   <span>·</span>
-                  <span className="text-[#006C56] dark:text-[#73D8C4] font-semibold">{therapist.experience}</span>
+                  <span className="text-[#006B56] dark:text-[#5FAF8A] font-semibold">{therapist.experience}</span>
                 </div>
               </div>
             </div>
@@ -415,7 +415,7 @@ export default function DoctorProfileModal({
               type="button"
               onClick={onClose}
               aria-label="Close modal"
-              className="w-9 h-9 rounded-full bg-[#F0F5F2] dark:bg-[#0E3931] text-[#5A756C] dark:text-[#9DB9B0] hover:text-[#19332A] dark:hover:text-white hover:bg-[#E2ECE6] dark:hover:bg-[#143B33] flex items-center justify-center transition-colors shrink-0 cursor-pointer"
+              className="w-9 h-9 rounded-full bg-[#F0F5F2] dark:bg-[#18201C] text-[#5A756C] dark:text-[#9DB9B0] hover:text-[#19332A] dark:hover:text-white hover:bg-[#E2ECE6] dark:hover:bg-[#22302A] flex items-center justify-center transition-colors shrink-0 cursor-pointer"
             >
               <span className="material-symbols-outlined text-lg leading-none">close</span>
             </button>
@@ -428,7 +428,7 @@ export default function DoctorProfileModal({
               onClick={() => setActiveTab("profile")}
               className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
                 activeTab === "profile"
-                  ? "bg-[#006C56] text-white dark:bg-[#00A889] shadow-xs"
+                  ? "bg-[#006B56] hover:bg-[#005B48] text-white shadow-xs"
                   : "bg-black/5 dark:bg-white/5 text-[#5A756C] dark:text-[#9DB9B0] hover:bg-black/10"
               }`}
             >
@@ -439,7 +439,7 @@ export default function DoctorProfileModal({
               onClick={() => setActiveTab("book")}
               className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
                 activeTab === "book"
-                  ? "bg-[#006C56] text-white dark:bg-[#00A889] shadow-xs"
+                  ? "bg-[#006B56] hover:bg-[#005B48] text-white shadow-xs"
                   : "bg-black/5 dark:bg-white/5 text-[#5A756C] dark:text-[#9DB9B0] hover:bg-black/10"
               }`}
             >
@@ -451,7 +451,7 @@ export default function DoctorProfileModal({
               onClick={() => setActiveTab("reviews")}
               className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
                 activeTab === "reviews"
-                  ? "bg-[#006C56] text-white dark:bg-[#00A889] shadow-xs"
+                  ? "bg-[#006B56] hover:bg-[#005B48] text-white shadow-xs"
                   : "bg-black/5 dark:bg-white/5 text-[#5A756C] dark:text-[#9DB9B0] hover:bg-black/10"
               }`}
             >
@@ -468,9 +468,9 @@ export default function DoctorProfileModal({
           {loadingProfile ? (
             /* Skeleton Loading State */
             <div className="space-y-4 animate-pulse">
-              <div className="h-6 w-1/3 bg-slate-200 dark:bg-[#143B33] rounded" />
-              <div className="h-16 bg-slate-200 dark:bg-[#143B33] rounded-2xl" />
-              <div className="h-20 bg-slate-200 dark:bg-[#143B33] rounded-2xl" />
+              <div className="h-6 w-1/3 bg-slate-200 dark:bg-[#18201C] rounded" />
+              <div className="h-16 bg-slate-200 dark:bg-[#18201C] rounded-2xl" />
+              <div className="h-20 bg-slate-200 dark:bg-[#18201C] rounded-2xl" />
             </div>
           ) : profileError ? (
             <div className="p-4 rounded-2xl bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-900/50 text-rose-700 dark:text-rose-300 flex items-center gap-3">
@@ -484,7 +484,7 @@ export default function DoctorProfileModal({
                 <div className="space-y-6 animate-in fade-in duration-200">
                   {/* About Section */}
                   <div className="space-y-2">
-                    <h3 className="text-xs font-black uppercase tracking-wider text-[#006C56] dark:text-[#73D8C4]">
+                    <h3 className="text-xs font-black uppercase tracking-wider text-[#006B56] dark:text-[#5FAF8A]">
                       About {therapist.name}
                     </h3>
                     <p className="text-xs sm:text-sm text-[#2A443C] dark:text-[#D5E6E0] leading-relaxed font-medium">
@@ -494,14 +494,14 @@ export default function DoctorProfileModal({
 
                   {/* Specializations Tags */}
                   <div className="space-y-2.5">
-                    <h3 className="text-xs font-black uppercase tracking-wider text-[#006C56] dark:text-[#73D8C4]">
+                    <h3 className="text-xs font-black uppercase tracking-wider text-[#006B56] dark:text-[#5FAF8A]">
                       Specializations &amp; Focus Areas
                     </h3>
                     <div className="flex flex-wrap gap-2">
                       {specialties.map((spec: string) => (
                         <span
                           key={spec}
-                          className="text-xs font-bold px-3 py-1 rounded-xl bg-emerald-50 dark:bg-[#0E3931] border border-emerald-200/80 dark:border-[rgba(0,168,137,0.25)] text-[#006C56] dark:text-[#73D8C4]"
+                          className="text-xs font-bold px-3 py-1 rounded-xl bg-emerald-50 dark:bg-[#18201C] border border-emerald-200/80 dark:border-[#22302A] text-[#006B56] dark:text-[#5FAF8A]"
                         >
                           {spec}
                         </span>
@@ -510,26 +510,26 @@ export default function DoctorProfileModal({
                   </div>
 
                   {/* Session Information Card */}
-                  <div className="bg-[#FAFDFB] dark:bg-[#07211C] p-4.5 rounded-2xl border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] space-y-3">
-                    <h3 className="text-xs font-black uppercase tracking-wider text-[#006C56] dark:text-[#73D8C4]">
+                  <div className="bg-[#FAFDFB] dark:bg-[#18201C] p-4.5 rounded-2xl border border-[#E2ECE6] dark:border-[#22302A] space-y-3">
+                    <h3 className="text-xs font-black uppercase tracking-wider text-[#006B56] dark:text-[#5FAF8A]">
                       Session Information
                     </h3>
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-                      <div className="p-3 rounded-xl bg-white dark:bg-[#0A2923] border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)]">
+                      <div className="p-3 rounded-xl bg-white dark:bg-[#131916] border border-[#E2ECE6] dark:border-[#22302A]">
                         <span className="text-[10px] text-[#789389] dark:text-[#9DB9B0] block">Duration</span>
                         <span className="font-bold text-[#19332A] dark:text-[#F4FAF7] mt-0.5 block">45 Minutes</span>
                       </div>
-                      <div className="p-3 rounded-xl bg-white dark:bg-[#0A2923] border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)]">
+                      <div className="p-3 rounded-xl bg-white dark:bg-[#131916] border border-[#E2ECE6] dark:border-[#22302A]">
                         <span className="text-[10px] text-[#789389] dark:text-[#9DB9B0] block">Fee</span>
                         <span className="font-bold text-[#19332A] dark:text-[#F4FAF7] mt-0.5 block">
                           {profileData?.hourlyRate || therapist.hourlyRate || "₹1,800"}
                         </span>
                       </div>
-                      <div className="p-3 rounded-xl bg-white dark:bg-[#0A2923] border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)]">
+                      <div className="p-3 rounded-xl bg-white dark:bg-[#131916] border border-[#E2ECE6] dark:border-[#22302A]">
                         <span className="text-[10px] text-[#789389] dark:text-[#9DB9B0] block">Format</span>
                         <span className="font-bold text-[#19332A] dark:text-[#F4FAF7] mt-0.5 block">1-on-1 Video</span>
                       </div>
-                      <div className="p-3 rounded-xl bg-white dark:bg-[#0A2923] border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)]">
+                      <div className="p-3 rounded-xl bg-white dark:bg-[#131916] border border-[#E2ECE6] dark:border-[#22302A]">
                         <span className="text-[10px] text-[#789389] dark:text-[#9DB9B0] block">Language</span>
                         <span className="font-bold text-[#19332A] dark:text-[#F4FAF7] mt-0.5 block">English, Hindi</span>
                       </div>
@@ -537,7 +537,7 @@ export default function DoctorProfileModal({
                   </div>
 
                   {/* Book Session Callout CTA */}
-                  <div className="pt-2 flex items-center justify-between gap-4 p-4 rounded-2xl bg-emerald-50/50 dark:bg-[rgba(0,168,137,0.08)] border border-emerald-200/80 dark:border-[rgba(0,168,137,0.2)]">
+                  <div className="pt-2 flex items-center justify-between gap-4 p-4 rounded-2xl bg-emerald-50/50 dark:bg-[#18201C] border border-emerald-200/80 dark:border-[#22302A]">
                     <div>
                       <h4 className="text-xs font-bold text-[#19332A] dark:text-[#F4FAF7]">
                         Ready to begin your session?
@@ -549,7 +549,7 @@ export default function DoctorProfileModal({
                     <button
                       type="button"
                       onClick={() => setActiveTab("book")}
-                      className="px-5 py-2.5 rounded-full text-xs font-bold bg-[#006C56] hover:bg-[#005745] text-white dark:bg-[#00A889] dark:hover:bg-[#009176] transition-all shadow-xs cursor-pointer shrink-0"
+                      className="px-5 py-2.5 rounded-full text-xs font-bold bg-[#006B56] hover:bg-[#005B48] text-white transition-all shadow-xs cursor-pointer shrink-0"
                     >
                       Book a Session
                     </button>
@@ -562,8 +562,8 @@ export default function DoctorProfileModal({
                 <div className="space-y-6 animate-in fade-in duration-200">
                   {bookedAppointment ? (
                     /* Booking Success Confirmation */
-                    <div className="p-6 rounded-3xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 text-center space-y-4 animate-in zoom-in-95">
-                      <div className="w-14 h-14 rounded-full bg-emerald-100 dark:bg-emerald-900/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mx-auto">
+                    <div className="p-6 rounded-3xl bg-emerald-50 dark:bg-[#18201C] border border-emerald-200 dark:border-[#22302A] text-center space-y-4 animate-in zoom-in-95">
+                      <div className="w-14 h-14 rounded-full bg-emerald-100 dark:bg-[#131916] text-[#006B56] dark:text-[#5FAF8A] flex items-center justify-center mx-auto">
                         <span className="material-symbols-outlined text-3xl">check_circle</span>
                       </div>
 
@@ -576,7 +576,7 @@ export default function DoctorProfileModal({
                         </p>
                       </div>
 
-                      <div className="p-4 rounded-2xl bg-white dark:bg-[#0A2923] border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.15)] text-left space-y-2 text-xs">
+                      <div className="p-4 rounded-2xl bg-white dark:bg-[#131916] border border-[#E2ECE6] dark:border-[#22302A] text-left space-y-2 text-xs">
                         <div className="flex justify-between">
                           <span className="text-[#789389]">Practitioner:</span>
                           <span className="font-bold">{therapist.name}</span>
@@ -607,7 +607,7 @@ export default function DoctorProfileModal({
                             onClose();
                             router.push("/appointments");
                           }}
-                          className="px-5 py-2.5 rounded-full text-xs font-bold bg-[#006C56] text-white hover:bg-[#005745] dark:bg-[#00A889] transition-all shadow-xs cursor-pointer"
+                          className="px-5 py-2.5 rounded-full text-xs font-bold bg-[#006B56] text-white hover:bg-[#005B48] transition-all shadow-xs cursor-pointer"
                         >
                           View in Appointments
                         </button>
@@ -626,7 +626,7 @@ export default function DoctorProfileModal({
                       {/* Date Selector Row */}
                       <div className="space-y-2">
                         <div className="flex items-center justify-between">
-                          <label className="text-xs font-black uppercase tracking-wider text-[#006C56] dark:text-[#73D8C4]">
+                          <label className="text-xs font-black uppercase tracking-wider text-[#006B56] dark:text-[#5FAF8A]">
                             1. Select Date
                           </label>
                           <span className="text-[11px] text-[#789389] dark:text-[#9DB9B0]">
@@ -644,8 +644,8 @@ export default function DoctorProfileModal({
                                 onClick={() => setSelectedDate(opt.fullDate)}
                                 className={`flex flex-col items-center justify-center py-2.5 px-3.5 rounded-2xl border min-w-[64px] transition-all cursor-pointer shrink-0 snap-start ${
                                   isSelected
-                                    ? "bg-[#006C56] text-white border-[#006C56] dark:bg-[#00A889] dark:border-[#00A889] shadow-xs"
-                                    : "bg-white dark:bg-[#07211C] border-[#E2ECE6] dark:border-[rgba(150,210,195,0.15)] text-[#19332A] dark:text-[#F4FAF7] hover:border-[#006C56]/50"
+                                    ? "bg-[#E37A47] hover:bg-[#D36A37] text-white border-[#E37A47] shadow-xs"
+                                    : "bg-white dark:bg-[#18201C] border-[#CBECE2] dark:border-[#22302A] text-[#19332A] dark:text-[#F4FAF7] hover:border-[#E37A47]/60"
                                 }`}
                               >
                                 <span className={`text-[10px] font-semibold uppercase ${isSelected ? "text-emerald-100" : "text-[#789389]"}`}>
@@ -666,7 +666,7 @@ export default function DoctorProfileModal({
                       {/* Time Slots Grid */}
                       <div className="space-y-2.5">
                         <div className="flex items-center justify-between">
-                          <label className="text-xs font-black uppercase tracking-wider text-[#006C56] dark:text-[#73D8C4]">
+                          <label className="text-xs font-black uppercase tracking-wider text-[#006B56] dark:text-[#5FAF8A]">
                             2. Select Time Slot
                           </label>
                           <span className="text-[11px] text-[#789389] dark:text-[#9DB9B0]">
@@ -677,11 +677,11 @@ export default function DoctorProfileModal({
                         {loadingSlots ? (
                           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 animate-pulse">
                             {[1, 2, 3, 4, 5, 6, 7].map((i) => (
-                              <div key={i} className="h-11 bg-slate-100 dark:bg-[#143B33] rounded-xl" />
+                              <div key={i} className="h-11 bg-slate-100 dark:bg-[#18201C] rounded-xl" />
                             ))}
                           </div>
                         ) : slots.length === 0 ? (
-                          <div className="p-6 text-center bg-[#FAFDFB] dark:bg-[#07211C] rounded-2xl border border-dashed border-[#D5E6E0] dark:border-[rgba(150,210,195,0.15)]">
+                          <div className="p-6 text-center bg-[#FAFDFB] dark:bg-[#18201C] rounded-2xl border border-dashed border-[#D5E6E0] dark:border-[#22302A]">
                             <p className="text-xs font-semibold text-[#5A756C] dark:text-[#9DB9B0]">
                               No slots available on this date.
                             </p>
@@ -701,9 +701,9 @@ export default function DoctorProfileModal({
                                   onClick={() => setSelectedSlot(s)}
                                   className={`py-2.5 px-3 rounded-xl border text-xs font-bold transition-all flex flex-col items-center justify-center cursor-pointer disabled:cursor-not-allowed ${
                                     isSelected
-                                      ? "bg-[#006C56] text-white border-[#006C56] dark:bg-[#00A889] dark:border-[#00A889] shadow-xs scale-102"
+                                      ? "bg-[#006B56] text-white border-[#006B56] dark:bg-[#006B56] dark:border-[#006B56] shadow-xs scale-102"
                                       : s.available
-                                      ? "bg-white dark:bg-[#07211C] border-[#E2ECE6] dark:border-[rgba(150,210,195,0.15)] text-[#19332A] dark:text-[#F4FAF7] hover:border-[#006C56] hover:bg-emerald-50/40"
+                                      ? "bg-white dark:bg-[#18201C] border-[#E2ECE6] dark:border-[#22302A] text-[#19332A] dark:text-[#F4FAF7] hover:border-[#006B56] hover:bg-emerald-50/40"
                                       : "bg-slate-100 dark:bg-white/5 border-transparent text-slate-400 dark:text-slate-600 line-through opacity-60"
                                   }`}
                                 >
@@ -733,8 +733,8 @@ export default function DoctorProfileModal({
                               onClick={() => setSelectedFocus(selectedFocus === spec ? "" : spec)}
                               className={`text-[11px] px-3 py-1 rounded-xl border transition-all cursor-pointer font-medium ${
                                 selectedFocus === spec
-                                  ? "bg-[#006C56] text-white border-[#006C56] dark:bg-[#00A889]"
-                                  : "bg-white dark:bg-[#07211C] border-[#D5E6E0] dark:border-[rgba(150,210,195,0.2)] text-[#5A756C] dark:text-[#9DB9B0]"
+                                  ? "bg-[#006B56] text-white border-[#006B56] dark:bg-[#006B56]"
+                                  : "bg-white dark:bg-[#18201C] border-[#D5E6E0] dark:border-[#22302A] text-[#5A756C] dark:text-[#9DB9B0]"
                               }`}
                             >
                               {spec}
@@ -753,10 +753,10 @@ export default function DoctorProfileModal({
 
                       {/* Booking Summary & Confirmation CTA */}
                       {selectedSlot && (
-                        <div className="p-4.5 rounded-2xl bg-[#FAFDFB] dark:bg-[#07211C] border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.15)] space-y-3 animate-in slide-in-from-top-2">
+                        <div className="p-4.5 rounded-2xl bg-[#FAFDFB] dark:bg-[#18201C] border border-[#E2ECE6] dark:border-[#22302A] space-y-3 animate-in slide-in-from-top-2">
                           <div className="flex items-center justify-between text-xs">
                             <span className="text-[#789389] dark:text-[#9DB9B0]">Selected Slot:</span>
-                            <span className="font-bold text-[#006C56] dark:text-[#73D8C4]">
+                            <span className="font-bold text-[#006B56] dark:text-[#5FAF8A]">
                               {selectedSlot.time} on {new Date(selectedSlot.isoTime).toLocaleDateString("en-US", { month: "short", day: "numeric", weekday: "short" })}
                             </span>
                           </div>
@@ -780,7 +780,7 @@ export default function DoctorProfileModal({
                               type="button"
                               onClick={handleConfirmBooking}
                               disabled={isSubmittingBooking}
-                              className="px-6 py-2.5 rounded-full text-xs font-bold bg-[#006C56] hover:bg-[#005745] text-white dark:bg-[#00A889] dark:hover:bg-[#009176] transition-all shadow-xs flex items-center gap-2 cursor-pointer disabled:opacity-50"
+                              className="px-6 py-2.5 rounded-full text-xs font-bold bg-[#006B56] hover:bg-[#005B48] text-white dark:bg-[#006B56] dark:hover:bg-[#005B48] transition-all shadow-xs flex items-center gap-2 cursor-pointer disabled:opacity-50"
                             >
                               {isSubmittingBooking ? (
                                 <>
@@ -816,13 +816,13 @@ export default function DoctorProfileModal({
                   )}
 
                   {/* 1. Overall Rating Hero + Rate Trigger + Compact Breakdown */}
-                  <div className="bg-[#FAFDFB] dark:bg-[#07211C] p-5 rounded-2xl border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] space-y-4">
+                  <div className="bg-[#FAFDFB] dark:bg-[#18201C] p-5 rounded-2xl border border-[#E2ECE6] dark:border-[#22302A] space-y-4">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                       {/* Hero Rating Display */}
                       <div className="flex items-center gap-3.5">
-                        <div className="w-13.5 h-13.5 rounded-2xl bg-[#EAF6F0] dark:bg-[rgba(0,168,137,0.15)] flex flex-col items-center justify-center border border-[#D2EAE0] dark:border-[rgba(0,168,137,0.25)] shrink-0">
+                        <div className="w-13.5 h-13.5 rounded-2xl bg-[#EAF6F0] dark:bg-[rgba(95,175,138,0.15)] flex flex-col items-center justify-center border border-[#D2EAE0] dark:border-[#22302A] shrink-0">
                           <span className="text-amber-500 text-xs leading-none">★</span>
-                          <span className="text-xl font-heading font-black text-[#006C56] dark:text-[#73D8C4] leading-tight mt-0.5">
+                          <span className="text-xl font-heading font-black text-[#006B56] dark:text-[#5FAF8A] leading-tight mt-0.5">
                             {formatted.isUnrated ? "--" : formatted.displayText}
                           </span>
                         </div>
@@ -847,8 +847,8 @@ export default function DoctorProfileModal({
                         }}
                         className={`h-9 px-4.5 rounded-full text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 shadow-2xs shrink-0 self-start sm:self-center ${
                           showRatingForm
-                            ? "bg-[#E2ECE6] dark:bg-[#143B33] text-[#19332A] dark:text-[#F4FAF7] hover:bg-[#D5E6E0]"
-                            : "bg-[#006C56] hover:bg-[#005745] text-white dark:bg-[#00A889] dark:hover:bg-[#009176]"
+                            ? "bg-[#E2ECE6] dark:bg-[#131916] text-[#19332A] dark:text-[#F4FAF7] hover:bg-[#D5E6E0]"
+                            : "bg-[#006B56] hover:bg-[#005B48] text-white dark:bg-[#006B56] dark:hover:bg-[#005B48]"
                         }`}
                       >
                         <span className="material-symbols-outlined text-base leading-none">
@@ -871,9 +871,9 @@ export default function DoctorProfileModal({
                             </div>
 
                             {/* Progress Bar */}
-                            <div className="flex-1 h-2 bg-[#E8F0EC] dark:bg-[#0E3931] rounded-full overflow-hidden relative">
+                            <div className="flex-1 h-2 bg-[#E8F0EC] dark:bg-[#131916] rounded-full overflow-hidden relative">
                               <div
-                                className="h-full rounded-full bg-[#006C56] dark:bg-[#00A889] transition-all duration-500 ease-out"
+                                className="h-full rounded-full bg-[#006B56] dark:bg-[#006B56] transition-all duration-500 ease-out"
                                 style={{ width: `${percent}%` }}
                               />
                             </div>
@@ -892,10 +892,10 @@ export default function DoctorProfileModal({
                   {showRatingForm && (
                     <form
                       onSubmit={handleSubmitRating}
-                      className="bg-emerald-50/40 dark:bg-[rgba(0,168,137,0.06)] p-5 rounded-2xl border border-emerald-200/80 dark:border-[rgba(0,168,137,0.25)] space-y-4.5 animate-in slide-in-from-top-3 duration-200"
+                      className="bg-emerald-50/40 dark:bg-[#18201C] p-5 rounded-2xl border border-emerald-200/80 dark:border-[#22302A] space-y-4.5 animate-in slide-in-from-top-3 duration-200"
                     >
                       <div className="flex items-center justify-between">
-                        <h3 className="text-xs font-black uppercase tracking-wider text-[#006C56] dark:text-[#73D8C4]">
+                        <h3 className="text-xs font-black uppercase tracking-wider text-[#006B56] dark:text-[#5FAF8A]">
                           {ratingsData?.userReview ? "Update your experience" : "Rate your experience"}
                         </h3>
                         {ratingsData?.userReview && (
@@ -922,7 +922,7 @@ export default function DoctorProfileModal({
                                   onMouseEnter={() => setHoverRating(star)}
                                   onMouseLeave={() => setHoverRating(null)}
                                   aria-label={`Rate ${star} star${star > 1 ? "s" : ""}`}
-                                  className="p-1 text-2xl transition-transform hover:scale-115 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#006C56] rounded-md cursor-pointer leading-none"
+                                  className="p-1 text-2xl transition-transform hover:scale-115 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#006B56] rounded-md cursor-pointer leading-none"
                                 >
                                   <span className={isFilled ? "text-amber-400" : "text-slate-300 dark:text-slate-700"}>
                                     ★
@@ -949,7 +949,7 @@ export default function DoctorProfileModal({
                           onChange={(e) => setFeedbackText(e.target.value)}
                           placeholder="Write your feedback regarding communication, empathy, and practical guidance..."
                           maxLength={1000}
-                          className="w-full text-xs p-3.5 rounded-xl bg-white dark:bg-[#07211C] border border-[#D5E6E0] dark:border-[rgba(150,210,195,0.2)] text-[#19332A] dark:text-[#F4FAF7] placeholder:text-[#9DB9B0] focus:outline-none focus:ring-2 focus:ring-[#006C56] dark:focus:ring-[#00A889] transition-all resize-y min-h-[84px] leading-relaxed block"
+                          className="w-full text-xs p-3.5 rounded-xl bg-white dark:bg-[#131916] border border-[#D5E6E0] dark:border-[#22302A] text-[#19332A] dark:text-[#F4FAF7] placeholder:text-[#9DB9B0] focus:outline-none focus:ring-2 focus:ring-[#006B56]/40 dark:focus:ring-[#5FAF8A]/30 transition-all resize-y min-h-[84px] leading-relaxed block"
                         />
                         <div className="flex justify-end text-[11px] text-[#789389] dark:text-[#9DB9B0] font-medium pt-0.5 tabular-nums">
                           {feedbackText.length} / 1000
@@ -975,7 +975,7 @@ export default function DoctorProfileModal({
                         <button
                           type="submit"
                           disabled={isSubmittingRating}
-                          className="h-9 px-5 rounded-full text-xs font-bold bg-[#006C56] hover:bg-[#005745] text-white dark:bg-[#00A889] dark:hover:bg-[#009176] transition-all shadow-xs flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
+                          className="h-9 px-5 rounded-full text-xs font-bold bg-[#006B56] hover:bg-[#005B48] text-white dark:bg-[#006B56] dark:hover:bg-[#005B48] transition-all shadow-xs flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
                         >
                           {isSubmittingRating ? (
                             <>
@@ -1002,7 +1002,7 @@ export default function DoctorProfileModal({
                     </div>
 
                     {!ratingsData?.reviews || ratingsData.reviews.length === 0 ? (
-                      <div className="p-6 text-center bg-[#FAFDFB] dark:bg-[#07211C] rounded-2xl border border-dashed border-[#D5E6E0] dark:border-[rgba(150,210,195,0.15)]">
+                      <div className="p-6 text-center bg-[#FAFDFB] dark:bg-[#18201C] rounded-2xl border border-dashed border-[#D5E6E0] dark:border-[#22302A]">
                         <p className="text-xs font-semibold text-[#5A756C] dark:text-[#9DB9B0]">
                           No patient reviews yet.
                         </p>
@@ -1015,7 +1015,7 @@ export default function DoctorProfileModal({
                         {ratingsData.reviews.map((rev: any) => (
                           <div
                             key={rev.id}
-                            className="p-4 rounded-2xl bg-[#FAFDFB] dark:bg-[#07211C] border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] space-y-2.5 transition-colors shadow-2xs"
+                            className="p-4 rounded-2xl bg-[#FAFDFB] dark:bg-[#18201C] border border-[#E2ECE6] dark:border-[#22302A] space-y-2.5 transition-colors shadow-2xs"
                           >
                             <div className="flex items-center justify-between gap-2">
                               <div className="flex items-center gap-2">
@@ -1024,14 +1024,14 @@ export default function DoctorProfileModal({
                                   <span>{rev.rating}.0</span>
                                 </span>
                                 {(rev.isCurrentUser || rev.isOwnReview) && (
-                                  <span className="text-[10px] bg-[#006C56]/10 text-[#006C56] dark:text-[#73D8C4] px-2 py-0.5 rounded-full font-bold">
+                                  <span className="text-[10px] bg-[#006C56]/10 text-[#006C56] dark:text-[#5FAF8A] px-2 py-0.5 rounded-full font-bold">
                                     Your Review
                                   </span>
                                 )}
                               </div>
 
                               <div className="text-xs text-[#789389] dark:text-[#9DB9B0] flex items-center gap-1.5 font-medium">
-                                <span className="material-symbols-outlined text-sm text-[#006C56] dark:text-[#00A889]">
+                                <span className="material-symbols-outlined text-sm text-[#006B56] dark:text-[#5FAF8A]">
                                   verified
                                 </span>
                                 <span>{rev.authorLabel || rev.patientDisplayLabel || "Verified Patient"}</span>
@@ -1063,15 +1063,15 @@ export default function DoctorProfileModal({
         {/* ================================================================= */}
         {/* MODAL FOOTER: Privacy Info & Close Button                        */}
         {/* ================================================================= */}
-        <div className="p-5 sm:p-6 border-t border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] bg-[#FAFDFB] dark:bg-[#07211C] flex items-center justify-between gap-3 shrink-0">
+        <div className="p-5 sm:p-6 border-t border-[#E2ECE6] dark:border-[#1E2824] bg-[#FAFDFB] dark:bg-[#111714] flex items-center justify-between gap-3 shrink-0">
           <div className="flex items-center gap-2 text-xs text-[#789389] dark:text-[#9DB9B0] font-medium">
-            <span className="material-symbols-outlined text-sm text-[#006C56] dark:text-[#00A889]">lock</span>
+            <span className="material-symbols-outlined text-sm text-[#006B56] dark:text-[#5FAF8A]">lock</span>
             <span>Anonymous &amp; Verified Patient Care</span>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="h-9 px-5 rounded-full text-xs font-bold bg-[#E2ECE6] dark:bg-[#143B33] text-[#19332A] dark:text-[#F4FAF7] hover:bg-[#D5E6E0] dark:hover:bg-[#19473D] transition-colors cursor-pointer flex items-center justify-center"
+            className="h-9 px-5 rounded-full text-xs font-bold bg-[#E2ECE6] dark:bg-[#18201C] text-[#19332A] dark:text-[#F4FAF7] hover:bg-[#D5E6E0] dark:hover:bg-[#22302A] transition-colors cursor-pointer flex items-center justify-center"
           >
             Close
           </button>

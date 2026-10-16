@@ -225,13 +225,13 @@ export default function DoctorRatingModal({
       aria-labelledby="doctor-rating-title"
     >
       <div
-        className="bg-white dark:bg-[#0A2923] text-[#19332A] dark:text-[#F4FAF7] w-full max-w-lg rounded-3xl shadow-2xl border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.18)] overflow-hidden flex flex-col max-h-[88vh] transition-all transform animate-in zoom-in-95 duration-200"
+        className="bg-white dark:bg-[#131916] text-[#19332A] dark:text-[#F4FAF7] w-full max-w-lg rounded-3xl shadow-2xl border border-[#E2ECE6] dark:border-[#1E2824] overflow-hidden flex flex-col max-h-[88vh] transition-all transform animate-in zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Modal Header: Clear Doctor Identity */}
-        <div className="p-5 sm:p-6 border-b border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] flex items-center justify-between gap-4 shrink-0 bg-[#FAFDFB] dark:bg-[#07211C]">
+        <div className="p-5 sm:p-6 border-b border-[#E2ECE6] dark:border-[#1E2824] flex items-center justify-between gap-4 shrink-0 bg-[#FAFDFB] dark:bg-[#111714]">
           <div className="flex items-center gap-3.5 min-w-0">
-            <div className="w-13 h-13 rounded-full overflow-hidden border-2 border-white dark:border-[#143B33] shadow-xs shrink-0 bg-slate-100 dark:bg-[#0E3931]">
+            <div className="w-13 h-13 rounded-full overflow-hidden border-2 border-white dark:border-[#1E2824] shadow-xs shrink-0 bg-slate-100 dark:bg-[#18201C]">
               <img
                 src={therapist.profileImage || therapist.image || "/images/therapists/default-professional.jpg"}
                 alt={therapist.name}
@@ -266,7 +266,7 @@ export default function DoctorRatingModal({
             type="button"
             onClick={onClose}
             aria-label="Close modal"
-            className="w-8.5 h-8.5 rounded-full bg-[#F0F5F2] dark:bg-[#0E3931] text-[#5A756C] dark:text-[#9DB9B0] hover:text-[#19332A] dark:hover:text-white hover:bg-[#E2ECE6] dark:hover:bg-[#143B33] flex items-center justify-center transition-colors shrink-0 cursor-pointer"
+            className="w-8.5 h-8.5 rounded-full bg-[#F0F5F2] dark:bg-[#18201C] text-[#5A756C] dark:text-[#9DB9B0] hover:text-[#19332A] dark:hover:text-[#EAEFEA] hover:bg-[#E2ECE6] dark:hover:bg-[#22302A] flex items-center justify-center transition-colors shrink-0 cursor-pointer"
           >
             <span className="material-symbols-outlined text-lg leading-none">close</span>
           </button>
@@ -278,17 +278,17 @@ export default function DoctorRatingModal({
             /* Skeleton Loading State */
             <div className="space-y-4 animate-pulse">
               <div className="flex items-center gap-4">
-                <div className="h-12 w-24 bg-slate-200 dark:bg-[#143B33] rounded-xl" />
-                <div className="h-4 w-32 bg-slate-200 dark:bg-[#143B33] rounded" />
+                <div className="h-12 w-24 bg-slate-200 dark:bg-[#18201C] rounded-xl" />
+                <div className="h-4 w-32 bg-slate-200 dark:bg-[#18201C] rounded" />
               </div>
               <div className="space-y-2 pt-3">
                 {[1, 2, 3, 4, 5].map((i) => (
-                  <div key={i} className="h-2.5 bg-slate-200 dark:bg-[#143B33] rounded w-full" />
+                  <div key={i} className="h-2.5 bg-slate-200 dark:bg-[#18201C] rounded w-full" />
                 ))}
               </div>
               <div className="space-y-3 pt-4 border-t border-slate-100 dark:border-white/5">
-                <div className="h-16 bg-slate-200 dark:bg-[#143B33] rounded-2xl" />
-                <div className="h-16 bg-slate-200 dark:bg-[#143B33] rounded-2xl" />
+                <div className="h-16 bg-slate-200 dark:bg-[#18201C] rounded-2xl" />
+                <div className="h-16 bg-slate-200 dark:bg-[#18201C] rounded-2xl" />
               </div>
             </div>
           ) : error ? (
@@ -310,13 +310,13 @@ export default function DoctorRatingModal({
               )}
 
               {/* 1. Overall Rating Hero + Rate Trigger + Compact Breakdown */}
-              <div className="bg-[#FAFDFB] dark:bg-[#07211C] p-5 rounded-2xl border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] space-y-4">
+              <div className="bg-[#FAFDFB] dark:bg-[#131916] p-5 rounded-2xl border border-[#E2ECE6] dark:border-[#1E2824] space-y-4">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   {/* Hero Rating Display */}
                   <div className="flex items-center gap-3.5">
-                    <div className="w-13.5 h-13.5 rounded-2xl bg-[#EAF6F0] dark:bg-[rgba(0,168,137,0.15)] flex flex-col items-center justify-center border border-[#D2EAE0] dark:border-[rgba(0,168,137,0.25)] shrink-0">
+                    <div className="w-13.5 h-13.5 rounded-2xl bg-[#EAF6F0] dark:bg-[#18201C] flex flex-col items-center justify-center border border-[#D2EAE0] dark:border-[#22302A] shrink-0">
                       <span className="text-amber-500 text-xs leading-none">★</span>
-                      <span className="text-xl font-heading font-black text-[#006C56] dark:text-[#73D8C4] leading-tight mt-0.5">
+                      <span className="text-xl font-heading font-black text-[#006C56] dark:text-[#5FAF8A] leading-tight mt-0.5">
                         {formatted.isUnrated ? "--" : formatted.displayText}
                       </span>
                     </div>
@@ -341,8 +341,8 @@ export default function DoctorRatingModal({
                     }}
                     className={`h-9 px-4.5 rounded-full text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 shadow-2xs shrink-0 self-start sm:self-center ${
                       showRatingForm
-                        ? "bg-[#E2ECE6] dark:bg-[#143B33] text-[#19332A] dark:text-[#F4FAF7] hover:bg-[#D5E6E0]"
-                        : "bg-[#006C56] hover:bg-[#005745] text-white dark:bg-[#00A889] dark:hover:bg-[#009176]"
+                        ? "bg-[#E2ECE6] dark:bg-[#18201C] text-[#19332A] dark:text-[#F4FAF7] hover:bg-[#D5E6E0] dark:hover:bg-[#22302A]"
+                        : "bg-[#006C56] hover:bg-[#005745] text-white dark:bg-[#006B56] dark:hover:bg-[#005B48]"
                     }`}
                   >
                     <span className="material-symbols-outlined text-base leading-none">
@@ -365,9 +365,9 @@ export default function DoctorRatingModal({
                         </div>
 
                         {/* Progress Bar */}
-                        <div className="flex-1 h-2 bg-[#E8F0EC] dark:bg-[#0E3931] rounded-full overflow-hidden relative">
+                        <div className="flex-1 h-2 bg-[#E8F0EC] dark:bg-[#18201C] rounded-full overflow-hidden relative">
                           <div
-                            className="h-full rounded-full bg-[#006C56] dark:bg-[#00A889] transition-all duration-500 ease-out"
+                            className="h-full rounded-full bg-[#006C56] dark:bg-[#006B56] transition-all duration-500 ease-out"
                             style={{ width: `${percent}%` }}
                           />
                         </div>
@@ -386,14 +386,14 @@ export default function DoctorRatingModal({
               {showRatingForm && (
                 <form
                   onSubmit={handleSubmitRating}
-                  className="bg-emerald-50/40 dark:bg-[rgba(0,168,137,0.06)] p-5 rounded-2xl border border-emerald-200/80 dark:border-[rgba(0,168,137,0.25)] space-y-4.5 animate-in slide-in-from-top-3 duration-200"
+                  className="bg-emerald-50/40 dark:bg-[#18201C] p-5 rounded-2xl border border-emerald-200/80 dark:border-[#22302A] space-y-4.5 animate-in slide-in-from-top-3 duration-200"
                 >
                   <div className="flex items-center justify-between">
-                    <h3 className="text-xs font-black uppercase tracking-wider text-[#006C56] dark:text-[#73D8C4]">
+                    <h3 className="text-xs font-black uppercase tracking-wider text-[#006C56] dark:text-[#5FAF8A]">
                       {data?.userReview ? "Update your experience" : "Rate your experience"}
                     </h3>
                     {data?.userReview && (
-                      <span className="text-[10px] bg-emerald-100 dark:bg-emerald-900/50 text-emerald-800 dark:text-emerald-200 px-2.5 py-0.5 rounded-full font-bold">
+                      <span className="text-[10px] bg-emerald-100 dark:bg-[rgba(95,175,138,0.12)] text-emerald-800 dark:text-[#5FAF8A] px-2.5 py-0.5 rounded-full font-bold">
                         Editing previous review
                       </span>
                     )}
@@ -418,7 +418,7 @@ export default function DoctorRatingModal({
                               aria-label={`Rate ${star} star${star > 1 ? "s" : ""}`}
                               className="p-1 text-2xl transition-transform hover:scale-115 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#006C56] rounded-md cursor-pointer leading-none"
                             >
-                              <span className={isFilled ? "text-amber-400" : "text-slate-300 dark:text-slate-700"}>
+                              <span className={isFilled ? "text-amber-400" : "text-slate-300 dark:text-zinc-700"}>
                                 ★
                               </span>
                             </button>
@@ -443,7 +443,7 @@ export default function DoctorRatingModal({
                       onChange={(e) => setFeedbackText(e.target.value)}
                       placeholder="Write your feedback regarding the doctor's communication, empathy, and practical guidance..."
                       maxLength={1000}
-                      className="w-full text-xs p-3.5 rounded-xl bg-white dark:bg-[#07211C] border border-[#D5E6E0] dark:border-[rgba(150,210,195,0.2)] text-[#19332A] dark:text-[#F4FAF7] placeholder:text-[#9DB9B0] focus:outline-none focus:ring-2 focus:ring-[#006C56] dark:focus:ring-[#00A889] transition-all resize-y min-h-[84px] leading-relaxed block"
+                      className="w-full text-xs p-3.5 rounded-xl bg-white dark:bg-[#131916] border border-[#D5E6E0] dark:border-[#22302A] text-[#19332A] dark:text-[#F4FAF7] placeholder:text-[#9DB9B0] focus:outline-none focus:ring-2 focus:ring-[#006C56] dark:focus:ring-[#006B56] transition-all resize-y min-h-[84px] leading-relaxed block"
                     />
                     <div className="flex justify-end text-[11px] text-[#789389] dark:text-[#9DB9B0] font-medium pt-0.5 tabular-nums">
                       {feedbackText.length} / 1000
@@ -471,7 +471,7 @@ export default function DoctorRatingModal({
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="h-9 px-5 rounded-full text-xs font-bold bg-[#006C56] hover:bg-[#005745] text-white dark:bg-[#00A889] dark:hover:bg-[#009176] transition-all shadow-xs flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
+                      className="h-9 px-5 rounded-full text-xs font-bold bg-[#006C56] hover:bg-[#005745] text-white dark:bg-[#006B56] dark:hover:bg-[#005B48] transition-all shadow-xs flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
                     >
                       {isSubmitting ? (
                         <>
@@ -498,7 +498,7 @@ export default function DoctorRatingModal({
                 </div>
 
                 {!data?.reviews || data.reviews.length === 0 ? (
-                  <div className="p-6 text-center bg-[#FAFDFB] dark:bg-[#07211C] rounded-2xl border border-dashed border-[#D5E6E0] dark:border-[rgba(150,210,195,0.15)]">
+                  <div className="p-6 text-center bg-[#FAFDFB] dark:bg-[#18201C] rounded-2xl border border-dashed border-[#D5E6E0] dark:border-[#22302A]">
                     <p className="text-xs font-semibold text-[#5A756C] dark:text-[#9DB9B0]">
                       No patient reviews yet.
                     </p>
@@ -511,7 +511,7 @@ export default function DoctorRatingModal({
                     {data.reviews.map((rev) => (
                       <div
                         key={rev.id}
-                        className="p-4 rounded-2xl bg-[#FAFDFB] dark:bg-[#07211C] border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] space-y-2.5 transition-colors shadow-2xs"
+                        className="p-4 rounded-2xl bg-[#FAFDFB] dark:bg-[#18201C] border border-[#E2ECE6] dark:border-[#22302A] space-y-2.5 transition-colors shadow-2xs"
                       >
                         {/* Top Row: Stars (Left) + Verified Patient & Date (Right) */}
                         <div className="flex items-center justify-between gap-2">
@@ -521,14 +521,14 @@ export default function DoctorRatingModal({
                               <span>{rev.rating}.0</span>
                             </span>
                             {(rev.isCurrentUser || rev.isOwnReview) && (
-                              <span className="text-[10px] bg-[#006C56]/10 text-[#006C56] dark:text-[#73D8C4] px-2 py-0.5 rounded-full font-bold">
+                              <span className="text-[10px] bg-[#006C56]/10 text-[#006C56] dark:text-[#5FAF8A] px-2 py-0.5 rounded-full font-bold">
                                 Your Review
                               </span>
                             )}
                           </div>
 
                           <div className="text-xs text-[#789389] dark:text-[#9DB9B0] flex items-center gap-1.5 font-medium">
-                            <span className="material-symbols-outlined text-sm text-[#006C56] dark:text-[#00A889]">
+                            <span className="material-symbols-outlined text-sm text-[#006C56] dark:text-[#5FAF8A]">
                               verified
                             </span>
                             <span>{rev.authorLabel || rev.patientDisplayLabel || "Verified Patient"}</span>
@@ -557,15 +557,15 @@ export default function DoctorRatingModal({
         </div>
 
         {/* Modal Footer: Locked at bottom with Privacy label & Close Button */}
-        <div className="p-5 sm:p-6 border-t border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] bg-[#FAFDFB] dark:bg-[#07211C] flex items-center justify-between gap-3 shrink-0">
+        <div className="p-5 sm:p-6 border-t border-[#E2ECE6] dark:border-[#1E2824] bg-[#FAFDFB] dark:bg-[#111714] flex items-center justify-between gap-3 shrink-0">
           <div className="flex items-center gap-2 text-xs text-[#789389] dark:text-[#9DB9B0] font-medium">
-            <span className="material-symbols-outlined text-sm text-[#006C56] dark:text-[#00A889]">lock</span>
+            <span className="material-symbols-outlined text-sm text-[#006C56] dark:text-[#5FAF8A]">lock</span>
             <span>Anonymous &amp; Verified Patient Data</span>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="h-9 px-5 rounded-full text-xs font-bold bg-[#E2ECE6] dark:bg-[#143B33] text-[#19332A] dark:text-[#F4FAF7] hover:bg-[#D5E6E0] dark:hover:bg-[#19473D] transition-colors cursor-pointer flex items-center justify-center"
+            className="h-9 px-5 rounded-full text-xs font-bold bg-[#E2ECE6] dark:bg-[#18201C] text-[#19332A] dark:text-[#F4FAF7] hover:bg-[#D5E6E0] dark:hover:bg-[#22302A] transition-colors cursor-pointer flex items-center justify-center"
           >
             Close
           </button>

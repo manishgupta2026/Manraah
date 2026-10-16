@@ -61,6 +61,28 @@ const config: Config = {
         background: "#fdf7ff",
         "on-background": "#1d192b",
         "surface-variant": "#e6dff8",
+        // Manraah Brand & Accent Tokens (from reference specifications)
+        "forest-emerald": {
+          DEFAULT: "#006B56",
+          dark: "#005B48",
+          hover: "#005B48",
+        },
+        "pine-green": "#004D3D",
+        "sage-mint": "#5FAF8A",
+        "mint-surface": "#E6F4F0",
+        "sage-surface": "#EAF6F2",
+        "mint-border": "#CBECE2",
+        "mint-accent": "#D0EDE4",
+        "emerald-container": "#112F28",
+        "emerald-border": "#1C463C",
+        terracotta: {
+          DEFAULT: "#E37A47",
+          hover: "#D36A37",
+          dark: "#F38A57",
+          wash: "#FFF6F2",
+        },
+        "amber-wash": "#FFF6EB",
+        "amber-border": "#FFE1C2",
         // Mood Accents
         pink: "#F4A6B8",
         peach: "#F5C99B",

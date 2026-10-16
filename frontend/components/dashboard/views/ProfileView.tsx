@@ -246,18 +246,18 @@ export default function ProfileView() {
   if (loading && !user) {
     return (
       <div className="w-full min-w-0 flex flex-col gap-6 animate-pulse">
-        <div className="w-full bg-white dark:bg-[#0B3029] rounded-3xl p-6 sm:p-7 border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] shadow-2xs">
+        <div className="w-full bg-white dark:bg-[#131916] rounded-3xl p-6 sm:p-7 border border-[#E2ECE6] dark:border-[#1E2824] shadow-2xs">
           <div className="flex items-center gap-5">
-            <div className="w-[76px] h-[76px] rounded-full bg-slate-200 dark:bg-[#0E3931]" />
+            <div className="w-[76px] h-[76px] rounded-full bg-slate-200 dark:bg-[#18201C]" />
             <div className="space-y-2.5 flex-1">
-              <div className="h-6 w-48 bg-slate-200 dark:bg-[#0E3931] rounded-md" />
-              <div className="h-3.5 w-32 bg-slate-200 dark:bg-[#0E3931] rounded-md" />
+              <div className="h-6 w-48 bg-slate-200 dark:bg-[#18201C] rounded-md" />
+              <div className="h-3.5 w-32 bg-slate-200 dark:bg-[#18201C] rounded-md" />
             </div>
           </div>
         </div>
         <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="h-48 bg-white dark:bg-[#0B3029] rounded-3xl p-6 border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)]" />
-          <div className="h-48 bg-white dark:bg-[#0B3029] rounded-3xl p-6 border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)]" />
+          <div className="h-48 bg-white dark:bg-[#131916] rounded-3xl p-6 border border-[#E2ECE6] dark:border-[#1E2824]" />
+          <div className="h-48 bg-white dark:bg-[#131916] rounded-3xl p-6 border border-[#E2ECE6] dark:border-[#1E2824]" />
         </div>
       </div>
     );
@@ -266,8 +266,8 @@ export default function ProfileView() {
   // 2. Unauthenticated State: If user is not authenticated after load completes
   if (!user && !loading) {
     return (
-      <div className="w-full bg-white dark:bg-[#0B3029] rounded-3xl p-8 border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] text-center space-y-4 shadow-2xs">
-        <div className="w-12 h-12 rounded-full bg-[#EAF6F0] dark:bg-[rgba(0,168,137,0.15)] text-[#006C56] dark:text-[#73D8C4] flex items-center justify-center mx-auto text-xl font-bold">
+      <div className="w-full bg-white dark:bg-[#131916] rounded-3xl p-8 border border-[#E2ECE6] dark:border-[#1E2824] text-center space-y-4 shadow-2xs">
+        <div className="w-12 h-12 rounded-full bg-[#EAF6F0] dark:bg-[#18201C] text-[#006C56] dark:text-[#5FAF8A] flex items-center justify-center mx-auto text-xl font-bold border border-transparent dark:border-[#22302A]">
           🔒
         </div>
         <h2 className="text-lg font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
@@ -278,7 +278,7 @@ export default function ProfileView() {
         </p>
         <button
           onClick={() => router.push("/login")}
-          className="px-5 py-2 rounded-full bg-[#004D3D] dark:bg-[#008F78] hover:bg-[#003B2E] dark:hover:bg-[#00A889] text-white text-xs font-bold shadow-md cursor-pointer transition-transform active:scale-95"
+          className="px-5 py-2 rounded-full bg-[#006B56] hover:bg-[#005B48] text-white text-xs font-bold shadow-md cursor-pointer transition-transform active:scale-95"
         >
           Sign In
         </button>
@@ -291,7 +291,7 @@ export default function ProfileView() {
       {/* ===================================================================== */}
       {/* 1. TOP PROFILE HEADER CARD                                            */}
       {/* ===================================================================== */}
-      <div className="w-full bg-white dark:bg-[#0B3029] rounded-3xl p-6 sm:p-7 border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] shadow-2xs transition-colors">
+      <div className="w-full bg-white dark:bg-[#131916] rounded-3xl p-6 sm:p-7 border border-[#E2ECE6] dark:border-[#1E2824] shadow-2xs transition-colors">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-5">
           {/* Left Group: Profile Image + Profile Information Column */}
           <div className="flex items-center gap-4 sm:gap-5 min-w-0 flex-1">
@@ -300,10 +300,10 @@ export default function ProfileView() {
               <UserAvatar
                 user={user}
                 sizeClass="w-[76px] h-[76px] min-w-[76px] min-h-[76px] max-w-[76px] max-h-[76px] text-2xl"
-                className="w-[76px] h-[76px] rounded-full object-cover border-2 border-white dark:border-[#0E3931] shadow-sm shrink-0"
+                className="w-[76px] h-[76px] rounded-full object-cover border-2 border-white dark:border-[#18201C] shadow-sm shrink-0"
               />
               <div
-                className="absolute bottom-0 right-0 w-5 h-5 rounded-full bg-[#006C56] dark:bg-[#008F78] border-2 border-white dark:border-[#0B3029] flex items-center justify-center text-[9px] text-white font-black shadow-xs pointer-events-none"
+                className="absolute bottom-0 right-0 w-5 h-5 rounded-full bg-[#006B56] border-2 border-white dark:border-[#131916] flex items-center justify-center text-[9px] text-white font-black shadow-xs pointer-events-none"
                 title="Verified Sanctuary Member"
               >
                 ✓
@@ -317,7 +317,7 @@ export default function ProfileView() {
                 <h1 className="text-xl sm:text-2xl font-heading font-black text-[#19332A] dark:text-[#F4FAF7] leading-tight break-words" suppressHydrationWarning>
                   {userName}
                 </h1>
-                <span className="px-2.5 py-0.5 rounded-full bg-[#EAF6F0] dark:bg-[rgba(0,168,137,0.15)] text-[#006C56] dark:text-[#73D8C4] border border-[#D5E8DF] dark:border-[rgba(0,168,137,0.30)] text-[10.5px] font-extrabold whitespace-nowrap" suppressHydrationWarning>
+                <span className="px-2.5 py-0.5 rounded-full bg-[#EAF6F0] dark:bg-[rgba(95,175,138,0.15)] text-[#006C56] dark:text-[#5FAF8A] border border-[#D5E8DF] dark:border-[#22302A] text-[10.5px] font-extrabold whitespace-nowrap" suppressHydrationWarning>
                   {formatCategoryLabel(userCategory)}
                 </span>
               </div>
@@ -346,7 +346,7 @@ export default function ProfileView() {
           <button
             onClick={openEditModal}
             type="button"
-            className="self-start md:self-center min-w-[140px] px-5 sm:px-6 py-2.5 rounded-full bg-[#004D3D] dark:bg-[#008F78] text-white text-xs font-heading font-bold shadow-md shadow-[#004D3D]/15 dark:shadow-[#008F78]/15 flex items-center justify-center gap-2 cursor-pointer shrink-0 whitespace-nowrap select-none"
+            className="self-start md:self-center min-w-[140px] px-5 sm:px-6 py-2.5 rounded-full bg-[#006B56] hover:bg-[#005B48] text-white text-xs font-heading font-bold shadow-md shadow-[#006B56]/15 flex items-center justify-center gap-2 cursor-pointer shrink-0 whitespace-nowrap select-none"
           >
             <svg className="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
@@ -361,10 +361,10 @@ export default function ProfileView() {
       {/* ===================================================================== */}
       <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
         {/* Card A: Personal Information */}
-        <div className="bg-white dark:bg-[#0B3029] rounded-3xl p-6 border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] shadow-2xs flex flex-col justify-between space-y-5 transition-colors h-full">
+        <div className="bg-white dark:bg-[#131916] rounded-3xl p-6 border border-[#E2ECE6] dark:border-[#1E2824] shadow-2xs flex flex-col justify-between space-y-5 transition-colors h-full">
           <div>
-            <div className="flex items-center gap-2.5 pb-3 border-b border-[#F0F5F2] dark:border-[rgba(150,210,195,0.12)]">
-              <div className="w-7.5 h-7.5 rounded-xl bg-[#EAF6F0] dark:bg-[#0E3931] text-[#006C56] dark:text-[#00A889] flex items-center justify-center shrink-0">
+            <div className="flex items-center gap-2.5 pb-3 border-b border-[#F0F5F2] dark:border-[#1E2824]">
+              <div className="w-7.5 h-7.5 rounded-xl bg-[#EAF6F0] dark:bg-[#18201C] text-[#006C56] dark:text-[#5FAF8A] flex items-center justify-center shrink-0 border border-transparent dark:border-[#22302A]">
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                 </svg>
@@ -397,10 +397,10 @@ export default function ProfileView() {
         </div>
 
         {/* Card B: Wellness Preferences */}
-        <div className="bg-white dark:bg-[#0B3029] rounded-3xl p-6 border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] shadow-2xs flex flex-col justify-between space-y-5 transition-colors h-full">
+        <div className="bg-white dark:bg-[#131916] rounded-3xl p-6 border border-[#E2ECE6] dark:border-[#1E2824] shadow-2xs flex flex-col justify-between space-y-5 transition-colors h-full">
           <div>
-            <div className="flex items-center gap-2.5 pb-3 border-b border-[#F0F5F2] dark:border-[rgba(150,210,195,0.12)]">
-              <div className="w-7.5 h-7.5 rounded-xl bg-[#EAF6F0] dark:bg-[#0E3931] text-[#006C56] dark:text-[#00A889] flex items-center justify-center shrink-0">
+            <div className="flex items-center gap-2.5 pb-3 border-b border-[#F0F5F2] dark:border-[#1E2824]">
+              <div className="w-7.5 h-7.5 rounded-xl bg-[#EAF6F0] dark:bg-[#18201C] text-[#006C56] dark:text-[#5FAF8A] flex items-center justify-center shrink-0 border border-transparent dark:border-[#22302A]">
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
@@ -428,7 +428,7 @@ export default function ProfileView() {
                   {selectedFocusAreas.map((area) => (
                     <span
                       key={area}
-                      className="text-[9.5px] font-bold px-2.5 py-1 rounded-full bg-[#EAF6F0] text-[#006C56] dark:bg-[rgba(0,168,137,0.15)] dark:text-[#73D8C4] border border-[#D5E8DF] dark:border-[rgba(0,168,137,0.30)]"
+                      className="text-[9.5px] font-bold px-2.5 py-1 rounded-full bg-[#EAF6F0] text-[#006C56] dark:bg-[#18201C] dark:text-[#5FAF8A] border border-[#D5E8DF] dark:border-[#22302A]"
                     >
                       {area}
                     </span>
@@ -452,11 +452,11 @@ export default function ProfileView() {
       {/* ===================================================================== */}
       {/* 3. ACCOUNT & SECURITY SECTION                                         */}
       {/* ===================================================================== */}
-      <div className="w-full bg-white dark:bg-[#0B3029] rounded-3xl p-6 border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] shadow-2xs space-y-5 transition-colors">
+      <div className="w-full bg-white dark:bg-[#131916] rounded-3xl p-6 border border-[#E2ECE6] dark:border-[#1E2824] shadow-2xs space-y-5 transition-colors">
         {/* Section Header & Log Out Button */}
-        <div className="flex items-center justify-between pb-3 border-b border-[#F0F5F2] dark:border-[rgba(150,210,195,0.12)]">
+        <div className="flex items-center justify-between pb-3 border-b border-[#F0F5F2] dark:border-[#1E2824]">
           <div className="flex items-center gap-2.5">
-            <div className="w-7.5 h-7.5 rounded-xl bg-[#EAF6F0] dark:bg-[#0E3931] text-[#006C56] dark:text-[#00A889] flex items-center justify-center shrink-0">
+            <div className="w-7.5 h-7.5 rounded-xl bg-[#EAF6F0] dark:bg-[#18201C] text-[#006C56] dark:text-[#5FAF8A] flex items-center justify-center shrink-0 border border-transparent dark:border-[#22302A]">
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
               </svg>
@@ -485,9 +485,9 @@ export default function ProfileView() {
         </div>
 
         {/* Security / Password Management Card */}
-        <div className="p-4 sm:p-5 rounded-2xl bg-[#F8FCFA] dark:bg-[#082821] border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="p-4 sm:p-5 rounded-2xl bg-[#F8FCFA] dark:bg-[#18201C] border border-[#E2ECE6] dark:border-[#22302A] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-start gap-3.5">
-            <div className="w-9 h-9 rounded-xl bg-[#EAF6F0] dark:bg-[#0E3931] text-[#006C56] dark:text-[#00A889] flex items-center justify-center shrink-0 mt-0.5 border border-[#D5E8DF] dark:border-[rgba(150,210,195,0.12)]">
+            <div className="w-9 h-9 rounded-xl bg-[#EAF6F0] dark:bg-[#131916] text-[#006C56] dark:text-[#5FAF8A] flex items-center justify-center shrink-0 mt-0.5 border border-[#D5E8DF] dark:border-[#22302A]">
               <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
               </svg>
@@ -505,7 +505,7 @@ export default function ProfileView() {
           <button
             type="button"
             onClick={openChangePasswordModal}
-            className="min-w-[165px] px-5 sm:px-6 py-2.5 rounded-full bg-[#004D3D] dark:bg-[#008F78] text-white text-xs font-heading font-bold shadow-md shadow-[#004D3D]/15 dark:shadow-[#008F78]/15 flex items-center justify-center gap-2 cursor-pointer shrink-0 whitespace-nowrap select-none"
+            className="min-w-[165px] px-5 sm:px-6 py-2.5 rounded-full bg-[#006B56] hover:bg-[#005B48] text-white text-xs font-heading font-bold shadow-md shadow-[#006B56]/15 flex items-center justify-center gap-2 cursor-pointer shrink-0 whitespace-nowrap select-none"
           >
             <svg className="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
@@ -515,10 +515,10 @@ export default function ProfileView() {
         </div>
 
         {/* Full-width Privacy Notice Card */}
-        <div className="p-4 sm:p-4.5 rounded-2xl bg-[#F0F9F5] dark:bg-[#0E3931] border border-[#D6EFE2] dark:border-[rgba(150,210,195,0.12)] flex items-start gap-3.5">
+        <div className="p-4 sm:p-4.5 rounded-2xl bg-[#F0F9F5] dark:bg-[#18201C] border border-[#D6EFE2] dark:border-[#22302A] flex items-start gap-3.5">
           <span className="text-lg leading-none mt-0.5 shrink-0">🔒</span>
           <div className="space-y-0.5">
-            <p className="text-xs font-bold text-[#006C56] dark:text-[#73D8C4]">
+            <p className="text-xs font-bold text-[#006C56] dark:text-[#5FAF8A]">
               100% Confidential &amp; Protected
             </p>
             <p className="text-[11px] text-[#4E685F] dark:text-[#9DB9B0] leading-relaxed">
@@ -548,15 +548,15 @@ export default function ProfileView() {
               initial={{ opacity: 0, scale: 0.95, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 10 }}
-              className="relative w-full max-w-lg bg-white dark:bg-[#0B3029] rounded-3xl p-6 sm:p-7 border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.15)] shadow-xl z-10 space-y-5 max-h-[90vh] overflow-y-auto"
+              className="relative w-full max-w-lg bg-white dark:bg-[#131916] rounded-3xl p-6 sm:p-7 border border-[#E2ECE6] dark:border-[#1E2824] shadow-xl z-10 space-y-5 max-h-[90vh] overflow-y-auto"
             >
-              <div className="flex items-center justify-between pb-2 border-b border-[#EBF0EC] dark:border-[rgba(150,210,195,0.12)]">
+              <div className="flex items-center justify-between pb-2 border-b border-[#EBF0EC] dark:border-[#1E2824]">
                 <h3 className="text-lg font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
                   Edit Profile
                 </h3>
                 <button
                   onClick={() => setIsEditModalOpen(false)}
-                  className="w-8 h-8 rounded-full bg-slate-100 dark:bg-[#0E3931] flex items-center justify-center text-slate-500 hover:text-slate-800 dark:text-[#9DB9B0] dark:hover:text-[#F4FAF7] transition-colors cursor-pointer"
+                  className="w-8 h-8 rounded-full bg-slate-100 dark:bg-[#18201C] flex items-center justify-center text-slate-500 hover:text-slate-800 dark:text-[#9DB9B0] dark:hover:text-[#F4FAF7] transition-colors cursor-pointer"
                 >
                   ✕
                 </button>
@@ -576,12 +576,12 @@ export default function ProfileView() {
 
               <form onSubmit={handleSaveChanges} className="space-y-4 text-xs">
                 {/* Profile Photo Upload / Edit */}
-                <div className="flex items-center gap-4 p-3.5 rounded-2xl bg-[#F8FCFA] dark:bg-[#082821] border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)]">
+                <div className="flex items-center gap-4 p-3.5 rounded-2xl bg-[#F8FCFA] dark:bg-[#18201C] border border-[#E2ECE6] dark:border-[#22302A]">
                   <UserAvatar
                     avatar={editAvatar}
                     name={editName}
                     sizeClass="w-14 h-14 text-base"
-                    className="border-2 border-white dark:border-[#0B3029] shadow-xs"
+                    className="border-2 border-white dark:border-[#131916] shadow-xs"
                   />
                   <div className="space-y-1.5 flex-1 min-w-0">
                     <p className="font-bold text-[#19332A] dark:text-[#F4FAF7] text-xs">Profile Picture</p>
@@ -589,7 +589,7 @@ export default function ProfileView() {
                       <button
                         type="button"
                         onClick={() => fileInputRef.current?.click()}
-                        className="px-3 py-1.5 rounded-full bg-[#004D3D] hover:bg-[#003B2E] dark:bg-[#008F78] dark:hover:bg-[#00A889] text-white text-[11px] font-bold shadow-xs transition-colors cursor-pointer"
+                        className="px-3 py-1.5 rounded-full bg-[#006B56] hover:bg-[#005B48] text-white text-[11px] font-bold shadow-xs transition-colors cursor-pointer"
                       >
                         Upload Photo
                       </button>
@@ -597,7 +597,7 @@ export default function ProfileView() {
                         <button
                           type="button"
                           onClick={() => setEditAvatar("/images/user_avatar.jpg")}
-                          className="px-2.5 py-1.5 rounded-full border border-slate-200 dark:border-[rgba(150,210,195,0.16)] text-slate-600 dark:text-[#9DB9B0] hover:bg-slate-100 dark:hover:bg-[#0E3931] text-[11px] font-semibold transition-colors cursor-pointer"
+                          className="px-2.5 py-1.5 rounded-full border border-slate-200 dark:border-[#22302A] text-slate-600 dark:text-[#9DB9B0] hover:bg-slate-100 dark:hover:bg-[#22302A] text-[11px] font-semibold transition-colors cursor-pointer"
                         >
                           Reset Default
                         </button>
@@ -623,7 +623,7 @@ export default function ProfileView() {
                     value={editName}
                     onChange={(e) => setEditName(e.target.value)}
                     required
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-[rgba(150,210,195,0.16)] bg-white dark:bg-[#082821] text-[#19332A] dark:text-[#F4FAF7] placeholder:text-[#789990] focus:outline-none focus:ring-2 focus:ring-[#006C56] dark:focus:ring-[#00A889] font-medium"
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-[#22302A] bg-white dark:bg-[#18201C] text-[#19332A] dark:text-[#F4FAF7] placeholder:text-[#789990] focus:outline-none focus:ring-2 focus:ring-[#006B56]/40 dark:focus:ring-[#5FAF8A]/30 font-medium"
                     placeholder="Enter your name"
                   />
                 </div>
@@ -641,8 +641,8 @@ export default function ProfileView() {
                         onClick={() => setEditCategory(cat.id)}
                         className={`p-3 rounded-2xl border text-left transition-all cursor-pointer ${
                           editCategory === cat.id
-                            ? "border-[#006C56] bg-[#EAF6F0] dark:bg-[rgba(0,168,137,0.15)] dark:border-[#00A889]"
-                            : "border-slate-200 dark:border-[rgba(150,210,195,0.12)] bg-white dark:bg-[#0E3931] hover:bg-slate-50 dark:hover:bg-[#12463C]"
+                            ? "border-[#006B56] bg-[#EAF6F0] dark:bg-[#18201C] dark:border-[#006B56]"
+                            : "border-slate-200 dark:border-[#22302A] bg-white dark:bg-[#18201C] hover:bg-slate-50 dark:hover:bg-[#22302A]"
                         }`}
                       >
                         <div className="flex items-center gap-1.5 font-bold text-[#19332A] dark:text-[#F4FAF7]">
@@ -672,8 +672,8 @@ export default function ProfileView() {
                           onClick={() => handleToggleFocusArea(area)}
                           className={`px-3 py-1 rounded-full text-[10.5px] font-semibold border transition-all cursor-pointer ${
                             isSelected
-                              ? "bg-[#004D3D] text-white border-[#004D3D] dark:bg-[#008F78] dark:border-[#008F78]"
-                              : "bg-slate-100 text-slate-700 border-slate-200 dark:bg-[#082821] dark:text-[#9DB9B0] dark:border-[rgba(150,210,195,0.12)]"
+                              ? "bg-[#006B56] text-white border-[#006B56] dark:bg-[#006B56] dark:text-white dark:border-[#006B56]"
+                              : "bg-slate-100 text-slate-700 border-slate-200 dark:bg-[#18201C] dark:text-[#9DB9B0] dark:border-[#22302A]"
                           }`}
                         >
                           {isSelected ? "✓ " : "+ "}
@@ -685,7 +685,7 @@ export default function ProfileView() {
                 </div>
 
                 {/* Security Section Shortcut inside Edit Modal */}
-                <div className="p-3.5 rounded-2xl bg-[#F8FCFA] dark:bg-[#082821] border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] flex items-center justify-between gap-3">
+                <div className="p-3.5 rounded-2xl bg-[#F8FCFA] dark:bg-[#18201C] border border-[#E2ECE6] dark:border-[#22302A] flex items-center justify-between gap-3">
                   <div className="space-y-0.5">
                     <p className="font-bold text-[#19332A] dark:text-[#F4FAF7] text-xs">Security</p>
                     <p className="text-[11px] text-[#5A756C] dark:text-[#9DB9B0]">Manage your account password and security.</p>
@@ -696,25 +696,25 @@ export default function ProfileView() {
                       setIsEditModalOpen(false);
                       openChangePasswordModal();
                     }}
-                    className="px-3.5 py-1.5 rounded-full border border-[#006C56] dark:border-[#00A889] text-[#006C56] dark:text-[#73D8C4] hover:bg-[#EAF6F0] dark:hover:bg-[rgba(0,168,137,0.15)] text-[11px] font-bold transition-colors cursor-pointer shrink-0"
+                    className="px-3.5 py-1.5 rounded-full border border-[#006B56] dark:border-[#5FAF8A] text-[#006B56] dark:text-[#5FAF8A] hover:bg-[#EAF6F0] dark:hover:bg-[rgba(95,175,138,0.15)] text-[11px] font-bold transition-colors cursor-pointer shrink-0"
                   >
                     Change Password
                   </button>
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex items-center justify-end gap-3 pt-4 border-t border-[#EBF0EC] dark:border-[rgba(150,210,195,0.12)]">
+                <div className="flex items-center justify-end gap-3 pt-4 border-t border-[#EBF0EC] dark:border-[#1E2824]">
                   <button
                     type="button"
                     onClick={() => setIsEditModalOpen(false)}
-                    className="px-4 py-2 rounded-full border border-slate-200 dark:border-[rgba(150,210,195,0.16)] text-slate-600 dark:text-[#9DB9B0] hover:bg-slate-100 dark:hover:bg-[#0E3931] font-bold cursor-pointer transition-colors"
+                    className="px-4 py-2 rounded-full border border-slate-200 dark:border-[#22302A] text-slate-600 dark:text-[#9DB9B0] hover:bg-slate-100 dark:hover:bg-[#18201C] font-bold cursor-pointer transition-colors"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={isSaving}
-                    className="px-5 py-2 rounded-full bg-[#004D3D] hover:bg-[#003B2E] dark:bg-[#008F78] dark:hover:bg-[#00A889] text-white font-bold shadow-md transition-all cursor-pointer disabled:opacity-50"
+                    className="px-5 py-2 rounded-full bg-[#006B56] hover:bg-[#005B48] text-white font-bold shadow-md transition-all cursor-pointer disabled:opacity-50"
                   >
                     {isSaving ? "Saving..." : "Save Changes"}
                   </button>
@@ -745,11 +745,11 @@ export default function ProfileView() {
               initial={{ opacity: 0, scale: 0.95, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 10 }}
-              className="relative w-full max-w-md bg-white dark:bg-[#0B3029] rounded-3xl p-6 sm:p-7 border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.15)] shadow-xl z-10 space-y-5"
+              className="relative w-full max-w-md bg-white dark:bg-[#131916] rounded-3xl p-6 sm:p-7 border border-[#E2ECE6] dark:border-[#1E2824] shadow-xl z-10 space-y-5"
             >
-              <div className="flex items-center justify-between pb-2 border-b border-[#EBF0EC] dark:border-[rgba(150,210,195,0.12)]">
+              <div className="flex items-center justify-between pb-2 border-b border-[#EBF0EC] dark:border-[#1E2824]">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-xl bg-[#EAF6F0] dark:bg-[#0E3931] text-[#006C56] dark:text-[#00A889] flex items-center justify-center shrink-0 border border-[#D5E8DF] dark:border-[rgba(150,210,195,0.12)]">
+                  <div className="w-8 h-8 rounded-xl bg-[#EAF6F0] dark:bg-[#18201C] text-[#006C56] dark:text-[#5FAF8A] flex items-center justify-center shrink-0 border border-[#D5E8DF] dark:border-[#22302A]">
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                     </svg>
@@ -766,7 +766,7 @@ export default function ProfileView() {
                 <button
                   onClick={closeChangePasswordModal}
                   disabled={isChangingPassword}
-                  className="w-8 h-8 rounded-full bg-slate-100 dark:bg-[#0E3931] flex items-center justify-center text-slate-500 hover:text-slate-800 dark:text-[#9DB9B0] dark:hover:text-[#F4FAF7] transition-colors cursor-pointer disabled:opacity-50"
+                  className="w-8 h-8 rounded-full bg-slate-100 dark:bg-[#18201C] flex items-center justify-center text-slate-500 hover:text-slate-800 dark:text-[#9DB9B0] dark:hover:text-[#F4FAF7] transition-colors cursor-pointer disabled:opacity-50"
                   aria-label="Close modal"
                 >
                   ✕
@@ -801,7 +801,7 @@ export default function ProfileView() {
                       autoComplete="current-password"
                       required
                       disabled={isChangingPassword}
-                      className="w-full pl-4 pr-11 py-2.5 rounded-xl border border-slate-200 dark:border-[rgba(150,210,195,0.16)] bg-white dark:bg-[#082821] text-[#19332A] dark:text-[#F4FAF7] placeholder:text-[#789990] focus:outline-none focus:ring-2 focus:ring-[#006C56] dark:focus:ring-[#00A889] font-medium"
+                      className="w-full pl-4 pr-11 py-2.5 rounded-xl border border-slate-200 dark:border-[#22302A] bg-white dark:bg-[#18201C] text-[#19332A] dark:text-[#F4FAF7] placeholder:text-[#789990] focus:outline-none focus:ring-2 focus:ring-[#006B56]/40 dark:focus:ring-[#5FAF8A]/30 font-medium"
                       placeholder="Enter your current password"
                     />
                     <button
@@ -835,7 +835,7 @@ export default function ProfileView() {
                       autoComplete="new-password"
                       required
                       disabled={isChangingPassword}
-                      className="w-full pl-4 pr-11 py-2.5 rounded-xl border border-slate-200 dark:border-[rgba(150,210,195,0.16)] bg-white dark:bg-[#082821] text-[#19332A] dark:text-[#F4FAF7] placeholder:text-[#789990] focus:outline-none focus:ring-2 focus:ring-[#006C56] dark:focus:ring-[#00A889] font-medium"
+                      className="w-full pl-4 pr-11 py-2.5 rounded-xl border border-slate-200 dark:border-[#22302A] bg-white dark:bg-[#18201C] text-[#19332A] dark:text-[#F4FAF7] placeholder:text-[#789990] focus:outline-none focus:ring-2 focus:ring-[#006B56]/40 dark:focus:ring-[#5FAF8A]/30 font-medium"
                       placeholder="Enter new password"
                     />
                     <button
@@ -864,7 +864,7 @@ export default function ProfileView() {
                       autoComplete="new-password"
                       required
                       disabled={isChangingPassword}
-                      className="w-full pl-4 pr-11 py-2.5 rounded-xl border border-slate-200 dark:border-[rgba(150,210,195,0.16)] bg-white dark:bg-[#082821] text-[#19332A] dark:text-[#F4FAF7] placeholder:text-[#789990] focus:outline-none focus:ring-2 focus:ring-[#006C56] dark:focus:ring-[#00A889] font-medium"
+                      className="w-full pl-4 pr-11 py-2.5 rounded-xl border border-slate-200 dark:border-[#22302A] bg-white dark:bg-[#18201C] text-[#19332A] dark:text-[#F4FAF7] placeholder:text-[#789990] focus:outline-none focus:ring-2 focus:ring-[#006B56]/40 dark:focus:ring-[#5FAF8A]/30 font-medium"
                       placeholder="Confirm new password"
                     />
                     <button
@@ -881,19 +881,19 @@ export default function ProfileView() {
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex items-center justify-end gap-3 pt-3 border-t border-[#EBF0EC] dark:border-[rgba(150,210,195,0.12)]">
+                <div className="flex items-center justify-end gap-3 pt-3 border-t border-[#EBF0EC] dark:border-[#1E2824]">
                   <button
                     type="button"
                     onClick={closeChangePasswordModal}
                     disabled={isChangingPassword}
-                    className="px-4 py-2 rounded-full border border-slate-200 dark:border-[rgba(150,210,195,0.16)] text-slate-600 dark:text-[#9DB9B0] hover:bg-slate-100 dark:hover:bg-[#0E3931] font-bold cursor-pointer transition-colors disabled:opacity-50"
+                    className="px-4 py-2 rounded-full border border-slate-200 dark:border-[#22302A] text-slate-600 dark:text-[#9DB9B0] hover:bg-slate-100 dark:hover:bg-[#18201C] font-bold cursor-pointer transition-colors disabled:opacity-50"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={isChangingPassword}
-                    className="px-5 py-2 rounded-full bg-[#004D3D] hover:bg-[#003B2E] dark:bg-[#008F78] dark:hover:bg-[#00A889] text-white font-bold shadow-md transition-all cursor-pointer disabled:opacity-50"
+                    className="px-5 py-2 rounded-full bg-[#006B56] hover:bg-[#005B48] text-white font-bold shadow-md transition-all cursor-pointer disabled:opacity-50"
                   >
                     {isChangingPassword ? "Changing Password..." : "Change Password"}
                   </button>

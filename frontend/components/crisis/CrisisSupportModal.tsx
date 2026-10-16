@@ -114,7 +114,7 @@ export default function CrisisSupportModal({ isOpen, onClose }: CrisisSupportMod
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 15 }}
             transition={{ type: "spring", damping: 25, stiffness: 350 }}
-            className="relative w-full max-w-lg rounded-3xl bg-surface-container-lowest dark:bg-[#0B3029] border border-red-200/50 dark:border-red-900/40 shadow-2xl overflow-hidden z-10 my-8 text-on-surface dark:text-[#F4FAF7]"
+            className="relative w-full max-w-lg rounded-3xl bg-surface-container-lowest dark:bg-[#131916] border border-red-200/50 dark:border-[#1E2824] shadow-2xl overflow-hidden z-10 my-8 text-on-surface dark:text-[#F4FAF7]"
             role="dialog"
             aria-modal="true"
             aria-labelledby="crisis-support-title"
@@ -178,7 +178,7 @@ export default function CrisisSupportModal({ isOpen, onClose }: CrisisSupportMod
                     <button
                       type="button"
                       onClick={() => setIsEditingContact(true)}
-                      className="text-xs font-heading font-semibold text-primary dark:text-[#00A889] hover:underline cursor-pointer flex items-center gap-1"
+                      className="text-xs font-heading font-semibold text-primary dark:text-[#5FAF8A] hover:underline cursor-pointer flex items-center gap-1"
                     >
                       <span className="material-symbols-outlined text-sm">edit</span>
                       <span>Edit</span>
@@ -195,14 +195,14 @@ export default function CrisisSupportModal({ isOpen, onClose }: CrisisSupportMod
 
                 {/* Display Saved Emergency Contact */}
                 {hasContact && !isEditingContact && (
-                  <div className="p-4 rounded-2xl bg-surface-container dark:bg-[#0E3931] border border-surface-variant/40 dark:border-[rgba(150,210,195,0.12)] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div className="p-4 rounded-2xl bg-surface-container dark:bg-[#18201C] border border-surface-variant/40 dark:border-[#22302A] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-heading font-bold text-on-surface dark:text-[#F4FAF7]">
                           {currentContact?.name}
                         </span>
                         {currentContact?.relation && (
-                          <span className="px-2 py-0.5 rounded-full text-[10px] font-heading font-semibold bg-primary/10 dark:bg-[rgba(0,168,137,0.15)] text-primary dark:text-[#73D8C4] border border-primary/20 dark:border-[rgba(0,168,137,0.30)]">
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-heading font-semibold bg-primary/10 dark:bg-[rgba(95,175,138,0.15)] text-primary dark:text-[#5FAF8A] border border-primary/20 dark:border-[#22302A]">
                             {currentContact.relation}
                           </span>
                         )}
@@ -224,7 +224,7 @@ export default function CrisisSupportModal({ isOpen, onClose }: CrisisSupportMod
 
                 {/* Emergency Contact Intake Form (First-time or Editing) */}
                 {(!hasContact || isEditingContact) && (
-                  <div className="p-4 rounded-2xl bg-surface-container/60 dark:bg-[#0E3931]/60 border border-dashed border-red-300 dark:border-red-900/50 space-y-3">
+                  <div className="p-4 rounded-2xl bg-surface-container/60 dark:bg-[#18201C] border border-dashed border-red-300 dark:border-[#22302A] space-y-3">
                     <div className="space-y-1">
                       <p className="text-xs font-heading font-bold text-on-surface dark:text-[#F4FAF7]">
                         {hasContact ? "Update Emergency Contact" : "Add an Emergency Contact for Quick Access"}
@@ -251,7 +251,7 @@ export default function CrisisSupportModal({ isOpen, onClose }: CrisisSupportMod
                               value={contactName}
                               onChange={(e) => setContactName(e.target.value)}
                               placeholder="e.g. Priya Sharma"
-                              className="w-full px-3 py-2 text-xs rounded-xl bg-surface dark:bg-[#082821] border border-surface-variant dark:border-[rgba(150,210,195,0.16)] focus:outline-hidden focus:ring-2 focus:ring-primary dark:focus:ring-[#00A889] text-on-surface dark:text-[#F4FAF7] placeholder:text-gray-400 dark:placeholder:text-[#789990]"
+                              className="w-full px-3 py-2 text-xs rounded-xl bg-surface dark:bg-[#131916] border border-surface-variant dark:border-[#22302A] focus:outline-hidden focus:ring-2 focus:ring-primary dark:focus:ring-[#006B56] text-on-surface dark:text-[#F4FAF7] placeholder:text-gray-400 dark:placeholder:text-[#789990]"
                             />
                           </div>
 
@@ -265,7 +265,7 @@ export default function CrisisSupportModal({ isOpen, onClose }: CrisisSupportMod
                               value={contactPhone}
                               onChange={(e) => setContactPhone(e.target.value)}
                               placeholder="e.g. +91 98765 43210"
-                              className="w-full px-3 py-2 text-xs rounded-xl bg-surface dark:bg-[#082821] border border-surface-variant dark:border-[rgba(150,210,195,0.16)] focus:outline-hidden focus:ring-2 focus:ring-primary dark:focus:ring-[#00A889] text-on-surface dark:text-[#F4FAF7] placeholder:text-gray-400 dark:placeholder:text-[#789990]"
+                              className="w-full px-3 py-2 text-xs rounded-xl bg-surface dark:bg-[#131916] border border-surface-variant dark:border-[#22302A] focus:outline-hidden focus:ring-2 focus:ring-primary dark:focus:ring-[#006B56] text-on-surface dark:text-[#F4FAF7] placeholder:text-gray-400 dark:placeholder:text-[#789990]"
                             />
                           </div>
                         </div>
@@ -277,15 +277,15 @@ export default function CrisisSupportModal({ isOpen, onClose }: CrisisSupportMod
                           <select
                             value={contactRelation}
                             onChange={(e) => setContactRelation(e.target.value)}
-                            className="w-full px-3 py-2 text-xs rounded-xl bg-surface dark:bg-[#082821] border border-surface-variant dark:border-[rgba(150,210,195,0.16)] focus:outline-hidden focus:ring-2 focus:ring-primary dark:focus:ring-[#00A889] text-on-surface dark:text-[#F4FAF7] cursor-pointer"
+                            className="w-full px-3 py-2 text-xs rounded-xl bg-surface dark:bg-[#131916] border border-surface-variant dark:border-[#22302A] focus:outline-hidden focus:ring-2 focus:ring-primary dark:focus:ring-[#006B56] text-on-surface dark:text-[#F4FAF7] cursor-pointer"
                           >
-                            <option value="Parent" className="dark:bg-[#082821]">Parent</option>
-                            <option value="Partner / Spouse" className="dark:bg-[#082821]">Partner / Spouse</option>
-                            <option value="Family" className="dark:bg-[#082821]">Family Member / Sibling</option>
-                            <option value="Close Friend" className="dark:bg-[#082821]">Close Friend</option>
-                            <option value="Doctor / Therapist" className="dark:bg-[#082821]">Doctor / Therapist</option>
-                            <option value="Guardian" className="dark:bg-[#082821]">Guardian</option>
-                            <option value="Other" className="dark:bg-[#082821]">Other</option>
+                            <option value="Parent" className="dark:bg-[#131916]">Parent</option>
+                            <option value="Partner / Spouse" className="dark:bg-[#131916]">Partner / Spouse</option>
+                            <option value="Family" className="dark:bg-[#131916]">Family Member / Sibling</option>
+                            <option value="Close Friend" className="dark:bg-[#131916]">Close Friend</option>
+                            <option value="Doctor / Therapist" className="dark:bg-[#131916]">Doctor / Therapist</option>
+                            <option value="Guardian" className="dark:bg-[#131916]">Guardian</option>
+                            <option value="Other" className="dark:bg-[#131916]">Other</option>
                           </select>
                         </div>
 
@@ -293,7 +293,7 @@ export default function CrisisSupportModal({ isOpen, onClose }: CrisisSupportMod
                           <button
                             type="submit"
                             disabled={isSaving}
-                            className="px-4 py-2 rounded-xl bg-primary hover:bg-primary-purple dark:bg-[#008F78] dark:hover:bg-[#00A889] text-white text-xs font-heading font-bold transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                            className="px-4 py-2 rounded-xl bg-primary hover:bg-primary-purple dark:bg-[#006B56] dark:hover:bg-[#005B48] text-white text-xs font-heading font-bold transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
                           >
                             <span className="material-symbols-outlined text-sm">
                               {isSaving ? "sync" : "save"}
@@ -308,7 +308,7 @@ export default function CrisisSupportModal({ isOpen, onClose }: CrisisSupportMod
                                 setIsEditingContact(false);
                                 setErrorMsg("");
                               }}
-                              className="px-3 py-2 rounded-xl bg-surface-container dark:bg-[#082821] hover:bg-surface-variant/40 dark:hover:bg-[#12463C] text-on-surface dark:text-[#D5E6E0] text-xs font-heading font-medium transition-colors cursor-pointer border border-transparent dark:border-[rgba(150,210,195,0.12)]"
+                              className="px-3 py-2 rounded-xl bg-surface-container dark:bg-[#18201C] hover:bg-surface-variant/40 dark:hover:bg-[#22302A] text-on-surface dark:text-[#D5E6E0] text-xs font-heading font-medium transition-colors cursor-pointer border border-transparent dark:border-[#22302A]"
                             >
                               Cancel
                             </button>
@@ -323,7 +323,7 @@ export default function CrisisSupportModal({ isOpen, onClose }: CrisisSupportMod
                         <Link
                           href="/login"
                           onClick={onClose}
-                          className="px-3 py-1.5 rounded-xl bg-primary dark:bg-[#008F78] text-white text-xs font-heading font-bold hover:bg-primary-purple dark:hover:bg-[#00A889] transition-all shrink-0"
+                          className="px-3 py-1.5 rounded-xl bg-primary dark:bg-[#006B56] text-white text-xs font-heading font-bold hover:bg-primary-purple dark:hover:bg-[#005B48] transition-all shrink-0"
                         >
                           Sign In
                         </Link>
@@ -346,13 +346,13 @@ export default function CrisisSupportModal({ isOpen, onClose }: CrisisSupportMod
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                   {/* Tele-MANAS */}
-                  <div className="p-3.5 rounded-2xl bg-surface-container dark:bg-[#0E3931] border border-surface-variant/40 dark:border-[rgba(150,210,195,0.12)] flex flex-col justify-between gap-2.5">
+                  <div className="p-3.5 rounded-2xl bg-surface-container dark:bg-[#18201C] border border-surface-variant/40 dark:border-[#22302A] flex flex-col justify-between gap-2.5">
                     <div>
                       <div className="flex items-center justify-between">
                         <span className="text-xs font-heading font-extrabold text-on-surface dark:text-[#F4FAF7]">
                           Tele-MANAS
                         </span>
-                        <span className="px-1.5 py-0.5 rounded text-[9px] font-heading font-bold bg-emerald-500/10 dark:bg-[rgba(0,168,137,0.15)] text-emerald-600 dark:text-[#73D8C4]">
+                        <span className="px-1.5 py-0.5 rounded text-[9px] font-heading font-bold bg-emerald-500/10 dark:bg-[rgba(95,175,138,0.15)] text-emerald-600 dark:text-[#5FAF8A]">
                           24/7 Free
                         </span>
                       </div>
@@ -363,7 +363,7 @@ export default function CrisisSupportModal({ isOpen, onClose }: CrisisSupportMod
 
                     <a
                       href="tel:14416"
-                      className="w-full py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 dark:bg-[#008F78] dark:hover:bg-[#00A889] text-white text-xs font-heading font-bold transition-all shadow-xs flex items-center justify-center gap-1.5 cursor-pointer"
+                      className="w-full py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 dark:bg-[#006B56] dark:hover:bg-[#005B48] text-white text-xs font-heading font-bold transition-all shadow-xs flex items-center justify-center gap-1.5 cursor-pointer"
                     >
                       <span className="material-symbols-outlined text-sm">call</span>
                       <span>Call 14416</span>
@@ -371,7 +371,7 @@ export default function CrisisSupportModal({ isOpen, onClose }: CrisisSupportMod
                   </div>
 
                   {/* National Emergency */}
-                  <div className="p-3.5 rounded-2xl bg-surface-container dark:bg-[#0E3931] border border-surface-variant/40 dark:border-[rgba(150,210,195,0.12)] flex flex-col justify-between gap-2.5">
+                  <div className="p-3.5 rounded-2xl bg-surface-container dark:bg-[#18201C] border border-surface-variant/40 dark:border-[#22302A] flex flex-col justify-between gap-2.5">
                     <div>
                       <div className="flex items-center justify-between">
                         <span className="text-xs font-heading font-extrabold text-on-surface dark:text-[#F4FAF7]">
@@ -396,13 +396,13 @@ export default function CrisisSupportModal({ isOpen, onClose }: CrisisSupportMod
                   </div>
 
                   {/* KIRAN Helpline */}
-                  <div className="p-3.5 rounded-2xl bg-surface-container dark:bg-[#0E3931] border border-surface-variant/40 dark:border-[rgba(150,210,195,0.12)] flex flex-col justify-between gap-2.5">
+                  <div className="p-3.5 rounded-2xl bg-surface-container dark:bg-[#18201C] border border-surface-variant/40 dark:border-[#22302A] flex flex-col justify-between gap-2.5">
                     <div>
                       <div className="flex items-center justify-between">
                         <span className="text-xs font-heading font-extrabold text-on-surface dark:text-[#F4FAF7]">
                           KIRAN Mental Health
                         </span>
-                        <span className="px-1.5 py-0.5 rounded text-[9px] font-heading font-bold bg-primary/10 dark:bg-[rgba(0,168,137,0.15)] text-primary dark:text-[#73D8C4]">
+                        <span className="px-1.5 py-0.5 rounded text-[9px] font-heading font-bold bg-primary/10 dark:bg-[rgba(95,175,138,0.15)] text-primary dark:text-[#5FAF8A]">
                           Toll-Free
                         </span>
                       </div>
@@ -413,21 +413,21 @@ export default function CrisisSupportModal({ isOpen, onClose }: CrisisSupportMod
 
                     <a
                       href="tel:18005990019"
-                      className="w-full py-2 rounded-xl bg-surface-container-highest dark:bg-[#12463C] hover:bg-primary/20 dark:hover:bg-[#175c50] text-on-surface dark:text-[#F4FAF7] text-xs font-heading font-bold transition-all border border-surface-variant/50 dark:border-[rgba(150,210,195,0.12)] flex items-center justify-center gap-1.5 cursor-pointer"
+                      className="w-full py-2 rounded-xl bg-surface-container-highest dark:bg-[#131916] hover:bg-primary/20 dark:hover:bg-[#22302A] text-on-surface dark:text-[#F4FAF7] text-xs font-heading font-bold transition-all border border-surface-variant/50 dark:border-[#22302A] flex items-center justify-center gap-1.5 cursor-pointer"
                     >
-                      <span className="material-symbols-outlined text-sm text-primary dark:text-[#00A889]">call</span>
+                      <span className="material-symbols-outlined text-sm text-primary dark:text-[#5FAF8A]">call</span>
                       <span>1800-599-0019</span>
                     </a>
                   </div>
 
                   {/* Vandrevala Foundation */}
-                  <div className="p-3.5 rounded-2xl bg-surface-container dark:bg-[#0E3931] border border-surface-variant/40 dark:border-[rgba(150,210,195,0.12)] flex flex-col justify-between gap-2.5">
+                  <div className="p-3.5 rounded-2xl bg-surface-container dark:bg-[#18201C] border border-surface-variant/40 dark:border-[#22302A] flex flex-col justify-between gap-2.5">
                     <div>
                       <div className="flex items-center justify-between">
                         <span className="text-xs font-heading font-extrabold text-on-surface dark:text-[#F4FAF7]">
                           Vandrevala Foundation
                         </span>
-                        <span className="px-1.5 py-0.5 rounded text-[9px] font-heading font-bold bg-primary/10 dark:bg-[rgba(0,168,137,0.15)] text-primary dark:text-[#73D8C4]">
+                        <span className="px-1.5 py-0.5 rounded text-[9px] font-heading font-bold bg-primary/10 dark:bg-[rgba(95,175,138,0.15)] text-primary dark:text-[#5FAF8A]">
                           Counseling
                         </span>
                       </div>
@@ -438,9 +438,9 @@ export default function CrisisSupportModal({ isOpen, onClose }: CrisisSupportMod
 
                     <a
                       href="tel:+919999666555"
-                      className="w-full py-2 rounded-xl bg-surface-container-highest dark:bg-[#12463C] hover:bg-primary/20 dark:hover:bg-[#175c50] text-on-surface dark:text-[#F4FAF7] text-xs font-heading font-bold transition-all border border-surface-variant/50 dark:border-[rgba(150,210,195,0.12)] flex items-center justify-center gap-1.5 cursor-pointer"
+                      className="w-full py-2 rounded-xl bg-surface-container-highest dark:bg-[#131916] hover:bg-primary/20 dark:hover:bg-[#22302A] text-on-surface dark:text-[#F4FAF7] text-xs font-heading font-bold transition-all border border-surface-variant/50 dark:border-[#22302A] flex items-center justify-center gap-1.5 cursor-pointer"
                     >
-                      <span className="material-symbols-outlined text-sm text-primary dark:text-[#00A889]">call</span>
+                      <span className="material-symbols-outlined text-sm text-primary dark:text-[#5FAF8A]">call</span>
                       <span>+91 9999 666 555</span>
                     </a>
                   </div>
@@ -448,8 +448,8 @@ export default function CrisisSupportModal({ isOpen, onClose }: CrisisSupportMod
               </div>
 
               {/* Section 3: Grounding & Calming Breathing Exercise */}
-              <div className="p-4 rounded-2xl bg-surface-container/50 dark:bg-[#0E3931]/60 border border-surface-variant/30 dark:border-[rgba(150,210,195,0.12)] flex items-center gap-3.5">
-                <div className="w-10 h-10 rounded-xl bg-teal-500/10 dark:bg-[rgba(0,168,137,0.15)] text-teal-600 dark:text-[#00A889] flex items-center justify-center shrink-0">
+              <div className="p-4 rounded-2xl bg-surface-container/50 dark:bg-[#18201C] border border-surface-variant/30 dark:border-[#22302A] flex items-center gap-3.5">
+                <div className="w-10 h-10 rounded-xl bg-teal-500/10 dark:bg-[rgba(95,175,138,0.15)] text-teal-600 dark:text-[#5FAF8A] flex items-center justify-center shrink-0">
                   <span className="material-symbols-outlined text-2xl">air</span>
                 </div>
                 <div className="space-y-0.5">
@@ -464,7 +464,7 @@ export default function CrisisSupportModal({ isOpen, onClose }: CrisisSupportMod
             </div>
 
             {/* Modal Footer */}
-            <div className="py-3 px-4 bg-surface-container dark:bg-[#082821] border-t border-surface-variant/30 dark:border-[rgba(150,210,195,0.12)] flex items-center justify-center">
+            <div className="py-3 px-4 bg-surface-container dark:bg-[#111714] border-t border-surface-variant/30 dark:border-[#1E2824] flex items-center justify-center">
               <span className="text-xs text-on-surface-variant dark:text-[#76968D] font-medium">
                 Manraah Crisis Support Desk
               </span>

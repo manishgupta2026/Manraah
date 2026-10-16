@@ -272,7 +272,7 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
       id: "appointments",
       title: "Book Session",
       section: "appointments" as const,
-      cardBg: "bg-[#F5F4FA] hover:bg-[#EBE9F5] dark:bg-[#0E3931] dark:hover:bg-[#12463C] dark:border dark:border-[rgba(150,210,195,0.12)]",
+      cardBg: "bg-[#F5F4FA] hover:bg-[#EBE9F5] dark:bg-[#18201C] dark:hover:bg-[#1E2824] dark:border dark:border-[#22302A]",
       iconColor: "text-[#5C4EB5] dark:text-[#CFC4F7]",
       icon: (
         <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -284,7 +284,7 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
       id: "journey",
       title: "My Journey",
       section: "journey" as const,
-      cardBg: "bg-[#EEF7FB] hover:bg-[#E1F1F8] dark:bg-[#0E3931] dark:hover:bg-[#12463C] dark:border dark:border-[rgba(150,210,195,0.12)]",
+      cardBg: "bg-[#EEF7FB] hover:bg-[#E1F1F8] dark:bg-[#18201C] dark:hover:bg-[#1E2824] dark:border dark:border-[#22302A]",
       iconColor: "text-[#1C92D2] dark:text-[#8EBBFF]",
       icon: (
         <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -296,8 +296,8 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
       id: "resources",
       title: "Resource Library",
       section: "resources" as const,
-      cardBg: "bg-[#EDF8F4] hover:bg-[#DEEFE8] dark:bg-[#0E3931] dark:hover:bg-[#12463C] dark:border dark:border-[rgba(150,210,195,0.12)]",
-      iconColor: "text-[#008968] dark:text-[#00A889]",
+      cardBg: "bg-[#EDF8F4] hover:bg-[#DEEFE8] dark:bg-[#18201C] dark:hover:bg-[#1E2824] dark:border dark:border-[#22302A]",
+      iconColor: "text-[#008968] dark:text-[#5FAF8A]",
       icon: (
         <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
@@ -308,7 +308,7 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
       id: "ai-companion",
       title: "AI Companion",
       section: "ai-companion" as const,
-      cardBg: "bg-[#F3F5FA] hover:bg-[#E5E9F3] dark:bg-[#0E3931] dark:hover:bg-[#12463C] dark:border dark:border-[rgba(150,210,195,0.12)]",
+      cardBg: "bg-[#F3F5FA] hover:bg-[#E5E9F3] dark:bg-[#18201C] dark:hover:bg-[#1E2824] dark:border dark:border-[#22302A]",
       iconColor: "text-[#3D52A0] dark:text-[#A8C7FA]",
       icon: (
         <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -343,7 +343,7 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-0.5">
         {/* Greeting: Welcome for first-time login vs Welcome back for returning logins */}
         <div className="space-y-0.5">
-          <span className="text-[10px] font-black tracking-widest text-[#006C56] dark:text-[#00A889]" suppressHydrationWarning>
+          <span className="text-[10px] font-black tracking-widest text-[#006B56] dark:text-[#5FAF8A]" suppressHydrationWarning>
             {isFirstLoginState ? "Welcome" : "Welcome back"}
           </span>
           <h1 className="text-2xl font-heading font-black text-[#19332A] dark:text-[#F4FAF7] leading-tight" suppressHydrationWarning>
@@ -352,7 +352,7 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
           <div className="pt-1 flex flex-wrap items-center gap-2">
             {/* Active Profile Indicator Pill */}
             <span
-              className="inline-flex items-center h-7 px-3 rounded-full text-xs font-semibold bg-white dark:bg-[#0B3029] text-[#006C56] dark:text-[#73D8C4] border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.18)] shadow-2xs select-none"
+              className="inline-flex items-center h-7 px-3 rounded-full text-xs font-semibold bg-white dark:bg-[#112F28] text-[#006B56] dark:text-[#5FAF8A] border border-[#CBECE2] dark:border-[#1C463C] shadow-2xs select-none"
               suppressHydrationWarning
             >
               <span>Active Profile:</span>
@@ -363,12 +363,12 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
             <button
               type="button"
               onClick={() => setIsSwitchProfileOpen(true)}
-              className="inline-flex items-center gap-1.5 h-7 px-3 rounded-full text-xs font-semibold bg-white hover:bg-[#EAF6F0] dark:bg-[#0B3029] dark:hover:bg-[#0E3931] text-[#006C56] hover:text-[#004D3D] dark:text-[#73D8C4] dark:hover:text-[#A6E8D8] border border-[#E2ECE6] hover:border-[#008968]/40 dark:border-[rgba(150,210,195,0.18)] dark:hover:border-[rgba(150,210,195,0.35)] shadow-2xs transition-all duration-180 ease-out cursor-pointer group select-none"
+              className="inline-flex items-center gap-1.5 h-7 px-3 rounded-full text-xs font-semibold bg-white hover:bg-[#EAF6F2] dark:bg-[#112F28] dark:hover:bg-[#164238] text-[#006B56] hover:text-[#005B48] dark:text-[#5FAF8A] dark:hover:text-[#88F7D6] border border-[#CBECE2] hover:border-[#006B56]/40 dark:border-[#1C463C] dark:hover:border-[#5FAF8A]/40 shadow-2xs transition-all duration-180 ease-out cursor-pointer group select-none"
               aria-label="Switch Profile"
             >
               <span>Switch Profile</span>
               <svg
-                className="w-3.5 h-3.5 text-[#006C56] dark:text-[#73D8C4] transition-transform duration-200 group-hover:rotate-180 shrink-0"
+                className="w-3.5 h-3.5 text-[#006B56] dark:text-[#5FAF8A] transition-transform duration-200 group-hover:rotate-180 shrink-0"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -383,10 +383,10 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
         {/* Right: Streak & Next Appointment Cards */}
         <div className="flex items-center gap-3">
           {/* Dynamic Streak Card */}
-          <div className="bg-white dark:bg-[#0B3029] rounded-2xl p-2.5 px-4 border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] shadow-2xs flex items-center gap-3 min-w-[145px] transition-colors">
+          <div className="bg-white dark:bg-[#131916] rounded-2xl p-2.5 px-4 border border-[#CBECE2] dark:border-[#1E2824] shadow-2xs flex items-center gap-3 min-w-[145px] transition-colors">
             <span className="text-xl leading-none">🔥</span>
             <div>
-              <p className="text-[11px] font-black text-[#F28C4B] leading-tight">
+              <p className="text-[11px] font-black text-[#E37A47] dark:text-[#F38A57] leading-tight">
                 Day {currentStreak} Streak
               </p>
               <p className="text-[9.5px] text-[#789389] dark:text-[#9DB9B0] font-medium leading-tight mt-0.5">
@@ -406,9 +406,9 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
                 onNavigate("appointments");
               }
             }}
-            className="bg-white dark:bg-[#0B3029] rounded-2xl p-2.5 px-4 border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] shadow-2xs flex items-center gap-3 min-w-[175px] max-w-[240px] transition-all cursor-pointer hover:border-[#008968]/50 dark:hover:border-[rgba(150,210,195,0.25)] group"
+            className="bg-white dark:bg-[#131916] rounded-2xl p-2.5 px-4 border border-[#CBECE2] dark:border-[#1E2824] shadow-2xs flex items-center gap-3 min-w-[175px] max-w-[240px] transition-all cursor-pointer hover:border-[#006B56]/50 dark:hover:border-[#5FAF8A]/40 group"
           >
-            <div className="w-7 h-7 rounded-xl bg-[#EAF6F0] dark:bg-[rgba(0,168,137,0.15)] text-[#006C56] dark:text-[#00A889] flex items-center justify-center shrink-0">
+            <div className="w-7 h-7 rounded-xl bg-[#E6F4F0] dark:bg-[rgba(95,175,138,0.15)] text-[#006B56] dark:text-[#5FAF8A] flex items-center justify-center shrink-0">
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
@@ -435,10 +435,10 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
       <RecommendedProfessionals onNavigate={onNavigate} />
 
       {/* 3. Today's Motivation Card */}
-      <div className="bg-white dark:bg-[#0E3931] rounded-3xl p-5 border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] shadow-2xs space-y-3 transition-colors">
+      <div className="bg-white dark:bg-[#131916] rounded-3xl p-5 border border-[#CBECE2] dark:border-[#1E2824] shadow-2xs space-y-3 transition-colors">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-2xl bg-[#FFF8E7] dark:bg-[#12463C] text-[#F1C40F] dark:text-[#F28C4B] flex items-center justify-center">
+            <div className="w-8 h-8 rounded-2xl bg-[#FFF8E7] dark:bg-[#1C1814] text-[#F1C40F] dark:text-[#F38A57] flex items-center justify-center">
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
               </svg>
@@ -455,7 +455,7 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
 
           <button
             onClick={handleNextQuote}
-            className="flex items-center gap-1 text-xs font-bold text-[#006C56] dark:text-[#00A889] hover:text-[#004D3D] dark:hover:text-[#00BFA3] transition-colors cursor-pointer select-none"
+            className="flex items-center gap-1 text-xs font-bold text-[#006B56] dark:text-[#5FAF8A] hover:text-[#005B48] transition-colors cursor-pointer select-none"
           >
             <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -465,8 +465,8 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
         </div>
 
         {/* Soft Mint / Dark Emerald Quote Banner */}
-        <div className="bg-[#EBF7F2] dark:bg-[#12463C] rounded-2xl p-4 px-5 flex items-center gap-3.5 border border-transparent dark:border-[rgba(150,210,195,0.12)] transition-colors">
-          <span className="font-serif text-2xl font-black text-[#006C56] dark:text-[#00A889] leading-none shrink-0 -mt-0.5">
+        <div className="bg-[#EAF6F2] dark:bg-[#112F28] rounded-2xl p-4 px-5 flex items-center gap-3.5 border border-[#CBECE2] dark:border-[#1C463C] transition-colors">
+          <span className="font-serif text-2xl font-black text-[#006B56] dark:text-[#5FAF8A] leading-none shrink-0 -mt-0.5">
             “
           </span>
           <AnimatePresence mode="wait">
@@ -476,7 +476,7 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -3 }}
               transition={{ duration: 0.15 }}
-              className="text-xs sm:text-sm font-semibold italic text-[#19332A] dark:text-[#E5F3EF] leading-snug"
+              className="text-xs sm:text-sm font-semibold italic text-[#004D3D] dark:text-[#EAF6F2] leading-snug"
             >
               {MOTIVATIONAL_QUOTES[quoteIndex]}
             </motion.p>
@@ -484,13 +484,13 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
         </div>
       </div>
 
-      {/* 4. Bottom Row: Quick Tools + 100% Confidential (Deliberate 2-Column Grid, Equal Height) */}
+      {/* 4. Bottom Row: Quick Tools + 100% Confidential */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
         {/* Left: Quick Tools (7 cols, Full Height) */}
-        <div className="lg:col-span-7 bg-white dark:bg-[#0B3029] rounded-3xl p-5 border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] shadow-2xs flex flex-col justify-between gap-3.5 h-full min-h-[204px] transition-colors">
+        <div className="lg:col-span-7 bg-white dark:bg-[#131916] rounded-3xl p-5 border border-[#CBECE2] dark:border-[#1E2824] shadow-2xs flex flex-col justify-between gap-3.5 h-full min-h-[204px] transition-colors">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="w-7.5 h-7.5 rounded-xl bg-[#EAF6F0] dark:bg-[rgba(0,168,137,0.15)] text-[#006C56] dark:text-[#00A889] flex items-center justify-center">
+              <div className="w-7.5 h-7.5 rounded-xl bg-[#E6F4F0] dark:bg-[rgba(95,175,138,0.15)] text-[#006B56] dark:text-[#5FAF8A] flex items-center justify-center">
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
                 </svg>
@@ -509,7 +509,7 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
               <button
                 onClick={() => onNavigate("journey")}
                 type="button"
-                className="text-xs font-bold text-[#004D3D] dark:text-[#00A889] hover:underline flex items-center gap-1 cursor-pointer"
+                className="text-xs font-bold text-[#006B56] dark:text-[#5FAF8A] hover:text-[#005B48] flex items-center gap-1 cursor-pointer"
               >
                 <span>View All</span>
                 <span>→</span>
@@ -517,7 +517,7 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
             ) : (
               <Link
                 href="/journey"
-                className="text-xs font-bold text-[#004D3D] dark:text-[#00A889] hover:underline flex items-center gap-1"
+                className="text-xs font-bold text-[#006B56] dark:text-[#5FAF8A] hover:text-[#005B48] flex items-center gap-1"
               >
                 <span>View All</span>
                 <span>→</span>
@@ -565,10 +565,10 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
         </div>
 
         {/* Right: 100% Confidential Card (5 cols, Full Height) */}
-        <div className="lg:col-span-5 bg-white dark:bg-[#0B3029] rounded-3xl p-5 border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] shadow-2xs flex flex-col justify-between gap-3.5 h-full min-h-[204px] transition-colors">
+        <div className="lg:col-span-5 bg-white dark:bg-[#131916] rounded-3xl p-5 border border-[#CBECE2] dark:border-[#1E2824] shadow-2xs flex flex-col justify-between gap-3.5 h-full min-h-[204px] transition-colors">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-2xl bg-[#EAF6F0] dark:bg-[rgba(0,168,137,0.15)] text-[#006C56] dark:text-[#00A889] flex items-center justify-center shrink-0">
+              <div className="w-8 h-8 rounded-2xl bg-[#E6F4F0] dark:bg-[rgba(95,175,138,0.15)] text-[#006B56] dark:text-[#5FAF8A] flex items-center justify-center shrink-0">
                 <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                 </svg>
@@ -582,14 +582,14 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
                 </p>
               </div>
             </div>
-            <span className="inline-flex items-center gap-1 text-[9.5px] font-bold px-2.5 py-0.5 rounded-full bg-[#EAF6F0] dark:bg-[rgba(0,168,137,0.15)] text-[#006C56] dark:text-[#73D8C4] border border-[#D2EAE0] dark:border-[rgba(0,168,137,0.25)]">
+            <span className="inline-flex items-center gap-1 text-[9.5px] font-bold px-2.5 py-0.5 rounded-full bg-[#E6F4F0] dark:bg-[rgba(95,175,138,0.15)] text-[#006B56] dark:text-[#5FAF8A] border border-[#CBECE2] dark:border-[#1C463C]">
               ✓ Protected
             </span>
           </div>
 
           <div className="my-auto py-1 space-y-1.5">
             <div className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#006C56] dark:bg-[#00A889] shrink-0" />
+              <span className="w-1.5 h-1.5 rounded-full bg-[#006B56] dark:bg-[#5FAF8A] shrink-0" />
               <p className="text-xs font-bold text-[#19332A] dark:text-[#F4FAF7]">
                 No data ever leaves this device.
               </p>
@@ -599,9 +599,9 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
             </p>
           </div>
 
-          <div className="pt-2 border-t border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] flex items-center justify-between text-[10px] text-[#789389] dark:text-[#9DB9B0]">
+          <div className="pt-2 border-t border-[#CBECE2] dark:border-[#1E2824] flex items-center justify-between text-[10px] text-[#789389] dark:text-[#9DB9B0]">
             <span>End-to-end encrypted</span>
-            <span className="font-bold text-[#006C56] dark:text-[#00A889]">Manraah Trust</span>
+            <span className="font-bold text-[#006B56] dark:text-[#5FAF8A]">Manraah Trust</span>
           </div>
         </div>
       </div>
@@ -615,12 +615,12 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 15 }}
               transition={{ duration: 0.2 }}
-              className="bg-white dark:bg-[#0B3029] border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.15)] rounded-3xl w-full max-w-lg p-5 sm:p-6 shadow-2xl relative overflow-hidden space-y-4"
+              className="bg-white dark:bg-[#131916] border border-[#E2ECE6] dark:border-[#1E2824] rounded-3xl w-full max-w-lg p-5 sm:p-6 shadow-2xl relative overflow-hidden space-y-4"
             >
               {/* Top Header */}
               <div className="flex items-start justify-between gap-3">
                 <div className="space-y-1">
-                  <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-heading font-black tracking-wider uppercase bg-[#EAF6F0] dark:bg-[rgba(0,168,137,0.15)] text-[#006C56] dark:text-[#72D7C3] border border-[#D2EAE0] dark:border-[rgba(0,168,137,0.30)]">
+                  <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-heading font-black tracking-wider uppercase bg-[#EAF6F0] dark:bg-[rgba(95,175,138,0.15)] text-[#006C56] dark:text-[#5FAF8A] border border-[#D2EAE0] dark:border-[rgba(95,175,138,0.30)]">
                     <span className="material-symbols-outlined text-[12px] leading-none">swap_horiz</span>
                     <span>Switch Profile</span>
                   </div>
@@ -641,7 +641,7 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
                     }
                   }}
                   disabled={isSwitchingProfile}
-                  className="w-8 h-8 rounded-full flex items-center justify-center text-[#789389] hover:text-[#19332A] dark:text-[#9DB9B0] dark:hover:text-[#F4FAF7] hover:bg-[#F0F5F2] dark:hover:bg-[#0E3931] transition-colors cursor-pointer shrink-0"
+                  className="w-8 h-8 rounded-full flex items-center justify-center text-[#789389] hover:text-[#19332A] dark:text-[#9DB9B0] dark:hover:text-[#F4FAF7] hover:bg-[#F0F5F2] dark:hover:bg-[#18201C] transition-colors cursor-pointer shrink-0"
                   aria-label="Close"
                 >
                   <span className="material-symbols-outlined text-lg">close</span>
@@ -670,19 +670,19 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
                       onClick={() => handleSwitchCategory(cat.id)}
                       className={`w-full text-left p-3.5 sm:p-4 rounded-2xl border transition-all flex items-center gap-3.5 group cursor-pointer ${
                         isSelectedForSwitch
-                          ? "bg-[#EAF6F0] dark:bg-[rgba(0,168,137,0.25)] border-[#008968] dark:border-[#00A889] shadow-md ring-2 ring-[#008968]/30"
+                          ? "bg-[#EAF6F0] dark:bg-[rgba(95,175,138,0.25)] border-[#008968] dark:border-[#5FAF8A] shadow-md ring-2 ring-[#008968]/30"
                           : isCurrent
-                          ? "bg-[#EAF6F0]/80 dark:bg-[rgba(0,168,137,0.15)] border-[#008968] dark:border-[#00A889] shadow-xs"
+                          ? "bg-[#EAF6F0]/80 dark:bg-[rgba(95,175,138,0.15)] border-[#008968] dark:border-[#5FAF8A] shadow-xs"
                           : isSwitchingProfile
-                          ? "opacity-50 cursor-not-allowed bg-[#F8FAF9] dark:bg-[#0E3931] border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)]"
-                          : "bg-[#F8FAF9] dark:bg-[#0E3931] hover:bg-white dark:hover:bg-[#12463C] border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] hover:border-[#008968]/50 dark:hover:border-[#00A889]/50 shadow-2xs hover:shadow-xs"
+                          ? "opacity-50 cursor-not-allowed bg-[#F8FAF9] dark:bg-[#18201C] border-[#E2ECE6] dark:border-[#22302A]"
+                          : "bg-[#F8FAF9] dark:bg-[#18201C] hover:bg-white dark:hover:bg-[#1E2824] border-[#E2ECE6] dark:border-[#22302A] hover:border-[#008968]/50 dark:hover:border-[#5FAF8A]/50 shadow-2xs hover:shadow-xs"
                       }`}
                     >
                       <div
                         className={`w-11 h-11 rounded-xl flex items-center justify-center text-xl shrink-0 border transition-transform ${
                           isSelectedForSwitch || isCurrent
-                            ? "bg-white dark:bg-[#08221D] border-[#008968]/30 dark:border-[#00A889]/30 shadow-xs scale-105"
-                            : "bg-white dark:bg-[#0B3029] border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] group-hover:scale-105"
+                            ? "bg-white dark:bg-[#131916] border-[#008968]/30 dark:border-[#5FAF8A]/30 shadow-xs scale-105"
+                            : "bg-white dark:bg-[#18201C] border-[#E2ECE6] dark:border-[#22302A] group-hover:scale-105"
                         }`}
                       >
                         {cat.emoji}
@@ -694,11 +694,11 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
                             {cat.name}
                           </h4>
                           {isSelectedForSwitch ? (
-                            <span className="px-2 py-0.5 rounded-full text-[10px] font-heading font-black bg-[#006C56] dark:bg-[#00A889] text-white animate-pulse">
+                            <span className="px-2 py-0.5 rounded-full text-[10px] font-heading font-black bg-[#006C56] dark:bg-[#006B56] text-white animate-pulse">
                               Switching...
                             </span>
                           ) : isCurrent ? (
-                            <span className="px-2 py-0.5 rounded-full text-[10px] font-heading font-black bg-[#006C56] dark:bg-[#00A889] text-white">
+                            <span className="px-2 py-0.5 rounded-full text-[10px] font-heading font-black bg-[#006C56] dark:bg-[#006B56] text-white">
                               Active
                             </span>
                           ) : null}
@@ -710,13 +710,13 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
 
                       <div className="shrink-0 text-right">
                         {isSelectedForSwitch ? (
-                          <div className="w-5 h-5 border-2 border-[#006C56] dark:border-[#00A889] border-t-transparent rounded-full animate-spin" />
+                          <div className="w-5 h-5 border-2 border-[#006C56] dark:border-[#5FAF8A] border-t-transparent rounded-full animate-spin" />
                         ) : isCurrent ? (
-                          <span className="material-symbols-outlined text-[#006C56] dark:text-[#73D8C4] text-xl">
+                          <span className="material-symbols-outlined text-[#006C56] dark:text-[#5FAF8A] text-xl">
                             check_circle
                           </span>
                         ) : (
-                          <span className="material-symbols-outlined text-[#789389] dark:text-[#9DB9B0] group-hover:text-[#006C56] dark:group-hover:text-[#00A889] group-hover:translate-x-0.5 transition-all text-xl">
+                          <span className="material-symbols-outlined text-[#789389] dark:text-[#9DB9B0] group-hover:text-[#006C56] dark:group-hover:text-[#5FAF8A] group-hover:translate-x-0.5 transition-all text-xl">
                             arrow_forward
                           </span>
                         )}
@@ -727,7 +727,7 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
               </div>
 
               {/* Bottom footer notice */}
-              <div className="pt-2 border-t border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] flex items-center justify-between text-[11px] text-[#789389] dark:text-[#9DB9B0]">
+              <div className="pt-2 border-t border-[#E2ECE6] dark:border-[#1E2824] flex items-center justify-between text-[11px] text-[#789389] dark:text-[#9DB9B0]">
                 <span>
                   {isSwitchingProfile ? "Updating active profile..." : "Click any profile to select and switch automatically."}
                 </span>

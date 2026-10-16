@@ -141,3 +141,36 @@ export async function PATCH(req: Request) {
     );
   }
 }
+
+export async function DELETE(req: Request) {
+  try {
+    const { searchParams } = new URL(req.url);
+    let postId = searchParams.get("postId") || searchParams.get("id");
+
+    if (!postId) {
+      const body = await req.json().catch(() => ({}));
+      postId = body?.postId || body?.id;
+    }
+
+    if (!postId) {
+      return NextResponse.json({ error: "Missing postId" }, { status: 400 });
+    }
+
+    await sql`
+      DELETE FROM community_posts
+      WHERE id = ${postId}
+    `;
+
+    return NextResponse.json({
+      success: true,
+      deletedId: postId,
+      message: "Post deleted permanently from community.",
+    });
+  } catch (err: any) {
+    console.error("Failed to delete admin community post:", err);
+    return NextResponse.json(
+      { error: err.message || "Failed to delete post" },
+      { status: 500 }
+    );
+  }
+}

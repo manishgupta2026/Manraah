@@ -69,11 +69,11 @@ export default function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
                   onClick={onClose}
                   className={`flex items-center gap-3.5 px-4 py-3 rounded-full text-sm font-medium transition-all duration-200 ${
                     isActive
-                      ? "bg-primary text-white shadow-md shadow-primary/20"
-                      : "text-on-surface-variant hover:bg-surface-container-low hover:text-primary"
+                      ? "bg-[#006B56] text-white shadow-md shadow-[#006B56]/20 font-bold"
+                      : "text-[#4F685F] dark:text-[#8EAAA1] hover:bg-[#E6F4F0] hover:text-[#006B56]"
                   }`}
                 >
-                  <span className={`material-symbols-outlined text-xl shrink-0 ${isActive ? "text-white" : "text-primary/70"}`}>
+                  <span className={`material-symbols-outlined text-xl shrink-0 ${isActive ? "text-white" : "text-[#006B56]"}`}>
                     {item.icon}
                   </span>
                   <span>{item.label}</span>

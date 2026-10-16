@@ -116,20 +116,20 @@ function DashboardContent({ initialSection }: UnifiedDashboardProps) {
   }
 
   return (
-    <main className="flex-1 min-w-0 p-4 sm:p-6 lg:p-7 max-w-[1440px] mx-auto space-y-6">
+    <main className="w-full flex-1 min-w-0 p-4 sm:p-6 lg:p-8 xl:px-10 space-y-6">
       {activeSection === "dashboard" ? (
         /* ===================================================================== */
-        /* TWO-COLUMN DASHBOARD: 320px WELLNESS PANEL + MAIN DASHBOARD CONTENT   */
+        /* TWO-COLUMN DASHBOARD: WELLNESS PANEL + EXPANDED FULL DASHBOARD VIEW   */
         /* ===================================================================== */
-        <div className="grid grid-cols-1 lg:grid-cols-[320px_minmax(0,1fr)] gap-6 items-start">
-          <aside className="w-full lg:w-[320px] lg:min-w-[320px] lg:max-w-[320px] shrink-0 select-none pointer-events-auto lg:sticky lg:top-[88px] self-start z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_320px] xl:grid-cols-[minmax(0,1fr)_340px] 2xl:grid-cols-[minmax(0,1fr)_360px] gap-6 items-start w-full">
+          <div className="w-full min-w-0">
+            <DashboardHome onNavigate={handleNavigate} />
+          </div>
+          <aside className="w-full lg:w-[320px] xl:w-[340px] 2xl:w-[360px] lg:min-w-[320px] shrink-0 select-none pointer-events-auto lg:sticky lg:top-[88px] self-start z-10">
             <WellnessCompanionPanel
               onCheckCondition={() => handleNavigate("journey")}
             />
           </aside>
-          <div className="w-full min-w-0">
-            <DashboardHome onNavigate={handleNavigate} />
-          </div>
         </div>
       ) : (
         /* ===================================================================== */

@@ -71,12 +71,12 @@ export default function DailyCheckInModal() {
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.96, y: 12 }}
         transition={{ type: "spring", damping: 25, stiffness: 300 }}
-        className="bg-white dark:bg-[#0B3029] border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.15)] rounded-3xl w-full max-w-lg p-6 sm:p-7 shadow-2xl relative overflow-hidden flex flex-col max-h-[90vh]"
+        className="bg-white dark:bg-[#131916] border border-[#E2ECE6] dark:border-[#1E2824] rounded-3xl w-full max-w-lg p-6 sm:p-7 shadow-2xl relative overflow-hidden flex flex-col max-h-[90vh]"
       >
         {/* Top Header */}
-        <div className="flex items-center justify-between pb-4 border-b border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)]">
+        <div className="flex items-center justify-between pb-4 border-b border-[#E2ECE6] dark:border-[#1E2824]">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-[#EAF6F0] dark:bg-[rgba(0,168,137,0.15)] text-[#006C56] dark:text-[#00A889] flex items-center justify-center text-xl shadow-xs">
+            <div className="w-10 h-10 rounded-2xl bg-[#EAF6F0] dark:bg-[#18201C] text-[#006C56] dark:text-[#5FAF8A] flex items-center justify-center text-xl shadow-xs border border-transparent dark:border-[#22302A]">
               ✦
             </div>
             <div>
@@ -90,7 +90,7 @@ export default function DailyCheckInModal() {
           </div>
           <button
             onClick={closeCheckInModal}
-            className="w-8 h-8 rounded-full bg-[#F4FAF7] dark:bg-[#0E3931] text-[#4F685F] dark:text-[#9DB9B0] flex items-center justify-center hover:bg-[#E2ECE6] dark:hover:bg-[#12463C] dark:hover:text-[#F4FAF7] transition-colors cursor-pointer"
+            className="w-8 h-8 rounded-full bg-[#F4FAF7] dark:bg-[#18201C] text-[#4F685F] dark:text-[#9DB9B0] flex items-center justify-center hover:bg-[#E2ECE6] dark:hover:bg-[#22302A] dark:hover:text-[#F4FAF7] transition-colors cursor-pointer"
             aria-label="Close"
           >
             ✕
@@ -105,7 +105,7 @@ export default function DailyCheckInModal() {
               animate={{ opacity: 1, scale: 1 }}
               className="py-12 text-center space-y-4"
             >
-              <div className="w-16 h-16 rounded-full bg-[#006C56] dark:bg-[#008F78] text-white flex items-center justify-center text-3xl mx-auto shadow-lg shadow-[#006C56]/20">
+              <div className="w-16 h-16 rounded-full bg-[#006C56] text-white flex items-center justify-center text-3xl mx-auto shadow-lg shadow-[#006C56]/20">
                 ✓
               </div>
               <div className="space-y-1">
@@ -120,7 +120,7 @@ export default function DailyCheckInModal() {
           ) : (
             <form onSubmit={handleSubmit} className="space-y-5">
               <div>
-                <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#006C56] dark:text-[#00A889]">
+                <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#006C56] dark:text-[#5FAF8A]">
                   Daily Check-In
                 </span>
                 <h3 className="text-base sm:text-lg font-heading font-black text-[#19332A] dark:text-[#F4FAF7] mt-0.5">
@@ -145,8 +145,8 @@ export default function DailyCheckInModal() {
                       onClick={() => setSelectedMood(mood.id)}
                       className={`p-3 rounded-2xl flex flex-col items-center justify-center gap-1.5 border transition-all cursor-pointer select-none relative overflow-hidden ${
                         isSelected
-                          ? "bg-[#EAF6F0] dark:bg-[#0E3931] border-[#008968] dark:border-[#00A889] shadow-lg shadow-[#008968]/15 ring-2 ring-[#008968]/30 dark:ring-[#00A889]/30"
-                          : "bg-[#F8FCFA] dark:bg-[#082821] border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] hover:border-[#008968]/50 dark:hover:border-[rgba(150,210,195,0.25)] hover:bg-[#F2FAF6] dark:hover:bg-[#0E3931]"
+                          ? "bg-[#EAF6F0] dark:bg-[#18201C] border-[#008968] dark:border-[#006B56] shadow-lg shadow-[#008968]/15 ring-2 ring-[#008968]/30 dark:ring-[#006B56]/30"
+                          : "bg-[#F8FCFA] dark:bg-[#18201C] border-[#E2ECE6] dark:border-[#22302A] hover:border-[#008968]/50 dark:hover:border-[#006B56]/50 hover:bg-[#F2FAF6] dark:hover:bg-[#22302A]"
                       }`}
                     >
                       <span className="text-2xl sm:text-3xl filter drop-shadow-xs">
@@ -155,7 +155,7 @@ export default function DailyCheckInModal() {
                       <span
                         className={`text-[11px] font-bold leading-tight text-center ${
                           isSelected
-                            ? "text-[#006C56] dark:text-[#00A889] font-black"
+                            ? "text-[#006C56] dark:text-[#5FAF8A] font-black"
                             : "text-[#19332A] dark:text-[#F4FAF7]"
                         }`}
                       >
@@ -163,7 +163,7 @@ export default function DailyCheckInModal() {
                       </span>
 
                       {isSelected && (
-                        <div className="absolute top-1.5 right-1.5 w-3.5 h-3.5 rounded-full bg-[#006C56] dark:bg-[#008F78] text-white flex items-center justify-center text-[8px] font-bold">
+                        <div className="absolute top-1.5 right-1.5 w-3.5 h-3.5 rounded-full bg-[#006C56] text-white flex items-center justify-center text-[8px] font-bold">
                           ✓
                         </div>
                       )}
@@ -183,7 +183,7 @@ export default function DailyCheckInModal() {
                   placeholder="What is contributing to how you feel today? (e.g., restful sleep, busy workday, relaxing walk)"
                   rows={2}
                   maxLength={300}
-                  className="w-full p-3 text-xs rounded-xl bg-[#F8FCFA] dark:bg-[#082821] border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.16)] text-[#19332A] dark:text-[#F4FAF7] placeholder:text-[#789389] dark:placeholder-[#789990] focus:outline-none focus:border-[#008968] dark:focus:border-[#00A889] resize-none"
+                  className="w-full p-3 text-xs rounded-xl bg-[#F8FCFA] dark:bg-[#18201C] border border-[#E2ECE6] dark:border-[#22302A] text-[#19332A] dark:text-[#F4FAF7] placeholder:text-[#789389] dark:placeholder-[#789990] focus:outline-none focus:border-[#008968] dark:focus:border-[#006B56] resize-none"
                 />
               </div>
 
@@ -194,18 +194,18 @@ export default function DailyCheckInModal() {
               )}
 
               {/* Action Buttons */}
-              <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)]">
+              <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-[#E2ECE6] dark:border-[#1E2824]">
                 <button
                   type="button"
                   onClick={closeCheckInModal}
-                  className="px-4 py-2.5 rounded-xl bg-[#F4FAF7] dark:bg-white/5 dark:border dark:border-[rgba(150,210,195,0.12)] hover:bg-[#E2ECE6] dark:hover:bg-white/10 text-[#4F685F] dark:text-[#9DB9B0] dark:hover:text-[#F4FAF7] text-xs font-bold transition-colors cursor-pointer"
+                  className="px-4 py-2.5 rounded-xl bg-[#F4FAF7] dark:bg-[#18201C] dark:border dark:border-[#22302A] hover:bg-[#E2ECE6] dark:hover:bg-[#22302A] text-[#4F685F] dark:text-[#9DB9B0] dark:hover:text-[#F4FAF7] text-xs font-bold transition-colors cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="px-6 py-2.5 rounded-xl bg-[#006C56] hover:bg-[#005241] dark:bg-[#008F78] dark:hover:bg-[#00A889] text-white text-xs font-bold transition-all shadow-md shadow-[#006C56]/20 dark:shadow-[#008F78]/25 cursor-pointer flex items-center gap-2 disabled:opacity-75 disabled:cursor-not-allowed"
+                  className="px-6 py-2.5 rounded-xl bg-[#006C56] hover:bg-[#005241] dark:bg-[#006B56] dark:hover:bg-[#005B48] text-white text-xs font-bold transition-all shadow-md shadow-[#006C56]/20 cursor-pointer flex items-center gap-2 disabled:opacity-75 disabled:cursor-not-allowed"
                 >
                   {isSubmitting ? (
                     <>

@@ -9,47 +9,58 @@
   --font-work-sans: 'Work Sans', sans-serif;
   color-scheme: light;
   
-  /* Manraah Light Tokens */
-  --dashboard-bg: #F4F9F6;
-  --dashboard-navbar: #004D3D;
-  --dashboard-sidebar: #052820;
+  /* Manraah Light Tokens - Exact Color Palette Specs */
+  --dashboard-bg: #F8F9FC;
+  --dashboard-navbar: #FFFFFF;
+  --dashboard-sidebar: #080C0B;
   --dashboard-surface: #FFFFFF;
-  --dashboard-surface-secondary: #0D2821;
+  --dashboard-surface-secondary: #F4FAF7;
   --dashboard-card: #FFFFFF;
   --dashboard-card-elevated: #FFFFFF;
-  --dashboard-primary: #006C56;
-  --dashboard-primary-hover: #004D3D;
+  --dashboard-primary: #006B56;
+  --dashboard-primary-hover: #005B48;
+  --dashboard-pine-green: #004D3D;
   --dashboard-mint: #E6F4F0;
+  --dashboard-sage: #EAF6F2;
+  --dashboard-mint-border: #CBECE2;
+  --dashboard-mint-accent: #D0EDE4;
   --dashboard-text-primary: #19332A;
   --dashboard-text-secondary: #4F685F;
   --dashboard-text-muted: #789389;
-  --dashboard-border: #E2ECE6;
+  --dashboard-border: #CBECE2;
   --dashboard-border-subtle: #EBF0EC;
+  --dashboard-terracotta: #E37A47;
+  --dashboard-terracotta-hover: #D36A37;
+  --dashboard-terracotta-wash: #FFF6F2;
+  --dashboard-amber-wash: #FFF6EB;
+  --dashboard-amber-border: #FFE1C2;
+  --dashboard-pastel-peach: #F5C99B;
 }
 
 .dark {
   color-scheme: dark;
   
-  /* Manraah Layered Dark-Green Theme Tokens */
-  --dashboard-bg: #061F1A;
-  --dashboard-navbar: #04382F;
-  --dashboard-sidebar: #032B25;
-  --dashboard-surface: #0B3029;
-  --dashboard-surface-secondary: #0E3931;
-  --dashboard-card: #0B3029;
-  --dashboard-card-elevated: #0E3931;
-  --dashboard-card-hover: #12463C;
-  --dashboard-primary: #00A889;
-  --dashboard-primary-hover: #00BFA3;
-  --dashboard-mint: #73D8C4;
+  /* Manraah Layered Dark Theme Tokens - Exact Specs */
+  --dashboard-bg: #0A0E0D;
+  --dashboard-navbar: #0E1412;
+  --dashboard-sidebar: #060908;
+  --dashboard-surface: #131916;
+  --dashboard-surface-secondary: #0E241E;
+  --dashboard-card: #131916;
+  --dashboard-card-elevated: #18201C;
+  --dashboard-card-hover: #1A2420;
+  --dashboard-primary: #006B56;
+  --dashboard-primary-hover: #005B48;
+  --dashboard-mint: #5FAF8A;
   --dashboard-text-primary: #F4FAF7;
   --dashboard-text-body: #D5E6E0;
   --dashboard-text-secondary: #9DB9B0;
   --dashboard-text-muted: #76968D;
   --dashboard-text-caption: #88A99F;
-  --dashboard-border: rgba(150, 210, 195, 0.12);
-  --dashboard-border-strong: rgba(150, 210, 195, 0.20);
-  --dashboard-input-bg: #082821;
+  --dashboard-border: #1E2824;
+  --dashboard-border-strong: #1C463C;
+  --dashboard-input-bg: #0C1210;
+  --dashboard-terracotta-text: #F38A57;
 }
 
 body {
@@ -64,7 +75,7 @@ body {
 }
 
 .dark body {
-  background-color: #061F1A;
+  background-color: #0A0E0D;
   color: #F4FAF7;
 }
 

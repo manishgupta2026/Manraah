@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/frontend/lib/context/AuthContext";
 import { getClientSession } from "@/backend/auth/client";
+import UserAvatar from "@/frontend/components/ui/UserAvatar";
 
 type FlowStep = "ENTRY" | "SEARCHING" | "MATCHED" | "CHAT" | "CALL" | "FEEDBACK";
 
@@ -21,10 +22,23 @@ const PRESET_TOPICS = [
   "Loneliness & Finding Connection",
 ];
 
+const SUGGESTED_CHAT_PROMPTS = [
+  "I'm feeling overwhelmed today",
+  "I need help coping with stress",
+  "Family matters are weighing on me",
+  "I just need someone to listen",
+  "Work burnout is catching up",
+];
+
 export default function HumanCompanionView() {
   const { user } = useAuth();
   const session = getClientSession();
-  const userName = user?.name || user?.sanctuaryName || session?.user?.name || session?.user?.sanctuaryName || "Manraah Member";
+  const userName =
+    user?.name ||
+    user?.sanctuaryName ||
+    session?.user?.name ||
+    session?.user?.sanctuaryName ||
+    "Manraah Member";
 
   const [step, setStep] = useState<FlowStep>("ENTRY");
   const [activeTopic, setActiveTopic] = useState("Emotional Venting & Guidance");
@@ -36,7 +50,7 @@ export default function HumanCompanionView() {
     {
       id: "m-1",
       sender: "listener",
-      text: "Hello! I am Priya, your peer listener today. I am here to listen without judgment. What is feeling heavy on your mind today?",
+      text: `Hello ${userName} 🌿. I am Priya, your peer listener today. I am here to listen without judgment in a completely anonymous and safe space. What is feeling heavy on your mind today?`,
       time: "Just now",
     },
   ]);
@@ -54,7 +68,7 @@ export default function HumanCompanionView() {
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Search countdown simulation
+  // Search countdown simulation (3-4 seconds)
   useEffect(() => {
     let interval: any;
     if (step === "SEARCHING") {
@@ -107,9 +121,8 @@ export default function HumanCompanionView() {
     setStep("ENTRY");
   };
 
-  const handleSendMessage = (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
-    const text = inputMessage.trim();
+  const handleSendMessage = (textToSend?: string) => {
+    const text = (textToSend || inputMessage).trim();
     if (!text) return;
 
     const userMsg: ChatMsg = {
@@ -144,7 +157,14 @@ export default function HumanCompanionView() {
         },
       ]);
       setIsListenerTyping(false);
-    }, 1800);
+    }, 1200);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
+    }
   };
 
   const handleEndSession = () => {
@@ -157,57 +177,235 @@ export default function HumanCompanionView() {
       {
         id: "m-1",
         sender: "listener",
-        text: "Hello! I am Priya, your peer listener today. I am here to listen without judgment. What is feeling heavy on your mind today?",
+        text: `Hello ${userName} 🌿. I am Priya, your peer listener today. I am here to listen without judgment in a completely anonymous and safe space. What is feeling heavy on your mind today?`,
         time: "Just now",
       },
     ]);
   };
 
   return (
-    <div className="w-full min-w-0 flex flex-col gap-5">
-      {/* 1. Header Banner */}
-      <div className="bg-white dark:bg-[#0B3029] rounded-3xl p-6 sm:p-7 border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] shadow-2xs space-y-4 transition-colors">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div className="w-full min-w-0 flex flex-col gap-4 sm:gap-5">
+      {/* 1. Companion Header Card (Aligned with AI Companion) */}
+      <div className="bg-white dark:bg-[#131916] rounded-3xl p-5 sm:p-6 border border-[#CBECE2] dark:border-[#1E2824] shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-colors">
+        <div className="flex items-center gap-3.5">
+          <div className="w-11 h-11 rounded-2xl bg-[#E6F4F0] dark:bg-[#18201C] text-[#006B56] dark:text-[#5FAF8A] flex items-center justify-center text-xl shadow-xs shrink-0 border border-transparent dark:border-[#22302A]">
+            👥
+          </div>
           <div>
-            <span className="text-[10px] font-black tracking-widest text-[#006C56] dark:text-[#00A889]">
-              1-on-1 Active Listener Manraah
-            </span>
-            <h1 className="text-2xl font-heading font-black text-[#19332A] dark:text-[#F4FAF7] leading-tight mt-0.5">
-              Human Companion
-            </h1>
+            <div className="flex items-center gap-2.5">
+              <h1 className="text-xl sm:text-2xl font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
+                Manraah Human Companion
+              </h1>
+              <span className="flex items-center gap-1.5 text-[10px] font-bold text-[#006B56] dark:text-[#5FAF8A] bg-[#E6F4F0] dark:bg-[rgba(95,175,138,0.15)] px-2.5 py-0.5 rounded-full border border-[#CBECE2] dark:border-[#22302A]">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#006B56] dark:bg-[#5FAF8A] animate-pulse" />
+                {step === "CHAT"
+                  ? `Active • ${formatTimer(sessionSeconds)}`
+                  : step === "CALL"
+                  ? `Voice Call • ${formatTimer(sessionSeconds)}`
+                  : step === "SEARCHING"
+                  ? "Matching Listener..."
+                  : step === "MATCHED"
+                  ? "Listener Connected"
+                  : "Peer Network Ready"}
+              </span>
+            </div>
             <p className="text-xs text-[#6B857C] dark:text-[#9DB9B0] font-medium mt-1">
-              Connect anonymously 1-on-1 with trained, compassionate peer listeners for genuine warmth and understanding.
+              Active Peer Listener: Priya (#104) • Topic: {customTopic || activeTopic} • 100% Anonymous &amp; Masked
             </p>
           </div>
+        </div>
 
-          <div className="flex items-center gap-2">
-            <span className="px-3 py-1 rounded-full bg-[#EAF5EF] dark:bg-[rgba(0,168,137,0.15)] text-[#006C56] dark:text-[#73D8C4] border border-[#D5E8DF] dark:border-[rgba(0,168,137,0.30)] text-xs font-bold flex items-center gap-1.5">
-              <span>🛡️</span> 100% Anonymous & Masked
-            </span>
-          </div>
+        {/* Action Controls */}
+        <div className="flex items-center gap-2 self-start sm:self-auto">
+          {step === "CHAT" && (
+            <>
+              <button
+                onClick={() => setStep("CALL")}
+                className="px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer bg-[#F4F9F6] dark:bg-[#18201C] text-[#4F685F] dark:text-[#9DB9B0] hover:bg-[#E6F4F0] dark:hover:bg-[#22302A] border border-[#CBECE2] dark:border-[#22302A]"
+              >
+                <span>🎙️</span>
+                <span>Voice Mode</span>
+              </button>
+              <button
+                onClick={handleEndSession}
+                className="px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-300 border border-rose-200 dark:border-rose-900/60 hover:bg-rose-100 dark:hover:bg-rose-900/40"
+              >
+                <span>End Session</span>
+              </button>
+            </>
+          )}
+
+          {step === "CALL" && (
+            <>
+              <button
+                onClick={() => setStep("CHAT")}
+                className="px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer bg-[#F4F9F6] dark:bg-[#18201C] text-[#4F685F] dark:text-[#9DB9B0] hover:bg-[#E6F4F0] dark:hover:bg-[#22302A] border border-[#CBECE2] dark:border-[#22302A]"
+              >
+                <span>💬</span>
+                <span>Switch to Chat</span>
+              </button>
+              <button
+                onClick={handleEndSession}
+                className="px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer bg-rose-600 hover:bg-rose-700 text-white shadow-xs"
+              >
+                <span>End Call</span>
+              </button>
+            </>
+          )}
+
+          {step === "SEARCHING" && (
+            <button
+              onClick={handleCancelSearch}
+              className="px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer bg-[#F4F9F6] dark:bg-[#18201C] text-[#4F685F] dark:text-[#9DB9B0] hover:bg-[#E6F4F0] dark:hover:bg-[#22302A] border border-[#CBECE2] dark:border-[#22302A]"
+            >
+              <span>Cancel Search</span>
+            </button>
+          )}
+
+          {step === "MATCHED" && (
+            <button
+              onClick={() => setStep("ENTRY")}
+              className="px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer bg-[#F4F9F6] dark:bg-[#18201C] text-[#4F685F] dark:text-[#9DB9B0] hover:bg-[#E6F4F0] dark:hover:bg-[#22302A] border border-[#CBECE2] dark:border-[#22302A]"
+            >
+              <span>Change Topic</span>
+            </button>
+          )}
+
+          {step === "ENTRY" && (
+            <button
+              onClick={handleStartSearch}
+              className="px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer bg-[#006B56] hover:bg-[#005B48] text-white shadow-sm"
+            >
+              <span>🎙️ Find a Listener</span>
+            </button>
+          )}
         </div>
       </div>
 
-      {/* 2. Multi-Step Controller Container */}
-      <div className="bg-white dark:bg-[#0B3029] rounded-3xl border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] shadow-2xs p-6 sm:p-8 transition-colors">
+      {/* 2. Main Conversation / Interaction Box */}
+      <div
+        className={`bg-white dark:bg-[#131916] rounded-3xl p-5 sm:p-6 border border-[#CBECE2] dark:border-[#1E2824] shadow-2xs flex flex-col transition-colors ${
+          step === "CHAT"
+            ? "h-[calc(100vh-230px)] min-h-[480px] justify-between space-y-4"
+            : "h-auto space-y-4 sm:space-y-5"
+        }`}
+      >
         {/* =================================================================== */}
-        {/* STEP 1: ENTRY & TOPIC SELECTION                                     */}
+        {/* STATE 1: CHAT CONVERSATION (Exact layout & bubble style of AI)      */}
+        {/* =================================================================== */}
+        {step === "CHAT" && (
+          <>
+            {/* Messages Stream Container */}
+            <div className="flex-1 min-h-[340px] overflow-y-auto space-y-4 pr-2">
+              {chatMessages.map((msg) => (
+                <div
+                  key={msg.id}
+                  className={`flex items-start gap-3 ${
+                    msg.sender === "user" ? "flex-row-reverse" : "flex-row"
+                  }`}
+                >
+                  {/* Avatar Icon */}
+                  {msg.sender === "user" ? (
+                    <UserAvatar user={user} sizeClass="w-8 h-8 text-xs" />
+                  ) : (
+                    <div className="w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs shrink-0 shadow-2xs bg-[#E6F4F0] dark:bg-[#18201C] text-[#006B56] dark:text-[#5FAF8A] border border-[#CBECE2] dark:border-[#22302A]">
+                      PL
+                    </div>
+                  )}
+
+                  {/* Bubble */}
+                  <div
+                    className={`max-w-[85%] sm:max-w-[75%] p-4 rounded-2xl text-xs sm:text-[13px] leading-relaxed shadow-2xs space-y-1.5 ${
+                      msg.sender === "user"
+                        ? "bg-[#006B56] text-white rounded-tr-xs"
+                        : "bg-[#F4FAF7] dark:bg-[#18201C] text-[#19332A] dark:text-[#F4FAF7] border border-[#CBECE2] dark:border-[#22302A] rounded-tl-xs"
+                    }`}
+                  >
+                    <p className="whitespace-pre-wrap" suppressHydrationWarning>{msg.text}</p>
+                    <p
+                      className={`text-[9px] font-medium text-right ${
+                        msg.sender === "user"
+                          ? "text-white/70 dark:text-white/80"
+                          : "text-[#789389] dark:text-[#76968D]"
+                      }`}
+                    >
+                      {msg.time}
+                    </p>
+                  </div>
+                </div>
+              ))}
+
+              {isListenerTyping && (
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full bg-[#E6F4F0] dark:bg-[#18201C] text-[#006B56] dark:text-[#5FAF8A] flex items-center justify-center font-bold text-xs border border-transparent dark:border-[#22302A]">
+                    PL
+                  </div>
+                  <div className="p-3.5 rounded-2xl bg-[#F4FAF7] dark:bg-[#18201C] border border-[#CBECE2] dark:border-[#22302A] text-xs text-[#789389] dark:text-[#76968D] flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-[#006B56] dark:bg-[#5FAF8A] animate-bounce" />
+                    <span className="w-2 h-2 rounded-full bg-[#006B56] dark:bg-[#5FAF8A] animate-bounce delay-150" />
+                    <span className="w-2 h-2 rounded-full bg-[#006B56] dark:bg-[#5FAF8A] animate-bounce delay-300" />
+                  </div>
+                </div>
+              )}
+              <div ref={messagesEndRef} />
+            </div>
+
+            {/* Bottom Section: Suggested Prompts + Input Bar */}
+            <div className="space-y-3 pt-2 border-t border-[#CBECE2] dark:border-[#1E2824]">
+              {/* Suggested Prompt Chips */}
+              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 max-w-full">
+                {SUGGESTED_CHAT_PROMPTS.map((prompt) => (
+                  <button
+                    key={prompt}
+                    onClick={() => handleSendMessage(prompt)}
+                    className="px-3 py-1 rounded-full bg-[#F4F9F6] dark:bg-[#18201C] hover:bg-[#E6F4F0] dark:hover:bg-[#22302A] text-[#4F685F] dark:text-[#9DB9B0] hover:text-[#006B56] dark:hover:text-[#5FAF8A] text-[10.5px] font-bold border border-[#CBECE2] dark:border-[#22302A] whitespace-nowrap transition-colors cursor-pointer"
+                  >
+                    “{prompt}”
+                  </button>
+                ))}
+              </div>
+
+              {/* Message Input Bar */}
+              <div className="flex items-center gap-2">
+                <input
+                  type="text"
+                  value={inputMessage}
+                  onChange={(e) => setInputMessage(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  placeholder="Share what's on your mind with Priya... (Press Enter to send)"
+                  className="flex-1 py-3 px-4.5 rounded-2xl bg-[#F8FCFA] dark:bg-[#18201C] border border-[#CBECE2] dark:border-[#22302A] text-xs sm:text-sm text-[#19332A] dark:text-[#F4FAF7] focus:outline-none focus:ring-2 focus:ring-[#006B56]/40 dark:focus:ring-[#5FAF8A]/30 placeholder:text-[#8EAAA1] dark:placeholder:text-[#789990]"
+                />
+                <button
+                  onClick={() => handleSendMessage()}
+                  disabled={!inputMessage.trim()}
+                  className="py-3 px-5 rounded-2xl bg-[#006B56] hover:bg-[#005B48] disabled:bg-slate-200 dark:bg-[#006B56] dark:hover:bg-[#005B48] dark:disabled:bg-[#18201C] dark:disabled:text-[#76968D] text-white text-xs font-bold shadow-sm transition-all flex items-center gap-1.5 cursor-pointer disabled:cursor-not-allowed shrink-0"
+                >
+                  <span>Send</span>
+                  <span>➤</span>
+                </button>
+              </div>
+            </div>
+          </>
+        )}
+
+        {/* =================================================================== */}
+        {/* STATE 2: ENTRY & TOPIC SELECTION                                   */}
         {/* =================================================================== */}
         {step === "ENTRY" && (
-          <div className="max-w-2xl mx-auto space-y-7 text-center">
+          <div className="space-y-4 sm:space-y-5">
             {/* Topic Selection Card */}
-            <div className="text-left space-y-4">
+            <div className="space-y-2.5">
               <div>
-                <h2 className="text-base font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
+                <h2 className="text-sm sm:text-base font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
                   What would you like to speak about today?
                 </h2>
-                <p className="text-xs text-[#6B857C] dark:text-[#9DB9B0]">
-                  Pick a topic or type your own. Our peer listeners are trained across emotional well-being areas.
+                <p className="text-xs text-[#6B857C] dark:text-[#9DB9B0] mt-0.5">
+                  Pick a focus area or write your own. Our verified peer listeners provide warm, non-judgmental space.
                 </p>
               </div>
 
               {/* Preset Chips */}
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2 pt-0.5">
                 {PRESET_TOPICS.map((t) => {
                   const isSelected = activeTopic === t && !customTopic;
                   return (
@@ -218,10 +416,10 @@ export default function HumanCompanionView() {
                         setActiveTopic(t);
                         setCustomTopic("");
                       }}
-                      className={`px-3.5 py-2 rounded-2xl text-xs font-bold transition-all border cursor-pointer ${
+                      className={`px-3.5 py-1.5 sm:py-2 rounded-2xl text-xs font-bold transition-all border cursor-pointer ${
                         isSelected
-                          ? "bg-[#006C56] dark:bg-[#008F78] text-white border-[#006C56] dark:border-[#008F78] shadow-xs"
-                          : "bg-[#F8FCFA] dark:bg-[#082821] border-[#D5E3DB] dark:border-[rgba(150,210,195,0.12)] text-[#4F685F] dark:text-[#9DB9B0] hover:border-[#006C56]/40 dark:hover:border-[rgba(150,210,195,0.25)]"
+                          ? "bg-[#006B56] text-white border-[#006B56] dark:bg-[#006B56] dark:text-white dark:border-[#006B56] shadow-xs"
+                          : "bg-[#F8FCFA] dark:bg-[#18201C] border-[#CBECE2] dark:border-[#22302A] text-[#4F685F] dark:text-[#9DB9B0] hover:border-[#006B56]/50 dark:hover:border-[#5FAF8A]/40"
                       }`}
                     >
                       {t}
@@ -231,54 +429,70 @@ export default function HumanCompanionView() {
               </div>
 
               {/* Custom Topic Input */}
-              <div>
+              <div className="pt-0.5">
                 <input
                   type="text"
                   value={customTopic}
                   onChange={(e) => setCustomTopic(e.target.value)}
                   placeholder="Or enter a custom topic (e.g. Navigating exam anxiety, feeling unheard)..."
-                  className="w-full py-2.5 px-4 rounded-2xl bg-[#F8FCFA] dark:bg-[#082821] border border-[#D5E3DB] dark:border-[rgba(150,210,195,0.16)] text-xs font-bold text-[#19332A] dark:text-[#F4FAF7] focus:outline-none focus:ring-2 focus:ring-[#006C56]/40 dark:focus:ring-[#00A889]/30 placeholder:text-[#8EAAA1] dark:placeholder:text-[#789990]"
+                  className="w-full py-2.5 sm:py-3 px-4 rounded-2xl bg-[#F8FCFA] dark:bg-[#18201C] border border-[#CBECE2] dark:border-[#22302A] text-xs font-medium text-[#19332A] dark:text-[#F4FAF7] focus:outline-none focus:ring-2 focus:ring-[#006B56]/40 dark:focus:ring-[#5FAF8A]/30 placeholder:text-[#8EAAA1] dark:placeholder:text-[#789990]"
                 />
               </div>
             </div>
 
-            {/* Pulsing Connect Button */}
-            <div className="py-4">
-              <button
-                onClick={handleStartSearch}
-                className="w-44 h-44 mx-auto rounded-full bg-gradient-to-br from-[#006C56] via-[#008968] to-[#00A982] text-white font-heading font-black text-sm shadow-xl shadow-[#006C56]/30 hover:scale-105 active:scale-95 transition-all flex flex-col items-center justify-center gap-2 cursor-pointer border-4 border-white dark:border-[#0E3931]"
-              >
-                <span className="text-3xl">🎙️</span>
-                <span>Find a Listener</span>
-                <span className="text-[10px] opacity-80 font-medium">Ready in ~10s</span>
-              </button>
+            {/* Pulsing Connect Action Button */}
+            <div className="p-4 sm:p-5 rounded-3xl bg-[#E6F4F0] dark:bg-[#18201C] border border-[#CBECE2] dark:border-[#22302A] flex flex-col sm:flex-row sm:items-center justify-between gap-3.5">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-[#006B56] dark:bg-[#006B56] text-white flex items-center justify-center text-xl shadow-xs shrink-0">
+                  🎙️
+                </div>
+                <div>
+                  <h3 className="text-xs sm:text-sm font-heading font-black text-[#004D3D] dark:text-[#F4FAF7]">
+                    Ready to Connect with a Peer Listener?
+                  </h3>
+                  <p className="text-[11px] sm:text-xs text-[#4F685F] dark:text-[#9DB9B0] mt-0.5">
+                    Peer listeners are online right now. Instant match in approximately ~5 seconds.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2.5 shrink-0 self-end sm:self-auto">
+                <button
+                  type="button"
+                  onClick={handleStartSearch}
+                  className="py-2.5 px-5 sm:px-6 rounded-2xl bg-[#006B56] hover:bg-[#005B48] text-white text-xs font-bold shadow-md shadow-[#006B56]/20 transition-all flex items-center gap-2 cursor-pointer"
+                >
+                  <span>Connect Now</span>
+                  <span>→</span>
+                </button>
+              </div>
             </div>
 
             {/* Privacy Commitments */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-4 border-t border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] text-left">
-              <div className="p-3.5 rounded-2xl bg-[#F8FCFA] dark:bg-[#0E3931] border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] space-y-1">
-                <span className="text-xs font-bold text-[#19332A] dark:text-[#F4FAF7] flex items-center gap-1.5">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3 pt-1 border-t border-[#CBECE2] dark:border-[#1E2824] text-left">
+              <div className="p-3 sm:p-3.5 rounded-2xl bg-[#EAF6F2] dark:bg-[#18201C] border border-[#CBECE2] dark:border-[#22302A] space-y-1">
+                <span className="text-xs font-bold text-[#004D3D] dark:text-[#F4FAF7] flex items-center gap-1.5">
                   <span>🔒</span> Zero Identifiers
                 </span>
-                <p className="text-[10.5px] text-[#6B857C] dark:text-[#9DB9B0] leading-relaxed">
+                <p className="text-[10.5px] text-[#4F685F] dark:text-[#9DB9B0] leading-relaxed">
                   Real names, numbers, or emails are never shared with listeners.
                 </p>
               </div>
 
-              <div className="p-3.5 rounded-2xl bg-[#F8FCFA] dark:bg-[#0E3931] border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] space-y-1">
-                <span className="text-xs font-bold text-[#19332A] dark:text-[#F4FAF7] flex items-center gap-1.5">
+              <div className="p-3 sm:p-3.5 rounded-2xl bg-[#EAF6F2] dark:bg-[#18201C] border border-[#CBECE2] dark:border-[#22302A] space-y-1">
+                <span className="text-xs font-bold text-[#004D3D] dark:text-[#F4FAF7] flex items-center gap-1.5">
                   <span>🕊️</span> Active Listening
                 </span>
-                <p className="text-[10.5px] text-[#6B857C] dark:text-[#9DB9B0] leading-relaxed">
+                <p className="text-[10.5px] text-[#4F685F] dark:text-[#9DB9B0] leading-relaxed">
                   No unsolicited advice or judgment. Just warm, present companionship.
                 </p>
               </div>
 
-              <div className="p-3.5 rounded-2xl bg-[#F8FCFA] dark:bg-[#0E3931] border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] space-y-1">
-                <span className="text-xs font-bold text-[#19332A] dark:text-[#F4FAF7] flex items-center gap-1.5">
+              <div className="p-3 sm:p-3.5 rounded-2xl bg-[#EAF6F2] dark:bg-[#18201C] border border-[#CBECE2] dark:border-[#22302A] space-y-1">
+                <span className="text-xs font-bold text-[#004D3D] dark:text-[#F4FAF7] flex items-center gap-1.5">
                   <span>🛑</span> Full Control
                 </span>
-                <p className="text-[10.5px] text-[#6B857C] dark:text-[#9DB9B0] leading-relaxed">
+                <p className="text-[10.5px] text-[#4F685F] dark:text-[#9DB9B0] leading-relaxed">
                   You can end the session or switch modes anytime with a single tap.
                 </p>
               </div>
@@ -287,21 +501,21 @@ export default function HumanCompanionView() {
         )}
 
         {/* =================================================================== */}
-        {/* STEP 2: SEARCHING / RADAR PULSE                                    */}
+        {/* STATE 3: SEARCHING / RADAR PULSE                                   */}
         {/* =================================================================== */}
         {step === "SEARCHING" && (
-          <div className="max-w-md mx-auto py-12 text-center space-y-8 animate-in fade-in duration-200">
+          <div className="max-w-md mx-auto py-12 text-center space-y-7 animate-in fade-in duration-200">
             <div className="relative w-36 h-36 mx-auto flex items-center justify-center">
-              <div className="absolute inset-0 rounded-full bg-[#006C56]/15 dark:bg-[#00A889]/15 animate-ping" />
-              <div className="absolute inset-3 rounded-full bg-[#006C56]/20 dark:bg-[#00A889]/20 animate-pulse" />
-              <div className="relative w-20 h-20 rounded-full bg-[#006C56] dark:bg-[#008F78] text-white flex items-center justify-center text-3xl shadow-lg">
+              <div className="absolute inset-0 rounded-full bg-[#006B56]/15 dark:bg-[#5FAF8A]/15 animate-ping" />
+              <div className="absolute inset-3 rounded-full bg-[#006B56]/20 dark:bg-[#5FAF8A]/20 animate-pulse" />
+              <div className="relative w-20 h-20 rounded-full bg-[#006B56] dark:bg-[#006B56] text-white flex items-center justify-center text-3xl shadow-lg">
                 <span>📡</span>
               </div>
             </div>
 
             <div className="space-y-2">
-              <span className="px-3 py-1 rounded-full bg-[#EAF5EF] dark:bg-[rgba(0,168,137,0.15)] text-[#006C56] dark:text-[#73D8C4] border border-[#D5E8DF] dark:border-[rgba(0,168,137,0.30)] text-xs font-bold tracking-wider inline-block">
-                Scanning Peer Network...
+              <span className="px-3 py-1 rounded-full bg-[#E6F4F0] dark:bg-[rgba(95,175,138,0.15)] text-[#006B56] dark:text-[#5FAF8A] border border-[#CBECE2] dark:border-[#22302A] text-xs font-bold tracking-wider inline-block">
+                Scanning Peer Network... ({3 - searchTimer}s)
               </span>
               <h2 className="text-xl font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
                 Matching with an Available Peer Listener
@@ -313,7 +527,7 @@ export default function HumanCompanionView() {
 
             <button
               onClick={handleCancelSearch}
-              className="px-6 py-2 rounded-full bg-[#F4F9F6] dark:bg-[#082821] hover:bg-[#E2ECE6] dark:hover:bg-[#0E3931] text-[#4F685F] dark:text-[#9DB9B0] text-xs font-bold border border-[#D5E3DB] dark:border-[rgba(150,210,195,0.12)] transition-all cursor-pointer"
+              className="px-6 py-2 rounded-full bg-[#F4F9F6] dark:bg-[#18201C] hover:bg-[#E6F4F0] dark:hover:bg-[#22302A] text-[#4F685F] dark:text-[#9DB9B0] text-xs font-bold border border-[#CBECE2] dark:border-[#22302A] transition-all cursor-pointer"
             >
               Cancel Search
             </button>
@@ -321,27 +535,27 @@ export default function HumanCompanionView() {
         )}
 
         {/* =================================================================== */}
-        {/* STEP 3: MATCHED                                                    */}
+        {/* STATE 4: MATCHED                                                   */}
         {/* =================================================================== */}
         {step === "MATCHED" && (
           <div className="max-w-md mx-auto py-8 text-center space-y-6 animate-in zoom-in-95 duration-200">
-            <span className="px-3.5 py-1 rounded-full bg-[#EAF5EF] dark:bg-[rgba(0,168,137,0.15)] text-[#006C56] dark:text-[#73D8C4] border border-[#D5E8DF] dark:border-[rgba(0,168,137,0.30)] text-xs font-bold tracking-wider inline-block">
+            <span className="px-3.5 py-1 rounded-full bg-[#E6F4F0] dark:bg-[rgba(95,175,138,0.15)] text-[#006B56] dark:text-[#5FAF8A] border border-[#CBECE2] dark:border-[#22302A] text-xs font-bold tracking-wider inline-block">
               ✓ Listener Connected
             </span>
 
             {/* Listener Card */}
-            <div className="p-6 rounded-3xl bg-[#F8FCFA] dark:bg-[#0E3931] border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] space-y-4">
-              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#006C56] to-[#00A889] text-white flex items-center justify-center font-bold text-lg mx-auto shadow-md">
+            <div className="p-6 rounded-3xl bg-[#EAF6F2] dark:bg-[#18201C] border border-[#CBECE2] dark:border-[#22302A] space-y-4">
+              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#006B56] to-[#5FAF8A] text-white flex items-center justify-center font-bold text-lg mx-auto shadow-md">
                 PL
               </div>
               <div>
-                <h3 className="text-base font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
+                <h3 className="text-base font-heading font-black text-[#004D3D] dark:text-[#F4FAF7]">
                   Peer Listener Priya (#104)
                 </h3>
-                <p className="text-xs text-[#6B857C] dark:text-[#9DB9B0] mt-0.5">
-                  Trained Active Listener • Empathy & Anxiety Support
+                <p className="text-xs text-[#4F685F] dark:text-[#9DB9B0] mt-0.5">
+                  Trained Active Listener • Empathy &amp; Anxiety Support
                 </p>
-                <div className="flex items-center justify-center gap-3 mt-2 text-xs font-bold text-[#006C56] dark:text-[#00A889]">
+                <div className="flex items-center justify-center gap-3 mt-2 text-xs font-bold text-[#006B56] dark:text-[#5FAF8A]">
                   <span>★ 4.9 Rating</span>
                   <span>•</span>
                   <span>140+ Support Sessions</span>
@@ -356,7 +570,7 @@ export default function HumanCompanionView() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <button
                 onClick={() => setStep("CHAT")}
-                className="py-3 px-5 rounded-2xl bg-[#006C56] hover:bg-[#005241] dark:bg-[#008F78] dark:hover:bg-[#00A889] text-white text-xs font-bold shadow-md shadow-[#006C56]/20 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                className="py-3 px-5 rounded-2xl bg-[#006B56] hover:bg-[#005B48] text-white text-xs font-bold shadow-md shadow-[#006B56]/20 transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
                 <span>💬</span>
                 <span>Start Text Chat</span>
@@ -364,7 +578,7 @@ export default function HumanCompanionView() {
 
               <button
                 onClick={() => setStep("CALL")}
-                className="py-3 px-5 rounded-2xl bg-[#F4F9F6] dark:bg-[#082821] hover:bg-[#EAF6F0] dark:hover:bg-[#0E3931] text-[#006C56] dark:text-[#73D8C4] text-xs font-bold border border-[#006C56]/30 dark:border-[rgba(0,168,137,0.30)] transition-all flex items-center justify-center gap-2 cursor-pointer"
+                className="py-3 px-5 rounded-2xl bg-[#F4F9F6] dark:bg-[#18201C] hover:bg-[#E6F4F0] dark:hover:bg-[#22302A] text-[#006B56] dark:text-[#5FAF8A] text-xs font-bold border border-[#CBECE2] dark:border-[#22302A] transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
                 <span>📞</span>
                 <span>Start Voice Call</span>
@@ -374,120 +588,26 @@ export default function HumanCompanionView() {
         )}
 
         {/* =================================================================== */}
-        {/* STEP 4: CHAT SESSION                                               */}
-        {/* =================================================================== */}
-        {step === "CHAT" && (
-          <div className="flex flex-col h-[560px] max-w-2xl mx-auto border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] rounded-3xl overflow-hidden bg-[#F8FCFA] dark:bg-[#082821]">
-            {/* Chat Session Header */}
-            <div className="p-4 bg-white dark:bg-[#0B3029] border-b border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] flex items-center justify-between">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-full bg-[#006C56] dark:bg-[#008F78] text-white flex items-center justify-center font-bold text-xs">
-                  PL
-                </div>
-                <div>
-                  <h4 className="text-xs font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
-                    Priya (Peer Listener)
-                  </h4>
-                  <div className="flex items-center gap-1.5 text-[10px] text-emerald-600 dark:text-emerald-400 font-bold">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                    <span>Active • {formatTimer(sessionSeconds)}</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => setStep("CALL")}
-                  className="px-3 py-1.5 rounded-full bg-[#F4F9F6] dark:bg-[#082821] text-[#006C56] dark:text-[#73D8C4] border border-transparent dark:border-[rgba(150,210,195,0.12)] text-xs font-bold cursor-pointer hover:bg-[#EAF6F0] dark:hover:bg-[#0E3931]"
-                >
-                  📞 Call
-                </button>
-                <button
-                  onClick={handleEndSession}
-                  className="px-3 py-1.5 rounded-full bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-300 text-xs font-bold border border-rose-200 dark:border-rose-800 hover:bg-rose-100 cursor-pointer"
-                >
-                  End Session
-                </button>
-              </div>
-            </div>
-
-            {/* Chat Messages */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-3">
-              {chatMessages.map((msg) => (
-                <div
-                  key={msg.id}
-                  className={`flex flex-col ${
-                    msg.sender === "user" ? "items-end" : "items-start"
-                  }`}
-                >
-                  <div
-                    className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-xs leading-relaxed ${
-                      msg.sender === "user"
-                        ? "bg-[#006C56] dark:bg-[#008F78] text-white rounded-br-none"
-                        : "bg-white dark:bg-[#0E3931] text-[#19332A] dark:text-[#F4FAF7] border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] rounded-bl-none shadow-2xs"
-                    }`}
-                  >
-                    {msg.text}
-                  </div>
-                  <span className="text-[9.5px] text-[#8EAAA1] dark:text-[#76968D] mt-1 px-1">
-                    {msg.time}
-                  </span>
-                </div>
-              ))}
-
-              {isListenerTyping && (
-                <div className="flex items-center gap-1.5 text-xs text-[#8EAAA1] dark:text-[#76968D] italic p-1">
-                  <span className="w-2 h-2 rounded-full bg-[#006C56] dark:bg-[#00A889] animate-bounce" />
-                  <span>Priya is listening and typing...</span>
-                </div>
-              )}
-              <div ref={messagesEndRef} />
-            </div>
-
-            {/* Chat Input */}
-            <form
-              onSubmit={handleSendMessage}
-              className="p-3 bg-white dark:bg-[#0B3029] border-t border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] flex items-center gap-2"
-            >
-              <input
-                type="text"
-                value={inputMessage}
-                onChange={(e) => setInputMessage(e.target.value)}
-                placeholder="Type your message with complete anonymity..."
-                className="flex-1 py-2 px-4 rounded-full bg-[#F8FCFA] dark:bg-[#082821] border border-[#D5E3DB] dark:border-[rgba(150,210,195,0.16)] text-xs text-[#19332A] dark:text-[#F4FAF7] focus:outline-none focus:ring-2 focus:ring-[#006C56]/40 dark:focus:ring-[#00A889]/30 placeholder:text-[#8EAAA1] dark:placeholder:text-[#789990]"
-              />
-              <button
-                type="submit"
-                disabled={!inputMessage.trim()}
-                className="w-9 h-9 rounded-full bg-[#006C56] dark:bg-[#008F78] text-white flex items-center justify-center text-sm disabled:opacity-40 cursor-pointer shadow-xs"
-              >
-                ↑
-              </button>
-            </form>
-          </div>
-        )}
-
-        {/* =================================================================== */}
-        {/* STEP 5: CALL SESSION                                               */}
+        {/* STATE 5: CALL SESSION                                              */}
         {/* =================================================================== */}
         {step === "CALL" && (
           <div className="max-w-md mx-auto py-8 text-center space-y-8 animate-in fade-in duration-200">
             <div className="space-y-1">
-              <span className="px-3 py-1 rounded-full bg-emerald-100 dark:bg-[rgba(0,168,137,0.15)] text-emerald-700 dark:text-[#73D8C4] border border-transparent dark:border-[rgba(0,168,137,0.30)] text-xs font-bold">
+              <span className="px-3 py-1 rounded-full bg-[#E6F4F0] dark:bg-[rgba(95,175,138,0.15)] text-[#006B56] dark:text-[#5FAF8A] border border-[#CBECE2] dark:border-[#22302A] text-xs font-bold">
                 ● Live Voice Session
               </span>
               <h3 className="text-xl font-heading font-black text-[#19332A] dark:text-[#F4FAF7] pt-2">
                 Peer Listener Priya
               </h3>
-              <p className="text-xs font-mono font-bold text-[#006C56] dark:text-[#00A889]">
+              <p className="text-xs font-mono font-bold text-[#006B56] dark:text-[#5FAF8A]">
                 {formatTimer(sessionSeconds)}
               </p>
             </div>
 
             {/* Pulsing Voice Avatar */}
             <div className="relative w-36 h-36 mx-auto flex items-center justify-center">
-              <div className="absolute inset-0 rounded-full bg-[#006C56]/15 dark:bg-[#00A889]/15 animate-ping" />
-              <div className="w-28 h-28 rounded-full bg-gradient-to-br from-[#006C56] to-[#00A889] text-white flex items-center justify-center text-4xl shadow-xl">
+              <div className="absolute inset-0 rounded-full bg-[#006B56]/15 dark:bg-[#5FAF8A]/15 animate-ping" />
+              <div className="w-28 h-28 rounded-full bg-gradient-to-br from-[#006B56] to-[#5FAF8A] text-white flex items-center justify-center text-4xl shadow-xl">
                 <span>🎙️</span>
               </div>
             </div>
@@ -499,7 +619,7 @@ export default function HumanCompanionView() {
                 className={`p-3.5 rounded-full border text-xs font-bold transition-all cursor-pointer ${
                   isMuted
                     ? "bg-rose-500 text-white border-rose-600"
-                    : "bg-[#F4F9F6] dark:bg-[#082821] text-[#19332A] dark:text-[#F4FAF7] border-[#D5E3DB] dark:border-[rgba(150,210,195,0.16)]"
+                    : "bg-[#F4F9F6] dark:bg-[#18201C] text-[#19332A] dark:text-[#F4FAF7] border-[#CBECE2] dark:border-[#22302A]"
                 }`}
                 title={isMuted ? "Unmute mic" : "Mute mic"}
               >
@@ -508,7 +628,7 @@ export default function HumanCompanionView() {
 
               <button
                 onClick={() => setStep("CHAT")}
-                className="p-3.5 rounded-full bg-[#F4F9F6] dark:bg-[#082821] text-[#006C56] dark:text-[#73D8C4] border border-[#D5E3DB] dark:border-[rgba(150,210,195,0.16)] text-xs font-bold cursor-pointer"
+                className="p-3.5 rounded-full bg-[#F4F9F6] dark:bg-[#18201C] text-[#006B56] dark:text-[#5FAF8A] border border-[#CBECE2] dark:border-[#22302A] text-xs font-bold cursor-pointer"
               >
                 💬 Switch to Chat
               </button>
@@ -524,7 +644,7 @@ export default function HumanCompanionView() {
         )}
 
         {/* =================================================================== */}
-        {/* STEP 6: FEEDBACK                                                   */}
+        {/* STATE 6: FEEDBACK                                                  */}
         {/* =================================================================== */}
         {step === "FEEDBACK" && (
           <div className="max-w-md mx-auto py-6 text-center space-y-6 animate-in zoom-in-95 duration-200">
@@ -573,8 +693,8 @@ export default function HumanCompanionView() {
                     }
                     className={`px-3 py-1 rounded-full text-xs font-bold transition-all cursor-pointer border ${
                       isSelected
-                        ? "bg-[#006C56] dark:bg-[#008F78] text-white border-[#006C56] dark:border-[#008F78]"
-                        : "bg-[#F4F9F6] dark:bg-[#082821] text-[#4F685F] dark:text-[#9DB9B0] border-[#D5E3DB] dark:border-[rgba(150,210,195,0.12)]"
+                        ? "bg-[#006B56] text-white border-[#006B56] dark:bg-[#006B56] dark:text-white dark:border-[#006B56]"
+                        : "bg-[#F4F9F6] dark:bg-[#18201C] text-[#4F685F] dark:text-[#9DB9B0] border-[#CBECE2] dark:border-[#22302A]"
                     }`}
                   >
                     {tag}
@@ -585,9 +705,9 @@ export default function HumanCompanionView() {
 
             <button
               onClick={handleFinishFeedback}
-              className="px-8 py-2.5 rounded-full bg-[#006C56] hover:bg-[#005241] dark:bg-[#008F78] dark:hover:bg-[#00A889] text-white text-xs font-bold shadow-md shadow-[#006C56]/20 transition-all cursor-pointer"
+              className="px-8 py-2.5 rounded-full bg-[#006B56] hover:bg-[#005B48] text-white text-xs font-bold shadow-md shadow-[#006B56]/20 transition-all cursor-pointer"
             >
-              Finish & Return to Companion →
+              Finish &amp; Return to Companion →
             </button>
           </div>
         )}

@@ -167,12 +167,12 @@ export default function WellnessAssessmentModal() {
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.96, y: 12 }}
         transition={{ type: "spring", damping: 25, stiffness: 300 }}
-        className="bg-white dark:bg-[#0B3029] border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.15)] rounded-3xl w-full max-w-xl p-6 sm:p-8 shadow-2xl relative overflow-hidden flex flex-col max-h-[92vh]"
+        className="bg-white dark:bg-[#131916] border border-[#E2ECE6] dark:border-[#1E2824] rounded-3xl w-full max-w-xl p-6 sm:p-8 shadow-2xl relative overflow-hidden flex flex-col max-h-[92vh]"
       >
         {/* Top Header */}
-        <div className="flex items-center justify-between pb-4 border-b border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)]">
+        <div className="flex items-center justify-between pb-4 border-b border-[#E2ECE6] dark:border-[#1E2824]">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-[#EAF6F0] dark:bg-[rgba(0,168,137,0.15)] text-[#006C56] dark:text-[#00A889] flex items-center justify-center text-xl shadow-xs">
+            <div className="w-10 h-10 rounded-2xl bg-[#EAF6F0] dark:bg-[#18201C] text-[#006C56] dark:text-[#5FAF8A] flex items-center justify-center text-xl shadow-xs border border-transparent dark:border-[#22302A]">
               ✦
             </div>
             <div>
@@ -186,7 +186,7 @@ export default function WellnessAssessmentModal() {
           </div>
           <button
             onClick={closeAssessment}
-            className="w-8 h-8 rounded-full bg-[#F4FAF7] dark:bg-[#0E3931] text-[#4F685F] dark:text-[#9DB9B0] flex items-center justify-center hover:bg-[#E2ECE6] dark:hover:bg-[#12463C] dark:hover:text-[#F4FAF7] transition-colors cursor-pointer"
+            className="w-8 h-8 rounded-full bg-[#F4FAF7] dark:bg-[#18201C] text-[#4F685F] dark:text-[#9DB9B0] flex items-center justify-center hover:bg-[#E2ECE6] dark:hover:bg-[#22302A] dark:hover:text-[#F4FAF7] transition-colors cursor-pointer"
             aria-label="Close"
           >
             ✕
@@ -197,7 +197,7 @@ export default function WellnessAssessmentModal() {
         <div className="flex-1 overflow-y-auto py-5 pr-1">
           {loadingQuestions ? (
             <div className="py-20 text-center space-y-3">
-              <div className="w-9 h-9 border-3 border-[#00A889] border-t-transparent rounded-full animate-spin mx-auto" />
+              <div className="w-9 h-9 border-3 border-[#006B56] border-t-transparent rounded-full animate-spin mx-auto" />
               <p className="text-xs text-[#789389] dark:text-[#9DB9B0] font-medium">
                 Loading assessment questions...
               </p>
@@ -216,7 +216,7 @@ export default function WellnessAssessmentModal() {
                     cx="50"
                     cy="50"
                     r="40"
-                    className="text-[#E9F3EE] dark:text-[rgba(150,210,195,0.12)]"
+                    className="text-[#E9F3EE] dark:text-[#18201C]"
                     strokeWidth="8"
                     fill="none"
                   />
@@ -224,7 +224,7 @@ export default function WellnessAssessmentModal() {
                     cx="50"
                     cy="50"
                     r="40"
-                    className="text-[#008968] dark:text-[#00A889]"
+                    className="text-[#008968] dark:text-[#5FAF8A]"
                     strokeWidth="8"
                     strokeDasharray={251.2}
                     initial={{ strokeDashoffset: 251.2 }}
@@ -247,7 +247,7 @@ export default function WellnessAssessmentModal() {
               </motion.div>
 
               <div className="space-y-2">
-                <span className="inline-block px-3 py-1 rounded-full text-xs font-bold bg-[#EAF6F0] dark:bg-[rgba(0,168,137,0.15)] text-[#006C56] dark:text-[#73D8C4] border border-[#008968]/20 dark:border-[rgba(0,168,137,0.30)]">
+                <span className="inline-block px-3 py-1 rounded-full text-xs font-bold bg-[#EAF6F0] dark:bg-[#18201C] text-[#006C56] dark:text-[#5FAF8A] border border-[#008968]/20 dark:border-[#22302A]">
                   Assessment Complete
                 </span>
                 <h3 className="text-xl font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
@@ -258,10 +258,10 @@ export default function WellnessAssessmentModal() {
                 </p>
               </div>
 
-              <div className="pt-4 border-t border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] flex items-center justify-center">
+              <div className="pt-4 border-t border-[#E2ECE6] dark:border-[#1E2824] flex items-center justify-center">
                 <button
                   onClick={closeAssessment}
-                  className="px-8 py-3 rounded-full bg-[#004D3D] hover:bg-[#003B2E] dark:bg-[#008F78] dark:hover:bg-[#00A889] text-white text-xs font-bold shadow-md shadow-[#004D3D]/20 dark:shadow-[#008F78]/25 transition-all cursor-pointer"
+                  className="px-8 py-3 rounded-full bg-[#004D3D] hover:bg-[#003B2E] dark:bg-[#006B56] dark:hover:bg-[#005B48] text-white text-xs font-bold shadow-md shadow-[#004D3D]/20 transition-all cursor-pointer"
                 >
                   View on Dashboard →
                 </button>
@@ -319,14 +319,14 @@ export default function WellnessAssessmentModal() {
                             onClick={() => handleSelectOption(opt.score)}
                             className={`w-full p-3.5 rounded-2xl flex items-center justify-between border transition-all text-left cursor-pointer ${
                               isSelected
-                                ? "bg-[#EAF6F0] dark:bg-[#0E3931] border-[#008968] dark:border-[#00A889] ring-2 ring-[#008968]/20 dark:ring-[#00A889]/20"
-                                : "bg-[#F8FCFA] dark:bg-[#082821] border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] hover:border-[#008968]/40 dark:hover:border-[rgba(150,210,195,0.25)]"
+                                ? "bg-[#EAF6F0] dark:bg-[#18201C] border-[#008968] dark:border-[#006B56] ring-2 ring-[#008968]/20 dark:ring-[#006B56]/20"
+                                : "bg-[#F8FCFA] dark:bg-[#18201C] border-[#E2ECE6] dark:border-[#22302A] hover:border-[#008968]/40 dark:hover:border-[#006B56]/40"
                             }`}
                           >
                             <span
                               className={`text-xs font-bold ${
                                 isSelected
-                                  ? "text-[#006C56] dark:text-[#00A889]"
+                                  ? "text-[#006C56] dark:text-[#5FAF8A]"
                                   : "text-[#19332A] dark:text-[#F4FAF7]"
                               }`}
                             >
@@ -335,8 +335,8 @@ export default function WellnessAssessmentModal() {
                             <span
                               className={`w-5 h-5 rounded-full border flex items-center justify-center text-[10px] font-bold ${
                                 isSelected
-                                  ? "bg-[#006C56] dark:bg-[#008F78] border-[#006C56] dark:border-[#008F78] text-white"
-                                  : "border-[#789389]/40 dark:border-[rgba(150,210,195,0.20)] text-transparent"
+                                  ? "bg-[#006C56] dark:bg-[#006B56] border-[#006C56] dark:border-[#006B56] text-white"
+                                  : "border-[#789389]/40 dark:border-[#22302A] text-transparent"
                               }`}
                             >
                               ✓
@@ -356,12 +356,12 @@ export default function WellnessAssessmentModal() {
               )}
 
               {/* Navigation Controls */}
-              <div className="flex items-center justify-between pt-4 border-t border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)]">
+              <div className="flex items-center justify-between pt-4 border-t border-[#E2ECE6] dark:border-[#1E2824]">
                 <button
                   type="button"
                   onClick={handlePrevQuestion}
                   disabled={questionStep === 0}
-                  className="px-4 py-2.5 rounded-xl bg-[#F4FAF7] dark:bg-white/5 dark:border dark:border-[rgba(150,210,195,0.12)] hover:bg-[#E2ECE6] dark:hover:bg-white/10 text-[#4F685F] dark:text-[#9DB9B0] dark:hover:text-[#F4FAF7] text-xs font-bold transition-colors disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+                  className="px-4 py-2.5 rounded-xl bg-[#F4FAF7] dark:bg-[#18201C] dark:border dark:border-[#22302A] hover:bg-[#E2ECE6] dark:hover:bg-[#22302A] text-[#4F685F] dark:text-[#9DB9B0] dark:hover:text-[#F4FAF7] text-xs font-bold transition-colors disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
                 >
                   ← Previous
                 </button>
@@ -371,7 +371,7 @@ export default function WellnessAssessmentModal() {
                     type="button"
                     onClick={handleSubmit}
                     disabled={!isCurrentQAnswered || isSubmitting}
-                    className="px-6 py-2.5 rounded-xl bg-[#006C56] hover:bg-[#005241] dark:bg-[#008F78] dark:hover:bg-[#00A889] text-white text-xs font-bold transition-all shadow-md shadow-[#006C56]/20 dark:shadow-[#008F78]/25 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center gap-2"
+                    className="px-6 py-2.5 rounded-xl bg-[#006C56] hover:bg-[#005241] dark:bg-[#006B56] dark:hover:bg-[#005B48] text-white text-xs font-bold transition-all shadow-md shadow-[#006C56]/20 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center gap-2"
                   >
                     {isSubmitting ? (
                       <>

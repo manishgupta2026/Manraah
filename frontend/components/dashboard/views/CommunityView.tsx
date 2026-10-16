@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "@/frontend/lib/context/AuthContext";
 import UserAvatar from "@/frontend/components/ui/UserAvatar";
+import { validateCommunityPost, checkInappropriateContent } from "@/frontend/lib/moderation";
 
 interface CommunityPostItem {
   id: string;
@@ -90,9 +91,33 @@ export default function CommunityView() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [expandedCommentsId, setExpandedCommentsId] = useState<string | null>(null);
   const [commentText, setCommentText] = useState("");
-  const [showModerationModal, setShowModerationModal] = useState(false);
-  const [lastSubmittedCircle, setLastSubmittedCircle] = useState("");
-  const [hasPendingPost, setHasPendingPost] = useState(false);
+  const [showInappropriateModal, setShowInappropriateModal] = useState(false);
+  const [inappropriateReason, setInappropriateReason] = useState("");
+  const [postToDelete, setPostToDelete] = useState<CommunityPostItem | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleDeletePost = async () => {
+    if (!postToDelete) return;
+    const targetId = postToDelete.id;
+    setIsDeleting(true);
+
+    try {
+      await fetch(`/api/community?id=${encodeURIComponent(targetId)}`, {
+        method: "DELETE",
+      });
+
+      // Optimistically remove from state
+      setPosts((prev) => prev.filter((p) => p.id !== targetId));
+      setPostToDelete(null);
+    } catch (err) {
+      console.error("Failed to delete post:", err);
+      // Still remove locally
+      setPosts((prev) => prev.filter((p) => p.id !== targetId));
+      setPostToDelete(null);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   useEffect(() => {
     async function loadCommunityPosts() {
@@ -104,6 +129,7 @@ export default function CommunityView() {
             const formatted = data.map((p: any) => ({
               id: p.id,
               author: p.author || "Manraah Member",
+              avatar: p.avatar,
               category: p.category || "Mindful Living",
               title: p.title,
               content: p.content,
@@ -136,13 +162,25 @@ export default function CommunityView() {
     e.preventDefault();
     if (!newTitle.trim() || !newContent.trim()) return;
 
-    setIsSubmitting(true);
-    const submittedCategory = newPostCategory;
     const titleToSend = newTitle.trim();
     const contentToSend = newContent.trim();
+    const submittedCategory = newPostCategory;
+
+    // 1. Client-side Inappropriate Content Validation
+    const moderation = validateCommunityPost(titleToSend, contentToSend);
+    if (moderation.isInappropriate) {
+      setInappropriateReason(
+        moderation.reason ||
+          "Your message contains inappropriate language or content that violates our community safety standards."
+      );
+      setShowInappropriateModal(true);
+      return;
+    }
+
+    setIsSubmitting(true);
 
     try {
-      await fetch("/api/community", {
+      const res = await fetch("/api/community", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -152,19 +190,40 @@ export default function CommunityView() {
         }),
       });
 
-      // Clear input and display 24-hour moderation popup
+      const data = await res.json().catch(() => ({}));
+
+      // Inappropriate content detected on backend
+      if (!res.ok || data.error === "inappropriate_content") {
+        if (res.status === 422 || data.error === "inappropriate_content") {
+          setInappropriateReason(
+            data.message ||
+              "You cannot post this. Your message contains inappropriate content that violates our community safety standards."
+          );
+          setShowInappropriateModal(true);
+          return;
+        }
+        throw new Error(data.error || "Failed to create post");
+      }
+
+      // 2. Direct Post Publishing: instantly added to feed (no admin review)
+      const createdItem: CommunityPostItem = {
+        id: data.post?.id || `post-${Date.now()}`,
+        author: data.post?.author || userName || "Manraah Member",
+        avatar: data.post?.avatar || user?.avatar,
+        category: submittedCategory,
+        title: titleToSend,
+        content: contentToSend,
+        likes: 1,
+        commentsCount: 0,
+        timeAgo: "Just now",
+        isLiked: false,
+      };
+
+      setPosts((prev) => [createdItem, ...prev]);
       setNewTitle("");
       setNewContent("");
-      setLastSubmittedCircle(submittedCategory);
-      setShowModerationModal(true);
-      setHasPendingPost(true);
-    } catch (err) {
-      console.warn("Post submission handled:", err);
-      setNewTitle("");
-      setNewContent("");
-      setLastSubmittedCircle(submittedCategory);
-      setShowModerationModal(true);
-      setHasPendingPost(true);
+    } catch (err: any) {
+      console.warn("Post submission error:", err);
     } finally {
       setIsSubmitting(false);
     }
@@ -200,14 +259,14 @@ export default function CommunityView() {
   return (
     <div className="w-full min-w-0 flex flex-col gap-5">
       {/* 1. Header Banner */}
-      <div className="bg-white dark:bg-[#0B3029] rounded-3xl p-6 sm:p-7 border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] shadow-2xs space-y-4 transition-colors">
+      <div className="bg-white dark:bg-[#131916] rounded-3xl p-6 sm:p-7 border border-[#CBECE2] dark:border-[#1E2824] shadow-2xs space-y-4 transition-colors">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <span className="text-[10px] font-black tracking-widest text-[#006C56] dark:text-[#00A889]">
+            <span className="text-[10px] font-black tracking-widest text-[#006B56] dark:text-[#5FAF8A]">
               Safe Peer Manraah
             </span>
             <h1 className="text-2xl font-heading font-black text-[#19332A] dark:text-[#F4FAF7] leading-tight mt-0.5">
-              Community & Peer Circles
+              Community &amp; Peer Circles
             </h1>
             <p className="text-xs text-[#6B857C] dark:text-[#9DB9B0] font-medium mt-1">
               Compassionate, moderated spaces to share reflections, exchange strategies, and support one another.
@@ -215,9 +274,9 @@ export default function CommunityView() {
           </div>
 
           <div className="flex items-center gap-2">
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#F4F9F6] dark:bg-[#082821] border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] text-xs">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="font-bold text-[#006C56] dark:text-[#73D8C4]">
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#E6F4F0] dark:bg-[#18201C] border border-[#CBECE2] dark:border-[#22302A] text-xs">
+              <span className="w-2 h-2 rounded-full bg-[#006B56] dark:bg-[#5FAF8A] animate-pulse" />
+              <span className="font-bold text-[#006B56] dark:text-[#5FAF8A]">
                 340+ Peers Active
               </span>
             </div>
@@ -225,14 +284,14 @@ export default function CommunityView() {
         </div>
 
         {/* Search & Category Tabs */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 border-t border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)]">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 border-t border-[#CBECE2] dark:border-[#1E2824]">
           <div className="relative flex-1 max-w-md">
             <input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search peer conversations, topics, tags..."
-              className="w-full py-2 pl-9 pr-4 rounded-full bg-[#F8FCFA] dark:bg-[#082821] border border-[#D5E3DB] dark:border-[rgba(150,210,195,0.16)] text-xs text-[#19332A] dark:text-[#F4FAF7] focus:outline-none focus:ring-2 focus:ring-[#006C56]/40 dark:focus:ring-[#00A889]/30 placeholder:text-[#8EAAA1] dark:placeholder:text-[#789990]"
+              className="w-full py-2 pl-9 pr-4 rounded-full bg-[#F8FCFA] dark:bg-[#18201C] border border-[#CBECE2] dark:border-[#22302A] text-xs text-[#19332A] dark:text-[#F4FAF7] focus:outline-none focus:ring-2 focus:ring-[#006B56]/40 dark:focus:ring-[#5FAF8A]/30 placeholder:text-[#8EAAA1] dark:placeholder:text-[#789990]"
             />
             <svg
               className="w-4 h-4 absolute left-3 top-2.5 text-[#8EAAA1] dark:text-[#789990]"
@@ -256,8 +315,8 @@ export default function CommunityView() {
                 onClick={() => setSelectedCategory(cat)}
                 className={`px-3 py-1 rounded-full text-[11px] font-bold transition-all whitespace-nowrap cursor-pointer border ${
                   selectedCategory === cat
-                    ? "bg-[#006C56] dark:bg-[#008F78] text-white border-[#006C56] dark:border-[#008F78] shadow-xs"
-                    : "bg-[#F4F9F6] dark:bg-[#082821] text-[#4F685F] dark:text-[#9DB9B0] border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] hover:bg-[#EAF6F0] dark:hover:bg-[#0E3931]"
+                    ? "bg-[#006B56] text-white border-[#006B56] dark:bg-[#006B56] dark:text-white dark:border-[#006B56] shadow-xs"
+                    : "bg-[#F4F9F6] dark:bg-[#18201C] text-[#4F685F] dark:text-[#9DB9B0] border-[#CBECE2] dark:border-[#22302A] hover:bg-[#E6F4F0] dark:hover:bg-[#22302A]"
                 }`}
               >
                 {cat}
@@ -272,7 +331,7 @@ export default function CommunityView() {
         {/* Left / Feed Column (8 cols) */}
         <div className="lg:col-span-8 flex flex-col gap-5">
           {/* Create Post Widget */}
-          <div className="bg-white dark:bg-[#0B3029] rounded-3xl p-5 sm:p-6 border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] shadow-2xs space-y-4 transition-colors">
+          <div className="bg-white dark:bg-[#131916] rounded-3xl p-5 sm:p-6 border border-[#CBECE2] dark:border-[#1E2824] shadow-2xs space-y-4 transition-colors">
             <div className="flex items-center gap-2.5">
               <UserAvatar user={user} sizeClass="w-8 h-8 text-xs" />
               <div>
@@ -291,7 +350,7 @@ export default function CommunityView() {
                 value={newTitle}
                 onChange={(e) => setNewTitle(e.target.value)}
                 placeholder="Topic or heading (e.g. A small habit that helped me this week...)"
-                className="w-full py-2.5 px-4 rounded-2xl bg-[#F8FCFA] dark:bg-[#082821] border border-[#D5E3DB] dark:border-[rgba(150,210,195,0.16)] text-xs font-bold text-[#19332A] dark:text-[#F4FAF7] focus:outline-none focus:ring-2 focus:ring-[#006C56]/40 dark:focus:ring-[#00A889]/30 placeholder:text-[#8EAAA1] dark:placeholder:text-[#789990]"
+                className="w-full py-2.5 px-4 rounded-2xl bg-[#F8FCFA] dark:bg-[#18201C] border border-[#CBECE2] dark:border-[#22302A] text-xs font-bold text-[#19332A] dark:text-[#F4FAF7] focus:outline-none focus:ring-2 focus:ring-[#006B56]/40 dark:focus:ring-[#5FAF8A]/30 placeholder:text-[#8EAAA1] dark:placeholder:text-[#789990]"
               />
 
               <textarea
@@ -299,7 +358,7 @@ export default function CommunityView() {
                 value={newContent}
                 onChange={(e) => setNewContent(e.target.value)}
                 placeholder="What would you like to share or ask your fellow circle members?"
-                className="w-full p-4 rounded-2xl bg-[#F8FCFA] dark:bg-[#082821] border border-[#D5E3DB] dark:border-[rgba(150,210,195,0.16)] text-xs leading-relaxed text-[#19332A] dark:text-[#F4FAF7] focus:outline-none focus:ring-2 focus:ring-[#006C56]/40 dark:focus:ring-[#00A889]/30 placeholder:text-[#8EAAA1] dark:placeholder:text-[#789990]"
+                className="w-full p-4 rounded-2xl bg-[#F8FCFA] dark:bg-[#18201C] border border-[#CBECE2] dark:border-[#22302A] text-xs leading-relaxed text-[#19332A] dark:text-[#F4FAF7] focus:outline-none focus:ring-2 focus:ring-[#006B56]/40 dark:focus:ring-[#5FAF8A]/30 placeholder:text-[#8EAAA1] dark:placeholder:text-[#789990]"
               />
 
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
@@ -310,7 +369,7 @@ export default function CommunityView() {
                   <select
                     value={newPostCategory}
                     onChange={(e) => setNewPostCategory(e.target.value)}
-                    className="py-1.5 px-3 rounded-full bg-[#F4F9F6] dark:bg-[#082821] border border-[#D5E3DB] dark:border-[rgba(150,210,195,0.16)] text-xs font-bold text-[#19332A] dark:text-[#F4FAF7] focus:outline-none cursor-pointer"
+                    className="py-1.5 px-3 rounded-full bg-[#F4F9F6] dark:bg-[#18201C] border border-[#CBECE2] dark:border-[#22302A] text-xs font-bold text-[#19332A] dark:text-[#F4FAF7] focus:outline-none cursor-pointer"
                   >
                     {COMMUNITY_CATEGORIES.filter((c) => c !== "All Circles").map((c) => (
                       <option key={c} value={c}>
@@ -323,7 +382,7 @@ export default function CommunityView() {
                 <button
                   type="submit"
                   disabled={isSubmitting || !newTitle.trim() || !newContent.trim()}
-                  className="py-2 px-5 rounded-full bg-[#006C56] hover:bg-[#005241] dark:bg-[#008F78] dark:hover:bg-[#00A889] text-white text-xs font-bold shadow-sm shadow-[#006C56]/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-1.5"
+                  className="py-2 px-5 rounded-full bg-[#006B56] hover:bg-[#005B48] text-white text-xs font-bold shadow-sm shadow-[#006B56]/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-1.5"
                 >
                   <span>{isSubmitting ? "Posting..." : "Post to Circle"}</span>
                   <span>→</span>
@@ -332,36 +391,10 @@ export default function CommunityView() {
             </form>
           </div>
 
-          {/* Pending Moderation Notice Banner */}
-          {hasPendingPost && (
-            <div className="p-4 rounded-3xl bg-[#EAF5EF] dark:bg-[rgba(0,168,137,0.15)] border border-[#006C56]/30 dark:border-[rgba(0,168,137,0.30)] flex items-center justify-between gap-3 text-xs shadow-2xs animate-in fade-in duration-200">
-              <div className="flex items-center gap-3 text-[#006C56] dark:text-[#73D8C4]">
-                <div className="w-8 h-8 rounded-full bg-[#006C56] dark:bg-[#008F78] text-white flex items-center justify-center text-sm font-bold shrink-0">
-                  ⏳
-                </div>
-                <div>
-                  <p className="font-heading font-black text-xs text-[#19332A] dark:text-[#F4FAF7]">
-                    Post Submitted for Moderation
-                  </p>
-                  <p className="text-[11px] text-[#4F685F] dark:text-[#9DB9B0]">
-                    Your post in &ldquo;{lastSubmittedCircle}&rdquo; is under admin review and will be reflected in the community within 24 hours.
-                  </p>
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={() => setShowModerationModal(true)}
-                className="px-3.5 py-1.5 rounded-full bg-[#006C56] dark:bg-[#008F78] text-white text-[11px] font-bold shrink-0 hover:bg-[#005241] dark:hover:bg-[#00A889] transition-colors cursor-pointer"
-              >
-                Review Info
-              </button>
-            </div>
-          )}
-
           {/* Posts Feed */}
           <div className="flex flex-col gap-4">
             {filteredPosts.length === 0 ? (
-              <div className="p-8 rounded-3xl bg-white dark:bg-[#0B3029] border border-dashed border-[#D5E3DB] dark:border-[rgba(150,210,195,0.16)] text-center space-y-2">
+              <div className="p-8 rounded-3xl bg-white dark:bg-[#131916] border border-dashed border-[#CBECE2] dark:border-[#1E2824] text-center space-y-2">
                 <span className="text-2xl block">💬</span>
                 <p className="text-xs font-bold text-[#19332A] dark:text-[#F4FAF7]">
                   No circle discussions found
@@ -374,7 +407,7 @@ export default function CommunityView() {
               filteredPosts.map((post) => (
                 <div
                   key={post.id}
-                  className="bg-white dark:bg-[#0B3029] rounded-3xl p-5 sm:p-6 border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] shadow-2xs space-y-3.5 transition-colors"
+                  className="bg-white dark:bg-[#131916] rounded-3xl p-5 sm:p-6 border border-[#CBECE2] dark:border-[#1E2824] shadow-2xs space-y-3.5 transition-colors"
                 >
                   {/* Author Header */}
                   <div className="flex items-center justify-between">
@@ -387,12 +420,35 @@ export default function CommunityView() {
                         <div className="flex items-center gap-2 text-[10.5px] text-[#6B857C] dark:text-[#9DB9B0]">
                           <span>{post.timeAgo}</span>
                           <span>•</span>
-                          <span className="px-2 py-0.5 rounded-full bg-[#EAF5EF] dark:bg-[rgba(0,168,137,0.15)] text-[#006C56] dark:text-[#73D8C4] font-bold text-[9.5px]">
+                          <span className="px-2 py-0.5 rounded-full bg-[#E6F4F0] dark:bg-[#18201C] text-[#006B56] dark:text-[#5FAF8A] border border-transparent dark:border-[#22302A] font-bold text-[9.5px]">
                             {post.category}
                           </span>
                         </div>
                       </div>
                     </div>
+
+                    {/* Delete Post Button */}
+                    <button
+                      type="button"
+                      onClick={() => setPostToDelete(post)}
+                      title="Delete post"
+                      className="px-2.5 py-1 rounded-xl text-[11px] font-bold text-[#8EAAA1] dark:text-[#76968D] hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-all cursor-pointer flex items-center gap-1 group"
+                    >
+                      <svg
+                        className="w-3.5 h-3.5 group-hover:scale-110 transition-transform"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                        />
+                      </svg>
+                      <span>Delete</span>
+                    </button>
                   </div>
 
                   {/* Post Content */}
@@ -406,7 +462,7 @@ export default function CommunityView() {
                   </div>
 
                   {/* Actions (Like & Comments) */}
-                  <div className="flex items-center gap-4 pt-3 border-t border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)]">
+                  <div className="flex items-center gap-4 pt-3 border-t border-[#CBECE2] dark:border-[#1E2824]">
                     <button
                       onClick={() => handleToggleLike(post.id)}
                       className={`flex items-center gap-1.5 text-xs font-bold transition-colors cursor-pointer ${
@@ -458,18 +514,30 @@ export default function CommunityView() {
 
                   {/* Expandable Comments Drawer */}
                   {expandedCommentsId === post.id && (
-                    <div className="pt-3 mt-1 border-t border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] space-y-2.5 animate-in fade-in duration-150">
+                    <div className="pt-3 mt-1 border-t border-[#CBECE2] dark:border-[#1E2824] space-y-2.5 animate-in fade-in duration-150">
                       <div className="flex gap-2">
                         <input
                           type="text"
                           value={commentText}
                           onChange={(e) => setCommentText(e.target.value)}
                           placeholder="Write a supportive reply..."
-                          className="flex-1 py-1.5 px-3 rounded-full bg-[#F8FCFA] dark:bg-[#082821] border border-[#D5E3DB] dark:border-[rgba(150,210,195,0.16)] text-xs text-[#19332A] dark:text-[#F4FAF7] focus:outline-none focus:ring-1 focus:ring-[#006C56] dark:focus:ring-[#00A889] placeholder:text-[#8EAAA1] dark:placeholder:text-[#789990]"
+                          className="flex-1 py-1.5 px-3 rounded-full bg-[#F8FCFA] dark:bg-[#18201C] border border-[#CBECE2] dark:border-[#22302A] text-xs text-[#19332A] dark:text-[#F4FAF7] focus:outline-none focus:ring-1 focus:ring-[#006B56] dark:focus:ring-[#5FAF8A] placeholder:text-[#8EAAA1] dark:placeholder:text-[#789990]"
                         />
                         <button
                           onClick={() => {
                             if (!commentText.trim()) return;
+                            const modCheck = checkInappropriateContent(
+                              commentText.trim(),
+                              "comment reply"
+                            );
+                            if (modCheck.isInappropriate) {
+                              setInappropriateReason(
+                                modCheck.reason ||
+                                  "Your comment contains inappropriate language or content."
+                              );
+                              setShowInappropriateModal(true);
+                              return;
+                            }
                             setPosts((prev) =>
                               prev.map((p) =>
                                 p.id === post.id
@@ -479,13 +547,13 @@ export default function CommunityView() {
                             );
                             setCommentText("");
                           }}
-                          className="px-4 py-1.5 rounded-full bg-[#006C56] dark:bg-[#008F78] hover:bg-[#005241] dark:hover:bg-[#00A889] text-white text-xs font-bold cursor-pointer"
+                          className="px-4 py-1.5 rounded-full bg-[#006B56] hover:bg-[#005B48] text-white text-xs font-bold cursor-pointer"
                         >
                           Reply
                         </button>
                       </div>
                       <p className="text-[10px] text-[#8EAAA1] dark:text-[#76968D] italic">
-                        Replies in Manraah peer circles are moderated to ensure kindness and emotional safety.
+                        Replies in Manraah peer circles are guided to ensure kindness, empathy, and emotional safety.
                       </p>
                     </div>
                   )}
@@ -498,34 +566,34 @@ export default function CommunityView() {
         {/* Right / Sidebar Column (4 cols) */}
         <div className="lg:col-span-4 flex flex-col gap-5">
           {/* Community Guidelines */}
-          <div className="bg-white dark:bg-[#0B3029] rounded-3xl p-5 sm:p-6 border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] shadow-2xs space-y-3.5 transition-colors">
+          <div className="bg-white dark:bg-[#131916] rounded-3xl p-5 sm:p-6 border border-[#CBECE2] dark:border-[#1E2824] shadow-2xs space-y-3.5 transition-colors">
             <h3 className="text-xs font-heading font-black text-[#19332A] dark:text-[#F4FAF7] tracking-wider flex items-center gap-1.5">
               <span>🌿</span> Manraah Agreements
             </h3>
             <div className="space-y-2.5 text-xs text-[#4F685F] dark:text-[#9DB9B0]">
               <div className="flex items-start gap-2">
-                <span className="font-bold text-[#006C56] dark:text-[#00A889]">•</span>
+                <span className="font-bold text-[#006B56] dark:text-[#5FAF8A]">•</span>
                 <p>
                   <strong className="text-[#19332A] dark:text-[#F4FAF7]">Kindness First:</strong> Listen and respond with gentleness and validation.
                 </p>
               </div>
               <div className="flex items-start gap-2">
-                <span className="font-bold text-[#006C56] dark:text-[#00A889]">•</span>
+                <span className="font-bold text-[#006B56] dark:text-[#5FAF8A]">•</span>
                 <p>
                   <strong className="text-[#19332A] dark:text-[#F4FAF7]">Masked Privacy:</strong> Never share personal phone numbers, addresses, or private details.
                 </p>
               </div>
               <div className="flex items-start gap-2">
-                <span className="font-bold text-[#006C56] dark:text-[#00A889]">•</span>
+                <span className="font-bold text-[#006B56] dark:text-[#5FAF8A]">•</span>
                 <p>
-                  <strong className="text-[#19332A] dark:text-[#F4FAF7]">Shared Strength:</strong> We honor each person's unique pacing and background.
+                  <strong className="text-[#19332A] dark:text-[#F4FAF7]">Shared Strength:</strong> We honor each person&apos;s unique pacing and background.
                 </p>
               </div>
             </div>
           </div>
 
           {/* Trending Topics */}
-          <div className="bg-white dark:bg-[#0B3029] rounded-3xl p-5 sm:p-6 border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] shadow-2xs space-y-3 transition-colors">
+          <div className="bg-white dark:bg-[#131916] rounded-3xl p-5 sm:p-6 border border-[#CBECE2] dark:border-[#1E2824] shadow-2xs space-y-3 transition-colors">
             <h3 className="text-xs font-heading font-black text-[#19332A] dark:text-[#F4FAF7] tracking-wider">
               Trending Circle Topics
             </h3>
@@ -542,7 +610,7 @@ export default function CommunityView() {
                 <button
                   key={topic}
                   onClick={() => setSearchTerm(topic.replace("#", ""))}
-                  className="px-2.5 py-1 rounded-full text-[10.5px] font-bold bg-[#F4F9F6] dark:bg-[#082821] border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] text-[#006C56] dark:text-[#73D8C4] hover:bg-[#EAF5EF] dark:hover:bg-[#0E3931] transition-colors cursor-pointer"
+                  className="px-2.5 py-1 rounded-full text-[10.5px] font-bold bg-[#E6F4F0] dark:bg-[#18201C] border border-[#CBECE2] dark:border-[#22302A] text-[#006B56] dark:text-[#5FAF8A] hover:bg-[#EAF6F2] dark:hover:bg-[#22302A] transition-colors cursor-pointer"
                 >
                   {topic}
                 </button>
@@ -562,39 +630,84 @@ export default function CommunityView() {
         </div>
       </div>
 
-      {/* 3. 24-Hour Moderation Review Modal Dialog */}
-      {showModerationModal && (
+      {/* 3. Inappropriate Content Modal Dialog */}
+      {showInappropriateModal && (
         <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-[#0B3029] rounded-3xl border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.15)] shadow-2xl max-w-md w-full p-6 sm:p-7 text-center space-y-5 animate-in fade-in zoom-in-95 duration-200">
-            <div className="w-16 h-16 rounded-full bg-[#EAF5EF] dark:bg-[rgba(0,168,137,0.15)] text-[#006C56] dark:text-[#00A889] flex items-center justify-center text-3xl mx-auto shadow-xs border border-[#006C56]/20 dark:border-[rgba(0,168,137,0.30)]">
-              <span>⏳</span>
+          <div className="bg-white dark:bg-[#131916] rounded-3xl border border-red-200 dark:border-red-900/50 shadow-2xl max-w-md w-full p-6 sm:p-7 text-center space-y-5 animate-in fade-in zoom-in-95 duration-200">
+            <div className="w-16 h-16 rounded-full bg-red-50 dark:bg-red-950/40 text-red-600 dark:text-red-400 flex items-center justify-center text-3xl mx-auto shadow-xs border border-red-200 dark:border-red-900/40">
+              <span>🚫</span>
             </div>
 
-            <div className="space-y-2">
-              <span className="px-3 py-1 rounded-full bg-[#EAF5EF] dark:bg-[rgba(0,168,137,0.15)] text-[#006C56] dark:text-[#73D8C4] text-[10.5px] font-bold tracking-wider inline-block">
-                Post Submitted For Review
+            <div className="space-y-2.5">
+              <span className="px-3 py-1 rounded-full bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 text-[10.5px] font-bold tracking-wider inline-block">
+                Community Safety Warning
               </span>
               <h3 className="text-xl font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
-                Reflected Within 24 Hours
+                You cannot post this
               </h3>
-              <p className="text-xs text-[#4F685F] dark:text-[#9DB9B0] leading-relaxed">
-                Thank you for sharing with your peer circle! To ensure Manraah remains a safe, compassionate, and supportive space for everyone, all community posts undergo admin review.
+              <p className="text-xs text-[#4F685F] dark:text-[#D5E6E0] leading-relaxed">
+                Manraah peer circles are dedicated safe spaces built on kindness, respect, and mutual support. Inappropriate, offensive, or harmful messages are not allowed.
               </p>
-              <div className="p-3.5 rounded-2xl bg-[#F8FCFA] dark:bg-[#082821] border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] text-xs font-semibold text-[#006C56] dark:text-[#73D8C4] space-y-1">
-                <p>✨ <strong>Circle:</strong> {lastSubmittedCircle}</p>
-                <p className="text-[11px] font-normal text-[#4F685F] dark:text-[#9DB9B0]">
-                  Your post has been sent to our admin moderation team. Once reviewed and allowed, it will be reflected in the community feed within 24 hours.
-                </p>
-              </div>
+              {inappropriateReason && (
+                <div className="p-3.5 rounded-2xl bg-red-50/70 dark:bg-red-950/30 border border-red-200/80 dark:border-red-900/40 text-xs text-red-700 dark:text-red-300 text-left">
+                  <p className="font-semibold flex items-center gap-1.5 mb-1">
+                    <span>⚠️</span> Content Policy Notice:
+                  </p>
+                  <p className="text-[11px] leading-relaxed opacity-90">
+                    {inappropriateReason}
+                  </p>
+                </div>
+              )}
             </div>
 
             <button
               type="button"
-              onClick={() => setShowModerationModal(false)}
-              className="w-full py-3 rounded-full bg-[#006C56] hover:bg-[#005241] dark:bg-[#008F78] dark:hover:bg-[#00A889] text-white text-xs font-bold shadow-md shadow-[#006C56]/20 transition-all cursor-pointer"
+              onClick={() => setShowInappropriateModal(false)}
+              className="w-full py-3 rounded-full bg-[#006B56] hover:bg-[#005B48] text-white text-xs font-bold shadow-md shadow-[#006B56]/20 transition-all cursor-pointer"
             >
-              Got It, Thank You
+              I Understand, Edit Message
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* 4. Delete Post Confirmation Modal */}
+      {postToDelete && (
+        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-[#131916] rounded-3xl border border-[#CBECE2] dark:border-[#1E2824] shadow-2xl max-w-md w-full p-6 sm:p-7 text-center space-y-4 animate-in fade-in zoom-in-95 duration-200">
+            <div className="w-14 h-14 rounded-full bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 flex items-center justify-center text-2xl mx-auto shadow-xs border border-rose-200 dark:border-rose-900/40">
+              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+            </div>
+
+            <div className="space-y-1.5">
+              <h3 className="text-lg font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
+                Delete this post?
+              </h3>
+              <p className="text-xs text-[#4F685F] dark:text-[#9DB9B0] leading-relaxed">
+                Are you sure you want to remove &ldquo;{postToDelete.title}&rdquo;? This will permanently delete this post from the community feed.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => setPostToDelete(null)}
+                disabled={isDeleting}
+                className="flex-1 py-2.5 rounded-full bg-[#E6F4F0] dark:bg-[#18201C] hover:bg-[#CBECE2] dark:hover:bg-[#22302A] text-[#004D3D] dark:text-[#F4FAF7] text-xs font-bold transition-all cursor-pointer disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleDeletePost}
+                disabled={isDeleting}
+                className="flex-1 py-2.5 rounded-full bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold shadow-md shadow-rose-600/20 transition-all cursor-pointer disabled:opacity-50"
+              >
+                {isDeleting ? "Deleting..." : "Yes, Delete"}
+              </button>
+            </div>
           </div>
         </div>
       )}
