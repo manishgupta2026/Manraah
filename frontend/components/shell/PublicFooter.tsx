@@ -133,7 +133,7 @@ export default function PublicFooter() {
             <span>24/7 Immediate Support Notice</span>
           </div>
           <p className="leading-relaxed">
-            If you or someone you know is in immediate crisis or emotional distress, please reach out to professional emergency resources: call <a href="tel:14416" className="font-bold text-white underline decoration-white/30 hover:text-mint transition-colors">Tele-MANAS (14416 / 1800-891-4416)</a>. Manraah is an everyday supportive wellness companion, not an emergency medical intervention service.
+            If you or someone you know is in immediate crisis or emotional distress, please reach out to professional emergency resources: call <a href="tel:14416" className="font-bold text-white underline decoration-white/30 hover:text-mint transition-colors">Tele-MANAS (14416 / 1800-891-4416)</a> or view our <Link href="/crisis" className="font-bold text-white underline decoration-white/30 hover:text-mint transition-colors">Crisis Directory &amp; 1-Tap Helplines</Link>. Manraah is an everyday supportive wellness companion, not an emergency medical intervention service.
           </p>
         </div>
 

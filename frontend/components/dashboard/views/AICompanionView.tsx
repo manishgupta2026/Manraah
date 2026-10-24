@@ -82,7 +82,28 @@ export default function AICompanionView() {
       let reply = `I hear you completely, ${userName}. It takes vulnerability to express what you're experiencing. Let's take a gentle 4-second breath together. What part of this feels most demanding right now?`;
 
       const lower = text.toLowerCase();
-      if (lower.includes("overwhelm") || lower.includes("stress") || lower.includes("burnout")) {
+      const isCrisis =
+        lower.includes("suicide") ||
+        lower.includes("kill myself") ||
+        lower.includes("end my life") ||
+        lower.includes("want to die") ||
+        lower.includes("harm myself") ||
+        lower.includes("self harm") ||
+        lower.includes("cut myself") ||
+        lower.includes("die today");
+
+      if (isCrisis) {
+        reply = `I care deeply about your safety, ${userName}. If you are in acute distress or having thoughts of harming yourself, please know that you do not have to carry this alone. Free, confidential professional support is available right now:
+
+• Tele-MANAS (24/7 Toll-Free): Call 14416 or 1800-891-4416
+• National Emergency: Call 112
+• Vandrevala Foundation: +91 9999 666 555
+
+I am opening our Crisis Support Desk for you right now so you can dial or reach help in a single tap. Please connect with someone who can support you.`;
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(new CustomEvent("open-crisis-modal"));
+        }
+      } else if (lower.includes("overwhelm") || lower.includes("stress") || lower.includes("burnout")) {
         reply = `It is completely valid to feel overwhelmed when multiple demands press on you at once. Remember: you don't have to solve everything today. Let's break things into one tiny, manageable step. Would you like a 2-minute grounding exercise, or just space to vent?`;
       } else if (lower.includes("sleep") || lower.includes("insomnia") || lower.includes("tired")) {
         reply = `Sleep disruption often signals that our nervous system has been running in high alert mode. Try letting your shoulders drop and relaxing your jaw. Would you like some Non-Sleep Deep Rest (NSDR) guidance tonight?`;

@@ -23,6 +23,7 @@ import WellnessReattemptModal from "../wellness/WellnessReattemptModal";
 import DailyCheckInModal from "../wellness/DailyCheckInModal";
 import LoginWellnessPrompt from "../wellness/LoginWellnessPrompt";
 import ProfileChangeAssessmentPrompt from "../wellness/ProfileChangeAssessmentPrompt";
+import CrisisSupportModal from "../crisis/CrisisSupportModal";
 
 const STANDALONE_ROUTES = [
   "/",
@@ -45,6 +46,7 @@ const STANDALONE_ROUTES = [
   "/privacy",
   "/security",
   "/contact",
+  "/crisis",
 ];
 
 export default function AppShell({ children }: { children: ReactNode }) {
@@ -70,7 +72,8 @@ export default function AppShell({ children }: { children: ReactNode }) {
     pathname.startsWith("/terms") ||
     pathname.startsWith("/privacy") ||
     pathname.startsWith("/security") ||
-    pathname.startsWith("/contact");
+    pathname.startsWith("/contact") ||
+    pathname.startsWith("/crisis");
 
   const isAdminRoute = pathname.startsWith("/admin") || pathname.startsWith("/companion");
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
@@ -146,6 +149,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
                   <WellnessReattemptModal />
                   <LoginWellnessPrompt />
                   <ProfileChangeAssessmentPrompt />
+                  <CrisisSupportModal />
                 </HeaderProvider>
               </WellnessScoreProvider>
             </WellnessProvider>

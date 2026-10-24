@@ -624,8 +624,20 @@ export default function CommunityView() {
               <span>❤️</span> Immediate Support
             </h4>
             <p className="text-[#7A3A2C] dark:text-[#E8A596] leading-relaxed text-[11px]">
-              If you or someone you know is in acute distress or crisis, tap Tele-MANAS (14416) or reach professional crisis counselors 24/7.
+              If you or someone you know is in acute distress or crisis, reach professional crisis counselors 24/7.
             </p>
+            <button
+              type="button"
+              onClick={() => {
+                if (typeof window !== "undefined") {
+                  window.dispatchEvent(new CustomEvent("open-crisis-modal"));
+                }
+              }}
+              className="mt-1 w-full py-2 px-3 rounded-xl bg-red-600 hover:bg-red-700 text-white text-[11px] font-bold shadow-xs transition-colors cursor-pointer flex items-center justify-center gap-1.5"
+            >
+              <span className="material-symbols-outlined text-sm">emergency</span>
+              <span>Open Crisis Support (14416 / 112)</span>
+            </button>
           </div>
         </div>
       </div>
