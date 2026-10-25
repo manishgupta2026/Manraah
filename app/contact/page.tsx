@@ -86,7 +86,7 @@ export default function ContactPage() {
                 <span>In Immediate Danger?</span>
               </h4>
               <p className="leading-relaxed">
-                If you are in immediate physical danger or contemplating self-harm, please visit our <Link href="/crisis" className="underline font-bold text-red-800">Crisis Helpline Directory</Link> or dial local emergency response services immediately.
+                If you are in immediate physical danger or contemplating self-harm, please call <a href="tel:14416" className="underline font-bold text-red-800">Tele-MANAS (14416)</a> or dial 112 immediately.
               </p>
             </div>
           </div>

@@ -70,6 +70,7 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
     pathname.startsWith("/meditation") ||
     pathname.startsWith("/sleep") ||
     pathname.startsWith("/profile") ||
+    pathname.startsWith("/crisis") ||
     pathname.startsWith("/checkin");
 
   const isAuthExempt = pathname === "/login" || pathname === "/signup" || pathname === "/forgot-password";
@@ -578,24 +579,6 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
           ) : (
             /* Public Action Buttons */
             <div className="hidden sm:flex items-center gap-2.5">
-              <button
-                type="button"
-                onClick={() => {
-                  if (typeof window !== "undefined") {
-                    window.dispatchEvent(new CustomEvent("open-crisis-modal"));
-                  }
-                  setIsCrisisModalOpen(true);
-                }}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full font-heading font-extrabold text-xs transition-all cursor-pointer select-none shrink-0 bg-white hover:bg-rose-50 text-rose-600 border border-rose-200 dark:bg-rose-950/30 dark:hover:bg-rose-900/40 dark:border-rose-900/60 dark:text-rose-300 shadow-2xs hover:shadow-xs"
-                title="Crisis & 24/7 Helplines"
-                aria-label="Crisis Help"
-              >
-                <span className="material-symbols-outlined text-base animate-pulse text-rose-500 dark:text-rose-400">
-                  emergency
-                </span>
-                <span>Crisis Help</span>
-              </button>
-
               <Link
                 href="/login"
                 className={`px-4 sm:px-5 py-2 rounded-full text-xs font-heading font-bold transition-all ${
@@ -664,24 +647,26 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
               className="relative z-20 lg:hidden w-full bg-surface-container-lowest border-t border-surface-variant/30 px-5 sm:px-6 pt-4 pb-8 flex flex-col gap-4 shadow-2xl max-h-[calc(100dvh-4.5rem)] overflow-y-auto no-scrollbar"
             >
               <nav className="flex flex-col gap-1 font-heading font-semibold text-sm text-on-surface">
-                {/* Mobile Quick Crisis Support Access (Accessible to All) */}
-                <button
-                  type="button"
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    if (typeof window !== "undefined") {
-                      window.dispatchEvent(new CustomEvent("open-crisis-modal"));
-                    }
-                    setIsCrisisModalOpen(true);
-                  }}
-                  className="w-full py-3 px-4 rounded-xl bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-900/50 font-heading font-extrabold text-sm sm:text-base flex items-center justify-between transition-colors mb-1 cursor-pointer"
-                >
-                  <span className="flex items-center gap-2">
-                    <span className="material-symbols-outlined text-lg sm:text-xl text-red-500 animate-pulse">emergency</span>
-                    <span>Crisis Support &amp; Helplines</span>
-                  </span>
-                  <span className="px-2.5 py-0.5 rounded-full text-xs bg-red-500/10 text-red-600 dark:text-red-400 font-extrabold">24/7</span>
-                </button>
+                {/* Mobile Quick Crisis Support Access (Authenticated Users Only) */}
+                {isUserAuthenticated && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      if (typeof window !== "undefined") {
+                        window.dispatchEvent(new CustomEvent("open-crisis-modal"));
+                      }
+                      setIsCrisisModalOpen(true);
+                    }}
+                    className="w-full py-3 px-4 rounded-xl bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-900/50 font-heading font-extrabold text-sm sm:text-base flex items-center justify-between transition-colors mb-1 cursor-pointer"
+                  >
+                    <span className="flex items-center gap-2">
+                      <span className="material-symbols-outlined text-lg sm:text-xl text-red-500 animate-pulse">emergency</span>
+                      <span>Crisis Support &amp; Helplines</span>
+                    </span>
+                    <span className="px-2.5 py-0.5 rounded-full text-xs bg-red-500/10 text-red-600 dark:text-red-400 font-extrabold">24/7</span>
+                  </button>
+                )}
 
                 <Link
                   href="/how-it-works"

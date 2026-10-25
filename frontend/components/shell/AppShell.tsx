@@ -46,7 +46,6 @@ const STANDALONE_ROUTES = [
   "/privacy",
   "/security",
   "/contact",
-  "/crisis",
 ];
 
 export default function AppShell({ children }: { children: ReactNode }) {
@@ -72,8 +71,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
     pathname.startsWith("/terms") ||
     pathname.startsWith("/privacy") ||
     pathname.startsWith("/security") ||
-    pathname.startsWith("/contact") ||
-    pathname.startsWith("/crisis");
+    pathname.startsWith("/contact");
 
   const isAdminRoute = pathname.startsWith("/admin") || pathname.startsWith("/companion");
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);

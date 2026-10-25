@@ -47,14 +47,15 @@ export default function CrisisSupportModal({
     setMounted(true);
   }, []);
 
-  // Global event listener to open crisis modal from anywhere
+  // Global event listener to open crisis modal from anywhere (Authenticated only)
   useEffect(() => {
     const handleGlobalOpen = () => {
+      if (!isAuthenticated && !user?.id) return;
       setInternalIsOpen(true);
     };
     window.addEventListener("open-crisis-modal", handleGlobalOpen);
     return () => window.removeEventListener("open-crisis-modal", handleGlobalOpen);
-  }, []);
+  }, [isAuthenticated, user?.id]);
 
   // Lock body scroll when modal is active
   useEffect(() => {
@@ -218,7 +219,7 @@ export default function CrisisSupportModal({
     }
   };
 
-  if (!mounted) return null;
+  if (!mounted || (!isAuthenticated && !user?.id)) return null;
 
   const modalMarkup = (
     <AnimatePresence>

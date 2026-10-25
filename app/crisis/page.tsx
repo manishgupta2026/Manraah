@@ -1,13 +1,31 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import CrisisSupportModal from "@/frontend/components/crisis/CrisisSupportModal";
+import { useAuth } from "@/frontend/lib/context/AuthContext";
 
 export default function CrisisPage() {
+  const router = useRouter();
+  const { user, isAuthenticated, loading } = useAuth();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [copiedNumber, setCopiedNumber] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!loading && !isAuthenticated && !user?.id) {
+      router.replace("/login");
+    }
+  }, [loading, isAuthenticated, user, router]);
+
+  if (loading || (!isAuthenticated && !user?.id)) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="w-8 h-8 border-3 border-primary/20 border-t-primary rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   const handleCopy = (num: string) => {
     if (typeof navigator !== "undefined" && navigator.clipboard) {

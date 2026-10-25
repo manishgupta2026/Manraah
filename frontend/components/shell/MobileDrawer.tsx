@@ -18,7 +18,7 @@ interface MobileDrawerProps {
 export default function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
   const pathname = usePathname();
   const { category } = useCategory();
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
 
   if (!isOpen) return null;
 
@@ -85,23 +85,25 @@ export default function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
 
         {/* User Profile & Crisis Quick Access */}
         <div className="space-y-2.5 pt-4 border-t border-surface-variant/30">
-          {/* Quick Crisis Help Button */}
-          <button
-            type="button"
-            onClick={() => {
-              onClose();
-              if (typeof window !== "undefined") {
-                window.dispatchEvent(new CustomEvent("open-crisis-modal"));
-              }
-            }}
-            className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900/50 text-red-700 dark:text-red-300 font-heading font-extrabold text-xs transition-colors cursor-pointer"
-          >
-            <div className="flex items-center gap-2">
-              <span className="material-symbols-outlined text-base text-red-500 animate-pulse">emergency</span>
-              <span>Crisis Support &amp; Helplines</span>
-            </div>
-            <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-red-600 text-white">24/7</span>
-          </button>
+          {/* Quick Crisis Help Button (Authenticated Only) */}
+          {(isAuthenticated || Boolean(user?.id)) && (
+            <button
+              type="button"
+              onClick={() => {
+                onClose();
+                if (typeof window !== "undefined") {
+                  window.dispatchEvent(new CustomEvent("open-crisis-modal"));
+                }
+              }}
+              className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900/50 text-red-700 dark:text-red-300 font-heading font-extrabold text-xs transition-colors cursor-pointer"
+            >
+              <div className="flex items-center gap-2">
+                <span className="material-symbols-outlined text-base text-red-500 animate-pulse">emergency</span>
+                <span>Crisis Support &amp; Helplines</span>
+              </div>
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-red-600 text-white">24/7</span>
+            </button>
+          )}
 
           <Link
             href="/profile"

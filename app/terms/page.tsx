@@ -50,7 +50,7 @@ export default function TermsPage() {
                 <span>IMPORTANT MEDICAL NOTICE</span>
               </p>
               <p>
-                Manraah is NOT a licensed medical care provider, hospital dispatch, or clinical emergency service. Our AI Companion and peer listeners do not provide clinical medical diagnoses or psychiatric treatment. If you are experiencing an immediate crisis or suicidal thoughts, please call local emergency services or visit our <Link href="/crisis" className="underline font-bold">Crisis Support</Link> page immediately.
+                Manraah is NOT a licensed medical care provider, hospital dispatch, or clinical emergency service. Our AI Companion and peer listeners do not provide clinical medical diagnoses or psychiatric treatment. If you are experiencing an immediate crisis or suicidal thoughts, please call Tele-MANAS (14416 / 1800-891-4416) or dial local emergency services (112) immediately.
               </p>
             </div>
           </section>
