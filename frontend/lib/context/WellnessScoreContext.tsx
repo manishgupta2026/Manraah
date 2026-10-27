@@ -127,7 +127,7 @@ const DEFAULT_CATEGORIES: LifeStageWellnessCategory[] = [
     name: "Working Professional",
     description: "Work-life harmony, burnout care & career fulfillment",
     icon: "work",
-    colorTheme: "purple",
+    colorTheme: "emerald",
     active: true,
     score: null,
     completedAt: null,

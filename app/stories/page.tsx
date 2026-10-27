@@ -186,7 +186,7 @@ export default function StoriesPage() {
 
         <h1 className="text-4xl sm:text-5xl lg:text-6xl font-heading font-black text-on-surface tracking-tight leading-[1.12]">
           Stories of Calm, Balance &amp;{" "}
-          <span className="text-primary bg-clip-text text-transparent bg-gradient-to-r from-primary via-[#5F4EA5] to-mint">
+          <span className="text-primary bg-clip-text text-transparent bg-gradient-to-r from-primary via-[#005B48] to-mint">
             Inner Strength
           </span>
         </h1>

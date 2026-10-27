@@ -221,16 +221,16 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                   <Link
                     href="/our-solution?target=colleges"
                     onClick={() => setSolutionDropdownOpen(false)}
-                    className="p-2.5 rounded-xl flex items-start gap-3 transition-colors group hover:bg-surface-container/70 dark:hover:bg-[#3B2C20]"
+                    className="p-2.5 rounded-xl flex items-start gap-3 transition-colors group hover:bg-[#E6F4F0]/60 dark:hover:bg-[#3B2C20]"
                   >
                     <div
-                      className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white dark:bg-[#30241A] dark:text-[#A3A77A] dark:group-hover:bg-[#858A60] dark:group-hover:text-[#211A14]"
+                      className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors bg-[#006C56]/10 text-[#006C56] group-hover:bg-[#006C56] group-hover:text-white dark:bg-[#30241A] dark:text-[#A3A77A] dark:group-hover:bg-[#858A60] dark:group-hover:text-[#211A14]"
                     >
                       <span className="material-symbols-outlined text-lg">school</span>
                     </div>
                     <div>
                       <div
-                        className="text-xs font-heading font-bold transition-colors flex items-center gap-1.5 text-on-surface group-hover:text-primary dark:text-[#F3E9D8] dark:group-hover:text-[#A3A77A]"
+                        className="text-xs font-heading font-bold transition-colors flex items-center gap-1.5 text-on-surface group-hover:text-[#006C56] dark:text-[#F3E9D8] dark:group-hover:text-[#A3A77A]"
                       >
                         <span>For Students &amp; Colleges</span>
                         <span
@@ -251,16 +251,16 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                   <Link
                     href="/our-solution?target=corporates"
                     onClick={() => setSolutionDropdownOpen(false)}
-                    className="p-2.5 rounded-xl flex items-start gap-3 transition-colors group hover:bg-surface-container/70 dark:hover:bg-[#3B2C20]"
+                    className="p-2.5 rounded-xl flex items-start gap-3 transition-colors group hover:bg-[#E6F4F0]/60 dark:hover:bg-[#3B2C20]"
                   >
                     <div
-                      className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors bg-secondary/10 text-secondary group-hover:bg-secondary group-hover:text-white dark:bg-[#30241A] dark:text-[#A7B69A] dark:group-hover:bg-[#858A60] dark:group-hover:text-[#211A14]"
+                      className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors bg-[#006C56]/10 text-[#006C56] group-hover:bg-[#006C56] group-hover:text-white dark:bg-[#30241A] dark:text-[#A7B69A] dark:group-hover:bg-[#858A60] dark:group-hover:text-[#211A14]"
                     >
                       <span className="material-symbols-outlined text-lg">corporate_fare</span>
                     </div>
                     <div>
                       <div
-                        className="text-xs font-heading font-bold transition-colors flex items-center gap-1.5 text-on-surface group-hover:text-secondary dark:text-[#F3E9D8] dark:group-hover:text-[#A3A77A]"
+                        className="text-xs font-heading font-bold transition-colors flex items-center gap-1.5 text-on-surface group-hover:text-[#006C56] dark:text-[#F3E9D8] dark:group-hover:text-[#A3A77A]"
                       >
                         <span>For Employees &amp; Corporates</span>
                       </div>
@@ -283,7 +283,7 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                         setCallbackDefaultSegment("colleges");
                         setCallbackModalOpen(true);
                       }}
-                      className="text-xs font-heading font-bold flex items-center gap-1.5 cursor-pointer text-primary hover:text-primary-purple dark:text-[#A3A77A] dark:hover:text-[#F3E9D8]"
+                      className="text-xs font-heading font-bold flex items-center gap-1.5 cursor-pointer text-[#006C56] hover:text-[#005241] dark:text-[#A3A77A] dark:hover:text-[#F3E9D8]"
                     >
                       <span className="material-symbols-outlined text-base">support_agent</span>
                       <span>Request a Callback</span>
@@ -291,7 +291,7 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                     <Link
                       href="/our-solution"
                       onClick={() => setSolutionDropdownOpen(false)}
-                      className="text-[11px] font-heading font-semibold transition-colors text-on-surface-variant hover:text-primary dark:text-[#C5B7A4] dark:hover:text-[#F3E9D8]"
+                      className="text-[11px] font-heading font-semibold transition-colors text-on-surface-variant hover:text-[#006C56] dark:text-[#C5B7A4] dark:hover:text-[#F3E9D8]"
                     >
                       Full Overview &rarr;
                     </Link>
@@ -364,11 +364,11 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                     onClick={() => setAboutDropdownOpen(false)}
                     className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-colors ${
                       pathname === "/about"
-                        ? "bg-primary/10 text-primary dark:bg-[#30241A] dark:text-[#A3A77A] font-bold"
-                        : "text-on-surface hover:bg-surface-container/70 hover:text-primary dark:text-[#C5B7A4] dark:hover:bg-[#3B2C20] dark:hover:text-[#F3E9D8]"
+                        ? "bg-[#006C56]/10 text-[#006C56] dark:bg-[#30241A] dark:text-[#A3A77A] font-bold"
+                        : "text-on-surface hover:bg-surface-container/70 hover:text-[#006C56] dark:text-[#C5B7A4] dark:hover:bg-[#3B2C20] dark:hover:text-[#F3E9D8]"
                     }`}
                   >
-                    <span className="material-symbols-outlined text-lg text-primary/70 dark:text-[#A3A77A]">info</span>
+                    <span className="material-symbols-outlined text-lg text-[#006C56]/80 dark:text-[#A3A77A]">info</span>
                     <div>
                       <div className="text-xs font-heading font-bold leading-tight">About Us</div>
                       <div className="text-[10px] font-normal leading-tight text-on-surface-variant dark:text-[#9F907E]">
@@ -382,8 +382,8 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                     onClick={() => setAboutDropdownOpen(false)}
                     className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-colors ${
                       pathname === "/faq"
-                        ? "bg-primary/10 text-primary dark:bg-[#30241A] dark:text-[#A3A77A] font-bold"
-                        : "text-on-surface hover:bg-surface-container/70 hover:text-primary dark:text-[#C5B7A4] dark:hover:bg-[#3B2C20] dark:hover:text-[#F3E9D8]"
+                        ? "bg-[#006C56]/10 text-[#006C56] dark:bg-[#30241A] dark:text-[#A3A77A] font-bold"
+                        : "text-on-surface hover:bg-surface-container/70 hover:text-[#006C56] dark:text-[#C5B7A4] dark:hover:bg-[#3B2C20] dark:hover:text-[#F3E9D8]"
                     }`}
                   >
                     <span className="material-symbols-outlined text-lg text-[#00A889] dark:text-[#A7B69A]">quiz</span>
@@ -400,8 +400,8 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                     onClick={() => setAboutDropdownOpen(false)}
                     className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-colors ${
                       pathname === "/privacy-and-trust"
-                        ? "bg-primary/10 text-primary dark:bg-[#30241A] dark:text-[#A3A77A] font-bold"
-                        : "text-on-surface hover:bg-surface-container/70 hover:text-primary dark:text-[#C5B7A4] dark:hover:bg-[#3B2C20] dark:hover:text-[#F3E9D8]"
+                        ? "bg-[#006C56]/10 text-[#006C56] dark:bg-[#30241A] dark:text-[#A3A77A] font-bold"
+                        : "text-on-surface hover:bg-surface-container/70 hover:text-[#006C56] dark:text-[#C5B7A4] dark:hover:bg-[#3B2C20] dark:hover:text-[#F3E9D8]"
                     }`}
                   >
                     <span className="material-symbols-outlined text-lg text-rose-400 dark:text-[#D4A59A]">verified_user</span>
@@ -420,7 +420,7 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
 
         {/* Right Column: Actions & Mobile Toggle (1fr, aligned to right edge) */}
         <div className="flex items-center justify-end lg:justify-self-end shrink-0 gap-3 sm:gap-4 min-w-0">
-          {!mounted || (loading && !isAuthenticated) ? (
+          {!mounted || (!isExplicitPublic && !isAuthExempt && loading && !isAuthenticated) ? (
             /* Session Loading / Initial Hydration Skeleton Spacer - Prevents Flash of Wrong Navbar */
             <div className="hidden sm:flex items-center gap-2.5 h-9 min-w-[140px] opacity-0 pointer-events-none" aria-hidden="true" />
           ) : showAuthenticatedUI ? (
@@ -487,11 +487,11 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                         onClick={() => setProfileDropdownOpen(false)}
                         className={`flex items-center gap-2.5 px-3.5 py-2 rounded-xl transition-colors text-xs font-heading font-semibold cursor-pointer ${
                           pathname === "/dashboard"
-                            ? "bg-primary/10 text-primary dark:bg-[#30241A] dark:text-[#A3A77A] font-bold"
-                            : "text-on-surface-variant dark:text-[#C5B7A4] hover:bg-surface-container/70 hover:text-primary dark:hover:bg-[#3B2C20] dark:hover:text-[#F3E9D8]"
+                            ? "bg-[#006C56]/10 text-[#006C56] dark:bg-[#30241A] dark:text-[#A3A77A] font-bold"
+                            : "text-on-surface-variant dark:text-[#C5B7A4] hover:bg-surface-container/70 hover:text-[#006C56] dark:hover:bg-[#3B2C20] dark:hover:text-[#F3E9D8]"
                         }`}
                       >
-                        <span className="material-symbols-outlined text-lg text-primary dark:text-[#A3A77A]">dashboard</span>
+                        <span className="material-symbols-outlined text-lg text-[#006C56] dark:text-[#A3A77A]">dashboard</span>
                         <span>Dashboard</span>
                       </Link>
 
@@ -501,11 +501,11 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                         onClick={() => setProfileDropdownOpen(false)}
                         className={`flex items-center gap-2.5 px-3.5 py-2 rounded-xl transition-colors text-xs font-heading font-semibold cursor-pointer ${
                           pathname === "/profile"
-                            ? "bg-primary/10 text-primary dark:bg-[#30241A] dark:text-[#A3A77A] font-bold"
-                            : "text-on-surface-variant dark:text-[#C5B7A4] hover:bg-surface-container/70 hover:text-primary dark:hover:bg-[#3B2C20] dark:hover:text-[#F3E9D8]"
+                            ? "bg-[#006C56]/10 text-[#006C56] dark:bg-[#30241A] dark:text-[#A3A77A] font-bold"
+                            : "text-on-surface-variant dark:text-[#C5B7A4] hover:bg-surface-container/70 hover:text-[#006C56] dark:hover:bg-[#3B2C20] dark:hover:text-[#F3E9D8]"
                         }`}
                       >
-                        <span className="material-symbols-outlined text-lg text-primary dark:text-[#A3A77A]">person</span>
+                        <span className="material-symbols-outlined text-lg text-[#006C56] dark:text-[#A3A77A]">person</span>
                         <span>My Profile</span>
                       </Link>
 
@@ -515,11 +515,11 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                         onClick={() => setProfileDropdownOpen(false)}
                         className={`flex items-center gap-2.5 px-3.5 py-2 rounded-xl transition-colors text-xs font-heading font-semibold cursor-pointer ${
                           pathname === "/journey"
-                            ? "bg-primary/10 text-primary dark:bg-[#30241A] dark:text-[#A3A77A] font-bold"
-                            : "text-on-surface-variant dark:text-[#C5B7A4] hover:bg-surface-container/70 hover:text-primary dark:hover:bg-[#3B2C20] dark:hover:text-[#F3E9D8]"
+                            ? "bg-[#006C56]/10 text-[#006C56] dark:bg-[#30241A] dark:text-[#A3A77A] font-bold"
+                            : "text-on-surface-variant dark:text-[#C5B7A4] hover:bg-surface-container/70 hover:text-[#006C56] dark:hover:bg-[#3B2C20] dark:hover:text-[#F3E9D8]"
                         }`}
                       >
-                        <span className="material-symbols-outlined text-lg text-primary dark:text-[#A3A77A]">timeline</span>
+                        <span className="material-symbols-outlined text-lg text-[#006C56] dark:text-[#A3A77A]">timeline</span>
                         <span>My Journey</span>
                       </Link>
 
@@ -567,10 +567,10 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
             <div className="hidden sm:flex items-center gap-2.5">
               <Link
                 href="/login"
-                className={`px-4 sm:px-5 py-2 rounded-full text-xs font-heading font-bold transition-all ${
+                className={`px-4 sm:px-5 py-2 rounded-full text-xs font-heading font-bold border transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#006C56]/40 focus-visible:ring-offset-1 ${
                   isLoginPage
-                    ? "bg-primary-container/20 text-primary border border-primary/30"
-                    : "bg-surface-container border border-surface-variant/40 text-on-surface hover:bg-primary/5 dark:bg-[#30241A] dark:border-[#51402E] dark:text-[#F3E9D8] dark:hover:bg-[#3B2C20]"
+                    ? "bg-[#D0EDE4] text-[#004D3D] border-[#006C56]/40 shadow-xs dark:bg-[#3B2C20] dark:text-[#A3A77A] dark:border-[#A3A77A]/50"
+                    : "bg-[#E6F4F0] border-[#CBECE2] text-[#006C56] hover:bg-[#D0EDE4] hover:text-[#004D3D] hover:border-[#006C56]/30 dark:bg-[#30241A] dark:border-[#51402E] dark:text-[#F3E9D8] dark:hover:bg-[#3B2C20]"
                 }`}
               >
                 Log In
@@ -579,10 +579,10 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
               <button
                 type="button"
                 onClick={handleGetStarted}
-                className={`px-4 sm:px-5 py-2 rounded-full font-heading font-bold text-xs shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all flex items-center gap-1.5 cursor-pointer ${
+                className={`px-4 sm:px-5 py-2 rounded-full font-heading font-bold text-xs shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex items-center gap-1.5 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#006C56]/50 focus-visible:ring-offset-2 ${
                   isSignupPage || pathname === "/category-selection"
-                    ? "bg-primary-purple text-white ring-2 ring-primary/20 dark:bg-[#858A60] dark:text-[#211A14]"
-                    : "bg-primary hover:bg-primary-purple text-white dark:bg-[#858A60] dark:hover:bg-[#A3A77A] dark:text-[#211A14]"
+                    ? "bg-[#005241] text-white ring-2 ring-[#006C56]/30 shadow-xs dark:bg-[#858A60] dark:text-[#211A14] dark:ring-[#A3A77A]/40"
+                    : "bg-[#006C56] hover:bg-[#005241] text-white dark:bg-[#858A60] dark:hover:bg-[#A3A77A] dark:text-[#211A14]"
                 }`}
               >
                 <span>Get Started</span>
@@ -594,7 +594,7 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
           <button
             type="button"
             onClick={handleToggleMobile}
-            className="lg:hidden p-2 rounded-xl transition-colors cursor-pointer flex items-center justify-center shrink-0 bg-surface-container text-on-surface hover:bg-surface-variant/50 border border-surface-variant/30 dark:bg-[#30241A] dark:border-[#51402E] dark:text-[#F3E9D8] dark:hover:bg-[#3B2C20]"
+            className="lg:hidden p-2 rounded-xl transition-colors cursor-pointer flex items-center justify-center shrink-0 bg-[#E6F4F0]/60 hover:bg-[#E6F4F0] text-[#19332A] border border-[#CBECE2] dark:bg-[#30241A] dark:border-[#51402E] dark:text-[#F3E9D8] dark:hover:bg-[#3B2C20] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#006C56]/40"
             aria-label="Toggle navigation menu"
             aria-expanded={mobileMenuOpen}
           >
@@ -655,8 +655,8 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                 <Link
                   href="/how-it-works"
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`py-3 px-3.5 rounded-xl hover:bg-surface-container hover:text-primary dark:hover:bg-[#30241A] dark:hover:text-[#F3E9D8] transition-colors flex items-center justify-between ${
-                    pathname === "/how-it-works" ? "bg-primary/10 text-primary dark:bg-[#30241A] dark:text-[#A3A77A] font-bold" : ""
+                  className={`py-3 px-3.5 rounded-xl hover:bg-surface-container hover:text-[#006C56] dark:hover:bg-[#30241A] dark:hover:text-[#F3E9D8] transition-colors flex items-center justify-between ${
+                    pathname === "/how-it-works" ? "bg-[#006C56]/10 text-[#006C56] dark:bg-[#30241A] dark:text-[#A3A77A] font-bold" : ""
                   }`}
                 >
                   <span>How it Works</span>
@@ -666,8 +666,8 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                   <Link
                     href="/dashboard"
                     onClick={() => setMobileMenuOpen(false)}
-                    className={`py-3 px-3.5 rounded-xl hover:bg-surface-container hover:text-primary dark:hover:bg-[#30241A] dark:hover:text-[#F3E9D8] transition-colors flex items-center justify-between ${
-                      pathname === "/dashboard" ? "bg-primary/10 text-primary dark:bg-[#30241A] dark:text-[#A3A77A] font-bold" : ""
+                    className={`py-3 px-3.5 rounded-xl hover:bg-surface-container hover:text-[#006C56] dark:hover:bg-[#30241A] dark:hover:text-[#F3E9D8] transition-colors flex items-center justify-between ${
+                      pathname === "/dashboard" ? "bg-[#006C56]/10 text-[#006C56] dark:bg-[#30241A] dark:text-[#A3A77A] font-bold" : ""
                     }`}
                   >
                     <span>Dashboard</span>
@@ -679,10 +679,10 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                   <button
                     type="button"
                     onClick={() => setMobileSolutionOpen((prev) => !prev)}
-                    className="py-3 px-3.5 rounded-xl hover:bg-surface-container hover:text-primary dark:hover:bg-[#30241A] dark:hover:text-[#F3E9D8] transition-colors flex items-center justify-between cursor-pointer"
+                    className="py-3 px-3.5 rounded-xl hover:bg-surface-container hover:text-[#006C56] dark:hover:bg-[#30241A] dark:hover:text-[#F3E9D8] transition-colors flex items-center justify-between cursor-pointer"
                   >
                     <span className="flex items-center gap-2">
-                      <span className={isSolutionActive ? "text-primary dark:text-[#A3A77A] font-bold" : ""}>Our Solution</span>
+                      <span className={isSolutionActive ? "text-[#006C56] dark:text-[#A3A77A] font-bold" : ""}>Our Solution</span>
                     </span>
                     <span
                       className={`material-symbols-outlined text-base text-on-surface-variant/50 dark:text-[#9F907E] transition-transform duration-200 ${
@@ -707,7 +707,7 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                           onClick={() => setMobileMenuOpen(false)}
                           className="py-2.5 px-3 rounded-lg hover:bg-surface-container dark:hover:bg-[#3B2C20] text-xs font-heading font-semibold flex items-center gap-2.5 text-on-surface dark:text-[#F3E9D8]"
                         >
-                          <span className="material-symbols-outlined text-base text-primary dark:text-[#A3A77A]">school</span>
+                          <span className="material-symbols-outlined text-base text-[#006C56] dark:text-[#A3A77A]">school</span>
                           <div>
                             <div className="leading-tight">For Students &amp; Colleges</div>
                             <div className="text-[10px] text-on-surface-variant dark:text-[#9F907E] font-normal">
@@ -735,7 +735,7 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                             setCallbackDefaultSegment("colleges");
                             setCallbackModalOpen(true);
                           }}
-                          className="mt-1 py-2.5 px-3 rounded-lg bg-primary/10 text-primary dark:bg-[#3B2C20] dark:text-[#A3A77A] hover:bg-primary/20 dark:hover:bg-[#443326] text-xs font-heading font-bold flex items-center gap-2 text-left cursor-pointer"
+                          className="mt-1 py-2.5 px-3 rounded-lg bg-[#006C56]/10 text-[#006C56] dark:bg-[#3B2C20] dark:text-[#A3A77A] hover:bg-[#006C56]/20 dark:hover:bg-[#443326] text-xs font-heading font-bold flex items-center gap-2 text-left cursor-pointer"
                         >
                           <span className="material-symbols-outlined text-base">support_agent</span>
                           <span>Request a Callback</span>
@@ -747,8 +747,8 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                 <Link
                   href="/features"
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`py-3 px-3.5 rounded-xl hover:bg-surface-container hover:text-primary dark:hover:bg-[#30241A] dark:hover:text-[#F3E9D8] transition-colors flex items-center justify-between ${
-                    pathname === "/features" ? "bg-primary/10 text-primary dark:bg-[#30241A] dark:text-[#A3A77A] font-bold" : ""
+                  className={`py-3 px-3.5 rounded-xl hover:bg-surface-container hover:text-[#006C56] dark:hover:bg-[#30241A] dark:hover:text-[#F3E9D8] transition-colors flex items-center justify-between ${
+                    pathname === "/features" ? "bg-[#006C56]/10 text-[#006C56] dark:bg-[#30241A] dark:text-[#A3A77A] font-bold" : ""
                   }`}
                 >
                   <span>Features</span>
@@ -757,8 +757,8 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                 <Link
                   href="/stories"
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`py-3 px-3.5 rounded-xl hover:bg-surface-container hover:text-primary dark:hover:bg-[#30241A] dark:hover:text-[#F3E9D8] transition-colors flex items-center justify-between ${
-                    pathname === "/stories" ? "bg-primary/10 text-primary dark:bg-[#30241A] dark:text-[#A3A77A] font-bold" : ""
+                  className={`py-3 px-3.5 rounded-xl hover:bg-surface-container hover:text-[#006C56] dark:hover:bg-[#30241A] dark:hover:text-[#F3E9D8] transition-colors flex items-center justify-between ${
+                    pathname === "/stories" ? "bg-[#006C56]/10 text-[#006C56] dark:bg-[#30241A] dark:text-[#A3A77A] font-bold" : ""
                   }`}
                 >
                   <span>Stories</span>
@@ -767,8 +767,8 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                 <Link
                   href="/for-you"
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`py-3 px-3.5 rounded-xl hover:bg-surface-container hover:text-primary dark:hover:bg-[#30241A] dark:hover:text-[#F3E9D8] transition-colors flex items-center justify-between ${
-                    pathname === "/for-you" ? "bg-primary/10 text-primary dark:bg-[#30241A] dark:text-[#A3A77A] font-bold" : ""
+                  className={`py-3 px-3.5 rounded-xl hover:bg-surface-container hover:text-[#006C56] dark:hover:bg-[#30241A] dark:hover:text-[#F3E9D8] transition-colors flex items-center justify-between ${
+                    pathname === "/for-you" ? "bg-[#006C56]/10 text-[#006C56] dark:bg-[#30241A] dark:text-[#A3A77A] font-bold" : ""
                   }`}
                 >
                   <span>For You (Pathways)</span>
@@ -777,8 +777,8 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                 <Link
                   href="/blog"
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`py-3 px-3.5 rounded-xl hover:bg-surface-container hover:text-primary dark:hover:bg-[#30241A] dark:hover:text-[#F3E9D8] transition-colors flex items-center justify-between ${
-                    pathname === "/blog" ? "bg-primary/10 text-primary dark:bg-[#30241A] dark:text-[#A3A77A] font-bold" : ""
+                  className={`py-3 px-3.5 rounded-xl hover:bg-surface-container hover:text-[#006C56] dark:hover:bg-[#30241A] dark:hover:text-[#F3E9D8] transition-colors flex items-center justify-between ${
+                    pathname === "/blog" ? "bg-[#006C56]/10 text-[#006C56] dark:bg-[#30241A] dark:text-[#A3A77A] font-bold" : ""
                   }`}
                 >
                   <span>Blog</span>
@@ -793,18 +793,18 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                   <Link
                     href="/about"
                     onClick={() => setMobileMenuOpen(false)}
-                    className={`py-2.5 px-3.5 rounded-xl hover:bg-surface-container hover:text-primary dark:hover:bg-[#30241A] dark:hover:text-[#F3E9D8] flex items-center gap-2.5 transition-colors ${
-                      pathname === "/about" ? "bg-primary/10 text-primary dark:bg-[#30241A] dark:text-[#A3A77A] font-bold" : "text-on-surface-variant dark:text-[#C5B7A4]"
+                    className={`py-2.5 px-3.5 rounded-xl hover:bg-surface-container hover:text-[#006C56] dark:hover:bg-[#30241A] dark:hover:text-[#F3E9D8] flex items-center gap-2.5 transition-colors ${
+                      pathname === "/about" ? "bg-[#006C56]/10 text-[#006C56] dark:bg-[#30241A] dark:text-[#A3A77A] font-bold" : "text-on-surface-variant dark:text-[#C5B7A4]"
                     }`}
                   >
-                    <span className="material-symbols-outlined text-lg text-primary dark:text-[#A3A77A]">info</span>
+                    <span className="material-symbols-outlined text-lg text-[#006C56] dark:text-[#A3A77A]">info</span>
                     <span>About Us</span>
                   </Link>
                   <Link
                     href="/faq"
                     onClick={() => setMobileMenuOpen(false)}
-                    className={`py-2.5 px-3.5 rounded-xl hover:bg-surface-container hover:text-primary dark:hover:bg-[#30241A] dark:hover:text-[#F3E9D8] flex items-center gap-2.5 transition-colors ${
-                      pathname === "/faq" ? "bg-primary/10 text-primary dark:bg-[#30241A] dark:text-[#A3A77A] font-bold" : "text-on-surface-variant dark:text-[#C5B7A4]"
+                    className={`py-2.5 px-3.5 rounded-xl hover:bg-surface-container hover:text-[#006C56] dark:hover:bg-[#30241A] dark:hover:text-[#F3E9D8] flex items-center gap-2.5 transition-colors ${
+                      pathname === "/faq" ? "bg-[#006C56]/10 text-[#006C56] dark:bg-[#30241A] dark:text-[#A3A77A] font-bold" : "text-on-surface-variant dark:text-[#C5B7A4]"
                     }`}
                   >
                     <span className="material-symbols-outlined text-lg text-secondary dark:text-[#A7B69A]">quiz</span>
@@ -813,13 +813,13 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                   <Link
                     href="/privacy-and-trust"
                     onClick={() => setMobileMenuOpen(false)}
-                    className={`py-2.5 px-3.5 rounded-xl hover:bg-surface-container hover:text-primary dark:hover:bg-[#30241A] dark:hover:text-[#F3E9D8] flex items-center gap-2.5 transition-colors ${
+                    className={`py-2.5 px-3.5 rounded-xl hover:bg-surface-container hover:text-[#006C56] dark:hover:bg-[#30241A] dark:hover:text-[#F3E9D8] flex items-center gap-2.5 transition-colors ${
                       pathname === "/privacy-and-trust"
-                        ? "bg-primary/10 text-primary dark:bg-[#30241A] dark:text-[#A3A77A] font-bold"
+                        ? "bg-[#006C56]/10 text-[#006C56] dark:bg-[#30241A] dark:text-[#A3A77A] font-bold"
                         : "text-on-surface-variant dark:text-[#C5B7A4]"
                     }`}
                   >
-                    <span className="material-symbols-outlined text-lg text-primary dark:text-[#A3A77A]">verified_user</span>
+                    <span className="material-symbols-outlined text-lg text-[#006C56] dark:text-[#A3A77A]">verified_user</span>
                     <span>Privacy &amp; Trust</span>
                   </Link>
                 </div>
@@ -853,7 +853,7 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                         setMobileMenuOpen(false);
                         handleGetStarted();
                       }}
-                      className="w-full py-3.5 rounded-full bg-primary text-white font-heading font-bold text-sm shadow-md hover:bg-primary-purple dark:bg-[#858A60] dark:text-[#211A14] dark:hover:bg-[#A3A77A] transition-all flex items-center justify-center gap-2 cursor-pointer"
+                      className="w-full py-3.5 rounded-full bg-[#006C56] hover:bg-[#005241] text-white font-heading font-bold text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#006C56]/50 dark:bg-[#858A60] dark:text-[#211A14] dark:hover:bg-[#A3A77A]"
                     >
                       <span>Get Started</span>
                       <span className="material-symbols-outlined text-lg">arrow_forward</span>
@@ -861,7 +861,11 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                     <Link
                       href="/login"
                       onClick={() => setMobileMenuOpen(false)}
-                      className="w-full text-center py-3 rounded-full bg-surface-container hover:bg-surface-variant/50 border border-surface-variant/40 dark:bg-[#30241A] dark:border-[#51402E] dark:text-[#F3E9D8] dark:hover:bg-[#3B2C20] font-heading font-semibold text-sm text-on-surface transition-colors"
+                      className={`w-full text-center py-3 rounded-full border font-heading font-bold text-sm transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#006C56]/40 ${
+                        isLoginPage
+                          ? "bg-[#D0EDE4] text-[#004D3D] border-[#006C56]/40 shadow-xs dark:bg-[#3B2C20] dark:text-[#A3A77A] dark:border-[#A3A77A]/50"
+                          : "bg-[#E6F4F0] hover:bg-[#D0EDE4] border-[#CBECE2] hover:border-[#006C56]/30 text-[#006C56] hover:text-[#004D3D] dark:bg-[#30241A] dark:border-[#51402E] dark:text-[#F3E9D8] dark:hover:bg-[#3B2C20]"
+                      }`}
                     >
                       Log In to Account
                     </Link>

@@ -194,7 +194,7 @@ export default function RequestCallbackModal({
                   <div className="pt-3">
                     <button
                       onClick={handleResetAndClose}
-                      className="px-8 py-3 rounded-full bg-primary dark:bg-[#006B56] dark:hover:bg-[#005B48] text-white font-heading font-bold text-sm shadow-md hover:bg-primary-purple transition-colors cursor-pointer"
+                      className="px-8 py-3 rounded-full bg-primary hover:bg-[#005B48] text-white font-heading font-bold text-sm shadow-md transition-colors cursor-pointer"
                     >
                       Done
                     </button>
@@ -380,7 +380,7 @@ export default function RequestCallbackModal({
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="w-full py-3.5 rounded-full bg-primary dark:bg-[#006B56] dark:hover:bg-[#005B48] text-white font-heading font-bold text-sm shadow-md hover:bg-primary-purple active:scale-[0.99] transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
+                      className="w-full py-3.5 rounded-full bg-primary hover:bg-[#005B48] text-white font-heading font-bold text-sm shadow-md active:scale-[0.99] transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
                     >
                       {isSubmitting ? (
                         <>

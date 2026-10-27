@@ -171,7 +171,7 @@ export default function WellnessScoreScreen() {
       badge: "bg-primary/10 text-primary border-primary/20",
       text: "text-primary",
       bg: "bg-primary/5",
-      stroke: "#7C6BC4",
+      stroke: "#006B56",
     },
     "Needs Attention": {
       badge: "bg-[#fff9e6] text-[#b38600] border-[#ffe080]",
@@ -348,9 +348,9 @@ export default function WellnessScoreScreen() {
               {saving ? "Saving..." : "Save & Continue"}
               <span className="material-symbols-outlined text-base">arrow_forward</span>
             </button>
-            <p className="text-xs text-[#5F309E] font-medium text-center bg-[#5F309E]/5 px-4 py-1.5 rounded-full mt-1 border border-[#5F309E]/10 flex items-center gap-1.5">
+            <p className="text-xs text-[#006C56] font-medium text-center bg-[#006C56]/5 px-4 py-1.5 rounded-full mt-1 border border-[#006C56]/15 flex items-center gap-1.5">
               <span>Saving results to: <strong className="font-bold">{session.user.email}</strong></span>
-              <span className="text-[#5F309E]/30">|</span>
+              <span className="text-[#006C56]/30">|</span>
               <button 
                 onClick={async () => {
                   await signOut();
@@ -359,7 +359,7 @@ export default function WellnessScoreScreen() {
                     window.location.href = "/login";
                   }
                 }} 
-                className="underline hover:text-[#7C6BC4] font-bold transition-colors cursor-pointer"
+                className="underline hover:text-[#004D3D] font-bold transition-colors cursor-pointer"
               >
                 Log out
               </button>

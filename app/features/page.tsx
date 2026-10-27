@@ -517,7 +517,7 @@ function FeaturesContent() {
                       </div>
                       <div className="flex items-center justify-between text-xs text-on-surface-variant font-bold pt-1">
                         <div className="flex items-center gap-3">
-                          <span className="flex items-center gap-1 text-primary">💜 24 Replies</span>
+                          <span className="flex items-center gap-1 text-primary">💚 24 Replies</span>
                           <span className="flex items-center gap-1 text-[#006B56]">✨ 18 Encouragements</span>
                         </div>
                       </div>

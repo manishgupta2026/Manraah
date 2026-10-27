@@ -145,9 +145,9 @@ const TESTIMONIALS_ROW_2 = [
     id: "transition",
     role: "An Individual in Transition",
     badge: "✨ Life Transitions",
-    badgeStyle: "bg-[#7C6BC4]/15 text-[#5F4EA5] border border-[#7C6BC4]/30",
+    badgeStyle: "bg-[#006C56]/10 text-[#006C56] border border-[#006C56]/20",
     initial: "T",
-    avatarBg: "bg-[#7C6BC4]/20 text-[#5F4EA5]",
+    avatarBg: "bg-[#006C56]/20 text-[#006C56]",
     quote: "Navigating a major life transition felt isolating. Having an anonymous, private retreat where I can journal and process uncertainty has been deeply grounding.",
     reflection: "🕊️ Grounded support during life changes",
   },
@@ -742,7 +742,7 @@ export default function MarketingLandingPage() {
             <motion.div variants={itemVariants} className="w-full max-w-3xl space-y-3 sm:space-y-4">
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[52px] font-heading font-black tracking-tight leading-[1.15] text-on-surface">
                 Your Safe Space to{" "}
-                <span className="text-primary bg-clip-text text-transparent bg-gradient-to-r from-primary via-[#5F4EA5] to-mint">
+                <span className="text-primary bg-clip-text text-transparent bg-gradient-to-r from-primary via-[#005B48] to-mint">
                   Breathe, Reflect & Feel Heard
                 </span>
               </h1>

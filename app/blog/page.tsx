@@ -216,7 +216,7 @@ export default function BlogPage() {
 
         <h1 className="text-4xl sm:text-5xl lg:text-6xl font-heading font-black text-on-surface tracking-tight leading-[1.12]">
           The Manraah{" "}
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-[#5F4EA5] to-mint">
+          <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-[#005B48] to-mint">
             Wellness Journal
           </span>
         </h1>

@@ -198,7 +198,7 @@ export default function FAQPage() {
 
         <h1 className="text-4xl sm:text-5xl lg:text-6xl font-heading font-black text-on-surface dark:text-[#F4FAF7] tracking-tight leading-[1.12]">
           Frequently Asked{" "}
-          <span className="text-primary bg-clip-text text-transparent bg-gradient-to-r from-primary via-[#5F4EA5] to-mint">
+          <span className="text-primary bg-clip-text text-transparent bg-gradient-to-r from-primary via-[#005B48] to-mint">
             Questions
           </span>
         </h1>
@@ -330,12 +330,12 @@ export default function FAQPage() {
                     <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 text-left">
                       <span>{item.q}</span>
                       {catObj && (
-                        <span className="self-start sm:self-center px-2.5 py-0.5 rounded-full text-[10px] font-heading font-semibold bg-primary/10 text-primary dark:bg-primary/20 dark:text-[#cbbeff] border border-primary/20 shrink-0">
+                        <span className="self-start sm:self-center px-2.5 py-0.5 rounded-full text-[10px] font-heading font-semibold bg-primary/10 text-primary dark:bg-primary/20 dark:text-[#88f7d6] border border-primary/20 shrink-0">
                           {catObj.label}
                         </span>
                       )}
                     </div>
-                    <span className="material-symbols-outlined text-primary dark:text-[#cbbeff] transition-transform duration-200 shrink-0">
+                    <span className="material-symbols-outlined text-primary dark:text-[#88f7d6] transition-transform duration-200 shrink-0">
                       {isOpen ? "expand_less" : "expand_more"}
                     </span>
                   </button>

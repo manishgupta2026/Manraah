@@ -126,9 +126,9 @@ h1, h2, h3, h4, h5, h6 {
   border: 1px solid rgba(230, 223, 248, 0.5);
 }
 
-/* Ambient Purple & Mint Gradients */
+/* Ambient Brand Green & Mint Gradients */
 .gradient-primary {
-  background: linear-gradient(135deg, #7C6BC4 0%, #5F4EA5 100%);
+  background: linear-gradient(135deg, #006B56 0%, #004D3D 100%);
 }
 
 .gradient-mint {
@@ -145,7 +145,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Soft ambient card shadow */
 .shadow-soft {
-  box-shadow: 0 10px 30px rgba(124, 107, 196, 0.08);
+  box-shadow: 0 10px 30px rgba(0, 107, 86, 0.08);
 }
 
 /* Marquee continuous scroll animations */

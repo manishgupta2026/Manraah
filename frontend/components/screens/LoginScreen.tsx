@@ -228,7 +228,7 @@ export default function LoginScreen() {
                     <select
                       value={ecRelation}
                       onChange={(e) => setEcRelation(e.target.value)}
-                      className="w-full px-4 py-3 rounded-2xl bg-surface-container-low border border-surface-variant/40 text-xs font-medium text-on-surface focus:outline-hidden focus:ring-2 focus:ring-[#006C56] cursor-pointer"
+                      className="w-full px-4 py-3 rounded-2xl bg-[#E6F4F0] dark:bg-[#30241A] border border-[#CBECE2] dark:border-[#51402E] text-xs font-medium text-[#19332A] dark:text-[#F3E9D8] focus:outline-hidden focus:ring-2 focus:ring-[#006C56]/20 focus:border-[#006C56] cursor-pointer"
                     >
                       <option value="Parent">Parent</option>
                       <option value="Partner / Spouse">Partner / Spouse</option>

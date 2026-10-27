@@ -39,7 +39,7 @@ export function FormInput({
 
       <div className="relative flex items-center">
         {icon && (
-          <span className="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-on-surface-variant/60 text-xl pointer-events-none select-none flex items-center justify-center">
+          <span className="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-[#4F685F]/70 dark:text-[#A7B69A] text-xl pointer-events-none select-none flex items-center justify-center">
             {icon}
           </span>
         )}
@@ -48,11 +48,11 @@ export function FormInput({
           type={inputType}
           className={`w-full h-12 p-3.5 ${
             icon ? "pl-11" : "pl-4"
-          } ${isPassword ? "pr-11" : "pr-4"} rounded-2xl bg-surface-container-low border ${
+          } ${isPassword ? "pr-11" : "pr-4"} rounded-2xl bg-[#E6F4F0] dark:bg-[#30241A] border ${
             error
-              ? "border-red-400 focus:ring-2 focus:ring-red-400/30"
-              : "border-surface-variant/40 focus:ring-2 focus:ring-primary/40 focus:border-primary/50"
-          } text-sm font-medium text-on-surface placeholder:text-on-surface-variant/40 transition-all outline-none ${className}`}
+              ? "border-red-400 focus:ring-2 focus:ring-red-400/30 focus:border-red-500"
+              : "border-[#CBECE2] dark:border-[#51402E] focus:ring-2 focus:ring-[#006C56]/20 focus:border-[#006C56]"
+          } text-sm font-medium text-[#19332A] dark:text-[#F3E9D8] placeholder:text-[#4F685F]/55 dark:placeholder:text-[#9F907E]/70 transition-all outline-none ${className}`}
           {...props}
         />
 
@@ -60,7 +60,7 @@ export function FormInput({
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3.5 top-1/2 -translate-y-1/2 text-on-surface-variant/70 hover:text-primary transition-colors p-1 rounded-lg focus:outline-none flex items-center justify-center"
+            className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#4F685F]/70 hover:text-[#006C56] dark:text-[#9F907E] dark:hover:text-[#F3E9D8] transition-colors p-1 rounded-lg focus:outline-none flex items-center justify-center cursor-pointer"
             aria-label={showPassword ? "Hide password" : "Show password"}
           >
             <span className="material-symbols-outlined text-xl select-none">

@@ -48,7 +48,7 @@ function SolutionContent() {
         {/* Main Title */}
         <h1 className="text-3xl sm:text-5xl lg:text-6xl font-heading font-black text-on-surface tracking-tight leading-[1.12]">
           Empowering India&apos;s Campuses &amp; Workplaces with{" "}
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-[#7C6BC4] to-secondary">
+          <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-[#005B48] to-secondary">
             Stigma-Free Mental Health Infrastructure
           </span>
         </h1>
