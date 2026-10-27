@@ -225,13 +225,13 @@ export default function DoctorRatingModal({
       aria-labelledby="doctor-rating-title"
     >
       <div
-        className="bg-white dark:bg-[#131916] text-[#19332A] dark:text-[#F4FAF7] w-full max-w-lg rounded-3xl shadow-2xl border border-[#E2ECE6] dark:border-[#1E2824] overflow-hidden flex flex-col max-h-[88vh] transition-all transform animate-in zoom-in-95 duration-200"
+        className="bg-white dark:bg-[#443326] text-[#19332A] dark:text-[#F3E9D8] w-full max-w-lg rounded-3xl shadow-2xl border border-[#E2ECE6] dark:border-[#51402E] overflow-hidden flex flex-col max-h-[88vh] transition-all transform animate-in zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Modal Header: Clear Doctor Identity */}
-        <div className="p-5 sm:p-6 border-b border-[#E2ECE6] dark:border-[#1E2824] flex items-center justify-between gap-4 shrink-0 bg-[#FAFDFB] dark:bg-[#111714]">
+        <div className="p-5 sm:p-6 border-b border-[#E2ECE6] dark:border-[#51402E] flex items-center justify-between gap-4 shrink-0 bg-[#FAFDFB] dark:bg-[#3B2C20]">
           <div className="flex items-center gap-3.5 min-w-0">
-            <div className="w-13 h-13 rounded-full overflow-hidden border-2 border-white dark:border-[#1E2824] shadow-xs shrink-0 bg-slate-100 dark:bg-[#18201C]">
+            <div className="w-13 h-13 rounded-full overflow-hidden border-2 border-white dark:border-[#51402E] shadow-xs shrink-0 bg-slate-100 dark:bg-[#30241A]">
               <img
                 src={therapist.profileImage || therapist.image || "/images/therapists/default-professional.jpg"}
                 alt={therapist.name}
@@ -247,14 +247,14 @@ export default function DoctorRatingModal({
             <div className="min-w-0 flex flex-col justify-center">
               <h2
                 id="doctor-rating-title"
-                className="text-base sm:text-lg font-heading font-black text-[#19332A] dark:text-[#F4FAF7] leading-snug truncate"
+                className="text-base sm:text-lg font-heading font-black text-[#19332A] dark:text-[#F3E9D8] leading-snug truncate"
               >
                 {therapist.name}
               </h2>
-              <p className="text-xs text-[#5A756C] dark:text-[#9DB9B0] font-semibold truncate">
+              <p className="text-xs text-[#5A756C] dark:text-[#C5B7A4] font-semibold truncate">
                 {therapist.role}
               </p>
-              <div className="flex items-center gap-1.5 mt-0.5 text-xs font-medium text-[#789389] dark:text-[#9DB9B0]">
+              <div className="flex items-center gap-1.5 mt-0.5 text-xs font-medium text-[#789389] dark:text-[#C5B7A4]">
                 <span className="text-amber-500 font-bold">★ {formatted.isUnrated ? "--" : formatted.displayText}</span>
                 <span>·</span>
                 <span>{currentCount} review{currentCount === 1 ? "" : "s"}</span>
@@ -266,7 +266,7 @@ export default function DoctorRatingModal({
             type="button"
             onClick={onClose}
             aria-label="Close modal"
-            className="w-8.5 h-8.5 rounded-full bg-[#F0F5F2] dark:bg-[#18201C] text-[#5A756C] dark:text-[#9DB9B0] hover:text-[#19332A] dark:hover:text-[#EAEFEA] hover:bg-[#E2ECE6] dark:hover:bg-[#22302A] flex items-center justify-center transition-colors shrink-0 cursor-pointer"
+            className="w-8.5 h-8.5 rounded-full bg-[#F0F5F2] dark:bg-[#30241A] text-[#5A756C] dark:text-[#9F907E] hover:text-[#19332A] dark:hover:text-[#F3E9D8] hover:bg-[#E2ECE6] dark:hover:bg-[#51402E] flex items-center justify-center transition-colors shrink-0 cursor-pointer"
           >
             <span className="material-symbols-outlined text-lg leading-none">close</span>
           </button>
@@ -278,22 +278,22 @@ export default function DoctorRatingModal({
             /* Skeleton Loading State */
             <div className="space-y-4 animate-pulse">
               <div className="flex items-center gap-4">
-                <div className="h-12 w-24 bg-slate-200 dark:bg-[#18201C] rounded-xl" />
-                <div className="h-4 w-32 bg-slate-200 dark:bg-[#18201C] rounded" />
+                <div className="h-12 w-24 bg-slate-200 dark:bg-[#30241A] rounded-xl" />
+                <div className="h-4 w-32 bg-slate-200 dark:bg-[#30241A] rounded" />
               </div>
               <div className="space-y-2 pt-3">
                 {[1, 2, 3, 4, 5].map((i) => (
-                  <div key={i} className="h-2.5 bg-slate-200 dark:bg-[#18201C] rounded w-full" />
+                  <div key={i} className="h-2.5 bg-slate-200 dark:bg-[#30241A] rounded w-full" />
                 ))}
               </div>
-              <div className="space-y-3 pt-4 border-t border-slate-100 dark:border-white/5">
-                <div className="h-16 bg-slate-200 dark:bg-[#18201C] rounded-2xl" />
-                <div className="h-16 bg-slate-200 dark:bg-[#18201C] rounded-2xl" />
+              <div className="space-y-3 pt-4 border-t border-slate-100 dark:border-[#51402E]">
+                <div className="h-16 bg-slate-200 dark:bg-[#30241A] rounded-2xl" />
+                <div className="h-16 bg-slate-200 dark:bg-[#30241A] rounded-2xl" />
               </div>
             </div>
           ) : error ? (
             /* Error State */
-            <div className="p-4 rounded-2xl bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-900/50 text-rose-700 dark:text-rose-300 flex items-center gap-3">
+            <div className="p-4 rounded-2xl bg-rose-50 dark:bg-[#30241A] border border-rose-200 dark:border-[#C95D54]/50 text-rose-700 dark:text-[#C95D54] flex items-center gap-3">
               <span className="material-symbols-outlined text-xl shrink-0">error</span>
               <p className="text-xs">{error}</p>
             </div>
@@ -301,8 +301,8 @@ export default function DoctorRatingModal({
             <>
               {/* Success Alert */}
               {submitSuccessMsg && (
-                <div className="p-3.5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 text-emerald-700 dark:text-emerald-300 text-xs flex items-center gap-2.5 animate-in fade-in">
-                  <span className="material-symbols-outlined text-lg text-emerald-600 dark:text-emerald-400 shrink-0">
+                <div className="p-3.5 rounded-2xl bg-emerald-50 dark:bg-[#30241A] border border-emerald-200 dark:border-[#91AD87]/40 text-emerald-700 dark:text-[#91AD87] text-xs flex items-center gap-2.5 animate-in fade-in">
+                  <span className="material-symbols-outlined text-lg text-emerald-600 dark:text-[#91AD87] shrink-0">
                     check_circle
                   </span>
                   <span>{submitSuccessMsg}</span>
@@ -310,21 +310,21 @@ export default function DoctorRatingModal({
               )}
 
               {/* 1. Overall Rating Hero + Rate Trigger + Compact Breakdown */}
-              <div className="bg-[#FAFDFB] dark:bg-[#131916] p-5 rounded-2xl border border-[#E2ECE6] dark:border-[#1E2824] space-y-4">
+              <div className="bg-[#FAFDFB] dark:bg-[#3B2C20] p-5 rounded-2xl border border-[#E2ECE6] dark:border-[#51402E] space-y-4">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   {/* Hero Rating Display */}
                   <div className="flex items-center gap-3.5">
-                    <div className="w-13.5 h-13.5 rounded-2xl bg-[#EAF6F0] dark:bg-[#18201C] flex flex-col items-center justify-center border border-[#D2EAE0] dark:border-[#22302A] shrink-0">
+                    <div className="w-13.5 h-13.5 rounded-2xl bg-[#EAF6F0] dark:bg-[#30241A] flex flex-col items-center justify-center border border-[#D2EAE0] dark:border-[#51402E] shrink-0">
                       <span className="text-amber-500 text-xs leading-none">★</span>
-                      <span className="text-xl font-heading font-black text-[#006C56] dark:text-[#5FAF8A] leading-tight mt-0.5">
+                      <span className="text-xl font-heading font-black text-[#006C56] dark:text-[#D7AD70] leading-tight mt-0.5">
                         {formatted.isUnrated ? "--" : formatted.displayText}
                       </span>
                     </div>
                     <div className="flex flex-col justify-center">
-                      <div className="text-xs font-bold text-[#19332A] dark:text-[#F4FAF7]">
+                      <div className="text-xs font-bold text-[#19332A] dark:text-[#F3E9D8]">
                         {formatted.isUnrated ? "Not Rated Yet" : "Overall Rating"}
                       </div>
-                      <p className="text-xs text-[#789389] dark:text-[#9DB9B0] mt-0.5">
+                      <p className="text-xs text-[#789389] dark:text-[#C5B7A4] mt-0.5">
                         {formatted.isUnrated
                           ? "Be the first patient to review."
                           : `Based on ${currentCount} verified review${currentCount === 1 ? "" : "s"}`}
@@ -341,8 +341,8 @@ export default function DoctorRatingModal({
                     }}
                     className={`h-9 px-4.5 rounded-full text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 shadow-2xs shrink-0 self-start sm:self-center ${
                       showRatingForm
-                        ? "bg-[#E2ECE6] dark:bg-[#18201C] text-[#19332A] dark:text-[#F4FAF7] hover:bg-[#D5E6E0] dark:hover:bg-[#22302A]"
-                        : "bg-[#006C56] hover:bg-[#005745] text-white dark:bg-[#006B56] dark:hover:bg-[#005B48]"
+                        ? "bg-[#E2ECE6] dark:bg-[#30241A] text-[#19332A] dark:text-[#F3E9D8] hover:bg-[#D5E6E0] dark:hover:bg-[#443326]"
+                        : "bg-[#006C56] hover:bg-[#005745] text-white dark:bg-[#858A60] dark:hover:bg-[#6E734E] dark:text-[#211A14]"
                     }`}
                   >
                     <span className="material-symbols-outlined text-base leading-none">
@@ -353,27 +353,27 @@ export default function DoctorRatingModal({
                 </div>
 
                 {/* Compact 5-Star Breakdown (Perfect Grid Alignment) */}
-                <div className="pt-4 border-t border-black/5 dark:border-white/5 space-y-2">
+                <div className="pt-4 border-t border-black/5 dark:border-[#51402E] space-y-2">
                   {([5, 4, 3, 2, 1] as const).map((stars) => {
                     const count = distribution[stars] || 0;
                     const percent = currentCount > 0 ? (count / currentCount) * 100 : 0;
                     return (
                       <div key={stars} className="flex items-center gap-3 text-xs">
-                        <div className="flex items-center gap-1 w-8 font-bold text-[#19332A] dark:text-[#F4FAF7] shrink-0 text-xs">
+                        <div className="flex items-center gap-1 w-8 font-bold text-[#19332A] dark:text-[#F3E9D8] shrink-0 text-xs">
                           <span>{stars}</span>
                           <span className="text-amber-400">★</span>
                         </div>
 
                         {/* Progress Bar */}
-                        <div className="flex-1 h-2 bg-[#E8F0EC] dark:bg-[#18201C] rounded-full overflow-hidden relative">
+                        <div className="flex-1 h-2 bg-[#E8F0EC] dark:bg-[#30241A] rounded-full overflow-hidden relative">
                           <div
-                            className="h-full rounded-full bg-[#006C56] dark:bg-[#006B56] transition-all duration-500 ease-out"
+                            className="h-full rounded-full bg-[#006C56] dark:bg-[#A3A77A] transition-all duration-500 ease-out"
                             style={{ width: `${percent}%` }}
                           />
                         </div>
 
                         {/* Count */}
-                        <div className="w-6 text-right font-medium text-[#789389] dark:text-[#9DB9B0] text-xs shrink-0 tabular-nums">
+                        <div className="w-6 text-right font-medium text-[#789389] dark:text-[#9F907E] text-xs shrink-0 tabular-nums">
                           {count}
                         </div>
                       </div>
@@ -386,14 +386,14 @@ export default function DoctorRatingModal({
               {showRatingForm && (
                 <form
                   onSubmit={handleSubmitRating}
-                  className="bg-emerald-50/40 dark:bg-[#18201C] p-5 rounded-2xl border border-emerald-200/80 dark:border-[#22302A] space-y-4.5 animate-in slide-in-from-top-3 duration-200"
+                  className="bg-emerald-50/40 dark:bg-[#30241A] p-5 rounded-2xl border border-emerald-200/80 dark:border-[#51402E] space-y-4.5 animate-in slide-in-from-top-3 duration-200"
                 >
                   <div className="flex items-center justify-between">
-                    <h3 className="text-xs font-black uppercase tracking-wider text-[#006C56] dark:text-[#5FAF8A]">
+                    <h3 className="text-xs font-black uppercase tracking-wider text-[#006C56] dark:text-[#A3A77A]">
                       {data?.userReview ? "Update your experience" : "Rate your experience"}
                     </h3>
                     {data?.userReview && (
-                      <span className="text-[10px] bg-emerald-100 dark:bg-[rgba(95,175,138,0.12)] text-emerald-800 dark:text-[#5FAF8A] px-2.5 py-0.5 rounded-full font-bold">
+                      <span className="text-[10px] bg-emerald-100 dark:bg-[#3B2C20] text-emerald-800 dark:text-[#D7AD70] border dark:border-[#51402E] px-2.5 py-0.5 rounded-full font-bold">
                         Editing previous review
                       </span>
                     )}
@@ -401,7 +401,7 @@ export default function DoctorRatingModal({
 
                   {/* Interactive Star Selection */}
                   <div className="space-y-1.5">
-                    <label className="text-xs font-semibold text-[#19332A] dark:text-[#F4FAF7] block">
+                    <label className="text-xs font-semibold text-[#19332A] dark:text-[#F3E9D8] block">
                       Select rating (1–5 stars)
                     </label>
                     <div className="flex items-center gap-3">
@@ -416,16 +416,16 @@ export default function DoctorRatingModal({
                               onMouseEnter={() => setHoverRating(star)}
                               onMouseLeave={() => setHoverRating(null)}
                               aria-label={`Rate ${star} star${star > 1 ? "s" : ""}`}
-                              className="p-1 text-2xl transition-transform hover:scale-115 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#006C56] rounded-md cursor-pointer leading-none"
+                              className="p-1 text-2xl transition-transform hover:scale-115 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#858A60] rounded-md cursor-pointer leading-none"
                             >
-                              <span className={isFilled ? "text-amber-400" : "text-slate-300 dark:text-zinc-700"}>
+                              <span className={isFilled ? "text-amber-400" : "text-slate-300 dark:text-[#51402E]"}>
                                 ★
                               </span>
                             </button>
                           );
                         })}
                       </div>
-                      <span className="text-xs font-bold text-[#5A756C] dark:text-[#9DB9B0] leading-none">
+                      <span className="text-xs font-bold text-[#5A756C] dark:text-[#C5B7A4] leading-none">
                         {hoverRating !== null ? hoverRating : selectedRating} of 5 Stars
                       </span>
                     </div>
@@ -433,8 +433,8 @@ export default function DoctorRatingModal({
 
                   {/* Optional Feedback Text Area & Character Counter */}
                   <div className="space-y-1.5">
-                    <label htmlFor="feedback-input" className="text-xs font-semibold text-[#19332A] dark:text-[#F4FAF7] block">
-                      Share your experience <span className="text-xs font-normal text-[#789389] dark:text-[#9DB9B0]">(optional)</span>
+                    <label htmlFor="feedback-input" className="text-xs font-semibold text-[#19332A] dark:text-[#F3E9D8] block">
+                      Share your experience <span className="text-xs font-normal text-[#789389] dark:text-[#9F907E]">(optional)</span>
                     </label>
                     <textarea
                       id="feedback-input"
@@ -443,16 +443,16 @@ export default function DoctorRatingModal({
                       onChange={(e) => setFeedbackText(e.target.value)}
                       placeholder="Write your feedback regarding the doctor's communication, empathy, and practical guidance..."
                       maxLength={1000}
-                      className="w-full text-xs p-3.5 rounded-xl bg-white dark:bg-[#131916] border border-[#D5E6E0] dark:border-[#22302A] text-[#19332A] dark:text-[#F4FAF7] placeholder:text-[#9DB9B0] focus:outline-none focus:ring-2 focus:ring-[#006C56] dark:focus:ring-[#006B56] transition-all resize-y min-h-[84px] leading-relaxed block"
+                      className="w-full text-xs p-3.5 rounded-xl bg-white dark:bg-[#201811] border border-[#D5E6E0] dark:border-[#51402E] text-[#19332A] dark:text-[#F3E9D8] placeholder:text-[#9DB9B0] dark:placeholder-[#9F907E] focus:outline-none focus:ring-2 focus:ring-[#006C56] dark:focus:ring-[#A3A77A]/30 transition-all resize-y min-h-[84px] leading-relaxed block"
                     />
-                    <div className="flex justify-end text-[11px] text-[#789389] dark:text-[#9DB9B0] font-medium pt-0.5 tabular-nums">
+                    <div className="flex justify-end text-[11px] text-[#789389] dark:text-[#9F907E] font-medium pt-0.5 tabular-nums">
                       {feedbackText.length} / 1000
                     </div>
                   </div>
 
                   {/* Submission Error Banner */}
                   {submitError && (
-                    <div className="p-3 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/50 text-rose-700 dark:text-rose-300 text-xs flex items-center gap-2">
+                    <div className="p-3 rounded-xl bg-rose-50 dark:bg-[#30241A] border border-rose-200 dark:border-[#C95D54]/50 text-rose-700 dark:text-[#C95D54] text-xs flex items-center gap-2">
                       <span className="material-symbols-outlined text-base shrink-0">error</span>
                       <span>{submitError}</span>
                     </div>
@@ -464,18 +464,18 @@ export default function DoctorRatingModal({
                       type="button"
                       onClick={() => setShowRatingForm(false)}
                       disabled={isSubmitting}
-                      className="h-9 px-4 rounded-full text-xs font-semibold text-[#5A756C] dark:text-[#9DB9B0] hover:bg-black/5 dark:hover:bg-white/5 transition-colors cursor-pointer flex items-center justify-center"
+                      className="h-9 px-4 rounded-full text-xs font-semibold text-[#5A756C] dark:text-[#C5B7A4] hover:bg-black/5 dark:hover:bg-[#3B2C20] transition-colors cursor-pointer flex items-center justify-center"
                     >
                       Cancel
                     </button>
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="h-9 px-5 rounded-full text-xs font-bold bg-[#006C56] hover:bg-[#005745] text-white dark:bg-[#006B56] dark:hover:bg-[#005B48] transition-all shadow-xs flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
+                      className="h-9 px-5 rounded-full text-xs font-bold bg-[#006C56] hover:bg-[#005745] text-white dark:bg-[#858A60] dark:hover:bg-[#6E734E] dark:text-[#211A14] transition-all shadow-xs flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
                     >
                       {isSubmitting ? (
                         <>
-                          <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin shrink-0" />
+                          <span className="w-3.5 h-3.5 border-2 border-white dark:border-[#211A14] border-t-transparent rounded-full animate-spin shrink-0" />
                           <span>Submitting...</span>
                         </>
                       ) : (
@@ -489,20 +489,20 @@ export default function DoctorRatingModal({
               {/* 3. Patient Experiences List */}
               <div className="space-y-3.5 pt-1">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-xs font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
+                  <h3 className="text-xs font-heading font-black text-[#19332A] dark:text-[#F3E9D8]">
                     Patient experiences
                   </h3>
-                  <span className="text-xs text-[#789389] dark:text-[#9DB9B0] font-medium">
+                  <span className="text-xs text-[#789389] dark:text-[#C5B7A4] font-medium">
                     {data?.reviews.length || 0} review{(data?.reviews.length || 0) === 1 ? "" : "s"}
                   </span>
                 </div>
 
                 {!data?.reviews || data.reviews.length === 0 ? (
-                  <div className="p-6 text-center bg-[#FAFDFB] dark:bg-[#18201C] rounded-2xl border border-dashed border-[#D5E6E0] dark:border-[#22302A]">
-                    <p className="text-xs font-semibold text-[#5A756C] dark:text-[#9DB9B0]">
+                  <div className="p-6 text-center bg-[#FAFDFB] dark:bg-[#30241A] rounded-2xl border border-dashed border-[#D5E6E0] dark:border-[#51402E]">
+                    <p className="text-xs font-semibold text-[#5A756C] dark:text-[#C5B7A4]">
                       No patient reviews yet.
                     </p>
-                    <p className="text-xs text-[#789389] dark:text-[#678B81] mt-1">
+                    <p className="text-xs text-[#789389] dark:text-[#9F907E] mt-1">
                       Be the first to share your experience after your session.
                     </p>
                   </div>
@@ -511,24 +511,24 @@ export default function DoctorRatingModal({
                     {data.reviews.map((rev) => (
                       <div
                         key={rev.id}
-                        className="p-4 rounded-2xl bg-[#FAFDFB] dark:bg-[#18201C] border border-[#E2ECE6] dark:border-[#22302A] space-y-2.5 transition-colors shadow-2xs"
+                        className="p-4 rounded-2xl bg-[#FAFDFB] dark:bg-[#30241A] border border-[#E2ECE6] dark:border-[#51402E] space-y-2.5 transition-colors shadow-2xs"
                       >
                         {/* Top Row: Stars (Left) + Verified Patient & Date (Right) */}
                         <div className="flex items-center justify-between gap-2">
                           <div className="flex items-center gap-2">
-                            <span className="text-xs font-bold text-amber-500 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/40 px-2.5 py-0.5 rounded-lg flex items-center gap-1 leading-none">
+                            <span className="text-xs font-bold text-amber-500 bg-amber-50 dark:bg-[#3B2C20] border border-amber-200 dark:border-[#51402E] px-2.5 py-0.5 rounded-lg flex items-center gap-1 leading-none">
                               <span>★</span>
                               <span>{rev.rating}.0</span>
                             </span>
                             {(rev.isCurrentUser || rev.isOwnReview) && (
-                              <span className="text-[10px] bg-[#006C56]/10 text-[#006C56] dark:text-[#5FAF8A] px-2 py-0.5 rounded-full font-bold">
+                              <span className="text-[10px] bg-[#006C56]/10 text-[#006C56] dark:bg-[#3B2C20] dark:text-[#A3A77A] dark:border dark:border-[#51402E] px-2 py-0.5 rounded-full font-bold">
                                 Your Review
                               </span>
                             )}
                           </div>
 
-                          <div className="text-xs text-[#789389] dark:text-[#9DB9B0] flex items-center gap-1.5 font-medium">
-                            <span className="material-symbols-outlined text-sm text-[#006C56] dark:text-[#5FAF8A]">
+                          <div className="text-xs text-[#789389] dark:text-[#9F907E] flex items-center gap-1.5 font-medium">
+                            <span className="material-symbols-outlined text-sm text-[#006C56] dark:text-[#A3A77A]">
                               verified
                             </span>
                             <span>{rev.authorLabel || rev.patientDisplayLabel || "Verified Patient"}</span>
@@ -539,11 +539,11 @@ export default function DoctorRatingModal({
 
                         {/* Review Body */}
                         {rev.feedback ? (
-                          <p className="text-xs text-[#2A443C] dark:text-[#D5E6E0] leading-relaxed font-medium">
+                          <p className="text-xs text-[#2A443C] dark:text-[#F3E9D8] leading-relaxed font-medium">
                             &ldquo;{rev.feedback}&rdquo;
                           </p>
                         ) : (
-                          <p className="text-xs text-[#789389] dark:text-[#678B81] italic">
+                          <p className="text-xs text-[#789389] dark:text-[#9F907E] italic">
                             Rated without written feedback.
                           </p>
                         )}
@@ -557,15 +557,15 @@ export default function DoctorRatingModal({
         </div>
 
         {/* Modal Footer: Locked at bottom with Privacy label & Close Button */}
-        <div className="p-5 sm:p-6 border-t border-[#E2ECE6] dark:border-[#1E2824] bg-[#FAFDFB] dark:bg-[#111714] flex items-center justify-between gap-3 shrink-0">
-          <div className="flex items-center gap-2 text-xs text-[#789389] dark:text-[#9DB9B0] font-medium">
-            <span className="material-symbols-outlined text-sm text-[#006C56] dark:text-[#5FAF8A]">lock</span>
+        <div className="p-5 sm:p-6 border-t border-[#E2ECE6] dark:border-[#51402E] bg-[#FAFDFB] dark:bg-[#3B2C20] flex items-center justify-between gap-3 shrink-0">
+          <div className="flex items-center gap-2 text-xs text-[#789389] dark:text-[#C5B7A4] font-medium">
+            <span className="material-symbols-outlined text-sm text-[#006C56] dark:text-[#A3A77A]">lock</span>
             <span>Anonymous &amp; Verified Patient Data</span>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="h-9 px-5 rounded-full text-xs font-bold bg-[#E2ECE6] dark:bg-[#18201C] text-[#19332A] dark:text-[#F4FAF7] hover:bg-[#D5E6E0] dark:hover:bg-[#22302A] transition-colors cursor-pointer flex items-center justify-center"
+            className="h-9 px-5 rounded-full text-xs font-bold bg-[#E2ECE6] dark:bg-[#30241A] text-[#19332A] dark:text-[#F3E9D8] hover:bg-[#D5E6E0] dark:hover:bg-[#443326] border border-transparent dark:border-[#51402E] transition-colors cursor-pointer flex items-center justify-center"
           >
             Close
           </button>

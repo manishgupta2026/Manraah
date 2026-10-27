@@ -35,32 +35,51 @@
   --dashboard-amber-wash: #FFF6EB;
   --dashboard-amber-border: #FFE1C2;
   --dashboard-pastel-peach: #F5C99B;
+
+  /* Warm Earth Tokens (Global System Reference) */
+  --warm-bg: #211A14;
+  --warm-navbar: #1B1510;
+  --warm-sidebar: #201811;
+  --warm-card: #30241A;
+  --warm-card-secondary: #3B2C20;
+  --warm-elevated: #443326;
+  --warm-olive: #A3A77A;
+  --warm-sage: #A7B69A;
+  --warm-cream: #F3E9D8;
+  --warm-beige: #C5B7A4;
+  --warm-taupe: #9F907E;
+  --warm-border: #51402E;
+  --warm-button: #858A60;
+  --warm-button-text: #211A14;
+  --warm-success: #91AD87;
+  --warm-amber: #D7AD70;
+  --warm-red: #C95D54;
 }
 
 .dark {
   color-scheme: dark;
   
-  /* Manraah Layered Dark Theme Tokens - Exact Specs */
-  --dashboard-bg: #0A0E0D;
-  --dashboard-navbar: #0E1412;
-  --dashboard-sidebar: #060908;
-  --dashboard-surface: #131916;
-  --dashboard-surface-secondary: #0E241E;
-  --dashboard-card: #131916;
-  --dashboard-card-elevated: #18201C;
-  --dashboard-card-hover: #1A2420;
-  --dashboard-primary: #006B56;
-  --dashboard-primary-hover: #005B48;
-  --dashboard-mint: #5FAF8A;
-  --dashboard-text-primary: #F4FAF7;
-  --dashboard-text-body: #D5E6E0;
-  --dashboard-text-secondary: #9DB9B0;
-  --dashboard-text-muted: #76968D;
-  --dashboard-text-caption: #88A99F;
-  --dashboard-border: #1E2824;
-  --dashboard-border-strong: #1C463C;
-  --dashboard-input-bg: #0C1210;
-  --dashboard-terracotta-text: #F38A57;
+  /* Warm Earth Dark Theme Tokens */
+  --dashboard-bg: #211A14;
+  --dashboard-navbar: #1B1510;
+  --dashboard-sidebar: #201811;
+  --dashboard-surface: #30241A;
+  --dashboard-surface-secondary: #3B2C20;
+  --dashboard-card: #30241A;
+  --dashboard-card-elevated: #443326;
+  --dashboard-card-hover: #3B2C20;
+  --dashboard-primary: #858A60;
+  --dashboard-primary-hover: #A3A77A;
+  --dashboard-mint: #A7B69A;
+  --dashboard-text-primary: #F3E9D8;
+  --dashboard-text-body: #C5B7A4;
+  --dashboard-text-secondary: #C5B7A4;
+  --dashboard-text-muted: #9F907E;
+  --dashboard-text-caption: #9F907E;
+  --dashboard-border: #51402E;
+  --dashboard-border-strong: #6B553E;
+  --dashboard-input-bg: #201811;
+  --dashboard-terracotta-text: #D7AD70;
 }
 
 body {
@@ -75,8 +94,8 @@ body {
 }
 
 .dark body {
-  background-color: #0A0E0D;
-  color: #F4FAF7;
+  background-color: #211A14;
+  color: #F3E9D8;
 }
 
 h1, h2, h3, h4, h5, h6 {

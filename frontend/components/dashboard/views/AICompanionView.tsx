@@ -133,22 +133,22 @@ I am opening our Crisis Support Desk for you right now so you can dial or reach 
   return (
     <div className="w-full min-w-0 flex flex-col gap-6">
       {/* 1. Companion Header Card */}
-      <div className="bg-white dark:bg-[#131916] rounded-3xl p-6 sm:p-7 border border-[#CBECE2] dark:border-[#1E2824] shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-colors">
+      <div className="bg-white dark:bg-[#30241A] rounded-3xl p-6 sm:p-7 border border-[#CBECE2] dark:border-[#51402E] shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-colors">
         <div className="flex items-center gap-3.5">
-          <div className="w-11 h-11 rounded-2xl bg-[#E6F4F0] dark:bg-[#18201C] text-[#006B56] dark:text-[#5FAF8A] flex items-center justify-center text-xl shadow-xs shrink-0 border border-transparent dark:border-[#22302A]">
+          <div className="w-11 h-11 rounded-2xl bg-[#E6F4F0] dark:bg-[#3B2C20] text-[#006B56] dark:text-[#A3A77A] flex items-center justify-center text-xl shadow-xs shrink-0 border border-transparent dark:border-[#51402E]">
             ✦
           </div>
           <div>
             <div className="flex items-center gap-2.5">
-              <h1 className="text-xl sm:text-2xl font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
+              <h1 className="text-xl sm:text-2xl font-heading font-black text-[#19332A] dark:text-[#F3E9D8]">
                 Manraah AI Companion
               </h1>
-              <span className="flex items-center gap-1.5 text-[10px] font-bold text-[#006B56] dark:text-[#5FAF8A] bg-[#E6F4F0] dark:bg-[rgba(95,175,138,0.15)] px-2.5 py-0.5 rounded-full border border-[#CBECE2] dark:border-[#22302A]">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#006B56] dark:bg-[#5FAF8A] animate-pulse" />
+              <span className="flex items-center gap-1.5 text-[10px] font-bold text-[#006B56] dark:text-[#A3A77A] bg-[#E6F4F0] dark:bg-[#3B2C20] px-2.5 py-0.5 rounded-full border border-[#CBECE2] dark:border-[#51402E]">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#006B56] dark:bg-[#A3A77A] animate-pulse" />
                 Here for you
               </span>
             </div>
-            <p className="text-xs text-[#6B857C] dark:text-[#9DB9B0] font-medium mt-1">
+            <p className="text-xs text-[#6B857C] dark:text-[#C5B7A4] font-medium mt-1">
               Calibrated for {userCategory.replace(/_/g, " ")} well-being • Confidential &amp; Safe
             </p>
           </div>
@@ -161,8 +161,8 @@ I am opening our Crisis Support Desk for you right now so you can dial or reach 
             onClick={() => setIsVoiceActive(!isVoiceActive)}
             className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
               isVoiceActive
-                ? "bg-[#006B56] dark:bg-[#005B48] text-white shadow-sm animate-pulse"
-                : "bg-[#F4F9F6] dark:bg-[#18201C] text-[#4F685F] dark:text-[#9DB9B0] hover:bg-[#E6F4F0] dark:hover:bg-[#22302A] border border-[#CBECE2] dark:border-[#22302A]"
+                ? "bg-[#006B56] dark:bg-[#858A60] text-white dark:text-[#211A14] shadow-sm animate-pulse"
+                : "bg-[#F4F9F6] dark:bg-[#3B2C20] text-[#4F685F] dark:text-[#C5B7A4] hover:bg-[#E6F4F0] dark:hover:bg-[#443326] border border-[#CBECE2] dark:border-[#51402E]"
             }`}
           >
             <span>🎙️</span>
@@ -183,7 +183,7 @@ I am opening our Crisis Support Desk for you right now so you can dial or reach 
                 ]);
               }
             }}
-            className="p-2 rounded-xl text-slate-400 hover:text-slate-600 dark:text-[#9DB9B0] dark:hover:text-[#F4FAF7] hover:bg-slate-100 dark:hover:bg-[#18201C] transition-colors cursor-pointer border border-[#CBECE2] dark:border-[#22302A]"
+            className="p-2 rounded-xl text-slate-400 hover:text-slate-600 dark:text-[#C5B7A4] dark:hover:text-[#F3E9D8] hover:bg-slate-100 dark:hover:bg-[#3B2C20] transition-colors cursor-pointer border border-[#CBECE2] dark:border-[#51402E]"
             title="Clear conversation"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -194,7 +194,7 @@ I am opening our Crisis Support Desk for you right now so you can dial or reach 
       </div>
 
       {/* 2. Main Chat Conversation Box */}
-      <div className="bg-white dark:bg-[#131916] rounded-3xl p-6 border border-[#CBECE2] dark:border-[#1E2824] shadow-2xs flex flex-col justify-between space-y-5 transition-colors min-h-[560px] h-[calc(100vh-270px)]">
+      <div className="bg-white dark:bg-[#30241A] rounded-3xl p-6 border border-[#CBECE2] dark:border-[#51402E] shadow-2xs flex flex-col justify-between space-y-5 transition-colors min-h-[560px] h-[calc(100vh-270px)]">
         {/* Messages Stream Container */}
         <div className="flex-1 min-h-[340px] overflow-y-auto space-y-4 pr-2">
           {messages.map((msg) => (
@@ -208,7 +208,7 @@ I am opening our Crisis Support Desk for you right now so you can dial or reach 
               {msg.sender === "user" ? (
                 <UserAvatar user={user} sizeClass="w-8 h-8 text-xs" />
               ) : (
-                <div className="w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs shrink-0 shadow-2xs bg-[#E6F4F0] dark:bg-[#18201C] text-[#006B56] dark:text-[#5FAF8A] border border-[#CBECE2] dark:border-[#22302A]">
+                <div className="w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs shrink-0 shadow-2xs bg-[#E6F4F0] dark:bg-[#3B2C20] text-[#006B56] dark:text-[#A3A77A] border border-[#CBECE2] dark:border-[#51402E]">
                   ✦
                 </div>
               )}
@@ -217,16 +217,16 @@ I am opening our Crisis Support Desk for you right now so you can dial or reach 
               <div
                 className={`max-w-[85%] sm:max-w-[75%] p-4 rounded-2xl text-xs sm:text-[13px] leading-relaxed shadow-2xs space-y-1.5 ${
                   msg.sender === "user"
-                    ? "bg-[#006B56] text-white rounded-tr-xs"
-                    : "bg-[#F4FAF7] dark:bg-[#18201C] text-[#19332A] dark:text-[#F4FAF7] border border-[#CBECE2] dark:border-[#22302A] rounded-tl-xs"
+                    ? "bg-[#006B56] dark:bg-[#858A60] text-white dark:text-[#211A14] font-medium rounded-tr-xs"
+                    : "bg-[#F4FAF7] dark:bg-[#3B2C20] text-[#19332A] dark:text-[#F3E9D8] border border-[#CBECE2] dark:border-[#51402E] rounded-tl-xs"
                 }`}
               >
                 <p className="whitespace-pre-wrap" suppressHydrationWarning>{msg.text}</p>
                 <p
                   className={`text-[9px] font-medium text-right ${
                     msg.sender === "user"
-                      ? "text-white/70 dark:text-white/80"
-                      : "text-[#789389] dark:text-[#76968D]"
+                      ? "text-white/70 dark:text-[#211A14]/75"
+                      : "text-[#789389] dark:text-[#9F907E]"
                   }`}
                 >
                   {msg.time}
@@ -237,13 +237,13 @@ I am opening our Crisis Support Desk for you right now so you can dial or reach 
 
           {isAiTyping && (
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-[#E6F4F0] dark:bg-[#18201C] text-[#006B56] dark:text-[#5FAF8A] flex items-center justify-center font-bold text-xs border border-transparent dark:border-[#22302A]">
+              <div className="w-8 h-8 rounded-full bg-[#E6F4F0] dark:bg-[#3B2C20] text-[#006B56] dark:text-[#A3A77A] flex items-center justify-center font-bold text-xs border border-transparent dark:border-[#51402E]">
                 ✦
               </div>
-              <div className="p-3.5 rounded-2xl bg-[#F4FAF7] dark:bg-[#18201C] border border-[#CBECE2] dark:border-[#22302A] text-xs text-[#789389] dark:text-[#76968D] flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-[#006B56] dark:bg-[#5FAF8A] animate-bounce" />
-                <span className="w-2 h-2 rounded-full bg-[#006B56] dark:bg-[#5FAF8A] animate-bounce delay-150" />
-                <span className="w-2 h-2 rounded-full bg-[#006B56] dark:bg-[#5FAF8A] animate-bounce delay-300" />
+              <div className="p-3.5 rounded-2xl bg-[#F4FAF7] dark:bg-[#3B2C20] border border-[#CBECE2] dark:border-[#51402E] text-xs text-[#789389] dark:text-[#9F907E] flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-[#006B56] dark:bg-[#A3A77A] animate-bounce" />
+                <span className="w-2 h-2 rounded-full bg-[#006B56] dark:bg-[#A3A77A] animate-bounce delay-150" />
+                <span className="w-2 h-2 rounded-full bg-[#006B56] dark:bg-[#A3A77A] animate-bounce delay-300" />
               </div>
             </div>
           )}
@@ -251,14 +251,14 @@ I am opening our Crisis Support Desk for you right now so you can dial or reach 
         </div>
 
         {/* Bottom Section: Suggested Prompts + Input Bar */}
-        <div className="space-y-3 pt-2 border-t border-[#CBECE2] dark:border-[#1E2824]">
+        <div className="space-y-3 pt-2 border-t border-[#CBECE2] dark:border-[#51402E]">
           {/* Suggested Prompt Chips */}
           <div className="flex items-center gap-1.5 overflow-x-auto pb-1 max-w-full">
             {SUGGESTED_PROMPTS.map((prompt) => (
               <button
                 key={prompt}
                 onClick={() => handleSendMessage(prompt)}
-                className="px-3 py-1 rounded-full bg-[#F4F9F6] dark:bg-[#18201C] hover:bg-[#E6F4F0] dark:hover:bg-[#22302A] text-[#4F685F] dark:text-[#9DB9B0] hover:text-[#006B56] dark:hover:text-[#5FAF8A] text-[10.5px] font-bold border border-[#CBECE2] dark:border-[#22302A] whitespace-nowrap transition-colors cursor-pointer"
+                className="px-3 py-1 rounded-full bg-[#F4F9F6] dark:bg-[#3B2C20] hover:bg-[#E6F4F0] dark:hover:bg-[#443326] text-[#4F685F] dark:text-[#C5B7A4] hover:text-[#006B56] dark:hover:text-[#F3E9D8] text-[10.5px] font-bold border border-[#CBECE2] dark:border-[#51402E] whitespace-nowrap transition-colors cursor-pointer"
               >
                 “{prompt}”
               </button>
@@ -273,12 +273,12 @@ I am opening our Crisis Support Desk for you right now so you can dial or reach 
               onChange={(e) => setInputMessage(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder="Share what's on your mind... (Press Enter to send)"
-              className="flex-1 py-3 px-4.5 rounded-2xl bg-[#F8FCFA] dark:bg-[#18201C] border border-[#CBECE2] dark:border-[#22302A] text-xs sm:text-sm text-[#19332A] dark:text-[#F4FAF7] focus:outline-none focus:ring-2 focus:ring-[#006B56]/40 dark:focus:ring-[#5FAF8A]/30 placeholder:text-[#8EAAA1] dark:placeholder:text-[#789990]"
+              className="flex-1 py-3 px-4.5 rounded-2xl bg-[#F8FCFA] dark:bg-[#201811] border border-[#CBECE2] dark:border-[#51402E] text-xs sm:text-sm text-[#19332A] dark:text-[#F3E9D8] focus:outline-none focus:ring-2 focus:ring-[#006B56]/40 dark:focus:ring-[#858A60]/40 placeholder:text-[#8EAAA1] dark:placeholder:text-[#9F907E]"
             />
             <button
               onClick={() => handleSendMessage()}
               disabled={!inputMessage.trim()}
-              className="py-3 px-5 rounded-2xl bg-[#006B56] hover:bg-[#005B48] disabled:bg-slate-200 dark:bg-[#006B56] dark:hover:bg-[#005B48] dark:disabled:bg-[#18201C] dark:disabled:text-[#76968D] text-white text-xs font-bold shadow-sm transition-all flex items-center gap-1.5 cursor-pointer disabled:cursor-not-allowed shrink-0"
+              className="py-3 px-5 rounded-2xl bg-[#006B56] hover:bg-[#005B48] disabled:bg-slate-200 dark:bg-[#858A60] dark:hover:bg-[#6E734E] dark:disabled:bg-[#3B2C20] dark:disabled:text-[#9F907E] text-white dark:text-[#211A14] text-xs font-bold shadow-sm transition-all flex items-center gap-1.5 cursor-pointer disabled:cursor-not-allowed shrink-0"
             >
               <span>Send</span>
               <span>➤</span>

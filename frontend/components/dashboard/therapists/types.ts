@@ -25,36 +25,36 @@ export interface UnifiedTherapist {
 
 const TINT_PALETTES = [
   {
-    bgTint: "bg-[#F0F9F5] dark:bg-[#18201C]",
-    borderClass: "border border-[#D6EFE2] dark:border-[#22302A]",
-    badgeClass: "bg-[#DCF2E7] text-[#006C56] dark:bg-[rgba(95,175,138,0.15)] dark:text-[#5FAF8A]",
+    bgTint: "bg-[#F0F9F5] dark:bg-[#2E281F]",
+    borderClass: "border border-[#D6EFE2] dark:border-[#51402E]",
+    badgeClass: "bg-[#DCF2E7] text-[#006C56] dark:bg-[#433B2B] dark:text-[#A7B69A]",
     defaultBadge: "Top Rated",
   },
   {
-    bgTint: "bg-[#F0F6FD] dark:bg-[#18201C]",
-    borderClass: "border border-[#D4E5F7] dark:border-[#22302A]",
-    badgeClass: "bg-[#E1EDFA] text-[#1A73E8] dark:bg-[rgba(80,150,255,0.15)] dark:text-[#8EBBFF]",
+    bgTint: "bg-[#F0F6FD] dark:bg-[#2A2621]",
+    borderClass: "border border-[#D4E5F7] dark:border-[#51402E]",
+    badgeClass: "bg-[#E1EDFA] text-[#1A73E8] dark:bg-[#3D3A33] dark:text-[#A7B69A]",
     defaultBadge: "Highly Rated",
   },
   {
-    bgTint: "bg-[#FAF2F8] dark:bg-[#18201C]",
-    borderClass: "border border-[#F2D7EE] dark:border-[#22302A]",
-    badgeClass: "bg-[#F5E6F5] text-[#8430CE] dark:bg-[rgba(230,100,180,0.15)] dark:text-[#F2A6D3]",
+    bgTint: "bg-[#FAF2F8] dark:bg-[#322521]",
+    borderClass: "border border-[#F2D7EE] dark:border-[#51402E]",
+    badgeClass: "bg-[#F5E6F5] text-[#8430CE] dark:bg-[#4A322C] dark:text-[#D4A59A]",
     defaultBadge: "Popular",
   },
   {
-    bgTint: "bg-[#FFF9F2] dark:bg-[#18201C]",
-    borderClass: "border border-[#FCE6D2] dark:border-[#22302A]",
-    badgeClass: "bg-[#FDF0DF] text-[#D97706] dark:bg-[rgba(245,160,60,0.15)] dark:text-[#FFC477]",
+    bgTint: "bg-[#FFF9F2] dark:bg-[#35271D]",
+    borderClass: "border border-[#FCE6D2] dark:border-[#51402E]",
+    badgeClass: "bg-[#FDF0DF] text-[#D97706] dark:bg-[#4B3625] dark:text-[#D7AD70]",
     defaultBadge: "Specialist",
   },
 ];
 
 const TAG_COLOR_PALETTES = [
-  { lightBg: "bg-[#E1F3EA] text-[#0A6349]", darkBg: "dark:bg-[rgba(95,175,138,0.15)] dark:text-[#5FAF8A] dark:border dark:border-[rgba(95,175,138,0.25)]" },
-  { lightBg: "bg-[#E5EFFB] text-[#185FA5]", darkBg: "dark:bg-[rgba(80,150,255,0.14)] dark:text-[#8EBBFF] dark:border dark:border-[rgba(80,150,255,0.25)]" },
-  { lightBg: "bg-[#F2E8FA] text-[#712BB8]", darkBg: "dark:bg-[rgba(230,100,180,0.14)] dark:text-[#F2A6D3] dark:border dark:border-[rgba(230,100,180,0.25)]" },
-  { lightBg: "bg-[#FEF3C7] text-[#92400E]", darkBg: "dark:bg-[rgba(245,160,60,0.14)] dark:text-[#FFC477] dark:border dark:border-[rgba(245,160,60,0.25)]" },
+  { lightBg: "bg-[#E1F3EA] text-[#0A6349]", darkBg: "dark:bg-[#433B2B] dark:text-[#A7B69A] dark:border dark:border-[#51402E]" },
+  { lightBg: "bg-[#E5EFFB] text-[#185FA5]", darkBg: "dark:bg-[#3D3A33] dark:text-[#A7B69A] dark:border dark:border-[#51402E]" },
+  { lightBg: "bg-[#F2E8FA] text-[#712BB8]", darkBg: "dark:bg-[#4A322C] dark:text-[#D4A59A] dark:border dark:border-[#51402E]" },
+  { lightBg: "bg-[#FEF3C7] text-[#92400E]", darkBg: "dark:bg-[#4B3625] dark:text-[#D7AD70] dark:border dark:border-[#51402E]" },
 ];
 
 export function normalizeTherapist(raw: any, index: number = 0): UnifiedTherapist {

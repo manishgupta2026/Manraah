@@ -328,16 +328,16 @@ export default function AppointmentsView() {
   return (
     <div className="w-full min-w-0 flex flex-col gap-5">
       {/* 1. Header Banner & Filter Tabs */}
-      <div className="bg-white dark:bg-[#131916] rounded-3xl p-6 sm:p-7 border border-[#CBECE2] dark:border-[#1E2824] shadow-2xs space-y-4 transition-colors">
+      <div className="bg-white dark:bg-[#30241A] rounded-3xl p-6 sm:p-7 border border-[#CBECE2] dark:border-[#51402E] shadow-2xs space-y-4 transition-colors">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <span className="text-[10px] font-black tracking-widest text-[#006B56] dark:text-[#5FAF8A]">
+            <span className="text-[10px] font-black tracking-widest text-[#006B56] dark:text-[#A3A77A]">
               Confidential sessions
             </span>
-            <h1 className="text-2xl font-heading font-black text-[#19332A] dark:text-[#F4FAF7] leading-tight mt-0.5">
+            <h1 className="text-2xl font-heading font-black text-[#19332A] dark:text-[#F3E9D8] leading-tight mt-0.5">
               Appointments
             </h1>
-            <p className="text-xs text-[#6B857C] dark:text-[#9DB9B0] font-medium mt-1">
+            <p className="text-xs text-[#6B857C] dark:text-[#C5B7A4] font-medium mt-1">
               Manage your upcoming and past wellness sessions.
             </p>
           </div>
@@ -348,7 +348,7 @@ export default function AppointmentsView() {
             <button
               type="button"
               onClick={handleScrollToBooking}
-              className="px-3.5 sm:px-4 py-2 rounded-xl bg-[#006B56] hover:bg-[#005B48] text-white text-xs font-heading font-bold shadow-xs hover:shadow-sm transition-all flex items-center gap-1.5 cursor-pointer shrink-0"
+              className="px-3.5 sm:px-4 py-2 rounded-xl bg-[#006B56] hover:bg-[#005B48] text-white dark:bg-[#858A60] dark:hover:bg-[#6E734E] dark:text-[#211A14] text-xs font-heading font-bold shadow-xs hover:shadow-sm transition-all flex items-center gap-1.5 cursor-pointer shrink-0"
             >
               <svg className="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -357,15 +357,15 @@ export default function AppointmentsView() {
             </button>
 
             {/* Appointment Filter Controls: Upcoming | Past */}
-            <div className="flex items-center gap-1 bg-[#F4F9F6] dark:bg-[#18201C] p-1 rounded-2xl border border-[#CBECE2] dark:border-[#22302A] shrink-0">
+            <div className="flex items-center gap-1 bg-[#F4F9F6] dark:bg-[#201811] p-1 rounded-2xl border border-[#CBECE2] dark:border-[#51402E] shrink-0">
               <button
                 type="button"
                 onClick={() => setActiveTab((prev) => (prev === "upcoming" ? null : "upcoming"))}
                 aria-pressed={activeTab === "upcoming"}
                 className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                   activeTab === "upcoming"
-                    ? "bg-[#006B56] text-white dark:bg-[#006B56] dark:text-white shadow-xs"
-                    : "text-[#6B857C] dark:text-[#9DB9B0] hover:text-[#006B56] dark:hover:text-[#5FAF8A]"
+                    ? "bg-[#006B56] text-white dark:bg-[#858A60] dark:text-[#211A14] shadow-xs"
+                    : "text-[#6B857C] dark:text-[#9F907E] hover:text-[#006B56] dark:hover:text-[#F3E9D8]"
                 }`}
               >
                 Upcoming{upcomingList.length > 0 ? ` (${upcomingList.length})` : ""}
@@ -376,8 +376,8 @@ export default function AppointmentsView() {
                 aria-pressed={activeTab === "past"}
                 className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                   activeTab === "past"
-                    ? "bg-[#006B56] text-white dark:bg-[#006B56] dark:text-white shadow-xs"
-                    : "text-[#6B857C] dark:text-[#9DB9B0] hover:text-[#006B56] dark:hover:text-[#5FAF8A]"
+                    ? "bg-[#006B56] text-white dark:bg-[#858A60] dark:text-[#211A14] shadow-xs"
+                    : "text-[#6B857C] dark:text-[#9F907E] hover:text-[#006B56] dark:hover:text-[#F3E9D8]"
                 }`}
               >
                 Past{pastList.length > 0 ? ` (${pastList.length})` : ""}
@@ -394,16 +394,16 @@ export default function AppointmentsView() {
             onClick={() => setActiveTab((prev) => (prev === "upcoming" ? null : "upcoming"))}
             className={`p-3.5 rounded-2xl text-left border transition-all cursor-pointer flex items-center gap-3 ${
               activeTab === "upcoming"
-                ? "bg-[#E6F4F0] dark:bg-[#112F28] border-[#006B56] dark:border-[#1C463C] ring-2 ring-[#006B56]/20"
-                : "bg-[#EAF6F2] dark:bg-[#18201C] border-[#CBECE2] dark:border-[#22302A] hover:border-[#006B56]/40 hover:shadow-xs"
+                ? "bg-[#E6F4F0] dark:bg-[#3B2C20] border-[#006B56] dark:border-[#A3A77A] ring-2 ring-[#006B56]/20 dark:ring-[#A3A77A]/20"
+                : "bg-[#EAF6F2] dark:bg-[#201811] border-[#CBECE2] dark:border-[#51402E] hover:border-[#006B56]/40 dark:hover:border-[#A3A77A]/40 hover:shadow-xs"
             }`}
           >
-            <div className="w-8 h-8 rounded-xl bg-[#006B56] text-white flex items-center justify-center font-bold text-xs shrink-0">
+            <div className="w-8 h-8 rounded-xl bg-[#006B56] dark:bg-[#858A60] text-white dark:text-[#211A14] flex items-center justify-center font-bold text-xs shrink-0">
               {upcomingList.length}
             </div>
             <div className="min-w-0">
-              <p className="text-[10px] text-[#789389] dark:text-[#9DB9B0] font-semibold">Upcoming Sessions</p>
-              <p className="text-xs font-black text-[#19332A] dark:text-[#F4FAF7] truncate">
+              <p className="text-[10px] text-[#789389] dark:text-[#9F907E] font-semibold">Upcoming Sessions</p>
+              <p className="text-xs font-black text-[#19332A] dark:text-[#F3E9D8] truncate">
                 {upcomingList.length > 0
                   ? `${upcomingList.length} ${upcomingList.length === 1 ? "Session" : "Sessions"}`
                   : "None Scheduled"}
@@ -417,16 +417,16 @@ export default function AppointmentsView() {
             onClick={() => setActiveTab((prev) => (prev === "past" ? null : "past"))}
             className={`p-3.5 rounded-2xl text-left border transition-all cursor-pointer flex items-center gap-3 ${
               activeTab === "past"
-                ? "bg-[#E7F3FA] dark:bg-[#18201C] border-[#1C92D2] ring-2 ring-[#1C92D2]/20"
-                : "bg-[#F1F7FB] dark:bg-[#18201C] border-[#E2ECE6] dark:border-[#22302A] hover:border-[#1C92D2]/40 hover:shadow-xs"
+                ? "bg-[#E7F3FA] dark:bg-[#3B2C20] border-[#1C92D2] dark:border-[#D7AD70] ring-2 ring-[#1C92D2]/20 dark:ring-[#D7AD70]/20"
+                : "bg-[#F1F7FB] dark:bg-[#201811] border-[#E2ECE6] dark:border-[#51402E] hover:border-[#1C92D2]/40 dark:hover:border-[#D7AD70]/40 hover:shadow-xs"
             }`}
           >
-            <div className="w-8 h-8 rounded-xl bg-[#1C92D2] text-white flex items-center justify-center font-bold text-xs shrink-0">
+            <div className="w-8 h-8 rounded-xl bg-[#1C92D2] dark:bg-[#3B2C20] text-white dark:text-[#D7AD70] dark:border dark:border-[#51402E] flex items-center justify-center font-bold text-xs shrink-0">
               {pastList.length}
             </div>
             <div className="min-w-0">
-              <p className="text-[10px] text-[#789389] dark:text-[#9DB9B0] font-semibold">Past Sessions</p>
-              <p className="text-xs font-black text-[#19332A] dark:text-[#F4FAF7] truncate">
+              <p className="text-[10px] text-[#789389] dark:text-[#9F907E] font-semibold">Past Sessions</p>
+              <p className="text-xs font-black text-[#19332A] dark:text-[#F3E9D8] truncate">
                 {pastList.length > 0
                   ? `${pastList.length} ${pastList.length === 1 ? "Session" : "Sessions"}`
                   : "0 Sessions"}
@@ -435,13 +435,13 @@ export default function AppointmentsView() {
           </button>
 
           {/* Practitioner Summary Card */}
-          <div className="p-3.5 rounded-2xl bg-[#FAF3F8] dark:bg-[#18201C] border border-[#E2ECE6] dark:border-[#22302A] flex items-center gap-3">
-            <div className="w-8 h-8 rounded-xl bg-[#8430CE] text-white flex items-center justify-center font-bold text-xs shrink-0">
+          <div className="p-3.5 rounded-2xl bg-[#FAF3F8] dark:bg-[#201811] border border-[#E2ECE6] dark:border-[#51402E] flex items-center gap-3">
+            <div className="w-8 h-8 rounded-xl bg-[#8430CE] dark:bg-[#3B2C20] text-white dark:text-[#A3A77A] dark:border dark:border-[#51402E] flex items-center justify-center font-bold text-xs shrink-0">
               ✦
             </div>
             <div className="min-w-0">
-              <p className="text-[10px] text-[#789389] dark:text-[#9DB9B0] font-semibold">Your Practitioner</p>
-              <p className="text-xs font-black text-[#19332A] dark:text-[#F4FAF7] truncate max-w-[140px]">
+              <p className="text-[10px] text-[#789389] dark:text-[#9F907E] font-semibold">Your Practitioner</p>
+              <p className="text-xs font-black text-[#19332A] dark:text-[#F3E9D8] truncate max-w-[140px]">
                 {upcomingList[0]?.therapistName || pastList[0]?.therapistName || "Verified Practitioner"}
               </p>
             </div>
@@ -451,33 +451,33 @@ export default function AppointmentsView() {
 
       {/* 2. Upcoming Appointment Highlight Card (Shown ONLY on Upcoming tab) */}
       {activeTab === "upcoming" && (
-        <div className="bg-white dark:bg-[#131916] rounded-3xl p-6 border border-[#E2ECE6] dark:border-[#1E2824] shadow-2xs space-y-4 transition-colors">
+        <div className="bg-white dark:bg-[#30241A] rounded-3xl p-6 border border-[#E2ECE6] dark:border-[#51402E] shadow-2xs space-y-4 transition-colors">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-2xl bg-[#E6F4F0] dark:bg-[rgba(95,175,138,0.15)] text-[#006B56] dark:text-[#5FAF8A] flex items-center justify-center">
+              <div className="w-8 h-8 rounded-2xl bg-[#E6F4F0] dark:bg-[#3B2C20] text-[#006B56] dark:text-[#A3A77A] flex items-center justify-center">
                 <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
               </div>
               <div>
-                <h2 className="text-sm font-heading font-black text-[#19332A] dark:text-[#F4FAF7] leading-tight">
+                <h2 className="text-sm font-heading font-black text-[#19332A] dark:text-[#F3E9D8] leading-tight">
                   Upcoming {upcomingList.length === 1 ? "Appointment" : "Appointments"}
                 </h2>
-                <p className="text-[10px] text-[#789389] dark:text-[#9DB9B0] font-medium leading-tight mt-0.5">
+                <p className="text-[10px] text-[#789389] dark:text-[#C5B7A4] font-medium leading-tight mt-0.5">
                   Your scheduled confidential video sessions
                 </p>
               </div>
             </div>
 
             <div className="flex items-center gap-2">
-              <span className="px-3 py-1 rounded-full bg-[#E6F4EA] dark:bg-[rgba(95,175,138,0.15)] text-[#137333] dark:text-[#5FAF8A] text-[10px] font-extrabold tracking-wide border border-[#CEEAD6] dark:border-[#1C463C]">
+              <span className="px-3 py-1 rounded-full bg-[#E6F4EA] dark:bg-[#3B2C20] text-[#137333] dark:text-[#91AD87] text-[10px] font-extrabold tracking-wide border border-[#CEEAD6] dark:border-[#51402E]">
                 {upcomingList.length > 0 ? `${upcomingList.length} Scheduled` : "No Appointments"}
               </span>
               <button
                 type="button"
                 onClick={() => setActiveTab(null)}
                 aria-label="Close upcoming view"
-                className="w-7 h-7 rounded-xl bg-[#F4FAF7] dark:bg-[#18201C] text-[#789389] hover:text-[#19332A] dark:hover:text-[#F4FAF7] flex items-center justify-center transition-colors cursor-pointer text-xs"
+                className="w-7 h-7 rounded-xl bg-[#F4FAF7] dark:bg-[#201811] text-[#789389] hover:text-[#19332A] dark:hover:text-[#F3E9D8] flex items-center justify-center transition-colors cursor-pointer text-xs"
               >
                 ✕
               </button>
@@ -485,8 +485,8 @@ export default function AppointmentsView() {
           </div>
 
           {isInitialLoading && !hasLoadedOnceRef.current ? (
-            <div className="p-8 text-center text-xs text-[#789389] dark:text-[#9DB9B0]">
-              <div className="w-6 h-6 border-2 border-[#006B56] dark:border-[#5FAF8A] border-t-transparent rounded-full animate-spin mx-auto mb-2" />
+            <div className="p-8 text-center text-xs text-[#789389] dark:text-[#C5B7A4]">
+              <div className="w-6 h-6 border-2 border-[#006B56] dark:border-[#A3A77A] border-t-transparent rounded-full animate-spin mx-auto mb-2" />
               Loading upcoming appointments...
             </div>
           ) : upcomingList.length > 0 ? (
@@ -497,10 +497,10 @@ export default function AppointmentsView() {
                   <div
                     key={stableKey}
                     id={`upcoming-appointment-card-${apt.id || index}`}
-                    className="p-5 rounded-2xl bg-white dark:bg-[#18201C] border border-[#CBECE2] dark:border-[#22302A] flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-2xs"
+                    className="p-5 rounded-2xl bg-white dark:bg-[#3B2C20] border border-[#CBECE2] dark:border-[#51402E] flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-2xs"
                   >
                     <div className="flex items-center gap-4 min-w-0">
-                      <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden border-2 border-[#D0EDE4] dark:border-[#22302A] shadow-xs shrink-0 bg-slate-100 dark:bg-[#131916]">
+                      <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden border-2 border-[#D0EDE4] dark:border-[#51402E] shadow-xs shrink-0 bg-slate-100 dark:bg-[#201811]">
                         <img
                           src={apt.therapistImage || "/images/therapist_sarah.jpg"}
                           alt={apt.therapistName || "Therapist"}
@@ -515,34 +515,30 @@ export default function AppointmentsView() {
                       </div>
                       <div className="min-w-0">
                         <div className="flex items-center gap-2 flex-wrap">
-                          <h3 className="text-sm sm:text-base font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
+                          <h3 className="text-sm sm:text-base font-heading font-black text-[#19332A] dark:text-[#F3E9D8]">
                             {apt.therapistName}
                           </h3>
-                          <span className="text-[9px] px-2 py-0.5 rounded-full bg-[#E6F4F0] dark:bg-[rgba(95,175,138,0.15)] text-[#006B56] dark:text-[#5FAF8A] font-bold capitalize border border-[#CBECE2] dark:border-[#1C463C]">
+                          <span className="text-[9px] px-2 py-0.5 rounded-full bg-[#E6F4F0] dark:bg-[#30241A] text-[#006B56] dark:text-[#91AD87] font-bold capitalize border border-[#CBECE2] dark:border-[#51402E]">
                             {apt.status || "Confirmed"}
                           </span>
                         </div>
-                        <p className="text-xs text-[#6B857C] dark:text-[#9DB9B0] font-medium mt-0.5">
+                        <p className="text-xs text-[#6B857C] dark:text-[#C5B7A4] font-medium mt-0.5">
                           {apt.therapistRole || "Clinical Psychologist"} • {apt.durationMinutes || 45} min {apt.sessionType || "1-on-1 Video Session"}
                         </p>
                         {apt.focusArea && (
                           <div className="mt-1">
                             <span
-                              className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full inline-flex items-center gap-1 ${
-                                apt.focusArea.toLowerCase().includes("kids") || apt.focusArea.toLowerCase().includes("play")
-                                  ? "bg-[#FFF6EB] border border-[#FFE1C2] text-[#E37A47] dark:bg-[#112F28] dark:border-[#FFE1C2]/30 dark:text-[#F38A57]"
-                                  : "bg-[#E6F4F0] dark:bg-[#112F28] text-[#006B56] dark:text-[#5FAF8A] border border-[#CBECE2] dark:border-[#1C463C]"
-                              }`}
+                              className="text-[10px] font-bold px-2.5 py-0.5 rounded-full inline-flex items-center gap-1 bg-[#FFF6EB] border border-[#FFE1C2] text-[#E37A47] dark:bg-[#30241A] dark:border-[#51402E] dark:text-[#D7AD70]"
                             >
                               Focus: {apt.focusArea}
                             </span>
                           </div>
                         )}
-                        <div className="flex flex-wrap items-center gap-3 mt-1.5 text-xs text-[#19332A] dark:text-[#F4FAF7] font-bold">
-                          <span className="flex items-center gap-1 text-[#006B56] dark:text-[#5FAF8A]">
+                        <div className="flex flex-wrap items-center gap-3 mt-1.5 text-xs text-[#19332A] dark:text-[#F3E9D8] font-bold">
+                          <span className="flex items-center gap-1 text-[#006B56] dark:text-[#A3A77A]">
                             📅 {formatAppointmentDate(apt.appointmentDate)}
                           </span>
-                          <span className="flex items-center gap-1 text-[#006B56] dark:text-[#5FAF8A]">
+                          <span className="flex items-center gap-1 text-[#006B56] dark:text-[#A3A77A]">
                             ⏰ {formatAppointmentTime(apt.appointmentDate)}
                           </span>
                         </div>
@@ -555,7 +551,7 @@ export default function AppointmentsView() {
                         href={apt.meetingLink || "#"}
                         target="_blank"
                         rel="noreferrer"
-                        className="py-2.5 px-4 rounded-xl bg-[#006B56] hover:bg-[#005B48] text-white text-xs font-bold shadow-sm transition-all flex items-center gap-1.5 cursor-pointer"
+                        className="py-2.5 px-4 rounded-xl bg-[#006B56] hover:bg-[#005B48] text-white dark:bg-[#858A60] dark:hover:bg-[#6E734E] dark:text-[#211A14] text-xs font-bold shadow-sm transition-all flex items-center gap-1.5 cursor-pointer"
                       >
                         <span>📹</span>
                         <span>Join Session</span>
@@ -563,14 +559,14 @@ export default function AppointmentsView() {
                       <button
                         type="button"
                         onClick={() => alert("Reschedule requested. Our care coordinator will contact you shortly.")}
-                        className="py-2.5 px-3.5 rounded-xl bg-white dark:bg-[#131916] hover:bg-[#EAF6F2] dark:hover:bg-[#18201C] text-[#19332A] dark:text-[#F4FAF7] text-xs font-bold border border-[#CBECE2] dark:border-[#22302A] transition-all cursor-pointer"
+                        className="py-2.5 px-3.5 rounded-xl bg-white dark:bg-[#30241A] hover:bg-[#EAF6F2] dark:hover:bg-[#443326] text-[#19332A] dark:text-[#F3E9D8] text-xs font-bold border border-[#CBECE2] dark:border-[#51402E] transition-all cursor-pointer"
                       >
                         Reschedule
                       </button>
                       <button
                         type="button"
                         onClick={() => handleCancelAppointment(apt.id)}
-                        className="py-2.5 px-3.5 rounded-xl bg-white dark:bg-[#131916] hover:bg-rose-50 dark:hover:bg-rose-950/30 text-rose-600 dark:text-rose-400 text-xs font-bold border border-[#CBECE2] dark:border-[#22302A] transition-all cursor-pointer"
+                        className="py-2.5 px-3.5 rounded-xl bg-white dark:bg-[#30241A] hover:bg-rose-50 dark:hover:bg-[#443326] text-rose-600 dark:text-[#C95D54] text-xs font-bold border border-[#CBECE2] dark:border-[#51402E] transition-all cursor-pointer"
                       >
                         Cancel
                       </button>
@@ -580,11 +576,11 @@ export default function AppointmentsView() {
               })}
             </div>
           ) : (
-            <div className="p-8 rounded-2xl bg-[#F8FCFA] dark:bg-[#18201C] border border-[#E2ECE6] dark:border-[#22302A] text-center space-y-2">
-              <p className="text-sm font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
+            <div className="p-8 rounded-2xl bg-[#F8FCFA] dark:bg-[#3B2C20] border border-[#E2ECE6] dark:border-[#51402E] text-center space-y-2">
+              <p className="text-sm font-heading font-black text-[#19332A] dark:text-[#F3E9D8]">
                 No upcoming appointments
               </p>
-              <p className="text-xs text-[#789389] dark:text-[#9DB9B0] max-w-sm mx-auto">
+              <p className="text-xs text-[#789389] dark:text-[#C5B7A4] max-w-sm mx-auto">
                 Explore our recommended therapists below and book a 1-on-1 confidential session whenever you are ready.
               </p>
             </div>
@@ -594,33 +590,33 @@ export default function AppointmentsView() {
 
       {/* 3. Past Appointments (Shown ONLY on Past tab) */}
       {activeTab === "past" && (
-        <div className="bg-white dark:bg-[#131916] rounded-3xl p-6 border border-[#E2ECE6] dark:border-[#1E2824] shadow-2xs space-y-4 transition-colors">
+        <div className="bg-white dark:bg-[#30241A] rounded-3xl p-6 border border-[#E2ECE6] dark:border-[#51402E] shadow-2xs space-y-4 transition-colors">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-2xl bg-[#E6F4F0] dark:bg-[rgba(95,175,138,0.15)] text-[#006B56] dark:text-[#5FAF8A] flex items-center justify-center">
+              <div className="w-8 h-8 rounded-2xl bg-[#E6F4F0] dark:bg-[#3B2C20] text-[#006B56] dark:text-[#A3A77A] flex items-center justify-center">
                 <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
               <div>
-                <h2 className="text-sm font-heading font-black text-[#19332A] dark:text-[#F4FAF7] leading-tight">
+                <h2 className="text-sm font-heading font-black text-[#19332A] dark:text-[#F3E9D8] leading-tight">
                   Past Appointments
                 </h2>
-                <p className="text-[10px] text-[#789389] dark:text-[#9DB9B0] font-medium leading-tight mt-0.5">
+                <p className="text-[10px] text-[#789389] dark:text-[#C5B7A4] font-medium leading-tight mt-0.5">
                   History of completed and previous wellness consultations
                 </p>
               </div>
             </div>
 
             <div className="flex items-center gap-2">
-              <span className="px-3 py-1 rounded-full bg-[#EAF2F8] dark:bg-[rgba(28,146,210,0.15)] text-[#1C92D2] text-[10px] font-extrabold tracking-wide border border-[#D0E4F3] dark:border-[rgba(28,146,210,0.30)]">
+              <span className="px-3 py-1 rounded-full bg-[#EAF2F8] dark:bg-[#3B2C20] text-[#1C92D2] dark:text-[#D7AD70] text-[10px] font-extrabold tracking-wide border border-[#D0E4F3] dark:border-[#51402E]">
                 {pastList.length > 0 ? `${pastList.length} Sessions` : "0 Sessions"}
               </span>
               <button
                 type="button"
                 onClick={() => setActiveTab(null)}
                 aria-label="Close past view"
-                className="w-7 h-7 rounded-xl bg-[#F4FAF7] dark:bg-[#18201C] text-[#789389] hover:text-[#19332A] dark:hover:text-[#F4FAF7] flex items-center justify-center transition-colors cursor-pointer text-xs"
+                className="w-7 h-7 rounded-xl bg-[#F4FAF7] dark:bg-[#201811] text-[#789389] hover:text-[#19332A] dark:hover:text-[#F3E9D8] flex items-center justify-center transition-colors cursor-pointer text-xs"
               >
                 ✕
               </button>
@@ -628,8 +624,8 @@ export default function AppointmentsView() {
           </div>
 
           {isInitialLoading && !hasLoadedOnceRef.current ? (
-            <div className="p-8 text-center text-xs text-[#789389] dark:text-[#9DB9B0]">
-              <div className="w-6 h-6 border-2 border-[#006B56] dark:border-[#5FAF8A] border-t-transparent rounded-full animate-spin mx-auto mb-2" />
+            <div className="p-8 text-center text-xs text-[#789389] dark:text-[#C5B7A4]">
+              <div className="w-6 h-6 border-2 border-[#006B56] dark:border-[#A3A77A] border-t-transparent rounded-full animate-spin mx-auto mb-2" />
               Loading past appointments...
             </div>
           ) : pastList.length > 0 ? (
@@ -640,10 +636,10 @@ export default function AppointmentsView() {
                   <div
                     key={stableKey}
                     id={`past-appointment-card-${session.id || index}`}
-                    className="p-4 sm:p-5 rounded-2xl bg-[#F8FCFA] dark:bg-[#18201C] border border-[#E2ECE6] dark:border-[#22302A] flex flex-col sm:flex-row sm:items-center justify-between gap-3.5"
+                    className="p-4 sm:p-5 rounded-2xl bg-[#F8FCFA] dark:bg-[#3B2C20] border border-[#E2ECE6] dark:border-[#51402E] flex flex-col sm:flex-row sm:items-center justify-between gap-3.5"
                   >
                     <div className="flex items-center gap-3.5 min-w-0">
-                      <div className="w-12 h-12 rounded-full overflow-hidden border border-[#E2ECE6] dark:border-[#22302A] shrink-0 bg-slate-100 dark:bg-[#131916]">
+                      <div className="w-12 h-12 rounded-full overflow-hidden border border-[#E2ECE6] dark:border-[#51402E] shrink-0 bg-slate-100 dark:bg-[#201811]">
                         <img
                           src={session.therapistImage || "/images/therapist_sarah.jpg"}
                           alt={session.therapistName || "Therapist"}
@@ -658,23 +654,23 @@ export default function AppointmentsView() {
                       </div>
                       <div className="min-w-0 space-y-0.5">
                         <div className="flex items-center gap-2 flex-wrap">
-                          <h3 className="text-xs sm:text-sm font-black text-[#19332A] dark:text-[#F4FAF7]">
+                          <h3 className="text-xs sm:text-sm font-black text-[#19332A] dark:text-[#F3E9D8]">
                             {session.therapistName}
                           </h3>
                           <span
-                            className={`text-[9px] px-2 py-0.5 rounded-full font-bold capitalize ${
+                            className={`text-[9px] px-2 py-0.5 rounded-full font-bold capitalize border dark:border-[#51402E] ${
                               session.status === "cancelled"
-                                ? "bg-rose-100 dark:bg-rose-950/40 text-rose-700 dark:text-rose-400"
-                                : "bg-[#E6F4EA] dark:bg-[rgba(95,175,138,0.15)] text-[#137333] dark:text-[#5FAF8A]"
+                                ? "bg-rose-100 dark:bg-[#30241A] text-rose-700 dark:text-[#C95D54]"
+                                : "bg-[#E6F4EA] dark:bg-[#30241A] text-[#137333] dark:text-[#91AD87]"
                             }`}
                           >
                             {session.status || "Completed"}
                           </span>
                         </div>
-                        <p className="text-[11px] text-[#4F685F] dark:text-[#9DB9B0] font-medium">
+                        <p className="text-[11px] text-[#4F685F] dark:text-[#C5B7A4] font-medium">
                           {session.therapistRole || "Clinical Psychologist"} {session.focusArea ? `• ${session.focusArea}` : ""}
                         </p>
-                        <p className="text-[9.5px] text-[#789389] dark:text-[#9DB9B0]">
+                        <p className="text-[9.5px] text-[#789389] dark:text-[#9F907E]">
                           📅 {formatAppointmentDate(session.appointmentDate)} • ⏰ {formatAppointmentTime(session.appointmentDate)}
                         </p>
                       </div>
@@ -683,7 +679,7 @@ export default function AppointmentsView() {
                     <button
                       type="button"
                       onClick={() => handleBookAgain(session)}
-                      className="px-4 py-2 rounded-xl bg-white dark:bg-[#131916] text-[#006B56] dark:text-[#5FAF8A] hover:bg-[#EAF6F0] dark:hover:bg-[#1E2824] text-xs font-bold border border-[#E2ECE6] dark:border-[#22302A] transition-all cursor-pointer self-start sm:self-auto shrink-0 shadow-2xs hover:shadow-xs"
+                      className="px-4 py-2 rounded-xl bg-white dark:bg-[#30241A] text-[#006B56] dark:text-[#A3A77A] hover:bg-[#EAF6F0] dark:hover:bg-[#443326] text-xs font-bold border border-[#E2ECE6] dark:border-[#51402E] transition-all cursor-pointer self-start sm:self-auto shrink-0 shadow-2xs hover:shadow-xs"
                     >
                       Book Again
                     </button>
@@ -692,11 +688,11 @@ export default function AppointmentsView() {
               })}
             </div>
           ) : (
-            <div className="p-8 rounded-2xl bg-[#F8FCFA] dark:bg-[#18201C] border border-[#E2ECE6] dark:border-[#22302A] text-center space-y-2">
-              <p className="text-sm font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
+            <div className="p-8 rounded-2xl bg-[#F8FCFA] dark:bg-[#3B2C20] border border-[#E2ECE6] dark:border-[#51402E] text-center space-y-2">
+              <p className="text-sm font-heading font-black text-[#19332A] dark:text-[#F3E9D8]">
                 No past appointments
               </p>
-              <p className="text-xs text-[#789389] dark:text-[#9DB9B0] max-w-sm mx-auto">
+              <p className="text-xs text-[#789389] dark:text-[#C5B7A4] max-w-sm mx-auto">
                 You haven&apos;t completed any sessions yet. Once you complete a consultation, it will appear here.
               </p>
             </div>
@@ -708,19 +704,19 @@ export default function AppointmentsView() {
       <div
         ref={bookingSectionRef}
         id="book-new-session"
-        className="bg-white dark:bg-[#131916] rounded-3xl p-6 border border-[#E2ECE6] dark:border-[#1E2824] shadow-2xs space-y-4 transition-colors scroll-mt-6"
+        className="bg-white dark:bg-[#30241A] rounded-3xl p-6 border border-[#E2ECE6] dark:border-[#51402E] shadow-2xs space-y-4 transition-colors scroll-mt-6"
       >
         {/* Header & Inline Search Bar */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3.5 sm:gap-4">
           <div className="flex items-center gap-2.5 min-w-0">
-            <div className="w-8 h-8 rounded-2xl bg-[#E6F4F0] dark:bg-[rgba(95,175,138,0.15)] text-[#006B56] dark:text-[#5FAF8A] flex items-center justify-center shrink-0">
+            <div className="w-8 h-8 rounded-2xl bg-[#E6F4F0] dark:bg-[#3B2C20] text-[#006B56] dark:text-[#A3A77A] flex items-center justify-center shrink-0">
               <span className="font-bold text-sm">+</span>
             </div>
             <div>
-              <h2 className="text-sm font-heading font-black text-[#19332A] dark:text-[#F4FAF7] leading-tight">
+              <h2 className="text-sm font-heading font-black text-[#19332A] dark:text-[#F3E9D8] leading-tight">
                 Book New Session
               </h2>
-              <p className="text-[10px] text-[#789389] dark:text-[#9DB9B0] font-medium leading-tight mt-0.5">
+              <p className="text-[10px] text-[#789389] dark:text-[#C5B7A4] font-medium leading-tight mt-0.5">
                 Browse verified practitioners and select a convenient time slot
               </p>
             </div>
@@ -728,7 +724,7 @@ export default function AppointmentsView() {
 
           {/* Search Input Bar (Inline on the Right) */}
           <div className="relative w-full sm:w-[380px] md:w-[420px] shrink-0">
-            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#6B857C] dark:text-[#9DB9B0]">
+            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#6B857C] dark:text-[#9F907E]">
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
@@ -739,13 +735,13 @@ export default function AppointmentsView() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search practitioners..."
-              className="w-full h-10 sm:h-11 pl-10 pr-10 bg-[#F8FCFA] dark:bg-[#18201C] hover:bg-white dark:hover:bg-[#1E2824] focus:bg-white dark:focus:bg-[#18201C] border border-[#E2ECE6] dark:border-[#22302A] rounded-2xl text-xs text-[#19332A] dark:text-[#F4FAF7] placeholder-[#789389] dark:placeholder-[#9DB9B0] focus:outline-none focus:ring-2 focus:ring-[#006B56]/20 dark:focus:ring-[#5FAF8A]/30 focus:border-[#006B56] dark:focus:border-[#5FAF8A] transition-all"
+              className="w-full h-10 sm:h-11 pl-10 pr-10 bg-[#F8FCFA] dark:bg-[#201811] hover:bg-white dark:hover:bg-[#201811] focus:bg-white dark:focus:bg-[#201811] border border-[#E2ECE6] dark:border-[#51402E] rounded-2xl text-xs text-[#19332A] dark:text-[#F3E9D8] placeholder-[#789389] dark:placeholder-[#9F907E] focus:outline-none focus:ring-2 focus:ring-[#006B56]/20 dark:focus:ring-[#A3A77A]/30 focus:border-[#006B56] dark:focus:border-[#A3A77A] transition-all"
             />
             {searchQuery && (
               <button
                 type="button"
                 onClick={() => setSearchQuery("")}
-                className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-[#789389] hover:text-[#19332A] dark:text-[#9DB9B0] dark:hover:text-[#F4FAF7] cursor-pointer transition-colors"
+                className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-[#789389] hover:text-[#19332A] dark:text-[#9F907E] dark:hover:text-[#F3E9D8] cursor-pointer transition-colors"
                 aria-label="Clear search"
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -757,23 +753,23 @@ export default function AppointmentsView() {
         </div>
 
         {/* Privacy & Confidentiality Reassurance Banner */}
-        <div className="p-3.5 sm:px-4.5 sm:py-3.5 rounded-2xl bg-[#EDF8F3] dark:bg-[#112F28] border border-[#BBE5D4] dark:border-[#1C463C] shadow-[0_4px_14px_rgba(0,80,65,0.06)] dark:shadow-none flex items-start sm:items-center gap-3 sm:gap-3.5 transition-all">
-          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#D6EFE3] dark:bg-[rgba(95,175,138,0.15)] border border-[#A4DEC7] dark:border-[#1C463C] flex items-center justify-center shrink-0 shadow-xs mt-0.5 sm:mt-0">
-            <svg className="w-4.5 h-4.5 sm:w-5 sm:h-5 text-[#006B56] dark:text-[#5FAF8A]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}>
+        <div className="p-3.5 sm:px-4.5 sm:py-3.5 rounded-2xl bg-[#EDF8F3] dark:bg-[#3B2C20] border border-[#BBE5D4] dark:border-[#51402E] shadow-[0_4px_14px_rgba(0,80,65,0.06)] dark:shadow-none flex items-start sm:items-center gap-3 sm:gap-3.5 transition-all">
+          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#D6EFE3] dark:bg-[#30241A] border border-[#A4DEC7] dark:border-[#51402E] flex items-center justify-center shrink-0 shadow-xs mt-0.5 sm:mt-0">
+            <svg className="w-4.5 h-4.5 sm:w-5 sm:h-5 text-[#006B56] dark:text-[#A3A77A]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
             </svg>
           </div>
 
           <div className="flex-1 min-w-0">
             <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
-              <span className="text-xs sm:text-sm font-heading font-black text-[#004D3D] dark:text-[#F4FAF7] tracking-tight">
+              <span className="text-xs sm:text-sm font-heading font-black text-[#004D3D] dark:text-[#F3E9D8] tracking-tight">
                 100% Confidential
               </span>
-              <span className="inline-flex items-center gap-0.5 text-[9.5px] sm:text-[10px] font-bold tracking-wider px-2 py-0.5 rounded-full bg-[#D4EFE4] dark:bg-[rgba(95,175,138,0.15)] text-[#006B56] dark:text-[#5FAF8A] border border-[#B3E2CF] dark:border-[#1C463C]">
+              <span className="inline-flex items-center gap-0.5 text-[9.5px] sm:text-[10px] font-bold tracking-wider px-2 py-0.5 rounded-full bg-[#D4EFE4] dark:bg-[#30241A] text-[#006B56] dark:text-[#A3A77A] border border-[#B3E2CF] dark:border-[#51402E]">
                 ✓ Private &amp; Secure
               </span>
             </div>
-            <p className="text-[11px] sm:text-xs text-[#265345] dark:text-[#9DB9B0] font-medium leading-snug mt-0.5">
+            <p className="text-[11px] sm:text-xs text-[#265345] dark:text-[#C5B7A4] font-medium leading-snug mt-0.5">
               Your sessions, wellness information, and personal details remain private and secure.
             </p>
           </div>
@@ -788,8 +784,8 @@ export default function AppointmentsView() {
                 onClick={() => setSelectedSpecialty(filter)}
                 className={`px-3 py-1 rounded-full text-[10.5px] font-bold transition-all whitespace-nowrap cursor-pointer ${
                   selectedSpecialty === filter
-                    ? "bg-[#006B56] dark:bg-[#006B56] text-white shadow-xs"
-                    : "bg-[#F4F9F6] dark:bg-[#18201C] text-[#4F685F] dark:text-[#9DB9B0] hover:bg-[#EAF6F0] dark:hover:bg-[#1E2824]"
+                    ? "bg-[#006B56] dark:bg-[#858A60] text-white dark:text-[#211A14] shadow-xs"
+                    : "bg-[#F4F9F6] dark:bg-[#201811] text-[#4F685F] dark:text-[#C5B7A4] hover:bg-[#EAF6F0] dark:hover:bg-[#3B2C20] border border-transparent dark:border-[#51402E]"
                 }`}
               >
                 {filter}
@@ -799,9 +795,9 @@ export default function AppointmentsView() {
 
           {/* Active search count */}
           {searchQuery.trim() && (
-            <div className="flex items-center justify-between text-xs text-[#6B857C] dark:text-[#9DB9B0] pt-1">
+            <div className="flex items-center justify-between text-xs text-[#6B857C] dark:text-[#C5B7A4] pt-1">
               <span>
-                <strong className="font-bold text-[#19332A] dark:text-[#F4FAF7]">
+                <strong className="font-bold text-[#19332A] dark:text-[#F3E9D8]">
                   {filteredTherapists.length}
                 </strong>{" "}
                 {filteredTherapists.length === 1 ? "practitioner" : "practitioners"} found
@@ -815,20 +811,20 @@ export default function AppointmentsView() {
 
         {/* Therapists Cards Grid or Empty State */}
         {filteredTherapists.length === 0 ? (
-          <div className="py-12 px-6 rounded-2xl bg-[#F8FCFA] dark:bg-[#18201C] border border-dashed border-[#CEE4DB] dark:border-[#22302A] text-center flex flex-col items-center justify-center space-y-3.5 transition-colors">
-            <div className="w-12 h-12 rounded-2xl bg-[#E6F4F0] dark:bg-[rgba(95,175,138,0.15)] text-[#006B56] dark:text-[#5FAF8A] flex items-center justify-center shadow-xs">
+          <div className="py-12 px-6 rounded-2xl bg-[#F8FCFA] dark:bg-[#3B2C20] border border-dashed border-[#CEE4DB] dark:border-[#51402E] text-center flex flex-col items-center justify-center space-y-3.5 transition-colors">
+            <div className="w-12 h-12 rounded-2xl bg-[#E6F4F0] dark:bg-[#30241A] text-[#006B56] dark:text-[#A3A77A] flex items-center justify-center shadow-xs">
               <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
             </div>
             <div className="space-y-1 max-w-sm">
-              <h3 className="text-sm font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
+              <h3 className="text-sm font-heading font-black text-[#19332A] dark:text-[#F3E9D8]">
                 No practitioners found
               </h3>
-              <p className="text-xs text-[#6B857C] dark:text-[#9DB9B0] font-medium leading-relaxed">
+              <p className="text-xs text-[#6B857C] dark:text-[#C5B7A4] font-medium leading-relaxed">
                 {searchQuery.trim() ? (
                   <>
-                    We couldn&apos;t find anyone matching &ldquo;<span className="font-semibold text-[#19332A] dark:text-[#F4FAF7]">{searchQuery.trim()}</span>&rdquo;.
+                    We couldn&apos;t find anyone matching &ldquo;<span className="font-semibold text-[#19332A] dark:text-[#F3E9D8]">{searchQuery.trim()}</span>&rdquo;.
                     <br />
                     Try searching by name, specialty, or focus area.
                   </>
@@ -842,7 +838,7 @@ export default function AppointmentsView() {
                 <button
                   type="button"
                   onClick={() => setSearchQuery("")}
-                  className="px-4 py-2 rounded-xl bg-[#006B56] hover:bg-[#005B48] text-white text-xs font-bold shadow-xs transition-all cursor-pointer"
+                  className="px-4 py-2 rounded-xl bg-[#006B56] hover:bg-[#005B48] text-white dark:bg-[#858A60] dark:hover:bg-[#6E734E] dark:text-[#211A14] text-xs font-bold shadow-xs transition-all cursor-pointer"
                 >
                   Clear Search
                 </button>
@@ -851,7 +847,7 @@ export default function AppointmentsView() {
                 <button
                   type="button"
                   onClick={() => setSelectedSpecialty("All")}
-                  className="px-4 py-2 rounded-xl bg-white dark:bg-[#131916] hover:bg-[#F2FAF6] dark:hover:bg-[#18201C] text-[#19332A] dark:text-[#F4FAF7] text-xs font-bold border border-[#E2ECE6] dark:border-[#22302A] transition-all cursor-pointer"
+                  className="px-4 py-2 rounded-xl bg-white dark:bg-[#30241A] hover:bg-[#F2FAF6] dark:hover:bg-[#443326] text-[#19332A] dark:text-[#F3E9D8] text-xs font-bold border border-[#E2ECE6] dark:border-[#51402E] transition-all cursor-pointer"
                 >
                   Show All Specialties
                 </button>
