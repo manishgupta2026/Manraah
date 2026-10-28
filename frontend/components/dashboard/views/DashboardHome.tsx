@@ -272,8 +272,8 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
       id: "appointments",
       title: "Book Session",
       section: "appointments" as const,
-      cardBg: "bg-[#F5F4FA] hover:bg-[#EBE9F5] dark:bg-[#3B2C20] dark:hover:bg-[#443326] dark:border dark:border-[#51402E]",
-      iconColor: "text-[#5C4EB5] dark:text-[#C5B7A4]",
+      cardBg: "bg-[#E6F4F0] hover:bg-[#D5EFE7] dark:bg-[#1E332B] dark:hover:bg-[#253D34] border border-[#CBECE2] dark:border-[#2E4E44]",
+      iconColor: "text-[#006B56] dark:text-[#88F7D6]",
       icon: (
         <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -284,8 +284,8 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
       id: "journey",
       title: "My Journey",
       section: "journey" as const,
-      cardBg: "bg-[#EEF7FB] hover:bg-[#E1F1F8] dark:bg-[#3B2C20] dark:hover:bg-[#443326] dark:border dark:border-[#51402E]",
-      iconColor: "text-[#1C92D2] dark:text-[#A7B69A]",
+      cardBg: "bg-[#EDF6F2] hover:bg-[#DDEFE7] dark:bg-[#213830] dark:hover:bg-[#28443B] border border-[#BCE2D2] dark:border-[#325246]",
+      iconColor: "text-[#005B48] dark:text-[#88F7D6]",
       icon: (
         <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -296,7 +296,7 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
       id: "resources",
       title: "Resource Library",
       section: "resources" as const,
-      cardBg: "bg-[#EDF8F4] hover:bg-[#DEEFE8] dark:bg-[#3B2C20] dark:hover:bg-[#443326] dark:border dark:border-[#51402E]",
+      cardBg: "bg-[#EBF7F2] hover:bg-[#D8F0E6] dark:bg-[#1C342C] dark:hover:bg-[#234036] border border-[#C5E8DC] dark:border-[#2C4A3E]",
       iconColor: "text-[#008968] dark:text-[#A3A77A]",
       icon: (
         <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -308,8 +308,8 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
       id: "ai-companion",
       title: "AI Companion",
       section: "ai-companion" as const,
-      cardBg: "bg-[#F3F5FA] hover:bg-[#E5E9F3] dark:bg-[#3B2C20] dark:hover:bg-[#443326] dark:border dark:border-[#51402E]",
-      iconColor: "text-[#3D52A0] dark:text-[#D7AD70]",
+      cardBg: "bg-[#E8F4EE] hover:bg-[#D6ECE0] dark:bg-[#20372E] dark:hover:bg-[#274338] border border-[#BDE0D1] dark:border-[#305043]",
+      iconColor: "text-[#006B56] dark:text-[#88F7D6]",
       icon: (
         <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />

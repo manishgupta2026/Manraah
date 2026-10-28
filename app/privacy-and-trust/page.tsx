@@ -46,7 +46,7 @@ export default function PrivacyAndTrustPage() {
                 <motion.div
                   animate={{ scale: [1, 1.08, 1], opacity: [0.3, 0.6, 0.3] }}
                   transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                  className="absolute w-24 h-24 rounded-full bg-gradient-to-r from-mint via-primary to-pink blur-md"
+                  className="absolute w-24 h-24 rounded-full bg-gradient-to-r from-mint via-primary to-secondary blur-md"
                 />
                 <div className="relative w-20 h-20 rounded-3xl bg-surface-container-lowest border border-white/60 shadow-xl flex items-center justify-center text-[#006B56]">
                   <span className="material-symbols-outlined text-4xl font-extrabold">verified_user</span>
@@ -106,9 +106,9 @@ export default function PrivacyAndTrustPage() {
           </div>
 
           {/* Full Width CBT/MBSR Banner */}
-          <div className="md:col-span-2 lg:col-span-12 p-8 sm:p-10 rounded-[32px] bg-surface-container-lowest border border-pink/30 shadow-card-lift hover:-translate-y-1 hover:shadow-xl transition-all flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="md:col-span-2 lg:col-span-12 p-8 sm:p-10 rounded-[32px] bg-surface-container-lowest border border-[#BCE2D2] dark:border-[#325246] shadow-card-lift hover:-translate-y-1 hover:shadow-xl transition-all flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="flex items-start sm:items-center gap-5">
-              <div className="w-14 h-14 rounded-2xl bg-pink/20 text-[#874959] flex items-center justify-center shrink-0">
+              <div className="w-14 h-14 rounded-2xl bg-[#EDF6F2] dark:bg-[#20372F] text-[#006B56] dark:text-[#88F7D6] flex items-center justify-center shrink-0">
                 <span className="material-symbols-outlined text-3xl font-bold">psychology</span>
               </div>
               <div className="space-y-1.5 max-w-3xl">
@@ -122,7 +122,7 @@ export default function PrivacyAndTrustPage() {
             </div>
 
             <div className="flex items-center gap-2 shrink-0">
-              <span className="px-3.5 py-1.5 rounded-full text-xs font-heading font-extrabold bg-pink/15 text-[#874959] border border-pink/30">
+              <span className="px-3.5 py-1.5 rounded-full text-xs font-heading font-extrabold bg-[#EDF6F2] dark:bg-[#20372F] text-[#006B56] dark:text-[#88F7D6] border border-[#BCE2D2] dark:border-[#325246]">
                 CBT &bull; MBSR &bull; Positive Psych
               </span>
             </div>
@@ -173,7 +173,7 @@ export default function PrivacyAndTrustPage() {
             {/* Pillar 3 */}
             <div className="p-7 rounded-[24px] bg-surface-container-lowest border border-surface-variant/30 space-y-3">
               <div className="flex items-center gap-3">
-                <span className="w-8 h-8 rounded-full bg-peach/30 text-[#9E5D28] font-heading font-bold flex items-center justify-center text-xs">
+                <span className="w-8 h-8 rounded-full bg-[#EDF6F2] dark:bg-[#20372F] text-[#006B56] dark:text-[#88F7D6] font-heading font-bold flex items-center justify-center text-xs">
                   03
                 </span>
                 <h3 className="font-heading font-bold text-lg text-on-surface">Verified Practitioner Credentials</h3>
@@ -186,7 +186,7 @@ export default function PrivacyAndTrustPage() {
             {/* Pillar 4 */}
             <div className="p-7 rounded-[24px] bg-surface-container-lowest border border-surface-variant/30 space-y-3">
               <div className="flex items-center gap-3">
-                <span className="w-8 h-8 rounded-full bg-pink/30 text-[#874959] font-heading font-bold flex items-center justify-center text-xs">
+                <span className="w-8 h-8 rounded-full bg-mint/20 dark:bg-[#1B332B] text-[#006B56] dark:text-[#88F7D6] font-heading font-bold flex items-center justify-center text-xs">
                   04
                 </span>
                 <h3 className="font-heading font-bold text-lg text-on-surface">Encrypted Voice &amp; Audio Processing</h3>
@@ -216,7 +216,7 @@ export default function PrivacyAndTrustPage() {
         <div className="pt-2 flex flex-wrap items-center justify-center gap-4">
           <Link
             href="/contact"
-            className="px-7 py-3.5 rounded-full bg-primary hover:bg-primary-purple text-white text-xs sm:text-sm font-heading font-bold shadow-md hover:shadow-lg transition-all inline-flex items-center gap-2"
+            className="px-7 py-3.5 rounded-full bg-primary hover:bg-[#005B48] text-white text-xs sm:text-sm font-heading font-bold shadow-md hover:shadow-lg transition-all inline-flex items-center gap-2 cursor-pointer"
           >
             <span>Contact Privacy Support</span>
             <span className="material-symbols-outlined text-base">mail</span>
@@ -224,7 +224,7 @@ export default function PrivacyAndTrustPage() {
 
           <Link
             href="/faq"
-            className="px-7 py-3.5 rounded-full bg-surface-container-lowest hover:bg-surface-container text-on-surface border border-surface-variant/50 text-xs sm:text-sm font-heading font-semibold transition-all"
+            className="px-7 py-3.5 rounded-full bg-primary/10 hover:bg-primary text-primary hover:text-white border border-primary/20 hover:border-primary text-xs sm:text-sm font-heading font-bold transition-all shadow-xs hover:shadow-md cursor-pointer"
           >
             Explore FAQ Hub
           </Link>

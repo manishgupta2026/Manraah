@@ -27,8 +27,8 @@ const STEPS_CAROUSEL = [
     subtitle: "Establishing your emotional starting point",
     desc: "Take a brief, pressure-free check-in to establish your baseline stress levels, current energy, and immediate wellness goals. No clinical labels, cold questionnaires, or intrusive diagnostic forms.",
     icon: "assignment_turned_in",
-    color: "bg-pink/25 text-[#9E3B54] border-pink/40",
-    badgeBg: "bg-[#9E3B54] text-white",
+    color: "bg-mint/20 dark:bg-[#1B332B] text-[#006B56] dark:text-[#88F7D6] border-mint/40 dark:border-[#2E4E44]",
+    badgeBg: "bg-[#006B56] text-white",
     highlights: [
       "100% anonymous — no real name required",
       "Identifies stress resilience and emotional focus",
@@ -57,8 +57,8 @@ const STEPS_CAROUSEL = [
     subtitle: "Long-term mental resilience and connection",
     desc: "Build sustainable daily habits through mood check-ins, guided CBT & MBSR exercises, anonymous peer community discussions, and direct access to licensed therapists whenever deeper care is needed.",
     icon: "trending_up",
-    color: "bg-peach/30 text-[#9E5D28] border-peach/50",
-    badgeBg: "bg-[#9E5D28] text-white",
+    color: "bg-[#EDF6F2] dark:bg-[#20372F] text-[#005B48] dark:text-[#88F7D6] border-[#BCE2D2] dark:border-[#325246]",
+    badgeBg: "bg-[#005B48] text-white",
     highlights: [
       "Progressive emotional rhythm and trend tracking",
       "Anonymous moderated peer circles",
@@ -116,7 +116,7 @@ export default function HowItWorksPage() {
           <div className="pt-2 flex items-center justify-center gap-3">
             <Link
               href="/features"
-              className="px-8 py-4 rounded-full bg-primary hover:bg-primary-purple text-white font-heading font-bold text-sm shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all inline-flex items-center gap-2 cursor-pointer"
+              className="px-8 py-4 rounded-full bg-primary hover:bg-[#005B48] text-white font-heading font-bold text-sm shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all inline-flex items-center gap-2 cursor-pointer"
             >
               <span>Explore All Features</span>
               <span className="material-symbols-outlined text-lg">arrow_forward</span>
@@ -138,14 +138,14 @@ export default function HowItWorksPage() {
                 <button
                   key={s.step}
                   onClick={() => setActiveStepIdx(idx)}
-                  className={`px-4 sm:px-6 py-2.5 sm:py-3 rounded-full text-xs sm:text-sm font-heading font-bold transition-all flex items-center gap-2 cursor-pointer ${
+                  className={`group px-4 sm:px-6 py-2.5 sm:py-3 rounded-full text-xs sm:text-sm font-heading font-bold transition-all flex items-center gap-2 cursor-pointer ${
                     isActive
-                      ? "bg-primary text-white shadow-md scale-[1.03]"
-                      : "bg-surface-container-lowest border border-surface-variant/40 text-on-surface-variant hover:bg-surface-container hover:text-on-surface"
+                      ? "bg-primary text-white shadow-md scale-[1.03] border border-primary"
+                      : "bg-primary/10 border border-primary/20 text-primary hover:bg-primary hover:text-white hover:border-primary"
                   }`}
                 >
-                  <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black ${
-                    isActive ? "bg-white text-primary" : "bg-primary/10 text-primary"
+                  <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black transition-colors ${
+                    isActive ? "bg-white text-primary" : "bg-primary/15 text-primary group-hover:bg-white group-hover:text-primary"
                   }`}>
                     {s.step}
                   </span>
@@ -229,11 +229,11 @@ export default function HowItWorksPage() {
                             <span>🎓</span>
                             <span>Student Mode</span>
                           </div>
-                          <div className="p-3 rounded-2xl bg-peach/25 text-[#9E5D28] border border-peach/40 flex items-center gap-2">
+                          <div className="p-3 rounded-2xl bg-[#EDF6F2] dark:bg-[#20372F] text-[#006B56] dark:text-[#88F7D6] border border-[#BCE2D2] dark:border-[#325246] flex items-center gap-2">
                             <span>💼</span>
                             <span>Working Pro</span>
                           </div>
-                          <div className="p-3 rounded-2xl bg-pink/20 text-[#874959] border border-pink/30 flex items-center gap-2">
+                          <div className="p-3 rounded-2xl bg-[#E2EFE9] dark:bg-[#1A3129] text-[#006B56] dark:text-[#88F7D6] border border-[#A8DAC7] dark:border-[#2E4E44] flex items-center gap-2">
                             <span>🍼</span>
                             <span>Parent Journey</span>
                           </div>
@@ -256,7 +256,7 @@ export default function HowItWorksPage() {
                         <div className="flex justify-center gap-2 text-xs font-heading font-bold">
                           <span className="px-3 py-1.5 rounded-full bg-mint/20 text-[#006B56] border border-mint/30">🌸 Calm</span>
                           <span className="px-3 py-1.5 rounded-full bg-primary/15 text-primary border border-primary/30">✨ Balanced</span>
-                          <span className="px-3 py-1.5 rounded-full bg-pink/20 text-[#874959] border border-pink/30">🌊 Overwhelmed</span>
+                          <span className="px-3 py-1.5 rounded-full bg-[#EDF6F2] dark:bg-[#20372F] text-[#006B56] dark:text-[#88F7D6] border border-[#BCE2D2] dark:border-[#325246]">🌊 Overwhelmed</span>
                         </div>
                         <div className="space-y-1 pt-1">
                           <div className="flex justify-between text-[10px] text-on-surface-variant font-bold">
@@ -292,7 +292,7 @@ export default function HowItWorksPage() {
                         </div>
                         <div className="flex justify-between text-[11px] font-bold text-emerald-600">
                           <span className="px-2.5 py-1 rounded-lg bg-mint/15">🫁 2-Min Reset</span>
-                          <span className="px-2.5 py-1 rounded-lg bg-peach/20 text-[#9E5D28]">📝 Night Journal</span>
+                          <span className="px-2.5 py-1 rounded-lg bg-[#E6F4F0] dark:bg-[#1B332B] text-[#006B56] dark:text-[#88F7D6]">📝 Night Journal</span>
                         </div>
                       </div>
                     )}
@@ -326,7 +326,7 @@ export default function HowItWorksPage() {
             <button
               onClick={handlePrevStep}
               aria-label="Previous step"
-              className="absolute left-2 sm:-left-5 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/90 hover:bg-white text-on-surface border border-surface-variant/40 shadow-lg backdrop-blur-md flex items-center justify-center transition-transform hover:scale-105 active:scale-95 cursor-pointer z-10"
+              className="absolute left-2 sm:-left-5 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-[#E6F4F0]/90 hover:bg-primary text-primary hover:text-white border border-[#CBECE2] hover:border-primary shadow-lg backdrop-blur-md flex items-center justify-center transition-all hover:scale-105 active:scale-95 cursor-pointer z-10"
             >
               <span className="material-symbols-outlined text-xl sm:text-2xl">chevron_left</span>
             </button>
@@ -335,7 +335,7 @@ export default function HowItWorksPage() {
             <button
               onClick={handleNextStep}
               aria-label="Next step"
-              className="absolute right-2 sm:-right-5 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/90 hover:bg-white text-on-surface border border-surface-variant/40 shadow-lg backdrop-blur-md flex items-center justify-center transition-transform hover:scale-105 active:scale-95 cursor-pointer z-10"
+              className="absolute right-2 sm:-right-5 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-[#E6F4F0]/90 hover:bg-primary text-primary hover:text-white border border-[#CBECE2] hover:border-primary shadow-lg backdrop-blur-md flex items-center justify-center transition-all hover:scale-105 active:scale-95 cursor-pointer z-10"
             >
               <span className="material-symbols-outlined text-xl sm:text-2xl">chevron_right</span>
             </button>
@@ -363,24 +363,24 @@ export default function HowItWorksPage() {
 
         {/* ═══ 3. PRIVACY & CLINICAL ASSURANCE ═══ */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
-          <div className="p-6 rounded-[28px] bg-mint/10 border border-mint/20 space-y-2.5">
-            <span className="material-symbols-outlined text-[#006B56] text-2xl">shield_lock</span>
+          <div className="p-6 rounded-[28px] bg-mint/15 dark:bg-[#1B332B] border border-mint/30 dark:border-[#2E4E44] space-y-2.5 shadow-2xs">
+            <span className="material-symbols-outlined text-[#006B56] dark:text-[#88F7D6] text-2xl">shield_lock</span>
             <h3 className="font-heading font-extrabold text-base text-on-surface">Zero Data Selling</h3>
             <p className="text-xs text-on-surface-variant leading-relaxed">
               Your conversations, journal entries, and check-in scores remain end-to-end encrypted. We will never sell or monetize your emotional data.
             </p>
           </div>
 
-          <div className="p-6 rounded-[28px] bg-primary/10 border border-primary/20 space-y-2.5">
-            <span className="material-symbols-outlined text-primary text-2xl">psychology</span>
+          <div className="p-6 rounded-[28px] bg-[#EDF6F2] dark:bg-[#20372F] border border-[#BCE2D2] dark:border-[#325246] space-y-2.5 shadow-2xs">
+            <span className="material-symbols-outlined text-[#005B48] dark:text-[#88F7D6] text-2xl">psychology</span>
             <h3 className="font-heading font-extrabold text-base text-on-surface">Evidence-Based Principles</h3>
             <p className="text-xs text-on-surface-variant leading-relaxed">
               AI companion prompts and guided tools are structured alongside Cognitive Behavioral Therapy (CBT) and MBSR mindfulness principles.
             </p>
           </div>
 
-          <div className="p-6 rounded-[28px] bg-peach/15 border border-peach/30 space-y-2.5">
-            <span className="material-symbols-outlined text-[#9E5D28] text-2xl">support_agent</span>
+          <div className="p-6 rounded-[28px] bg-[#E2EFE9] dark:bg-[#1A3129] border border-[#A8DAC7] dark:border-[#2E4E44] space-y-2.5 shadow-2xs">
+            <span className="material-symbols-outlined text-[#006B56] dark:text-[#88F7D6] text-2xl">support_agent</span>
             <h3 className="font-heading font-extrabold text-base text-on-surface">AI + Human Complement</h3>
             <p className="text-xs text-on-surface-variant leading-relaxed">
               Instant 24/7 AI availability backed by trained human peer listeners and verified licensed therapists whenever you need deeper care.
@@ -395,6 +395,7 @@ export default function HowItWorksPage() {
         description="Take your first 1-minute check-in and unlock a personalized space tailored to your life stage."
         buttonText="Explore Life Stage Pathways"
         buttonHref="/for-you"
+        variant="green"
       />
     </div>
   );

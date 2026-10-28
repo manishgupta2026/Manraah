@@ -48,7 +48,7 @@ export default function SecurityPage() {
           </div>
 
           <div className="p-6 rounded-[28px] bg-surface-container-lowest border border-surface-variant/30 shadow-card-lift space-y-3">
-            <div className="w-12 h-12 rounded-2xl bg-peach/30 text-[#9E5D28] flex items-center justify-center">
+            <div className="w-12 h-12 rounded-2xl bg-[#EDF6F2] dark:bg-[#20372F] text-[#006B56] dark:text-[#88F7D6] border border-[#BCE2D2] dark:border-[#325246] flex items-center justify-center">
               <span className="material-symbols-outlined text-2xl font-bold">psychology</span>
             </div>
             <h3 className="font-heading font-extrabold text-base text-on-surface">
@@ -60,7 +60,7 @@ export default function SecurityPage() {
           </div>
 
           <div className="p-6 rounded-[28px] bg-surface-container-lowest border border-surface-variant/30 shadow-card-lift space-y-3">
-            <div className="w-12 h-12 rounded-2xl bg-pink/25 text-[#A83256] flex items-center justify-center">
+            <div className="w-12 h-12 rounded-2xl bg-mint/20 dark:bg-[#1B332B] text-[#006B56] dark:text-[#88F7D6] border border-mint/30 dark:border-[#2E4E44] flex items-center justify-center">
               <span className="material-symbols-outlined text-2xl font-bold">published_with_changes</span>
             </div>
             <h3 className="font-heading font-extrabold text-base text-on-surface">
@@ -76,7 +76,7 @@ export default function SecurityPage() {
         <div className="p-6 rounded-[24px] bg-surface-container border border-surface-variant/40 flex flex-col sm:flex-row items-center justify-between gap-4">
           <Link
             href="/"
-            className="px-6 py-3 rounded-full bg-primary hover:bg-primary-purple text-white font-heading font-bold text-xs shadow-md transition-all flex items-center gap-2"
+            className="px-6 py-3 rounded-full bg-primary hover:bg-[#005B48] text-white font-heading font-bold text-xs shadow-md transition-all flex items-center gap-2 cursor-pointer"
           >
             <span className="material-symbols-outlined text-sm">arrow_back</span>
             <span>Return to Home</span>

@@ -67,13 +67,13 @@ const PATHWAYS: PathwayDetail[] = [
       { title: "Midday Micro-Breathing", desc: "3-minute nerve reset between meetings", icon: "air" },
       { title: "Workplace Burnout Telemetry", desc: "Weekly balance and serenity analytics", icon: "analytics" },
     ],
-    accentColor: "from-primary to-primary-purple",
+    accentColor: "from-primary to-secondary",
   },
   {
     id: "parent",
     name: "Parents & Families",
     badge: "🍼 Family Care",
-    badgeStyle: "bg-peach/30 text-[#9E5D28] border border-peach/40",
+    badgeStyle: "bg-[#EDF6F2] dark:bg-[#20372F] text-[#006B56] dark:text-[#88F7D6] border border-[#BCE2D2] dark:border-[#325246]",
     icon: "family_history",
     emoji: "🍼",
     image: "/category/family.png",
@@ -97,7 +97,7 @@ const PATHWAYS: PathwayDetail[] = [
     id: "couple",
     name: "Couples & Relationships",
     badge: "💖 Harmony Journey",
-    badgeStyle: "bg-pink/30 text-[#874959] border border-pink/40",
+    badgeStyle: "bg-mint/15 dark:bg-[#1B332B] text-[#006B56] dark:text-[#88F7D6] border border-mint/30 dark:border-[#2E4E44]",
     icon: "favorite",
     emoji: "💖",
     image: "/category/couple.png",
@@ -121,7 +121,7 @@ const PATHWAYS: PathwayDetail[] = [
     id: "other",
     name: "Other Pathways",
     badge: "✨ Unique Path",
-    badgeStyle: "bg-[#7C6BC4]/15 text-[#5F4EA5] border border-[#7C6BC4]/30",
+    badgeStyle: "bg-primary/10 text-primary border border-primary/20",
     icon: "explore",
     emoji: "✨",
     image: "/category/other.png",
@@ -139,7 +139,7 @@ const PATHWAYS: PathwayDetail[] = [
       { title: "Encrypted Voice Journaling", desc: "Express unspoken thoughts safely", icon: "mic" },
       { title: "Custom Reflection Prompts", desc: "Tailored to your daily check-in responses", icon: "auto_awesome" },
     ],
-    accentColor: "from-[#5F4EA5] to-[#7C6BC4]",
+    accentColor: "from-primary to-mint",
   },
 ];
 
@@ -163,7 +163,7 @@ export default function ForYouPage() {
 
         <h1 className="text-4xl sm:text-5xl lg:text-6xl font-heading font-black text-on-surface tracking-tight leading-[1.12]">
           Designed For{" "}
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-[#5F4EA5] to-mint">
+          <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-[#005B48] to-mint">
             Your Life Stage
           </span>
         </h1>
@@ -184,8 +184,8 @@ export default function ForYouPage() {
                 onClick={() => setActivePathwayId(p.id)}
                 className={`px-5 py-2.5 rounded-full text-xs sm:text-sm font-heading font-bold transition-all cursor-pointer flex items-center gap-2 ${
                   isActive
-                    ? "bg-primary text-white shadow-md scale-105"
-                    : "bg-surface-container-lowest hover:bg-surface-container text-on-surface-variant border border-surface-variant/40"
+                    ? "bg-primary text-white shadow-md scale-105 border border-primary"
+                    : "bg-primary/10 border border-primary/20 text-primary hover:bg-primary hover:text-white hover:border-primary"
                 }`}
               >
                 <span className="text-base">{p.emoji}</span>
@@ -276,8 +276,8 @@ export default function ForYouPage() {
                   </ul>
                 </div>
 
-                <div className="p-6 rounded-[24px] bg-primary/5 border border-primary/20 space-y-2">
-                  <div className="flex items-center gap-2 text-primary font-heading font-bold text-xs uppercase tracking-wider">
+                <div className="p-6 rounded-[24px] bg-[#E6F4F0] dark:bg-[#1B332B] border border-[#CBECE2] dark:border-[#2E4E44] space-y-2">
+                  <div className="flex items-center gap-2 text-primary dark:text-[#88F7D6] font-heading font-bold text-xs uppercase tracking-wider">
                     <span className="material-symbols-outlined text-sm">graphic_eq</span>
                     <span>AI Companion Persona Calibration</span>
                   </div>
@@ -326,6 +326,7 @@ export default function ForYouPage() {
         description="Select your category and experience daily mood check-ins, CBT prompts, and soundscapes built specifically for your life stage."
         buttonText="Explore How It Works"
         buttonHref="/how-it-works"
+        variant="green"
       />
     </div>
   );

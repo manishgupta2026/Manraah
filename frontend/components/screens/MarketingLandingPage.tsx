@@ -9,11 +9,11 @@ import BottomCtaBand from "@/frontend/components/ui/BottomCtaBand";
 // Vibrant 2-Tone Brand Gradients per Category
 const USER_CATEGORY_GRADIENTS: Record<string, { bg: string; badge: string }> = {
   student: {
-    bg: "bg-gradient-to-br from-[#5F4EA5] via-[#7C6BC4] to-[#F4A6B8]",
+    bg: "bg-gradient-to-br from-[#004D3D] via-[#006B56] to-[#5FAF8A]",
     badge: "🎓 Academic Focus",
   },
   working_professional: {
-    bg: "bg-gradient-to-br from-[#006B56] via-[#2A9D8F] to-[#5F4EA5]",
+    bg: "bg-gradient-to-br from-[#006B56] via-[#2A9D8F] to-[#004D3D]",
     badge: "💼 Career & Balance",
   },
   parent: {
@@ -25,7 +25,7 @@ const USER_CATEGORY_GRADIENTS: Record<string, { bg: string; badge: string }> = {
     badge: "💖 Harmony Journey",
   },
   other: {
-    bg: "bg-gradient-to-br from-[#5F4EA5] via-[#7C6BC4] to-[#5FCFB0]",
+    bg: "bg-gradient-to-br from-[#004D3D] via-[#006B56] to-[#5FCFB0]",
     badge: "✨ Unique Path",
   },
 };
@@ -71,17 +71,17 @@ const TRUST_BADGES = [
     icon: "psychology",
     title: "Evidence-Based Support",
     desc: "CBT & mindfulness tools",
-    bg: "bg-pink/20",
-    iconColor: "text-[#874959]",
-    border: "border-pink/30",
+    bg: "bg-[#EDF6F2] dark:bg-[#20372F]",
+    iconColor: "text-[#005B48] dark:text-[#88F7D6]",
+    border: "border-[#BCE2D2] dark:border-[#325246]",
   },
   {
     icon: "schedule",
     title: "Available 24/7",
     desc: "Support whenever you need",
-    bg: "bg-peach/25",
-    iconColor: "text-[#9E5D28]",
-    border: "border-peach/30",
+    bg: "bg-[#E6F4F0] dark:bg-[#1B332B]",
+    iconColor: "text-[#006B56] dark:text-[#88F7D6]",
+    border: "border-[#CBECE2] dark:border-[#2E4E44]",
   },
 ];
 
@@ -102,9 +102,9 @@ const TESTIMONIALS_ROW_1 = [
     id: "couple",
     role: "A Couple using Manraah",
     badge: "💖 Relationship Harmony",
-    badgeStyle: "bg-pink/20 text-[#A83256] border border-pink/30",
+    badgeStyle: "bg-mint/15 dark:bg-[#1B332B] text-[#006B56] dark:text-[#88F7D6] border border-mint/30 dark:border-[#2E4E44]",
     initial: "C",
-    avatarBg: "bg-pink/30 text-[#A83256]",
+    avatarBg: "bg-mint/25 text-[#006B56] dark:text-[#88F7D6]",
     quote: "The guided reflection prompts helped us slow down difficult conversations around work stress and finances. It gave us a gentle structure to truly hear each other again.",
     reflection: "💑 Fostering open, peaceful dialogue",
   },
@@ -135,9 +135,9 @@ const TESTIMONIALS_ROW_2 = [
     id: "parent",
     role: "A Parent Member",
     badge: "🍼 Family & Parenting",
-    badgeStyle: "bg-peach/30 text-[#9E5D28] border border-peach/40",
+    badgeStyle: "bg-[#EDF6F2] dark:bg-[#20372F] text-[#006B56] dark:text-[#88F7D6] border border-[#BCE2D2] dark:border-[#325246]",
     initial: "P",
-    avatarBg: "bg-peach/40 text-[#9E5D28]",
+    avatarBg: "bg-[#E6F4F0] dark:bg-[#1B332B] text-[#006B56] dark:text-[#88F7D6]",
     quote: "Balancing work deadlines and family care often left me depleted by evening. The 5-minute unwinding reflections give me a quiet moment to reset and recharge my patience.",
     reflection: "🌿 Daily moments of evening reset",
   },
@@ -165,9 +165,9 @@ const TESTIMONIALS_ROW_2 = [
     id: "creative-pro",
     role: "A Creative Freelancer",
     badge: "💼 Work & Wellness",
-    badgeStyle: "bg-peach/30 text-[#9E5D28] border border-peach/40",
+    badgeStyle: "bg-[#EDF6F2] dark:bg-[#20372F] text-[#006B56] dark:text-[#88F7D6] border border-[#BCE2D2] dark:border-[#325246]",
     initial: "F",
-    avatarBg: "bg-peach/30 text-[#9E5D28]",
+    avatarBg: "bg-[#E6F4F0] dark:bg-[#1B332B] text-[#006B56] dark:text-[#88F7D6]",
     quote: "Working remotely without a team made it easy to lose perspective. The mood tracking and AI check-ins serve as my daily emotional anchor.",
     reflection: "💡 Daily mindfulness during solitary work",
   },
@@ -329,7 +329,7 @@ export default function MarketingLandingPage() {
         <button
           onClick={handlePrevHeroSlide}
           aria-label="Previous slide"
-          className="absolute left-2 sm:left-3 md:left-4 top-1/2 -translate-y-1/2 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/80 hover:bg-white text-on-surface shadow-xl backdrop-blur-md flex items-center justify-center transition-all hover:scale-105 active:scale-95 cursor-pointer z-30 border border-white/50 opacity-80 hover:opacity-100"
+          className="absolute left-2 sm:left-3 md:left-4 top-1/2 -translate-y-1/2 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#E6F4F0]/90 hover:bg-primary text-[#006B56] hover:text-white border border-[#CBECE2] hover:border-primary shadow-xl backdrop-blur-md flex items-center justify-center transition-all hover:scale-105 active:scale-95 cursor-pointer z-30 opacity-90 hover:opacity-100"
         >
           <span className="material-symbols-outlined text-lg sm:text-xl">chevron_left</span>
         </button>
@@ -338,7 +338,7 @@ export default function MarketingLandingPage() {
         <button
           onClick={handleNextHeroSlide}
           aria-label="Next slide"
-          className="absolute right-2 sm:right-3 md:right-4 top-1/2 -translate-y-1/2 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/80 hover:bg-white text-on-surface shadow-xl backdrop-blur-md flex items-center justify-center transition-all hover:scale-105 active:scale-95 cursor-pointer z-30 border border-white/50 opacity-80 hover:opacity-100"
+          className="absolute right-2 sm:right-3 md:right-4 top-1/2 -translate-y-1/2 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#E6F4F0]/90 hover:bg-primary text-[#006B56] hover:text-white border border-[#CBECE2] hover:border-primary shadow-xl backdrop-blur-md flex items-center justify-center transition-all hover:scale-105 active:scale-95 cursor-pointer z-30 opacity-90 hover:opacity-100"
         >
           <span className="material-symbols-outlined text-lg sm:text-xl">chevron_right</span>
         </button>
@@ -356,7 +356,7 @@ export default function MarketingLandingPage() {
                   aria-label={`Go to slide ${idx + 1}`}
                   className={`transition-all duration-300 cursor-pointer rounded-full ${
                     isActive
-                      ? "w-4 sm:w-6 h-1 sm:h-1.5 bg-[#7C6BC4] shadow-xs"
+                      ? "w-4 sm:w-6 h-1 sm:h-1.5 bg-primary shadow-xs"
                       : "w-1 sm:w-1.5 h-1 sm:h-1.5 bg-white/40 hover:bg-white/70"
                   }`}
                 />
@@ -495,8 +495,8 @@ export default function MarketingLandingPage() {
               <div className="flex flex-col rounded-xl sm:rounded-2xl border border-surface-variant/40 overflow-hidden divide-y divide-surface-variant/30 shadow-ambient">
 
                 {/* Benefit 1: Accessible & Instant */}
-                <div className="flex items-start gap-3.5 sm:gap-4 p-4 sm:p-5 bg-pink/5 hover:bg-pink/10 transition-colors">
-                  <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-pink/20 text-[#9E3B54] flex items-center justify-center shrink-0 mt-0.5">
+                <div className="flex items-start gap-3.5 sm:gap-4 p-4 sm:p-5 bg-mint/5 hover:bg-mint/10 dark:bg-[#1B332B]/30 dark:hover:bg-[#1B332B]/50 transition-colors">
+                  <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-mint/20 text-[#006B56] dark:text-[#88F7D6] flex items-center justify-center shrink-0 mt-0.5">
                     <span className="material-symbols-outlined text-base sm:text-lg font-bold">payments</span>
                   </div>
                   <div>
@@ -559,14 +559,14 @@ export default function MarketingLandingPage() {
             <div className="hidden sm:flex items-center gap-2.5 sm:gap-3 shrink-0">
               <button
                 onClick={() => scrollCategoryCarousel("left")}
-                className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-surface-container border border-surface-variant/40 text-on-surface hover:bg-primary hover:text-white transition-all flex items-center justify-center shadow-xs cursor-pointer"
+                className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-primary/10 border border-primary/20 text-primary hover:bg-primary hover:text-white hover:border-primary transition-all flex items-center justify-center shadow-xs cursor-pointer"
                 aria-label="Scroll left"
               >
                 <span className="material-symbols-outlined text-lg sm:text-xl">chevron_left</span>
               </button>
               <button
                 onClick={() => scrollCategoryCarousel("right")}
-                className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-surface-container border border-surface-variant/40 text-on-surface hover:bg-primary hover:text-white transition-all flex items-center justify-center shadow-xs cursor-pointer"
+                className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-primary/10 border border-primary/20 text-primary hover:bg-primary hover:text-white hover:border-primary transition-all flex items-center justify-center shadow-xs cursor-pointer"
                 aria-label="Scroll right"
               >
                 <span className="material-symbols-outlined text-lg sm:text-xl">chevron_right</span>
@@ -587,7 +587,7 @@ export default function MarketingLandingPage() {
           >
             {USER_CATEGORIES.map((cat) => {
               const style = USER_CATEGORY_GRADIENTS[cat.id] || {
-                bg: "bg-gradient-to-br from-[#5F4EA5] via-[#7C6BC4] to-[#5FCFB0]",
+                bg: "bg-gradient-to-br from-[#004D3D] via-[#006B56] to-[#5FCFB0]",
                 badge: "🌿 Wellness Journey",
               };
 
@@ -638,7 +638,7 @@ export default function MarketingLandingPage() {
           <div className="text-left pt-2 sm:pt-4">
             <Link
               href="/for-you"
-              className="inline-flex items-center gap-2 px-6 sm:px-7 py-2.5 sm:py-3 rounded-full bg-surface-container-lowest hover:bg-primary/10 text-primary border border-primary/30 font-heading font-bold text-xs sm:text-sm shadow-xs hover:shadow-md transition-all hover:scale-105 cursor-pointer"
+              className="inline-flex items-center gap-2 px-6 sm:px-7 py-2.5 sm:py-3 rounded-full bg-primary/10 hover:bg-primary text-primary hover:text-white border border-primary/20 hover:border-primary font-heading font-bold text-xs sm:text-sm shadow-xs hover:shadow-md transition-all hover:scale-105 cursor-pointer"
             >
               <span>Explore All Dedicated Life Stage Pathways</span>
               <span className="material-symbols-outlined text-base">arrow_forward</span>
@@ -713,7 +713,7 @@ export default function MarketingLandingPage() {
           <div className="max-w-7xl mx-auto text-left">
             <Link
               href="/stories"
-              className="inline-flex items-center gap-2 px-6 sm:px-7 py-2.5 sm:py-3 rounded-full bg-surface-container-lowest hover:bg-primary/10 text-primary border border-primary/30 font-heading font-bold text-xs sm:text-sm shadow-xs hover:shadow-md transition-all hover:scale-105 cursor-pointer"
+              className="inline-flex items-center gap-2 px-6 sm:px-7 py-2.5 sm:py-3 rounded-full bg-primary/10 hover:bg-primary text-primary hover:text-white border border-primary/20 hover:border-primary font-heading font-bold text-xs sm:text-sm shadow-xs hover:shadow-md transition-all hover:scale-105 cursor-pointer"
             >
               <span>Explore All Member Stories &amp; Journeys</span>
               <span className="material-symbols-outlined text-base">arrow_forward</span>
@@ -756,10 +756,10 @@ export default function MarketingLandingPage() {
             <motion.div variants={itemVariants} className="flex items-center justify-start">
               <Link
                 href="/how-it-works"
-                className="px-7 sm:px-8 py-3.5 sm:py-4 rounded-full bg-primary hover:bg-primary-purple text-white font-heading font-bold text-xs sm:text-sm shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all inline-flex items-center gap-2 group cursor-pointer"
+                className="px-7 sm:px-8 py-3.5 sm:py-4 rounded-full bg-primary/10 hover:bg-primary text-primary hover:text-white border border-primary/20 hover:border-primary font-heading font-bold text-xs sm:text-sm transition-all inline-flex items-center gap-2 group cursor-pointer"
               >
                 <span>See How It Works</span>
-                <span className="material-symbols-outlined text-base sm:text-lg group-hover:translate-x-1 transition-transform">
+                <span className="material-symbols-outlined text-base sm:text-lg group-hover:translate-x-1 transition-transform text-primary group-hover:text-white">
                   arrow_forward
                 </span>
               </Link>

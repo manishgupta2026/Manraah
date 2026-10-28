@@ -182,7 +182,7 @@ export default function CrisisPage() {
                   <h3 className="text-base font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
                     KIRAN Mental Health Helpline
                   </h3>
-                  <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-sky-100 text-sky-700 dark:bg-sky-950/60 dark:text-sky-300">
+                  <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#E6F4F0] dark:bg-[rgba(95,175,138,0.15)] text-[#006B56] dark:text-[#5FAF8A]">
                     24/7 Toll-Free
                   </span>
                 </div>
@@ -222,7 +222,7 @@ export default function CrisisPage() {
                   <h3 className="text-base font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
                     Vandrevala Foundation
                   </h3>
-                  <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300">
+                  <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#EDF6F2] dark:bg-[rgba(95,175,138,0.15)] text-[#006B56] dark:text-[#5FAF8A]">
                     Free Counseling
                   </span>
                 </div>

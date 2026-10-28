@@ -11,8 +11,8 @@ const FEATURES_DATA = [
     id: "ai",
     label: "AI Companion",
     icon: "smart_toy",
-    panelBg: "bg-[#F2EBFF]",
-    panelBorder: "border-primary/20",
+    panelBg: "bg-[#E6F4F0] dark:bg-[#1B332B]",
+    panelBorder: "border-[#CBECE2] dark:border-[#2E4E44]",
     badge: "24/7 AI Guidance",
     headline: "Support, any time you need to talk",
     description: "Unpack your thoughts with a 24/7 empathetic assistant trained in active listening, cognitive reflection, and compassionate guidance. Receive immediate, non-judgmental support whenever your mind feels overwhelmed.",
@@ -27,8 +27,8 @@ const FEATURES_DATA = [
     id: "human",
     label: "Human Companion",
     icon: "record_voice_over",
-    panelBg: "bg-[#FFF4E8]",
-    panelBorder: "border-peach/40",
+    panelBg: "bg-[#EDF6F2] dark:bg-[#20372F]",
+    panelBorder: "border-[#BCE2D2] dark:border-[#325246]",
     badge: "Human Companion",
     headline: "Genuine empathy from real peer listeners",
     description: "Connect with compassionate, trained peer companions who understand your exact life stage. Share your feelings in a safe space built on warmth, mutual respect, and shared lived experience.",
@@ -43,8 +43,8 @@ const FEATURES_DATA = [
     id: "pro",
     label: "Professional Care",
     icon: "medical_services",
-    panelBg: "bg-[#FFF0F3]",
-    panelBorder: "border-tertiary/20",
+    panelBg: "bg-[#E2EFE9] dark:bg-[#1A3129]",
+    panelBorder: "border-[#A8DAC7] dark:border-[#2E4E44]",
     badge: "Clinical Expertise",
     headline: "Clinical expertise when you need deeper care",
     description: "Book 1-on-1 sessions with verified, licensed therapists and counselors. Get dedicated professional guidance tailored to anxiety, burnout, life transitions, and relationship health.",
@@ -59,8 +59,8 @@ const FEATURES_DATA = [
     id: "mood",
     label: "Mood Tracking",
     icon: "mood",
-    panelBg: "bg-[#FFF0F5]",
-    panelBorder: "border-pink/30",
+    panelBg: "bg-[#EBF7F2] dark:bg-[#233D34]",
+    panelBorder: "border-[#C5E8DC] dark:border-[#385B4E]",
     badge: "Self Awareness",
     headline: "Track your emotional rhythm over time",
     description: "Log daily feelings in seconds, identify emotional triggers, and watch your mental resilience grow. Gain clear visual insights into how sleep, work, and routines impact your mood.",
@@ -75,8 +75,8 @@ const FEATURES_DATA = [
     id: "journal",
     label: "Reflective Journal",
     icon: "auto_stories",
-    panelBg: "bg-[#FFFBEA]",
-    panelBorder: "border-pale-yellow/60",
+    panelBg: "bg-[#EFF8F4] dark:bg-[#1F362E]",
+    panelBorder: "border-[#CFEDE2] dark:border-[#305044]",
     badge: "Daily Reflection",
     headline: "Private, guided space for your thoughts",
     description: "Release daily mental clutter with gentle AI prompts and voice-to-text notes. Your journal entries are 100% private, encrypted, and designed to help you process emotions effortlessly.",
@@ -91,8 +91,8 @@ const FEATURES_DATA = [
     id: "meditation",
     label: "Meditation & Sleep",
     icon: "self_improvement",
-    panelBg: "bg-[#E8FAF4]",
-    panelBorder: "border-mint/30",
+    panelBg: "bg-[#E8FAF4] dark:bg-[#1C342C]",
+    panelBorder: "border-mint/30 dark:border-[#2E4E44]",
     badge: "Calm & Rest",
     headline: "Calm your nervous system in minutes",
     description: "Immerse yourself in guided breathwork, soothing bedtime soundscapes, and body-scan relaxation sessions. Lower stress levels and improve sleep quality with ad-free audio.",
@@ -107,8 +107,8 @@ const FEATURES_DATA = [
     id: "community",
     label: "Community Circles",
     icon: "groups",
-    panelBg: "bg-[#F5F2FF]",
-    panelBorder: "border-primary/20",
+    panelBg: "bg-[#E4F3ED] dark:bg-[#223B32]",
+    panelBorder: "border-[#B8E3D2] dark:border-[#35574B]",
     badge: "Safe Circles",
     headline: "Safe, anonymous circles where you belong",
     description: "Join moderated peer support spaces organized by life stage. Share reflections, exchange encouragement, and connect with people who truly understand what you're going through.",
@@ -123,8 +123,8 @@ const FEATURES_DATA = [
     id: "resources",
     label: "Expert Toolkits",
     icon: "menu_book",
-    panelBg: "bg-[#EBFBF7]",
-    panelBorder: "border-secondary/20",
+    panelBg: "bg-[#EBFBF7] dark:bg-[#1B322A]",
+    panelBorder: "border-[#B2E4D4] dark:border-[#2E4D43]",
     badge: "Expert Toolkits",
     headline: "Bite-sized toolkits for mental wellness",
     description: "Explore expert-crafted guides, anxiety relief toolkits, and practical self-care articles. Grounded in clinical psychology to give you actionable strategies for everyday challenges.",
@@ -198,28 +198,28 @@ function FeaturesContent() {
   const currentFeature = FEATURES_DATA[selectedPillar];
 
   return (
-    <div className="min-h-screen bg-surface text-on-surface font-sans py-12 md:py-20 px-4 sm:px-6 lg:px-12 select-none overflow-x-hidden">
-      <div className="max-w-6xl mx-auto space-y-16 md:space-y-24">
+    <div className="min-h-screen bg-surface text-on-surface font-sans pt-4 sm:pt-6 md:pt-8 pb-12 md:pb-16 px-4 sm:px-6 lg:px-12 select-none overflow-x-hidden">
+      <div className="max-w-6xl mx-auto space-y-6 sm:space-y-8 md:space-y-8">
 
         {/* ═══ 1. HEADER HERO ═══ */}
-        <div className="text-center space-y-5 max-w-3xl mx-auto">
-          <span className="px-4 py-1.5 rounded-full text-xs font-heading font-bold bg-primary/10 text-primary border border-primary/20 uppercase tracking-widest inline-block">
+        <div className="text-center space-y-2.5 sm:space-y-3 max-w-3xl mx-auto">
+          <span className="px-3.5 py-1 rounded-full text-[11px] font-heading font-bold bg-primary/10 text-primary border border-primary/20 uppercase tracking-wider inline-block">
             Comprehensive Care Platform
           </span>
-          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-heading font-black text-on-surface tracking-tight leading-tight">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-heading font-black text-on-surface tracking-tight leading-tight">
             Integrated Features for Real Wellbeing
           </h1>
-          <p className="text-base sm:text-lg text-on-surface-variant font-normal leading-relaxed">
+          <p className="text-xs sm:text-sm md:text-base text-on-surface-variant font-normal leading-relaxed max-w-2xl mx-auto">
             From 24/7 AI companion support to licensed therapist sessions, mood rhythm tracking, and private peer circles — everything you need in one compassionate space.
           </p>
 
-          <div className="pt-2 flex items-center justify-center gap-3">
+          <div className="pt-0.5 flex items-center justify-center gap-3">
             <Link
               href="/how-it-works"
-              className="px-8 py-4 rounded-full bg-primary hover:bg-primary-purple text-white font-heading font-bold text-sm shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all inline-flex items-center gap-2 cursor-pointer"
+              className="px-6 sm:px-7 py-2.5 sm:py-3 rounded-full bg-primary/10 hover:bg-primary text-primary hover:text-white border border-primary/20 hover:border-primary font-heading font-bold text-xs sm:text-sm transition-all inline-flex items-center gap-1.5 group cursor-pointer"
             >
               <span>See How It Works</span>
-              <span className="material-symbols-outlined text-lg">arrow_forward</span>
+              <span className="material-symbols-outlined text-base group-hover:translate-x-1 transition-transform text-primary group-hover:text-white">arrow_forward</span>
             </Link>
           </div>
         </div>
@@ -228,13 +228,13 @@ function FeaturesContent() {
         <div
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
-          className="space-y-8"
+          className="space-y-4 sm:space-y-5"
         >
           {/* Horizontal Scrollable Pill Tabs */}
-          <div className="w-full flex justify-start md:justify-center overflow-x-auto pb-2 pt-1 scroll-smooth [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+          <div className="w-full flex overflow-x-auto pb-1.5 pt-0.5 scroll-smooth [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
             <div
               ref={pillTabsRef}
-              className="flex items-center gap-2 sm:gap-2.5 px-1 shrink-0"
+              className="flex items-center gap-1.5 sm:gap-2 px-1 shrink-0 mx-auto"
             >
               {FEATURES_DATA.map((feat, idx) => {
                 const isActive = selectedPillar === idx;
@@ -242,13 +242,13 @@ function FeaturesContent() {
                   <button
                     key={feat.id}
                     onClick={() => setSelectedPillar(idx)}
-                    className={`px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-full text-xs font-heading font-bold whitespace-nowrap transition-all flex items-center gap-1.5 sm:gap-2 cursor-pointer shrink-0 ${
+                    className={`px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-full text-xs font-heading font-bold whitespace-nowrap transition-all flex items-center gap-1.5 cursor-pointer shrink-0 ${
                       isActive
-                        ? "bg-on-surface text-white shadow-md scale-[1.03]"
-                        : "bg-surface-container-lowest border border-surface-variant/40 text-on-surface-variant hover:bg-surface-container hover:text-on-surface"
+                        ? "bg-primary text-white shadow-md scale-[1.02] border border-primary"
+                        : "bg-primary/10 border border-primary/20 text-primary hover:bg-primary hover:text-white hover:border-primary"
                     }`}
                   >
-                    <span className="material-symbols-outlined text-base">{feat.icon}</span>
+                    <span className="material-symbols-outlined text-sm sm:text-base">{feat.icon}</span>
                     <span>{feat.label}</span>
                   </button>
                 );
@@ -265,26 +265,26 @@ function FeaturesContent() {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
                 transition={{ duration: 0.35, ease: "easeOut" }}
-                className={`p-6 sm:p-10 md:p-12 rounded-[36px] border ${currentFeature.panelBg} ${currentFeature.panelBorder} shadow-card-lift grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center`}
+                className={`p-5 sm:p-7 md:p-8 rounded-[28px] sm:rounded-[32px] border ${currentFeature.panelBg} ${currentFeature.panelBorder} shadow-card-lift grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center`}
               >
                 {/* Left Column: Feature Details & Highlights */}
-                <div className="lg:col-span-7 space-y-6 text-left">
-                  <span className="px-3.5 py-1.5 rounded-full text-xs font-heading font-bold bg-surface-container-lowest text-on-surface border border-surface-variant/40 uppercase tracking-widest inline-block shadow-xs">
+                <div className="lg:col-span-7 space-y-4 text-left">
+                  <span className="px-3 py-1 rounded-full text-[11px] font-heading font-bold bg-surface-container-lowest text-on-surface border border-surface-variant/40 uppercase tracking-wider inline-block shadow-xs">
                     {currentFeature.badge}
                   </span>
 
-                  <h2 className="text-2xl sm:text-3xl lg:text-4xl font-heading font-black text-on-surface tracking-tight leading-tight">
+                  <h2 className="text-xl sm:text-2xl lg:text-3xl font-heading font-black text-on-surface tracking-tight leading-snug">
                     {currentFeature.headline}
                   </h2>
 
-                  <p className="text-base sm:text-lg text-on-surface-variant leading-relaxed font-normal">
+                  <p className="text-xs sm:text-sm md:text-base text-on-surface-variant leading-relaxed font-normal">
                     {currentFeature.description}
                   </p>
 
-                  <div className="space-y-2.5 pt-2">
+                  <div className="space-y-2 pt-0.5">
                     {currentFeature.points.map((p, pIdx) => (
                       <div key={pIdx} className="flex items-center gap-2.5 text-xs sm:text-sm font-medium text-on-surface">
-                        <span className="w-5 h-5 rounded-full bg-primary/15 text-primary flex items-center justify-center text-xs font-bold shrink-0">
+                        <span className="w-4.5 h-4.5 rounded-full bg-primary/15 text-primary flex items-center justify-center text-[11px] font-bold shrink-0">
                           ✓
                         </span>
                         <span>{p}</span>
@@ -292,43 +292,43 @@ function FeaturesContent() {
                     ))}
                   </div>
 
-                  <div className="pt-3 flex items-center gap-3">
-                    <span className="text-xs text-on-surface-variant/70 font-semibold">
+                  <div className="pt-1 flex items-center gap-3">
+                    <span className="text-[11px] text-on-surface-variant/70 font-semibold">
                       Feature {selectedPillar + 1} of {FEATURES_DATA.length}
                     </span>
                   </div>
                 </div>
 
                 {/* Right Column: Custom Live Mockup per Feature */}
-                <div className="lg:col-span-5 flex justify-center">
+                <div className="lg:col-span-5 flex justify-center items-center w-full">
                   {currentFeature.id === "ai" && (
-                    <div className="w-full max-w-sm p-5 sm:p-6 rounded-[28px] bg-surface-container-lowest border border-surface-variant/40 shadow-xl space-y-4 text-left">
-                      <div className="flex items-center justify-between border-b border-surface-variant/20 pb-3">
+                    <div className="w-full max-w-sm p-4 sm:p-5 rounded-[24px] bg-surface-container-lowest border border-surface-variant/40 shadow-xl space-y-3 text-left">
+                      <div className="flex items-center justify-between border-b border-surface-variant/20 pb-2.5">
                         <div className="flex items-center gap-2.5">
-                          <div className="w-9 h-9 rounded-xl bg-primary/15 text-primary flex items-center justify-center font-bold shrink-0">
-                            <span className="material-symbols-outlined text-lg">smart_toy</span>
+                          <div className="w-8 h-8 rounded-xl bg-primary/15 text-primary flex items-center justify-center font-bold shrink-0">
+                            <span className="material-symbols-outlined text-base">smart_toy</span>
                           </div>
                           <div>
-                            <h4 className="font-heading font-extrabold text-xs sm:text-sm text-on-surface">Your AI Companion</h4>
+                            <h4 className="font-heading font-extrabold text-xs sm:text-sm text-on-surface leading-tight">Your AI Companion</h4>
                             <p className="text-[10px] text-emerald-600 font-semibold flex items-center gap-1"><span>●</span> Active 24/7</p>
                           </div>
                         </div>
-                        <span className="px-2.5 py-0.5 rounded-full text-[9px] font-heading font-bold bg-primary/10 text-primary shrink-0">Active Listener</span>
+                        <span className="px-2 py-0.5 rounded-full text-[9px] font-heading font-bold bg-primary/10 text-primary shrink-0">Active Listener</span>
                       </div>
-                      <div className="space-y-3 text-xs">
+                      <div className="space-y-2.5 text-xs">
                         <div className="flex justify-end">
-                          <div className="max-w-[85%] p-3 rounded-2xl rounded-tr-xs bg-primary text-white font-medium shadow-xs leading-relaxed">
+                          <div className="max-w-[85%] p-2.5 rounded-2xl rounded-tr-xs bg-primary text-white font-medium shadow-xs leading-relaxed text-[11px] sm:text-xs">
                             I get so stressed before deadlines. It feels like my mind won&apos;t quiet down.
                           </div>
                         </div>
                         <div className="flex justify-start">
-                          <div className="max-w-[85%] p-3 rounded-2xl rounded-tl-xs bg-surface-container-low border border-surface-variant/30 text-on-surface font-medium leading-relaxed">
+                          <div className="max-w-[85%] p-2.5 rounded-2xl rounded-tl-xs bg-surface-container-low border border-surface-variant/30 text-on-surface font-medium leading-relaxed text-[11px] sm:text-xs">
                             I hear you. Let&apos;s take a slow deep breath together right now and break down tonight into gentle steps.
                           </div>
                         </div>
                       </div>
-                      <div className="p-2.5 rounded-xl bg-mint/15 border border-mint/30 flex items-center justify-between text-[11px] text-[#006B56] font-bold">
-                        <div className="flex items-center gap-2">
+                      <div className="p-2 rounded-xl bg-mint/15 border border-mint/30 flex items-center justify-between text-[11px] text-[#006B56] font-bold">
+                        <div className="flex items-center gap-1.5">
                           <span className="material-symbols-outlined text-sm">air</span>
                           <span>2-Min Breathing Reset</span>
                         </div>
@@ -338,10 +338,10 @@ function FeaturesContent() {
                   )}
 
                   {currentFeature.id === "human" && (
-                    <div className="w-full max-w-sm p-5 sm:p-6 rounded-[28px] bg-surface-container-lowest border border-peach/40 shadow-xl space-y-4 text-left">
+                    <div className="w-full max-w-sm p-5 sm:p-6 rounded-[28px] bg-surface-container-lowest border border-[#BCE2D2] dark:border-[#325246] shadow-xl space-y-4 text-left">
                       <div className="flex items-center justify-between border-b border-surface-variant/20 pb-3">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-full bg-peach/40 text-[#9E5D28] font-bold flex items-center justify-center text-sm shrink-0">
+                          <div className="w-10 h-10 rounded-full bg-mint/20 dark:bg-mint/30 text-[#006B56] dark:text-[#88F7D6] font-bold flex items-center justify-center text-sm shrink-0">
                             M
                           </div>
                           <div>
@@ -349,16 +349,16 @@ function FeaturesContent() {
                             <p className="text-[10px] text-emerald-600 font-semibold flex items-center gap-1"><span>●</span> Certified Peer Listener</p>
                           </div>
                         </div>
-                        <span className="px-2.5 py-1 rounded-full text-[10px] font-heading font-bold bg-peach/25 text-[#9E5D28] shrink-0">
+                        <span className="px-2.5 py-1 rounded-full text-[10px] font-heading font-bold bg-[#E6F4F0] dark:bg-[#1B332B] text-[#006B56] dark:text-[#88F7D6] border border-[#CBECE2] dark:border-[#2E4E44] shrink-0">
                           ⭐️ 4.9 (120+ Sessions)
                         </span>
                       </div>
-                      <div className="p-4 rounded-2xl bg-[#FFF9F2] border border-peach/30 text-xs text-on-surface leading-relaxed font-medium">
+                      <div className="p-4 rounded-2xl bg-[#EDF6F2] dark:bg-[#1A3129] border border-[#BCE2D2] dark:border-[#325246] text-xs text-on-surface leading-relaxed font-medium">
                         &quot;I&apos;ve been in that exact spot during my junior year. You&apos;re doing better than you think. Take it one day at a time.&quot;
                       </div>
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs pt-1">
                         <span className="text-on-surface-variant/70 text-[11px]">100% Anonymous & Private</span>
-                        <span className="px-4 py-1.5 rounded-full bg-peach/20 text-[#9E5D28] font-heading font-bold text-xs shrink-0">
+                        <span className="px-4 py-1.5 rounded-full bg-mint/15 dark:bg-[#1B332B] text-[#006B56] dark:text-[#88F7D6] font-heading font-bold text-xs shrink-0">
                           Peer Space
                         </span>
                       </div>
@@ -366,10 +366,10 @@ function FeaturesContent() {
                   )}
 
                   {currentFeature.id === "pro" && (
-                    <div className="w-full max-w-sm p-5 sm:p-6 rounded-[28px] bg-surface-container-lowest border border-tertiary/20 shadow-xl space-y-4 text-left">
+                    <div className="w-full max-w-sm p-5 sm:p-6 rounded-[28px] bg-surface-container-lowest border border-[#A8DAC7] dark:border-[#2E4E44] shadow-xl space-y-4 text-left">
                       <div className="flex items-center justify-between border-b border-surface-variant/20 pb-3">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-full bg-pink/30 text-[#874959] font-bold flex items-center justify-center text-sm shrink-0">
+                          <div className="w-10 h-10 rounded-full bg-[#E2EFE9] dark:bg-[#1A3129] text-[#006B56] dark:text-[#88F7D6] font-bold flex items-center justify-center text-sm shrink-0">
                             Dr
                           </div>
                           <div>
@@ -377,7 +377,7 @@ function FeaturesContent() {
                             <p className="text-[10px] text-on-surface-variant font-semibold">Licensed Clinical Psychologist</p>
                           </div>
                         </div>
-                        <span className="px-2.5 py-1 rounded-full text-[10px] font-heading font-bold bg-pink/20 text-[#874959] shrink-0">
+                        <span className="px-2.5 py-1 rounded-full text-[10px] font-heading font-bold bg-mint/20 dark:bg-[#1B332B] text-[#006B56] dark:text-[#88F7D6] border border-mint/30 dark:border-[#2E4E44] shrink-0">
                           Verified
                         </span>
                       </div>
@@ -396,7 +396,7 @@ function FeaturesContent() {
                   )}
 
                   {currentFeature.id === "mood" && (
-                    <div className="w-full max-w-sm p-5 sm:p-6 rounded-[28px] bg-surface-container-lowest border border-pink/30 shadow-xl space-y-4 text-left">
+                    <div className="w-full max-w-sm p-5 sm:p-6 rounded-[28px] bg-surface-container-lowest border border-[#C5E8DC] dark:border-[#385B4E] shadow-xl space-y-4 text-left">
                       <div className="flex items-center justify-between border-b border-surface-variant/20 pb-3">
                         <h4 className="font-heading font-extrabold text-sm text-on-surface">Weekly Mood Rhythm</h4>
                         <span className="px-2.5 py-0.5 rounded-full text-[9px] font-heading font-bold bg-mint/20 text-[#006B56]">
@@ -430,16 +430,16 @@ function FeaturesContent() {
                   )}
 
                   {currentFeature.id === "journal" && (
-                    <div className="w-full max-w-sm p-5 sm:p-6 rounded-[28px] bg-surface-container-lowest border border-pale-yellow shadow-xl space-y-3.5 text-left">
+                    <div className="w-full max-w-sm p-5 sm:p-6 rounded-[28px] bg-surface-container-lowest border border-[#CFEDE2] dark:border-[#305044] shadow-xl space-y-3.5 text-left">
                       <div className="flex items-center justify-between border-b border-surface-variant/20 pb-2.5">
                         <div className="flex items-center gap-2">
-                          <span className="material-symbols-outlined text-[#9E5D28] text-lg">auto_stories</span>
+                          <span className="material-symbols-outlined text-[#006B56] dark:text-[#88F7D6] text-lg">auto_stories</span>
                           <h4 className="font-heading font-extrabold text-xs sm:text-sm text-on-surface">Evening Reflection</h4>
                         </div>
                         <span className="text-[10px] text-on-surface-variant/60">Today, 8:45 PM</span>
                       </div>
-                      <div className="p-3 rounded-2xl bg-[#FFFDF5] border border-pale-yellow/60 space-y-1.5">
-                        <p className="text-[10px] font-heading font-bold text-[#9E5D28]">Prompt of the day:</p>
+                      <div className="p-3 rounded-2xl bg-[#EDF6F2] dark:bg-[#1A3129] border border-[#CFEDE2] dark:border-[#305044] space-y-1.5">
+                        <p className="text-[10px] font-heading font-bold text-[#006B56] dark:text-[#88F7D6]">Prompt of the day:</p>
                         <p className="text-xs text-on-surface italic font-normal">
                           &quot;What is one small thing that brought peace to your morning?&quot;
                         </p>
@@ -557,42 +557,58 @@ function FeaturesContent() {
               </motion.div>
             </AnimatePresence>
 
-            {/* Left Nav Arrow Button */}
+            {/* Desktop Left Nav Arrow Button */}
             <button
               onClick={handlePrevFeature}
               aria-label="Previous feature"
-              className="absolute left-2 sm:-left-5 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/90 hover:bg-white text-on-surface border border-surface-variant/40 shadow-lg backdrop-blur-md flex items-center justify-center transition-transform hover:scale-105 active:scale-95 cursor-pointer z-10"
+              className="hidden sm:flex absolute -left-4 sm:-left-5 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-[#E6F4F0]/90 hover:bg-primary text-primary hover:text-white border border-[#CBECE2] hover:border-primary shadow-lg backdrop-blur-md items-center justify-center transition-all hover:scale-105 active:scale-95 cursor-pointer z-10"
             >
               <span className="material-symbols-outlined text-xl sm:text-2xl">chevron_left</span>
             </button>
 
-            {/* Right Nav Arrow Button */}
+            {/* Desktop Right Nav Arrow Button */}
             <button
               onClick={handleNextFeature}
               aria-label="Next feature"
-              className="absolute right-2 sm:-right-5 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/90 hover:bg-white text-on-surface border border-surface-variant/40 shadow-lg backdrop-blur-md flex items-center justify-center transition-transform hover:scale-105 active:scale-95 cursor-pointer z-10"
+              className="hidden sm:flex absolute -right-4 sm:-right-5 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-[#E6F4F0]/90 hover:bg-primary text-primary hover:text-white border border-[#CBECE2] hover:border-primary shadow-lg backdrop-blur-md items-center justify-center transition-all hover:scale-105 active:scale-95 cursor-pointer z-10"
             >
               <span className="material-symbols-outlined text-xl sm:text-2xl">chevron_right</span>
             </button>
           </div>
 
-          {/* Dots Indicator */}
-          <div className="flex items-center justify-center gap-2 pt-2">
-            {FEATURES_DATA.map((feat, idx) => {
-              const isActive = selectedPillar === idx;
-              return (
-                <button
-                  key={feat.id}
-                  onClick={() => setSelectedPillar(idx)}
-                  aria-label={`Go to feature ${idx + 1}`}
-                  className={`transition-all duration-300 rounded-full cursor-pointer ${
-                    isActive
-                      ? "w-8 h-2.5 bg-primary shadow-xs"
-                      : "w-2.5 h-2.5 bg-surface-variant/70 hover:bg-primary/40"
-                  }`}
-                />
-              );
-            })}
+          {/* Dots Indicator & Mobile Navigation Controls */}
+          <div className="flex items-center justify-center gap-3 pt-1">
+            <button
+              onClick={handlePrevFeature}
+              aria-label="Previous feature"
+              className="sm:hidden w-8 h-8 rounded-full bg-primary/10 hover:bg-primary border border-primary/20 hover:border-primary text-primary hover:text-white flex items-center justify-center active:scale-95 transition-all cursor-pointer"
+            >
+              <span className="material-symbols-outlined text-base">chevron_left</span>
+            </button>
+            <div className="flex items-center gap-1.5">
+              {FEATURES_DATA.map((feat, idx) => {
+                const isActive = selectedPillar === idx;
+                return (
+                  <button
+                    key={feat.id}
+                    onClick={() => setSelectedPillar(idx)}
+                    aria-label={`Go to feature ${idx + 1}`}
+                    className={`transition-all duration-300 rounded-full cursor-pointer ${
+                      isActive
+                        ? "w-7 h-2 bg-primary shadow-xs"
+                        : "w-2 h-2 bg-surface-variant/70 hover:bg-primary/40"
+                    }`}
+                  />
+                );
+              })}
+            </div>
+            <button
+              onClick={handleNextFeature}
+              aria-label="Next feature"
+              className="sm:hidden w-8 h-8 rounded-full bg-primary/10 hover:bg-primary border border-primary/20 hover:border-primary text-primary hover:text-white flex items-center justify-center active:scale-95 transition-all cursor-pointer"
+            >
+              <span className="material-symbols-outlined text-base">chevron_right</span>
+            </button>
           </div>
         </div>
       </div>

@@ -382,18 +382,18 @@ export default function JourneyView() {
           </div>
 
           {/* Active Streak */}
-          <div className="p-4 rounded-2xl bg-[#FFF8F2] dark:bg-[#201811] border border-[#CBECE2] dark:border-[#51402E] flex items-center gap-3.5">
-            <div className="w-11 h-11 rounded-2xl bg-[#E37A47] dark:bg-[#3B2C20] text-white dark:text-[#D7AD70] flex items-center justify-center text-xl shadow-xs">
+          <div className="p-4 rounded-2xl bg-[#EDF6F2] dark:bg-[#201811] border border-[#BCE2D2] dark:border-[#51402E] flex items-center gap-3.5">
+            <div className="w-11 h-11 rounded-2xl bg-[#006B56] dark:bg-[#3B2C20] text-white dark:text-[#88F7D6] flex items-center justify-center text-xl shadow-xs">
               🔥
             </div>
             <div>
               <p className="text-[10px] text-[#789389] dark:text-[#9F907E] font-semibold">Active Streak</p>
-              <p className="text-xs font-black text-[#E37A47] dark:text-[#D7AD70]">{currentStreak} Days Consistent</p>
+              <p className="text-xs font-black text-[#006B56] dark:text-[#88F7D6]">{currentStreak} Days Consistent</p>
             </div>
           </div>
 
           {/* Mindfulness Time */}
-          <div className="p-4 rounded-2xl bg-[#F3F5FA] dark:bg-[#201811] border border-[#CBECE2] dark:border-[#51402E] flex items-center gap-3.5">
+          <div className="p-4 rounded-2xl bg-[#E6F4F0] dark:bg-[#201811] border border-[#CBECE2] dark:border-[#51402E] flex items-center gap-3.5">
             <div className="w-11 h-11 rounded-2xl bg-[#006B56] dark:bg-[#3B2C20] text-white dark:text-[#A3A77A] flex items-center justify-center text-lg shadow-xs">
               🧘
             </div>

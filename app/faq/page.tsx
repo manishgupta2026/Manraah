@@ -378,7 +378,7 @@ export default function FAQPage() {
           <div className="pt-2 flex flex-wrap items-center justify-center gap-4">
             <Link
               href="/contact"
-              className="px-7 py-3.5 rounded-full bg-primary hover:bg-primary-purple text-white text-xs sm:text-sm font-heading font-bold shadow-md hover:shadow-lg transition-all inline-flex items-center gap-2"
+              className="px-7 py-3.5 rounded-full bg-primary hover:bg-[#005B48] text-white text-xs sm:text-sm font-heading font-bold shadow-md hover:shadow-lg transition-all inline-flex items-center gap-2 cursor-pointer"
             >
               <span>Contact Support</span>
               <span className="material-symbols-outlined text-base">mail</span>
@@ -386,7 +386,7 @@ export default function FAQPage() {
 
             <Link
               href="/features"
-              className="px-7 py-3.5 rounded-full bg-surface-container-lowest hover:bg-surface-container text-on-surface border border-surface-variant/50 text-xs sm:text-sm font-heading font-semibold transition-all"
+              className="px-7 py-3.5 rounded-full bg-primary/10 hover:bg-primary text-primary hover:text-white border border-primary/20 hover:border-primary text-xs sm:text-sm font-heading font-bold transition-all shadow-xs hover:shadow-md cursor-pointer"
             >
               Explore All Features
             </Link>

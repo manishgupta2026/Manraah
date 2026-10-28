@@ -214,67 +214,62 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 6, scale: 0.97 }}
                   transition={{ duration: 0.15, ease: "easeOut" }}
-                  className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-80 rounded-2xl p-2.5 z-50 flex flex-col gap-1 shadow-2xl border bg-surface-container-lowest/95 dark:bg-[#443326] backdrop-blur-xl border-surface-variant/40 dark:border-[#51402E] text-on-surface dark:text-[#F3E9D8]"
+                  className="absolute top-full left-1/2 -translate-x-1/2 mt-2.5 w-[360px] sm:w-[400px] max-w-[calc(100vw-2rem)] rounded-2xl p-3 sm:p-3.5 z-50 flex flex-col gap-1.5 shadow-2xl border bg-surface-container-lowest/95 dark:bg-[#443326] backdrop-blur-xl border-surface-variant/40 dark:border-[#51402E] text-on-surface dark:text-[#F3E9D8]"
                 >
-
                   {/* Colleges / Higher Ed */}
                   <Link
-                    href="/our-solution?target=colleges"
+                    href="/our-solution/students"
                     onClick={() => setSolutionDropdownOpen(false)}
-                    className="p-2.5 rounded-xl flex items-start gap-3 transition-colors group hover:bg-[#E6F4F0]/60 dark:hover:bg-[#3B2C20]"
+                    className="p-2.5 sm:p-3 rounded-xl flex items-start gap-3 transition-colors group hover:bg-[#E6F4F0]/60 dark:hover:bg-[#3B2C20] w-full"
                   >
                     <div
-                      className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors bg-[#006C56]/10 text-[#006C56] group-hover:bg-[#006C56] group-hover:text-white dark:bg-[#30241A] dark:text-[#A3A77A] dark:group-hover:bg-[#858A60] dark:group-hover:text-[#211A14]"
+                      className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 transition-colors bg-[#006C56]/10 text-[#006C56] group-hover:bg-[#006C56] group-hover:text-white dark:bg-[#30241A] dark:text-[#A3A77A] dark:group-hover:bg-[#858A60] dark:group-hover:text-[#211A14]"
                     >
                       <span className="material-symbols-outlined text-lg">school</span>
                     </div>
-                    <div>
-                      <div
-                        className="text-xs font-heading font-bold transition-colors flex items-center gap-1.5 text-on-surface group-hover:text-[#006C56] dark:text-[#F3E9D8] dark:group-hover:text-[#A3A77A]"
-                      >
-                        <span>For Students &amp; Colleges</span>
+                    <div className="min-w-0 flex-1 space-y-0.5">
+                      <div className="flex items-center justify-between gap-1.5 flex-wrap">
+                        <span className="text-xs sm:text-sm font-heading font-bold transition-colors text-on-surface group-hover:text-[#006C56] dark:text-[#F3E9D8] dark:group-hover:text-[#A3A77A] leading-snug">
+                          For Students &amp; Colleges
+                        </span>
                         <span
-                          className="text-[9px] px-1.5 py-0.5 rounded font-semibold border bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-[#30241A] dark:text-[#A7B69A] dark:border-[#51402E]"
+                          className="text-[9px] px-1.5 py-0.5 rounded font-semibold border bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-[#30241A] dark:text-[#A7B69A] dark:border-[#51402E] shrink-0"
                         >
                           SC 2025
                         </span>
                       </div>
-                      <div
-                        className="text-[11px] line-clamp-1 text-on-surface-variant dark:text-[#C5B7A4]"
-                      >
+                      <p className="text-[11px] sm:text-xs text-on-surface-variant dark:text-[#C5B7A4] leading-relaxed font-normal break-words">
                         Campus-wide suicide prevention &amp; UGC guidelines
-                      </div>
+                      </p>
                     </div>
                   </Link>
 
                   {/* Corporates & Startups */}
                   <Link
-                    href="/our-solution?target=corporates"
+                    href="/our-solution/corporates"
                     onClick={() => setSolutionDropdownOpen(false)}
-                    className="p-2.5 rounded-xl flex items-start gap-3 transition-colors group hover:bg-[#E6F4F0]/60 dark:hover:bg-[#3B2C20]"
+                    className="p-2.5 sm:p-3 rounded-xl flex items-start gap-3 transition-colors group hover:bg-[#E6F4F0]/60 dark:hover:bg-[#3B2C20] w-full"
                   >
                     <div
-                      className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors bg-[#006C56]/10 text-[#006C56] group-hover:bg-[#006C56] group-hover:text-white dark:bg-[#30241A] dark:text-[#A7B69A] dark:group-hover:bg-[#858A60] dark:group-hover:text-[#211A14]"
+                      className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 transition-colors bg-[#006C56]/10 text-[#006C56] group-hover:bg-[#006C56] group-hover:text-white dark:bg-[#30241A] dark:text-[#A7B69A] dark:group-hover:bg-[#858A60] dark:group-hover:text-[#211A14]"
                     >
                       <span className="material-symbols-outlined text-lg">corporate_fare</span>
                     </div>
-                    <div>
-                      <div
-                        className="text-xs font-heading font-bold transition-colors flex items-center gap-1.5 text-on-surface group-hover:text-[#006C56] dark:text-[#F3E9D8] dark:group-hover:text-[#A3A77A]"
-                      >
-                        <span>For Employees &amp; Corporates</span>
+                    <div className="min-w-0 flex-1 space-y-0.5">
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-xs sm:text-sm font-heading font-bold transition-colors text-on-surface group-hover:text-[#006C56] dark:text-[#F3E9D8] dark:group-hover:text-[#A3A77A] leading-snug">
+                          For Employees &amp; Corporates
+                        </span>
                       </div>
-                      <div
-                        className="text-[11px] line-clamp-1 text-on-surface-variant dark:text-[#C5B7A4]"
-                      >
+                      <p className="text-[11px] sm:text-xs text-on-surface-variant dark:text-[#C5B7A4] leading-relaxed font-normal break-words">
                         24/7 confidential EAP, burnout telemetry &amp; ROI
-                      </div>
+                      </p>
                     </div>
                   </Link>
 
                   {/* Dropdown Footer CTA */}
                   <div
-                    className="mt-1 pt-2 border-t border-surface-variant/30 dark:border-[#51402E] flex items-center justify-between px-2 pb-1"
+                    className="mt-1 pt-2.5 border-t border-surface-variant/30 dark:border-[#51402E] flex flex-wrap items-center justify-between gap-2 px-2 pb-0.5"
                   >
                     <button
                       type="button"
@@ -283,17 +278,18 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                         setCallbackDefaultSegment("colleges");
                         setCallbackModalOpen(true);
                       }}
-                      className="text-xs font-heading font-bold flex items-center gap-1.5 cursor-pointer text-[#006C56] hover:text-[#005241] dark:text-[#A3A77A] dark:hover:text-[#F3E9D8]"
+                      className="text-xs font-heading font-bold flex items-center gap-1.5 cursor-pointer text-[#006C56] hover:text-[#005241] dark:text-[#A3A77A] dark:hover:text-[#F3E9D8] transition-colors py-1 shrink-0"
                     >
                       <span className="material-symbols-outlined text-base">support_agent</span>
                       <span>Request a Callback</span>
                     </button>
                     <Link
-                      href="/our-solution"
+                      href="/our-solution/students"
                       onClick={() => setSolutionDropdownOpen(false)}
-                      className="text-[11px] font-heading font-semibold transition-colors text-on-surface-variant hover:text-[#006C56] dark:text-[#C5B7A4] dark:hover:text-[#F3E9D8]"
+                      className="text-[11px] sm:text-xs font-heading font-semibold transition-colors text-on-surface-variant hover:text-[#006C56] dark:text-[#C5B7A4] dark:hover:text-[#F3E9D8] py-1 shrink-0 flex items-center gap-1"
                     >
-                      Full Overview &rarr;
+                      <span>Full Overview</span>
+                      <span>&rarr;</span>
                     </Link>
                   </div>
                 </motion.div>
@@ -567,10 +563,10 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
             <div className="hidden sm:flex items-center gap-2.5">
               <Link
                 href="/login"
-                className={`px-4 sm:px-5 py-2 rounded-full text-xs font-heading font-bold border transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#006C56]/40 focus-visible:ring-offset-1 ${
+                className={`px-4 sm:px-5 py-2 rounded-full text-xs font-heading font-bold border transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-1 ${
                   isLoginPage
-                    ? "bg-[#D0EDE4] text-[#004D3D] border-[#006C56]/40 shadow-xs dark:bg-[#3B2C20] dark:text-[#A3A77A] dark:border-[#A3A77A]/50"
-                    : "bg-[#E6F4F0] border-[#CBECE2] text-[#006C56] hover:bg-[#D0EDE4] hover:text-[#004D3D] hover:border-[#006C56]/30 dark:bg-[#30241A] dark:border-[#51402E] dark:text-[#F3E9D8] dark:hover:bg-[#3B2C20]"
+                    ? "bg-primary/20 text-primary border-primary/40 dark:bg-primary/20 dark:text-[#88F7D6] dark:border-primary/40"
+                    : "bg-primary/10 border-primary/20 text-primary hover:bg-primary hover:text-white hover:border-primary dark:bg-primary/15 dark:border-primary/30 dark:text-[#88F7D6] dark:hover:bg-primary dark:hover:text-white"
                 }`}
               >
                 Log In
@@ -579,10 +575,10 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
               <button
                 type="button"
                 onClick={handleGetStarted}
-                className={`px-4 sm:px-5 py-2 rounded-full font-heading font-bold text-xs shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex items-center gap-1.5 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#006C56]/50 focus-visible:ring-offset-2 ${
+                className={`px-4 sm:px-5 py-2 rounded-full font-heading font-bold text-xs border transition-all duration-200 flex items-center gap-1.5 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 ${
                   isSignupPage || pathname === "/category-selection"
-                    ? "bg-[#005241] text-white ring-2 ring-[#006C56]/30 shadow-xs dark:bg-[#858A60] dark:text-[#211A14] dark:ring-[#A3A77A]/40"
-                    : "bg-[#006C56] hover:bg-[#005241] text-white dark:bg-[#858A60] dark:hover:bg-[#A3A77A] dark:text-[#211A14]"
+                    ? "bg-[#005241] border-[#005241] text-white ring-2 ring-primary/30 dark:bg-[#005241] dark:text-white dark:border-[#005241]"
+                    : "bg-primary hover:bg-[#005241] border-primary text-white dark:bg-primary dark:hover:bg-[#005241] dark:text-white dark:border-primary"
                 }`}
               >
                 <span>Get Started</span>
@@ -700,46 +696,69 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                         animate={{ opacity: 1, height: "auto" }}
                         exit={{ opacity: 0, height: 0 }}
                         transition={{ duration: 0.2 }}
-                        className="pl-3 pr-1 py-1.5 flex flex-col gap-1 bg-surface-container-low/50 dark:bg-[#30241A]/50 rounded-xl mt-1 overflow-hidden"
+                        className="p-2 sm:p-2.5 flex flex-col gap-1.5 bg-surface-container-low/50 dark:bg-[#30241A]/50 rounded-xl mt-1 overflow-hidden"
                       >
                         <Link
-                          href="/our-solution?target=colleges"
+                          href="/our-solution/students"
                           onClick={() => setMobileMenuOpen(false)}
-                          className="py-2.5 px-3 rounded-lg hover:bg-surface-container dark:hover:bg-[#3B2C20] text-xs font-heading font-semibold flex items-center gap-2.5 text-on-surface dark:text-[#F3E9D8]"
+                          className="p-2.5 rounded-lg hover:bg-surface-container dark:hover:bg-[#3B2C20] flex items-start gap-3 transition-colors text-on-surface dark:text-[#F3E9D8] w-full"
                         >
-                          <span className="material-symbols-outlined text-base text-[#006C56] dark:text-[#A3A77A]">school</span>
-                          <div>
-                            <div className="leading-tight">For Students &amp; Colleges</div>
-                            <div className="text-[10px] text-on-surface-variant dark:text-[#9F907E] font-normal">
-                              UGC/SC compliance &amp; campus care
+                          <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 bg-[#006C56]/10 text-[#006C56] dark:bg-[#30241A] dark:text-[#A3A77A]">
+                            <span className="material-symbols-outlined text-base">school</span>
+                          </div>
+                          <div className="min-w-0 flex-1 space-y-0.5">
+                            <div className="flex items-center justify-between gap-1.5 flex-wrap">
+                              <span className="text-xs font-heading font-bold leading-tight">
+                                For Students &amp; Colleges
+                              </span>
+                              <span className="text-[9px] px-1.5 py-0.5 rounded font-semibold border bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-[#30241A] dark:text-[#A7B69A] dark:border-[#51402E] shrink-0">
+                                SC 2025
+                              </span>
                             </div>
+                            <p className="text-[11px] text-on-surface-variant dark:text-[#9F907E] font-normal leading-relaxed break-words">
+                              Campus-wide suicide prevention &amp; UGC guidelines
+                            </p>
                           </div>
                         </Link>
                         <Link
-                          href="/our-solution?target=corporates"
+                          href="/our-solution/corporates"
                           onClick={() => setMobileMenuOpen(false)}
-                          className="py-2.5 px-3 rounded-lg hover:bg-surface-container dark:hover:bg-[#3B2C20] text-xs font-heading font-semibold flex items-center gap-2.5 text-on-surface dark:text-[#F3E9D8]"
+                          className="p-2.5 rounded-lg hover:bg-surface-container dark:hover:bg-[#3B2C20] flex items-start gap-3 transition-colors text-on-surface dark:text-[#F3E9D8] w-full"
                         >
-                          <span className="material-symbols-outlined text-base text-secondary dark:text-[#A7B69A]">corporate_fare</span>
-                          <div>
-                            <div className="leading-tight">For Employees &amp; Corporates</div>
-                            <div className="text-[10px] text-on-surface-variant dark:text-[#9F907E] font-normal">
-                              24/7 EAP &amp; burnout telemetry
+                          <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 bg-[#006C56]/10 text-[#006C56] dark:bg-[#30241A] dark:text-[#A7B69A]">
+                            <span className="material-symbols-outlined text-base">corporate_fare</span>
+                          </div>
+                          <div className="min-w-0 flex-1 space-y-0.5">
+                            <div className="text-xs font-heading font-bold leading-tight">
+                              For Employees &amp; Corporates
                             </div>
+                            <p className="text-[11px] text-on-surface-variant dark:text-[#9F907E] font-normal leading-relaxed break-words">
+                              24/7 confidential EAP, burnout telemetry &amp; ROI
+                            </p>
                           </div>
                         </Link>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setMobileMenuOpen(false);
-                            setCallbackDefaultSegment("colleges");
-                            setCallbackModalOpen(true);
-                          }}
-                          className="mt-1 py-2.5 px-3 rounded-lg bg-[#006C56]/10 text-[#006C56] dark:bg-[#3B2C20] dark:text-[#A3A77A] hover:bg-[#006C56]/20 dark:hover:bg-[#443326] text-xs font-heading font-bold flex items-center gap-2 text-left cursor-pointer"
-                        >
-                          <span className="material-symbols-outlined text-base">support_agent</span>
-                          <span>Request a Callback</span>
-                        </button>
+                        <div className="mt-1 pt-2 border-t border-surface-variant/20 dark:border-[#51402E] flex flex-wrap items-center justify-between gap-2 px-1">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setMobileMenuOpen(false);
+                              setCallbackDefaultSegment("colleges");
+                              setCallbackModalOpen(true);
+                            }}
+                            className="py-1.5 px-2.5 rounded-lg bg-[#006C56]/10 text-[#006C56] dark:bg-[#3B2C20] dark:text-[#A3A77A] hover:bg-[#006C56]/20 dark:hover:bg-[#443326] text-xs font-heading font-bold flex items-center gap-1.5 text-left cursor-pointer transition-colors shrink-0"
+                          >
+                            <span className="material-symbols-outlined text-base">support_agent</span>
+                            <span>Request a Callback</span>
+                          </button>
+                          <Link
+                            href="/our-solution/students"
+                            onClick={() => setMobileMenuOpen(false)}
+                            className="py-1.5 px-2 text-[11px] font-heading font-semibold text-on-surface-variant hover:text-[#006C56] dark:text-[#C5B7A4] dark:hover:text-[#F3E9D8] transition-colors shrink-0 flex items-center gap-1"
+                          >
+                            <span>Full Overview</span>
+                            <span>&rarr;</span>
+                          </Link>
+                        </div>
                       </motion.div>
                     )}
                   </AnimatePresence>
@@ -831,7 +850,7 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                     <Link
                       href="/dashboard"
                       onClick={() => setMobileMenuOpen(false)}
-                      className="w-full py-3.5 rounded-full bg-[#006C56] dark:bg-[#858A60] text-white dark:text-[#211A14] font-heading font-bold text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
+                      className="w-full py-3.5 rounded-full bg-primary hover:bg-[#005241] border border-primary text-white font-heading font-bold text-sm transition-all flex items-center justify-center gap-2 cursor-pointer dark:bg-primary dark:text-white dark:border-primary"
                     >
                       <span>Go to Dashboard</span>
                       <span className="material-symbols-outlined text-lg">arrow_forward</span>
@@ -853,7 +872,7 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                         setMobileMenuOpen(false);
                         handleGetStarted();
                       }}
-                      className="w-full py-3.5 rounded-full bg-[#006C56] hover:bg-[#005241] text-white font-heading font-bold text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#006C56]/50 dark:bg-[#858A60] dark:text-[#211A14] dark:hover:bg-[#A3A77A]"
+                      className="w-full py-3.5 rounded-full bg-primary hover:bg-[#005241] border border-primary text-white font-heading font-bold text-sm transition-all flex items-center justify-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 dark:bg-primary dark:text-white dark:border-primary dark:hover:bg-[#005241]"
                     >
                       <span>Get Started</span>
                       <span className="material-symbols-outlined text-lg">arrow_forward</span>
@@ -861,10 +880,10 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                     <Link
                       href="/login"
                       onClick={() => setMobileMenuOpen(false)}
-                      className={`w-full text-center py-3 rounded-full border font-heading font-bold text-sm transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#006C56]/40 ${
+                      className={`w-full text-center py-3 rounded-full border font-heading font-bold text-sm transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 ${
                         isLoginPage
-                          ? "bg-[#D0EDE4] text-[#004D3D] border-[#006C56]/40 shadow-xs dark:bg-[#3B2C20] dark:text-[#A3A77A] dark:border-[#A3A77A]/50"
-                          : "bg-[#E6F4F0] hover:bg-[#D0EDE4] border-[#CBECE2] hover:border-[#006C56]/30 text-[#006C56] hover:text-[#004D3D] dark:bg-[#30241A] dark:border-[#51402E] dark:text-[#F3E9D8] dark:hover:bg-[#3B2C20]"
+                          ? "bg-primary/20 text-primary border-primary/40 dark:bg-primary/20 dark:text-[#88F7D6] dark:border-primary/40"
+                          : "bg-primary/10 hover:bg-primary border-primary/20 hover:border-primary text-primary hover:text-white dark:bg-primary/15 dark:border-primary/30 dark:text-[#88F7D6] dark:hover:bg-primary dark:hover:text-white"
                       }`}
                     >
                       Log In to Account

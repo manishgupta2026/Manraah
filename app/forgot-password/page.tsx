@@ -49,7 +49,7 @@ export default function ForgotPasswordPage() {
 
               <Link
                 href="/login"
-                className="w-full py-3.5 rounded-full bg-primary hover:bg-primary-purple text-white font-heading font-bold text-xs shadow-md transition-all inline-block"
+                className="w-full py-3.5 rounded-full bg-primary hover:bg-[#005B48] text-white font-heading font-bold text-xs shadow-md transition-all inline-block cursor-pointer text-center"
               >
                 Return to Log In
               </Link>
@@ -69,7 +69,7 @@ export default function ForgotPasswordPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-4 rounded-full bg-primary hover:bg-primary-purple text-white font-heading font-bold text-sm shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 disabled:opacity-70"
+                className="w-full py-4 rounded-full bg-primary hover:bg-[#005B48] text-white font-heading font-bold text-sm shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 disabled:opacity-70 cursor-pointer"
               >
                 {loading ? (
                   <>

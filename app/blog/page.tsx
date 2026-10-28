@@ -89,7 +89,7 @@ const BLOG_POSTS: BlogPost[] = [
     id: "gentle-parenting-guilt",
     title: "Why Compassionate Parenting Starts with De-escalating Parental Guilt",
     category: "Parenting",
-    categoryStyle: "bg-peach/30 text-[#9E5D28] border-peach/40",
+    categoryStyle: "bg-[#EDF6F2] dark:bg-[#20372F] text-[#006B56] dark:text-[#88F7D6] border border-[#BCE2D2] dark:border-[#325246]",
     readTime: "7 min read",
     date: "Aug 29, 2026",
     author: {
@@ -109,7 +109,7 @@ const BLOG_POSTS: BlogPost[] = [
     id: "active-listening-couples",
     title: "Active Listening in Relationships: 4 Micro-Habits That Defuse Everyday Arguments",
     category: "Relationships",
-    categoryStyle: "bg-pink/30 text-[#874959] border-pink/40",
+    categoryStyle: "bg-mint/15 dark:bg-[#1B332B] text-[#006B56] dark:text-[#88F7D6] border border-mint/30 dark:border-[#2E4E44]",
     readTime: "5 min read",
     date: "Aug 24, 2026",
     author: {
@@ -149,7 +149,7 @@ const BLOG_POSTS: BlogPost[] = [
     id: "imposter-syndrome-first-job",
     title: "Navigating Imposter Syndrome at Your First Corporate Job",
     category: "Anxiety & Stress",
-    categoryStyle: "bg-[#7C6BC4]/20 text-[#5F4EA5] border-[#7C6BC4]/30",
+    categoryStyle: "bg-primary/10 text-primary border border-primary/20",
     readTime: "4 min read",
     date: "Aug 12, 2026",
     author: {
@@ -417,7 +417,7 @@ export default function BlogPage() {
                 />
                 <button
                   type="submit"
-                  className="w-full sm:w-auto px-6 py-3 rounded-full bg-primary hover:bg-primary-purple text-white font-heading font-bold text-xs shadow-md transition-all shrink-0 cursor-pointer"
+                  className="w-full sm:w-auto px-6 py-3 rounded-full bg-primary hover:bg-[#005B48] text-white font-heading font-bold text-xs shadow-md transition-all shrink-0 cursor-pointer"
                 >
                   Join Free
                 </button>
@@ -494,7 +494,7 @@ export default function BlogPage() {
                 </p>
                 <button
                   onClick={() => setActiveArticle(null)}
-                  className="px-5 py-2 rounded-full bg-primary text-white text-xs font-heading font-bold shadow-xs hover:bg-primary-purple transition-all"
+                  className="px-5 py-2 rounded-full bg-primary text-white text-xs font-heading font-bold shadow-xs hover:bg-[#005B48] transition-all cursor-pointer"
                 >
                   Done Reading
                 </button>

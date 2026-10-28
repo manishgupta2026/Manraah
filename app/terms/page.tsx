@@ -103,7 +103,7 @@ export default function TermsPage() {
           <div className="pt-6 border-t border-surface-variant/20 flex flex-col sm:flex-row items-center justify-between gap-4">
             <Link
               href="/"
-              className="px-6 py-3 rounded-full bg-primary hover:bg-primary-purple text-white font-heading font-bold text-xs shadow-md transition-all flex items-center gap-2"
+              className="px-6 py-3 rounded-full bg-primary hover:bg-[#005B48] text-white font-heading font-bold text-xs shadow-md transition-all flex items-center gap-2 cursor-pointer"
             >
               <span className="material-symbols-outlined text-sm">arrow_back</span>
               <span>Return to Home</span>

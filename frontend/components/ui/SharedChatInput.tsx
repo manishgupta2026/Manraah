@@ -13,7 +13,7 @@ export default function SharedChatInput({
   onSendMessage,
   placeholder = "Type your message...",
   quickPromptChips = [],
-  accentButtonClass = "bg-primary hover:bg-primary-purple text-white",
+  accentButtonClass = "bg-primary hover:bg-[#005B48] text-white",
 }: SharedChatInputProps) {
   const [input, setInput] = useState("");
 
