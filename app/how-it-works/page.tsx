@@ -116,7 +116,7 @@ export default function HowItWorksPage() {
           <div className="pt-2 flex items-center justify-center gap-3">
             <Link
               href="/features"
-              className="px-8 py-4 rounded-full bg-primary hover:bg-[#005B48] text-white font-heading font-bold text-sm shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all inline-flex items-center gap-2 cursor-pointer"
+              className="px-8 py-4 rounded-full bg-primary/10 text-primary border border-primary/20 hover:bg-primary hover:text-white hover:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40 focus:ring-offset-2 active:scale-98 font-heading font-bold text-sm shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 inline-flex items-center gap-2 cursor-pointer"
             >
               <span>Explore All Features</span>
               <span className="material-symbols-outlined text-lg">arrow_forward</span>

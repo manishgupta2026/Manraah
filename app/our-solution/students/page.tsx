@@ -1,9 +1,7 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
 import BottomCtaBand from "@/frontend/components/ui/BottomCtaBand";
-import SolutionSelectorTabs from "@/frontend/components/ui/SolutionSelectorTabs";
 
 export default function StudentsSolutionPage() {
   const triggerCallbackModal = (segment: "colleges" | "corporates" = "colleges") => {
@@ -22,7 +20,7 @@ export default function StudentsSolutionPage() {
       <div className="absolute bottom-96 left-10 w-96 h-96 bg-mint/15 rounded-full blur-3xl pointer-events-none -z-10" />
 
       {/* ═══ 1. HERO HEADER ═══ */}
-      <section className="relative pt-12 pb-10 md:pt-20 md:pb-16 px-4 sm:px-6 max-w-5xl mx-auto text-center space-y-6">
+      <section className="relative pt-12 pb-8 md:pt-20 md:pb-12 px-4 sm:px-6 max-w-5xl mx-auto text-center space-y-6">
         {/* Category Pill */}
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-heading font-bold uppercase tracking-wider">
           <span className="material-symbols-outlined text-base">school</span>
@@ -57,11 +55,6 @@ export default function StudentsSolutionPage() {
             <span className="text-white">Explore Supreme Court Compliance</span>
             <span className="material-symbols-outlined text-base text-white">arrow_downward</span>
           </a>
-        </div>
-
-        {/* Segment Switcher Tabs */}
-        <div className="pt-6">
-          <SolutionSelectorTabs activeTab="students" />
         </div>
       </section>
 
@@ -362,7 +355,7 @@ export default function StudentsSolutionPage() {
       </section>
 
       {/* ═══ 5. CLINICAL GOVERNANCE & TRUST ═══ */}
-      <section className="px-4 sm:px-6 max-w-6xl mx-auto pb-16">
+      <section className="px-4 sm:px-6 max-w-6xl mx-auto pb-10 sm:pb-14">
         <div className="text-center max-w-3xl mx-auto space-y-3 mb-10">
           <span className="px-3.5 py-1 rounded-full text-xs font-heading font-bold bg-primary/10 text-primary border border-primary/20 uppercase tracking-wider">
             CLINICAL GOVERNANCE &amp; SAFETY
@@ -418,45 +411,7 @@ export default function StudentsSolutionPage() {
         </div>
       </section>
 
-      {/* ═══ 6. DEDICATED CALLBACK CTA BANNER ═══ */}
-      <section className="px-4 sm:px-6 max-w-5xl mx-auto pb-16">
-        <div className="p-8 sm:p-12 rounded-3xl bg-gradient-to-r from-primary via-[#00624F] to-secondary text-white text-center space-y-6 shadow-2xl">
-          <div className="w-14 h-14 rounded-2xl bg-white/15 backdrop-blur-md text-white flex items-center justify-center mx-auto border border-white/20 shadow-inner">
-            <span className="material-symbols-outlined text-3xl">school</span>
-          </div>
-
-          <div className="space-y-2 max-w-2xl mx-auto">
-            <h3 className="text-2xl sm:text-4xl font-heading font-black tracking-tight">
-              Ready to Transform Your Campus Mental Health Support?
-            </h3>
-            <p className="text-xs sm:text-base text-white/90 leading-relaxed font-normal">
-              Schedule a 20-minute discovery session with our Higher Education Care Director. We will walk you through campus deployment, SC 2025 compliance checklists, and per-student MoU models.
-            </p>
-          </div>
-
-          <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
-            <button
-              onClick={() => triggerCallbackModal("colleges")}
-              className="px-8 py-3.5 rounded-full bg-white text-primary hover:bg-white/95 font-heading font-extrabold text-sm shadow-lg active:scale-98 transition-all cursor-pointer flex items-center gap-2"
-            >
-              <span>Schedule Institutional Callback</span>
-              <span className="material-symbols-outlined text-base">arrow_forward</span>
-            </button>
-            <Link
-              href="/contact"
-              className="px-6 py-3.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white font-heading font-bold text-sm transition-all"
-            >
-              Contact Support
-            </Link>
-          </div>
-
-          <p className="text-[11px] text-white/70">
-            ⚡ Quick 4-hour response SLA &bull; Tailored for Vice Chancellors, Deans &amp; Student Affairs
-          </p>
-        </div>
-      </section>
-
-      {/* ═══ 7. BOTTOM CTA BAND ═══ */}
+      {/* ═══ 6. BOTTOM CTA BAND ═══ */}
       <BottomCtaBand
         title="Looking for Individual Student Care?"
         description="Explore how Manraah also supports individual students with self-paced wellness assessments, AI companions, and exam calm soundscapes."

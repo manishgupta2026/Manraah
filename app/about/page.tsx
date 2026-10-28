@@ -206,7 +206,7 @@ export default function AboutPage() {
         <motion.div variants={heroItemVariants} className="pt-2">
           <Link
             href="/for-you"
-            className="px-8 py-3.5 rounded-full bg-primary hover:bg-[#005B48] text-white font-heading font-bold text-sm shadow-md hover:shadow-lg transition-all inline-flex items-center gap-2 cursor-pointer"
+            className="px-8 py-3.5 rounded-full bg-primary/10 text-primary border border-primary/20 hover:bg-primary hover:text-white hover:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40 focus:ring-offset-2 active:scale-98 font-heading font-bold text-sm shadow-md hover:shadow-lg transition-all duration-200 inline-flex items-center gap-2 cursor-pointer"
           >
             <span>Explore Life Pathways</span>
             <span className="material-symbols-outlined text-base">

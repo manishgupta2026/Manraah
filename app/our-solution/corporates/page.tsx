@@ -3,7 +3,6 @@
 import React from "react";
 import Link from "next/link";
 import BottomCtaBand from "@/frontend/components/ui/BottomCtaBand";
-import SolutionSelectorTabs from "@/frontend/components/ui/SolutionSelectorTabs";
 
 export default function CorporatesSolutionPage() {
   const triggerCallbackModal = (segment: "colleges" | "corporates" = "corporates") => {
@@ -22,7 +21,7 @@ export default function CorporatesSolutionPage() {
       <div className="absolute bottom-96 left-10 w-96 h-96 bg-mint/15 rounded-full blur-3xl pointer-events-none -z-10" />
 
       {/* ═══ 1. HERO HEADER ═══ */}
-      <section className="relative pt-12 pb-10 md:pt-20 md:pb-16 px-4 sm:px-6 max-w-5xl mx-auto text-center space-y-6">
+      <section className="relative pt-12 pb-8 md:pt-20 md:pb-12 px-4 sm:px-6 max-w-5xl mx-auto text-center space-y-6">
         {/* Category Pill */}
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-secondary/15 border border-secondary/25 text-secondary text-xs font-heading font-bold uppercase tracking-wider">
           <span className="material-symbols-outlined text-base">corporate_fare</span>
@@ -57,11 +56,6 @@ export default function CorporatesSolutionPage() {
             <span className="text-white">Explore CHRO Wellbeing Compass</span>
             <span className="material-symbols-outlined text-base text-white">arrow_downward</span>
           </a>
-        </div>
-
-        {/* Segment Switcher Tabs */}
-        <div className="pt-6">
-          <SolutionSelectorTabs activeTab="corporates" />
         </div>
       </section>
 

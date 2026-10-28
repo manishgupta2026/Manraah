@@ -417,7 +417,7 @@ export default function BlogPage() {
                 />
                 <button
                   type="submit"
-                  className="w-full sm:w-auto px-6 py-3 rounded-full bg-primary hover:bg-[#005B48] text-white font-heading font-bold text-xs shadow-md transition-all shrink-0 cursor-pointer"
+                  className="w-full sm:w-auto px-6 py-3 rounded-full bg-primary/10 text-primary border border-primary/20 hover:bg-primary hover:text-white hover:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40 focus:ring-offset-2 active:scale-[0.98] font-heading font-bold text-xs shadow-md transition-all duration-200 shrink-0 cursor-pointer"
                 >
                   Join Free
                 </button>
