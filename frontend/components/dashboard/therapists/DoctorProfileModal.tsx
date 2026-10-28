@@ -428,8 +428,8 @@ export default function DoctorProfileModal({
               onClick={() => setActiveTab("profile")}
               className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
                 activeTab === "profile"
-                  ? "bg-[#006B56] hover:bg-[#005B48] text-white shadow-xs"
-                  : "bg-black/5 dark:bg-white/5 text-[#5A756C] dark:text-[#9DB9B0] hover:bg-black/10"
+                  ? "bg-[#006B56] hover:bg-[#005B48] text-white dark:bg-[#5FAF8A] dark:text-[#112F28] shadow-xs"
+                  : "bg-black/5 dark:bg-white/5 text-[#5A756C] dark:text-[#9DB9B0] hover:bg-black/10 dark:hover:bg-white/10 dark:hover:text-[#F4FAF7]"
               }`}
             >
               Overview &amp; Bio
@@ -439,8 +439,8 @@ export default function DoctorProfileModal({
               onClick={() => setActiveTab("book")}
               className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
                 activeTab === "book"
-                  ? "bg-[#006B56] hover:bg-[#005B48] text-white shadow-xs"
-                  : "bg-black/5 dark:bg-white/5 text-[#5A756C] dark:text-[#9DB9B0] hover:bg-black/10"
+                  ? "bg-[#006B56] hover:bg-[#005B48] text-white dark:bg-[#5FAF8A] dark:text-[#112F28] shadow-xs"
+                  : "bg-black/5 dark:bg-white/5 text-[#5A756C] dark:text-[#9DB9B0] hover:bg-black/10 dark:hover:bg-white/10 dark:hover:text-[#F4FAF7]"
               }`}
             >
               <span className="material-symbols-outlined text-sm leading-none">calendar_month</span>
@@ -451,8 +451,8 @@ export default function DoctorProfileModal({
               onClick={() => setActiveTab("reviews")}
               className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
                 activeTab === "reviews"
-                  ? "bg-[#006B56] hover:bg-[#005B48] text-white shadow-xs"
-                  : "bg-black/5 dark:bg-white/5 text-[#5A756C] dark:text-[#9DB9B0] hover:bg-black/10"
+                  ? "bg-[#006B56] hover:bg-[#005B48] text-white dark:bg-[#5FAF8A] dark:text-[#112F28] shadow-xs"
+                  : "bg-black/5 dark:bg-white/5 text-[#5A756C] dark:text-[#9DB9B0] hover:bg-black/10 dark:hover:bg-white/10 dark:hover:text-[#F4FAF7]"
               }`}
             >
               <span className="material-symbols-outlined text-sm leading-none">rate_review</span>
@@ -549,7 +549,7 @@ export default function DoctorProfileModal({
                     <button
                       type="button"
                       onClick={() => setActiveTab("book")}
-                      className="px-5 py-2.5 rounded-full text-xs font-bold bg-[#006B56] hover:bg-[#005B48] text-white transition-all shadow-xs cursor-pointer shrink-0"
+                      className="px-5 py-2.5 rounded-full text-xs font-bold bg-[#006B56] hover:bg-[#005B48] text-white dark:bg-[#5FAF8A] dark:hover:bg-[#006B56] dark:text-[#112F28] dark:hover:text-white transition-all shadow-xs cursor-pointer shrink-0"
                     >
                       Book a Session
                     </button>
@@ -607,7 +607,7 @@ export default function DoctorProfileModal({
                             onClose();
                             router.push("/appointments");
                           }}
-                          className="px-5 py-2.5 rounded-full text-xs font-bold bg-[#006B56] text-white hover:bg-[#005B48] transition-all shadow-xs cursor-pointer"
+                          className="px-5 py-2.5 rounded-full text-xs font-bold bg-[#006B56] hover:bg-[#005B48] text-white dark:bg-[#5FAF8A] dark:hover:bg-[#006B56] dark:text-[#112F28] dark:hover:text-white transition-all shadow-xs cursor-pointer"
                         >
                           View in Appointments
                         </button>
@@ -780,7 +780,7 @@ export default function DoctorProfileModal({
                               type="button"
                               onClick={handleConfirmBooking}
                               disabled={isSubmittingBooking}
-                              className="px-6 py-2.5 rounded-full text-xs font-bold bg-[#006B56] hover:bg-[#005B48] text-white dark:bg-[#006B56] dark:hover:bg-[#005B48] transition-all shadow-xs flex items-center gap-2 cursor-pointer disabled:opacity-50"
+                              className="px-6 py-2.5 rounded-full text-xs font-bold bg-[#006B56] hover:bg-[#005B48] text-white dark:bg-[#5FAF8A] dark:hover:bg-[#006B56] dark:text-[#112F28] dark:hover:text-white transition-all shadow-xs flex items-center gap-2 cursor-pointer disabled:opacity-50"
                             >
                               {isSubmittingBooking ? (
                                 <>

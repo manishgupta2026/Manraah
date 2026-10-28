@@ -184,7 +184,7 @@ export default function FAQPage() {
   }, [selectedCategory, searchQuery]);
 
   return (
-    <div className="min-h-screen bg-surface dark:bg-[#071C17] text-on-surface dark:text-[#F4FAF7]">
+    <div className="min-h-screen bg-surface dark:bg-[#0A0E0D] text-on-surface dark:text-[#F4FAF7]">
       {/* ═══ 1. FAQ HERO HEADER ═══ */}
       <section className="relative pt-12 pb-14 md:pt-16 md:pb-18 px-6 max-w-5xl mx-auto text-center space-y-6">
         {/* Subtle Glow Blobs */}
@@ -203,14 +203,14 @@ export default function FAQPage() {
           </span>
         </h1>
 
-        <p className="text-base sm:text-lg text-on-surface-variant dark:text-[#A9C5BC] max-w-2xl mx-auto leading-relaxed font-normal">
+        <p className="text-base sm:text-lg text-on-surface-variant dark:text-[#9DB9B0] max-w-2xl mx-auto leading-relaxed font-normal">
           Everything you need to know about Manraah, our 24/7 AI companion, privacy standards, and mental wellness care.
         </p>
 
         {/* Live Search Bar */}
         <div className="max-w-2xl mx-auto pt-2 space-y-3">
           <div className="relative flex items-center">
-            <span className="material-symbols-outlined absolute left-4 text-on-surface-variant dark:text-[#78958C] text-xl pointer-events-none">
+            <span className="material-symbols-outlined absolute left-4 text-on-surface-variant dark:text-[#9DB9B0] text-xl pointer-events-none">
               search
             </span>
             <input
@@ -218,14 +218,14 @@ export default function FAQPage() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search questions, AI companion, therapy, privacy, pricing..."
-              className="w-full pl-12 pr-12 py-4 rounded-full bg-surface-container-lowest dark:bg-[#102F27] border border-surface-variant/60 dark:border-[#23483E] shadow-md hover:shadow-lg text-sm sm:text-base text-on-surface dark:text-[#F4FAF7] placeholder:text-on-surface-variant/60 dark:placeholder-[#78958C] focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all"
+              className="w-full pl-12 pr-12 py-4 rounded-full bg-surface-container-lowest dark:bg-[#18201C] border border-surface-variant/60 dark:border-[#22302A] shadow-md hover:shadow-lg text-sm sm:text-base text-on-surface dark:text-[#F4FAF7] placeholder:text-on-surface-variant/60 dark:placeholder-[#789389] focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all"
             />
             {searchQuery && (
               <button
                 type="button"
                 onClick={() => setSearchQuery("")}
                 aria-label="Clear search"
-                className="absolute right-4 w-7 h-7 rounded-full bg-surface-container-low dark:bg-[#1A453B] text-on-surface-variant dark:text-[#A9C5BC] hover:text-on-surface dark:hover:text-white flex items-center justify-center transition-colors cursor-pointer"
+                className="absolute right-4 w-7 h-7 rounded-full bg-surface-container-low dark:bg-[#22302A] text-on-surface-variant dark:text-[#9DB9B0] hover:text-on-surface dark:hover:text-[#F4FAF7] flex items-center justify-center transition-colors cursor-pointer"
               >
                 <span className="material-symbols-outlined text-sm">close</span>
               </button>
@@ -234,7 +234,7 @@ export default function FAQPage() {
 
           {/* Quick Suggestion Search Chips */}
           <div className="flex items-center justify-center gap-1.5 sm:gap-2 flex-wrap text-xs pt-1">
-            <span className="text-[11px] font-semibold text-on-surface-variant/70 dark:text-[#78958C] mr-1">
+            <span className="text-[11px] font-semibold text-on-surface-variant/70 dark:text-[#9DB9B0] mr-1">
               Popular:
             </span>
             {QUICK_SUGGESTIONS.map((tag) => (
@@ -244,8 +244,8 @@ export default function FAQPage() {
                 onClick={() => setSearchQuery(tag)}
                 className={`px-3 py-1 rounded-full text-xs font-heading font-medium transition-all cursor-pointer ${
                   searchQuery.toLowerCase() === tag.toLowerCase()
-                    ? "bg-primary text-white shadow-xs"
-                    : "bg-surface-container-lowest dark:bg-[#102F27] hover:bg-surface-container dark:hover:bg-[#14382F] text-on-surface-variant dark:text-[#A9C5BC] border border-surface-variant/40 dark:border-[#23483E]"
+                    ? "bg-primary text-white shadow-xs dark:bg-[#5FAF8A] dark:text-[#112F28]"
+                    : "bg-surface-container-lowest dark:bg-[#18201C] hover:bg-surface-container dark:hover:bg-[#22302A] text-on-surface-variant dark:text-[#9DB9B0] border border-surface-variant/40 dark:border-[#22302A]"
                 }`}
               >
                 {tag}
@@ -255,7 +255,7 @@ export default function FAQPage() {
 
           {/* Search Result Feedback Bar */}
           {isSearchActive && (
-            <div className="flex items-center justify-between px-3 py-1.5 rounded-xl bg-primary/10 dark:bg-[#102F27] border border-primary/20 dark:border-[#23483E] text-xs font-heading font-semibold text-primary dark:text-[#5FCFB0]">
+            <div className="flex items-center justify-between px-3 py-1.5 rounded-xl bg-primary/10 dark:bg-[#18201C] border border-primary/20 dark:border-[#22302A] text-xs font-heading font-semibold text-primary dark:text-[#5FAF8A]">
               <span>
                 Found {filteredFaqs.length} matching {filteredFaqs.length === 1 ? "question" : "questions"}
               </span>
@@ -282,8 +282,8 @@ export default function FAQPage() {
                 onClick={() => setSelectedCategory(tab.id)}
                 className={`px-4 py-2 rounded-full text-xs sm:text-sm font-heading font-bold transition-all cursor-pointer ${
                   isActive
-                    ? "bg-primary text-white shadow-md scale-105"
-                    : "bg-surface-container-lowest hover:bg-surface-container text-on-surface-variant border border-surface-variant/40"
+                    ? "bg-primary text-white shadow-md scale-105 dark:bg-[#5FAF8A] dark:text-[#112F28]"
+                    : "bg-surface-container-lowest dark:bg-[#18201C] hover:bg-surface-container dark:hover:bg-[#22302A] text-on-surface-variant dark:text-[#9DB9B0] border border-surface-variant/40 dark:border-[#22302A]"
                 }`}
               >
                 {tab.label}
@@ -321,7 +321,7 @@ export default function FAQPage() {
               return (
                 <div
                   key={item.id}
-                  className="rounded-[24px] bg-surface-container-lowest dark:bg-[#102F27] border border-surface-variant/40 dark:border-[#23483E] shadow-ambient overflow-hidden transition-all hover:border-primary/40 dark:hover:border-primary/40"
+                  className="rounded-[24px] bg-surface-container-lowest dark:bg-[#131916] border border-surface-variant/40 dark:border-[#1E2824] shadow-ambient overflow-hidden transition-all hover:border-primary/40 dark:hover:border-[#5FAF8A]/40"
                 >
                   <button
                     onClick={() => toggleAccordion(item.id)}
@@ -330,12 +330,12 @@ export default function FAQPage() {
                     <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 text-left">
                       <span>{item.q}</span>
                       {catObj && (
-                        <span className="self-start sm:self-center px-2.5 py-0.5 rounded-full text-[10px] font-heading font-semibold bg-primary/10 text-primary dark:bg-primary/20 dark:text-[#cbbeff] border border-primary/20 shrink-0">
+                        <span className="self-start sm:self-center px-2.5 py-0.5 rounded-full text-[10px] font-heading font-semibold bg-primary/10 text-primary dark:bg-[#18201C] dark:text-[#5FAF8A] border border-primary/20 dark:border-[#22302A] shrink-0">
                           {catObj.label}
                         </span>
                       )}
                     </div>
-                    <span className="material-symbols-outlined text-primary dark:text-[#cbbeff] transition-transform duration-200 shrink-0">
+                    <span className="material-symbols-outlined text-primary dark:text-[#5FAF8A] transition-transform duration-200 shrink-0">
                       {isOpen ? "expand_less" : "expand_more"}
                     </span>
                   </button>
@@ -347,7 +347,7 @@ export default function FAQPage() {
                         animate={{ opacity: 1, height: "auto" }}
                         exit={{ opacity: 0, height: 0 }}
                         transition={{ duration: 0.2 }}
-                        className="px-5 sm:px-6 pb-6 pt-0 text-sm text-on-surface-variant dark:text-[#A9C5BC] leading-relaxed font-normal border-t border-surface-variant/20 dark:border-[#23483E]/60 pt-4"
+                        className="px-5 sm:px-6 pb-6 pt-0 text-sm text-on-surface-variant dark:text-[#9DB9B0] leading-relaxed font-normal border-t border-surface-variant/20 dark:border-[#1E2824] pt-4"
                       >
                         {item.a}
                       </motion.div>
@@ -361,24 +361,24 @@ export default function FAQPage() {
       </section>
 
       {/* ═══ 4. STILL HAVE QUESTIONS CARD ═══ */}
-      <section className="py-16 bg-[#F2EBFF]/50 border-y border-surface-variant/20 px-6">
+      <section className="py-16 bg-[#F2EBFF]/50 dark:bg-[#111714] border-y border-surface-variant/20 dark:border-[#1E2824] px-6">
         <div className="max-w-4xl mx-auto text-center space-y-6">
-          <div className="w-12 h-12 rounded-2xl bg-primary/15 text-primary flex items-center justify-center mx-auto shadow-xs">
+          <div className="w-12 h-12 rounded-2xl bg-primary/15 dark:bg-[#18201C] text-primary dark:text-[#5FAF8A] flex items-center justify-center mx-auto shadow-xs">
             <span className="material-symbols-outlined text-2xl font-bold">support_agent</span>
           </div>
 
-          <h2 className="text-2xl sm:text-3xl font-heading font-black text-on-surface">
+          <h2 className="text-2xl sm:text-3xl font-heading font-black text-on-surface dark:text-[#F4FAF7]">
             Still Have Questions?
           </h2>
 
-          <p className="text-sm sm:text-base text-on-surface-variant leading-relaxed max-w-xl mx-auto font-normal">
+          <p className="text-sm sm:text-base text-on-surface-variant dark:text-[#9DB9B0] leading-relaxed max-w-xl mx-auto font-normal">
             Our support team is here to help. Whether you need assistance with your account, privacy inquiries, or feature guidance, we are one message away.
           </p>
 
           <div className="pt-2 flex flex-wrap items-center justify-center gap-4">
             <Link
               href="/contact"
-              className="px-7 py-3.5 rounded-full bg-primary hover:bg-primary-purple text-white text-xs sm:text-sm font-heading font-bold shadow-md hover:shadow-lg transition-all inline-flex items-center gap-2"
+              className="px-7 py-3.5 rounded-full bg-primary hover:bg-primary-purple text-white dark:bg-[#5FAF8A] dark:hover:bg-[#006B56] dark:text-[#112F28] dark:hover:text-white text-xs sm:text-sm font-heading font-bold shadow-md hover:shadow-lg transition-all inline-flex items-center gap-2 cursor-pointer"
             >
               <span>Contact Support</span>
               <span className="material-symbols-outlined text-base">mail</span>
@@ -386,7 +386,7 @@ export default function FAQPage() {
 
             <Link
               href="/features"
-              className="px-7 py-3.5 rounded-full bg-surface-container-lowest hover:bg-surface-container text-on-surface border border-surface-variant/50 text-xs sm:text-sm font-heading font-semibold transition-all"
+              className="px-7 py-3.5 rounded-full bg-surface-container-lowest dark:bg-[#18201C] hover:bg-surface-container dark:hover:bg-[#22302A] text-on-surface dark:text-[#F4FAF7] border border-surface-variant/50 dark:border-[#22302A] text-xs sm:text-sm font-heading font-semibold transition-all cursor-pointer"
             >
               Explore All Features
             </Link>

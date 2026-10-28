@@ -41,14 +41,14 @@ export default function SleepMeditationView({ defaultTab }: SleepMeditationViewP
     <div className="w-full min-w-0 flex flex-col gap-5 select-none animate-fade-in">
       {/* Sub-Tab Navigation Header Switcher */}
       <div className="flex items-center justify-between flex-wrap gap-3 pb-1">
-        <div className="flex items-center gap-1.5 p-1.5 rounded-2xl bg-white dark:bg-[#112F28] border border-[#CBECE2] dark:border-[#1C463C] shadow-2xs">
+        <div className="flex items-center gap-1.5 p-1.5 rounded-full bg-white dark:bg-[#112F28] border border-[#CBECE2] dark:border-[#1C463C] shadow-2xs">
           <button
             type="button"
             onClick={() => handleTabChange("sleep")}
-            className={`flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs font-heading font-black transition-all cursor-pointer ${
+            className={`flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs font-heading font-black transition-all cursor-pointer ${
               activeTab === "sleep"
-                ? "bg-[#006B56] hover:bg-[#005B48] text-white shadow-xs"
-                : "text-[#004D3D] dark:text-[#9DB9B0] hover:text-[#006B56] dark:hover:text-[#5FAF8A] hover:bg-[#E6F4F0] dark:hover:bg-[#0E3931]"
+                ? "bg-[#006B56] hover:bg-[#005B48] text-white dark:bg-[#5FAF8A] dark:hover:bg-[#006B56] dark:text-[#112F28] dark:hover:text-white shadow-xs"
+                : "text-[#004D3D] dark:text-[#9DB9B0] hover:text-[#006B56] dark:hover:text-[#5FAF8A] hover:bg-[#E6F4F0] dark:hover:bg-[#18201C]"
             }`}
           >
             <span className="material-symbols-outlined text-lg">bedtime</span>
@@ -58,10 +58,10 @@ export default function SleepMeditationView({ defaultTab }: SleepMeditationViewP
           <button
             type="button"
             onClick={() => handleTabChange("meditation")}
-            className={`flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs font-heading font-black transition-all cursor-pointer ${
+            className={`flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs font-heading font-black transition-all cursor-pointer ${
               activeTab === "meditation"
-                ? "bg-[#006B56] hover:bg-[#005B48] text-white shadow-xs"
-                : "text-[#004D3D] dark:text-[#9DB9B0] hover:text-[#006B56] dark:hover:text-[#5FAF8A] hover:bg-[#E6F4F0] dark:hover:bg-[#0E3931]"
+                ? "bg-[#006B56] hover:bg-[#005B48] text-white dark:bg-[#5FAF8A] dark:hover:bg-[#006B56] dark:text-[#112F28] dark:hover:text-white shadow-xs"
+                : "text-[#004D3D] dark:text-[#9DB9B0] hover:text-[#006B56] dark:hover:text-[#5FAF8A] hover:bg-[#E6F4F0] dark:hover:bg-[#18201C]"
             }`}
           >
             <span className="material-symbols-outlined text-lg">self_improvement</span>

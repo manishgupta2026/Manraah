@@ -323,16 +323,16 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
       <div className="w-full min-w-0 flex flex-col gap-5 animate-pulse">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-0.5">
           <div className="space-y-2">
-            <div className="h-3 w-28 bg-slate-200 dark:bg-[#0B3029] rounded-full" />
-            <div className="h-8 w-48 bg-slate-200 dark:bg-[#0B3029] rounded-xl" />
-            <div className="h-5 w-24 bg-slate-200 dark:bg-[#0B3029] rounded-full" />
+            <div className="h-3 w-28 bg-slate-200 dark:bg-[#18201C] rounded-full" />
+            <div className="h-8 w-48 bg-slate-200 dark:bg-[#18201C] rounded-xl" />
+            <div className="h-5 w-24 bg-slate-200 dark:bg-[#18201C] rounded-full" />
           </div>
           <div className="flex items-center gap-3">
-            <div className="h-14 w-36 bg-slate-200 dark:bg-[#0B3029] rounded-2xl" />
-            <div className="h-14 w-44 bg-slate-200 dark:bg-[#0B3029] rounded-2xl" />
+            <div className="h-14 w-36 bg-slate-200 dark:bg-[#18201C] rounded-2xl" />
+            <div className="h-14 w-44 bg-slate-200 dark:bg-[#18201C] rounded-2xl" />
           </div>
         </div>
-        <div className="h-44 w-full bg-slate-200 dark:bg-[#0B3029] rounded-3xl" />
+        <div className="h-44 w-full bg-slate-200 dark:bg-[#18201C] rounded-3xl" />
       </div>
     );
   }

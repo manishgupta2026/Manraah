@@ -31,7 +31,7 @@ function SolutionContent() {
   };
 
   return (
-    <div className="min-h-screen bg-surface text-on-surface select-none relative overflow-hidden">
+    <div className="min-h-screen bg-surface dark:bg-[#0A0E0D] text-on-surface dark:text-[#F4FAF7] select-none relative overflow-hidden">
       {/* Background Glow Accents */}
       <div className="absolute top-10 left-1/2 -translate-x-1/2 w-[700px] h-[360px] bg-primary/12 rounded-full blur-3xl pointer-events-none -z-10" />
       <div className="absolute top-96 right-10 w-80 h-80 bg-secondary/10 rounded-full blur-3xl pointer-events-none -z-10" />
@@ -61,14 +61,14 @@ function SolutionContent() {
         <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
           <button
             onClick={() => triggerCallbackModal(activeTab)}
-            className="px-6 sm:px-8 py-3.5 rounded-full bg-primary text-white font-heading font-bold text-sm shadow-md hover:bg-primary-purple hover:shadow-lg active:scale-98 transition-all flex items-center gap-2 cursor-pointer"
+            className="px-6 sm:px-8 py-3.5 rounded-full bg-primary hover:bg-primary-purple text-white dark:bg-[#5FAF8A] dark:hover:bg-[#006B56] dark:text-[#112F28] dark:hover:text-white font-heading font-bold text-sm shadow-md hover:shadow-lg active:scale-98 transition-all flex items-center gap-2 cursor-pointer"
           >
             <span className="material-symbols-outlined text-lg">support_agent</span>
             <span>Request Institutional Callback</span>
           </button>
           <a
             href="#compliance-section"
-            className="px-6 py-3.5 rounded-full bg-surface-container border border-surface-variant/40 hover:bg-surface-variant/30 text-on-surface font-heading font-semibold text-sm transition-colors flex items-center gap-2"
+            className="px-6 py-3.5 rounded-full bg-surface-container dark:bg-[#18201C] border border-surface-variant/40 dark:border-[#22302A] hover:bg-surface-variant/30 dark:hover:bg-[#22302A] text-on-surface dark:text-[#F4FAF7] font-heading font-semibold text-sm transition-colors flex items-center gap-2 cursor-pointer"
           >
             <span>Explore Supreme Court Compliance</span>
             <span className="material-symbols-outlined text-base">arrow_downward</span>
@@ -77,13 +77,13 @@ function SolutionContent() {
 
         {/* Segment Switcher Tabs */}
         <div className="pt-6 max-w-xl mx-auto">
-          <div className="p-1.5 rounded-2xl bg-surface-container border border-surface-variant/30 grid grid-cols-2 gap-1.5 shadow-inner">
+          <div className="p-1.5 rounded-2xl bg-surface-container dark:bg-[#18201C] border border-surface-variant/30 dark:border-[#1E2824] dark:border-[#22302A] grid grid-cols-2 gap-1.5 shadow-inner">
             <button
               onClick={() => setActiveTab("colleges")}
               className={`py-3 px-3 sm:px-5 rounded-xl font-heading font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all cursor-pointer ${
                 activeTab === "colleges"
-                  ? "bg-surface-container-lowest text-primary shadow-sm"
-                  : "text-on-surface-variant hover:text-on-surface"
+                  ? "bg-surface-container-lowest dark:bg-[#131916] dark:bg-[#5FAF8A] text-primary dark:text-[#112F28] shadow-sm"
+                  : "text-on-surface-variant dark:text-[#9DB9B0] hover:text-on-surface dark:hover:text-[#F4FAF7]"
               }`}
             >
               <span className="material-symbols-outlined text-base sm:text-lg">school</span>
@@ -93,8 +93,8 @@ function SolutionContent() {
               onClick={() => setActiveTab("corporates")}
               className={`py-3 px-3 sm:px-5 rounded-xl font-heading font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all cursor-pointer ${
                 activeTab === "corporates"
-                  ? "bg-surface-container-lowest text-secondary shadow-sm"
-                  : "text-on-surface-variant hover:text-on-surface"
+                  ? "bg-surface-container-lowest dark:bg-[#131916] dark:bg-[#5FAF8A] text-secondary dark:text-[#112F28] shadow-sm"
+                  : "text-on-surface-variant dark:text-[#9DB9B0] hover:text-on-surface dark:hover:text-[#F4FAF7]"
               }`}
             >
               <span className="material-symbols-outlined text-base sm:text-lg">corporate_fare</span>
@@ -122,7 +122,7 @@ function SolutionContent() {
             <section className="px-4 sm:px-6 max-w-6xl mx-auto">
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
                 {/* Left: The Campus Reality & Compliance Urgency */}
-                <div className="lg:col-span-5 p-7 sm:p-9 rounded-3xl bg-surface-container-low/70 border border-surface-variant/30 flex flex-col justify-between space-y-6">
+                <div className="lg:col-span-5 p-7 sm:p-9 rounded-3xl bg-surface-container-low/70 dark:bg-[#18201C] border border-surface-variant/30 dark:border-[#1E2824] flex flex-col justify-between space-y-6">
                   <div className="space-y-3">
                     <span className="px-3 py-1 rounded-full text-[11px] font-heading font-bold uppercase tracking-wider bg-error/10 text-error border border-error/20">
                       The Campus Reality
@@ -136,7 +136,7 @@ function SolutionContent() {
                   </div>
 
                   <div className="space-y-3">
-                    <div className="p-3.5 rounded-2xl bg-surface-container-lowest border border-surface-variant/20 flex items-start gap-3">
+                    <div className="p-3.5 rounded-2xl bg-surface-container-lowest dark:bg-[#131916] border border-surface-variant/20 dark:border-[#1E2824] flex items-start gap-3">
                       <span className="material-symbols-outlined text-error text-xl shrink-0 mt-0.5">visibility_off</span>
                       <div>
                         <div className="text-xs font-heading font-bold text-on-surface">Fear of Exposure</div>
@@ -145,7 +145,7 @@ function SolutionContent() {
                         </div>
                       </div>
                     </div>
-                    <div className="p-3.5 rounded-2xl bg-surface-container-lowest border border-surface-variant/20 flex items-start gap-3">
+                    <div className="p-3.5 rounded-2xl bg-surface-container-lowest dark:bg-[#131916] border border-surface-variant/20 dark:border-[#1E2824] flex items-start gap-3">
                       <span className="material-symbols-outlined text-error text-xl shrink-0 mt-0.5">timer_off</span>
                       <div>
                         <div className="text-xs font-heading font-bold text-on-surface">Zero Late-Night Access</div>
@@ -154,7 +154,7 @@ function SolutionContent() {
                         </div>
                       </div>
                     </div>
-                    <div className="p-3.5 rounded-2xl bg-surface-container-lowest border border-surface-variant/20 flex items-start gap-3">
+                    <div className="p-3.5 rounded-2xl bg-surface-container-lowest dark:bg-[#131916] border border-surface-variant/20 dark:border-[#1E2824] flex items-start gap-3">
                       <span className="material-symbols-outlined text-error text-xl shrink-0 mt-0.5">balance</span>
                       <div>
                         <div className="text-xs font-heading font-bold text-on-surface">Mandatory SC Compliance</div>
@@ -171,7 +171,7 @@ function SolutionContent() {
                 </div>
 
                 {/* Right: The Complete Manraah Campus Suite */}
-                <div className="lg:col-span-7 p-7 sm:p-9 rounded-3xl bg-surface-container-lowest border border-surface-variant/30 shadow-card-lift flex flex-col justify-between space-y-6">
+                <div className="lg:col-span-7 p-7 sm:p-9 rounded-3xl bg-surface-container-lowest dark:bg-[#131916] border border-surface-variant/30 dark:border-[#1E2824] shadow-card-lift flex flex-col justify-between space-y-6">
                   <div className="space-y-2">
                     <span className="px-3 py-1 rounded-full text-[11px] font-heading font-bold uppercase tracking-wider bg-primary/10 text-primary border border-primary/20">
                       Campus Offering Architecture
@@ -186,7 +186,7 @@ function SolutionContent() {
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {/* Feature 1 */}
-                    <div className="p-4 rounded-2xl bg-surface-container-low/50 border border-surface-variant/20 space-y-2 hover:border-primary/30 transition-colors">
+                    <div className="p-4 rounded-2xl bg-surface-container-low/50 dark:bg-[#18201C] border border-surface-variant/20 dark:border-[#1E2824] space-y-2 hover:border-primary/30 transition-colors">
                       <div className="w-9 h-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
                         <span className="material-symbols-outlined text-xl">vpn_key</span>
                       </div>
@@ -197,7 +197,7 @@ function SolutionContent() {
                     </div>
 
                     {/* Feature 2 */}
-                    <div className="p-4 rounded-2xl bg-surface-container-low/50 border border-surface-variant/20 space-y-2 hover:border-primary/30 transition-colors">
+                    <div className="p-4 rounded-2xl bg-surface-container-low/50 dark:bg-[#18201C] border border-surface-variant/20 dark:border-[#1E2824] space-y-2 hover:border-primary/30 transition-colors">
                       <div className="w-9 h-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
                         <span className="material-symbols-outlined text-xl">schedule</span>
                       </div>
@@ -208,7 +208,7 @@ function SolutionContent() {
                     </div>
 
                     {/* Feature 3 */}
-                    <div className="p-4 rounded-2xl bg-surface-container-low/50 border border-surface-variant/20 space-y-2 hover:border-primary/30 transition-colors">
+                    <div className="p-4 rounded-2xl bg-surface-container-low/50 dark:bg-[#18201C] border border-surface-variant/20 dark:border-[#1E2824] space-y-2 hover:border-primary/30 transition-colors">
                       <div className="w-9 h-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
                         <span className="material-symbols-outlined text-xl">model_training</span>
                       </div>
@@ -219,7 +219,7 @@ function SolutionContent() {
                     </div>
 
                     {/* Feature 4 */}
-                    <div className="p-4 rounded-2xl bg-surface-container-low/50 border border-surface-variant/20 space-y-2 hover:border-primary/30 transition-colors">
+                    <div className="p-4 rounded-2xl bg-surface-container-low/50 dark:bg-[#18201C] border border-surface-variant/20 dark:border-[#1E2824] space-y-2 hover:border-primary/30 transition-colors">
                       <div className="w-9 h-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
                         <span className="material-symbols-outlined text-xl">crisis_alert</span>
                       </div>
@@ -230,7 +230,7 @@ function SolutionContent() {
                     </div>
                   </div>
 
-                  <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-surface-variant/20">
+                  <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-surface-variant/20 dark:border-[#1E2824]">
                     <div className="text-xs text-on-surface-variant">
                       <span className="font-bold text-on-surface">MoU Model:</span> Predictable annual per-student contract with zero out-of-pocket fees for students.
                     </div>
@@ -262,7 +262,7 @@ function SolutionContent() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                  <div className="p-5 rounded-2xl bg-surface-container-lowest border border-surface-variant/30 space-y-2.5 shadow-xs">
+                  <div className="p-5 rounded-2xl bg-surface-container-lowest dark:bg-[#131916] border border-surface-variant/30 dark:border-[#1E2824] space-y-2.5 shadow-xs">
                     <div className="w-8 h-8 rounded-lg bg-primary/10 text-primary font-heading font-bold flex items-center justify-center text-xs">
                       01
                     </div>
@@ -272,7 +272,7 @@ function SolutionContent() {
                     </p>
                   </div>
 
-                  <div className="p-5 rounded-2xl bg-surface-container-lowest border border-surface-variant/30 space-y-2.5 shadow-xs">
+                  <div className="p-5 rounded-2xl bg-surface-container-lowest dark:bg-[#131916] border border-surface-variant/30 dark:border-[#1E2824] space-y-2.5 shadow-xs">
                     <div className="w-8 h-8 rounded-lg bg-primary/10 text-primary font-heading font-bold flex items-center justify-center text-xs">
                       02
                     </div>
@@ -282,7 +282,7 @@ function SolutionContent() {
                     </p>
                   </div>
 
-                  <div className="p-5 rounded-2xl bg-surface-container-lowest border border-surface-variant/30 space-y-2.5 shadow-xs">
+                  <div className="p-5 rounded-2xl bg-surface-container-lowest dark:bg-[#131916] border border-surface-variant/30 dark:border-[#1E2824] space-y-2.5 shadow-xs">
                     <div className="w-8 h-8 rounded-lg bg-primary/10 text-primary font-heading font-bold flex items-center justify-center text-xs">
                       03
                     </div>
@@ -293,7 +293,7 @@ function SolutionContent() {
                   </div>
                 </div>
 
-                <div className="p-5 rounded-2xl bg-surface-container-lowest border border-surface-variant/20 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="p-5 rounded-2xl bg-surface-container-lowest dark:bg-[#131916] border border-surface-variant/20 dark:border-[#1E2824] flex flex-col sm:flex-row items-center justify-between gap-4">
                   <div className="flex items-center gap-3">
                     <span className="material-symbols-outlined text-secondary text-2xl">verified</span>
                     <span className="text-xs sm:text-sm font-heading font-bold text-on-surface">
@@ -326,7 +326,7 @@ function SolutionContent() {
             <section className="px-4 sm:px-6 max-w-6xl mx-auto">
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
                 {/* Left: The Corporate Reality */}
-                <div className="lg:col-span-5 p-7 sm:p-9 rounded-3xl bg-surface-container-low/70 border border-surface-variant/30 flex flex-col justify-between space-y-6">
+                <div className="lg:col-span-5 p-7 sm:p-9 rounded-3xl bg-surface-container-low/70 dark:bg-[#18201C] border border-surface-variant/30 dark:border-[#1E2824] flex flex-col justify-between space-y-6">
                   <div className="space-y-3">
                     <span className="px-3 py-1 rounded-full text-[11px] font-heading font-bold uppercase tracking-wider bg-error/10 text-error border border-error/20">
                       The Workplace Challenge
@@ -340,7 +340,7 @@ function SolutionContent() {
                   </div>
 
                   <div className="space-y-3">
-                    <div className="p-3.5 rounded-2xl bg-surface-container-lowest border border-surface-variant/20 flex items-start gap-3">
+                    <div className="p-3.5 rounded-2xl bg-surface-container-lowest dark:bg-[#131916] border border-surface-variant/20 dark:border-[#1E2824] flex items-start gap-3">
                       <span className="material-symbols-outlined text-error text-xl shrink-0 mt-0.5">psychology_alt</span>
                       <div>
                         <div className="text-xs font-heading font-bold text-on-surface">Burnout &amp; Quiet Quitting</div>
@@ -349,7 +349,7 @@ function SolutionContent() {
                         </div>
                       </div>
                     </div>
-                    <div className="p-3.5 rounded-2xl bg-surface-container-lowest border border-surface-variant/20 flex items-start gap-3">
+                    <div className="p-3.5 rounded-2xl bg-surface-container-lowest dark:bg-[#131916] border border-surface-variant/20 dark:border-[#1E2824] flex items-start gap-3">
                       <span className="material-symbols-outlined text-error text-xl shrink-0 mt-0.5">lock_open</span>
                       <div>
                         <div className="text-xs font-heading font-bold text-on-surface">Lack of Perceived Privacy</div>
@@ -358,7 +358,7 @@ function SolutionContent() {
                         </div>
                       </div>
                     </div>
-                    <div className="p-3.5 rounded-2xl bg-surface-container-lowest border border-surface-variant/20 flex items-start gap-3">
+                    <div className="p-3.5 rounded-2xl bg-surface-container-lowest dark:bg-[#131916] border border-surface-variant/20 dark:border-[#1E2824] flex items-start gap-3">
                       <span className="material-symbols-outlined text-error text-xl shrink-0 mt-0.5">bar_chart</span>
                       <div>
                         <div className="text-xs font-heading font-bold text-on-surface">Zero Actionable Insights</div>
@@ -375,7 +375,7 @@ function SolutionContent() {
                 </div>
 
                 {/* Right: The Complete Manraah Corporate Suite */}
-                <div className="lg:col-span-7 p-7 sm:p-9 rounded-3xl bg-surface-container-lowest border border-surface-variant/30 shadow-card-lift flex flex-col justify-between space-y-6">
+                <div className="lg:col-span-7 p-7 sm:p-9 rounded-3xl bg-surface-container-lowest dark:bg-[#131916] border border-surface-variant/30 dark:border-[#1E2824] shadow-card-lift flex flex-col justify-between space-y-6">
                   <div className="space-y-2">
                     <span className="px-3 py-1 rounded-full text-[11px] font-heading font-bold uppercase tracking-wider bg-secondary/15 text-secondary border border-secondary/20">
                       Enterprise Suite Architecture
@@ -390,7 +390,7 @@ function SolutionContent() {
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {/* Feature 1 */}
-                    <div className="p-4 rounded-2xl bg-surface-container-low/50 border border-surface-variant/20 space-y-2 hover:border-secondary/30 transition-colors">
+                    <div className="p-4 rounded-2xl bg-surface-container-low/50 dark:bg-[#18201C] border border-surface-variant/20 dark:border-[#1E2824] space-y-2 hover:border-secondary/30 transition-colors">
                       <div className="w-9 h-9 rounded-xl bg-secondary/15 text-secondary flex items-center justify-center">
                         <span className="material-symbols-outlined text-xl">diversity_1</span>
                       </div>
@@ -401,7 +401,7 @@ function SolutionContent() {
                     </div>
 
                     {/* Feature 2 */}
-                    <div className="p-4 rounded-2xl bg-surface-container-low/50 border border-surface-variant/20 space-y-2 hover:border-secondary/30 transition-colors">
+                    <div className="p-4 rounded-2xl bg-surface-container-low/50 dark:bg-[#18201C] border border-surface-variant/20 dark:border-[#1E2824] space-y-2 hover:border-secondary/30 transition-colors">
                       <div className="w-9 h-9 rounded-xl bg-secondary/15 text-secondary flex items-center justify-center">
                         <span className="material-symbols-outlined text-xl">insights</span>
                       </div>
@@ -412,7 +412,7 @@ function SolutionContent() {
                     </div>
 
                     {/* Feature 3 */}
-                    <div className="p-4 rounded-2xl bg-surface-container-low/50 border border-surface-variant/20 space-y-2 hover:border-secondary/30 transition-colors">
+                    <div className="p-4 rounded-2xl bg-surface-container-low/50 dark:bg-[#18201C] border border-surface-variant/20 dark:border-[#1E2824] space-y-2 hover:border-secondary/30 transition-colors">
                       <div className="w-9 h-9 rounded-xl bg-secondary/15 text-secondary flex items-center justify-center">
                         <span className="material-symbols-outlined text-xl">psychology</span>
                       </div>
@@ -423,7 +423,7 @@ function SolutionContent() {
                     </div>
 
                     {/* Feature 4 */}
-                    <div className="p-4 rounded-2xl bg-surface-container-low/50 border border-surface-variant/20 space-y-2 hover:border-secondary/30 transition-colors">
+                    <div className="p-4 rounded-2xl bg-surface-container-low/50 dark:bg-[#18201C] border border-surface-variant/20 dark:border-[#1E2824] space-y-2 hover:border-secondary/30 transition-colors">
                       <div className="w-9 h-9 rounded-xl bg-secondary/15 text-secondary flex items-center justify-center">
                         <span className="material-symbols-outlined text-xl">military_tech</span>
                       </div>
@@ -434,7 +434,7 @@ function SolutionContent() {
                     </div>
                   </div>
 
-                  <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-surface-variant/20">
+                  <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-surface-variant/20 dark:border-[#1E2824]">
                     <div className="text-xs text-on-surface-variant">
                       <span className="font-bold text-on-surface">Commercial Model:</span> Flexible Per-Employee-Per-Year (PEPY) contract tailored to company headcount.
                     </div>
@@ -467,7 +467,7 @@ function SolutionContent() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          <div className="p-6 rounded-2xl bg-surface-container-lowest border border-surface-variant/30 space-y-3">
+          <div className="p-6 rounded-2xl bg-surface-container-lowest dark:bg-[#131916] border border-surface-variant/30 dark:border-[#1E2824] space-y-3">
             <div className="w-10 h-10 rounded-xl bg-mint/20 text-[#006B56] flex items-center justify-center">
               <span className="material-symbols-outlined text-xl">badge</span>
             </div>
@@ -477,7 +477,7 @@ function SolutionContent() {
             </p>
           </div>
 
-          <div className="p-6 rounded-2xl bg-surface-container-lowest border border-surface-variant/30 space-y-3">
+          <div className="p-6 rounded-2xl bg-surface-container-lowest dark:bg-[#131916] border border-surface-variant/30 dark:border-[#1E2824] space-y-3">
             <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
               <span className="material-symbols-outlined text-xl">lock</span>
             </div>
@@ -487,7 +487,7 @@ function SolutionContent() {
             </p>
           </div>
 
-          <div className="p-6 rounded-2xl bg-surface-container-lowest border border-surface-variant/30 space-y-3">
+          <div className="p-6 rounded-2xl bg-surface-container-lowest dark:bg-[#131916] border border-surface-variant/30 dark:border-[#1E2824] space-y-3">
             <div className="w-10 h-10 rounded-xl bg-[#9E5D28]/15 text-[#9E5D28] flex items-center justify-center">
               <span className="material-symbols-outlined text-xl">emergency</span>
             </div>
@@ -497,7 +497,7 @@ function SolutionContent() {
             </p>
           </div>
 
-          <div className="p-6 rounded-2xl bg-surface-container-lowest border border-surface-variant/30 space-y-3">
+          <div className="p-6 rounded-2xl bg-surface-container-lowest dark:bg-[#131916] border border-surface-variant/30 dark:border-[#1E2824] space-y-3">
             <div className="w-10 h-10 rounded-xl bg-pink/25 text-[#874959] flex items-center justify-center">
               <span className="material-symbols-outlined text-xl">translate</span>
             </div>
@@ -562,7 +562,7 @@ export default function OurSolutionPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-surface flex items-center justify-center">
+        <div className="min-h-screen bg-surface dark:bg-[#0A0E0D] flex items-center justify-center">
           <div className="w-8 h-8 border-3 border-primary border-t-transparent rounded-full animate-spin" />
         </div>
       }

@@ -348,7 +348,7 @@ export default function AppointmentsView() {
             <button
               type="button"
               onClick={handleScrollToBooking}
-              className="px-3.5 sm:px-4 py-2 rounded-xl bg-[#006B56] hover:bg-[#005B48] text-white text-xs font-heading font-bold shadow-xs hover:shadow-sm transition-all flex items-center gap-1.5 cursor-pointer shrink-0"
+              className="px-4 sm:px-5 py-2.5 rounded-full bg-[#006B56] hover:bg-[#005B48] text-white dark:bg-[#5FAF8A] dark:hover:bg-[#006B56] dark:text-[#112F28] dark:hover:text-white text-xs font-heading font-bold shadow-xs hover:shadow-sm transition-all flex items-center gap-1.5 cursor-pointer shrink-0"
             >
               <svg className="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -357,15 +357,15 @@ export default function AppointmentsView() {
             </button>
 
             {/* Appointment Filter Controls: Upcoming | Past */}
-            <div className="flex items-center gap-1 bg-[#F4F9F6] dark:bg-[#18201C] p-1 rounded-2xl border border-[#CBECE2] dark:border-[#22302A] shrink-0">
+            <div className="flex items-center gap-1 bg-[#F4F9F6] dark:bg-[#18201C] p-1 rounded-full border border-[#CBECE2] dark:border-[#22302A] shrink-0">
               <button
                 type="button"
                 onClick={() => setActiveTab((prev) => (prev === "upcoming" ? null : "upcoming"))}
                 aria-pressed={activeTab === "upcoming"}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
                   activeTab === "upcoming"
-                    ? "bg-[#006B56] text-white dark:bg-[#006B56] dark:text-white shadow-xs"
-                    : "text-[#6B857C] dark:text-[#9DB9B0] hover:text-[#006B56] dark:hover:text-[#5FAF8A]"
+                    ? "bg-[#006B56] text-white dark:bg-[#5FAF8A] dark:text-[#112F28] shadow-xs"
+                    : "text-[#6B857C] dark:text-[#9DB9B0] hover:text-[#006B56] dark:hover:text-white"
                 }`}
               >
                 Upcoming{upcomingList.length > 0 ? ` (${upcomingList.length})` : ""}
@@ -374,10 +374,10 @@ export default function AppointmentsView() {
                 type="button"
                 onClick={() => setActiveTab((prev) => (prev === "past" ? null : "past"))}
                 aria-pressed={activeTab === "past"}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
                   activeTab === "past"
-                    ? "bg-[#006B56] text-white dark:bg-[#006B56] dark:text-white shadow-xs"
-                    : "text-[#6B857C] dark:text-[#9DB9B0] hover:text-[#006B56] dark:hover:text-[#5FAF8A]"
+                    ? "bg-[#006B56] text-white dark:bg-[#5FAF8A] dark:text-[#112F28] shadow-xs"
+                    : "text-[#6B857C] dark:text-[#9DB9B0] hover:text-[#006B56] dark:hover:text-white"
                 }`}
               >
                 Past{pastList.length > 0 ? ` (${pastList.length})` : ""}
@@ -555,7 +555,7 @@ export default function AppointmentsView() {
                         href={apt.meetingLink || "#"}
                         target="_blank"
                         rel="noreferrer"
-                        className="py-2.5 px-4 rounded-xl bg-[#006B56] hover:bg-[#005B48] text-white text-xs font-bold shadow-sm transition-all flex items-center gap-1.5 cursor-pointer"
+                        className="py-2.5 px-5 rounded-full bg-[#006B56] hover:bg-[#005B48] text-white dark:bg-[#5FAF8A] dark:hover:bg-[#006B56] dark:text-[#112F28] dark:hover:text-white text-xs font-bold shadow-sm transition-all flex items-center gap-1.5 cursor-pointer"
                       >
                         <span>📹</span>
                         <span>Join Session</span>
@@ -563,14 +563,14 @@ export default function AppointmentsView() {
                       <button
                         type="button"
                         onClick={() => alert("Reschedule requested. Our care coordinator will contact you shortly.")}
-                        className="py-2.5 px-3.5 rounded-xl bg-white dark:bg-[#131916] hover:bg-[#EAF6F2] dark:hover:bg-[#18201C] text-[#19332A] dark:text-[#F4FAF7] text-xs font-bold border border-[#CBECE2] dark:border-[#22302A] transition-all cursor-pointer"
+                        className="py-2.5 px-4 rounded-full bg-white dark:bg-[#18201C] hover:bg-[#EAF6F2] dark:hover:bg-[#22302A] text-[#19332A] dark:text-[#F4FAF7] text-xs font-bold border border-[#CBECE2] dark:border-[#22302A] transition-all cursor-pointer"
                       >
                         Reschedule
                       </button>
                       <button
                         type="button"
                         onClick={() => handleCancelAppointment(apt.id)}
-                        className="py-2.5 px-3.5 rounded-xl bg-white dark:bg-[#131916] hover:bg-rose-50 dark:hover:bg-rose-950/30 text-rose-600 dark:text-rose-400 text-xs font-bold border border-[#CBECE2] dark:border-[#22302A] transition-all cursor-pointer"
+                        className="py-2.5 px-4 rounded-full bg-white dark:bg-[#18201C] hover:bg-rose-50 dark:hover:bg-rose-950/30 text-rose-600 dark:text-rose-400 text-xs font-bold border border-[#CBECE2] dark:border-[#22302A] transition-all cursor-pointer"
                       >
                         Cancel
                       </button>

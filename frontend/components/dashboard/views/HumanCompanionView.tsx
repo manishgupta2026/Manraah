@@ -221,14 +221,14 @@ export default function HumanCompanionView() {
             <>
               <button
                 onClick={() => setStep("CALL")}
-                className="px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer bg-[#F4F9F6] dark:bg-[#18201C] text-[#4F685F] dark:text-[#9DB9B0] hover:bg-[#E6F4F0] dark:hover:bg-[#22302A] border border-[#CBECE2] dark:border-[#22302A]"
+                className="px-4 py-2 rounded-full text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer bg-[#F4F9F6] dark:bg-[#18201C] text-[#4F685F] dark:text-[#9DB9B0] hover:bg-[#E6F4F0] dark:hover:bg-[#22302A] border border-[#CBECE2] dark:border-[#22302A]"
               >
                 <span>🎙️</span>
                 <span>Voice Mode</span>
               </button>
               <button
                 onClick={handleEndSession}
-                className="px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-300 border border-rose-200 dark:border-rose-900/60 hover:bg-rose-100 dark:hover:bg-rose-900/40"
+                className="px-4 py-2 rounded-full text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-300 border border-rose-200 dark:border-rose-900/60 hover:bg-rose-100 dark:hover:bg-rose-900/40"
               >
                 <span>End Session</span>
               </button>
@@ -239,14 +239,14 @@ export default function HumanCompanionView() {
             <>
               <button
                 onClick={() => setStep("CHAT")}
-                className="px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer bg-[#F4F9F6] dark:bg-[#18201C] text-[#4F685F] dark:text-[#9DB9B0] hover:bg-[#E6F4F0] dark:hover:bg-[#22302A] border border-[#CBECE2] dark:border-[#22302A]"
+                className="px-4 py-2 rounded-full text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer bg-[#F4F9F6] dark:bg-[#18201C] text-[#4F685F] dark:text-[#9DB9B0] hover:bg-[#E6F4F0] dark:hover:bg-[#22302A] border border-[#CBECE2] dark:border-[#22302A]"
               >
                 <span>💬</span>
                 <span>Switch to Chat</span>
               </button>
               <button
                 onClick={handleEndSession}
-                className="px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer bg-rose-600 hover:bg-rose-700 text-white shadow-xs"
+                className="px-4 py-2 rounded-full text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer bg-rose-600 hover:bg-rose-700 text-white shadow-xs"
               >
                 <span>End Call</span>
               </button>
@@ -256,7 +256,7 @@ export default function HumanCompanionView() {
           {step === "SEARCHING" && (
             <button
               onClick={handleCancelSearch}
-              className="px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer bg-[#F4F9F6] dark:bg-[#18201C] text-[#4F685F] dark:text-[#9DB9B0] hover:bg-[#E6F4F0] dark:hover:bg-[#22302A] border border-[#CBECE2] dark:border-[#22302A]"
+              className="px-4 py-2 rounded-full text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer bg-[#F4F9F6] dark:bg-[#18201C] text-[#4F685F] dark:text-[#9DB9B0] hover:bg-[#E6F4F0] dark:hover:bg-[#22302A] border border-[#CBECE2] dark:border-[#22302A]"
             >
               <span>Cancel Search</span>
             </button>
@@ -265,7 +265,7 @@ export default function HumanCompanionView() {
           {step === "MATCHED" && (
             <button
               onClick={() => setStep("ENTRY")}
-              className="px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer bg-[#F4F9F6] dark:bg-[#18201C] text-[#4F685F] dark:text-[#9DB9B0] hover:bg-[#E6F4F0] dark:hover:bg-[#22302A] border border-[#CBECE2] dark:border-[#22302A]"
+              className="px-4 py-2 rounded-full text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer bg-[#F4F9F6] dark:bg-[#18201C] text-[#4F685F] dark:text-[#9DB9B0] hover:bg-[#E6F4F0] dark:hover:bg-[#22302A] border border-[#CBECE2] dark:border-[#22302A]"
             >
               <span>Change Topic</span>
             </button>
@@ -274,7 +274,7 @@ export default function HumanCompanionView() {
           {step === "ENTRY" && (
             <button
               onClick={handleStartSearch}
-              className="px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer bg-[#006B56] hover:bg-[#005B48] text-white shadow-sm"
+              className="px-5 py-2.5 rounded-full text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer bg-[#006B56] hover:bg-[#005B48] text-white dark:bg-[#5FAF8A] dark:hover:bg-[#006B56] dark:text-[#112F28] dark:hover:text-white shadow-sm"
             >
               <span>🎙️ Find a Listener</span>
             </button>
@@ -378,7 +378,7 @@ export default function HumanCompanionView() {
                 <button
                   onClick={() => handleSendMessage()}
                   disabled={!inputMessage.trim()}
-                  className="py-3 px-5 rounded-2xl bg-[#006B56] hover:bg-[#005B48] disabled:bg-slate-200 dark:bg-[#006B56] dark:hover:bg-[#005B48] dark:disabled:bg-[#18201C] dark:disabled:text-[#76968D] text-white text-xs font-bold shadow-sm transition-all flex items-center gap-1.5 cursor-pointer disabled:cursor-not-allowed shrink-0"
+                  className="py-3 px-6 rounded-full bg-[#006B56] hover:bg-[#005B48] disabled:bg-slate-200 dark:bg-[#5FAF8A] dark:hover:bg-[#006B56] dark:text-[#112F28] dark:hover:text-white dark:disabled:bg-[#18201C] dark:disabled:text-[#76968D] text-white text-xs font-bold shadow-sm transition-all flex items-center gap-1.5 cursor-pointer disabled:cursor-not-allowed shrink-0"
                 >
                   <span>Send</span>
                   <span>➤</span>
@@ -416,9 +416,9 @@ export default function HumanCompanionView() {
                         setActiveTopic(t);
                         setCustomTopic("");
                       }}
-                      className={`px-3.5 py-1.5 sm:py-2 rounded-2xl text-xs font-bold transition-all border cursor-pointer ${
+                      className={`px-4 py-2 rounded-full text-xs font-bold transition-all border cursor-pointer ${
                         isSelected
-                          ? "bg-[#006B56] text-white border-[#006B56] dark:bg-[#006B56] dark:text-white dark:border-[#006B56] shadow-xs"
+                          ? "bg-[#006B56] text-white border-[#006B56] dark:bg-[#5FAF8A] dark:text-[#112F28] dark:border-[#5FAF8A] shadow-xs"
                           : "bg-[#F8FCFA] dark:bg-[#18201C] border-[#CBECE2] dark:border-[#22302A] text-[#4F685F] dark:text-[#9DB9B0] hover:border-[#006B56]/50 dark:hover:border-[#5FAF8A]/40"
                       }`}
                     >
@@ -460,7 +460,7 @@ export default function HumanCompanionView() {
                 <button
                   type="button"
                   onClick={handleStartSearch}
-                  className="py-2.5 px-5 sm:px-6 rounded-2xl bg-[#006B56] hover:bg-[#005B48] text-white text-xs font-bold shadow-md shadow-[#006B56]/20 transition-all flex items-center gap-2 cursor-pointer"
+                  className="py-3 px-6 sm:px-7 rounded-full bg-[#006B56] hover:bg-[#005B48] text-white dark:bg-[#5FAF8A] dark:hover:bg-[#006B56] dark:text-[#112F28] dark:hover:text-white text-xs font-bold shadow-md shadow-[#006B56]/20 transition-all flex items-center gap-2 cursor-pointer"
                 >
                   <span>Connect Now</span>
                   <span>→</span>

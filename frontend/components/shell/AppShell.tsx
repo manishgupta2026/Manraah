@@ -93,14 +93,14 @@ export default function AppShell({ children }: { children: ReactNode }) {
                 <HeaderProvider>
                   {isStandalone ? (
                     /* Standalone Onboarding / Auth / Public Layout with Global Public Header & Footer */
-                    <div className="min-h-screen bg-background text-on-background font-sans antialiased flex flex-col justify-between overflow-hidden">
+                    <div className="min-h-screen bg-background dark:bg-[#0A0E0D] text-on-background dark:text-[#F4FAF7] font-sans antialiased flex flex-col justify-between overflow-hidden transition-colors duration-200">
                       {!["/assessment", "/wellness-score", "/category-selection"].includes(pathname) && <PublicNavbar />}
                       <div className="flex-1 h-full w-full overflow-hidden">{children}</div>
                       {!["/assessment", "/wellness-score", "/category-selection"].includes(pathname) && <PublicFooter />}
                     </div>
                   ) : isAdminRoute ? (
                     /* Dedicated Admin Listener Portal Shell - Isolated from Regular User Navigation */
-                    <div className="min-h-screen bg-background text-on-background font-sans antialiased flex flex-col">
+                    <div className="min-h-screen bg-background dark:bg-[#0A0E0D] text-on-background dark:text-[#F4FAF7] font-sans antialiased flex flex-col transition-colors duration-200">
                       <AdminHeader />
                       <main className="flex-1 px-4 md:px-8 py-6 max-w-7xl mx-auto w-full">
                         {children}

@@ -584,7 +584,7 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                 className={`px-4 sm:px-5 py-2 rounded-full text-xs font-heading font-bold transition-all ${
                   isLoginPage
                     ? "bg-primary-container/20 text-primary border border-primary/30"
-                    : "bg-surface-container border border-surface-variant/40 text-on-surface hover:bg-primary/5"
+                    : "bg-surface-container dark:bg-[#18201C] border border-surface-variant/40 dark:border-[#22302A] text-on-surface dark:text-[#F4FAF7] hover:bg-primary/5 dark:hover:bg-[#22302A]"
                 }`}
               >
                 Log In
@@ -595,7 +595,7 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                 className={`px-4 sm:px-5 py-2 rounded-full font-heading font-bold text-xs shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all flex items-center gap-1.5 cursor-pointer ${
                   isSignupPage || pathname === "/category-selection"
                     ? "bg-primary-purple text-white ring-2 ring-primary/20"
-                    : "bg-primary hover:bg-primary-purple text-white"
+                    : "bg-primary hover:bg-primary-purple text-white dark:bg-[#5FAF8A] dark:hover:bg-[#006B56] dark:text-[#112F28] dark:hover:text-white"
                 }`}
               >
                 <span>Get Started</span>
@@ -644,7 +644,7 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.25, ease: "easeInOut" }}
-              className="relative z-20 lg:hidden w-full bg-surface-container-lowest border-t border-surface-variant/30 px-5 sm:px-6 pt-4 pb-8 flex flex-col gap-4 shadow-2xl max-h-[calc(100dvh-4.5rem)] overflow-y-auto no-scrollbar"
+              className="relative z-20 lg:hidden w-full bg-surface-container-lowest dark:bg-[#0A0E0D] border-t border-surface-variant/30 dark:border-[#1E2824] px-5 sm:px-6 pt-4 pb-8 flex flex-col gap-4 shadow-2xl max-h-[calc(100dvh-4.5rem)] overflow-y-auto no-scrollbar text-on-surface dark:text-[#F4FAF7]"
             >
               <nav className="flex flex-col gap-1 font-heading font-semibold text-sm text-on-surface">
                 {/* Mobile Quick Crisis Support Access (Authenticated Users Only) */}
@@ -847,7 +847,7 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                     <Link
                       href="/dashboard"
                       onClick={() => setMobileMenuOpen(false)}
-                      className="w-full py-3.5 rounded-full bg-[#006C56] dark:bg-[#00A982] text-white dark:text-[#071C17] font-heading font-bold text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
+                      className="w-full py-3.5 rounded-full bg-[#006C56] hover:bg-[#005B48] text-white dark:bg-[#5FAF8A] dark:hover:bg-[#006B56] dark:text-[#112F28] dark:hover:text-white font-heading font-bold text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
                     >
                       <span>Go to Dashboard</span>
                       <span className="material-symbols-outlined text-lg">arrow_forward</span>
@@ -869,7 +869,7 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                         setMobileMenuOpen(false);
                         handleGetStarted();
                       }}
-                      className="w-full py-3.5 rounded-full bg-primary text-white font-heading font-bold text-sm shadow-md hover:bg-primary-purple transition-all flex items-center justify-center gap-2 cursor-pointer"
+                      className="w-full py-3.5 rounded-full bg-primary hover:bg-primary-purple text-white dark:bg-[#5FAF8A] dark:hover:bg-[#006B56] dark:text-[#112F28] dark:hover:text-white font-heading font-bold text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
                     >
                       <span>Get Started</span>
                       <span className="material-symbols-outlined text-lg">arrow_forward</span>
@@ -877,7 +877,7 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                     <Link
                       href="/login"
                       onClick={() => setMobileMenuOpen(false)}
-                      className="w-full text-center py-3 rounded-full bg-surface-container hover:bg-surface-variant/50 border border-surface-variant/40 font-heading font-semibold text-sm text-on-surface transition-colors"
+                      className="w-full text-center py-3 rounded-full bg-surface-container dark:bg-[#18201C] hover:bg-surface-variant/50 dark:hover:bg-[#22302A] border border-surface-variant/40 dark:border-[#22302A] font-heading font-semibold text-sm text-on-surface dark:text-[#F4FAF7] transition-colors"
                     >
                       Log In to Account
                     </Link>

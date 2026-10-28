@@ -18,12 +18,12 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="min-h-screen bg-surface text-on-surface font-sans py-12 px-4 sm:px-6 lg:px-12 select-none">
+    <div className="min-h-screen bg-surface dark:bg-[#0A0E0D] text-on-surface dark:text-[#F4FAF7] font-sans py-12 px-4 sm:px-6 lg:px-12 select-none">
       <div className="max-w-4xl mx-auto space-y-10">
         
         {/* Header */}
-        <div className="text-center space-y-3 border-b border-surface-variant/30 pb-8">
-          <p className="text-xs font-heading font-bold text-[#006B56] tracking-widest uppercase">
+        <div className="text-center space-y-3 border-b border-surface-variant/30 dark:border-[#1E2824] pb-8">
+          <p className="text-xs font-heading font-bold text-[#006B56] dark:text-[#5FAF8A] tracking-widest uppercase">
             Contact & Support
           </p>
           <h1 className="text-3xl sm:text-4xl font-heading font-black text-on-surface tracking-tight">
@@ -38,7 +38,7 @@ export default function ContactPage() {
           
           {/* Support Channels Info (Left) */}
           <div className="lg:col-span-5 space-y-6">
-            <div className="p-6 rounded-[28px] bg-surface-container-lowest border border-surface-variant/30 shadow-card-lift space-y-5">
+            <div className="p-6 rounded-[28px] bg-surface-container-lowest dark:bg-[#131916] border border-surface-variant/30 dark:border-[#1E2824] shadow-card-lift space-y-5">
               <h3 className="font-heading font-extrabold text-lg text-on-surface">
                 Support Channels
               </h3>
@@ -56,7 +56,7 @@ export default function ContactPage() {
                 </div>
 
                 <div className="flex items-start gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-mint/25 text-[#006B56] flex items-center justify-center shrink-0 mt-0.5">
+                  <div className="w-9 h-9 rounded-xl bg-mint/25 text-[#006B56] dark:text-[#5FAF8A] flex items-center justify-center shrink-0 mt-0.5">
                     <span className="material-symbols-outlined text-lg">shield</span>
                   </div>
                   <div>
@@ -93,7 +93,7 @@ export default function ContactPage() {
 
           {/* Interactive Form Card (Right) */}
           <div className="lg:col-span-7">
-            <div className="p-7 sm:p-9 rounded-[32px] bg-surface-container-lowest border border-surface-variant/30 shadow-card-lift space-y-5">
+            <div className="p-7 sm:p-9 rounded-[32px] bg-surface-container-lowest dark:bg-[#131916] border border-surface-variant/30 dark:border-[#1E2824] shadow-card-lift space-y-5">
               {submitted ? (
                 <div className="py-12 text-center space-y-4 animate-fadeIn">
                   <div className="w-16 h-16 rounded-full bg-emerald-500/10 text-emerald-600 flex items-center justify-center mx-auto">
@@ -110,7 +110,7 @@ export default function ContactPage() {
                       setSubmitted(false);
                       setMessage("");
                     }}
-                    className="px-6 py-2.5 rounded-full bg-surface-container border border-surface-variant/40 font-heading font-bold text-xs text-on-surface hover:bg-primary/5 transition-colors mt-2"
+                    className="px-6 py-2.5 rounded-full bg-surface-container dark:bg-[#18201C] border border-surface-variant/40 dark:border-[#22302A] font-heading font-bold text-xs text-on-surface dark:text-[#F4FAF7] hover:bg-primary/5 dark:hover:bg-[#22302A] transition-colors mt-2 cursor-pointer"
                   >
                     Send Another Message
                   </button>
@@ -162,13 +162,13 @@ export default function ContactPage() {
                       placeholder="How can we assist you today?"
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
-                      className="w-full p-3.5 rounded-2xl bg-surface-container-low border border-surface-variant/40 text-sm font-medium text-on-surface focus:ring-2 focus:ring-primary/40 focus:border-primary/50 transition-all outline-none resize-none"
+                      className="w-full p-3.5 rounded-2xl bg-surface-container-low dark:bg-[#18201C] border border-surface-variant/40 dark:border-[#22302A] text-sm font-medium text-on-surface dark:text-[#F4FAF7] focus:ring-2 focus:ring-[#5FAF8A]/40 focus:border-[#5FAF8A]/50 transition-all outline-none resize-none"
                     />
                   </div>
 
                   <button
                     type="submit"
-                    className="w-full py-4 rounded-full bg-primary hover:bg-primary-purple text-white font-heading font-bold text-sm shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2"
+                    className="w-full py-4 rounded-full bg-primary hover:bg-primary-purple text-white dark:bg-[#5FAF8A] dark:hover:bg-[#006B56] dark:text-[#112F28] dark:hover:text-white font-heading font-bold text-sm shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer"
                   >
                     <span>Send Message</span>
                     <span className="material-symbols-outlined text-base">send</span>

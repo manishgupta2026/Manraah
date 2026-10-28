@@ -342,7 +342,7 @@ export default function DoctorRatingModal({
                     className={`h-9 px-4.5 rounded-full text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 shadow-2xs shrink-0 self-start sm:self-center ${
                       showRatingForm
                         ? "bg-[#E2ECE6] dark:bg-[#18201C] text-[#19332A] dark:text-[#F4FAF7] hover:bg-[#D5E6E0] dark:hover:bg-[#22302A]"
-                        : "bg-[#006C56] hover:bg-[#005745] text-white dark:bg-[#006B56] dark:hover:bg-[#005B48]"
+                        : "bg-[#006C56] hover:bg-[#005745] text-white dark:bg-[#5FAF8A] dark:hover:bg-[#006B56] dark:text-[#112F28] dark:hover:text-white"
                     }`}
                   >
                     <span className="material-symbols-outlined text-base leading-none">
@@ -367,7 +367,7 @@ export default function DoctorRatingModal({
                         {/* Progress Bar */}
                         <div className="flex-1 h-2 bg-[#E8F0EC] dark:bg-[#18201C] rounded-full overflow-hidden relative">
                           <div
-                            className="h-full rounded-full bg-[#006C56] dark:bg-[#006B56] transition-all duration-500 ease-out"
+                            className="h-full rounded-full bg-[#006C56] dark:bg-[#5FAF8A] transition-all duration-500 ease-out"
                             style={{ width: `${percent}%` }}
                           />
                         </div>
@@ -471,7 +471,7 @@ export default function DoctorRatingModal({
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="h-9 px-5 rounded-full text-xs font-bold bg-[#006C56] hover:bg-[#005745] text-white dark:bg-[#006B56] dark:hover:bg-[#005B48] transition-all shadow-xs flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
+                      className="h-9 px-5 rounded-full text-xs font-bold bg-[#006C56] hover:bg-[#005745] text-white dark:bg-[#5FAF8A] dark:hover:bg-[#006B56] dark:text-[#112F28] dark:hover:text-white transition-all shadow-xs flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
                     >
                       {isSubmitting ? (
                         <>

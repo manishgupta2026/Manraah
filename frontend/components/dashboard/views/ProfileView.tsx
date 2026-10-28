@@ -346,7 +346,7 @@ export default function ProfileView() {
           <button
             onClick={openEditModal}
             type="button"
-            className="self-start md:self-center min-w-[140px] px-5 sm:px-6 py-2.5 rounded-full bg-[#006B56] hover:bg-[#005B48] text-white text-xs font-heading font-bold shadow-md shadow-[#006B56]/15 flex items-center justify-center gap-2 cursor-pointer shrink-0 whitespace-nowrap select-none"
+            className="self-start md:self-center min-w-[140px] px-5 sm:px-6 py-2.5 rounded-full bg-[#006B56] hover:bg-[#005B48] text-white dark:bg-[#5FAF8A] dark:hover:bg-[#006B56] dark:text-[#112F28] dark:hover:text-white text-xs font-heading font-bold shadow-md shadow-[#006B56]/15 flex items-center justify-center gap-2 cursor-pointer shrink-0 whitespace-nowrap select-none"
           >
             <svg className="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
@@ -505,7 +505,7 @@ export default function ProfileView() {
           <button
             type="button"
             onClick={openChangePasswordModal}
-            className="min-w-[165px] px-5 sm:px-6 py-2.5 rounded-full bg-[#006B56] hover:bg-[#005B48] text-white text-xs font-heading font-bold shadow-md shadow-[#006B56]/15 flex items-center justify-center gap-2 cursor-pointer shrink-0 whitespace-nowrap select-none"
+            className="min-w-[165px] px-5 sm:px-6 py-2.5 rounded-full bg-[#006B56] hover:bg-[#005B48] text-white dark:bg-[#5FAF8A] dark:hover:bg-[#006B56] dark:text-[#112F28] dark:hover:text-white text-xs font-heading font-bold shadow-md shadow-[#006B56]/15 flex items-center justify-center gap-2 cursor-pointer shrink-0 whitespace-nowrap select-none"
           >
             <svg className="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
@@ -714,7 +714,7 @@ export default function ProfileView() {
                   <button
                     type="submit"
                     disabled={isSaving}
-                    className="px-5 py-2 rounded-full bg-[#006B56] hover:bg-[#005B48] text-white font-bold shadow-md transition-all cursor-pointer disabled:opacity-50"
+                    className="px-5 py-2 rounded-full bg-[#006B56] hover:bg-[#005B48] text-white dark:bg-[#5FAF8A] dark:hover:bg-[#006B56] dark:text-[#112F28] dark:hover:text-white font-bold shadow-md transition-all cursor-pointer disabled:opacity-50"
                   >
                     {isSaving ? "Saving..." : "Save Changes"}
                   </button>
@@ -893,7 +893,7 @@ export default function ProfileView() {
                   <button
                     type="submit"
                     disabled={isChangingPassword}
-                    className="px-5 py-2 rounded-full bg-[#006B56] hover:bg-[#005B48] text-white font-bold shadow-md transition-all cursor-pointer disabled:opacity-50"
+                    className="px-5 py-2 rounded-full bg-[#006B56] hover:bg-[#005B48] text-white dark:bg-[#5FAF8A] dark:hover:bg-[#006B56] dark:text-[#112F28] dark:hover:text-white font-bold shadow-md transition-all cursor-pointer disabled:opacity-50"
                   >
                     {isChangingPassword ? "Changing Password..." : "Change Password"}
                   </button>

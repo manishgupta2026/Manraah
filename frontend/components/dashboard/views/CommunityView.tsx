@@ -315,7 +315,7 @@ export default function CommunityView() {
                 onClick={() => setSelectedCategory(cat)}
                 className={`px-3 py-1 rounded-full text-[11px] font-bold transition-all whitespace-nowrap cursor-pointer border ${
                   selectedCategory === cat
-                    ? "bg-[#006B56] text-white border-[#006B56] dark:bg-[#006B56] dark:text-white dark:border-[#006B56] shadow-xs"
+                    ? "bg-[#006B56] text-white border-[#006B56] dark:bg-[#5FAF8A] dark:text-[#112F28] dark:border-[#5FAF8A] shadow-xs"
                     : "bg-[#F4F9F6] dark:bg-[#18201C] text-[#4F685F] dark:text-[#9DB9B0] border-[#CBECE2] dark:border-[#22302A] hover:bg-[#E6F4F0] dark:hover:bg-[#22302A]"
                 }`}
               >
@@ -382,7 +382,7 @@ export default function CommunityView() {
                 <button
                   type="submit"
                   disabled={isSubmitting || !newTitle.trim() || !newContent.trim()}
-                  className="py-2 px-5 rounded-full bg-[#006B56] hover:bg-[#005B48] text-white text-xs font-bold shadow-sm shadow-[#006B56]/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-1.5"
+                  className="py-2.5 px-6 rounded-full bg-[#006B56] hover:bg-[#005B48] text-white dark:bg-[#5FAF8A] dark:hover:bg-[#006B56] dark:text-[#112F28] dark:hover:text-white text-xs font-bold shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-1.5"
                 >
                   <span>{isSubmitting ? "Posting..." : "Post to Circle"}</span>
                   <span>→</span>

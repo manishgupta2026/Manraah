@@ -76,7 +76,7 @@ export default function UserAvatar({
     return (
       <div
         suppressHydrationWarning
-        className={`${sizeClass} rounded-full bg-[#0E342B] dark:bg-[#14382F] text-[#8EAAA1] dark:text-[#78958C] flex items-center justify-center shrink-0 select-none shadow-xs ${
+        className={`${sizeClass} rounded-full bg-[#0E342B] dark:bg-[#18201C] text-[#8EAAA1] dark:text-[#9DB9B0] flex items-center justify-center shrink-0 select-none shadow-xs ${
           showBorder ? "border-2 border-white/20 dark:border-white/10" : ""
         } ${className}`}
         title="Sanctuary Member"
@@ -93,7 +93,7 @@ export default function UserAvatar({
   if (authLoading && !user && !explicitName && !explicitUser) {
     return (
       <div
-        className={`${sizeClass} rounded-full bg-white/10 dark:bg-[#14382F] animate-pulse shrink-0 select-none ${
+        className={`${sizeClass} rounded-full bg-white/10 dark:bg-[#18201C] animate-pulse shrink-0 select-none ${
           showBorder ? "border-2 border-white/20 dark:border-white/10" : ""
         } ${className}`}
         aria-hidden="true"
@@ -120,7 +120,7 @@ export default function UserAvatar({
     return (
       <div
         suppressHydrationWarning
-        className={`${sizeClass} rounded-full bg-[#0E342B] dark:bg-[#14382F] text-[#8EAAA1] dark:text-[#78958C] flex items-center justify-center shrink-0 select-none shadow-xs ${
+        className={`${sizeClass} rounded-full bg-[#0E342B] dark:bg-[#18201C] text-[#8EAAA1] dark:text-[#9DB9B0] flex items-center justify-center shrink-0 select-none shadow-xs ${
           showBorder ? "border-2 border-white/20 dark:border-white/10" : ""
         } ${className}`}
         title="Guest Sanctuary Member"

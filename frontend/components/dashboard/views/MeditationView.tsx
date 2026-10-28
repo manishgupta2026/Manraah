@@ -358,10 +358,10 @@ export default function MeditationView() {
   return (
     <div className="w-full min-w-0 flex flex-col gap-5 select-none animate-fade-in">
       {/* 1. Header Banner with Integrated Stats */}
-      <div className="bg-white dark:bg-[#0B3029] rounded-3xl p-5 sm:p-6 border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] shadow-2xs transition-colors">
+      <div className="bg-white dark:bg-[#131916] rounded-3xl p-5 sm:p-6 border border-[#E2ECE6] dark:border-[#1E2824] shadow-2xs transition-colors">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div className="space-y-1">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EAF6F0] dark:bg-[rgba(0,168,137,0.15)] text-[#006C56] dark:text-[#73D8C4] text-[10.5px] font-heading font-black tracking-wider border border-[#D2EAE0] dark:border-[rgba(0,168,137,0.30)]">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EAF6F0] dark:bg-[#112F28] text-[#006C56] dark:text-[#5FAF8A] text-[10.5px] font-heading font-black tracking-wider border border-[#D2EAE0] dark:border-[#1C463C]">
               <span>🧘 Mindfulness Manraah</span>
               <span>•</span>
               <span>Breathe & reset</span>
@@ -376,8 +376,8 @@ export default function MeditationView() {
 
           {/* Quick Stats Pills */}
           <div className="flex items-center gap-2.5 flex-wrap self-start lg:self-auto">
-            <div className="px-3.5 py-2 rounded-2xl bg-[#F4F9F6] dark:bg-[#0E3931] border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] text-center min-w-[90px]">
-              <span className="block text-xs font-heading font-black text-[#006C56] dark:text-[#73D8C4]">
+            <div className="px-3.5 py-2 rounded-2xl bg-[#F4F9F6] dark:bg-[#18201C] border border-[#E2ECE6] dark:border-[#1E2824] text-center min-w-[90px]">
+              <span className="block text-xs font-heading font-black text-[#006C56] dark:text-[#5FAF8A]">
                 {stats.totalMinutes}m
               </span>
               <span className="text-[10px] font-medium text-[#6B857C] dark:text-[#9DB9B0] tracking-wider">
@@ -385,7 +385,7 @@ export default function MeditationView() {
               </span>
             </div>
 
-            <div className="px-3.5 py-2 rounded-2xl bg-[#F4F9F6] dark:bg-[#0E3931] border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] text-center min-w-[90px]">
+            <div className="px-3.5 py-2 rounded-2xl bg-[#F4F9F6] dark:bg-[#18201C] border border-[#E2ECE6] dark:border-[#1E2824] text-center min-w-[90px]">
               <span className="block text-xs font-heading font-black text-[#D97706] dark:text-[#FBBF24]">
                 {stats.streakDays}d 🔥
               </span>
@@ -394,7 +394,7 @@ export default function MeditationView() {
               </span>
             </div>
 
-            <div className="px-3.5 py-2 rounded-2xl bg-[#F4F9F6] dark:bg-[#0E3931] border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] text-center min-w-[90px]">
+            <div className="px-3.5 py-2 rounded-2xl bg-[#F4F9F6] dark:bg-[#18201C] border border-[#E2ECE6] dark:border-[#1E2824] text-center min-w-[90px]">
               <span className="block text-xs font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
                 {stats.totalSessions}
               </span>
@@ -408,10 +408,10 @@ export default function MeditationView() {
         {/* Optional Category Focus Strip */}
         {p?.meditationBannerTitle && (
           <div
-            className="mt-3.5 pt-3 border-t border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] flex items-center justify-between gap-3 text-xs"
+            className="mt-3.5 pt-3 border-t border-[#E2ECE6] dark:border-[#1E2824] flex items-center justify-between gap-3 text-xs"
             suppressHydrationWarning
           >
-            <div className="flex items-center gap-2 text-[#006C56] dark:text-[#73D8C4] font-medium" suppressHydrationWarning>
+            <div className="flex items-center gap-2 text-[#006C56] dark:text-[#5FAF8A] font-medium" suppressHydrationWarning>
               <span>🌿</span>
               <span suppressHydrationWarning>{p.meditationBannerTitle}</span>
               <span className="text-[#5A756C] dark:text-[#9DB9B0] hidden sm:inline" suppressHydrationWarning>
@@ -419,7 +419,7 @@ export default function MeditationView() {
               </span>
             </div>
             <span
-              className="px-2.5 py-0.5 rounded-full bg-[#EAF6F0] dark:bg-[rgba(0,168,137,0.15)] text-[10px] font-bold text-[#006C56] dark:text-[#73D8C4] border border-[#D2EAE0] dark:border-[rgba(0,168,137,0.30)] shrink-0"
+              className="px-2.5 py-0.5 rounded-full bg-[#EAF6F0] dark:bg-[#112F28] text-[10px] font-bold text-[#006C56] dark:text-[#5FAF8A] border border-[#D2EAE0] dark:border-[#1C463C] shrink-0"
               suppressHydrationWarning
             >
               {p.meditationBadge || "Focus Mode"}
@@ -430,7 +430,7 @@ export default function MeditationView() {
 
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="p-3.5 rounded-2xl bg-[#006C56] dark:bg-[#008F78] text-white text-xs font-heading font-bold text-center shadow-md animate-fade-in">
+        <div className="p-3.5 rounded-2xl bg-[#006C56] dark:bg-[#5FAF8A] dark:text-[#112F28] text-white text-xs font-heading font-bold text-center shadow-md animate-fade-in">
           {toastMessage}
         </div>
       )}
@@ -438,9 +438,9 @@ export default function MeditationView() {
       {/* 2. Main Two-Column Balanced Workspace */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
         {/* Left Column: Visual Breathing Player (7 cols) */}
-        <div className="lg:col-span-7 bg-white dark:bg-[#0B3029] rounded-3xl p-6 sm:p-7 border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] shadow-2xs flex flex-col items-center justify-between gap-6 transition-colors">
+        <div className="lg:col-span-7 bg-white dark:bg-[#131916] rounded-3xl p-6 sm:p-7 border border-[#E2ECE6] dark:border-[#1E2824] shadow-2xs flex flex-col items-center justify-between gap-6 transition-colors">
           {/* Duration Selector Tabs */}
-          <div className="w-full flex items-center justify-between gap-2 flex-wrap pb-2 border-b border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)]">
+          <div className="w-full flex items-center justify-between gap-2 flex-wrap pb-2 border-b border-[#E2ECE6] dark:border-[#1E2824]">
             <span className="text-xs font-heading font-bold text-[#19332A] dark:text-[#F4FAF7]">
               Session Length
             </span>
@@ -457,8 +457,8 @@ export default function MeditationView() {
                   onClick={() => setSelectedDuration(item.mins)}
                   className={`px-3 py-1 rounded-full text-xs font-heading font-bold transition-all cursor-pointer ${
                     selectedDuration === item.mins
-                      ? "bg-[#006C56] dark:bg-[#008F78] text-white shadow-xs"
-                      : "bg-[#F4FAF7] dark:bg-[#0E3931] text-[#5A756C] dark:text-[#9DB9B0] hover:bg-[#E2ECE6] dark:hover:bg-[#12463C]"
+                      ? "bg-[#006C56] dark:bg-[#5FAF8A] dark:text-[#112F28] text-white shadow-xs"
+                      : "bg-[#F4FAF7] dark:bg-[#18201C] text-[#5A756C] dark:text-[#9DB9B0] hover:bg-[#E2ECE6] dark:hover:bg-[#22302A]"
                   }`}
                 >
                   {item.label}
@@ -473,11 +473,11 @@ export default function MeditationView() {
               className={`absolute inset-0 rounded-full border-4 transition-all duration-1000 shadow-inner flex items-center justify-center ${
                 isPlaying
                   ? breathPhase === "Inhale"
-                    ? "scale-110 border-[#00A889] bg-[#EAF6F0]/70 dark:bg-[#0E3931]/80 shadow-[#00A889]/20"
+                    ? "scale-110 border-[#00A889] bg-[#EAF6F0]/70 dark:bg-[#18201C]/80 shadow-[#00A889]/20"
                     : breathPhase === "Hold"
                     ? "scale-105 border-[#006C56] bg-[#006C56]/15 dark:bg-[#00A889]/20"
                     : "scale-90 border-[#D97706] bg-[#FEF3C7]/40 dark:bg-[#78350F]/20"
-                  : "scale-100 border-[#D2EAE0] dark:border-[rgba(150,210,195,0.12)] bg-[#F4FAF7] dark:bg-[#0E3931]/50"
+                  : "scale-100 border-[#D2EAE0] dark:border-[#1E2824] bg-[#F4FAF7] dark:bg-[#18201C]/50"
               }`}
             >
               <div className="text-center space-y-1">
@@ -486,7 +486,7 @@ export default function MeditationView() {
                 </span>
                 {isPlaying ? (
                   <div className="space-y-0.5">
-                    <span className="font-heading font-bold text-xs sm:text-sm text-[#006C56] dark:text-[#73D8C4] block tracking-wider">
+                    <span className="font-heading font-bold text-xs sm:text-sm text-[#006C56] dark:text-[#5FAF8A] block tracking-wider">
                       {breathPhase}
                     </span>
                     <span className="font-mono font-bold text-xs text-[#5A756C] dark:text-[#9DB9B0] block">
@@ -510,7 +510,7 @@ export default function MeditationView() {
             >
               {selectedDuration}-Minute {mounted ? (categoryDetails?.name || "Mindfulness") : "Mindfulness"} Session
             </h2>
-            <p className="text-[11px] text-[#006C56] dark:text-[#73D8C4] font-semibold tracking-wider">
+            <p className="text-[11px] text-[#006C56] dark:text-[#5FAF8A] font-semibold tracking-wider">
               🎵 Mode: <span className="underline">{selectedMode}</span>{" "}
               {natureSound !== "None" && `+ ${natureSound}`}
             </p>
@@ -518,7 +518,7 @@ export default function MeditationView() {
 
           {/* Live Countdown & Progress Bar */}
           <div className="w-full max-w-sm space-y-1.5">
-            <div className="h-2 bg-[#EAF6F0] dark:bg-[#0E3931] rounded-full overflow-hidden border border-[#D2EAE0] dark:border-[rgba(150,210,195,0.12)]">
+            <div className="h-2 bg-[#EAF6F0] dark:bg-[#18201C] rounded-full overflow-hidden border border-[#D2EAE0] dark:border-[#1E2824]">
               <div
                 className="h-full bg-gradient-to-r from-[#006C56] to-[#00A889] transition-all duration-1000"
                 style={{ width: `${progressPercent}%` }}
@@ -526,7 +526,7 @@ export default function MeditationView() {
             </div>
             <div className="flex justify-between text-xs text-[#5A756C] dark:text-[#9DB9B0] font-mono font-semibold">
               <span>{formatTime(selectedDuration * 60 - secondsLeft)}</span>
-              <span className="text-[#006C56] dark:text-[#73D8C4] font-bold">
+              <span className="text-[#006C56] dark:text-[#5FAF8A] font-bold">
                 {formatTime(secondsLeft)}
               </span>
             </div>
@@ -537,7 +537,7 @@ export default function MeditationView() {
             <button
               type="button"
               onClick={() => setSecondsLeft((s) => Math.min(selectedDuration * 60, s + 30))}
-              className="w-11 h-11 rounded-full bg-[#F4FAF7] dark:bg-[#0E3931] text-[#19332A] dark:text-[#F4FAF7] flex items-center justify-center shadow-xs hover:bg-[#E2ECE6] dark:hover:bg-[#12463C] transition-all cursor-pointer border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)]"
+              className="w-11 h-11 rounded-full bg-[#F4FAF7] dark:bg-[#18201C] text-[#19332A] dark:text-[#F4FAF7] flex items-center justify-center shadow-xs hover:bg-[#E2ECE6] dark:hover:bg-[#22302A] transition-all cursor-pointer border border-[#E2ECE6] dark:border-[#1E2824]"
               title="Add 30 seconds"
             >
               <span className="material-symbols-outlined text-xl">replay_30</span>
@@ -549,7 +549,7 @@ export default function MeditationView() {
               className={`w-14 h-14 rounded-full text-white flex items-center justify-center shadow-md transition-all scale-105 active:scale-95 cursor-pointer ${
                 isPlaying
                   ? "bg-[#D97706] hover:bg-[#B45309]"
-                  : "bg-[#006C56] hover:bg-[#005241] dark:bg-[#008F78] dark:hover:bg-[#00A889]"
+                  : "bg-[#006C56] hover:bg-[#005241] dark:bg-[#5FAF8A] dark:hover:bg-[#006B56] dark:text-[#112F28] dark:hover:text-white"
               }`}
             >
               <span className="material-symbols-outlined text-3xl">
@@ -560,7 +560,7 @@ export default function MeditationView() {
             <button
               type="button"
               onClick={() => handleCompleteSession()}
-              className="w-11 h-11 rounded-full bg-[#F4FAF7] dark:bg-[#0E3931] text-[#006C56] dark:text-[#73D8C4] flex items-center justify-center shadow-xs hover:bg-[#E2ECE6] dark:hover:bg-[#12463C] transition-all cursor-pointer border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)]"
+              className="w-11 h-11 rounded-full bg-[#F4FAF7] dark:bg-[#18201C] text-[#006C56] dark:text-[#5FAF8A] flex items-center justify-center shadow-xs hover:bg-[#E2ECE6] dark:hover:bg-[#22302A] transition-all cursor-pointer border border-[#E2ECE6] dark:border-[#1E2824]"
               title="Complete & Log Session"
             >
               <span className="material-symbols-outlined text-xl">check_circle</span>
@@ -571,7 +571,7 @@ export default function MeditationView() {
         {/* Right Column: Audio Modes, Ambient Sounds & Reflections (5 cols) */}
         <div className="lg:col-span-5 flex flex-col gap-4">
           {/* Soundscape Mode Card */}
-          <div className="bg-white dark:bg-[#0B3029] rounded-3xl p-5 border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] shadow-2xs space-y-3 transition-colors">
+          <div className="bg-white dark:bg-[#131916] rounded-3xl p-5 border border-[#E2ECE6] dark:border-[#1E2824] shadow-2xs space-y-3 transition-colors">
             <div className="flex items-center justify-between">
               <h3 className="text-xs font-heading font-black text-[#19332A] dark:text-[#F4FAF7] tracking-wider">
                 Soundscape Frequency Mode
@@ -607,15 +607,15 @@ export default function MeditationView() {
                   onClick={() => setSelectedMode(m.mode)}
                   className={`p-3 rounded-2xl border transition-all cursor-pointer flex items-start gap-3 ${
                     selectedMode === m.mode
-                      ? "bg-[#EAF6F0] dark:bg-[rgba(0,168,137,0.15)] border-[#006C56] dark:border-[#00A889] shadow-xs ring-1 ring-[#006C56]/30 dark:ring-[#00A889]/30"
-                      : "bg-[#F4FAF7]/60 dark:bg-[#082821] border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] hover:bg-[#F4FAF7] dark:hover:bg-[#0E3931]"
+                      ? "bg-[#EAF6F0] dark:bg-[#112F28] border-[#006C56] dark:border-[#00A889] shadow-xs ring-1 ring-[#006C56]/30 dark:ring-[#00A889]/30"
+                      : "bg-[#F4FAF7]/60 dark:bg-[#18201C] border-[#E2ECE6] dark:border-[#1E2824] hover:bg-[#F4FAF7] dark:hover:bg-[#22302A]"
                   }`}
                 >
                   <div
                     className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${
                       selectedMode === m.mode
-                        ? "bg-[#006C56] dark:bg-[#008F78] text-white"
-                        : "bg-white dark:bg-[#0E3931] text-[#5A756C] dark:text-[#9DB9B0]"
+                        ? "bg-[#006C56] dark:bg-[#5FAF8A] dark:text-[#112F28] text-white"
+                        : "bg-white dark:bg-[#18201C] text-[#5A756C] dark:text-[#9DB9B0]"
                     }`}
                   >
                     <span className="material-symbols-outlined text-base">{m.icon}</span>
@@ -636,7 +636,7 @@ export default function MeditationView() {
           </div>
 
           {/* Ambient Nature Sound Layer */}
-          <div className="bg-white dark:bg-[#0B3029] rounded-3xl p-5 border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] shadow-2xs space-y-2.5 transition-colors">
+          <div className="bg-white dark:bg-[#131916] rounded-3xl p-5 border border-[#E2ECE6] dark:border-[#1E2824] shadow-2xs space-y-2.5 transition-colors">
             <h3 className="text-xs font-heading font-black text-[#19332A] dark:text-[#F4FAF7] tracking-wider">
               Ambient Nature Layer
             </h3>
@@ -647,8 +647,8 @@ export default function MeditationView() {
                   onClick={() => setNatureSound(sound)}
                   className={`px-3 py-1.5 rounded-full text-xs font-heading font-bold transition-all cursor-pointer ${
                     natureSound === sound
-                      ? "bg-[#006C56] dark:bg-[#008F78] text-white shadow-xs"
-                      : "bg-[#F4FAF7] dark:bg-[#082821] border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] text-[#5A756C] dark:text-[#9DB9B0] hover:bg-[#E2ECE6] dark:hover:bg-[#0E3931]"
+                      ? "bg-[#006C56] dark:bg-[#5FAF8A] dark:text-[#112F28] text-white shadow-xs"
+                      : "bg-[#F4FAF7] dark:bg-[#18201C] border border-[#E2ECE6] dark:border-[#1E2824] text-[#5A756C] dark:text-[#9DB9B0] hover:bg-[#E2ECE6] dark:hover:bg-[#22302A]"
                   }`}
                 >
                   🌿 {sound}
@@ -658,9 +658,9 @@ export default function MeditationView() {
           </div>
 
           {/* Daily Mindfulness Reset Quote & Quick Reflection */}
-          <div className="bg-white dark:bg-[#0B3029] rounded-3xl p-5 border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.12)] shadow-2xs space-y-3 transition-colors">
+          <div className="bg-white dark:bg-[#131916] rounded-3xl p-5 border border-[#E2ECE6] dark:border-[#1E2824] shadow-2xs space-y-3 transition-colors">
             <div className="flex items-start gap-2.5">
-              <span className="material-symbols-outlined text-lg text-[#006C56] dark:text-[#73D8C4] shrink-0">
+              <span className="material-symbols-outlined text-lg text-[#006C56] dark:text-[#5FAF8A] shrink-0">
                 format_quote
               </span>
               <p className="text-xs text-[#5A756C] dark:text-[#9DB9B0] italic leading-relaxed">
@@ -673,12 +673,12 @@ export default function MeditationView() {
               value={reflectionInput}
               onChange={(e) => setReflectionInput(e.target.value)}
               placeholder="Jot down a quick thought or feeling from this meditation..."
-              className="w-full p-3 rounded-2xl bg-[#F4FAF7] dark:bg-[#082821] border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.16)] text-xs text-[#19332A] dark:text-[#F4FAF7] placeholder:text-[#8EAAA1] dark:placeholder:text-[#789990] focus:outline-none focus:ring-2 focus:ring-[#006C56] dark:focus:ring-[#00A889] resize-none"
+              className="w-full p-3 rounded-2xl bg-[#F4FAF7] dark:bg-[#18201C] border border-[#E2ECE6] dark:border-[#22302A] text-xs text-[#19332A] dark:text-[#F4FAF7] placeholder:text-[#8EAAA1] dark:placeholder:text-[#789990] focus:outline-none focus:ring-2 focus:ring-[#006C56] dark:focus:ring-[#00A889] resize-none"
             />
 
             <div className="flex items-center justify-between">
               {reflectionSavedToast ? (
-                <span className="text-[11px] font-bold text-[#006C56] dark:text-[#73D8C4]">
+                <span className="text-[11px] font-bold text-[#006C56] dark:text-[#5FAF8A]">
                   ✓ Saved to Journal!
                 </span>
               ) : (
@@ -690,7 +690,7 @@ export default function MeditationView() {
                 type="button"
                 onClick={handleSaveReflection}
                 disabled={savingReflection || !reflectionInput.trim()}
-                className="px-3 py-1.5 rounded-full bg-[#006C56] hover:bg-[#005241] dark:bg-[#008F78] dark:hover:bg-[#00A889] disabled:opacity-40 text-white text-xs font-heading font-bold transition-all cursor-pointer"
+                className="px-3 py-1.5 rounded-full bg-[#006C56] hover:bg-[#005241] dark:bg-[#5FAF8A] dark:hover:bg-[#006B56] dark:text-[#112F28] dark:hover:text-white disabled:opacity-40 text-white text-xs font-heading font-bold transition-all cursor-pointer"
               >
                 {savingReflection ? "Saving..." : "Save to Journal"}
               </button>
@@ -702,8 +702,8 @@ export default function MeditationView() {
       {/* Post-Session Reflection Modal */}
       {showReflectionModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-xs animate-fade-in">
-          <div className="bg-white dark:bg-[#0B3029] rounded-3xl p-6 sm:p-7 max-w-md w-full border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.15)] shadow-2xl space-y-4 text-center">
-            <div className="w-14 h-14 rounded-2xl bg-[#EAF6F0] dark:bg-[rgba(0,168,137,0.15)] text-[#006C56] dark:text-[#73D8C4] mx-auto flex items-center justify-center text-3xl border border-[#D2EAE0] dark:border-[rgba(0,168,137,0.30)]">
+          <div className="bg-white dark:bg-[#131916] rounded-3xl p-6 sm:p-7 max-w-md w-full border border-[#E2ECE6] dark:border-[#1E2824] shadow-2xl space-y-4 text-center">
+            <div className="w-14 h-14 rounded-2xl bg-[#EAF6F0] dark:bg-[#112F28] text-[#006C56] dark:text-[#5FAF8A] mx-auto flex items-center justify-center text-3xl border border-[#D2EAE0] dark:border-[#1C463C]">
               🧘
             </div>
             <div className="space-y-1">
@@ -720,7 +720,7 @@ export default function MeditationView() {
               value={reflectionInput}
               onChange={(e) => setReflectionInput(e.target.value)}
               placeholder="e.g. My shoulders dropped, my breath slowed, and I feel centered..."
-              className="w-full p-3.5 rounded-2xl bg-[#F4FAF7] dark:bg-[#082821] border border-[#E2ECE6] dark:border-[rgba(150,210,195,0.16)] text-xs text-[#19332A] dark:text-[#F4FAF7] placeholder:text-[#8EAAA1] dark:placeholder:text-[#789990] focus:outline-none focus:ring-2 focus:ring-[#006C56] dark:focus:ring-[#00A889] resize-none"
+              className="w-full p-3.5 rounded-2xl bg-[#F4FAF7] dark:bg-[#18201C] border border-[#E2ECE6] dark:border-[#22302A] text-xs text-[#19332A] dark:text-[#F4FAF7] placeholder:text-[#8EAAA1] dark:placeholder:text-[#789990] focus:outline-none focus:ring-2 focus:ring-[#006C56] dark:focus:ring-[#00A889] resize-none"
             />
 
             <div className="flex gap-2.5">
@@ -731,7 +731,7 @@ export default function MeditationView() {
                   setToastMessage(`🎉 Session Complete! +${selectedDuration} Mins saved to your profile.`);
                   setTimeout(() => setToastMessage(null), 5000);
                 }}
-                className="flex-1 py-2.5 rounded-full bg-[#F4FAF7] dark:bg-[#082821] text-[#4F685F] dark:text-[#9DB9B0] font-heading font-bold text-xs hover:bg-[#E2ECE6] dark:hover:bg-[#0E3931] border border-transparent dark:border-[rgba(150,210,195,0.12)] transition-colors cursor-pointer"
+                className="flex-1 py-2.5 rounded-full bg-[#F4FAF7] dark:bg-[#18201C] text-[#4F685F] dark:text-[#9DB9B0] font-heading font-bold text-xs hover:bg-[#E2ECE6] dark:hover:bg-[#22302A] border border-transparent dark:border-[#1E2824] transition-colors cursor-pointer"
               >
                 Skip Reflection
               </button>
@@ -739,7 +739,7 @@ export default function MeditationView() {
                 type="button"
                 onClick={handleSaveReflection}
                 disabled={savingReflection}
-                className="flex-1 py-2.5 rounded-full bg-[#006C56] hover:bg-[#005241] dark:bg-[#008F78] dark:hover:bg-[#00A889] text-white font-heading font-black text-xs shadow-md transition-all cursor-pointer"
+                className="flex-1 py-2.5 rounded-full bg-[#006C56] hover:bg-[#005241] dark:bg-[#5FAF8A] dark:hover:bg-[#006B56] dark:text-[#112F28] dark:hover:text-white text-white font-heading font-black text-xs shadow-md transition-all cursor-pointer"
               >
                 {savingReflection ? "Saving..." : "Save to Journal →"}
               </button>

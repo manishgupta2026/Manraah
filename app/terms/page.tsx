@@ -5,11 +5,11 @@ import Link from "next/link";
 
 export default function TermsPage() {
   return (
-    <div className="min-h-screen bg-surface text-on-surface font-sans py-12 px-4 sm:px-6 lg:px-12 select-none">
+    <div className="min-h-screen bg-surface dark:bg-[#0A0E0D] text-on-surface dark:text-[#F4FAF7] font-sans py-12 px-4 sm:px-6 lg:px-12 select-none">
       <div className="max-w-4xl mx-auto space-y-10">
         
         {/* Header */}
-        <div className="text-center space-y-3 border-b border-surface-variant/30 pb-8">
+        <div className="text-center space-y-3 border-b border-surface-variant/30 dark:border-[#1E2824] pb-8">
           <p className="text-xs font-heading font-bold text-primary tracking-widest uppercase">
             Legal Terms
           </p>
@@ -22,7 +22,7 @@ export default function TermsPage() {
         </div>
 
         {/* Content Card */}
-        <div className="p-8 sm:p-10 rounded-[32px] bg-surface-container-lowest border border-surface-variant/30 shadow-card-lift space-y-8 text-sm leading-relaxed text-on-surface-variant">
+        <div className="p-8 sm:p-10 rounded-[32px] bg-surface-container-lowest dark:bg-[#131916] border border-surface-variant/30 dark:border-[#1E2824] shadow-card-lift space-y-8 text-sm leading-relaxed text-on-surface-variant">
           
           {/* Section 1 */}
           <section className="space-y-3">
@@ -100,10 +100,10 @@ export default function TermsPage() {
           </section>
 
           {/* Back button */}
-          <div className="pt-6 border-t border-surface-variant/20 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="pt-6 border-t border-surface-variant/20 dark:border-[#1E2824] flex flex-col sm:flex-row items-center justify-between gap-4">
             <Link
               href="/"
-              className="px-6 py-3 rounded-full bg-primary hover:bg-primary-purple text-white font-heading font-bold text-xs shadow-md transition-all flex items-center gap-2"
+              className="px-6 py-3 rounded-full bg-primary hover:bg-primary-purple text-white dark:bg-[#5FAF8A] dark:hover:bg-[#006B56] dark:text-[#112F28] dark:hover:text-white font-heading font-bold text-xs shadow-md transition-all flex items-center gap-2 cursor-pointer"
             >
               <span className="material-symbols-outlined text-sm">arrow_back</span>
               <span>Return to Home</span>

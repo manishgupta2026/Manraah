@@ -149,7 +149,7 @@ export default function ForYouPage() {
   const activePathway = PATHWAYS.find((p) => p.id === activePathwayId) || PATHWAYS[0];
 
   return (
-    <div className="min-h-screen bg-surface text-on-surface select-none">
+    <div className="min-h-screen bg-surface dark:bg-[#0A0E0D] text-on-surface dark:text-[#F4FAF7] select-none">
       {/* ═══ 1. HERO HEADER ═══ */}
       <section className="relative pt-12 pb-14 md:pt-16 md:pb-18 px-6 max-w-5xl mx-auto text-center space-y-6">
         {/* Atmosphere Glow */}
@@ -184,8 +184,8 @@ export default function ForYouPage() {
                 onClick={() => setActivePathwayId(p.id)}
                 className={`px-5 py-2.5 rounded-full text-xs sm:text-sm font-heading font-bold transition-all cursor-pointer flex items-center gap-2 ${
                   isActive
-                    ? "bg-primary text-white shadow-md scale-105"
-                    : "bg-surface-container-lowest hover:bg-surface-container text-on-surface-variant border border-surface-variant/40"
+                    ? "bg-primary text-white shadow-md scale-105 dark:bg-[#5FAF8A] dark:text-[#112F28]"
+                    : "bg-surface-container-lowest dark:bg-[#131916] dark:bg-[#18201C] hover:bg-surface-container dark:hover:bg-[#22302A] text-on-surface-variant dark:text-[#9DB9B0] border border-surface-variant/40 dark:border-[#1E2824] dark:border-[#22302A]"
                 }`}
               >
                 <span className="text-base">{p.emoji}</span>
@@ -205,10 +205,10 @@ export default function ForYouPage() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -12 }}
             transition={{ duration: 0.25 }}
-            className="rounded-[32px] bg-surface-container-lowest border border-surface-variant/40 shadow-card-lift p-8 sm:p-12 space-y-10"
+            className="rounded-[32px] bg-surface-container-lowest dark:bg-[#131916] border border-surface-variant/40 dark:border-[#1E2824] shadow-card-lift p-8 sm:p-12 space-y-10"
           >
             {/* Header Info + Active Pathway Artwork */}
-            <div className="pb-8 border-b border-surface-variant/20 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            <div className="pb-8 border-b border-surface-variant/20 dark:border-[#1E2824] grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
               <div className="lg:col-span-7 space-y-4 text-left">
                 <span className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-heading font-bold ${activePathway.badgeStyle}`}>
                   {activePathway.badge}
@@ -220,7 +220,7 @@ export default function ForYouPage() {
                   {activePathway.description}
                 </p>
                 <div className="pt-1 flex items-center gap-2">
-                  <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface-container-low/80 border border-surface-variant/40 text-xs sm:text-sm font-heading font-semibold text-on-surface-variant">
+                  <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface-container-low/80 border border-surface-variant/40 dark:border-[#1E2824] text-xs sm:text-sm font-heading font-semibold text-on-surface-variant">
                     <span className="w-2 h-2 rounded-full bg-primary" />
                     <span>{activePathway.tagline}</span>
                   </span>
@@ -298,7 +298,7 @@ export default function ForYouPage() {
                   {activePathway.recommendedTools.map((tool, idx) => (
                     <div
                       key={idx}
-                      className="p-5 rounded-[20px] bg-surface-container-lowest border border-surface-variant/40 shadow-xs flex items-center gap-4 hover:border-primary/30 transition-all"
+                      className="p-5 rounded-[20px] bg-surface-container-lowest dark:bg-[#131916] border border-surface-variant/40 dark:border-[#1E2824] shadow-xs flex items-center gap-4 hover:border-primary/30 transition-all"
                     >
                       <div className="w-10 h-10 rounded-2xl bg-surface-container-low text-primary flex items-center justify-center shrink-0">
                         <span className="material-symbols-outlined text-xl">{tool.icon}</span>

@@ -145,7 +145,7 @@ export default function ResourcesView() {
               onClick={() => setSelectedCategory(cat)}
               className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all whitespace-nowrap cursor-pointer border ${
                 selectedCategory === cat
-                  ? "bg-[#006B56] text-white border-[#006B56] dark:bg-[#006B56] dark:text-white dark:border-[#006B56] shadow-xs"
+                  ? "bg-[#006B56] text-white border-[#006B56] dark:bg-[#5FAF8A] dark:text-[#112F28] dark:border-[#5FAF8A] shadow-xs"
                   : "bg-[#F4F9F6] dark:bg-[#18201C] text-[#4F685F] dark:text-[#9DB9B0] border-[#CBECE2] dark:border-[#22302A] hover:bg-[#E6F4F0] dark:hover:bg-[#22302A]"
               }`}
             >
@@ -160,7 +160,7 @@ export default function ResourcesView() {
         <div className="bg-gradient-to-br from-[#E6F4F0] to-[#EAF6F2] dark:from-[#112F28] dark:to-[#131916] rounded-3xl p-6 sm:p-7 border border-[#CBECE2] dark:border-[#1C463C] shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-5 transition-colors">
           <div className="space-y-2 max-w-xl">
             <div className="flex items-center gap-2">
-              <span className="px-2.5 py-0.5 rounded-full bg-[#006B56] text-white dark:bg-[#006B56] dark:text-white text-[9.5px] font-extrabold tracking-wide">
+              <span className="px-2.5 py-0.5 rounded-full bg-[#006B56] text-white dark:bg-[#5FAF8A] dark:text-[#112F28] text-[9.5px] font-extrabold tracking-wide">
                 Featured Guide
               </span>
               <span className="text-[10.5px] text-[#6B857C] dark:text-[#9DB9B0] font-semibold">
@@ -180,7 +180,7 @@ export default function ResourcesView() {
 
           <button
             onClick={() => setReadingResource(featuredResource)}
-            className="py-3 px-6 rounded-full bg-[#006B56] hover:bg-[#005B48] text-white text-xs font-bold shadow-md shadow-[#006B56]/20 transition-all flex items-center justify-center gap-2 group cursor-pointer shrink-0 self-start md:self-auto"
+            className="py-3 px-6 rounded-full bg-[#006B56] hover:bg-[#005B48] text-white dark:bg-[#5FAF8A] dark:hover:bg-[#006B56] dark:text-[#112F28] dark:hover:text-white text-xs font-bold shadow-md transition-all flex items-center justify-center gap-2 group cursor-pointer shrink-0 self-start md:self-auto"
           >
             <span>Read Guide</span>
             <span className="transition-transform group-hover:translate-x-1">→</span>
@@ -303,7 +303,7 @@ export default function ResourcesView() {
               </button>
               <button
                 onClick={() => setReadingResource(null)}
-                className="px-5 py-2.5 rounded-xl bg-[#006B56] hover:bg-[#005B48] text-white text-xs font-bold shadow-sm cursor-pointer"
+                className="px-5 py-2.5 rounded-full bg-[#006B56] hover:bg-[#005B48] text-white dark:bg-[#5FAF8A] dark:hover:bg-[#006B56] dark:text-[#112F28] dark:hover:text-white text-xs font-bold shadow-sm transition-all cursor-pointer"
               >
                 Close Guide
               </button>

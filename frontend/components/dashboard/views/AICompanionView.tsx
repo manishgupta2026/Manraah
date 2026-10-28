@@ -159,9 +159,9 @@ I am opening our Crisis Support Desk for you right now so you can dial or reach 
           {/* Voice Mode Action */}
           <button
             onClick={() => setIsVoiceActive(!isVoiceActive)}
-            className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+            className={`px-4 py-2 rounded-full text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
               isVoiceActive
-                ? "bg-[#006B56] dark:bg-[#005B48] text-white shadow-sm animate-pulse"
+                ? "bg-[#006B56] text-white dark:bg-[#5FAF8A] dark:text-[#112F28] shadow-sm animate-pulse"
                 : "bg-[#F4F9F6] dark:bg-[#18201C] text-[#4F685F] dark:text-[#9DB9B0] hover:bg-[#E6F4F0] dark:hover:bg-[#22302A] border border-[#CBECE2] dark:border-[#22302A]"
             }`}
           >
@@ -278,7 +278,7 @@ I am opening our Crisis Support Desk for you right now so you can dial or reach 
             <button
               onClick={() => handleSendMessage()}
               disabled={!inputMessage.trim()}
-              className="py-3 px-5 rounded-2xl bg-[#006B56] hover:bg-[#005B48] disabled:bg-slate-200 dark:bg-[#006B56] dark:hover:bg-[#005B48] dark:disabled:bg-[#18201C] dark:disabled:text-[#76968D] text-white text-xs font-bold shadow-sm transition-all flex items-center gap-1.5 cursor-pointer disabled:cursor-not-allowed shrink-0"
+              className="py-3 px-6 rounded-full bg-[#006B56] hover:bg-[#005B48] disabled:bg-slate-200 dark:bg-[#5FAF8A] dark:hover:bg-[#006B56] dark:text-[#112F28] dark:hover:text-white dark:disabled:bg-[#18201C] dark:disabled:text-[#76968D] text-white text-xs font-bold shadow-sm transition-all flex items-center gap-1.5 cursor-pointer disabled:cursor-not-allowed shrink-0"
             >
               <span>Send</span>
               <span>➤</span>

@@ -199,7 +199,7 @@ export default function JournalView() {
           </div>
 
           <div className="flex items-center gap-3 self-start sm:self-auto">
-            <div className="px-4 py-2 rounded-2xl bg-[#E6F4F0] dark:bg-[#0E3931] border border-[#CBECE2] dark:border-[#1C463C] text-center">
+            <div className="px-4 py-2 rounded-2xl bg-[#E6F4F0] dark:bg-[#18201C] border border-[#CBECE2] dark:border-[#22302A] text-center">
               <span className="block text-xs font-black text-[#006B56] dark:text-[#5FAF8A]">
                 {entries.length}
               </span>
@@ -210,7 +210,7 @@ export default function JournalView() {
             <button
               type="button"
               onClick={() => setShowPrivacyPopup(true)}
-              className="px-4 py-2 rounded-2xl bg-[#E6F4F0] dark:bg-[#0E3931] border border-[#CBECE2] dark:border-[#1C463C] text-center hover:border-[#006B56]/40 dark:hover:border-[#5FAF8A]/40 hover:bg-[#EAF6F2] dark:hover:bg-[#12463C] transition-colors cursor-pointer"
+              className="px-4 py-2 rounded-2xl bg-[#E6F4F0] dark:bg-[#18201C] border border-[#CBECE2] dark:border-[#22302A] text-center hover:border-[#006B56]/40 dark:hover:border-[#5FAF8A]/40 hover:bg-[#EAF6F2] dark:hover:bg-[#22302A] transition-colors cursor-pointer"
               title="Click to view privacy agreement"
             >
               <span className="block text-xs font-black text-[#006B56] dark:text-[#5FAF8A]">
@@ -231,7 +231,7 @@ export default function JournalView() {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search your journal reflections..."
-              className="w-full py-2 pl-9 pr-4 rounded-full bg-[#F8FCFA] dark:bg-[#0E3931] border border-[#CBECE2] dark:border-[#1C463C] text-xs text-[#19332A] dark:text-[#F4FAF7] focus:outline-none focus:ring-2 focus:ring-[#006B56]/40 dark:focus:ring-[#5FAF8A]/30 placeholder:text-[#8EAAA1] dark:placeholder:text-[#789990]"
+              className="w-full py-2 pl-9 pr-4 rounded-full bg-[#F8FCFA] dark:bg-[#18201C] border border-[#CBECE2] dark:border-[#22302A] text-xs text-[#19332A] dark:text-[#F4FAF7] focus:outline-none focus:ring-2 focus:ring-[#006B56]/40 dark:focus:ring-[#5FAF8A]/30 placeholder:text-[#8EAAA1] dark:placeholder:text-[#789990]"
             />
             <svg
               className="w-4 h-4 absolute left-3 top-2.5 text-[#8EAAA1] dark:text-[#789990]"
@@ -255,8 +255,8 @@ export default function JournalView() {
                 onClick={() => setFilterTag(tag)}
                 className={`px-3 py-1 rounded-full text-[11px] font-bold transition-all whitespace-nowrap cursor-pointer ${
                   filterTag === tag
-                    ? "bg-[#006B56] hover:bg-[#005B48] text-white shadow-xs"
-                    : "bg-[#E6F4F0] dark:bg-[#0E3931] text-[#004D3D] dark:text-[#9DB9B0] hover:bg-[#EAF6F2] dark:hover:bg-[#12463C]"
+                    ? "bg-[#006B56] hover:bg-[#005B48] text-white dark:bg-[#5FAF8A] dark:text-[#112F28] shadow-xs"
+                    : "bg-[#E6F4F0] dark:bg-[#18201C] text-[#004D3D] dark:text-[#9DB9B0] border border-transparent dark:border-[#22302A] hover:bg-[#EAF6F2] dark:hover:bg-[#22302A]"
                 }`}
               >
                 {tag}
@@ -269,7 +269,7 @@ export default function JournalView() {
       {/* 2. Main Two-Column Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
         {/* Editor Form Column (7 cols) */}
-        <div className="lg:col-span-7 bg-white dark:bg-[#112F28] rounded-3xl p-6 sm:p-7 border border-[#CBECE2] dark:border-[#1C463C] shadow-2xs space-y-5 transition-colors">
+        <div className="lg:col-span-7 bg-white dark:bg-[#131916] rounded-3xl p-6 sm:p-7 border border-[#CBECE2] dark:border-[#1E2824] shadow-2xs space-y-5 transition-colors">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-base font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
@@ -292,7 +292,7 @@ export default function JournalView() {
                 value={newTitle}
                 onChange={(e) => setNewTitle(e.target.value)}
                 placeholder="Give your thought a name (e.g. Unpacking morning tension...)"
-                className="w-full py-2.5 px-4 rounded-2xl bg-[#F8FCFA] dark:bg-[#0E3931] border border-[#CBECE2] dark:border-[#1C463C] text-xs font-bold text-[#19332A] dark:text-[#F4FAF7] focus:outline-none focus:ring-2 focus:ring-[#006B56]/40 dark:focus:ring-[#5FAF8A]/30 placeholder:text-[#8EAAA1] dark:placeholder:text-[#789990]"
+                className="w-full py-2.5 px-4 rounded-2xl bg-[#F8FCFA] dark:bg-[#18201C] border border-[#CBECE2] dark:border-[#22302A] text-xs font-bold text-[#19332A] dark:text-[#F4FAF7] focus:outline-none focus:ring-2 focus:ring-[#006B56]/40 dark:focus:ring-[#5FAF8A]/30 placeholder:text-[#8EAAA1] dark:placeholder:text-[#789990]"
               />
             </div>
 
@@ -305,7 +305,7 @@ export default function JournalView() {
                 value={newContent}
                 onChange={(e) => setNewContent(e.target.value)}
                 placeholder="Describe what you felt, what challenged you, or what you learned about yourself today..."
-                className="w-full p-4 rounded-2xl bg-[#F8FCFA] dark:bg-[#0E3931] border border-[#CBECE2] dark:border-[#1C463C] text-xs leading-relaxed text-[#19332A] dark:text-[#F4FAF7] focus:outline-none focus:ring-2 focus:ring-[#006B56]/40 dark:focus:ring-[#5FAF8A]/30 placeholder:text-[#8EAAA1] dark:placeholder:text-[#789990]"
+                className="w-full p-4 rounded-2xl bg-[#F8FCFA] dark:bg-[#18201C] border border-[#CBECE2] dark:border-[#22302A] text-xs leading-relaxed text-[#19332A] dark:text-[#F4FAF7] focus:outline-none focus:ring-2 focus:ring-[#006B56]/40 dark:focus:ring-[#5FAF8A]/30 placeholder:text-[#8EAAA1] dark:placeholder:text-[#789990]"
               />
             </div>
 
@@ -323,7 +323,7 @@ export default function JournalView() {
                       if (!newTitle) setNewTitle(prompt);
                       setNewContent((prev) => (prev ? `${prev}\n\n${prompt} ` : `${prompt} `));
                     }}
-                    className="px-2.5 py-1 rounded-xl text-[10.5px] font-medium bg-[#E6F4F0] dark:bg-[#0E3931] border border-[#CBECE2] dark:border-[#1C463C] text-[#004D3D] dark:text-[#9DB9B0] hover:border-[#006B56]/40 dark:hover:border-[#5FAF8A]/40 hover:text-[#006B56] dark:hover:text-[#5FAF8A] transition-colors cursor-pointer text-left"
+                    className="px-2.5 py-1 rounded-xl text-[10.5px] font-medium bg-[#E6F4F0] dark:bg-[#18201C] border border-[#CBECE2] dark:border-[#22302A] text-[#004D3D] dark:text-[#9DB9B0] hover:border-[#006B56]/40 dark:hover:border-[#5FAF8A]/40 hover:text-[#006B56] dark:hover:text-[#5FAF8A] transition-colors cursor-pointer text-left"
                   >
                     {prompt}
                   </button>
@@ -332,7 +332,7 @@ export default function JournalView() {
             </div>
 
             {/* Mood Tag & Save Action */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-3 border-t border-[#CBECE2] dark:border-[#1C463C]">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-3 border-t border-[#CBECE2] dark:border-[#1E2824]">
               <div className="flex items-center gap-1.5 flex-wrap">
                 <span className="text-[11px] font-bold text-[#4F685F] dark:text-[#9DB9B0] mr-1">
                   Mood:
@@ -344,8 +344,8 @@ export default function JournalView() {
                     onClick={() => setSelectedTag(tag)}
                     className={`px-2.5 py-1 rounded-full text-[11px] font-bold transition-all cursor-pointer ${
                       selectedTag === tag
-                        ? "bg-[#006B56] text-white shadow-2xs"
-                        : "bg-[#E6F4F0] dark:bg-[#0E3931] text-[#004D3D] dark:text-[#9DB9B0] hover:bg-[#EAF6F2] dark:hover:bg-[#12463C]"
+                        ? "bg-[#006B56] text-white dark:bg-[#5FAF8A] dark:text-[#112F28] shadow-2xs"
+                        : "bg-[#E6F4F0] dark:bg-[#18201C] text-[#004D3D] dark:text-[#9DB9B0] border border-transparent dark:border-[#22302A] hover:bg-[#EAF6F2] dark:hover:bg-[#22302A]"
                     }`}
                   >
                     {tag}
@@ -356,7 +356,7 @@ export default function JournalView() {
               <button
                 type="submit"
                 disabled={saving || !newTitle.trim() || !newContent.trim()}
-                className="py-2.5 px-6 rounded-full bg-[#006B56] hover:bg-[#005B48] text-white text-xs font-bold shadow-sm shadow-[#006B56]/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1.5 cursor-pointer shrink-0"
+                className="py-2.5 px-6 rounded-full bg-[#006B56] hover:bg-[#005B48] text-white dark:bg-[#5FAF8A] dark:hover:bg-[#006B56] dark:text-[#112F28] dark:hover:text-white text-xs font-bold shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1.5 cursor-pointer shrink-0"
               >
                 <span>{saving ? "Saving..." : "Save Reflection"}</span>
                 <span>→</span>
@@ -392,7 +392,7 @@ export default function JournalView() {
                 <div
                   key={item.id}
                   onClick={() => setActiveEntryModal(item)}
-                  className="p-5 rounded-3xl bg-white dark:bg-[#112F28] border border-[#CBECE2] dark:border-[#1C463C] shadow-2xs hover:border-[#006B56]/40 dark:hover:border-[#5FAF8A]/40 hover:bg-[#F2FAF6] dark:hover:bg-[#0E3931] hover:shadow-md transition-all cursor-pointer space-y-2.5 group"
+                  className="p-5 rounded-3xl bg-white dark:bg-[#18201C] border border-[#CBECE2] dark:border-[#22302A] shadow-2xs hover:border-[#006B56]/40 dark:hover:border-[#5FAF8A]/40 hover:bg-[#F2FAF6] dark:hover:bg-[#1E2824] hover:shadow-md transition-all cursor-pointer space-y-2.5 group"
                 >
                   <div className="flex items-center justify-between">
                     <span className="text-[10px] text-[#8EAAA1] dark:text-[#76968D] font-medium">
@@ -429,14 +429,14 @@ export default function JournalView() {
       {/* 3. Detailed Entry Modal */}
       {activeEntryModal && (
         <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-[#112F28] rounded-3xl border border-[#CBECE2] dark:border-[#1C463C] shadow-xl max-w-lg w-full p-6 sm:p-7 space-y-4 animate-in fade-in zoom-in-95 duration-150">
+          <div className="bg-white dark:bg-[#131916] rounded-3xl border border-[#CBECE2] dark:border-[#1E2824] shadow-xl max-w-lg w-full p-6 sm:p-7 space-y-4 animate-in fade-in zoom-in-95 duration-150">
             <div className="flex items-center justify-between">
-              <span className="px-3 py-1 rounded-full bg-[#E6F4F0] dark:bg-[rgba(0,107,86,0.2)] text-[#006B56] dark:text-[#5FAF8A] text-xs font-bold border border-transparent dark:border-[#1C463C]">
+              <span className="px-3 py-1 rounded-full bg-[#E6F4F0] dark:bg-[rgba(95,175,138,0.15)] text-[#006B56] dark:text-[#5FAF8A] text-xs font-bold border border-transparent dark:border-[#1C463C]">
                 {activeEntryModal.moodTag}
               </span>
               <button
                 onClick={() => setActiveEntryModal(null)}
-                className="w-8 h-8 rounded-full bg-[#E6F4F0] dark:bg-[#0E3931] hover:bg-[#CBECE2] dark:hover:bg-[#12463C] text-[#4F685F] dark:text-[#9DB9B0] dark:hover:text-[#F4FAF7] flex items-center justify-center text-sm cursor-pointer"
+                className="w-8 h-8 rounded-full bg-[#E6F4F0] dark:bg-[#18201C] hover:bg-[#CBECE2] dark:hover:bg-[#22302A] text-[#4F685F] dark:text-[#9DB9B0] dark:hover:text-[#F4FAF7] flex items-center justify-center text-sm cursor-pointer"
               >
                 ✕
               </button>
@@ -451,14 +451,14 @@ export default function JournalView() {
               </h2>
             </div>
 
-            <div className="p-4 rounded-2xl bg-[#F8FCFA] dark:bg-[#0E3931] border border-[#CBECE2] dark:border-[#1C463C] text-xs leading-relaxed text-[#19332A] dark:text-[#D5E6E0] whitespace-pre-line max-h-72 overflow-y-auto">
+            <div className="p-4 rounded-2xl bg-[#F8FCFA] dark:bg-[#18201C] border border-[#CBECE2] dark:border-[#22302A] text-xs leading-relaxed text-[#19332A] dark:text-[#D5E6E0] whitespace-pre-line max-h-72 overflow-y-auto">
               {activeEntryModal.content}
             </div>
 
             <div className="flex justify-end pt-2">
               <button
                 onClick={() => setActiveEntryModal(null)}
-                className="px-5 py-2 rounded-full bg-[#006B56] hover:bg-[#005B48] text-white text-xs font-bold cursor-pointer"
+                className="px-5 py-2 rounded-full bg-[#006B56] hover:bg-[#005B48] text-white dark:bg-[#5FAF8A] dark:hover:bg-[#006B56] dark:text-[#112F28] dark:hover:text-white text-xs font-bold transition-all cursor-pointer"
               >
                 Close Reflection
               </button>
@@ -470,13 +470,13 @@ export default function JournalView() {
       {/* 4. Journal Privacy Notice Modal Dialog */}
       {showPrivacyPopup && (
         <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-[#112F28] rounded-3xl border border-[#CBECE2] dark:border-[#1C463C] shadow-2xl max-w-md w-full p-6 sm:p-7 text-center space-y-5 animate-in fade-in zoom-in-95 duration-200">
-            <div className="w-16 h-16 rounded-full bg-[#E6F4F0] dark:bg-[#0E3931] text-[#006B56] dark:text-[#5FAF8A] flex items-center justify-center text-3xl mx-auto shadow-xs border border-[#CBECE2] dark:border-[#1C463C]">
+          <div className="bg-white dark:bg-[#131916] rounded-3xl border border-[#CBECE2] dark:border-[#1E2824] shadow-2xl max-w-md w-full p-6 sm:p-7 text-center space-y-5 animate-in fade-in zoom-in-95 duration-200">
+            <div className="w-16 h-16 rounded-full bg-[#E6F4F0] dark:bg-[#18201C] text-[#006B56] dark:text-[#5FAF8A] flex items-center justify-center text-3xl mx-auto shadow-xs border border-[#CBECE2] dark:border-[#22302A]">
               <span>✍️</span>
             </div>
 
             <div className="space-y-2.5">
-              <span className="px-3 py-1 rounded-full bg-[#E6F4F0] dark:bg-[rgba(0,107,86,0.2)] text-[#006B56] dark:text-[#5FAF8A] text-[10.5px] font-bold tracking-wider inline-block border border-transparent dark:border-[#1C463C]">
+              <span className="px-3 py-1 rounded-full bg-[#E6F4F0] dark:bg-[rgba(95,175,138,0.15)] text-[#006B56] dark:text-[#5FAF8A] text-[10.5px] font-bold tracking-wider inline-block border border-transparent dark:border-[#1C463C]">
                 Personal &amp; Private Space
               </span>
               <h3 className="text-xl font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
@@ -493,7 +493,7 @@ export default function JournalView() {
             <button
               type="button"
               onClick={() => setShowPrivacyPopup(false)}
-              className="w-full py-3 rounded-full bg-[#006B56] hover:bg-[#005B48] text-white text-xs font-bold shadow-md shadow-[#006B56]/20 transition-all cursor-pointer"
+              className="w-full py-3 rounded-full bg-[#006B56] hover:bg-[#005B48] text-white dark:bg-[#5FAF8A] dark:hover:bg-[#006B56] dark:text-[#112F28] dark:hover:text-white text-xs font-bold shadow-md shadow-[#006B56]/20 transition-all cursor-pointer"
             >
               Start Writing →
             </button>

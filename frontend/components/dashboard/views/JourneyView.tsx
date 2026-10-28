@@ -43,7 +43,7 @@ const CATEGORY_ICONS: Record<string, string> = {
 
 function getScoreStatusBadge(score: number | null | undefined): { label: string; color: string } {
   if (score === null || score === undefined) {
-    return { label: "Not Assessed", color: "text-slate-500 bg-slate-100 dark:bg-[#082821] dark:text-[#9DB9B0]" };
+    return { label: "Not Assessed", color: "text-slate-500 bg-slate-100 dark:bg-[#18201C] dark:text-[#9DB9B0]" };
   }
   if (score >= 80) {
     return { label: "Flourishing", color: "text-[#006C56] bg-[#EAF6F0] dark:bg-[rgba(0,168,137,0.15)] dark:text-[#73D8C4]" };
@@ -430,7 +430,7 @@ export default function JourneyView() {
           <button
             type="button"
             onClick={() => setIsPastModalOpen(true)}
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#EAF6F2] dark:bg-[#18201C] hover:bg-[#E6F4F0] dark:hover:bg-[#1E2824] text-[#006B56] dark:text-[#5FAF8A] text-xs font-bold border border-[#CBECE2] dark:border-[#22302A] transition-all cursor-pointer shadow-2xs self-start sm:self-auto"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#EAF6F2] dark:bg-[#18201C] hover:bg-[#E6F4F0] dark:hover:bg-[#22302A] text-[#006B56] dark:text-[#5FAF8A] text-xs font-bold border border-[#CBECE2] dark:border-[#22302A] transition-all cursor-pointer shadow-2xs self-start sm:self-auto"
           >
             <span>🕒</span>
             <span>View Past Activity →</span>
@@ -478,14 +478,14 @@ export default function JourneyView() {
                   <button
                     type="button"
                     onClick={() => openBreakdownModal()}
-                    className="py-2.5 px-3.5 rounded-xl bg-white dark:bg-[#18201C] hover:bg-[#EAF6F2] dark:hover:bg-[#1E2824] text-[#19332A] dark:text-[#F4FAF7] text-xs font-bold border border-[#CBECE2] dark:border-[#22302A] transition-all cursor-pointer shadow-2xs"
+                    className="py-2.5 px-4 rounded-full bg-white dark:bg-[#18201C] hover:bg-[#EAF6F2] dark:hover:bg-[#22302A] text-[#19332A] dark:text-[#F4FAF7] text-xs font-bold border border-[#CBECE2] dark:border-[#22302A] transition-all cursor-pointer shadow-2xs"
                   >
                     View Details →
                   </button>
                   <button
                     type="button"
                     onClick={() => openReattemptModal(currentCategory)}
-                    className="py-2.5 px-4 rounded-xl bg-white hover:bg-[#FFF6F2] dark:bg-[#18201C] text-[#E37A47] dark:text-[#F38A57] border border-[#E37A47]/40 hover:border-[#E37A47] text-xs font-bold transition-all cursor-pointer shadow-xs"
+                    className="py-2.5 px-4 rounded-full bg-white hover:bg-[#FFF6F2] dark:bg-[#18201C] dark:hover:bg-[#22302A] text-[#E37A47] dark:text-[#F38A57] border border-[#E37A47]/40 hover:border-[#E37A47] text-xs font-bold transition-all cursor-pointer shadow-xs"
                   >
                     Retake Assessment
                   </button>
@@ -494,7 +494,7 @@ export default function JourneyView() {
                 <button
                   type="button"
                   onClick={() => openAssessment(currentCategory)}
-                  className="py-2.5 px-4 rounded-xl bg-[#006B56] hover:bg-[#005B48] text-white text-xs font-bold transition-all cursor-pointer shadow-xs"
+                  className="py-2.5 px-5 rounded-full bg-[#006B56] hover:bg-[#005B48] text-white dark:bg-[#5FAF8A] dark:hover:bg-[#006B56] dark:text-[#112F28] dark:hover:text-white text-xs font-bold transition-all cursor-pointer shadow-xs"
                 >
                   Start Wellness Check →
                 </button>

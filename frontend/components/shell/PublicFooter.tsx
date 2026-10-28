@@ -28,7 +28,7 @@ export default function PublicFooter() {
   };
 
   return (
-    <footer className="bg-[#262235] text-surface/90 pt-12 sm:pt-16 pb-10 sm:pb-12 px-4 sm:px-6 lg:px-8 border-t border-white/10 select-none">
+    <footer className="bg-[#262235] dark:bg-[#070A09] text-surface/90 pt-12 sm:pt-16 pb-10 sm:pb-12 px-4 sm:px-6 lg:px-8 border-t border-white/10 dark:border-[#1E2824] select-none">
       <div className="max-w-7xl mx-auto space-y-10 sm:space-y-12">
         {/* Main Footer Columns */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 lg:gap-10 text-sm">

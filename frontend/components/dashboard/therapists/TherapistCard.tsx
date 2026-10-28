@@ -72,7 +72,7 @@ export default function TherapistCard({
         <div className="flex items-center gap-3 min-w-0 flex-1">
           {/* Contained Avatar (52px × 52px, Circular, Cover) */}
           <div className="relative shrink-0 w-[52px] h-[52px] min-w-[52px] max-w-[52px] min-h-[52px] max-h-[52px]">
-            <div className="w-[52px] h-[52px] min-w-[52px] min-h-[52px] rounded-full overflow-hidden border-2 border-white dark:border-[rgba(150,210,195,0.20)] shadow-xs bg-slate-100 dark:bg-[#082821]">
+            <div className="w-[52px] h-[52px] min-w-[52px] min-h-[52px] rounded-full overflow-hidden border-2 border-white dark:border-[#1E2824] shadow-xs bg-slate-100 dark:bg-[#18201C]">
               <img
                 src={therapist.profileImage || therapist.image || "/images/therapists/default-professional.jpg"}
                 alt={therapist.name}
@@ -87,7 +87,7 @@ export default function TherapistCard({
               />
             </div>
             <span
-              className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-[#00A889] border-2 border-white dark:border-[#082821] shadow-xs"
+              className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-[#00A889] border-2 border-white dark:border-[#131916] shadow-xs"
               title="Available"
             />
           </div>
