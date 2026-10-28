@@ -27,7 +27,7 @@ const BLOG_POSTS: BlogPost[] = [
     id: "neuroscience-of-calm",
     title: "The Neuroscience of Calm: Why 3-Minute Breathing Resets Break the Cortisol Loop",
     category: "Mindfulness & Science",
-    categoryStyle: "bg-mint/20 text-[#006B56] border-mint/30",
+    categoryStyle: "bg-primary/10 text-primary border border-primary/20 hover:bg-primary hover:text-white hover:border-primary",
     readTime: "6 min read",
     date: "Sep 8, 2026",
     featured: true,
@@ -49,7 +49,7 @@ const BLOG_POSTS: BlogPost[] = [
     id: "breaking-perfectionism-loop",
     title: "Breaking the Perfectionism Loop: A CBT Reframing Guide for University Students",
     category: "Academic & Career",
-    categoryStyle: "bg-primary/10 text-primary border-primary/20",
+    categoryStyle: "bg-primary/10 text-primary border border-primary/20 hover:bg-primary hover:text-white hover:border-primary",
     readTime: "5 min read",
     date: "Sep 5, 2026",
     author: {
@@ -69,7 +69,7 @@ const BLOG_POSTS: BlogPost[] = [
     id: "post-work-decompression",
     title: "The Post-Work Decompression Ritual: How to Mentally Disconnect After 6 PM",
     category: "Academic & Career",
-    categoryStyle: "bg-primary/10 text-primary border-primary/20",
+    categoryStyle: "bg-primary/10 text-primary border border-primary/20 hover:bg-primary hover:text-white hover:border-primary",
     readTime: "4 min read",
     date: "Sep 2, 2026",
     author: {
@@ -89,7 +89,7 @@ const BLOG_POSTS: BlogPost[] = [
     id: "gentle-parenting-guilt",
     title: "Why Compassionate Parenting Starts with De-escalating Parental Guilt",
     category: "Parenting",
-    categoryStyle: "bg-[#EDF6F2] dark:bg-[#20372F] text-[#006B56] dark:text-[#88F7D6] border border-[#BCE2D2] dark:border-[#325246]",
+    categoryStyle: "bg-primary/10 text-primary border border-primary/20 hover:bg-primary hover:text-white hover:border-primary",
     readTime: "7 min read",
     date: "Aug 29, 2026",
     author: {
@@ -109,7 +109,7 @@ const BLOG_POSTS: BlogPost[] = [
     id: "active-listening-couples",
     title: "Active Listening in Relationships: 4 Micro-Habits That Defuse Everyday Arguments",
     category: "Relationships",
-    categoryStyle: "bg-mint/15 dark:bg-[#1B332B] text-[#006B56] dark:text-[#88F7D6] border border-mint/30 dark:border-[#2E4E44]",
+    categoryStyle: "bg-primary/10 text-primary border border-primary/20 hover:bg-primary hover:text-white hover:border-primary",
     readTime: "5 min read",
     date: "Aug 24, 2026",
     author: {
@@ -129,7 +129,7 @@ const BLOG_POSTS: BlogPost[] = [
     id: "binaural-soundscapes-focus",
     title: "Binaural Audio & Alpha Brainwaves: The Science Behind Soundscape Focus",
     category: "Mindfulness & Science",
-    categoryStyle: "bg-mint/20 text-[#006B56] border-mint/30",
+    categoryStyle: "bg-primary/10 text-primary border border-primary/20 hover:bg-primary hover:text-white hover:border-primary",
     readTime: "6 min read",
     date: "Aug 18, 2026",
     author: {
@@ -149,7 +149,7 @@ const BLOG_POSTS: BlogPost[] = [
     id: "imposter-syndrome-first-job",
     title: "Navigating Imposter Syndrome at Your First Corporate Job",
     category: "Anxiety & Stress",
-    categoryStyle: "bg-primary/10 text-primary border border-primary/20",
+    categoryStyle: "bg-primary/10 text-primary border border-primary/20 hover:bg-primary hover:text-white hover:border-primary",
     readTime: "4 min read",
     date: "Aug 12, 2026",
     author: {
@@ -257,10 +257,10 @@ export default function BlogPage() {
               <button
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
-                className={`px-4 py-2 rounded-full text-xs font-heading font-bold transition-all cursor-pointer ${
+                className={`px-4 py-2 rounded-full text-xs font-heading font-bold transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/40 focus:ring-offset-2 active:scale-95 ${
                   isActive
-                    ? "bg-primary text-white shadow-sm scale-105"
-                    : "bg-surface-container-lowest hover:bg-surface-container text-on-surface-variant border border-surface-variant/40"
+                    ? "bg-primary text-white shadow-sm scale-105 border border-primary"
+                    : "bg-primary/10 text-primary border border-primary/20 hover:bg-primary hover:text-white hover:border-primary"
                 }`}
               >
                 {cat}
@@ -282,9 +282,16 @@ export default function BlogPage() {
                 <span className="px-3 py-1 rounded-full text-xs font-heading font-extrabold bg-primary text-white shadow-xs">
                   ⭐ FEATURED STORY
                 </span>
-                <span className={`px-3 py-1 rounded-full text-xs font-heading font-bold ${featuredPost.categoryStyle}`}>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedCategory(featuredPost.category);
+                  }}
+                  className={`px-3 py-1 rounded-full text-xs font-heading font-bold transition-all duration-200 cursor-pointer ${featuredPost.categoryStyle}`}
+                >
                   {featuredPost.category}
-                </span>
+                </button>
               </div>
               <span className="text-xs text-on-surface-variant font-medium">
                 {featuredPost.readTime} &bull; {featuredPost.date}
@@ -342,9 +349,16 @@ export default function BlogPage() {
               >
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className={`px-2.5 py-1 rounded-full text-[10px] font-heading font-extrabold ${post.categoryStyle}`}>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedCategory(post.category);
+                      }}
+                      className={`px-2.5 py-1 rounded-full text-[10px] font-heading font-extrabold transition-all duration-200 cursor-pointer ${post.categoryStyle}`}
+                    >
                       {post.category}
-                    </span>
+                    </button>
                     <span className="text-[11px] text-on-surface-variant/80 font-medium">
                       {post.readTime}
                     </span>
@@ -446,12 +460,20 @@ export default function BlogPage() {
               className="w-full max-w-2xl max-h-[85vh] overflow-y-auto bg-surface-container-lowest rounded-[32px] border border-surface-variant/40 shadow-2xl p-6 sm:p-10 space-y-6 text-left"
             >
               <div className="flex items-center justify-between border-b border-surface-variant/20 pb-4">
-                <span className={`px-3 py-1 rounded-full text-xs font-heading font-extrabold ${activeArticle.categoryStyle}`}>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedCategory(activeArticle.category);
+                    setActiveArticle(null);
+                  }}
+                  className={`px-3 py-1 rounded-full text-xs font-heading font-extrabold transition-all duration-200 cursor-pointer ${activeArticle.categoryStyle}`}
+                >
                   {activeArticle.category}
-                </span>
+                </button>
                 <button
                   onClick={() => setActiveArticle(null)}
-                  className="w-9 h-9 rounded-full bg-surface-container flex items-center justify-center text-on-surface hover:bg-surface-variant/60 transition-colors cursor-pointer"
+                  className="w-9 h-9 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary hover:bg-primary hover:text-white hover:border-primary transition-all duration-200 cursor-pointer"
                 >
                   <span className="material-symbols-outlined text-lg">close</span>
                 </button>

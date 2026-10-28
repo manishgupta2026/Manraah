@@ -141,8 +141,16 @@ export default function PublicFooter() {
         {/* Bottom Copyright Bar */}
         <div className="pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between text-xs text-white/50 gap-4">
           <p>© 2026 Manraah. All rights reserved.</p>
-          <p className="flex items-center gap-1">
-            <span>Crafted with compassion for mind &amp; soul</span>
+          <p className="flex items-center gap-1.5">
+            <span>Designed &amp; Crafted by</span>
+            <a
+              href="https://digigrantha.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-mint hover:text-white font-medium underline decoration-mint/40 hover:decoration-white transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mint/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#262235] rounded-xs"
+            >
+              DigiGrantha
+            </a>
           </p>
         </div>
       </div>

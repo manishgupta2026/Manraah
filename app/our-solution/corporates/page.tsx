@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
 import BottomCtaBand from "@/frontend/components/ui/BottomCtaBand";
 
 export default function CorporatesSolutionPage() {
@@ -356,7 +355,7 @@ export default function CorporatesSolutionPage() {
       </section>
 
       {/* ═══ 5. CLINICAL GOVERNANCE & SECURITY ═══ */}
-      <section className="px-4 sm:px-6 max-w-6xl mx-auto pb-16">
+      <section className="px-4 sm:px-6 max-w-6xl mx-auto pb-10 sm:pb-14">
         <div className="text-center max-w-3xl mx-auto space-y-3 mb-10">
           <span className="px-3.5 py-1 rounded-full text-xs font-heading font-bold bg-secondary/15 text-secondary border border-secondary/20 uppercase tracking-wider">
             ENTERPRISE SECURITY &amp; CLINICAL STANDARDS
@@ -412,45 +411,7 @@ export default function CorporatesSolutionPage() {
         </div>
       </section>
 
-      {/* ═══ 6. DEDICATED CALLBACK CTA BANNER ═══ */}
-      <section className="px-4 sm:px-6 max-w-5xl mx-auto pb-16">
-        <div className="p-8 sm:p-12 rounded-3xl bg-gradient-to-r from-secondary via-[#00624F] to-primary text-white text-center space-y-6 shadow-2xl">
-          <div className="w-14 h-14 rounded-2xl bg-white/15 backdrop-blur-md text-white flex items-center justify-center mx-auto border border-white/20 shadow-inner">
-            <span className="material-symbols-outlined text-3xl">corporate_fare</span>
-          </div>
-
-          <div className="space-y-2 max-w-2xl mx-auto">
-            <h3 className="text-2xl sm:text-4xl font-heading font-black tracking-tight">
-              Ready to Build a High-Trust, Resilient Workplace Culture?
-            </h3>
-            <p className="text-xs sm:text-base text-white/90 leading-relaxed font-normal">
-              Schedule a 20-minute consultation with our Enterprise Wellbeing Director. We will walk you through flexible PEPY tiers, custom SLA terms, and pilot rollouts.
-            </p>
-          </div>
-
-          <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
-            <button
-              onClick={() => triggerCallbackModal("corporates")}
-              className="px-8 py-3.5 rounded-full bg-white text-[#006B56] hover:bg-white/95 font-heading font-extrabold text-sm shadow-lg active:scale-98 transition-all cursor-pointer flex items-center gap-2"
-            >
-              <span>Schedule Corporate Callback</span>
-              <span className="material-symbols-outlined text-base">arrow_forward</span>
-            </button>
-            <Link
-              href="/contact"
-              className="px-6 py-3.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white font-heading font-bold text-sm transition-all"
-            >
-              Contact Enterprise Sales
-            </Link>
-          </div>
-
-          <p className="text-[11px] text-white/70">
-            ⚡ Quick 4-hour response SLA &bull; Tailored for CHROs, Chief People Officers &amp; HR Directors
-          </p>
-        </div>
-      </section>
-
-      {/* ═══ 7. BOTTOM CTA BAND ═══ */}
+      {/* ═══ 6. BOTTOM CTA BAND ═══ */}
       <BottomCtaBand
         title="Looking for Individual Personal Care?"
         description="Explore how Manraah also supports individual professionals and entrepreneurs with evening decompression, mood tracking, and AI companions."
