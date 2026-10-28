@@ -577,8 +577,8 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                 onClick={handleGetStarted}
                 className={`px-4 sm:px-5 py-2 rounded-full font-heading font-bold text-xs border transition-all duration-200 flex items-center gap-1.5 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 ${
                   isSignupPage || pathname === "/category-selection"
-                    ? "bg-[#005241] border-[#005241] text-white ring-2 ring-primary/30 dark:bg-[#005241] dark:text-white dark:border-[#005241]"
-                    : "bg-primary hover:bg-[#005241] border-primary text-white dark:bg-primary dark:hover:bg-[#005241] dark:text-white dark:border-primary"
+                    ? "bg-primary border-primary text-white ring-2 ring-primary/30 dark:bg-primary dark:text-white dark:border-primary"
+                    : "bg-primary/10 hover:bg-primary border-primary/20 hover:border-primary text-primary hover:text-white dark:bg-primary/15 dark:border-primary/30 dark:text-[#88F7D6] dark:hover:bg-primary dark:hover:text-white"
                 }`}
               >
                 <span>Get Started</span>
@@ -872,7 +872,11 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                         setMobileMenuOpen(false);
                         handleGetStarted();
                       }}
-                      className="w-full py-3.5 rounded-full bg-primary hover:bg-[#005241] border border-primary text-white font-heading font-bold text-sm transition-all flex items-center justify-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 dark:bg-primary dark:text-white dark:border-primary dark:hover:bg-[#005241]"
+                      className={`w-full py-3.5 rounded-full border font-heading font-bold text-sm transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 ${
+                        isSignupPage || pathname === "/category-selection"
+                          ? "bg-primary border-primary text-white dark:bg-primary dark:text-white dark:border-primary"
+                          : "bg-primary/10 hover:bg-primary border-primary/20 hover:border-primary text-primary hover:text-white dark:bg-primary/15 dark:border-primary/30 dark:text-[#88F7D6] dark:hover:bg-primary dark:hover:text-white"
+                      }`}
                     >
                       <span>Get Started</span>
                       <span className="material-symbols-outlined text-lg">arrow_forward</span>
