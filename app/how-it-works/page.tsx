@@ -98,25 +98,25 @@ export default function HowItWorksPage() {
   const currentStep = STEPS_CAROUSEL[activeStepIdx];
 
   return (
-    <div className="min-h-screen bg-surface dark:bg-[#0A0E0D] text-on-surface dark:text-[#F4FAF7] font-sans py-12 md:py-20 px-4 sm:px-6 lg:px-12 select-none overflow-x-hidden">
+    <div className="min-h-screen bg-surface dark:bg-[#09090b] text-on-surface dark:text-white font-sans py-12 md:py-20 px-4 sm:px-6 lg:px-12 select-none overflow-x-hidden">
       <div className="max-w-6xl mx-auto space-y-16 md:space-y-24">
 
         {/* ═══ 1. HEADER HERO ═══ */}
         <div className="text-center space-y-5 max-w-3xl mx-auto">
-          <span className="px-4 py-1.5 rounded-full text-xs font-heading font-bold bg-primary/10 dark:bg-[#18201C] text-primary dark:text-[#5FAF8A] border border-primary/20 dark:border-[#22302A] uppercase tracking-widest inline-block">
+          <span className="px-4 py-1.5 rounded-full text-xs font-heading font-bold bg-primary/10 dark:bg-[#18181b] text-primary dark:text-zinc-200 border border-primary/20 dark:border-[#27272a] uppercase tracking-widest inline-block">
             Simple 4-Step Journey
           </span>
-          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-heading font-black text-on-surface dark:text-[#F4FAF7] tracking-tight leading-tight">
+          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-heading font-black text-on-surface dark:text-white tracking-tight leading-tight">
             How Manraah Works
           </h1>
-          <p className="text-base sm:text-lg text-on-surface-variant dark:text-[#9DB9B0] font-normal leading-relaxed">
+          <p className="text-base sm:text-lg text-on-surface-variant dark:text-[#A1A1AA] font-normal leading-relaxed">
             Start feeling supported, understood, and grounded in less than two minutes. A calm, step-by-step pathway from your first check-in to lasting mental resilience.
           </p>
 
           <div className="pt-2 flex items-center justify-center gap-3">
             <Link
               href="/features"
-              className="px-8 py-4 rounded-full bg-primary hover:bg-primary-purple text-white dark:bg-[#5FAF8A] dark:hover:bg-[#006B56] dark:text-[#112F28] dark:hover:text-white font-heading font-bold text-sm shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all inline-flex items-center gap-2 cursor-pointer"
+              className="px-8 py-4 rounded-full bg-primary hover:bg-primary-purple text-white dark:bg-white dark:hover:bg-zinc-200 dark:text-black dark:hover:text-black font-heading font-bold text-sm shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all inline-flex items-center gap-2 cursor-pointer"
             >
               <span>Explore All Features</span>
               <span className="material-symbols-outlined text-lg">arrow_forward</span>
@@ -140,12 +140,12 @@ export default function HowItWorksPage() {
                   onClick={() => setActiveStepIdx(idx)}
                   className={`px-4 sm:px-6 py-2.5 sm:py-3 rounded-full text-xs sm:text-sm font-heading font-bold transition-all flex items-center gap-2 cursor-pointer ${
                     isActive
-                      ? "bg-primary text-white shadow-md scale-[1.03] dark:bg-[#5FAF8A] dark:text-[#112F28]"
-                      : "bg-surface-container-lowest dark:bg-[#18201C] border border-surface-variant/40 dark:border-[#22302A] text-on-surface-variant dark:text-[#9DB9B0] hover:bg-surface-container dark:hover:bg-[#22302A] hover:text-on-surface dark:hover:text-[#F4FAF7]"
+                      ? "bg-primary text-white shadow-md scale-[1.03] dark:bg-white dark:text-black"
+                      : "bg-surface-container-lowest dark:bg-[#18181b] border border-surface-variant/40 dark:border-[#27272a] text-on-surface-variant dark:text-[#A1A1AA] hover:bg-surface-container dark:hover:bg-[#27272a] hover:text-on-surface dark:hover:text-[#F4FAF7]"
                   }`}
                 >
                   <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black ${
-                    isActive ? "bg-white text-primary dark:bg-[#112F28] dark:text-[#5FAF8A]" : "bg-primary/10 text-primary dark:bg-white/10 dark:text-[#5FAF8A]"
+                    isActive ? "bg-white text-primary dark:bg-[#18181b] dark:text-zinc-200" : "bg-primary/10 text-primary dark:bg-white/10 dark:text-zinc-200"
                   }`}>
                     {s.step}
                   </span>
@@ -164,31 +164,31 @@ export default function HowItWorksPage() {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
                 transition={{ duration: 0.35, ease: "easeOut" }}
-                className="p-6 sm:p-10 md:p-12 rounded-[36px] bg-surface-container-lowest dark:bg-[#131916] border border-surface-variant/40 dark:border-[#1E2824] shadow-card-lift grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center"
+                className="p-6 sm:p-10 md:p-12 rounded-[36px] bg-surface-container-lowest dark:bg-[#121214] border border-surface-variant/40 dark:border-[#27272a] shadow-card-lift grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center"
               >
                 {/* Left Column: Step Copy & Highlights */}
                 <div className="lg:col-span-6 space-y-6 text-left">
                   <div className="flex items-center gap-3">
-                    <span className={`px-3.5 py-1 rounded-full text-xs font-heading font-black ${currentStep.badgeBg} dark:bg-[#18201C] dark:text-[#5FAF8A]`}>
+                    <span className={`px-3.5 py-1 rounded-full text-xs font-heading font-black ${currentStep.badgeBg} dark:bg-[#18181b] dark:text-zinc-200`}>
                       Step {currentStep.step}
                     </span>
-                    <span className="text-xs font-heading font-bold text-primary dark:text-[#5FAF8A] uppercase tracking-wider">
+                    <span className="text-xs font-heading font-bold text-primary dark:text-zinc-200 uppercase tracking-wider">
                       {currentStep.subtitle}
                     </span>
                   </div>
 
-                  <h2 className="text-2xl sm:text-3xl lg:text-4xl font-heading font-black text-on-surface dark:text-[#F4FAF7] tracking-tight leading-tight">
+                  <h2 className="text-2xl sm:text-3xl lg:text-4xl font-heading font-black text-on-surface dark:text-white tracking-tight leading-tight">
                     {currentStep.title}
                   </h2>
 
-                  <p className="text-sm sm:text-base text-on-surface-variant dark:text-[#9DB9B0] leading-relaxed font-normal">
+                  <p className="text-sm sm:text-base text-on-surface-variant dark:text-[#A1A1AA] leading-relaxed font-normal">
                     {currentStep.desc}
                   </p>
 
                   <div className="space-y-2.5 pt-2">
                     {currentStep.highlights.map((h, hIdx) => (
-                      <div key={hIdx} className="flex items-center gap-2.5 text-xs sm:text-sm font-medium text-on-surface dark:text-[#D5E6E0]">
-                        <span className="w-5 h-5 rounded-full bg-primary/15 dark:bg-[#18201C] text-primary dark:text-[#5FAF8A] flex items-center justify-center text-xs font-bold shrink-0">
+                      <div key={hIdx} className="flex items-center gap-2.5 text-xs sm:text-sm font-medium text-on-surface dark:text-[#E4E4E7]">
+                        <span className="w-5 h-5 rounded-full bg-primary/15 dark:bg-[#18181b] text-primary dark:text-zinc-200 flex items-center justify-center text-xs font-bold shrink-0">
                           ✓
                         </span>
                         <span>{h}</span>
@@ -197,7 +197,7 @@ export default function HowItWorksPage() {
                   </div>
 
                   <div className="pt-3 flex items-center gap-3">
-                    <span className="text-xs text-on-surface-variant/70 dark:text-[#9DB9B0] font-semibold">
+                    <span className="text-xs text-on-surface-variant/70 dark:text-[#A1A1AA] font-semibold">
                       Step {activeStepIdx + 1} of {STEPS_CAROUSEL.length}
                     </span>
                   </div>
@@ -205,7 +205,7 @@ export default function HowItWorksPage() {
 
                 {/* Right Column: Interactive Styled UI Mockup Window */}
                 <div className="lg:col-span-6 flex justify-center">
-                  <div className="w-full max-w-md rounded-[28px] bg-surface-container-low dark:bg-[#18201C] border border-surface-variant/40 dark:border-[#22302A] shadow-2xl p-5 space-y-4 text-left relative overflow-hidden">
+                  <div className="w-full max-w-md rounded-[28px] bg-surface-container-low dark:bg-[#18181b] border border-surface-variant/40 dark:border-[#27272a] shadow-2xl p-5 space-y-4 text-left relative overflow-hidden">
                     {/* Window Chrome Header */}
                     <div className="flex items-center justify-between border-b border-surface-variant/20 pb-3">
                       <div className="flex items-center gap-1.5">
@@ -326,7 +326,7 @@ export default function HowItWorksPage() {
             <button
               onClick={handlePrevStep}
               aria-label="Previous step"
-              className="absolute left-2 sm:-left-5 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/90 hover:bg-white text-on-surface dark:bg-[#18201C] dark:hover:bg-[#22302A] dark:text-[#F4FAF7] border border-surface-variant/40 dark:border-[#22302A] shadow-lg backdrop-blur-md flex items-center justify-center transition-transform hover:scale-105 active:scale-95 cursor-pointer z-10"
+              className="absolute left-2 sm:-left-5 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/90 hover:bg-white text-on-surface dark:bg-[#18181b] dark:hover:bg-[#27272a] dark:text-white border border-surface-variant/40 dark:border-[#27272a] shadow-lg backdrop-blur-md flex items-center justify-center transition-transform hover:scale-105 active:scale-95 cursor-pointer z-10"
             >
               <span className="material-symbols-outlined text-xl sm:text-2xl">chevron_left</span>
             </button>
@@ -335,7 +335,7 @@ export default function HowItWorksPage() {
             <button
               onClick={handleNextStep}
               aria-label="Next step"
-              className="absolute right-2 sm:-right-5 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/90 hover:bg-white text-on-surface dark:bg-[#18201C] dark:hover:bg-[#22302A] dark:text-[#F4FAF7] border border-surface-variant/40 dark:border-[#22302A] shadow-lg backdrop-blur-md flex items-center justify-center transition-transform hover:scale-105 active:scale-95 cursor-pointer z-10"
+              className="absolute right-2 sm:-right-5 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/90 hover:bg-white text-on-surface dark:bg-[#18181b] dark:hover:bg-[#27272a] dark:text-white border border-surface-variant/40 dark:border-[#27272a] shadow-lg backdrop-blur-md flex items-center justify-center transition-transform hover:scale-105 active:scale-95 cursor-pointer z-10"
             >
               <span className="material-symbols-outlined text-xl sm:text-2xl">chevron_right</span>
             </button>
@@ -352,8 +352,8 @@ export default function HowItWorksPage() {
                   aria-label={`Go to step ${idx + 1}`}
                   className={`transition-all duration-300 rounded-full cursor-pointer ${
                     isActive
-                      ? "w-8 h-2.5 bg-primary dark:bg-[#5FAF8A] shadow-xs"
-                      : "w-2.5 h-2.5 bg-surface-variant/70 dark:bg-[#22302A] hover:bg-primary/40 dark:hover:bg-[#5FAF8A]/40"
+                      ? "w-8 h-2.5 bg-primary dark:bg-white dark:text-black shadow-xs"
+                      : "w-2.5 h-2.5 bg-surface-variant/70 dark:bg-[#22302A] hover:bg-primary/40 dark:hover:bg-zinc-200/40"
                   }`}
                 />
               );
@@ -363,26 +363,26 @@ export default function HowItWorksPage() {
 
         {/* ═══ 3. PRIVACY & CLINICAL ASSURANCE ═══ */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
-          <div className="p-6 rounded-[28px] bg-mint/10 dark:bg-[#131916] border border-mint/20 dark:border-[#1E2824] space-y-2.5">
-            <span className="material-symbols-outlined text-[#006B56] dark:text-[#5FAF8A] text-2xl">shield_lock</span>
-            <h3 className="font-heading font-extrabold text-base text-on-surface dark:text-[#F4FAF7]">Zero Data Selling</h3>
-            <p className="text-xs text-on-surface-variant dark:text-[#9DB9B0] leading-relaxed">
+          <div className="p-6 rounded-[28px] bg-mint/10 dark:bg-[#121214] border border-mint/20 dark:border-[#27272a] space-y-2.5">
+            <span className="material-symbols-outlined text-[#006B56] dark:text-zinc-200 text-2xl">shield_lock</span>
+            <h3 className="font-heading font-extrabold text-base text-on-surface dark:text-white">Zero Data Selling</h3>
+            <p className="text-xs text-on-surface-variant dark:text-[#A1A1AA] leading-relaxed">
               Your conversations, journal entries, and check-in scores remain end-to-end encrypted. We will never sell or monetize your emotional data.
             </p>
           </div>
 
-          <div className="p-6 rounded-[28px] bg-primary/10 dark:bg-[#131916] border border-primary/20 dark:border-[#1E2824] space-y-2.5">
-            <span className="material-symbols-outlined text-primary dark:text-[#5FAF8A] text-2xl">psychology</span>
-            <h3 className="font-heading font-extrabold text-base text-on-surface dark:text-[#F4FAF7]">Evidence-Based Principles</h3>
-            <p className="text-xs text-on-surface-variant dark:text-[#9DB9B0] leading-relaxed">
+          <div className="p-6 rounded-[28px] bg-primary/10 dark:bg-[#121214] border border-primary/20 dark:border-[#27272a] space-y-2.5">
+            <span className="material-symbols-outlined text-primary dark:text-zinc-200 text-2xl">psychology</span>
+            <h3 className="font-heading font-extrabold text-base text-on-surface dark:text-white">Evidence-Based Principles</h3>
+            <p className="text-xs text-on-surface-variant dark:text-[#A1A1AA] leading-relaxed">
               AI companion prompts and guided tools are structured alongside Cognitive Behavioral Therapy (CBT) and MBSR mindfulness principles.
             </p>
           </div>
 
-          <div className="p-6 rounded-[28px] bg-peach/15 dark:bg-[#131916] border border-peach/30 dark:border-[#1E2824] space-y-2.5">
-            <span className="material-symbols-outlined text-[#9E5D28] dark:text-[#5FAF8A] text-2xl">support_agent</span>
-            <h3 className="font-heading font-extrabold text-base text-on-surface dark:text-[#F4FAF7]">AI + Human Complement</h3>
-            <p className="text-xs text-on-surface-variant dark:text-[#9DB9B0] leading-relaxed">
+          <div className="p-6 rounded-[28px] bg-peach/15 dark:bg-[#121214] border border-peach/30 dark:border-[#27272a] space-y-2.5">
+            <span className="material-symbols-outlined text-[#9E5D28] dark:text-zinc-200 text-2xl">support_agent</span>
+            <h3 className="font-heading font-extrabold text-base text-on-surface dark:text-white">AI + Human Complement</h3>
+            <p className="text-xs text-on-surface-variant dark:text-[#A1A1AA] leading-relaxed">
               Instant 24/7 AI availability backed by trained human peer listeners and verified licensed therapists whenever you need deeper care.
             </p>
           </div>

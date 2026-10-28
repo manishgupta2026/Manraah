@@ -21,15 +21,15 @@ export default function MobileTabBar() {
               key={tab.href}
               href={targetHref}
               className={`flex flex-col items-center py-1 px-3 rounded-full transition-all ${
-                isActive ? "text-[#006B56] dark:text-[#5FAF8A] font-semibold scale-105" : "text-[#4F685F] dark:text-[#9DB9B0] hover:text-[#006B56]"
+                isActive ? "text-[#006B56] dark:text-zinc-200 font-semibold scale-105" : "text-[#4F685F] dark:text-[#A1A1AA] hover:text-[#006B56]"
               }`}
             >
               <div
                 className={`w-10 h-8 rounded-full flex items-center justify-center transition-colors ${
-                  isActive ? "bg-[#E6F4F0] dark:bg-[#112F28]" : ""
+                  isActive ? "bg-[#E6F4F0] dark:bg-[#18181b]" : ""
                 }`}
               >
-                <span className={`material-symbols-outlined text-2xl ${isActive ? "text-[#006B56] dark:text-[#5FAF8A] font-bold" : ""}`}>
+                <span className={`material-symbols-outlined text-2xl ${isActive ? "text-[#006B56] dark:text-zinc-200 font-bold" : ""}`}>
                   {tab.icon}
                 </span>
               </div>

@@ -130,12 +130,12 @@ export default function RecommendedProfessionals({
   };
 
   return (
-    <div className="bg-white dark:bg-[#131916] rounded-3xl p-5 sm:p-6 border border-[#CBECE2] dark:border-[#1E2824] shadow-2xs flex flex-col gap-3 sm:gap-3.5 transition-colors w-full min-w-0 overflow-hidden">
+    <div className="bg-white dark:bg-[#121214] rounded-3xl p-5 sm:p-6 border border-[#CBECE2] dark:border-[#27272a] shadow-2xs flex flex-col gap-3 sm:gap-3.5 transition-colors w-full min-w-0 overflow-hidden">
       {/* Section Header */}
       <div className="flex items-center justify-between gap-3">
         {/* Left: Icon and Title */}
         <div className="flex items-center gap-3 min-w-0">
-          <div className="w-8.5 h-8.5 rounded-2xl bg-[#E6F4F0] dark:bg-[rgba(95,175,138,0.15)] text-[#006B56] dark:text-[#5FAF8A] flex items-center justify-center shrink-0">
+          <div className="w-8.5 h-8.5 rounded-2xl bg-[#E6F4F0] dark:bg-white/5 text-[#006B56] dark:text-zinc-200 flex items-center justify-center shrink-0">
             <svg
               className="w-4.5 h-4.5"
               fill="none"
@@ -151,10 +151,10 @@ export default function RecommendedProfessionals({
             </svg>
           </div>
           <div className="min-w-0">
-            <h2 className="text-sm font-heading font-black text-[#19332A] dark:text-[#F4FAF7] leading-tight truncate">
+            <h2 className="text-sm font-heading font-black text-[#19332A] dark:text-white leading-tight truncate">
               Recommended for You
             </h2>
-            <p className="text-[10px] text-[#789389] dark:text-[#9DB9B0] font-medium leading-tight mt-0.5 truncate">
+            <p className="text-[10px] text-[#789389] dark:text-[#A1A1AA] font-medium leading-tight mt-0.5 truncate">
               Curated by our mental health professionals
             </p>
           </div>
@@ -166,7 +166,7 @@ export default function RecommendedProfessionals({
             <button
               onClick={() => onNavigate("appointments")}
               type="button"
-              className="text-xs font-bold text-[#006B56] dark:text-[#5FAF8A] hover:text-[#005B48] flex items-center gap-1 cursor-pointer shrink-0"
+              className="text-xs font-bold text-[#006B56] dark:text-zinc-200 hover:text-[#005B48] flex items-center gap-1 cursor-pointer shrink-0"
             >
               <span>View All</span>
               <span>→</span>
@@ -174,7 +174,7 @@ export default function RecommendedProfessionals({
           ) : (
             <Link
               href="/appointments"
-              className="text-xs font-bold text-[#006B56] dark:text-[#5FAF8A] hover:text-[#005B48] flex items-center gap-1 shrink-0"
+              className="text-xs font-bold text-[#006B56] dark:text-zinc-200 hover:text-[#005B48] flex items-center gap-1 shrink-0"
             >
               <span>View All</span>
               <span>→</span>
@@ -190,46 +190,46 @@ export default function RecommendedProfessionals({
           {[1, 2, 3].map((n) => (
             <div
               key={n}
-              className="bg-[#F8FAF9] dark:bg-[#18201C] border border-[#E2ECE6] dark:border-[#22302A] rounded-3xl p-5 flex flex-col justify-between animate-pulse min-h-[220px]"
+              className="bg-[#F8FAF9] dark:bg-[#18181b] border border-[#E2ECE6] dark:border-[#27272a] rounded-3xl p-5 flex flex-col justify-between animate-pulse min-h-[220px]"
             >
               <div className="flex items-start justify-between gap-2.5">
                 <div className="flex items-center gap-3 flex-1">
-                  <div className="w-[52px] h-[52px] rounded-full bg-slate-200 dark:bg-[#25302B] shrink-0" />
+                  <div className="w-[52px] h-[52px] rounded-full bg-slate-200 dark:bg-[#27272a] shrink-0" />
                   <div className="space-y-2 flex-1">
-                    <div className="h-3.5 bg-slate-200 dark:bg-[#25302B] rounded w-3/4" />
-                    <div className="h-2.5 bg-slate-200 dark:bg-[#25302B] rounded w-1/2" />
-                    <div className="h-2 bg-slate-200 dark:bg-[#25302B] rounded w-2/3" />
+                    <div className="h-3.5 bg-slate-200 dark:bg-[#27272a] rounded w-3/4" />
+                    <div className="h-2.5 bg-slate-200 dark:bg-[#27272a] rounded w-1/2" />
+                    <div className="h-2 bg-slate-200 dark:bg-[#27272a] rounded w-2/3" />
                   </div>
                 </div>
-                <div className="w-14 h-4 bg-slate-200 dark:bg-[#25302B] rounded-full" />
+                <div className="w-14 h-4 bg-slate-200 dark:bg-[#27272a] rounded-full" />
               </div>
               <div className="space-y-1.5 my-3">
-                <div className="h-2.5 bg-slate-200 dark:bg-[#25302B] rounded w-full" />
-                <div className="h-2.5 bg-slate-200 dark:bg-[#25302B] rounded w-4/5" />
+                <div className="h-2.5 bg-slate-200 dark:bg-[#27272a] rounded w-full" />
+                <div className="h-2.5 bg-slate-200 dark:bg-[#27272a] rounded w-4/5" />
               </div>
               <div className="flex gap-1.5 mb-3.5">
-                <div className="h-4 bg-slate-200 dark:bg-[#25302B] rounded-full w-20" />
-                <div className="h-4 bg-slate-200 dark:bg-[#25302B] rounded-full w-16" />
+                <div className="h-4 bg-slate-200 dark:bg-[#27272a] rounded-full w-20" />
+                <div className="h-4 bg-slate-200 dark:bg-[#27272a] rounded-full w-16" />
               </div>
-              <div className="pt-3 border-t border-black/5 dark:border-[#22302A] flex items-center justify-between">
-                <div className="h-3 bg-slate-200 dark:bg-[#25302B] rounded w-24" />
-                <div className="w-8 h-8 rounded-full bg-slate-200 dark:bg-[#25302B]" />
+              <div className="pt-3 border-t border-black/5 dark:border-[#27272a] flex items-center justify-between">
+                <div className="h-3 bg-slate-200 dark:bg-[#27272a] rounded w-24" />
+                <div className="w-8 h-8 rounded-full bg-slate-200 dark:bg-[#27272a]" />
               </div>
             </div>
           ))}
         </div>
       ) : items.length === 0 ? (
         /* Empty State */
-        <div className="py-10 px-4 text-center flex flex-col items-center justify-center space-y-2.5 bg-[#FAFDFB] dark:bg-[#18201C] rounded-2xl border border-dashed border-[#D6EFE2] dark:border-[#22302A]">
-          <div className="w-10 h-10 rounded-full bg-[#E6F4F0] dark:bg-[rgba(95,175,138,0.15)] text-[#006B56] dark:text-[#5FAF8A] flex items-center justify-center">
+        <div className="py-10 px-4 text-center flex flex-col items-center justify-center space-y-2.5 bg-[#FAFDFB] dark:bg-[#18181b] rounded-2xl border border-dashed border-[#D6EFE2] dark:border-[#27272a]">
+          <div className="w-10 h-10 rounded-full bg-[#E6F4F0] dark:bg-white/5 text-[#006B56] dark:text-zinc-200 flex items-center justify-center">
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
             </svg>
           </div>
-          <p className="text-xs font-bold text-[#19332A] dark:text-[#F4FAF7]">
+          <p className="text-xs font-bold text-[#19332A] dark:text-white">
             No professionals available right now.
           </p>
-          <p className="text-[11px] text-[#789389] dark:text-[#9DB9B0]">
+          <p className="text-[11px] text-[#789389] dark:text-[#A1A1AA]">
             Please check back soon or explore our resources.
           </p>
         </div>

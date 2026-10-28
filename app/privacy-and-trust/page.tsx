@@ -8,7 +8,7 @@ import BottomCtaBand from "@/frontend/components/ui/BottomCtaBand";
 export default function PrivacyAndTrustPage() {
 
   return (
-    <div className="min-h-screen bg-surface dark:bg-[#0A0E0D] text-on-surface dark:text-[#F4FAF7] select-none">
+    <div className="min-h-screen bg-surface dark:bg-[#09090b] text-on-surface dark:text-white select-none">
       {/* ═══ 1. HERO HEADER ═══ */}
       <section className="relative pt-12 pb-16 md:pt-20 md:pb-20 px-6 max-w-5xl mx-auto text-center space-y-6">
         {/* Glow Blobs */}
@@ -48,7 +48,7 @@ export default function PrivacyAndTrustPage() {
                   transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
                   className="absolute w-24 h-24 rounded-full bg-gradient-to-r from-mint via-primary to-pink blur-md"
                 />
-                <div className="relative w-20 h-20 rounded-3xl bg-surface-container-lowest dark:bg-[#131916] border border-white/60 shadow-xl flex items-center justify-center text-[#006B56]">
+                <div className="relative w-20 h-20 rounded-3xl bg-surface-container-lowest dark:bg-[#121214] border border-white/60 shadow-xl flex items-center justify-center text-[#006B56]">
                   <span className="material-symbols-outlined text-4xl font-extrabold">verified_user</span>
                 </div>
               </div>
@@ -64,13 +64,13 @@ export default function PrivacyAndTrustPage() {
             </div>
 
             <div className="relative z-10 grid grid-cols-3 gap-2 text-center pt-6 border-t border-surface-variant/20">
-              <div className="p-2.5 rounded-2xl bg-surface-container-lowest dark:bg-[#131916]/80 border border-surface-variant/30 dark:border-[#1E2824] text-[11px] font-heading font-bold text-on-surface">
+              <div className="p-2.5 rounded-2xl bg-surface-container-lowest dark:bg-[#121214]/80 border border-surface-variant/30 dark:border-[#27272a] text-[11px] font-heading font-bold text-on-surface">
                 🔒 256-Bit SSL
               </div>
-              <div className="p-2.5 rounded-2xl bg-surface-container-lowest dark:bg-[#131916]/80 border border-surface-variant/30 dark:border-[#1E2824] text-[11px] font-heading font-bold text-on-surface">
+              <div className="p-2.5 rounded-2xl bg-surface-container-lowest dark:bg-[#121214]/80 border border-surface-variant/30 dark:border-[#27272a] text-[11px] font-heading font-bold text-on-surface">
                 🛡️ Zero Ad Tracking
               </div>
-              <div className="p-2.5 rounded-2xl bg-surface-container-lowest dark:bg-[#131916]/80 border border-surface-variant/30 dark:border-[#1E2824] text-[11px] font-heading font-bold text-on-surface">
+              <div className="p-2.5 rounded-2xl bg-surface-container-lowest dark:bg-[#121214]/80 border border-surface-variant/30 dark:border-[#27272a] text-[11px] font-heading font-bold text-on-surface">
                 👁️ Pseudonymous
               </div>
             </div>
@@ -79,7 +79,7 @@ export default function PrivacyAndTrustPage() {
           {/* Tile Stack Right */}
           <div className="md:col-span-2 lg:col-span-7 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-6">
             {/* Zero-Knowledge Encryption */}
-            <div className="p-8 rounded-[32px] bg-surface-container-lowest dark:bg-[#131916] border border-surface-variant/40 shadow-card-lift hover:-translate-y-1 hover:shadow-xl transition-all space-y-4">
+            <div className="p-8 rounded-[32px] bg-surface-container-lowest dark:bg-[#121214] border border-surface-variant/40 shadow-card-lift hover:-translate-y-1 hover:shadow-xl transition-all space-y-4">
               <div className="w-12 h-12 rounded-2xl bg-mint/20 text-[#006B56] flex items-center justify-center shrink-0">
                 <span className="material-symbols-outlined text-2xl font-bold">lock</span>
               </div>
@@ -92,7 +92,7 @@ export default function PrivacyAndTrustPage() {
             </div>
 
             {/* Complete Anonymity */}
-            <div className="p-8 rounded-[32px] bg-surface-container-lowest dark:bg-[#131916] border border-surface-variant/40 shadow-card-lift hover:-translate-y-1 hover:shadow-xl transition-all space-y-4">
+            <div className="p-8 rounded-[32px] bg-surface-container-lowest dark:bg-[#121214] border border-surface-variant/40 shadow-card-lift hover:-translate-y-1 hover:shadow-xl transition-all space-y-4">
               <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
                 <span className="material-symbols-outlined text-2xl font-bold">visibility_off</span>
               </div>
@@ -106,7 +106,7 @@ export default function PrivacyAndTrustPage() {
           </div>
 
           {/* Full Width CBT/MBSR Banner */}
-          <div className="md:col-span-2 lg:col-span-12 p-8 sm:p-10 rounded-[32px] bg-surface-container-lowest dark:bg-[#131916] border border-pink/30 shadow-card-lift hover:-translate-y-1 hover:shadow-xl transition-all flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="md:col-span-2 lg:col-span-12 p-8 sm:p-10 rounded-[32px] bg-surface-container-lowest dark:bg-[#121214] border border-pink/30 shadow-card-lift hover:-translate-y-1 hover:shadow-xl transition-all flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="flex items-start sm:items-center gap-5">
               <div className="w-14 h-14 rounded-2xl bg-pink/20 text-[#874959] flex items-center justify-center shrink-0">
                 <span className="material-symbols-outlined text-3xl font-bold">psychology</span>
@@ -145,7 +145,7 @@ export default function PrivacyAndTrustPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Pillar 1 */}
-            <div className="p-7 rounded-[24px] bg-surface-container-lowest dark:bg-[#131916] border border-surface-variant/30 dark:border-[#1E2824] space-y-3">
+            <div className="p-7 rounded-[24px] bg-surface-container-lowest dark:bg-[#121214] border border-surface-variant/30 dark:border-[#27272a] space-y-3">
               <div className="flex items-center gap-3">
                 <span className="w-8 h-8 rounded-full bg-primary/10 text-primary font-heading font-bold flex items-center justify-center text-xs">
                   01
@@ -158,7 +158,7 @@ export default function PrivacyAndTrustPage() {
             </div>
 
             {/* Pillar 2 */}
-            <div className="p-7 rounded-[24px] bg-surface-container-lowest dark:bg-[#131916] border border-surface-variant/30 dark:border-[#1E2824] space-y-3">
+            <div className="p-7 rounded-[24px] bg-surface-container-lowest dark:bg-[#121214] border border-surface-variant/30 dark:border-[#27272a] space-y-3">
               <div className="flex items-center gap-3">
                 <span className="w-8 h-8 rounded-full bg-[#006B56]/10 text-[#006B56] font-heading font-bold flex items-center justify-center text-xs">
                   02
@@ -171,7 +171,7 @@ export default function PrivacyAndTrustPage() {
             </div>
 
             {/* Pillar 3 */}
-            <div className="p-7 rounded-[24px] bg-surface-container-lowest dark:bg-[#131916] border border-surface-variant/30 dark:border-[#1E2824] space-y-3">
+            <div className="p-7 rounded-[24px] bg-surface-container-lowest dark:bg-[#121214] border border-surface-variant/30 dark:border-[#27272a] space-y-3">
               <div className="flex items-center gap-3">
                 <span className="w-8 h-8 rounded-full bg-peach/30 text-[#9E5D28] font-heading font-bold flex items-center justify-center text-xs">
                   03
@@ -184,7 +184,7 @@ export default function PrivacyAndTrustPage() {
             </div>
 
             {/* Pillar 4 */}
-            <div className="p-7 rounded-[24px] bg-surface-container-lowest dark:bg-[#131916] border border-surface-variant/30 dark:border-[#1E2824] space-y-3">
+            <div className="p-7 rounded-[24px] bg-surface-container-lowest dark:bg-[#121214] border border-surface-variant/30 dark:border-[#27272a] space-y-3">
               <div className="flex items-center gap-3">
                 <span className="w-8 h-8 rounded-full bg-pink/30 text-[#874959] font-heading font-bold flex items-center justify-center text-xs">
                   04
@@ -216,7 +216,7 @@ export default function PrivacyAndTrustPage() {
         <div className="pt-2 flex flex-wrap items-center justify-center gap-4">
           <Link
             href="/contact"
-            className="px-7 py-3.5 rounded-full bg-primary hover:bg-primary-purple text-white dark:bg-[#5FAF8A] dark:hover:bg-[#006B56] dark:text-[#112F28] dark:hover:text-white text-xs sm:text-sm font-heading font-bold shadow-md hover:shadow-lg transition-all inline-flex items-center gap-2 cursor-pointer"
+            className="px-7 py-3.5 rounded-full bg-primary hover:bg-primary-purple text-white dark:bg-white dark:hover:bg-zinc-200 dark:text-black dark:hover:text-black text-xs sm:text-sm font-heading font-bold shadow-md hover:shadow-lg transition-all inline-flex items-center gap-2 cursor-pointer"
           >
             <span>Contact Privacy Support</span>
             <span className="material-symbols-outlined text-base">mail</span>
@@ -224,7 +224,7 @@ export default function PrivacyAndTrustPage() {
 
           <Link
             href="/faq"
-            className="px-7 py-3.5 rounded-full bg-surface-container-lowest dark:bg-[#131916] hover:bg-surface-container text-on-surface border border-surface-variant/50 text-xs sm:text-sm font-heading font-semibold transition-all"
+            className="px-7 py-3.5 rounded-full bg-surface-container-lowest dark:bg-[#121214] hover:bg-surface-container text-on-surface border border-surface-variant/50 text-xs sm:text-sm font-heading font-semibold transition-all"
           >
             Explore FAQ Hub
           </Link>

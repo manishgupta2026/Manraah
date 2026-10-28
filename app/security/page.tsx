@@ -5,11 +5,11 @@ import Link from "next/link";
 
 export default function SecurityPage() {
   return (
-    <div className="min-h-screen bg-surface dark:bg-[#0A0E0D] text-on-surface dark:text-[#F4FAF7] font-sans py-12 px-4 sm:px-6 lg:px-12 select-none">
+    <div className="min-h-screen bg-surface dark:bg-[#09090b] text-on-surface dark:text-white font-sans py-12 px-4 sm:px-6 lg:px-12 select-none">
       <div className="max-w-4xl mx-auto space-y-10">
         
         {/* Header */}
-        <div className="text-center space-y-3 border-b border-surface-variant/30 dark:border-[#1E2824] pb-8">
+        <div className="text-center space-y-3 border-b border-surface-variant/30 dark:border-[#27272a] pb-8">
           <p className="text-xs font-heading font-bold text-primary tracking-widest uppercase">
             Security Infrastructure
           </p>
@@ -23,7 +23,7 @@ export default function SecurityPage() {
 
         {/* 4 Security Pillars Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="p-6 rounded-[28px] bg-surface-container-lowest dark:bg-[#131916] border border-surface-variant/30 dark:border-[#1E2824] shadow-card-lift space-y-3">
+          <div className="p-6 rounded-[28px] bg-surface-container-lowest dark:bg-[#121214] border border-surface-variant/30 dark:border-[#27272a] shadow-card-lift space-y-3">
             <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center">
               <span className="material-symbols-outlined text-2xl font-bold">lock</span>
             </div>
@@ -35,7 +35,7 @@ export default function SecurityPage() {
             </p>
           </div>
 
-          <div className="p-6 rounded-[28px] bg-surface-container-lowest dark:bg-[#131916] border border-surface-variant/30 dark:border-[#1E2824] shadow-card-lift space-y-3">
+          <div className="p-6 rounded-[28px] bg-surface-container-lowest dark:bg-[#121214] border border-surface-variant/30 dark:border-[#27272a] shadow-card-lift space-y-3">
             <div className="w-12 h-12 rounded-2xl bg-mint/25 text-[#006B56] flex items-center justify-center">
               <span className="material-symbols-outlined text-2xl font-bold">shield_person</span>
             </div>
@@ -47,7 +47,7 @@ export default function SecurityPage() {
             </p>
           </div>
 
-          <div className="p-6 rounded-[28px] bg-surface-container-lowest dark:bg-[#131916] border border-surface-variant/30 dark:border-[#1E2824] shadow-card-lift space-y-3">
+          <div className="p-6 rounded-[28px] bg-surface-container-lowest dark:bg-[#121214] border border-surface-variant/30 dark:border-[#27272a] shadow-card-lift space-y-3">
             <div className="w-12 h-12 rounded-2xl bg-peach/30 text-[#9E5D28] flex items-center justify-center">
               <span className="material-symbols-outlined text-2xl font-bold">psychology</span>
             </div>
@@ -59,7 +59,7 @@ export default function SecurityPage() {
             </p>
           </div>
 
-          <div className="p-6 rounded-[28px] bg-surface-container-lowest dark:bg-[#131916] border border-surface-variant/30 dark:border-[#1E2824] shadow-card-lift space-y-3">
+          <div className="p-6 rounded-[28px] bg-surface-container-lowest dark:bg-[#121214] border border-surface-variant/30 dark:border-[#27272a] shadow-card-lift space-y-3">
             <div className="w-12 h-12 rounded-2xl bg-pink/25 text-[#A83256] flex items-center justify-center">
               <span className="material-symbols-outlined text-2xl font-bold">published_with_changes</span>
             </div>
@@ -76,7 +76,7 @@ export default function SecurityPage() {
         <div className="p-6 rounded-[24px] bg-surface-container border border-surface-variant/40 flex flex-col sm:flex-row items-center justify-between gap-4">
           <Link
             href="/"
-            className="px-6 py-3 rounded-full bg-primary hover:bg-primary-purple text-white dark:bg-[#5FAF8A] dark:hover:bg-[#006B56] dark:text-[#112F28] dark:hover:text-white font-heading font-bold text-xs shadow-md transition-all flex items-center gap-2 cursor-pointer"
+            className="px-6 py-3 rounded-full bg-primary hover:bg-primary-purple text-white dark:bg-white dark:hover:bg-zinc-200 dark:text-black dark:hover:text-black font-heading font-bold text-xs shadow-md transition-all flex items-center gap-2 cursor-pointer"
           >
             <span className="material-symbols-outlined text-sm">arrow_back</span>
             <span>Return to Home</span>

@@ -172,7 +172,7 @@ export default function StoriesPage() {
       : ALL_STORIES.filter((s) => s.category === selectedCategory);
 
   return (
-    <div className="min-h-screen bg-surface dark:bg-[#0A0E0D] text-on-surface dark:text-[#F4FAF7] select-none">
+    <div className="min-h-screen bg-surface dark:bg-[#09090b] text-on-surface dark:text-white select-none">
       {/* ═══ 1. HERO HEADER ═══ */}
       <section className="relative pt-12 pb-16 md:pt-16 md:pb-20 px-6 max-w-5xl mx-auto text-center space-y-6">
         {/* Glow Blobs */}
@@ -197,15 +197,15 @@ export default function StoriesPage() {
 
         {/* Social Proof Badges Bar */}
         <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 pt-4 text-xs font-heading font-semibold text-on-surface-variant">
-          <div className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-surface-container dark:bg-[#18201C]-lowest dark:bg-[#131916] border border-surface-variant/40 dark:border-[#22302A] shadow-xs">
+          <div className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-surface-container dark:bg-[#18181b]-lowest dark:bg-[#121214] border border-surface-variant/40 dark:border-[#27272a] shadow-xs">
             <span className="text-amber-400">★ ★ ★ ★ ★</span>
             <span className="font-bold text-on-surface">4.9/5 Member Rating</span>
           </div>
-          <div className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-surface-container dark:bg-[#18201C]-lowest dark:bg-[#131916] border border-surface-variant/40 dark:border-[#22302A] shadow-xs">
+          <div className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-surface-container dark:bg-[#18181b]-lowest dark:bg-[#121214] border border-surface-variant/40 dark:border-[#27272a] shadow-xs">
             <span className="text-primary">🛡️</span>
             <span>100% Anonymized &amp; Encrypted</span>
           </div>
-          <div className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-surface-container dark:bg-[#18201C]-lowest dark:bg-[#131916] border border-surface-variant/40 dark:border-[#22302A] shadow-xs">
+          <div className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-surface-container dark:bg-[#18181b]-lowest dark:bg-[#121214] border border-surface-variant/40 dark:border-[#27272a] shadow-xs">
             <span className="text-[#006B56]">🌿</span>
             <span>14,000+ Active Members</span>
           </div>
@@ -223,8 +223,8 @@ export default function StoriesPage() {
                 onClick={() => setSelectedCategory(cat.id)}
                 className={`px-5 py-2.5 rounded-full text-xs sm:text-sm font-heading font-bold transition-all cursor-pointer ${
                   isActive
-                    ? "bg-primary text-white shadow-md scale-105 dark:bg-[#5FAF8A] dark:text-[#112F28]"
-                    : "bg-surface-container dark:bg-[#18201C]-lowest dark:bg-[#131916] dark:bg-[#18201C] hover:bg-surface-container dark:bg-[#18201C] dark:hover:bg-[#22302A] text-on-surface-variant dark:text-[#9DB9B0] border border-surface-variant/40 dark:border-[#22302A] dark:border-[#22302A]"
+                    ? "bg-primary text-white shadow-md scale-105 dark:bg-white dark:text-black"
+                    : "bg-surface-container dark:bg-[#18181b]-lowest dark:bg-[#121214] dark:bg-[#18181b] hover:bg-surface-container dark:bg-[#18181b] dark:hover:bg-[#27272a] text-on-surface-variant dark:text-[#A1A1AA] border border-surface-variant/40 dark:border-[#27272a]"
                 }`}
               >
                 {cat.label}
@@ -246,7 +246,7 @@ export default function StoriesPage() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ duration: 0.3 }}
-                className="p-7 sm:p-8 rounded-[32px] bg-surface-container dark:bg-[#18201C]-lowest dark:bg-[#131916] border border-surface-variant/50 dark:border-[#1E2824] shadow-card-lift hover:shadow-xl hover:border-primary/40 transition-all duration-300 flex flex-col justify-between space-y-6 text-left"
+                className="p-7 sm:p-8 rounded-[32px] bg-surface-container dark:bg-[#18181b]-lowest dark:bg-[#121214] border border-surface-variant/50 dark:border-[#27272a] shadow-card-lift hover:shadow-xl hover:border-primary/40 transition-all duration-300 flex flex-col justify-between space-y-6 text-left"
               >
                 <div className="space-y-4">
                   {/* Top Bar: Stars + Category Badge */}
@@ -266,7 +266,7 @@ export default function StoriesPage() {
 
                   {/* Favorite Tool Tag */}
                   <div className="pt-1">
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-surface-container dark:bg-[#18201C] text-[11px] font-heading font-semibold text-on-surface-variant border border-surface-variant/40 dark:border-[#22302A]">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-surface-container dark:bg-[#18181b] text-[11px] font-heading font-semibold text-on-surface-variant border border-surface-variant/40 dark:border-[#27272a]">
                       <span className="text-primary font-bold">Go-to Tool:</span>
                       <span>{story.favoriteTool}</span>
                     </span>

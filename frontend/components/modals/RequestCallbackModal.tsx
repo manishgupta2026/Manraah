@@ -128,19 +128,19 @@ export default function RequestCallbackModal({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.94, y: 16 }}
             transition={{ type: "spring", stiffness: 320, damping: 28 }}
-            className="relative w-full max-w-xl bg-surface-container-lowest dark:bg-[#131916] text-on-surface dark:text-[#F4FAF7] rounded-2xl sm:rounded-3xl shadow-2xl border border-surface-variant/30 dark:border-[#1E2824] overflow-hidden my-auto max-h-[92vh] flex flex-col"
+            className="relative w-full max-w-xl bg-surface-container-lowest dark:bg-[#121214] text-on-surface dark:text-white rounded-2xl sm:rounded-3xl shadow-2xl border border-surface-variant/30 dark:border-[#27272a] overflow-hidden my-auto max-h-[92vh] flex flex-col"
           >
             {/* Header */}
-            <div className="px-6 py-5 border-b border-surface-variant/20 dark:border-[#1E2824] flex items-center justify-between bg-surface-container-low/40 dark:bg-[#111714] shrink-0">
+            <div className="px-6 py-5 border-b border-surface-variant/20 dark:border-[#27272a] flex items-center justify-between bg-surface-container-low/40 dark:bg-[#121214] shrink-0">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-primary/10 dark:bg-[rgba(95,175,138,0.15)] text-primary dark:text-[#5FAF8A] flex items-center justify-center shrink-0">
+                <div className="w-10 h-10 rounded-xl bg-primary/10 dark:bg-white/5 text-primary dark:text-zinc-200 flex items-center justify-center shrink-0">
                   <span className="material-symbols-outlined text-2xl">support_agent</span>
                 </div>
                 <div>
-                  <h3 className="font-heading font-bold text-lg text-on-surface dark:text-[#F4FAF7] leading-snug">
+                  <h3 className="font-heading font-bold text-lg text-on-surface dark:text-white leading-snug">
                     Request an Institutional Callback
                   </h3>
-                  <p className="text-xs text-on-surface-variant dark:text-[#9DB9B0] font-medium">
+                  <p className="text-xs text-on-surface-variant dark:text-[#A1A1AA] font-medium">
                     Tailored for Deans, HR Leaders, and Campus Directors
                   </p>
                 </div>
@@ -148,7 +148,7 @@ export default function RequestCallbackModal({
 
               <button
                 onClick={handleResetAndClose}
-                className="w-8 h-8 rounded-full bg-surface-container dark:bg-[#18201C] hover:bg-surface-variant/40 dark:hover:bg-[#22302A] flex items-center justify-center text-on-surface-variant dark:text-[#9DB9B0] dark:hover:text-[#F4FAF7] transition-colors cursor-pointer"
+                className="w-8 h-8 rounded-full bg-surface-container dark:bg-[#18181b] hover:bg-surface-variant/40 dark:hover:bg-[#27272a] flex items-center justify-center text-on-surface-variant dark:text-[#A1A1AA] dark:hover:text-[#F4FAF7] transition-colors cursor-pointer"
                 aria-label="Close dialog"
               >
                 <span className="material-symbols-outlined text-lg">close</span>
@@ -164,27 +164,27 @@ export default function RequestCallbackModal({
                   animate={{ opacity: 1, scale: 1 }}
                   className="py-8 px-4 text-center space-y-4"
                 >
-                  <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 dark:bg-[#18201C] dark:text-[#5FAF8A] mx-auto flex items-center justify-center shadow-inner border border-transparent dark:border-[#22302A]">
+                  <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 dark:bg-[#18181b] dark:text-zinc-200 mx-auto flex items-center justify-center shadow-inner border border-transparent dark:border-[#27272a]">
                     <span className="material-symbols-outlined text-3xl font-bold">check_circle</span>
                   </div>
                   <div className="space-y-2">
-                    <h4 className="font-heading font-extrabold text-2xl text-on-surface dark:text-[#F4FAF7]">
+                    <h4 className="font-heading font-extrabold text-2xl text-on-surface dark:text-white">
                       Callback Scheduled!
                     </h4>
-                    <p className="text-sm text-on-surface-variant dark:text-[#D5E6E0] max-w-md mx-auto leading-relaxed">
-                      Thank you, <span className="font-bold text-on-surface dark:text-[#F4FAF7]">{formData.fullName}</span>.
+                    <p className="text-sm text-on-surface-variant dark:text-[#E4E4E7] max-w-md mx-auto leading-relaxed">
+                      Thank you, <span className="font-bold text-on-surface dark:text-white">{formData.fullName}</span>.
                       Our Institutional Care Director will review your requirements for{" "}
-                      <span className="font-semibold text-primary dark:text-[#5FAF8A]">{formData.orgName}</span> and
-                      connect with you at <span className="font-semibold text-on-surface dark:text-[#F4FAF7]">{formData.phone}</span> within 4 business hours.
+                      <span className="font-semibold text-primary dark:text-zinc-200">{formData.orgName}</span> and
+                      connect with you at <span className="font-semibold text-on-surface dark:text-white">{formData.phone}</span> within 4 business hours.
                     </p>
                   </div>
 
-                  <div className="p-4 rounded-2xl bg-surface-container-low/70 dark:bg-[#18201C] border border-surface-variant/20 dark:border-[#22302A] text-xs text-on-surface-variant dark:text-[#9DB9B0] text-left space-y-1.5 max-w-md mx-auto">
-                    <div className="flex items-center gap-2 text-primary dark:text-[#5FAF8A] font-bold">
+                  <div className="p-4 rounded-2xl bg-surface-container-low/70 dark:bg-[#18181b] border border-surface-variant/20 dark:border-[#27272a] text-xs text-on-surface-variant dark:text-[#A1A1AA] text-left space-y-1.5 max-w-md mx-auto">
+                    <div className="flex items-center gap-2 text-primary dark:text-zinc-200 font-bold">
                       <span className="material-symbols-outlined text-sm">verified_user</span>
                       <span>Next Steps in Your Demo:</span>
                     </div>
-                    <ul className="list-disc list-inside space-y-1 pl-1 text-[11px] dark:text-[#D5E6E0]">
+                    <ul className="list-disc list-inside space-y-1 pl-1 text-[11px] dark:text-[#E4E4E7]">
                       <li>Supreme Court 2025 / UGC Institutional Compliance checklist</li>
                       <li>Anonymous multi-lingual counsellor provisioning walkthrough</li>
                       <li>Custom per-student or per-employee pricing &amp; MoU architecture</li>
@@ -194,7 +194,7 @@ export default function RequestCallbackModal({
                   <div className="pt-3">
                     <button
                       onClick={handleResetAndClose}
-                      className="px-8 py-3 rounded-full bg-primary dark:bg-[#006B56] dark:hover:bg-[#005B48] text-white font-heading font-bold text-sm shadow-md hover:bg-primary-purple transition-colors cursor-pointer"
+                      className="px-8 py-3 rounded-full bg-primary dark:bg-white dark:text-black dark:hover:bg-zinc-200 text-white font-heading font-bold text-sm shadow-md hover:bg-primary-purple transition-colors cursor-pointer"
                     >
                       Done
                     </button>
@@ -212,7 +212,7 @@ export default function RequestCallbackModal({
 
                   {/* Segment Selector */}
                   <div>
-                    <label className="block text-xs font-heading font-bold text-on-surface dark:text-[#F4FAF7] mb-1.5">
+                    <label className="block text-xs font-heading font-bold text-on-surface dark:text-white mb-1.5">
                       I represent a:
                     </label>
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
@@ -227,8 +227,8 @@ export default function RequestCallbackModal({
                           onClick={() => setFormData({ ...formData, segment: item.id })}
                           className={`p-2.5 rounded-xl border text-xs font-heading font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
                             formData.segment === item.id
-                              ? "bg-primary/10 dark:bg-[rgba(95,175,138,0.15)] border-primary dark:border-[#006B56] text-primary dark:text-[#5FAF8A] shadow-xs"
-                              : "bg-surface-container dark:bg-[#18201C] border-surface-variant/30 dark:border-[#22302A] text-on-surface-variant dark:text-[#9DB9B0] hover:bg-surface-variant/30 dark:hover:bg-[#22302A]"
+                              ? "bg-primary/10 dark:bg-white/5 border-primary dark:border-white/20 text-primary dark:text-zinc-200 shadow-xs"
+                              : "bg-surface-container dark:bg-[#18181b] border-surface-variant/30 dark:border-[#27272a] text-on-surface-variant dark:text-[#A1A1AA] hover:bg-surface-variant/30 dark:hover:bg-[#27272a]"
                           }`}
                         >
                           <span className="material-symbols-outlined text-base">{item.icon}</span>
@@ -241,8 +241,8 @@ export default function RequestCallbackModal({
                   {/* Name & Email */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-xs font-heading font-bold text-on-surface dark:text-[#F4FAF7] mb-1">
-                        Your Full Name <span className="text-primary dark:text-[#5FAF8A]">*</span>
+                      <label className="block text-xs font-heading font-bold text-on-surface dark:text-white mb-1">
+                        Your Full Name <span className="text-primary dark:text-zinc-200">*</span>
                       </label>
                       <input
                         type="text"
@@ -250,12 +250,12 @@ export default function RequestCallbackModal({
                         placeholder="Dr. Rajesh / Sunita Mehta"
                         value={formData.fullName}
                         onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container dark:bg-[#18201C] border border-surface-variant/40 dark:border-[#22302A] text-xs font-medium text-on-surface dark:text-[#F4FAF7] placeholder:text-gray-400 dark:placeholder:text-[#789990] focus:outline-none focus:ring-2 focus:ring-primary/40 dark:focus:ring-[#006B56]/40 focus:border-primary dark:focus:border-[#006B56] transition-all"
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container dark:bg-[#18181b] border border-surface-variant/40 dark:border-[#27272a] text-xs font-medium text-on-surface dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#789990] focus:outline-none focus:ring-2 focus:ring-primary/40 dark:focus:ring-zinc-400/40 focus:border-primary dark:focus:border-zinc-400 transition-all"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-heading font-bold text-on-surface dark:text-[#F4FAF7] mb-1">
-                        Official / Work Email <span className="text-primary dark:text-[#5FAF8A]">*</span>
+                      <label className="block text-xs font-heading font-bold text-on-surface dark:text-white mb-1">
+                        Official / Work Email <span className="text-primary dark:text-zinc-200">*</span>
                       </label>
                       <input
                         type="email"
@@ -263,7 +263,7 @@ export default function RequestCallbackModal({
                         placeholder="name@institute.edu / name@company.com"
                         value={formData.workEmail}
                         onChange={(e) => setFormData({ ...formData, workEmail: e.target.value })}
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container dark:bg-[#18201C] border border-surface-variant/40 dark:border-[#22302A] text-xs font-medium text-on-surface dark:text-[#F4FAF7] placeholder:text-gray-400 dark:placeholder:text-[#789990] focus:outline-none focus:ring-2 focus:ring-primary/40 dark:focus:ring-[#006B56]/40 focus:border-primary dark:focus:border-[#006B56] transition-all"
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container dark:bg-[#18181b] border border-surface-variant/40 dark:border-[#27272a] text-xs font-medium text-on-surface dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#789990] focus:outline-none focus:ring-2 focus:ring-primary/40 dark:focus:ring-zinc-400/40 focus:border-primary dark:focus:border-zinc-400 transition-all"
                       />
                     </div>
                   </div>
@@ -271,11 +271,11 @@ export default function RequestCallbackModal({
                   {/* Phone & Organization Name */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-xs font-heading font-bold text-on-surface dark:text-[#F4FAF7] mb-1">
-                        Phone Number <span className="text-primary dark:text-[#5FAF8A]">*</span>
+                      <label className="block text-xs font-heading font-bold text-on-surface dark:text-white mb-1">
+                        Phone Number <span className="text-primary dark:text-zinc-200">*</span>
                       </label>
                       <div className="relative flex items-center">
-                        <span className="absolute left-3 text-xs font-bold text-on-surface-variant/70 dark:text-[#76968D]">
+                        <span className="absolute left-3 text-xs font-bold text-on-surface-variant/70 dark:text-[#71717A]">
                           +91
                         </span>
                         <input
@@ -290,13 +290,13 @@ export default function RequestCallbackModal({
                               phone: e.target.value.replace(/\D/g, ""),
                             })
                           }
-                          className="w-full pl-11 pr-3.5 py-2.5 rounded-xl bg-surface-container dark:bg-[#18201C] border border-surface-variant/40 dark:border-[#22302A] text-xs font-medium text-on-surface dark:text-[#F4FAF7] placeholder:text-gray-400 dark:placeholder:text-[#789990] focus:outline-none focus:ring-2 focus:ring-primary/40 dark:focus:ring-[#006B56]/40 focus:border-primary dark:focus:border-[#006B56] transition-all"
+                          className="w-full pl-11 pr-3.5 py-2.5 rounded-xl bg-surface-container dark:bg-[#18181b] border border-surface-variant/40 dark:border-[#27272a] text-xs font-medium text-on-surface dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#789990] focus:outline-none focus:ring-2 focus:ring-primary/40 dark:focus:ring-zinc-400/40 focus:border-primary dark:focus:border-zinc-400 transition-all"
                         />
                       </div>
                     </div>
                     <div>
-                      <label className="block text-xs font-heading font-bold text-on-surface dark:text-[#F4FAF7] mb-1">
-                        Organization / Campus Name <span className="text-primary dark:text-[#5FAF8A]">*</span>
+                      <label className="block text-xs font-heading font-bold text-on-surface dark:text-white mb-1">
+                        Organization / Campus Name <span className="text-primary dark:text-zinc-200">*</span>
                       </label>
                       <input
                         type="text"
@@ -304,14 +304,14 @@ export default function RequestCallbackModal({
                         placeholder="e.g., IIT Bombay / Infosys"
                         value={formData.orgName}
                         onChange={(e) => setFormData({ ...formData, orgName: e.target.value })}
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container dark:bg-[#18201C] border border-surface-variant/40 dark:border-[#22302A] text-xs font-medium text-on-surface dark:text-[#F4FAF7] placeholder:text-gray-400 dark:placeholder:text-[#789990] focus:outline-none focus:ring-2 focus:ring-primary/40 dark:focus:ring-[#006B56]/40 focus:border-primary dark:focus:border-[#006B56] transition-all"
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container dark:bg-[#18181b] border border-surface-variant/40 dark:border-[#27272a] text-xs font-medium text-on-surface dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#789990] focus:outline-none focus:ring-2 focus:ring-primary/40 dark:focus:ring-zinc-400/40 focus:border-primary dark:focus:border-zinc-400 transition-all"
                       />
                     </div>
                   </div>
 
                   {/* Organization Size */}
                   <div>
-                    <label className="block text-xs font-heading font-bold text-on-surface dark:text-[#F4FAF7] mb-1.5">
+                    <label className="block text-xs font-heading font-bold text-on-surface dark:text-white mb-1.5">
                       Estimated Students / Employees:
                     </label>
                     <div className="grid grid-cols-4 gap-1.5">
@@ -322,8 +322,8 @@ export default function RequestCallbackModal({
                           onClick={() => setFormData({ ...formData, orgSize: size })}
                           className={`py-2 px-1 rounded-xl border text-[11px] font-heading font-bold text-center transition-all cursor-pointer ${
                             formData.orgSize === size
-                              ? "bg-secondary/15 dark:bg-[rgba(95,175,138,0.15)] border-secondary dark:border-[#006B56] text-secondary dark:text-[#5FAF8A] shadow-xs"
-                              : "bg-surface-container dark:bg-[#18201C] border-surface-variant/30 dark:border-[#22302A] text-on-surface-variant dark:text-[#9DB9B0] hover:bg-surface-variant/30 dark:hover:bg-[#22302A]"
+                              ? "bg-secondary/15 dark:bg-white/5 border-secondary dark:border-white/20 text-secondary dark:text-zinc-200 shadow-xs"
+                              : "bg-surface-container dark:bg-[#18181b] border-surface-variant/30 dark:border-[#27272a] text-on-surface-variant dark:text-[#A1A1AA] hover:bg-surface-variant/30 dark:hover:bg-[#27272a]"
                           }`}
                         >
                           {size}
@@ -334,7 +334,7 @@ export default function RequestCallbackModal({
 
                   {/* Areas of Interest */}
                   <div>
-                    <label className="block text-xs font-heading font-bold text-on-surface dark:text-[#F4FAF7] mb-1.5">
+                    <label className="block text-xs font-heading font-bold text-on-surface dark:text-white mb-1.5">
                       Priority Needs (Select all that apply):
                     </label>
                     <div className="flex flex-wrap gap-1.5">
@@ -347,8 +347,8 @@ export default function RequestCallbackModal({
                             onClick={() => handleInterestToggle(opt)}
                             className={`px-3 py-1.5 rounded-full border text-[11px] font-heading font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
                               isSelected
-                                ? "bg-primary dark:bg-[#006B56] text-white border-primary dark:border-[#006B56] shadow-xs"
-                                : "bg-surface-container dark:bg-[#18201C] border-surface-variant/30 dark:border-[#22302A] text-on-surface-variant dark:text-[#9DB9B0] hover:bg-surface-variant/30 dark:hover:bg-[#22302A]"
+                                ? "bg-primary dark:bg-white dark:text-black text-white border-primary dark:border-white/20 shadow-xs"
+                                : "bg-surface-container dark:bg-[#18181b] border-surface-variant/30 dark:border-[#27272a] text-on-surface-variant dark:text-[#A1A1AA] hover:bg-surface-variant/30 dark:hover:bg-[#27272a]"
                             }`}
                           >
                             {isSelected && (
@@ -363,7 +363,7 @@ export default function RequestCallbackModal({
 
                   {/* Optional Notes */}
                   <div>
-                    <label className="block text-xs font-heading font-bold text-on-surface dark:text-[#F4FAF7] mb-1">
+                    <label className="block text-xs font-heading font-bold text-on-surface dark:text-white mb-1">
                       Specific Notes or Timeline (Optional):
                     </label>
                     <textarea
@@ -371,7 +371,7 @@ export default function RequestCallbackModal({
                       placeholder="e.g., Looking to deploy before upcoming semester / quarterly renewal..."
                       value={formData.notes}
                       onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                      className="w-full px-3.5 py-2 rounded-xl bg-surface-container dark:bg-[#18201C] border border-surface-variant/40 dark:border-[#22302A] text-xs font-medium text-on-surface dark:text-[#F4FAF7] placeholder:text-gray-400 dark:placeholder:text-[#789990] focus:outline-none focus:ring-2 focus:ring-primary/40 dark:focus:ring-[#006B56]/40 focus:border-primary dark:focus:border-[#006B56] transition-all resize-none"
+                      className="w-full px-3.5 py-2 rounded-xl bg-surface-container dark:bg-[#18181b] border border-surface-variant/40 dark:border-[#27272a] text-xs font-medium text-on-surface dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#789990] focus:outline-none focus:ring-2 focus:ring-primary/40 dark:focus:ring-zinc-400/40 focus:border-primary dark:focus:border-zinc-400 transition-all resize-none"
                     />
                   </div>
 
@@ -380,7 +380,7 @@ export default function RequestCallbackModal({
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="w-full py-3.5 rounded-full bg-primary dark:bg-[#006B56] dark:hover:bg-[#005B48] text-white font-heading font-bold text-sm shadow-md hover:bg-primary-purple active:scale-[0.99] transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
+                      className="w-full py-3.5 rounded-full bg-primary dark:bg-white dark:text-black dark:hover:bg-zinc-200 text-white font-heading font-bold text-sm shadow-md hover:bg-primary-purple active:scale-[0.99] transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
                     >
                       {isSubmitting ? (
                         <>
@@ -394,7 +394,7 @@ export default function RequestCallbackModal({
                         </>
                       )}
                     </button>
-                    <p className="text-center text-[11px] text-on-surface-variant/70 dark:text-[#76968D] mt-2">
+                    <p className="text-center text-[11px] text-on-surface-variant/70 dark:text-[#71717A] mt-2">
                       🔒 100% Confidential. DPDP Act compliant. No unsolicited spam.
                     </p>
                   </div>

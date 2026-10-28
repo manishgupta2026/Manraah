@@ -167,26 +167,26 @@ export default function WellnessAssessmentModal() {
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.96, y: 12 }}
         transition={{ type: "spring", damping: 25, stiffness: 300 }}
-        className="bg-white dark:bg-[#131916] border border-[#E2ECE6] dark:border-[#1E2824] rounded-3xl w-full max-w-xl p-6 sm:p-8 shadow-2xl relative overflow-hidden flex flex-col max-h-[92vh]"
+        className="bg-white dark:bg-[#121214] border border-[#E2ECE6] dark:border-[#27272a] rounded-3xl w-full max-w-xl p-6 sm:p-8 shadow-2xl relative overflow-hidden flex flex-col max-h-[92vh]"
       >
         {/* Top Header */}
-        <div className="flex items-center justify-between pb-4 border-b border-[#E2ECE6] dark:border-[#1E2824]">
+        <div className="flex items-center justify-between pb-4 border-b border-[#E2ECE6] dark:border-[#27272a]">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-[#EAF6F0] dark:bg-[#18201C] text-[#006C56] dark:text-[#5FAF8A] flex items-center justify-center text-xl shadow-xs border border-transparent dark:border-[#22302A]">
+            <div className="w-10 h-10 rounded-2xl bg-[#EAF6F0] dark:bg-[#18181b] text-[#006C56] dark:text-zinc-200 flex items-center justify-center text-xl shadow-xs border border-transparent dark:border-[#27272a]">
               ✦
             </div>
             <div>
-              <h2 className="text-base sm:text-lg font-heading font-black text-[#19332A] dark:text-[#F4FAF7] leading-tight">
+              <h2 className="text-base sm:text-lg font-heading font-black text-[#19332A] dark:text-white leading-tight">
                 {activeCategoryInfo.name} Wellness Assessment
               </h2>
-              <p className="text-[11.5px] text-[#789389] dark:text-[#9DB9B0] font-medium">
+              <p className="text-[11.5px] text-[#789389] dark:text-[#A1A1AA] font-medium">
                 5 targeted questions to calculate your category wellness score.
               </p>
             </div>
           </div>
           <button
             onClick={closeAssessment}
-            className="w-8 h-8 rounded-full bg-[#F4FAF7] dark:bg-[#18201C] text-[#4F685F] dark:text-[#9DB9B0] flex items-center justify-center hover:bg-[#E2ECE6] dark:hover:bg-[#22302A] dark:hover:text-[#F4FAF7] transition-colors cursor-pointer"
+            className="w-8 h-8 rounded-full bg-[#F4FAF7] dark:bg-[#18181b] text-[#4F685F] dark:text-[#A1A1AA] flex items-center justify-center hover:bg-[#E2ECE6] dark:hover:bg-[#27272a] dark:hover:text-[#F4FAF7] transition-colors cursor-pointer"
             aria-label="Close"
           >
             ✕
@@ -198,7 +198,7 @@ export default function WellnessAssessmentModal() {
           {loadingQuestions ? (
             <div className="py-20 text-center space-y-3">
               <div className="w-9 h-9 border-3 border-[#006B56] border-t-transparent rounded-full animate-spin mx-auto" />
-              <p className="text-xs text-[#789389] dark:text-[#9DB9B0] font-medium">
+              <p className="text-xs text-[#789389] dark:text-[#A1A1AA] font-medium">
                 Loading assessment questions...
               </p>
             </div>
@@ -216,7 +216,7 @@ export default function WellnessAssessmentModal() {
                     cx="50"
                     cy="50"
                     r="40"
-                    className="text-[#E9F3EE] dark:text-[#18201C]"
+                    className="text-[#E9F3EE] dark:text-black"
                     strokeWidth="8"
                     fill="none"
                   />
@@ -224,7 +224,7 @@ export default function WellnessAssessmentModal() {
                     cx="50"
                     cy="50"
                     r="40"
-                    className="text-[#008968] dark:text-[#5FAF8A]"
+                    className="text-[#008968] dark:text-zinc-200"
                     strokeWidth="8"
                     strokeDasharray={251.2}
                     initial={{ strokeDashoffset: 251.2 }}
@@ -240,28 +240,28 @@ export default function WellnessAssessmentModal() {
                   <span className="text-3xl font-heading font-black text-[#19332A] dark:text-[#E8F8F3]">
                     {submittedScore}%
                   </span>
-                  <span className="text-[9px] font-bold text-[#789389] dark:text-[#9DB9B0] uppercase tracking-wider">
+                  <span className="text-[9px] font-bold text-[#789389] dark:text-[#A1A1AA] uppercase tracking-wider">
                     Score
                   </span>
                 </div>
               </motion.div>
 
               <div className="space-y-2">
-                <span className="inline-block px-3 py-1 rounded-full text-xs font-bold bg-[#EAF6F0] dark:bg-[#18201C] text-[#006C56] dark:text-[#5FAF8A] border border-[#008968]/20 dark:border-[#22302A]">
+                <span className="inline-block px-3 py-1 rounded-full text-xs font-bold bg-[#EAF6F0] dark:bg-[#18181b] text-[#006C56] dark:text-zinc-200 border border-[#008968]/20 dark:border-[#27272a]">
                   Assessment Complete
                 </span>
-                <h3 className="text-xl font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
+                <h3 className="text-xl font-heading font-black text-[#19332A] dark:text-white">
                   {activeCategoryInfo.name} Wellness Score Saved!
                 </h3>
-                <p className="text-xs text-[#6B857C] dark:text-[#9DB9B0] max-w-sm mx-auto leading-relaxed">
+                <p className="text-xs text-[#6B857C] dark:text-[#A1A1AA] max-w-sm mx-auto leading-relaxed">
                   Your wellness baseline is calculated and stored. It will remain saved on your dashboard and won&apos;t recalculate unless you choose to re-attempt.
                 </p>
               </div>
 
-              <div className="pt-4 border-t border-[#E2ECE6] dark:border-[#1E2824] flex items-center justify-center">
+              <div className="pt-4 border-t border-[#E2ECE6] dark:border-[#27272a] flex items-center justify-center">
                 <button
                   onClick={closeAssessment}
-                  className="px-8 py-3 rounded-full bg-[#004D3D] hover:bg-[#003B2E] dark:bg-[#006B56] dark:hover:bg-[#005B48] text-white text-xs font-bold shadow-md shadow-[#004D3D]/20 transition-all cursor-pointer"
+                  className="px-8 py-3 rounded-full bg-[#004D3D] hover:bg-[#003B2E] dark:bg-white dark:text-black dark:hover:bg-zinc-200 text-white text-xs font-bold shadow-md shadow-[#004D3D]/20 transition-all cursor-pointer"
                 >
                   View on Dashboard →
                 </button>
@@ -272,10 +272,10 @@ export default function WellnessAssessmentModal() {
             <div className="space-y-5">
               {/* Progress & Breadcrumb */}
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#006C56] dark:text-[#00A889]">
+                <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#006C56] dark:text-zinc-200">
                   Question {questionStep + 1} of 5
                 </span>
-                <span className="text-xs font-bold text-[#789389] dark:text-[#9DB9B0]">
+                <span className="text-xs font-bold text-[#789389] dark:text-[#A1A1AA]">
                   {Math.round(((questionStep + 1) / 5) * 100)}%
                 </span>
               </div>
@@ -301,7 +301,7 @@ export default function WellnessAssessmentModal() {
                     transition={{ duration: 0.18, ease: "easeOut" }}
                     className="space-y-4 pt-1"
                   >
-                    <h3 className="text-base sm:text-lg font-heading font-black text-[#19332A] dark:text-[#F4FAF7] leading-snug">
+                    <h3 className="text-base sm:text-lg font-heading font-black text-[#19332A] dark:text-white leading-snug">
                       {currentQ.questionText}
                     </h3>
 
@@ -319,15 +319,15 @@ export default function WellnessAssessmentModal() {
                             onClick={() => handleSelectOption(opt.score)}
                             className={`w-full p-3.5 rounded-2xl flex items-center justify-between border transition-all text-left cursor-pointer ${
                               isSelected
-                                ? "bg-[#EAF6F0] dark:bg-[#18201C] border-[#008968] dark:border-[#006B56] ring-2 ring-[#008968]/20 dark:ring-[#006B56]/20"
-                                : "bg-[#F8FCFA] dark:bg-[#18201C] border-[#E2ECE6] dark:border-[#22302A] hover:border-[#008968]/40 dark:hover:border-[#006B56]/40"
+                                ? "bg-[#EAF6F0] dark:bg-[#18181b] border-[#008968] dark:border-white/20 ring-2 ring-[#008968]/20 dark:ring-white/20"
+                                : "bg-[#F8FCFA] dark:bg-[#18181b] border-[#E2ECE6] dark:border-[#27272a] hover:border-[#008968]/40 dark:hover:border-zinc-400/40"
                             }`}
                           >
                             <span
                               className={`text-xs font-bold ${
                                 isSelected
-                                  ? "text-[#006C56] dark:text-[#5FAF8A]"
-                                  : "text-[#19332A] dark:text-[#F4FAF7]"
+                                  ? "text-[#006C56] dark:text-zinc-200"
+                                  : "text-[#19332A] dark:text-white"
                               }`}
                             >
                               {opt.text}
@@ -335,8 +335,8 @@ export default function WellnessAssessmentModal() {
                             <span
                               className={`w-5 h-5 rounded-full border flex items-center justify-center text-[10px] font-bold ${
                                 isSelected
-                                  ? "bg-[#006C56] dark:bg-[#006B56] border-[#006C56] dark:border-[#006B56] text-white"
-                                  : "border-[#789389]/40 dark:border-[#22302A] text-transparent"
+                                  ? "bg-[#006C56] dark:bg-white dark:text-black border-[#006C56] dark:border-white/20 text-white"
+                                  : "border-[#789389]/40 dark:border-[#27272a] text-transparent"
                               }`}
                             >
                               ✓
@@ -356,12 +356,12 @@ export default function WellnessAssessmentModal() {
               )}
 
               {/* Navigation Controls */}
-              <div className="flex items-center justify-between pt-4 border-t border-[#E2ECE6] dark:border-[#1E2824]">
+              <div className="flex items-center justify-between pt-4 border-t border-[#E2ECE6] dark:border-[#27272a]">
                 <button
                   type="button"
                   onClick={handlePrevQuestion}
                   disabled={questionStep === 0}
-                  className="px-4 py-2.5 rounded-xl bg-[#F4FAF7] dark:bg-[#18201C] dark:border dark:border-[#22302A] hover:bg-[#E2ECE6] dark:hover:bg-[#22302A] text-[#4F685F] dark:text-[#9DB9B0] dark:hover:text-[#F4FAF7] text-xs font-bold transition-colors disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+                  className="px-4 py-2.5 rounded-xl bg-[#F4FAF7] dark:bg-[#18181b] dark:border dark:border-[#27272a] hover:bg-[#E2ECE6] dark:hover:bg-[#27272a] text-[#4F685F] dark:text-[#A1A1AA] dark:hover:text-[#F4FAF7] text-xs font-bold transition-colors disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
                 >
                   ← Previous
                 </button>
@@ -371,7 +371,7 @@ export default function WellnessAssessmentModal() {
                     type="button"
                     onClick={handleSubmit}
                     disabled={!isCurrentQAnswered || isSubmitting}
-                    className="px-6 py-2.5 rounded-xl bg-[#006C56] hover:bg-[#005241] dark:bg-[#006B56] dark:hover:bg-[#005B48] text-white text-xs font-bold transition-all shadow-md shadow-[#006C56]/20 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center gap-2"
+                    className="px-6 py-2.5 rounded-xl bg-[#006C56] hover:bg-[#005241] dark:bg-white dark:text-black dark:hover:bg-zinc-200 text-white text-xs font-bold transition-all shadow-md shadow-[#006C56]/20 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center gap-2"
                   >
                     {isSubmitting ? (
                       <>
@@ -389,7 +389,7 @@ export default function WellnessAssessmentModal() {
               </div>
             </div>
           ) : (
-            <div className="py-12 text-center text-xs text-[#789389] dark:text-[#9DB9B0]">
+            <div className="py-12 text-center text-xs text-[#789389] dark:text-[#A1A1AA]">
               No questions found for this category.
             </div>
           )}

@@ -242,7 +242,7 @@ export default function CrisisSupportModal({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 15 }}
             transition={{ type: "spring", damping: 25, stiffness: 350 }}
-            className="relative w-full max-w-xl rounded-3xl bg-white dark:bg-[#131916] border border-red-200/60 dark:border-[#22302A] shadow-2xl overflow-hidden z-10 my-6 text-[#19332A] dark:text-[#F4FAF7]"
+            className="relative w-full max-w-xl rounded-3xl bg-white dark:bg-[#121214] border border-red-200/60 dark:border-[#27272a] shadow-2xl overflow-hidden z-10 my-6 text-[#19332A] dark:text-white"
             role="dialog"
             aria-modal="true"
             aria-labelledby="crisis-support-title"
@@ -345,7 +345,7 @@ export default function CrisisSupportModal({
                         <span className="material-symbols-outlined text-rose-500 text-lg">
                           contact_phone
                         </span>
-                        <h3 className="text-sm font-heading font-bold text-[#19332A] dark:text-[#F4FAF7]">
+                        <h3 className="text-sm font-heading font-bold text-[#19332A] dark:text-white">
                           Your Trusted Emergency Contact
                         </h3>
                       </div>
@@ -354,7 +354,7 @@ export default function CrisisSupportModal({
                         <button
                           type="button"
                           onClick={() => setIsEditingContact(true)}
-                          className="text-xs font-heading font-semibold text-[#006B56] dark:text-[#5FAF8A] hover:underline cursor-pointer flex items-center gap-1"
+                          className="text-xs font-heading font-semibold text-[#006B56] dark:text-zinc-200 hover:underline cursor-pointer flex items-center gap-1"
                         >
                           <span className="material-symbols-outlined text-sm">edit</span>
                           <span>Edit</span>
@@ -373,19 +373,19 @@ export default function CrisisSupportModal({
 
                     {/* Display Saved Emergency Contact */}
                     {hasContact && !isEditingContact && (
-                      <div className="p-4 rounded-2xl bg-[#F8FCFA] dark:bg-[#18201C] border border-[#CBECE2] dark:border-[#22302A] flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
+                      <div className="p-4 rounded-2xl bg-[#F8FCFA] dark:bg-[#18181b] border border-[#CBECE2] dark:border-[#27272a] flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
                         <div className="space-y-1">
                           <div className="flex items-center gap-2">
-                            <span className="text-sm font-heading font-bold text-[#19332A] dark:text-[#F4FAF7]">
+                            <span className="text-sm font-heading font-bold text-[#19332A] dark:text-white">
                               {activeContact?.name}
                             </span>
                             {activeContact?.relation && (
-                              <span className="px-2 py-0.5 rounded-full text-[10px] font-heading font-semibold bg-[#E6F4F0] dark:bg-[rgba(95,175,138,0.15)] text-[#006B56] dark:text-[#5FAF8A] border border-[#CBECE2] dark:border-[#22302A]">
+                              <span className="px-2 py-0.5 rounded-full text-[10px] font-heading font-semibold bg-[#E6F4F0] dark:bg-white/5 text-[#006B56] dark:text-zinc-200 border border-[#CBECE2] dark:border-[#27272a]">
                                 {activeContact.relation}
                               </span>
                             )}
                           </div>
-                          <p className="text-xs font-mono font-bold text-[#4F685F] dark:text-[#9DB9B0]">
+                          <p className="text-xs font-mono font-bold text-[#4F685F] dark:text-[#A1A1AA]">
                             {activeContact?.phone}
                           </p>
                         </div>
@@ -394,7 +394,7 @@ export default function CrisisSupportModal({
                           <button
                             type="button"
                             onClick={() => handleCopyNumber(activeContact?.phone || "")}
-                            className="px-3 py-2 rounded-xl bg-white dark:bg-[#131916] hover:bg-gray-50 dark:hover:bg-[#1E2824] border border-[#CBECE2] dark:border-[#22302A] text-xs font-bold text-[#4F685F] dark:text-[#9DB9B0] transition-colors cursor-pointer flex items-center gap-1.5"
+                            className="px-3 py-2 rounded-xl bg-white dark:bg-[#121214] hover:bg-gray-50 dark:hover:bg-[#27272a] border border-[#CBECE2] dark:border-[#27272a] text-xs font-bold text-[#4F685F] dark:text-[#A1A1AA] transition-colors cursor-pointer flex items-center gap-1.5"
                             title="Copy phone number"
                           >
                             <span className="material-symbols-outlined text-sm">
@@ -416,14 +416,14 @@ export default function CrisisSupportModal({
 
                     {/* Emergency Contact Intake Form */}
                     {(!hasContact || isEditingContact) && (
-                      <div className="p-4 rounded-2xl bg-[#F8FCFA] dark:bg-[#18201C] border border-dashed border-red-300 dark:border-red-900/40 space-y-3">
+                      <div className="p-4 rounded-2xl bg-[#F8FCFA] dark:bg-[#18181b] border border-dashed border-red-300 dark:border-red-900/40 space-y-3">
                         <div className="space-y-0.5">
-                          <p className="text-xs font-heading font-bold text-[#19332A] dark:text-[#F4FAF7]">
+                          <p className="text-xs font-heading font-bold text-[#19332A] dark:text-white">
                             {hasContact
                               ? "Update Emergency Contact"
                               : "Add a Trusted Emergency Contact"}
                           </p>
-                          <p className="text-[11px] text-[#4F685F] dark:text-[#9DB9B0] leading-relaxed">
+                          <p className="text-[11px] text-[#4F685F] dark:text-[#A1A1AA] leading-relaxed">
                             Add someone you trust (partner, parent, friend). Reach them in 1 tap anytime during distress.
                           </p>
                         </div>
@@ -435,7 +435,7 @@ export default function CrisisSupportModal({
 
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                             <div>
-                              <label className="block text-[11px] font-heading font-bold text-[#4F685F] dark:text-[#9DB9B0] mb-1">
+                              <label className="block text-[11px] font-heading font-bold text-[#4F685F] dark:text-[#A1A1AA] mb-1">
                                 Contact Name *
                               </label>
                               <input
@@ -444,12 +444,12 @@ export default function CrisisSupportModal({
                                 value={contactName}
                                 onChange={(e) => setContactName(e.target.value)}
                                 placeholder="e.g. Priya Sharma, Mom, Rahul"
-                                className="w-full px-3 py-2 text-xs rounded-xl bg-white dark:bg-[#131916] border border-[#CBECE2] dark:border-[#22302A] focus:outline-hidden focus:ring-2 focus:ring-[#006B56] text-[#19332A] dark:text-[#F4FAF7] placeholder:text-gray-400 dark:placeholder:text-[#789990]"
+                                className="w-full px-3 py-2 text-xs rounded-xl bg-white dark:bg-[#121214] border border-[#CBECE2] dark:border-[#27272a] focus:outline-hidden focus:ring-2 focus:ring-[#006B56] text-[#19332A] dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#789990]"
                               />
                             </div>
 
                             <div>
-                              <label className="block text-[11px] font-heading font-bold text-[#4F685F] dark:text-[#9DB9B0] mb-1">
+                              <label className="block text-[11px] font-heading font-bold text-[#4F685F] dark:text-[#A1A1AA] mb-1">
                                 Phone Number *
                               </label>
                               <input
@@ -458,19 +458,19 @@ export default function CrisisSupportModal({
                                 value={contactPhone}
                                 onChange={(e) => setContactPhone(e.target.value)}
                                 placeholder="e.g. +91 98765 43210"
-                                className="w-full px-3 py-2 text-xs rounded-xl bg-white dark:bg-[#131916] border border-[#CBECE2] dark:border-[#22302A] focus:outline-hidden focus:ring-2 focus:ring-[#006B56] text-[#19332A] dark:text-[#F4FAF7] placeholder:text-gray-400 dark:placeholder:text-[#789990]"
+                                className="w-full px-3 py-2 text-xs rounded-xl bg-white dark:bg-[#121214] border border-[#CBECE2] dark:border-[#27272a] focus:outline-hidden focus:ring-2 focus:ring-[#006B56] text-[#19332A] dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#789990]"
                               />
                             </div>
                           </div>
 
                           <div>
-                            <label className="block text-[11px] font-heading font-bold text-[#4F685F] dark:text-[#9DB9B0] mb-1">
+                            <label className="block text-[11px] font-heading font-bold text-[#4F685F] dark:text-[#A1A1AA] mb-1">
                               Relationship
                             </label>
                             <select
                               value={contactRelation}
                               onChange={(e) => setContactRelation(e.target.value)}
-                              className="w-full px-3 py-2 text-xs rounded-xl bg-white dark:bg-[#131916] border border-[#CBECE2] dark:border-[#22302A] focus:outline-hidden focus:ring-2 focus:ring-[#006B56] text-[#19332A] dark:text-[#F4FAF7] cursor-pointer"
+                              className="w-full px-3 py-2 text-xs rounded-xl bg-white dark:bg-[#121214] border border-[#CBECE2] dark:border-[#27272a] focus:outline-hidden focus:ring-2 focus:ring-[#006B56] text-[#19332A] dark:text-white cursor-pointer"
                             >
                               <option value="Parent">Parent</option>
                               <option value="Partner / Spouse">Partner / Spouse</option>
@@ -501,7 +501,7 @@ export default function CrisisSupportModal({
                                   setIsEditingContact(false);
                                   setErrorMsg("");
                                 }}
-                                className="px-3 py-2 rounded-xl bg-gray-100 hover:bg-gray-200 dark:bg-[#18201C] dark:hover:bg-[#22302A] text-[#19332A] dark:text-[#D5E6E0] text-xs font-heading font-medium transition-colors cursor-pointer"
+                                className="px-3 py-2 rounded-xl bg-gray-100 hover:bg-gray-200 dark:bg-[#18181b] dark:hover:bg-[#27272a] text-[#19332A] dark:text-[#E4E4E7] text-xs font-heading font-medium transition-colors cursor-pointer"
                               >
                                 Cancel
                               </button>
@@ -518,24 +518,24 @@ export default function CrisisSupportModal({
                       <span className="material-symbols-outlined text-red-500 text-lg">
                         support_agent
                       </span>
-                      <h3 className="text-sm font-heading font-bold text-[#19332A] dark:text-[#F4FAF7]">
+                      <h3 className="text-sm font-heading font-bold text-[#19332A] dark:text-white">
                         Verified 24/7 National Helplines (Free &amp; Confidential)
                       </h3>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       {/* Tele-MANAS */}
-                      <div className="p-3.5 rounded-2xl bg-[#F8FCFA] dark:bg-[#18201C] border border-[#CBECE2] dark:border-[#22302A] flex flex-col justify-between gap-3 shadow-2xs">
+                      <div className="p-3.5 rounded-2xl bg-[#F8FCFA] dark:bg-[#18181b] border border-[#CBECE2] dark:border-[#27272a] flex flex-col justify-between gap-3 shadow-2xs">
                         <div>
                           <div className="flex items-center justify-between">
-                            <span className="text-xs font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
+                            <span className="text-xs font-heading font-black text-[#19332A] dark:text-white">
                               Tele-MANAS (Govt. of India)
                             </span>
-                            <span className="px-2 py-0.5 rounded-full text-[9px] font-heading font-bold bg-[#E6F4F0] dark:bg-[rgba(95,175,138,0.15)] text-[#006B56] dark:text-[#5FAF8A]">
+                            <span className="px-2 py-0.5 rounded-full text-[9px] font-heading font-bold bg-[#E6F4F0] dark:bg-white/5 text-[#006B56] dark:text-zinc-200">
                               24/7 Free
                             </span>
                           </div>
-                          <p className="text-[10.5px] text-[#4F685F] dark:text-[#9DB9B0] mt-1 leading-snug">
+                          <p className="text-[10.5px] text-[#4F685F] dark:text-[#A1A1AA] mt-1 leading-snug">
                             National Tele Mental Health Programme in 20+ Indian languages.
                           </p>
                         </div>
@@ -544,7 +544,7 @@ export default function CrisisSupportModal({
                           <button
                             type="button"
                             onClick={() => handleCopyNumber("14416")}
-                            className="p-2 rounded-xl bg-white dark:bg-[#131916] hover:bg-gray-50 dark:hover:bg-[#1E2824] border border-[#CBECE2] dark:border-[#22302A] text-xs font-bold text-[#4F685F] dark:text-[#9DB9B0] transition-colors cursor-pointer"
+                            className="p-2 rounded-xl bg-white dark:bg-[#121214] hover:bg-gray-50 dark:hover:bg-[#27272a] border border-[#CBECE2] dark:border-[#27272a] text-xs font-bold text-[#4F685F] dark:text-[#A1A1AA] transition-colors cursor-pointer"
                             title="Copy 14416"
                           >
                             <span className="material-symbols-outlined text-sm">
@@ -563,17 +563,17 @@ export default function CrisisSupportModal({
                       </div>
 
                       {/* National Emergency Services (112) */}
-                      <div className="p-3.5 rounded-2xl bg-[#F8FCFA] dark:bg-[#18201C] border border-[#CBECE2] dark:border-[#22302A] flex flex-col justify-between gap-3 shadow-2xs">
+                      <div className="p-3.5 rounded-2xl bg-[#F8FCFA] dark:bg-[#18181b] border border-[#CBECE2] dark:border-[#27272a] flex flex-col justify-between gap-3 shadow-2xs">
                         <div>
                           <div className="flex items-center justify-between">
-                            <span className="text-xs font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
+                            <span className="text-xs font-heading font-black text-[#19332A] dark:text-white">
                               National Emergency
                             </span>
                             <span className="px-2 py-0.5 rounded-full text-[9px] font-heading font-bold bg-red-100 text-red-700 dark:bg-red-950/60 dark:text-red-300">
                               Emergency 112
                             </span>
                           </div>
-                          <p className="text-[10.5px] text-[#4F685F] dark:text-[#9DB9B0] mt-1 leading-snug">
+                          <p className="text-[10.5px] text-[#4F685F] dark:text-[#A1A1AA] mt-1 leading-snug">
                             Immediate police, ambulance, medical rescue dispatch across India.
                           </p>
                         </div>
@@ -582,7 +582,7 @@ export default function CrisisSupportModal({
                           <button
                             type="button"
                             onClick={() => handleCopyNumber("112")}
-                            className="p-2 rounded-xl bg-white dark:bg-[#131916] hover:bg-gray-50 dark:hover:bg-[#1E2824] border border-[#CBECE2] dark:border-[#22302A] text-xs font-bold text-[#4F685F] dark:text-[#9DB9B0] transition-colors cursor-pointer"
+                            className="p-2 rounded-xl bg-white dark:bg-[#121214] hover:bg-gray-50 dark:hover:bg-[#27272a] border border-[#CBECE2] dark:border-[#27272a] text-xs font-bold text-[#4F685F] dark:text-[#A1A1AA] transition-colors cursor-pointer"
                             title="Copy 112"
                           >
                             <span className="material-symbols-outlined text-sm">
@@ -601,17 +601,17 @@ export default function CrisisSupportModal({
                       </div>
 
                       {/* KIRAN Helpline */}
-                      <div className="p-3.5 rounded-2xl bg-[#F8FCFA] dark:bg-[#18201C] border border-[#CBECE2] dark:border-[#22302A] flex flex-col justify-between gap-3 shadow-2xs">
+                      <div className="p-3.5 rounded-2xl bg-[#F8FCFA] dark:bg-[#18181b] border border-[#CBECE2] dark:border-[#27272a] flex flex-col justify-between gap-3 shadow-2xs">
                         <div>
                           <div className="flex items-center justify-between">
-                            <span className="text-xs font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
+                            <span className="text-xs font-heading font-black text-[#19332A] dark:text-white">
                               KIRAN Mental Health
                             </span>
                             <span className="px-2 py-0.5 rounded-full text-[9px] font-heading font-bold bg-sky-100 text-sky-700 dark:bg-sky-950/60 dark:text-sky-300">
                               Toll-Free
                             </span>
                           </div>
-                          <p className="text-[10.5px] text-[#4F685F] dark:text-[#9DB9B0] mt-1 leading-snug">
+                          <p className="text-[10.5px] text-[#4F685F] dark:text-[#A1A1AA] mt-1 leading-snug">
                             Govt. 24/7 psychological first aid, anxiety &amp; depression relief.
                           </p>
                         </div>
@@ -620,7 +620,7 @@ export default function CrisisSupportModal({
                           <button
                             type="button"
                             onClick={() => handleCopyNumber("18005990019")}
-                            className="p-2 rounded-xl bg-white dark:bg-[#131916] hover:bg-gray-50 dark:hover:bg-[#1E2824] border border-[#CBECE2] dark:border-[#22302A] text-xs font-bold text-[#4F685F] dark:text-[#9DB9B0] transition-colors cursor-pointer"
+                            className="p-2 rounded-xl bg-white dark:bg-[#121214] hover:bg-gray-50 dark:hover:bg-[#27272a] border border-[#CBECE2] dark:border-[#27272a] text-xs font-bold text-[#4F685F] dark:text-[#A1A1AA] transition-colors cursor-pointer"
                             title="Copy 1800-599-0019"
                           >
                             <span className="material-symbols-outlined text-sm">
@@ -639,17 +639,17 @@ export default function CrisisSupportModal({
                       </div>
 
                       {/* Vandrevala Foundation */}
-                      <div className="p-3.5 rounded-2xl bg-[#F8FCFA] dark:bg-[#18201C] border border-[#CBECE2] dark:border-[#22302A] flex flex-col justify-between gap-3 shadow-2xs">
+                      <div className="p-3.5 rounded-2xl bg-[#F8FCFA] dark:bg-[#18181b] border border-[#CBECE2] dark:border-[#27272a] flex flex-col justify-between gap-3 shadow-2xs">
                         <div>
                           <div className="flex items-center justify-between">
-                            <span className="text-xs font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
+                            <span className="text-xs font-heading font-black text-[#19332A] dark:text-white">
                               Vandrevala Foundation
                             </span>
                             <span className="px-2 py-0.5 rounded-full text-[9px] font-heading font-bold bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300">
                               Free Counsel
                             </span>
                           </div>
-                          <p className="text-[10.5px] text-[#4F685F] dark:text-[#9DB9B0] mt-1 leading-snug">
+                          <p className="text-[10.5px] text-[#4F685F] dark:text-[#A1A1AA] mt-1 leading-snug">
                             Trained clinical psychologists &amp; crisis counselors standing by 24/7.
                           </p>
                         </div>
@@ -658,7 +658,7 @@ export default function CrisisSupportModal({
                           <button
                             type="button"
                             onClick={() => handleCopyNumber("+919999666555")}
-                            className="p-2 rounded-xl bg-white dark:bg-[#131916] hover:bg-gray-50 dark:hover:bg-[#1E2824] border border-[#CBECE2] dark:border-[#22302A] text-xs font-bold text-[#4F685F] dark:text-[#9DB9B0] transition-colors cursor-pointer"
+                            className="p-2 rounded-xl bg-white dark:bg-[#121214] hover:bg-gray-50 dark:hover:bg-[#27272a] border border-[#CBECE2] dark:border-[#27272a] text-xs font-bold text-[#4F685F] dark:text-[#A1A1AA] transition-colors cursor-pointer"
                             title="Copy +91 9999 666 555"
                           >
                             <span className="material-symbols-outlined text-sm">
@@ -683,22 +683,22 @@ export default function CrisisSupportModal({
               {/* TAB 2: INTERNATIONAL HELPLINES */}
               {activeTab === "international" && (
                 <div className="space-y-4">
-                  <p className="text-xs text-[#4F685F] dark:text-[#9DB9B0] leading-relaxed">
+                  <p className="text-xs text-[#4F685F] dark:text-[#A1A1AA] leading-relaxed">
                     If you are currently outside India, please contact these verified international crisis networks or dial your local emergency services (911 in North America, 999 in the UK, 000 in Australia).
                   </p>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {/* USA / Canada */}
-                    <div className="p-3.5 rounded-2xl bg-[#F8FCFA] dark:bg-[#18201C] border border-[#CBECE2] dark:border-[#22302A] space-y-2">
+                    <div className="p-3.5 rounded-2xl bg-[#F8FCFA] dark:bg-[#18181b] border border-[#CBECE2] dark:border-[#27272a] space-y-2">
                       <div className="flex items-center justify-between">
-                        <span className="text-xs font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
+                        <span className="text-xs font-heading font-black text-[#19332A] dark:text-white">
                           🇺🇸 / 🇨🇦 USA &amp; Canada (988)
                         </span>
                         <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300">
                           24/7 Call/Text
                         </span>
                       </div>
-                      <p className="text-[10.5px] text-[#4F685F] dark:text-[#9DB9B0]">
+                      <p className="text-[10.5px] text-[#4F685F] dark:text-[#A1A1AA]">
                         Suicide &amp; Crisis Lifeline. Dial or text 988. Free and confidential.
                       </p>
                       <a
@@ -711,16 +711,16 @@ export default function CrisisSupportModal({
                     </div>
 
                     {/* United Kingdom */}
-                    <div className="p-3.5 rounded-2xl bg-[#F8FCFA] dark:bg-[#18201C] border border-[#CBECE2] dark:border-[#22302A] space-y-2">
+                    <div className="p-3.5 rounded-2xl bg-[#F8FCFA] dark:bg-[#18181b] border border-[#CBECE2] dark:border-[#27272a] space-y-2">
                       <div className="flex items-center justify-between">
-                        <span className="text-xs font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
+                        <span className="text-xs font-heading font-black text-[#19332A] dark:text-white">
                           🇬🇧 United Kingdom (111 / 116 123)
                         </span>
                         <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300">
                           24/7 NHS / Samaritans
                         </span>
                       </div>
-                      <p className="text-[10.5px] text-[#4F685F] dark:text-[#9DB9B0]">
+                      <p className="text-[10.5px] text-[#4F685F] dark:text-[#A1A1AA]">
                         NHS Mental Health Services (111) or Samaritans (116 123).
                       </p>
                       <a
@@ -733,16 +733,16 @@ export default function CrisisSupportModal({
                     </div>
 
                     {/* Australia */}
-                    <div className="p-3.5 rounded-2xl bg-[#F8FCFA] dark:bg-[#18201C] border border-[#CBECE2] dark:border-[#22302A] space-y-2">
+                    <div className="p-3.5 rounded-2xl bg-[#F8FCFA] dark:bg-[#18181b] border border-[#CBECE2] dark:border-[#27272a] space-y-2">
                       <div className="flex items-center justify-between">
-                        <span className="text-xs font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
+                        <span className="text-xs font-heading font-black text-[#19332A] dark:text-white">
                           🇦🇺 Australia (13 11 14)
                         </span>
                         <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300">
                           24/7 Lifeline
                         </span>
                       </div>
-                      <p className="text-[10.5px] text-[#4F685F] dark:text-[#9DB9B0]">
+                      <p className="text-[10.5px] text-[#4F685F] dark:text-[#A1A1AA]">
                         Lifeline Australia crisis support and suicide prevention services.
                       </p>
                       <a
@@ -755,12 +755,12 @@ export default function CrisisSupportModal({
                     </div>
 
                     {/* Global Directory Link */}
-                    <div className="p-3.5 rounded-2xl bg-[#F8FCFA] dark:bg-[#18201C] border border-[#CBECE2] dark:border-[#22302A] space-y-2 flex flex-col justify-between">
+                    <div className="p-3.5 rounded-2xl bg-[#F8FCFA] dark:bg-[#18181b] border border-[#CBECE2] dark:border-[#27272a] space-y-2 flex flex-col justify-between">
                       <div>
-                        <span className="text-xs font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
+                        <span className="text-xs font-heading font-black text-[#19332A] dark:text-white">
                           🌐 Worldwide Directory
                         </span>
-                        <p className="text-[10.5px] text-[#4F685F] dark:text-[#9DB9B0] mt-1">
+                        <p className="text-[10.5px] text-[#4F685F] dark:text-[#A1A1AA] mt-1">
                           Find free confidential crisis hotlines in over 130+ countries worldwide.
                         </p>
                       </div>
@@ -768,7 +768,7 @@ export default function CrisisSupportModal({
                         href="https://findahelpline.com"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="w-full py-2 rounded-xl bg-gray-100 hover:bg-gray-200 dark:bg-[#22302A] dark:hover:bg-[#2d3f37] text-[#19332A] dark:text-[#F4FAF7] text-xs font-heading font-bold flex items-center justify-center gap-1.5 transition-colors"
+                        className="w-full py-2 rounded-xl bg-gray-100 hover:bg-gray-200 dark:bg-[#22302A] dark:hover:bg-[#2d3f37] text-[#19332A] dark:text-white text-xs font-heading font-bold flex items-center justify-center gap-1.5 transition-colors"
                       >
                         <span>Open FindAHelpline.com</span>
                         <span className="material-symbols-outlined text-sm">open_in_new</span>
@@ -780,12 +780,12 @@ export default function CrisisSupportModal({
 
               {/* TAB 3: CALMING BOX BREATHING EXERCISE */}
               {activeTab === "exercise" && (
-                <div className="p-5 rounded-3xl bg-[#E6F4F0] dark:bg-[#18201C] border border-[#CBECE2] dark:border-[#22302A] flex flex-col items-center justify-center text-center space-y-4">
+                <div className="p-5 rounded-3xl bg-[#E6F4F0] dark:bg-[#18181b] border border-[#CBECE2] dark:border-[#27272a] flex flex-col items-center justify-center text-center space-y-4">
                   <div className="space-y-1">
-                    <h4 className="text-sm font-heading font-black text-[#004D3D] dark:text-[#F4FAF7]">
+                    <h4 className="text-sm font-heading font-black text-[#004D3D] dark:text-white">
                       4-4-4 Grounding Nervous System Reset
                     </h4>
-                    <p className="text-xs text-[#4F685F] dark:text-[#9DB9B0] max-w-sm">
+                    <p className="text-xs text-[#4F685F] dark:text-[#A1A1AA] max-w-sm">
                       Follow the rhythm to reduce heart rate and signal physical safety to your nervous system.
                     </p>
                   </div>
@@ -802,7 +802,7 @@ export default function CrisisSupportModal({
                             : 0.9,
                       }}
                       transition={{ duration: 4, ease: "easeInOut" }}
-                      className="absolute inset-0 rounded-full bg-[#006B56]/20 dark:bg-[#5FAF8A]/20 blur-md"
+                      className="absolute inset-0 rounded-full bg-[#006B56]/20 dark:bg-white dark:text-black/20 blur-md"
                     />
                     <motion.div
                       animate={{
@@ -814,7 +814,7 @@ export default function CrisisSupportModal({
                             : 0.85,
                       }}
                       transition={{ duration: 4, ease: "easeInOut" }}
-                      className="w-28 h-28 rounded-full bg-[#006B56] dark:bg-[#006B56] text-white flex flex-col items-center justify-center shadow-lg shadow-[#006B56]/25 select-none"
+                      className="w-28 h-28 rounded-full bg-[#006B56] dark:bg-white dark:text-black text-white flex flex-col items-center justify-center shadow-lg shadow-[#006B56]/25 select-none"
                     >
                       <span className="text-xs font-heading font-extrabold uppercase tracking-wider">
                         {isBreathingActive ? breathPhase : "Ready"}
@@ -826,7 +826,7 @@ export default function CrisisSupportModal({
                   </div>
 
                   {/* Instruction Step */}
-                  <div className="text-xs font-semibold text-[#004D3D] dark:text-[#5FAF8A]">
+                  <div className="text-xs font-semibold text-[#004D3D] dark:text-zinc-200">
                     {isBreathingActive && breathPhase === "Inhale" && "Breathe in slowly through your nose..."}
                     {isBreathingActive && breathPhase === "Hold" && "Gently hold your breath... relax your shoulders"}
                     {isBreathingActive && breathPhase === "Exhale" && "Exhale smoothly through your mouth..."}
@@ -849,12 +849,12 @@ export default function CrisisSupportModal({
             </div>
 
             {/* Modal Footer */}
-            <div className="py-3 px-5 bg-[#F4F9F6] dark:bg-[#111714] border-t border-[#CBECE2] dark:border-[#1E2824] flex items-center justify-between text-xs text-[#4F685F] dark:text-[#76968D]">
+            <div className="py-3 px-5 bg-[#F4F9F6] dark:bg-[#121214] border-t border-[#CBECE2] dark:border-[#27272a] flex items-center justify-between text-xs text-[#4F685F] dark:text-[#71717A]">
               <span className="font-semibold">Manraah 24/7 Crisis Support Desk</span>
               <Link
                 href="/crisis"
                 onClick={handleClose}
-                className="font-bold text-[#006B56] dark:text-[#5FAF8A] hover:underline"
+                className="font-bold text-[#006B56] dark:text-zinc-200 hover:underline"
               >
                 Full Crisis Page →
               </Link>
