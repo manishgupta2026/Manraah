@@ -75,19 +75,19 @@ export default function WellnessCompanionPanel({ onCheckCondition }: WellnessCom
   return (
     <aside className="w-full flex flex-col gap-4 select-none pointer-events-auto shrink-0">
       {/* 1. Check Your Condition / Wellness Companion Card */}
-      <div className="bg-[#E6F4F0] dark:bg-[#18181b] rounded-3xl p-4 sm:p-5 border border-[#CBECE2] dark:border-[#27272a] text-center flex flex-col justify-between min-h-[330px] sm:min-h-[355px] shadow-2xs transition-colors">
+      <div className="bg-[#E6F4F0] dark:bg-[#131916] rounded-3xl p-4 sm:p-5 border border-[#CBECE2] dark:border-[#1E2824] text-center flex flex-col justify-between min-h-[330px] sm:min-h-[355px] shadow-2xs transition-colors">
         {/* Top: Header Group */}
         <div className="flex items-center gap-2.5 text-left w-full">
-          <div className="w-8 h-8 rounded-2xl bg-[#EAF6F2] dark:bg-[#18181b] text-[#006B56] dark:text-zinc-200 border border-[#CBECE2] dark:border-[#27272a] flex items-center justify-center shrink-0">
+          <div className="w-8 h-8 rounded-2xl bg-[#EAF6F2] dark:bg-[#131916] text-[#006B56] dark:text-[#D5E6E0] border border-[#CBECE2] dark:border-[#1E2824] flex items-center justify-center shrink-0">
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
             </svg>
           </div>
           <div className="min-w-0">
-            <h3 className="text-xs sm:text-sm font-heading font-black text-[#004D3D] dark:text-white leading-tight truncate">
+            <h3 className="text-xs sm:text-sm font-heading font-black text-[#004D3D] dark:text-[#F4FAF7] leading-tight truncate">
               Your Wellness Companion
             </h3>
-            <p className="text-[9.5px] text-[#4F685F] dark:text-[#A1A1AA] font-medium leading-tight mt-0.5 truncate">
+            <p className="text-[9.5px] text-[#4F685F] dark:text-[#9DB9B0] font-medium leading-tight mt-0.5 truncate">
               {isCheckedIn ? "Today's check-in complete" : "Check your condition"}
             </p>
           </div>
@@ -106,7 +106,7 @@ export default function WellnessCompanionPanel({ onCheckCondition }: WellnessCom
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="7.5"
-                className="text-[#CBECE2] dark:text-zinc-700"
+                className="text-[#CBECE2] dark:text-[#1E2824]"
               />
               {/* Dynamic Progress Ring */}
               {isCheckedIn && (
@@ -120,7 +120,7 @@ export default function WellnessCompanionPanel({ onCheckCondition }: WellnessCom
                   strokeLinecap="round"
                   strokeDasharray={301.59}
                   strokeDashoffset={0}
-                  className="text-[#006B56] dark:text-zinc-200 transition-all duration-1000 ease-out"
+                  className="text-[#006B56] dark:text-[#D5E6E0] transition-all duration-1000 ease-out"
                 />
               )}
             </svg>
@@ -132,7 +132,7 @@ export default function WellnessCompanionPanel({ onCheckCondition }: WellnessCom
                   <span className="text-3xl sm:text-[38px] leading-none filter drop-shadow-xs">
                     {moodEmoji}
                   </span>
-                  <span className="text-[10.5px] sm:text-xs font-black text-[#004D3D] dark:text-white mt-1 leading-none">
+                  <span className="text-[10.5px] sm:text-xs font-black text-[#004D3D] dark:text-[#F4FAF7] mt-1 leading-none">
                     {moodLabel}
                   </span>
                 </div>
@@ -141,9 +141,9 @@ export default function WellnessCompanionPanel({ onCheckCondition }: WellnessCom
                   <UserAvatar
                     user={isUserAuthenticated ? user : null}
                     sizeClass="w-13 h-13 sm:w-14 sm:h-14 text-xl"
-                    className="border-2 border-white dark:border-[#27272a] shadow-xs"
+                    className="border-2 border-white dark:border-[#112F28] shadow-xs"
                   />
-                  <span className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-[#006B56] dark:bg-white text-white dark:text-black flex items-center justify-center text-[8.5px] font-bold">
+                  <span className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-[#006B56] dark:bg-[#5FAF8A] text-white dark:text-[#112F28] flex items-center justify-center text-[8.5px] font-bold">
                     ✦
                   </span>
                 </div>
@@ -153,10 +153,10 @@ export default function WellnessCompanionPanel({ onCheckCondition }: WellnessCom
 
           {/* Status Label & Short Meaning */}
           <div className="space-y-0.5">
-            <h4 className="text-xs sm:text-sm font-black text-[#006B56] dark:text-zinc-200 leading-tight">
+            <h4 className="text-xs sm:text-sm font-black text-[#006B56] dark:text-[#D5E6E0] leading-tight">
               {isCheckedIn ? "Mood Check Complete" : "Check Your Condition"}
             </h4>
-            <p className="text-[10.5px] sm:text-[11px] text-[#4F685F] dark:text-[#A1A1AA] font-medium leading-relaxed max-w-[230px]">
+            <p className="text-[10.5px] sm:text-[11px] text-[#4F685F] dark:text-[#9DB9B0] font-medium leading-relaxed max-w-[230px]">
               {isCheckedIn
                 ? completedTimeStr
                 : "Track your feelings & daily mental wellness."}
@@ -170,9 +170,9 @@ export default function WellnessCompanionPanel({ onCheckCondition }: WellnessCom
             <button
               type="button"
               onClick={openCheckInModal}
-              className="w-full py-2.5 sm:py-3 px-4 rounded-full bg-[#D0EDE4] hover:bg-[#C2E8DC] dark:bg-[#18181b] dark:hover:bg-[#27272a] text-[#006B56] dark:text-zinc-200 text-xs font-bold border border-[#CBECE2] dark:border-[#27272a] shadow-2xs transition-all flex items-center justify-center gap-2 group cursor-pointer select-none"
+              className="w-full py-2.5 sm:py-3 px-4 rounded-full bg-[#D0EDE4] hover:bg-[#C2E8DC] dark:bg-[#131916] dark:hover:bg-[#22302A] text-[#006B56] dark:text-[#D5E6E0] text-xs font-bold border border-[#CBECE2] dark:border-[#1E2824] shadow-2xs transition-all flex items-center justify-center gap-2 group cursor-pointer select-none"
             >
-              <span className="w-4 h-4 rounded-full bg-[#006B56] dark:bg-white dark:text-black text-white dark:text-black flex items-center justify-center text-[9px] font-black">
+              <span className="w-4 h-4 rounded-full bg-[#006B56] dark:bg-[#5FAF8A] text-white dark:text-[#112F28] flex items-center justify-center text-[9px] font-black">
                 ✓
               </span>
               <span>Checked In Today</span>
@@ -183,9 +183,9 @@ export default function WellnessCompanionPanel({ onCheckCondition }: WellnessCom
               onClick={handleCheckInClick}
               disabled={isCheckingIn}
               type="button"
-              className="w-full py-2.5 sm:py-3 px-4 rounded-full bg-[#006B56] hover:bg-[#005B48] text-white dark:bg-white dark:hover:bg-zinc-200 dark:text-black dark:hover:text-black text-xs font-bold shadow-sm shadow-[#006B56]/20 transition-all border border-transparent flex items-center justify-center gap-2 group cursor-pointer disabled:opacity-80 disabled:cursor-not-allowed select-none"
+              className="w-full py-2.5 sm:py-3 px-4 rounded-full bg-[#006B56] hover:bg-[#005B48] text-white dark:bg-[#5FAF8A] dark:hover:bg-[#006B56] dark:text-[#112F28] dark:hover:text-[#F4FAF7] text-xs font-bold shadow-sm shadow-[#006B56]/20 transition-all border border-transparent flex items-center justify-center gap-2 group cursor-pointer disabled:opacity-80 disabled:cursor-not-allowed select-none"
             >
-              <span className="w-4 h-4 rounded-full border border-white/60 dark:border-[#27272a]/60 flex items-center justify-center text-[8.5px]">
+              <span className="w-4 h-4 rounded-full border border-white/60 dark:border-[#112F28]/60 flex items-center justify-center text-[8.5px]">
                 ✦
               </span>
               <span>Check It Now</span>
@@ -196,19 +196,19 @@ export default function WellnessCompanionPanel({ onCheckCondition }: WellnessCom
       </div>
 
       {/* 2. Your Wellness Score Card */}
-      <div className="bg-[#E6F4F0] dark:bg-[#18181b] rounded-3xl p-4 sm:p-5 border border-[#CBECE2] dark:border-[#27272a] text-center flex flex-col justify-between min-h-[330px] sm:min-h-[355px] shadow-2xs transition-colors">
+      <div className="bg-[#E6F4F0] dark:bg-[#131916] rounded-3xl p-4 sm:p-5 border border-[#CBECE2] dark:border-[#1E2824] text-center flex flex-col justify-between min-h-[330px] sm:min-h-[355px] shadow-2xs transition-colors">
         {/* Top: Header Group */}
         <div className="flex items-center gap-2.5 text-left w-full">
-          <div className="w-8 h-8 rounded-2xl bg-[#EAF6F2] dark:bg-[#18181b] text-[#006B56] dark:text-zinc-200 border border-[#CBECE2] dark:border-[#27272a] flex items-center justify-center shrink-0">
+          <div className="w-8 h-8 rounded-2xl bg-[#EAF6F2] dark:bg-[#131916] text-[#006B56] dark:text-[#D5E6E0] border border-[#CBECE2] dark:border-[#1E2824] flex items-center justify-center shrink-0">
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
             </svg>
           </div>
           <div className="min-w-0">
-            <h3 className="text-xs sm:text-sm font-heading font-black text-[#004D3D] dark:text-white leading-tight truncate">
+            <h3 className="text-xs sm:text-sm font-heading font-black text-[#004D3D] dark:text-[#F4FAF7] leading-tight truncate">
               Your Wellness Score
             </h3>
-            <p className="text-[9.5px] text-[#4F685F] dark:text-[#A1A1AA] font-medium leading-tight mt-0.5 truncate">
+            <p className="text-[9.5px] text-[#4F685F] dark:text-[#9DB9B0] font-medium leading-tight mt-0.5 truncate">
               Based on your latest check
             </p>
           </div>
@@ -227,7 +227,7 @@ export default function WellnessCompanionPanel({ onCheckCondition }: WellnessCom
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="7.5"
-                className="text-[#CBECE2] dark:text-zinc-700"
+                className="text-[#CBECE2] dark:text-[#1E2824]"
               />
               {/* Dynamic Progress Ring */}
               {isCurrentAssessed && currentScore !== null && (
@@ -241,17 +241,17 @@ export default function WellnessCompanionPanel({ onCheckCondition }: WellnessCom
                   strokeLinecap="round"
                   strokeDasharray={301.59}
                   strokeDashoffset={301.59 - (Math.min(Math.max(currentScore, 0), 100) / 100) * 301.59}
-                  className="text-[#006B56] dark:text-zinc-200 transition-all duration-1000 ease-out"
+                  className="text-[#006B56] dark:text-[#D5E6E0] transition-all duration-1000 ease-out"
                 />
               )}
             </svg>
 
             {/* Centered Score Value */}
             <div className="absolute inset-0 flex flex-col items-center justify-center text-center select-none pointer-events-none">
-              <span className="text-3xl sm:text-[35px] font-heading font-black text-[#004D3D] dark:text-white leading-none tracking-tight">
+              <span className="text-3xl sm:text-[35px] font-heading font-black text-[#004D3D] dark:text-[#F4FAF7] leading-none tracking-tight">
                 {isCurrentAssessed && currentScore !== null ? currentScore : "--"}
               </span>
-              <span className="text-[11px] sm:text-xs font-bold text-[#4F685F] dark:text-[#A1A1AA] mt-1 leading-none">
+              <span className="text-[11px] sm:text-xs font-bold text-[#4F685F] dark:text-[#9DB9B0] mt-1 leading-none">
                 /100
               </span>
             </div>
@@ -259,10 +259,10 @@ export default function WellnessCompanionPanel({ onCheckCondition }: WellnessCom
 
           {/* Status Label & Short Meaning */}
           <div className="space-y-0.5">
-            <h4 className="text-xs sm:text-sm font-black text-[#006B56] dark:text-zinc-200 leading-tight">
+            <h4 className="text-xs sm:text-sm font-black text-[#006B56] dark:text-[#D5E6E0] leading-tight">
               {isCurrentAssessed && currentScore !== null ? "Wellness Score" : "Not Assessed Yet"}
             </h4>
-            <p className="text-[10.5px] sm:text-[11px] text-[#4F685F] dark:text-[#A1A1AA] font-medium leading-relaxed max-w-[230px]">
+            <p className="text-[10.5px] sm:text-[11px] text-[#4F685F] dark:text-[#9DB9B0] font-medium leading-relaxed max-w-[230px]">
               {isCurrentAssessed && currentScore !== null
                 ? "Based on your latest assessment."
                 : "Complete a wellness check to see your score."}
@@ -281,7 +281,7 @@ export default function WellnessCompanionPanel({ onCheckCondition }: WellnessCom
                 openAssessment(currentCategory);
               }
             }}
-            className="w-full py-2.5 sm:py-3 px-4 rounded-full bg-[#006B56] hover:bg-[#005B48] dark:bg-white dark:hover:bg-zinc-200 dark:text-black dark:hover:text-black text-white text-xs font-bold shadow-sm shadow-[#006B56]/20 transition-all border border-transparent flex items-center justify-center gap-2 group cursor-pointer select-none"
+            className="w-full py-2.5 sm:py-3 px-4 rounded-full bg-[#006B56] hover:bg-[#005B48] dark:bg-[#5FAF8A] dark:hover:bg-[#006B56] dark:text-[#112F28] dark:hover:text-[#F4FAF7] text-white text-xs font-bold shadow-sm shadow-[#006B56]/20 transition-all border border-transparent flex items-center justify-center gap-2 group cursor-pointer select-none"
           >
             <span>{isCurrentAssessed && currentScore !== null ? "Re-attempt Check" : "Start Wellness Check"}</span>
             <span className="transition-transform group-hover:translate-x-1 text-xs">→</span>

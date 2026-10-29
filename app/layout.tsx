@@ -57,7 +57,7 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
         />
       </head>
-      <body className="bg-background text-on-background antialiased font-sans">
+      <body className="bg-background dark:bg-[#0A0E0D] text-on-background dark:text-[#F4FAF7] antialiased font-sans">
         <AppShell>{children}</AppShell>
       </body>
     </html>

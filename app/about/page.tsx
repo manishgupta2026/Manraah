@@ -157,7 +157,7 @@ export default function AboutPage() {
   };
 
   return (
-    <div className="min-h-screen bg-surface dark:bg-[#09090b] text-on-surface dark:text-white select-none relative overflow-hidden">
+    <div className="min-h-screen bg-surface dark:bg-[#0A0E0D] text-on-surface dark:text-[#F4FAF7] select-none relative overflow-hidden">
       {/* ═══ 1. HERO SECTION: ABOUT US ═══ */}
       <motion.section
         initial="hidden"
@@ -187,7 +187,7 @@ export default function AboutPage() {
         {/* Core Opening Quote / Philosophy */}
         <motion.div
           variants={heroItemVariants}
-          className="max-w-3xl mx-auto p-6 sm:p-8 rounded-[28px] bg-surface-container-lowest dark:bg-[#121214]/80 backdrop-blur-md border border-primary/20 shadow-sm space-y-3"
+          className="max-w-3xl mx-auto p-6 sm:p-8 rounded-[28px] bg-surface-container-lowest dark:bg-[#131916]/80 backdrop-blur-md border border-primary/20 shadow-sm space-y-3"
         >
           <p className="text-lg sm:text-xl font-heading font-bold text-primary leading-snug">
             &ldquo;At Manraah, we believe healing begins the moment someone feels truly heard. We believe mental well-being isn&apos;t a destination — it&apos;s a journey, and no one should have to walk it alone.&rdquo;
@@ -206,7 +206,7 @@ export default function AboutPage() {
         <motion.div variants={heroItemVariants} className="pt-2">
           <Link
             href="/for-you"
-            className="px-8 py-3.5 rounded-full bg-primary hover:bg-primary-purple text-white dark:bg-white dark:hover:bg-zinc-200 dark:text-black dark:hover:text-black font-heading font-bold text-sm shadow-md hover:shadow-lg transition-all inline-flex items-center gap-2 cursor-pointer"
+            className="px-8 py-3.5 rounded-full bg-primary hover:bg-primary-purple text-white dark:bg-[#5FAF8A] dark:hover:bg-[#006B56] dark:text-[#112F28] dark:hover:text-[#F4FAF7] font-heading font-bold text-sm shadow-md hover:shadow-lg transition-all inline-flex items-center gap-2 cursor-pointer"
           >
             <span>Explore Life Pathways</span>
             <span className="material-symbols-outlined text-base">
@@ -223,10 +223,10 @@ export default function AboutPage() {
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
           variants={sectionRevealVariants}
-          className="rounded-[32px] bg-surface-container-lowest dark:bg-[#121214] border border-surface-variant/40 shadow-card-lift p-8 sm:p-12 space-y-10"
+          className="rounded-[32px] bg-surface-container-lowest dark:bg-[#131916] border border-surface-variant/40 shadow-card-lift p-8 sm:p-12 space-y-10"
         >
           {/* Header Info */}
-          <div className="pb-8 border-b border-surface-variant/20 dark:border-[#27272a]">
+          <div className="pb-8 border-b border-surface-variant/20 dark:border-[#1E2824]">
             <div className="space-y-3 max-w-3xl text-left">
               <span className="px-3 py-1 rounded-full text-xs font-heading font-bold bg-primary/10 text-primary border border-primary/20 uppercase tracking-wider">
                 Our Essence &amp; Meaning
@@ -241,7 +241,7 @@ export default function AboutPage() {
           </div>
 
           {/* Three Pillars Showcase */}
-          <div className="space-y-4 text-left pb-8 border-b border-surface-variant/20 dark:border-[#27272a]">
+          <div className="space-y-4 text-left pb-8 border-b border-surface-variant/20 dark:border-[#1E2824]">
             <div className="flex items-center gap-2 text-on-surface">
               <span className="material-symbols-outlined text-mint text-2xl">auto_awesome</span>
               <h3 className="font-heading font-extrabold text-xl text-on-surface">
@@ -259,13 +259,13 @@ export default function AboutPage() {
                   variants={cardHoverVariants}
                   initial="rest"
                   whileHover="hover"
-                  className="p-6 rounded-[24px] bg-surface-container-low/60 border border-surface-variant/30 dark:border-[#27272a] flex flex-col justify-between hover:border-primary/30 transition-all cursor-default"
+                  className="p-6 rounded-[24px] bg-surface-container-low/60 border border-surface-variant/30 dark:border-[#1E2824] flex flex-col justify-between hover:border-primary/30 transition-all cursor-default"
                 >
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
                       <motion.div
                         variants={iconVariants}
-                        className="w-11 h-11 rounded-2xl bg-surface-container-lowest dark:bg-[#121214] text-primary shadow-xs flex items-center justify-center shrink-0 border border-primary/10"
+                        className="w-11 h-11 rounded-2xl bg-surface-container-lowest dark:bg-[#131916] text-primary shadow-xs flex items-center justify-center shrink-0 border border-primary/10"
                       >
                         <span className="material-symbols-outlined text-2xl">{pillar.icon}</span>
                       </motion.div>
@@ -292,7 +292,7 @@ export default function AboutPage() {
               variants={cardHoverVariants}
               initial="rest"
               whileHover="hover"
-              className="p-7 sm:p-8 rounded-[24px] bg-surface-container-low/60 border border-surface-variant/30 dark:border-[#27272a] hover:border-primary/30 transition-all flex flex-col justify-start space-y-4 text-left cursor-default relative overflow-hidden"
+              className="p-7 sm:p-8 rounded-[24px] bg-surface-container-low/60 border border-surface-variant/30 dark:border-[#1E2824] hover:border-primary/30 transition-all flex flex-col justify-start space-y-4 text-left cursor-default relative overflow-hidden"
             >
               <div className="flex items-center justify-between">
                 <span className="px-3.5 py-1.5 rounded-full text-xs font-heading font-bold bg-primary/10 text-primary border border-primary/20 uppercase tracking-wider">
@@ -315,7 +315,7 @@ export default function AboutPage() {
               variants={cardHoverVariants}
               initial="rest"
               whileHover="hover"
-              className="p-7 sm:p-8 rounded-[24px] bg-surface-container-low/60 border border-surface-variant/30 dark:border-[#27272a] hover:border-[#006B56]/30 transition-all flex flex-col justify-start space-y-4 text-left cursor-default relative overflow-hidden"
+              className="p-7 sm:p-8 rounded-[24px] bg-surface-container-low/60 border border-surface-variant/30 dark:border-[#1E2824] hover:border-[#006B56]/30 transition-all flex flex-col justify-start space-y-4 text-left cursor-default relative overflow-hidden"
             >
               <div className="flex items-center justify-between">
                 <span className="px-3.5 py-1.5 rounded-full text-xs font-heading font-bold bg-[#006B56]/15 text-[#006B56] border border-[#006B56]/20 uppercase tracking-wider">
@@ -338,7 +338,7 @@ export default function AboutPage() {
               variants={cardHoverVariants}
               initial="rest"
               whileHover="hover"
-              className="p-7 sm:p-8 rounded-[24px] bg-surface-container-low/60 border border-surface-variant/30 dark:border-[#27272a] hover:border-[#874959]/30 transition-all flex flex-col justify-start space-y-4 text-left cursor-default relative overflow-hidden"
+              className="p-7 sm:p-8 rounded-[24px] bg-surface-container-low/60 border border-surface-variant/30 dark:border-[#1E2824] hover:border-[#874959]/30 transition-all flex flex-col justify-start space-y-4 text-left cursor-default relative overflow-hidden"
             >
               <div className="flex items-center justify-between">
                 <span className="px-3.5 py-1.5 rounded-full text-xs font-heading font-bold bg-[#E6F4F0] text-[#006B56] border border-[#CBECE2] uppercase tracking-wider">
@@ -361,7 +361,7 @@ export default function AboutPage() {
               variants={cardHoverVariants}
               initial="rest"
               whileHover="hover"
-              className="p-7 sm:p-8 rounded-[24px] bg-surface-container-low/60 border border-surface-variant/30 dark:border-[#27272a] hover:border-[#9E5D28]/30 transition-all flex flex-col justify-start space-y-4 text-left cursor-default relative overflow-hidden"
+              className="p-7 sm:p-8 rounded-[24px] bg-surface-container-low/60 border border-surface-variant/30 dark:border-[#1E2824] hover:border-[#9E5D28]/30 transition-all flex flex-col justify-start space-y-4 text-left cursor-default relative overflow-hidden"
             >
               <div className="flex items-center justify-between">
                 <span className="px-3.5 py-1.5 rounded-full text-xs font-heading font-bold bg-[#EDF6F2] text-[#006B56] border border-[#BCE2D2] uppercase tracking-wider">
@@ -383,7 +383,7 @@ export default function AboutPage() {
       </section>
 
       {/* ═══ 3. CORE PRINCIPLES ═══ */}
-      <section className="py-16 bg-[#F2EBFF]/40 border-y border-surface-variant/20 dark:border-[#27272a] px-6">
+      <section className="py-16 bg-[#F2EBFF]/40 border-y border-surface-variant/20 dark:border-[#1E2824] px-6">
         <div className="max-w-6xl mx-auto space-y-12">
           <div className="text-center space-y-3 max-w-2xl mx-auto">
             <span className="px-3.5 py-1.5 rounded-full text-xs font-heading font-bold bg-primary/10 text-primary border border-primary/20 uppercase tracking-wider">
@@ -410,7 +410,7 @@ export default function AboutPage() {
                   variants={cardHoverVariants}
                   initial="rest"
                   whileHover="hover"
-                  className="p-6 rounded-[24px] bg-surface-container-lowest dark:bg-[#121214] border border-surface-variant/30 dark:border-[#27272a] shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between cursor-default h-full text-left"
+                  className="p-6 rounded-[24px] bg-surface-container-lowest dark:bg-[#131916] border border-surface-variant/30 dark:border-[#1E2824] shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between cursor-default h-full text-left"
                 >
                   <div>
                     <div className="flex items-center gap-3 mb-3">

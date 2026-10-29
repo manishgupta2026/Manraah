@@ -21,26 +21,26 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="min-h-screen bg-surface dark:bg-[#09090b] text-on-surface dark:text-white flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-12 select-none relative">
+    <div className="min-h-screen bg-surface dark:bg-[#0A0E0D] text-on-surface dark:text-[#F4FAF7] flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-12 select-none relative">
       <div className="max-w-md w-full mx-auto">
-        <div className="p-8 sm:p-10 rounded-[32px] bg-surface-container-lowest dark:bg-[#121214] border border-surface-variant/30 dark:border-[#27272a] shadow-card-lift space-y-6 text-center">
+        <div className="p-8 sm:p-10 rounded-[32px] bg-surface-container-lowest dark:bg-[#131916] border border-surface-variant/30 dark:border-[#1E2824] shadow-card-lift space-y-6 text-center">
           
           {/* Header */}
           <div className="space-y-2">
-            <div className="w-12 h-12 rounded-2xl bg-primary/10 dark:bg-[#18181b] text-primary dark:text-zinc-200 flex items-center justify-center mx-auto mb-3 shadow-xs">
+            <div className="w-12 h-12 rounded-2xl bg-primary/10 dark:bg-[#131916] text-primary dark:text-[#D5E6E0] flex items-center justify-center mx-auto mb-3 shadow-xs">
               <span className="material-symbols-outlined text-2xl font-bold">lock_reset</span>
             </div>
-            <h2 className="text-2xl font-heading font-extrabold text-on-surface dark:text-white">
+            <h2 className="text-2xl font-heading font-extrabold text-on-surface dark:text-[#F4FAF7]">
               Account Recovery
             </h2>
-            <p className="text-xs text-on-surface-variant dark:text-[#A1A1AA] leading-relaxed">
+            <p className="text-xs text-on-surface-variant dark:text-[#9DB9B0] leading-relaxed">
               Enter your registered email address and we&apos;ll send you a secure password reset link.
             </p>
           </div>
 
           {sent ? (
             <div className="py-6 space-y-4 animate-fadeIn">
-              <div className="p-4 rounded-2xl bg-emerald-500/10 dark:bg-[#18181b] border border-emerald-500/20 dark:border-[#27272a] text-xs font-semibold text-emerald-700 dark:text-zinc-200 flex items-start gap-2.5 text-left">
+              <div className="p-4 rounded-2xl bg-emerald-500/10 dark:bg-[#131916] border border-emerald-500/20 dark:border-[#1E2824] text-xs font-semibold text-emerald-700 dark:text-[#D5E6E0] flex items-start gap-2.5 text-left">
                 <span className="material-symbols-outlined text-lg shrink-0 mt-0.5">check_circle</span>
                 <span className="leading-relaxed">
                   We&apos;ve sent a password reset link to <strong>{email}</strong>. Please check your inbox and follow the instructions.
@@ -49,7 +49,7 @@ export default function ForgotPasswordPage() {
 
               <Link
                 href="/login"
-                className="w-full py-3.5 rounded-full bg-primary hover:bg-primary-purple text-white dark:bg-white dark:hover:bg-zinc-200 dark:text-black dark:hover:text-black font-heading font-bold text-xs shadow-md transition-all inline-block cursor-pointer"
+                className="w-full py-3.5 rounded-full bg-primary hover:bg-primary-purple text-white dark:bg-[#5FAF8A] dark:hover:bg-[#006B56] dark:text-[#112F28] dark:hover:text-[#F4FAF7] font-heading font-bold text-xs shadow-md transition-all inline-block cursor-pointer"
               >
                 Return to Log In
               </Link>
@@ -69,7 +69,7 @@ export default function ForgotPasswordPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-4 rounded-full bg-primary hover:bg-primary-purple text-white dark:bg-white dark:hover:bg-zinc-200 dark:text-black dark:hover:text-black font-heading font-bold text-sm shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 disabled:opacity-70 cursor-pointer"
+                className="w-full py-4 rounded-full bg-primary hover:bg-primary-purple text-white dark:bg-[#5FAF8A] dark:hover:bg-[#006B56] dark:text-[#112F28] dark:hover:text-[#F4FAF7] font-heading font-bold text-sm shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 disabled:opacity-70 cursor-pointer"
               >
                 {loading ? (
                   <>
@@ -86,10 +86,10 @@ export default function ForgotPasswordPage() {
             </form>
           )}
 
-          <div className="pt-4 border-t border-surface-variant/20 dark:border-[#27272a]">
-            <p className="text-xs text-on-surface-variant dark:text-[#A1A1AA] font-normal">
+          <div className="pt-4 border-t border-surface-variant/20 dark:border-[#1E2824]">
+            <p className="text-xs text-on-surface-variant dark:text-[#9DB9B0] font-normal">
               Remember your password?{" "}
-              <Link href="/login" className="font-heading font-bold text-primary dark:text-zinc-200 hover:underline">
+              <Link href="/login" className="font-heading font-bold text-primary dark:text-[#D5E6E0] hover:underline">
                 Log In
               </Link>
             </p>

@@ -59,27 +59,27 @@
 .dark {
   color-scheme: dark;
   
-  /* Manraah Modern Obsidian Pitch Black Theme */
-  --dashboard-bg: #09090b;
-  --dashboard-navbar: #09090b;
-  --dashboard-sidebar: #000000;
-  --dashboard-surface: #121214;
-  --dashboard-surface-secondary: #18181b;
-  --dashboard-card: #121214;
-  --dashboard-card-elevated: #18181b;
-  --dashboard-card-hover: #222226;
-  --dashboard-primary: #10B981;
-  --dashboard-primary-hover: #059669;
-  --dashboard-mint: #34D399;
-  --dashboard-text-primary: #FFFFFF;
-  --dashboard-text-body: #E4E4E7;
-  --dashboard-text-secondary: #A1A1AA;
-  --dashboard-text-muted: #71717A;
-  --dashboard-text-caption: #A1A1AA;
-  --dashboard-border: #27272a;
-  --dashboard-border-strong: #3f3f46;
-  --dashboard-input-bg: #18181b;
-  --dashboard-terracotta-text: #F97316;
+  /* Manraah Layered Dark Theme Tokens - Exact Specs */
+  --dashboard-bg: #0A0E0D;
+  --dashboard-navbar: #0E1412;
+  --dashboard-sidebar: #060908;
+  --dashboard-surface: #131916;
+  --dashboard-surface-secondary: #0E241E;
+  --dashboard-card: #131916;
+  --dashboard-card-elevated: #18201C;
+  --dashboard-card-hover: #1A2420;
+  --dashboard-primary: #006B56;
+  --dashboard-primary-hover: #005B48;
+  --dashboard-mint: #5FAF8A;
+  --dashboard-text-primary: #F4FAF7;
+  --dashboard-text-body: #D5E6E0;
+  --dashboard-text-secondary: #9DB9B0;
+  --dashboard-text-muted: #76968D;
+  --dashboard-text-caption: #88A99F;
+  --dashboard-border: #1E2824;
+  --dashboard-border-strong: #1C463C;
+  --dashboard-input-bg: #0C1210;
+  --dashboard-terracotta-text: #F38A57;
 }
 
 body {
@@ -94,8 +94,8 @@ body {
 }
 
 .dark body {
-  background-color: #09090b;
-  color: #FFFFFF;
+  background-color: #0A0E0D;
+  color: #F4FAF7;
 }
 
 h1, h2, h3, h4, h5, h6 {

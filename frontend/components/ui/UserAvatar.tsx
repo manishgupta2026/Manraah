@@ -76,8 +76,8 @@ export default function UserAvatar({
     return (
       <div
         suppressHydrationWarning
-        className={`${sizeClass} rounded-full bg-[#0E342B] dark:bg-[#18181b] text-[#8EAAA1] dark:text-[#A1A1AA] flex items-center justify-center shrink-0 select-none shadow-xs ${
-          showBorder ? "border-2 border-white/20 dark:border-white/10" : ""
+        className={`${sizeClass} rounded-full bg-[#0E342B] dark:bg-[#131916] text-[#8EAAA1] dark:text-[#9DB9B0] flex items-center justify-center shrink-0 select-none shadow-xs ${
+          showBorder ? "border-2 border-white/20 dark:border-[#1C463C]/10" : ""
         } ${className}`}
         title="Sanctuary Member"
         aria-label="Member"
@@ -93,8 +93,8 @@ export default function UserAvatar({
   if (authLoading && !user && !explicitName && !explicitUser) {
     return (
       <div
-        className={`${sizeClass} rounded-full bg-white/10 dark:bg-[#18181b] animate-pulse shrink-0 select-none ${
-          showBorder ? "border-2 border-white/20 dark:border-white/10" : ""
+        className={`${sizeClass} rounded-full bg-white/10 dark:bg-[#131916] animate-pulse shrink-0 select-none ${
+          showBorder ? "border-2 border-white/20 dark:border-[#1C463C]/10" : ""
         } ${className}`}
         aria-hidden="true"
       />
@@ -109,7 +109,7 @@ export default function UserAvatar({
         alt={displayName || "Avatar"}
         onError={() => setHasError(true)}
         className={`${sizeClass} rounded-full object-cover shrink-0 select-none ${
-          showBorder ? "border-2 border-white/20 dark:border-white/10" : ""
+          showBorder ? "border-2 border-white/20 dark:border-[#1C463C]/10" : ""
         } ${className}`}
       />
     );
@@ -120,8 +120,8 @@ export default function UserAvatar({
     return (
       <div
         suppressHydrationWarning
-        className={`${sizeClass} rounded-full bg-[#0E342B] dark:bg-[#18181b] text-[#8EAAA1] dark:text-[#A1A1AA] flex items-center justify-center shrink-0 select-none shadow-xs ${
-          showBorder ? "border-2 border-white/20 dark:border-white/10" : ""
+        className={`${sizeClass} rounded-full bg-[#0E342B] dark:bg-[#131916] text-[#8EAAA1] dark:text-[#9DB9B0] flex items-center justify-center shrink-0 select-none shadow-xs ${
+          showBorder ? "border-2 border-white/20 dark:border-[#1C463C]/10" : ""
         } ${className}`}
         title="Guest Sanctuary Member"
         aria-label="Guest"
@@ -142,7 +142,7 @@ export default function UserAvatar({
       suppressHydrationWarning
       style={{ backgroundColor: palette.bg, color: palette.text }}
       className={`${sizeClass} rounded-full font-heading font-black flex items-center justify-center tracking-wider shrink-0 select-none shadow-xs ${
-        showBorder ? "border-2 border-white/30 dark:border-white/20" : ""
+        showBorder ? "border-2 border-white/30 dark:border-[#1C463C]" : ""
       } ${className}`}
       title={displayName}
       aria-label={displayName}

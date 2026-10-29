@@ -202,7 +202,7 @@ export default function BlogPage() {
   };
 
   return (
-    <div className="min-h-screen bg-surface dark:bg-[#09090b] text-on-surface dark:text-white select-none relative overflow-hidden">
+    <div className="min-h-screen bg-surface dark:bg-[#0A0E0D] text-on-surface dark:text-[#F4FAF7] select-none relative overflow-hidden">
       {/* ═══ 1. HERO HEADER ═══ */}
       <section className="relative pt-14 pb-12 md:pt-20 md:pb-16 px-6 max-w-5xl mx-auto text-center space-y-6">
         {/* Glows */}
@@ -227,7 +227,7 @@ export default function BlogPage() {
 
         {/* Search Input */}
         <div className="max-w-md mx-auto pt-2">
-          <div className="flex items-center gap-2 bg-surface-container-lowest dark:bg-[#121214] border border-surface-variant/40 dark:border-[#27272a] rounded-full px-4 py-2.5 shadow-sm focus-within:border-primary/40 transition-colors">
+          <div className="flex items-center gap-2 bg-surface-container-lowest dark:bg-[#131916] border border-surface-variant/40 dark:border-[#1E2824] rounded-full px-4 py-2.5 shadow-sm focus-within:border-primary/40 transition-colors">
             <span className="material-symbols-outlined text-on-surface-variant text-xl">search</span>
             <input
               type="text"
@@ -259,8 +259,8 @@ export default function BlogPage() {
                 onClick={() => setSelectedCategory(cat)}
                 className={`px-4 py-2 rounded-full text-xs font-heading font-bold transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/40 focus:ring-offset-2 active:scale-95 ${
                   isActive
-                    ? "bg-primary text-white shadow-sm scale-105 dark:bg-white dark:text-black"
-                    : "bg-surface-container-lowest dark:bg-[#121214] dark:bg-[#18181b] hover:bg-surface-container dark:hover:bg-[#27272a] text-on-surface-variant dark:text-[#A1A1AA] border border-surface-variant/40 dark:border-[#27272a]"
+                    ? "bg-primary text-white shadow-sm scale-105 dark:bg-[#5FAF8A] dark:text-[#112F28]"
+                    : "bg-surface-container-lowest dark:bg-[#131916] dark:bg-[#131916] hover:bg-surface-container dark:hover:bg-[#22302A] text-on-surface-variant dark:text-[#9DB9B0] border border-surface-variant/40 dark:border-[#1E2824]"
                 }`}
               >
                 {cat}
@@ -275,7 +275,7 @@ export default function BlogPage() {
         <section className="px-6 max-w-6xl mx-auto pb-12">
           <div
             onClick={() => setActiveArticle(featuredPost)}
-            className="group rounded-[32px] bg-surface-container-lowest dark:bg-[#121214] border border-surface-variant/40 dark:border-[#27272a] shadow-card-lift p-8 sm:p-12 hover:border-primary/40 transition-all duration-300 cursor-pointer text-left space-y-6 relative overflow-hidden"
+            className="group rounded-[32px] bg-surface-container-lowest dark:bg-[#131916] border border-surface-variant/40 dark:border-[#1E2824] shadow-card-lift p-8 sm:p-12 hover:border-primary/40 transition-all duration-300 cursor-pointer text-left space-y-6 relative overflow-hidden"
           >
             <div className="flex items-center justify-between flex-wrap gap-3">
               <div className="flex items-center gap-2">
@@ -334,7 +334,7 @@ export default function BlogPage() {
       {/* ═══ 4. ARTICLES DEMO STACK GRID ═══ */}
       <section className="px-6 max-w-6xl mx-auto pb-16">
         {filteredPosts.length === 0 ? (
-          <div className="p-12 rounded-[28px] bg-surface-container-lowest dark:bg-[#121214] border border-surface-variant/40 dark:border-[#27272a] text-center space-y-3">
+          <div className="p-12 rounded-[28px] bg-surface-container-lowest dark:bg-[#131916] border border-surface-variant/40 dark:border-[#1E2824] text-center space-y-3">
             <span className="material-symbols-outlined text-4xl text-on-surface-variant/50">search_off</span>
             <h3 className="font-heading font-bold text-lg text-on-surface">No articles found</h3>
             <p className="text-xs text-on-surface-variant">Try selecting a different category or clearing your search term.</p>
@@ -345,7 +345,7 @@ export default function BlogPage() {
               <div
                 key={post.id}
                 onClick={() => setActiveArticle(post)}
-                className="group p-6 sm:p-7 rounded-[28px] bg-surface-container-lowest dark:bg-[#121214] border border-surface-variant/40 dark:border-[#27272a] shadow-xs hover:shadow-card-lift hover:border-primary/40 transition-all duration-300 flex flex-col justify-between text-left cursor-pointer space-y-4"
+                className="group p-6 sm:p-7 rounded-[28px] bg-surface-container-lowest dark:bg-[#131916] border border-surface-variant/40 dark:border-[#1E2824] shadow-xs hover:shadow-card-lift hover:border-primary/40 transition-all duration-300 flex flex-col justify-between text-left cursor-pointer space-y-4"
               >
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
@@ -427,11 +427,11 @@ export default function BlogPage() {
                   onChange={(e) => setNewsletterEmail(e.target.value)}
                   placeholder="Enter your personal email..."
                   required
-                  className="w-full sm:w-64 px-4 py-3 rounded-full bg-surface-container-lowest dark:bg-[#121214] border border-surface-variant/40 dark:border-[#27272a] text-xs text-on-surface outline-none focus:border-primary/40 shadow-xs"
+                  className="w-full sm:w-64 px-4 py-3 rounded-full bg-surface-container-lowest dark:bg-[#131916] border border-surface-variant/40 dark:border-[#1E2824] text-xs text-on-surface outline-none focus:border-primary/40 shadow-xs"
                 />
                 <button
                   type="submit"
-                  className="w-full sm:w-auto px-6 py-3 rounded-full bg-primary hover:bg-primary-purple text-white dark:bg-white dark:hover:bg-zinc-200 dark:text-black dark:hover:text-black font-heading font-bold text-xs shadow-md transition-all shrink-0 cursor-pointer"
+                  className="w-full sm:w-auto px-6 py-3 rounded-full bg-primary hover:bg-primary-purple text-white dark:bg-[#5FAF8A] dark:hover:bg-[#006B56] dark:text-[#112F28] dark:hover:text-[#F4FAF7] font-heading font-bold text-xs shadow-md transition-all shrink-0 cursor-pointer"
                 >
                   Join Free
                 </button>
@@ -457,7 +457,7 @@ export default function BlogPage() {
               exit={{ opacity: 0, y: 20, scale: 0.95 }}
               transition={{ duration: 0.25 }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-2xl max-h-[85vh] overflow-y-auto bg-surface-container-lowest dark:bg-[#121214] rounded-[32px] border border-surface-variant/40 dark:border-[#27272a] shadow-2xl p-6 sm:p-10 space-y-6 text-left"
+              className="w-full max-w-2xl max-h-[85vh] overflow-y-auto bg-surface-container-lowest dark:bg-[#131916] rounded-[32px] border border-surface-variant/40 dark:border-[#1E2824] shadow-2xl p-6 sm:p-10 space-y-6 text-left"
             >
               <div className="flex items-center justify-between border-b border-surface-variant/20 pb-4">
                 <button
@@ -516,7 +516,7 @@ export default function BlogPage() {
                 </p>
                 <button
                   onClick={() => setActiveArticle(null)}
-                  className="px-5 py-2 rounded-full bg-primary hover:bg-primary-purple text-white dark:bg-white dark:hover:bg-zinc-200 dark:text-black dark:hover:text-black text-xs font-heading font-bold shadow-xs transition-all cursor-pointer"
+                  className="px-5 py-2 rounded-full bg-primary hover:bg-primary-purple text-white dark:bg-[#5FAF8A] dark:hover:bg-[#006B56] dark:text-[#112F28] dark:hover:text-[#F4FAF7] text-xs font-heading font-bold shadow-xs transition-all cursor-pointer"
                 >
                   Done Reading
                 </button>

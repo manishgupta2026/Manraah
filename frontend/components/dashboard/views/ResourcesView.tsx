@@ -110,15 +110,15 @@ export default function ResourcesView() {
   return (
     <div className="w-full min-w-0 flex flex-col gap-5">
       {/* 1. Header Banner */}
-      <div className="bg-white dark:bg-[#121214] rounded-3xl p-6 sm:p-7 border border-[#CBECE2] dark:border-[#27272a] shadow-2xs space-y-4 transition-colors">
+      <div className="bg-white dark:bg-[#131916] rounded-3xl p-6 sm:p-7 border border-[#CBECE2] dark:border-[#1E2824] shadow-2xs space-y-4 transition-colors">
         <div>
-          <span className="text-[10px] font-black tracking-widest text-[#006B56] dark:text-zinc-200">
+          <span className="text-[10px] font-black tracking-widest text-[#006B56] dark:text-[#D5E6E0]">
             Evidence-based guides
           </span>
-          <h1 className="text-2xl font-heading font-black text-[#19332A] dark:text-white leading-tight mt-0.5">
+          <h1 className="text-2xl font-heading font-black text-[#19332A] dark:text-[#F4FAF7] leading-tight mt-0.5">
             Resources
           </h1>
-          <p className="text-xs text-[#6B857C] dark:text-[#A1A1AA] font-medium mt-1">
+          <p className="text-xs text-[#6B857C] dark:text-[#9DB9B0] font-medium mt-1">
             Explore tools and guidance curated for your well-being.
           </p>
         </div>
@@ -130,7 +130,7 @@ export default function ResourcesView() {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search articles, CBT guides, sleep science..."
-            className="w-full py-2.5 pl-10 pr-4 rounded-full bg-[#F8FCFA] dark:bg-[#18181b] border border-[#CBECE2] dark:border-[#27272a] text-xs text-[#19332A] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#006B56]/40 dark:focus:ring-zinc-400/30 placeholder:text-[#8EAAA1] dark:placeholder:text-[#789990]"
+            className="w-full py-2.5 pl-10 pr-4 rounded-full bg-[#F8FCFA] dark:bg-[#131916] border border-[#CBECE2] dark:border-[#1E2824] text-xs text-[#19332A] dark:text-[#F4FAF7] focus:outline-none focus:ring-2 focus:ring-[#006B56]/40 dark:focus:ring-[#5FAF8A]/30 placeholder:text-[#8EAAA1] dark:placeholder:text-[#76968D]"
           />
           <svg className="w-4 h-4 absolute left-3.5 top-3 text-[#8EAAA1] dark:text-[#789990]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -145,8 +145,8 @@ export default function ResourcesView() {
               onClick={() => setSelectedCategory(cat)}
               className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all whitespace-nowrap cursor-pointer border ${
                 selectedCategory === cat
-                  ? "bg-[#006B56] text-white border-[#006B56] dark:bg-white dark:text-black dark:border-white/20 shadow-xs"
-                  : "bg-[#F4F9F6] dark:bg-[#18181b] text-[#4F685F] dark:text-[#A1A1AA] border-[#CBECE2] dark:border-[#27272a] hover:bg-[#E6F4F0] dark:hover:bg-[#27272a]"
+                  ? "bg-[#006B56] text-white border-[#006B56] dark:bg-[#5FAF8A] dark:text-[#112F28] dark:border-[#1C463C] shadow-xs"
+                  : "bg-[#F4F9F6] dark:bg-[#131916] text-[#4F685F] dark:text-[#9DB9B0] border-[#CBECE2] dark:border-[#1E2824] hover:bg-[#E6F4F0] dark:hover:bg-[#22302A]"
               }`}
             >
               {cat === "Saved" ? `🔖 Saved (${savedIds.length})` : cat}
@@ -157,30 +157,30 @@ export default function ResourcesView() {
 
       {/* 2. Featured Resource Banner */}
       {selectedCategory === "All" && !searchTerm && (
-        <div className="bg-gradient-to-br from-[#E6F4F0] to-[#EAF6F2] dark:from-[#18181b] dark:to-[#121214] rounded-3xl p-6 sm:p-7 border border-[#CBECE2] dark:border-[#27272a] shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-5 transition-colors">
+        <div className="bg-gradient-to-br from-[#E6F4F0] to-[#EAF6F2] dark:from-[#18181b] dark:to-[#121214] rounded-3xl p-6 sm:p-7 border border-[#CBECE2] dark:border-[#1E2824] shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-5 transition-colors">
           <div className="space-y-2 max-w-xl">
             <div className="flex items-center gap-2">
-              <span className="px-2.5 py-0.5 rounded-full bg-[#006B56] text-white dark:bg-white dark:text-black text-[9.5px] font-extrabold tracking-wide">
+              <span className="px-2.5 py-0.5 rounded-full bg-[#006B56] text-white dark:bg-[#5FAF8A] dark:text-[#112F28] text-[9.5px] font-extrabold tracking-wide">
                 Featured Guide
               </span>
-              <span className="text-[10.5px] text-[#6B857C] dark:text-[#A1A1AA] font-semibold">
+              <span className="text-[10.5px] text-[#6B857C] dark:text-[#9DB9B0] font-semibold">
                 {featuredResource.readTime}
               </span>
             </div>
-            <h2 className="text-lg sm:text-xl font-heading font-black text-[#004D3D] dark:text-white leading-snug">
+            <h2 className="text-lg sm:text-xl font-heading font-black text-[#004D3D] dark:text-[#F4FAF7] leading-snug">
               {featuredResource.title}
             </h2>
             <p className="text-xs text-[#4F685F] dark:text-[#E4E4E7] leading-relaxed">
               {featuredResource.summary}
             </p>
-            <p className="text-[10px] text-[#789389] dark:text-[#71717A] font-bold pt-1">
+            <p className="text-[10px] text-[#789389] dark:text-[#76968D] font-bold pt-1">
               By {featuredResource.author}
             </p>
           </div>
 
           <button
             onClick={() => setReadingResource(featuredResource)}
-            className="py-3 px-6 rounded-full bg-[#006B56] hover:bg-[#005B48] text-white dark:bg-white dark:hover:bg-zinc-200 dark:text-black dark:hover:text-black text-xs font-bold shadow-md transition-all flex items-center justify-center gap-2 group cursor-pointer shrink-0 self-start md:self-auto"
+            className="py-3 px-6 rounded-full bg-[#006B56] hover:bg-[#005B48] text-white dark:bg-[#5FAF8A] dark:hover:bg-[#006B56] dark:text-[#112F28] dark:hover:text-[#F4FAF7] text-xs font-bold shadow-md transition-all flex items-center justify-center gap-2 group cursor-pointer shrink-0 self-start md:self-auto"
           >
             <span>Read Guide</span>
             <span className="transition-transform group-hover:translate-x-1">→</span>
@@ -196,15 +196,15 @@ export default function ResourcesView() {
             <div
               key={res.id}
               onClick={() => setReadingResource(res)}
-              className="p-5 sm:p-6 rounded-3xl bg-white dark:bg-[#121214] border border-[#CBECE2] dark:border-[#27272a] shadow-2xs flex flex-col justify-between space-y-4 hover:border-[#006B56]/50 dark:hover:border-white/30 hover:bg-[#F8FCFA] dark:hover:bg-[#27272a] hover:shadow-md transition-all cursor-pointer group"
+              className="p-5 sm:p-6 rounded-3xl bg-white dark:bg-[#131916] border border-[#CBECE2] dark:border-[#1E2824] shadow-2xs flex flex-col justify-between space-y-4 hover:border-[#006B56]/50 dark:hover:border-white/30 hover:bg-[#F8FCFA] dark:hover:bg-[#22302A] hover:shadow-md transition-all cursor-pointer group"
             >
               <div className="space-y-2.5">
                 <div className="flex items-center justify-between">
-                  <span className="px-2.5 py-0.5 rounded-full bg-[#E6F4F0] dark:bg-[#18181b] text-[#006B56] dark:text-zinc-200 text-[10px] font-bold border border-transparent dark:border-[#27272a]">
+                  <span className="px-2.5 py-0.5 rounded-full bg-[#E6F4F0] dark:bg-[#131916] text-[#006B56] dark:text-[#D5E6E0] text-[10px] font-bold border border-transparent dark:border-[#1E2824]">
                     {res.category}
                   </span>
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] text-[#789389] dark:text-[#71717A] font-semibold">
+                    <span className="text-[10px] text-[#789389] dark:text-[#76968D] font-semibold">
                       {res.readTime}
                     </span>
                     <button
@@ -220,7 +220,7 @@ export default function ResourcesView() {
                   </div>
                 </div>
 
-                <h3 className="text-sm sm:text-base font-heading font-black text-[#19332A] dark:text-white leading-snug group-hover:text-[#006C56] dark:group-hover:text-white transition-colors">
+                <h3 className="text-sm sm:text-base font-heading font-black text-[#19332A] dark:text-[#F4FAF7] leading-snug group-hover:text-[#006C56] dark:group-hover:text-white transition-colors">
                   {res.title}
                 </h3>
                 <p className="text-xs text-[#4F685F] dark:text-[#E4E4E7] leading-relaxed line-clamp-3">
@@ -228,11 +228,11 @@ export default function ResourcesView() {
                 </p>
               </div>
 
-              <div className="flex items-center justify-between pt-3 border-t border-[#E2ECE6] dark:border-[#27272a] text-xs">
-                <span className="text-[10px] text-[#789389] dark:text-[#71717A] font-medium">
+              <div className="flex items-center justify-between pt-3 border-t border-[#E2ECE6] dark:border-[#1E2824] text-xs">
+                <span className="text-[10px] text-[#789389] dark:text-[#76968D] font-medium">
                   By {res.author}
                 </span>
-                <span className="text-xs font-bold text-[#006C56] dark:text-zinc-200 flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
+                <span className="text-xs font-bold text-[#006C56] dark:text-[#D5E6E0] flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
                   <span>Read Guide</span>
                   <span>→</span>
                 </span>
@@ -243,10 +243,10 @@ export default function ResourcesView() {
       </div>
 
       {filteredResources.length === 0 && (
-        <div className="p-12 text-center rounded-3xl bg-white dark:bg-[#121214] border border-[#E2ECE6] dark:border-[#27272a] space-y-2">
+        <div className="p-12 text-center rounded-3xl bg-white dark:bg-[#131916] border border-[#E2ECE6] dark:border-[#1E2824] space-y-2">
           <span className="text-3xl">🔍</span>
-          <h3 className="text-sm font-bold text-[#19332A] dark:text-white">No guides found</h3>
-          <p className="text-xs text-[#6B857C] dark:text-[#A1A1AA]">
+          <h3 className="text-sm font-bold text-[#19332A] dark:text-[#F4FAF7]">No guides found</h3>
+          <p className="text-xs text-[#6B857C] dark:text-[#9DB9B0]">
             Try adjusting your search terms or selecting a different category.
           </p>
         </div>
@@ -255,24 +255,24 @@ export default function ResourcesView() {
       {/* Reading Modal */}
       {readingResource && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-xs">
-          <div className="bg-white dark:bg-[#121214] rounded-3xl p-6 sm:p-8 max-w-2xl w-full max-h-[85vh] overflow-y-auto border border-[#E2ECE6] dark:border-[#27272a] shadow-2xl space-y-5">
-            <div className="flex items-center justify-between pb-3 border-b border-[#E2ECE6] dark:border-[#27272a]">
-              <span className="px-2.5 py-0.5 rounded-full bg-[#EAF6F0] dark:bg-white/5 text-[#006C56] dark:text-zinc-200 text-[10px] font-bold border border-transparent dark:border-[#27272a]">
+          <div className="bg-white dark:bg-[#131916] rounded-3xl p-6 sm:p-8 max-w-2xl w-full max-h-[85vh] overflow-y-auto border border-[#E2ECE6] dark:border-[#1E2824] shadow-2xl space-y-5">
+            <div className="flex items-center justify-between pb-3 border-b border-[#E2ECE6] dark:border-[#1E2824]">
+              <span className="px-2.5 py-0.5 rounded-full bg-[#EAF6F0] dark:bg-white/5 text-[#006C56] dark:text-[#D5E6E0] text-[10px] font-bold border border-transparent dark:border-[#1E2824]">
                 {readingResource.category} • {readingResource.readTime}
               </span>
               <button
                 onClick={() => setReadingResource(null)}
-                className="w-7 h-7 rounded-full bg-[#F4FAF7] dark:bg-[#18181b] text-[#4F685F] dark:text-[#A1A1AA] flex items-center justify-center hover:bg-[#E2ECE6] dark:hover:bg-[#27272a] dark:hover:text-[#F4FAF7] transition-colors cursor-pointer text-xs"
+                className="w-7 h-7 rounded-full bg-[#F4FAF7] dark:bg-[#131916] text-[#4F685F] dark:text-[#9DB9B0] flex items-center justify-center hover:bg-[#E2ECE6] dark:hover:bg-[#22302A] dark:hover:text-[#F4FAF7] transition-colors cursor-pointer text-xs"
               >
                 ✕
               </button>
             </div>
 
             <div className="space-y-2">
-              <h2 className="text-xl sm:text-2xl font-heading font-black text-[#19332A] dark:text-white">
+              <h2 className="text-xl sm:text-2xl font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
                 {readingResource.title}
               </h2>
-              <p className="text-xs text-[#789389] dark:text-[#71717A]">
+              <p className="text-xs text-[#789389] dark:text-[#76968D]">
                 Authored by {readingResource.author} • Licensed Mental Health Practitioner
               </p>
             </div>
@@ -281,7 +281,7 @@ export default function ResourcesView() {
               <p>
                 {readingResource.summary}
               </p>
-              <p className="font-semibold text-[#19332A] dark:text-white">
+              <p className="font-semibold text-[#19332A] dark:text-[#F4FAF7]">
                 Key Psychoeducation Takeaways:
               </p>
               <ul className="list-disc pl-5 space-y-1.5 text-xs text-[#3E554D] dark:text-[#E4E4E7]">
@@ -294,16 +294,16 @@ export default function ResourcesView() {
               </p>
             </div>
 
-            <div className="pt-4 border-t border-[#E2ECE6] dark:border-[#27272a] flex items-center justify-between">
+            <div className="pt-4 border-t border-[#E2ECE6] dark:border-[#1E2824] flex items-center justify-between">
               <button
                 onClick={(e) => toggleBookmark(readingResource.id, e)}
-                className="text-xs font-bold text-[#006C56] dark:text-zinc-200 flex items-center gap-1.5 cursor-pointer"
+                className="text-xs font-bold text-[#006C56] dark:text-[#D5E6E0] flex items-center gap-1.5 cursor-pointer"
               >
                 <span>{savedIds.includes(readingResource.id) ? "★ Saved in Bookmarks" : "☆ Save to Bookmarks"}</span>
               </button>
               <button
                 onClick={() => setReadingResource(null)}
-                className="px-5 py-2.5 rounded-full bg-[#006B56] hover:bg-[#005B48] text-white dark:bg-white dark:hover:bg-zinc-200 dark:text-black dark:hover:text-black text-xs font-bold shadow-sm transition-all cursor-pointer"
+                className="px-5 py-2.5 rounded-full bg-[#006B56] hover:bg-[#005B48] text-white dark:bg-[#5FAF8A] dark:hover:bg-[#006B56] dark:text-[#112F28] dark:hover:text-[#F4FAF7] text-xs font-bold shadow-sm transition-all cursor-pointer"
               >
                 Close Guide
               </button>

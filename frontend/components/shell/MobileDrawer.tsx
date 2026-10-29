@@ -70,7 +70,7 @@ export default function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
                   className={`flex items-center gap-3.5 px-4 py-3 rounded-full text-sm font-medium transition-all duration-200 ${
                     isActive
                       ? "bg-[#006B56] text-white shadow-md shadow-[#006B56]/20 font-bold"
-                      : "text-[#4F685F] dark:text-[#A1A1AA] hover:bg-[#E6F4F0] hover:text-[#006B56]"
+                      : "text-[#4F685F] dark:text-[#9DB9B0] hover:bg-[#E6F4F0] hover:text-[#006B56]"
                   }`}
                 >
                   <span className={`material-symbols-outlined text-xl shrink-0 ${isActive ? "text-white dark:text-[#A3A77A]" : "text-[#006B56] dark:text-[#A3A77A]"}`}>

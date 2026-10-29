@@ -26,21 +26,21 @@ export default function WellnessBreakdownModal() {
         initial={{ opacity: 0, scale: 0.95, y: 15 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 15 }}
-        className="bg-white dark:bg-[#121214] border border-[#E2ECE6] dark:border-[#27272a] rounded-3xl w-full max-w-xl p-6 sm:p-8 shadow-2xl relative overflow-hidden flex flex-col max-h-[90vh]"
+        className="bg-white dark:bg-[#131916] border border-[#E2ECE6] dark:border-[#1E2824] rounded-3xl w-full max-w-xl p-6 sm:p-8 shadow-2xl relative overflow-hidden flex flex-col max-h-[90vh]"
       >
         {/* Header */}
-        <div className="flex items-center justify-between pb-4 border-b border-[#E2ECE6] dark:border-[#27272a]">
+        <div className="flex items-center justify-between pb-4 border-b border-[#E2ECE6] dark:border-[#1E2824]">
           <div>
-            <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#006C56] dark:text-zinc-200">
+            <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#006C56] dark:text-[#D5E6E0]">
               YOUR WELLNESS
             </span>
-            <h2 className="text-xl font-heading font-black text-[#19332A] dark:text-white leading-tight">
+            <h2 className="text-xl font-heading font-black text-[#19332A] dark:text-[#F4FAF7] leading-tight">
               {currentCategoryName}
             </h2>
           </div>
           <button
             onClick={closeBreakdownModal}
-            className="w-8 h-8 rounded-full bg-[#F4FAF7] dark:bg-[#18181b] text-[#4F685F] dark:text-[#A1A1AA] flex items-center justify-center hover:bg-[#E2ECE6] dark:hover:bg-[#27272a] dark:hover:text-[#F4FAF7] transition-colors cursor-pointer"
+            className="w-8 h-8 rounded-full bg-[#F4FAF7] dark:bg-[#131916] text-[#4F685F] dark:text-[#9DB9B0] flex items-center justify-center hover:bg-[#E2ECE6] dark:hover:bg-[#22302A] dark:hover:text-[#F4FAF7] transition-colors cursor-pointer"
             aria-label="Close"
           >
             ✕
@@ -50,24 +50,24 @@ export default function WellnessBreakdownModal() {
         {/* Modal Body */}
         <div className="flex-1 overflow-y-auto py-5 space-y-6">
           {/* Active Category Card */}
-          <div className="p-5 rounded-2xl bg-[#F8FCFA] dark:bg-[#18181b] border border-[#E2ECE6] dark:border-[#27272a] flex flex-col sm:flex-row items-center justify-between gap-5">
+          <div className="p-5 rounded-2xl bg-[#F8FCFA] dark:bg-[#131916] border border-[#E2ECE6] dark:border-[#1E2824] flex flex-col sm:flex-row items-center justify-between gap-5">
             <div className="flex items-center gap-4">
               {/* Ring or Badge */}
-              <div className="w-16 h-16 rounded-2xl bg-[#EAF6F0] dark:bg-[#121214] text-[#006C56] dark:text-zinc-200 border border-[#D2EAE0] dark:border-[#27272a] flex items-center justify-center font-heading font-black text-2xl shadow-xs shrink-0">
+              <div className="w-16 h-16 rounded-2xl bg-[#EAF6F0] dark:bg-[#131916] text-[#006C56] dark:text-[#D5E6E0] border border-[#D2EAE0] dark:border-[#1E2824] flex items-center justify-center font-heading font-black text-2xl shadow-xs shrink-0">
                 {isCurrentAssessed && currentScore !== null ? `${currentScore}%` : "--"}
               </div>
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
-                  <h3 className="text-sm font-heading font-bold text-[#19332A] dark:text-white">
+                  <h3 className="text-sm font-heading font-bold text-[#19332A] dark:text-[#F4FAF7]">
                     Current Wellness Score
                   </h3>
                   {isCurrentAssessed && (
-                    <span className="px-2 py-0.5 rounded-full bg-[#008968]/10 dark:bg-white/5 text-[#008968] dark:text-zinc-200 text-[9.5px] font-bold">
+                    <span className="px-2 py-0.5 rounded-full bg-[#008968]/10 dark:bg-white/5 text-[#008968] dark:text-[#D5E6E0] text-[9.5px] font-bold">
                       {levelBadge}
                     </span>
                   )}
                 </div>
-                <p className="text-xs text-[#6B857C] dark:text-[#A1A1AA] leading-relaxed">
+                <p className="text-xs text-[#6B857C] dark:text-[#9DB9B0] leading-relaxed">
                   {isCurrentAssessed
                     ? `Based on your latest 5-question ${currentCategoryName} wellness check.`
                     : `Your wellness score for ${currentCategoryName} hasn't been calculated yet.`}
@@ -80,7 +80,7 @@ export default function WellnessBreakdownModal() {
                 closeBreakdownModal();
                 openAssessment(currentCategory);
               }}
-              className="px-4 py-2 rounded-xl bg-[#006C56] hover:bg-[#005241] dark:bg-white dark:text-black dark:hover:bg-zinc-200 text-white text-xs font-bold transition-all shrink-0 cursor-pointer shadow-xs w-full sm:w-auto text-center"
+              className="px-4 py-2 rounded-xl bg-[#006C56] hover:bg-[#005241] dark:bg-[#5FAF8A] dark:text-[#112F28] dark:hover:bg-[#006B56] dark:hover:text-[#F4FAF7] text-white text-xs font-bold transition-all shrink-0 cursor-pointer shadow-xs w-full sm:w-auto text-center"
             >
               {isCurrentAssessed ? "Retake Check-In" : "Start Wellness Check"}
             </button>
@@ -89,10 +89,10 @@ export default function WellnessBreakdownModal() {
           {/* All 5 Life-Stage Paths Switcher / Overview */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <h4 className="text-xs font-heading font-black text-[#19332A] dark:text-white uppercase tracking-wider">
+              <h4 className="text-xs font-heading font-black text-[#19332A] dark:text-[#F4FAF7] uppercase tracking-wider">
                 Your Life-Stage Paths
               </h4>
-              <span className="text-[10px] text-[#789389] dark:text-[#A1A1AA] font-medium">
+              <span className="text-[10px] text-[#789389] dark:text-[#9DB9B0] font-medium">
                 Independent scores preserved per category
               </span>
             </div>
@@ -107,12 +107,12 @@ export default function WellnessBreakdownModal() {
                     key={cat.id}
                     className={`p-3.5 rounded-2xl border transition-all flex items-center justify-between gap-3 ${
                       isCurrent
-                        ? "bg-[#EAF6F0]/60 dark:bg-[#18181b] border-[#008968]/60 dark:border-white/20"
-                        : "bg-[#F8FCFA] dark:bg-[#18181b] border-[#E2ECE6] dark:border-[#27272a]"
+                        ? "bg-[#EAF6F0]/60 dark:bg-[#131916] border-[#008968]/60 dark:border-[#1C463C]"
+                        : "bg-[#F8FCFA] dark:bg-[#131916] border-[#E2ECE6] dark:border-[#1E2824]"
                     }`}
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-xl bg-white dark:bg-[#121214] border border-[#E2ECE6] dark:border-[#27272a] flex items-center justify-center text-base shrink-0">
+                      <div className="w-9 h-9 rounded-xl bg-white dark:bg-[#131916] border border-[#E2ECE6] dark:border-[#1E2824] flex items-center justify-center text-base shrink-0">
                         {cat.icon === "school"
                           ? "🎓"
                           : cat.icon === "family_restroom"
@@ -125,7 +125,7 @@ export default function WellnessBreakdownModal() {
                       </div>
                       <div>
                         <div className="flex items-center gap-2">
-                          <h5 className="text-xs font-bold text-[#19332A] dark:text-white">
+                          <h5 className="text-xs font-bold text-[#19332A] dark:text-[#F4FAF7]">
                             {cat.name}
                           </h5>
                           {isCurrent && (
@@ -134,14 +134,14 @@ export default function WellnessBreakdownModal() {
                             </span>
                           )}
                         </div>
-                        <p className="text-[10px] text-[#789389] dark:text-[#A1A1AA]">
+                        <p className="text-[10px] text-[#789389] dark:text-[#9DB9B0]">
                           {hasScore ? `Completed • Score: ${cat.score}%` : "Not assessed yet"}
                         </p>
                       </div>
                     </div>
 
                     <div className="flex items-center gap-2.5">
-                      <span className={`text-xs font-black font-heading ${hasScore ? "text-[#008968] dark:text-zinc-200" : "text-[#A9C5BC] dark:text-[#71717A]"}`}>
+                      <span className={`text-xs font-black font-heading ${hasScore ? "text-[#008968] dark:text-[#D5E6E0]" : "text-[#A9C5BC] dark:text-[#76968D]"}`}>
                         {hasScore ? `${cat.score}%` : "--"}
                       </span>
                       <button
@@ -149,7 +149,7 @@ export default function WellnessBreakdownModal() {
                           closeBreakdownModal();
                           openAssessment(cat.id);
                         }}
-                        className="px-2.5 py-1 rounded-lg text-[10.5px] font-bold text-[#006C56] dark:text-zinc-200 hover:bg-[#EAF6F0] dark:hover:bg-[#27272a] transition-colors cursor-pointer"
+                        className="px-2.5 py-1 rounded-lg text-[10.5px] font-bold text-[#006C56] dark:text-[#D5E6E0] hover:bg-[#EAF6F0] dark:hover:bg-[#22302A] transition-colors cursor-pointer"
                       >
                         {hasScore ? "Retake →" : "Assess →"}
                       </button>
@@ -162,10 +162,10 @@ export default function WellnessBreakdownModal() {
         </div>
 
         {/* Footer */}
-        <div className="pt-3 border-t border-[#E2ECE6] dark:border-[#27272a] text-right">
+        <div className="pt-3 border-t border-[#E2ECE6] dark:border-[#1E2824] text-right">
           <button
             onClick={closeBreakdownModal}
-            className="px-4 py-2 rounded-xl bg-[#F4FAF7] dark:bg-[#18181b] dark:border dark:border-[#27272a] text-[#19332A] dark:text-white text-xs font-bold hover:bg-[#E2ECE6] dark:hover:bg-[#27272a] transition-colors cursor-pointer"
+            className="px-4 py-2 rounded-xl bg-[#F4FAF7] dark:bg-[#131916] dark:border dark:border-[#1E2824] text-[#19332A] dark:text-[#F4FAF7] text-xs font-bold hover:bg-[#E2ECE6] dark:hover:bg-[#22302A] transition-colors cursor-pointer"
           >
             Close
           </button>

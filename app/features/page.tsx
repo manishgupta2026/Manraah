@@ -198,7 +198,7 @@ function FeaturesContent() {
   const currentFeature = FEATURES_DATA[selectedPillar];
 
   return (
-    <div className="min-h-screen bg-surface dark:bg-[#09090b] text-on-surface dark:text-white font-sans py-12 md:py-20 px-4 sm:px-6 lg:px-12 select-none overflow-x-hidden">
+    <div className="min-h-screen bg-surface dark:bg-[#0A0E0D] text-on-surface dark:text-[#F4FAF7] font-sans py-12 md:py-20 px-4 sm:px-6 lg:px-12 select-none overflow-x-hidden">
       <div className="max-w-6xl mx-auto space-y-16 md:space-y-24">
 
         {/* ═══ 1. HEADER HERO ═══ */}
@@ -216,7 +216,7 @@ function FeaturesContent() {
           <div className="pt-0.5 flex items-center justify-center gap-3">
             <Link
               href="/how-it-works"
-              className="px-8 py-4 rounded-full bg-primary hover:bg-primary-purple text-white dark:bg-white dark:hover:bg-zinc-200 dark:text-black dark:hover:text-black font-heading font-bold text-sm shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all inline-flex items-center gap-2 cursor-pointer"
+              className="px-8 py-4 rounded-full bg-primary hover:bg-primary-purple text-white dark:bg-[#5FAF8A] dark:hover:bg-[#006B56] dark:text-[#112F28] dark:hover:text-[#F4FAF7] font-heading font-bold text-sm shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all inline-flex items-center gap-2 cursor-pointer"
             >
               <span>See How It Works</span>
               <span className="material-symbols-outlined text-base group-hover:translate-x-1 transition-transform text-primary group-hover:text-white">arrow_forward</span>
@@ -244,8 +244,8 @@ function FeaturesContent() {
                     onClick={() => setSelectedPillar(idx)}
                     className={`px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-full text-xs font-heading font-bold whitespace-nowrap transition-all flex items-center gap-1.5 cursor-pointer shrink-0 ${
                       isActive
-                        ? "bg-on-surface text-white shadow-md scale-[1.03] dark:bg-white dark:text-black"
-                        : "bg-surface-container-lowest dark:bg-[#18181b] border border-surface-variant/40 dark:border-[#27272a] text-on-surface-variant dark:text-[#A1A1AA] hover:bg-surface-container dark:hover:bg-[#27272a] hover:text-on-surface dark:hover:text-[#F4FAF7]"
+                        ? "bg-on-surface text-white shadow-md scale-[1.03] dark:bg-[#5FAF8A] dark:text-[#112F28]"
+                        : "bg-surface-container-lowest dark:bg-[#131916] border border-surface-variant/40 dark:border-[#1E2824] text-on-surface-variant dark:text-[#9DB9B0] hover:bg-surface-container dark:hover:bg-[#22302A] hover:text-on-surface dark:hover:text-[#F4FAF7]"
                     }`}
                   >
                     <span className="material-symbols-outlined text-sm sm:text-base">{feat.icon}</span>
@@ -265,11 +265,11 @@ function FeaturesContent() {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
                 transition={{ duration: 0.35, ease: "easeOut" }}
-                className={`p-6 sm:p-10 md:p-12 rounded-[36px] border ${currentFeature.panelBg} dark:bg-[#121214] ${currentFeature.panelBorder} dark:border-[#27272a] shadow-card-lift grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center`}
+                className={`p-6 sm:p-10 md:p-12 rounded-[36px] border ${currentFeature.panelBg} dark:bg-[#131916] ${currentFeature.panelBorder} dark:border-[#1E2824] shadow-card-lift grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center`}
               >
                 {/* Left Column: Feature Details & Highlights */}
                 <div className="lg:col-span-7 space-y-6 text-left">
-                  <span className="px-3.5 py-1.5 rounded-full text-xs font-heading font-bold bg-surface-container-lowest dark:bg-[#18181b] text-on-surface dark:text-white border border-surface-variant/40 dark:border-[#27272a] uppercase tracking-widest inline-block shadow-xs">
+                  <span className="px-3.5 py-1.5 rounded-full text-xs font-heading font-bold bg-surface-container-lowest dark:bg-[#131916] text-on-surface dark:text-[#F4FAF7] border border-surface-variant/40 dark:border-[#1E2824] uppercase tracking-widest inline-block shadow-xs">
                     {currentFeature.badge}
                   </span>
 

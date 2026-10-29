@@ -19,7 +19,7 @@ export default function BottomCtaBand({
   variant = "green",
 }: BottomCtaBandProps) {
   return (
-    <section className={`w-full py-10 sm:py-14 px-4 sm:px-6 bg-surface dark:bg-[#09090b] transition-colors ${className}`}>
+    <section className={`w-full py-10 sm:py-14 px-4 sm:px-6 bg-surface dark:bg-[#0A0E0D] transition-colors ${className}`}>
       <div className="max-w-6xl mx-auto">
         <div
           className="p-6 sm:p-10 lg:p-14 rounded-2xl sm:rounded-3xl bg-gradient-to-br from-[#004D3D] via-[#006B56] to-[#004D3D] text-white text-center space-y-5 sm:space-y-6 shadow-2xl relative overflow-hidden"

@@ -43,13 +43,13 @@ const CATEGORY_ICONS: Record<string, string> = {
 
 function getScoreStatusBadge(score: number | null | undefined): { label: string; color: string } {
   if (score === null || score === undefined) {
-    return { label: "Not Assessed", color: "text-slate-500 bg-slate-100 dark:bg-[#18181b] dark:text-[#A1A1AA]" };
+    return { label: "Not Assessed", color: "text-slate-500 bg-slate-100 dark:bg-[#131916] dark:text-[#9DB9B0]" };
   }
   if (score >= 80) {
     return { label: "Flourishing", color: "text-[#006C56] bg-[#EAF6F0] dark:bg-[#30241A] dark:text-[#91AD87] dark:border dark:border-[#51402E]" };
   }
   if (score >= 65) {
-    return { label: "Good Progress", color: "text-[#008968] bg-[#EAF6F0] dark:bg-[rgba(0,168,137,0.15)] dark:text-zinc-200" };
+    return { label: "Good Progress", color: "text-[#008968] bg-[#EAF6F0] dark:bg-[rgba(0,168,137,0.15)] dark:text-[#D5E6E0]" };
   }
   if (score >= 50) {
     return { label: "Moderate", color: "text-[#D97706] bg-[#FEF3C7] dark:bg-[#30241A] dark:text-[#D7AD70] dark:border dark:border-[#51402E]" };
@@ -339,14 +339,14 @@ export default function JourneyView() {
   return (
     <div className="w-full min-w-0 flex flex-col gap-5">
       {/* 1. Header Banner */}
-      <div className="bg-white dark:bg-[#121214] rounded-3xl p-6 sm:p-7 border border-[#E2ECE6] dark:border-[#27272a] shadow-2xs space-y-3 transition-colors">
-        <span className="px-3.5 py-1 rounded-full bg-[#EAF6F0] dark:bg-white/5 text-[#006C56] dark:text-zinc-200 text-[10.5px] font-extrabold tracking-wider border border-transparent dark:border-[rgba(95,175,138,0.30)]">
+      <div className="bg-white dark:bg-[#131916] rounded-3xl p-6 sm:p-7 border border-[#E2ECE6] dark:border-[#1E2824] shadow-2xs space-y-3 transition-colors">
+        <span className="px-3.5 py-1 rounded-full bg-[#EAF6F0] dark:bg-white/5 text-[#006C56] dark:text-[#D5E6E0] text-[10.5px] font-extrabold tracking-wider border border-transparent dark:border-[rgba(95,175,138,0.30)]">
           {p.badgeLabel || "🌿 Wellness Journey"}
         </span>
-        <h1 className="text-2xl font-heading font-black text-[#19332A] dark:text-white leading-tight">
+        <h1 className="text-2xl font-heading font-black text-[#19332A] dark:text-[#F4FAF7] leading-tight">
           My Journey
         </h1>
-        <p className="text-xs text-[#6B857C] dark:text-[#A1A1AA] font-medium leading-relaxed max-w-xl">
+        <p className="text-xs text-[#6B857C] dark:text-[#9DB9B0] font-medium leading-relaxed max-w-xl">
           Your personal path toward emotional balance and resilience. Track your active {currentCategoryName} score, progress trend, and consistency.
         </p>
 
@@ -361,67 +361,67 @@ export default function JourneyView() {
                 openAssessment(currentCategory);
               }
             }}
-            className="p-4 rounded-2xl bg-[#EAF6F2] dark:bg-[#18181b] border border-[#CBECE2] dark:border-[#27272a] flex items-center justify-between cursor-pointer hover:border-[#006B56]/60 dark:hover:border-zinc-400/60 hover:bg-[#E6F4F0] dark:hover:bg-[#163830] transition-all group"
+            className="p-4 rounded-2xl bg-[#EAF6F2] dark:bg-[#131916] border border-[#CBECE2] dark:border-[#1E2824] flex items-center justify-between cursor-pointer hover:border-[#006B56]/60 dark:hover:border-zinc-400/60 hover:bg-[#E6F4F0] dark:hover:bg-[#163830] transition-all group"
           >
             <div className="flex items-center gap-3.5">
               <div className="w-11 h-11 rounded-2xl bg-[#006B56] dark:bg-[#858A60] text-white dark:text-[#211A14] flex items-center justify-center font-black text-sm shadow-xs group-hover:scale-105 transition-transform">
                 {isCurrentAssessed && currentScore !== null ? `${currentScore}%` : "--"}
               </div>
               <div>
-                <p className="text-[10px] text-[#789389] dark:text-[#A1A1AA] font-semibold">
+                <p className="text-[10px] text-[#789389] dark:text-[#9DB9B0] font-semibold">
                   {currentCategoryName} Wellness
                 </p>
-                <p className="text-xs font-black text-[#006B56] dark:text-zinc-200">
+                <p className="text-xs font-black text-[#006B56] dark:text-[#D5E6E0]">
                   {isCurrentAssessed && currentScore !== null ? levelBadge : "Not Assessed Yet"}
                 </p>
               </div>
             </div>
-            <span className="text-[10px] font-bold text-[#006B56] dark:text-zinc-200 opacity-80 group-hover:opacity-100">
+            <span className="text-[10px] font-bold text-[#006B56] dark:text-[#D5E6E0] opacity-80 group-hover:opacity-100">
               {isCurrentAssessed && currentScore !== null ? "Retake →" : "Start Check →"}
             </span>
           </div>
 
           {/* Active Streak */}
-          <div className="p-4 rounded-2xl bg-[#FFF8F2] dark:bg-[#18181b] border border-[#CBECE2] dark:border-[#27272a] flex items-center gap-3.5">
+          <div className="p-4 rounded-2xl bg-[#FFF8F2] dark:bg-[#131916] border border-[#CBECE2] dark:border-[#1E2824] flex items-center gap-3.5">
             <div className="w-11 h-11 rounded-2xl bg-[#E37A47] text-white flex items-center justify-center text-xl shadow-xs">
               🔥
             </div>
             <div>
-              <p className="text-[10px] text-[#789389] dark:text-[#A1A1AA] font-semibold">Active Streak</p>
+              <p className="text-[10px] text-[#789389] dark:text-[#9DB9B0] font-semibold">Active Streak</p>
               <p className="text-xs font-black text-[#E37A47] dark:text-[#F38A57]">{currentStreak} Days Consistent</p>
             </div>
           </div>
 
           {/* Mindfulness Time */}
-          <div className="p-4 rounded-2xl bg-[#F3F5FA] dark:bg-[#18181b] border border-[#CBECE2] dark:border-[#27272a] flex items-center gap-3.5">
+          <div className="p-4 rounded-2xl bg-[#F3F5FA] dark:bg-[#131916] border border-[#CBECE2] dark:border-[#1E2824] flex items-center gap-3.5">
             <div className="w-11 h-11 rounded-2xl bg-[#006B56] text-white flex items-center justify-center text-lg shadow-xs">
               🧘
             </div>
             <div>
-              <p className="text-[10px] text-[#789389] dark:text-[#A1A1AA] font-semibold">Mindfulness Time</p>
-              <p className="text-xs font-black text-[#19332A] dark:text-white">{mindfulnessMinutes} Mins Logged</p>
+              <p className="text-[10px] text-[#789389] dark:text-[#9DB9B0] font-semibold">Mindfulness Time</p>
+              <p className="text-xs font-black text-[#19332A] dark:text-[#F4FAF7]">{mindfulnessMinutes} Mins Logged</p>
             </div>
           </div>
         </div>
       </div>
 
       {/* 2. YOUR CURRENT WELLNESS (Focused Single Active Category Card) */}
-      <div className="bg-white dark:bg-[#121214] rounded-3xl p-6 sm:p-7 border border-[#CBECE2] dark:border-[#27272a] shadow-2xs space-y-5 transition-colors">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#CBECE2] dark:border-[#27272a]">
+      <div className="bg-white dark:bg-[#131916] rounded-3xl p-6 sm:p-7 border border-[#CBECE2] dark:border-[#1E2824] shadow-2xs space-y-5 transition-colors">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#CBECE2] dark:border-[#1E2824]">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-2xl bg-[#E6F4F0] dark:bg-white/5 text-[#006B56] dark:text-zinc-200 flex items-center justify-center font-bold text-xs">
+            <div className="w-8 h-8 rounded-2xl bg-[#E6F4F0] dark:bg-white/5 text-[#006B56] dark:text-[#D5E6E0] flex items-center justify-center font-bold text-xs">
               📊
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-sm font-heading font-black text-[#19332A] dark:text-white leading-tight">
+                <h2 className="text-sm font-heading font-black text-[#19332A] dark:text-[#F4FAF7] leading-tight">
                   Your Current Wellness
                 </h2>
-                <span className="px-2 py-0.5 rounded-full bg-[#E6F4F0] dark:bg-white/5 text-[#006B56] dark:text-zinc-200 text-[9.5px] font-extrabold tracking-wider border border-[#CBECE2] dark:border-[#27272a]">
+                <span className="px-2 py-0.5 rounded-full bg-[#E6F4F0] dark:bg-white/5 text-[#006B56] dark:text-[#D5E6E0] text-[9.5px] font-extrabold tracking-wider border border-[#CBECE2] dark:border-[#1E2824]">
                   Active Category
                 </span>
               </div>
-              <p className="text-[10px] text-[#789389] dark:text-[#A1A1AA] font-medium leading-tight mt-0.5">
+              <p className="text-[10px] text-[#789389] dark:text-[#9DB9B0] font-medium leading-tight mt-0.5">
                 Live personalized assessment for your active life-stage
               </p>
             </div>
@@ -430,7 +430,7 @@ export default function JourneyView() {
           <button
             type="button"
             onClick={() => setIsPastModalOpen(true)}
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#EAF6F2] dark:bg-[#18181b] hover:bg-[#E6F4F0] dark:hover:bg-[#27272a] text-[#006B56] dark:text-zinc-200 text-xs font-bold border border-[#CBECE2] dark:border-[#27272a] transition-all cursor-pointer shadow-2xs self-start sm:self-auto"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#EAF6F2] dark:bg-[#131916] hover:bg-[#E6F4F0] dark:hover:bg-[#22302A] text-[#006B56] dark:text-[#D5E6E0] text-xs font-bold border border-[#CBECE2] dark:border-[#1E2824] transition-all cursor-pointer shadow-2xs self-start sm:self-auto"
           >
             <span>🕒</span>
             <span>View Past Activity →</span>
@@ -438,21 +438,21 @@ export default function JourneyView() {
         </div>
 
         {/* Active Category Focused Card (Condition / Progress card token) */}
-        <div className="p-5 sm:p-6 rounded-2xl bg-[#EAF6F2] dark:bg-[#18181b] border border-[#CBECE2] dark:border-[#27272a] flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="p-5 sm:p-6 rounded-2xl bg-[#EAF6F2] dark:bg-[#131916] border border-[#CBECE2] dark:border-[#1E2824] flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="flex items-start sm:items-center gap-4">
-            <div className="w-16 h-16 rounded-2xl bg-white dark:bg-[#18181b] border border-[#CBECE2] dark:border-[#27272a] flex items-center justify-center text-3xl shrink-0 shadow-xs">
+            <div className="w-16 h-16 rounded-2xl bg-white dark:bg-[#131916] border border-[#CBECE2] dark:border-[#1E2824] flex items-center justify-center text-3xl shrink-0 shadow-xs">
               {CATEGORY_ICONS[currentCategory] || "🌱"}
             </div>
             <div className="space-y-1">
               <div className="flex items-center gap-2">
-                <h3 className="text-lg font-heading font-black text-[#004D3D] dark:text-white">
+                <h3 className="text-lg font-heading font-black text-[#004D3D] dark:text-[#F4FAF7]">
                   {currentCategoryName}
                 </h3>
-                <span className="px-2 py-0.5 rounded-md bg-[#006B56] dark:bg-white dark:text-black text-white text-[9px] font-extrabold">
+                <span className="px-2 py-0.5 rounded-md bg-[#006B56] dark:bg-[#5FAF8A] dark:text-[#112F28] text-white text-[9px] font-extrabold">
                   Active
                 </span>
               </div>
-              <p className="text-xs text-[#4F685F] dark:text-[#A1A1AA] font-medium">
+              <p className="text-xs text-[#4F685F] dark:text-[#9DB9B0] font-medium">
                 {isCurrentAssessed && currentScore !== null
                   ? "Your current wellness score for this category."
                   : "No assessment recorded for this category yet."}
@@ -463,11 +463,11 @@ export default function JourneyView() {
           <div className="flex flex-wrap items-center gap-4 self-start md:self-auto">
             <div className="text-left md:text-right">
               <div className="flex items-baseline gap-1">
-                <span className="text-3xl sm:text-4xl font-heading font-black text-[#006B56] dark:text-zinc-200">
+                <span className="text-3xl sm:text-4xl font-heading font-black text-[#006B56] dark:text-[#D5E6E0]">
                   {isCurrentAssessed && currentScore !== null ? `${currentScore}%` : "--"}
                 </span>
               </div>
-              <span className="inline-block px-2.5 py-0.5 rounded-full text-[10.5px] font-black bg-[#E6F4F0] dark:bg-white/5 text-[#006B56] dark:text-zinc-200 border border-[#CBECE2] dark:border-[#27272a] mt-0.5">
+              <span className="inline-block px-2.5 py-0.5 rounded-full text-[10.5px] font-black bg-[#E6F4F0] dark:bg-white/5 text-[#006B56] dark:text-[#D5E6E0] border border-[#CBECE2] dark:border-[#1E2824] mt-0.5">
                 {isCurrentAssessed && currentScore !== null ? levelBadge : "Not Assessed Yet"}
               </span>
             </div>
@@ -478,14 +478,14 @@ export default function JourneyView() {
                   <button
                     type="button"
                     onClick={() => openBreakdownModal()}
-                    className="py-2.5 px-4 rounded-full bg-white dark:bg-[#18181b] hover:bg-[#EAF6F2] dark:hover:bg-[#27272a] text-[#19332A] dark:text-white text-xs font-bold border border-[#CBECE2] dark:border-[#27272a] transition-all cursor-pointer shadow-2xs"
+                    className="py-2.5 px-4 rounded-full bg-white dark:bg-[#131916] hover:bg-[#EAF6F2] dark:hover:bg-[#22302A] text-[#19332A] dark:text-[#F4FAF7] text-xs font-bold border border-[#CBECE2] dark:border-[#1E2824] transition-all cursor-pointer shadow-2xs"
                   >
                     View Details →
                   </button>
                   <button
                     type="button"
                     onClick={() => openReattemptModal(currentCategory)}
-                    className="py-2.5 px-4 rounded-full bg-white hover:bg-[#FFF6F2] dark:bg-[#18181b] dark:hover:bg-[#27272a] text-[#E37A47] dark:text-[#F38A57] border border-[#E37A47]/40 hover:border-[#E37A47] text-xs font-bold transition-all cursor-pointer shadow-xs"
+                    className="py-2.5 px-4 rounded-full bg-white hover:bg-[#FFF6F2] dark:bg-[#131916] dark:hover:bg-[#22302A] text-[#E37A47] dark:text-[#F38A57] border border-[#E37A47]/40 hover:border-[#E37A47] text-xs font-bold transition-all cursor-pointer shadow-xs"
                   >
                     Retake Assessment
                   </button>
@@ -494,7 +494,7 @@ export default function JourneyView() {
                 <button
                   type="button"
                   onClick={() => openAssessment(currentCategory)}
-                  className="py-2.5 px-5 rounded-full bg-[#006B56] hover:bg-[#005B48] text-white dark:bg-white dark:hover:bg-zinc-200 dark:text-black dark:hover:text-black text-xs font-bold transition-all cursor-pointer shadow-xs"
+                  className="py-2.5 px-5 rounded-full bg-[#006B56] hover:bg-[#005B48] text-white dark:bg-[#5FAF8A] dark:hover:bg-[#006B56] dark:text-[#112F28] dark:hover:text-[#F4FAF7] text-xs font-bold transition-all cursor-pointer shadow-xs"
                 >
                   Start Wellness Check →
                 </button>
@@ -507,18 +507,18 @@ export default function JourneyView() {
       {/* 3. WELLNESS INSIGHTS (Score Trend & Check-In Consistency) */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Card 1: Wellness Score Trend */}
-        <div className="bg-white dark:bg-[#121214] rounded-3xl p-6 border border-[#E2ECE6] dark:border-[#27272a] shadow-2xs space-y-4 transition-colors flex flex-col justify-between">
+        <div className="bg-white dark:bg-[#131916] rounded-3xl p-6 border border-[#E2ECE6] dark:border-[#1E2824] shadow-2xs space-y-4 transition-colors flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-xl bg-[#EAF6F0] dark:bg-white/5 text-[#006B56] dark:text-zinc-200 flex items-center justify-center font-bold text-xs">
+                <div className="w-7 h-7 rounded-xl bg-[#EAF6F0] dark:bg-white/5 text-[#006B56] dark:text-[#D5E6E0] flex items-center justify-center font-bold text-xs">
                   📈
                 </div>
                 <div>
-                  <h3 className="text-sm font-heading font-black text-[#19332A] dark:text-white leading-tight">
+                  <h3 className="text-sm font-heading font-black text-[#19332A] dark:text-[#F4FAF7] leading-tight">
                     Wellness Score Trend
                   </h3>
-                  <p className="text-[10px] text-[#789389] dark:text-[#A1A1AA] font-medium leading-tight">
+                  <p className="text-[10px] text-[#789389] dark:text-[#9DB9B0] font-medium leading-tight">
                     {currentCategoryName} progress over time
                   </p>
                 </div>
@@ -527,7 +527,7 @@ export default function JourneyView() {
                 <span
                   className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold border dark:border-[#51402E] ${
                     scoreDelta.isPositive
-                      ? "bg-[#E6F4EA] dark:bg-white/5 text-[#137333] dark:text-zinc-200"
+                      ? "bg-[#E6F4EA] dark:bg-white/5 text-[#137333] dark:text-[#D5E6E0]"
                       : "bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-300"
                   }`}
                 >
@@ -541,17 +541,17 @@ export default function JourneyView() {
                 <div className="space-y-3">
                   <div className="flex items-baseline justify-between pt-1">
                     <div>
-                      <span className="text-2xl font-heading font-black text-[#19332A] dark:text-white">
+                      <span className="text-2xl font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
                         {currentScore}%
                       </span>
-                      <span className="text-xs text-[#789389] dark:text-[#A1A1AA] ml-1.5 font-semibold">
+                      <span className="text-xs text-[#789389] dark:text-[#9DB9B0] ml-1.5 font-semibold">
                         Current Score
                       </span>
                     </div>
                   </div>
 
                   {/* Sparkline / Points visualization */}
-                  <div className="h-28 pt-2 pb-1 border-b border-[#E2ECE6] dark:border-[#27272a] flex items-end justify-between gap-2 px-1">
+                  <div className="h-28 pt-2 pb-1 border-b border-[#E2ECE6] dark:border-[#1E2824] flex items-end justify-between gap-2 px-1">
                     {activeScoreHistory.map((pt, idx) => {
                       const heightPct = Math.max(15, Math.min(100, (pt.score / 100) * 100));
                       const isLast = idx === activeScoreHistory.length - 1;
@@ -560,24 +560,24 @@ export default function JourneyView() {
                           key={pt.date + idx}
                           className="flex-1 flex flex-col items-center gap-1 h-full justify-end group"
                         >
-                          <span className="text-[9px] font-bold text-[#006B56] dark:text-zinc-200 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <span className="text-[9px] font-bold text-[#006B56] dark:text-[#D5E6E0] opacity-0 group-hover:opacity-100 transition-opacity">
                             {pt.score}%
                           </span>
-                          <div className="w-full max-w-[28px] bg-[#EAF5EF] dark:bg-[#18181b] rounded-t-lg overflow-hidden h-full flex items-end">
+                          <div className="w-full max-w-[28px] bg-[#EAF5EF] dark:bg-[#131916] rounded-t-lg overflow-hidden h-full flex items-end">
                             <div
                               style={{ height: `${heightPct}%` }}
                               className={`w-full rounded-t-lg transition-all duration-500 ${
                                 isLast
-                                  ? "bg-[#006B56] dark:bg-white dark:text-black"
-                                  : "bg-[#71C79E] dark:bg-white dark:text-black/40"
+                                  ? "bg-[#006B56] dark:bg-[#5FAF8A] dark:text-[#112F28]"
+                                  : "bg-[#71C79E] dark:bg-[#5FAF8A] dark:text-[#112F28]/40"
                               }`}
                             />
                           </div>
                           <span
                             className={`text-[9.5px] font-bold truncate max-w-[45px] ${
                               isLast
-                                ? "text-[#006B56] dark:text-zinc-200"
-                                : "text-[#789389] dark:text-[#A1A1AA]"
+                                ? "text-[#006B56] dark:text-[#D5E6E0]"
+                                : "text-[#789389] dark:text-[#9DB9B0]"
                             }`}
                           >
                             {pt.date}
@@ -588,12 +588,12 @@ export default function JourneyView() {
                   </div>
                 </div>
               ) : (
-                <div className="p-6 rounded-2xl bg-[#F8FCFA] dark:bg-[#18181b] border border-[#E2ECE6] dark:border-[#27272a] text-center space-y-2">
+                <div className="p-6 rounded-2xl bg-[#F8FCFA] dark:bg-[#131916] border border-[#E2ECE6] dark:border-[#1E2824] text-center space-y-2">
                   <span className="text-2xl">🌱</span>
-                  <p className="text-xs font-bold text-[#19332A] dark:text-white">
+                  <p className="text-xs font-bold text-[#19332A] dark:text-[#F4FAF7]">
                     {isCurrentAssessed ? "Complete another wellness check to start tracking your progress over time." : "No wellness trend yet."}
                   </p>
-                  <p className="text-[10px] text-[#789389] dark:text-[#A1A1AA]">
+                  <p className="text-[10px] text-[#789389] dark:text-[#9DB9B0]">
                     {isCurrentAssessed
                       ? "Your score changes and trend graph will appear after multiple assessments."
                       : "Complete a wellness check to start tracking your progress over time."}
@@ -605,39 +605,39 @@ export default function JourneyView() {
         </div>
 
         {/* Card 2: Check-In Consistency */}
-        <div className="bg-white dark:bg-[#121214] rounded-3xl p-6 border border-[#E2ECE6] dark:border-[#27272a] shadow-2xs space-y-4 transition-colors flex flex-col justify-between">
+        <div className="bg-white dark:bg-[#131916] rounded-3xl p-6 border border-[#E2ECE6] dark:border-[#1E2824] shadow-2xs space-y-4 transition-colors flex flex-col justify-between">
           <div>
             <div className="flex items-center gap-2">
               <div className="w-7 h-7 rounded-xl bg-[#FFF4EB] dark:bg-[#3B2C20] text-[#F28C4B] dark:text-[#D7AD70] flex items-center justify-center font-bold text-xs">
                 🔥
               </div>
               <div>
-                <h3 className="text-sm font-heading font-black text-[#19332A] dark:text-white leading-tight">
+                <h3 className="text-sm font-heading font-black text-[#19332A] dark:text-[#F4FAF7] leading-tight">
                   Check-In Consistency
                 </h3>
-                <p className="text-[10px] text-[#789389] dark:text-[#A1A1AA] font-medium leading-tight">
+                <p className="text-[10px] text-[#789389] dark:text-[#9DB9B0] font-medium leading-tight">
                   Your daily mindfulness and check-in engagement
                 </p>
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-3 mt-4">
-              <div className="p-3.5 rounded-2xl bg-[#F8FCFA] dark:bg-[#18181b] border border-[#E2ECE6] dark:border-[#27272a]">
+              <div className="p-3.5 rounded-2xl bg-[#F8FCFA] dark:bg-[#131916] border border-[#E2ECE6] dark:border-[#1E2824]">
                 <span className="text-lg">🔥</span>
                 <p className="text-xl font-heading font-black text-[#E37A47] dark:text-[#D7AD70] mt-1">
                   {consistencyStats.thisMonthCount} {consistencyStats.thisMonthCount === 1 ? "check-in" : "check-ins"}
                 </p>
-                <p className="text-[10.5px] text-[#789389] dark:text-[#A1A1AA] font-semibold">
+                <p className="text-[10.5px] text-[#789389] dark:text-[#9DB9B0] font-semibold">
                   this month
                 </p>
               </div>
 
-              <div className="p-3.5 rounded-2xl bg-[#F8FCFA] dark:bg-[#18181b] border border-[#E2ECE6] dark:border-[#27272a]">
+              <div className="p-3.5 rounded-2xl bg-[#F8FCFA] dark:bg-[#131916] border border-[#E2ECE6] dark:border-[#1E2824]">
                 <span className="text-lg">📅</span>
-                <p className="text-xl font-heading font-black text-[#006B56] dark:text-zinc-200 mt-1">
+                <p className="text-xl font-heading font-black text-[#006B56] dark:text-[#D5E6E0] mt-1">
                   {consistencyStats.thisWeekCount} / 7 days
                 </p>
-                <p className="text-[10.5px] text-[#789389] dark:text-[#A1A1AA] font-semibold">
+                <p className="text-[10.5px] text-[#789389] dark:text-[#9DB9B0] font-semibold">
                   active this week
                 </p>
               </div>
@@ -645,11 +645,11 @@ export default function JourneyView() {
           </div>
 
           <div className="pt-2">
-            <div className="p-3 rounded-xl bg-[#F2FAF6] dark:bg-[#18181b] border border-[#E2ECE6] dark:border-[#27272a] flex items-center justify-between text-xs">
-              <span className="text-[11px] text-[#4F685F] dark:text-[#A1A1AA] font-medium">
+            <div className="p-3 rounded-xl bg-[#F2FAF6] dark:bg-[#131916] border border-[#E2ECE6] dark:border-[#1E2824] flex items-center justify-between text-xs">
+              <span className="text-[11px] text-[#4F685F] dark:text-[#9DB9B0] font-medium">
                 Total recorded check-ins:
               </span>
-              <span className="font-heading font-black text-[#006B56] dark:text-zinc-200">
+              <span className="font-heading font-black text-[#006B56] dark:text-[#D5E6E0]">
                 {consistencyStats.last30DaysCount} in last 30 days
               </span>
             </div>
@@ -658,13 +658,13 @@ export default function JourneyView() {
       </div>
 
       {/* 4. Daily Check-In Timeline Section with Filters */}
-      <div className="bg-white dark:bg-[#121214] rounded-3xl p-6 sm:p-7 border border-[#E2ECE6] dark:border-[#27272a] shadow-2xs space-y-5 transition-colors">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-3 border-b border-[#E2ECE6] dark:border-[#27272a]">
+      <div className="bg-white dark:bg-[#131916] rounded-3xl p-6 sm:p-7 border border-[#E2ECE6] dark:border-[#1E2824] shadow-2xs space-y-5 transition-colors">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-3 border-b border-[#E2ECE6] dark:border-[#1E2824]">
           <div>
-            <h2 className="text-base sm:text-lg font-heading font-black text-[#19332A] dark:text-white leading-tight">
+            <h2 className="text-base sm:text-lg font-heading font-black text-[#19332A] dark:text-[#F4FAF7] leading-tight">
               Daily Check-In Timeline
             </h2>
-            <p className="text-[11px] text-[#789389] dark:text-[#A1A1AA] font-medium leading-tight mt-0.5">
+            <p className="text-[11px] text-[#789389] dark:text-[#9DB9B0] font-medium leading-tight mt-0.5">
               Review your mood entries, wellness notes, and verified check-ins
             </p>
           </div>
@@ -672,7 +672,7 @@ export default function JourneyView() {
           {/* Time & Mood Filter Controls */}
           <div className="flex flex-wrap items-center gap-2">
             {/* Time Filter */}
-            <div className="flex items-center bg-[#F4FAF7] dark:bg-[#18181b] p-1 rounded-xl border border-[#E2ECE6] dark:border-[#27272a]">
+            <div className="flex items-center bg-[#F4FAF7] dark:bg-[#131916] p-1 rounded-xl border border-[#E2ECE6] dark:border-[#1E2824]">
               {TIME_FILTER_OPTIONS.map((tf) => (
                 <button
                   key={tf}
@@ -680,8 +680,8 @@ export default function JourneyView() {
                   onClick={() => setTimeFilter(tf)}
                   className={`px-2.5 py-1 rounded-lg text-[10.5px] font-bold transition-all cursor-pointer ${
                     timeFilter === tf
-                      ? "bg-[#006B56] dark:bg-white dark:text-black text-white shadow-xs"
-                      : "text-[#4F685F] dark:text-[#A1A1AA] hover:text-[#19332A] dark:hover:text-[#F4FAF7]"
+                      ? "bg-[#006B56] dark:bg-[#5FAF8A] dark:text-[#112F28] text-white shadow-xs"
+                      : "text-[#4F685F] dark:text-[#9DB9B0] hover:text-[#19332A] dark:hover:text-[#F4FAF7]"
                   }`}
                 >
                   {tf}
@@ -693,10 +693,10 @@ export default function JourneyView() {
             <select
               value={moodFilter}
               onChange={(e) => setMoodFilter(e.target.value)}
-              className="px-3 py-1.5 rounded-xl bg-[#F4FAF7] dark:bg-[#18181b] text-[#19332A] dark:text-white text-[11px] font-bold border border-[#E2ECE6] dark:border-[#27272a] focus:outline-none cursor-pointer"
+              className="px-3 py-1.5 rounded-xl bg-[#F4FAF7] dark:bg-[#131916] text-[#19332A] dark:text-[#F4FAF7] text-[11px] font-bold border border-[#E2ECE6] dark:border-[#1E2824] focus:outline-none cursor-pointer"
             >
               {MOOD_FILTER_OPTIONS.map((mf) => (
-                <option key={mf} value={mf} className="text-black dark:text-white dark:bg-[#18181b]">
+                <option key={mf} value={mf} className="text-black dark:text-[#F4FAF7] dark:bg-[#131916]">
                   {mf === "All" ? "All Moods" : `${MOOD_EMOJIS[mf.toLowerCase()] || ""} ${mf}`}
                 </option>
               ))}
@@ -708,8 +708,8 @@ export default function JourneyView() {
         <div className="space-y-3">
           {isLoading ? (
             <div className="py-12 text-center space-y-2">
-              <div className="w-7 h-7 border-2 border-[#006B56] dark:border-white/20 border-t-transparent rounded-full animate-spin mx-auto" />
-              <p className="text-xs text-[#789389] dark:text-[#A1A1AA]">Loading check-in history...</p>
+              <div className="w-7 h-7 border-2 border-[#006B56] dark:border-[#1C463C] border-t-transparent rounded-full animate-spin mx-auto" />
+              <p className="text-xs text-[#789389] dark:text-[#9DB9B0]">Loading check-in history...</p>
             </div>
           ) : filteredHistory.length > 0 ? (
             filteredHistory.map((item, idx) => {
@@ -726,27 +726,27 @@ export default function JourneyView() {
               return (
                 <div
                   key={item.id || idx}
-                  className="p-4 sm:p-5 rounded-2xl bg-[#F8FCFA] dark:bg-[#18181b] border border-[#E2ECE6] dark:border-[#27272a] hover:border-[#006B56]/50 dark:hover:border-white/30 dark:hover:bg-[#27272a] transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 group"
+                  className="p-4 sm:p-5 rounded-2xl bg-[#F8FCFA] dark:bg-[#131916] border border-[#E2ECE6] dark:border-[#1E2824] hover:border-[#006B56]/50 dark:hover:border-white/30 dark:hover:bg-[#22302A] transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 group"
                 >
                   <div className="flex items-start gap-3.5 min-w-0">
                     {/* Large Mood Emoji Badge */}
-                    <div className="w-12 h-12 rounded-2xl bg-white dark:bg-[#121214] border border-[#D2E8DC] dark:border-[#27272a] flex items-center justify-center text-2xl shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
+                    <div className="w-12 h-12 rounded-2xl bg-white dark:bg-[#131916] border border-[#D2E8DC] dark:border-[#1E2824] flex items-center justify-center text-2xl shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
                       {emoji}
                     </div>
 
                     <div className="min-w-0 space-y-1">
                       <div className="flex flex-wrap items-center gap-2">
-                        <span className="text-xs font-heading font-black text-[#19332A] dark:text-white">
+                        <span className="text-xs font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
                           {dateLabel}
                         </span>
-                        <span className="px-2 py-0.5 rounded-full bg-[#EAF6F0] dark:bg-white/5 text-[#006C56] dark:text-zinc-200 text-[10px] font-bold">
+                        <span className="px-2 py-0.5 rounded-full bg-[#EAF6F0] dark:bg-white/5 text-[#006C56] dark:text-[#D5E6E0] text-[10px] font-bold">
                           {emoji} {moodLabel}
                         </span>
-                        <span className="px-2 py-0.5 rounded-full bg-slate-100 dark:bg-[#121214] text-[#4F685F] dark:text-[#A1A1AA] text-[9.5px] font-bold border border-transparent dark:border-[#27272a]">
+                        <span className="px-2 py-0.5 rounded-full bg-slate-100 dark:bg-[#131916] text-[#4F685F] dark:text-[#9DB9B0] text-[9.5px] font-bold border border-transparent dark:border-[#1E2824]">
                           {categoryTitle}
                         </span>
                         {timeLabel && (
-                          <span className="text-[10px] text-[#789389] dark:text-[#A1A1AA]">
+                          <span className="text-[10px] text-[#789389] dark:text-[#9DB9B0]">
                             • {timeLabel}
                           </span>
                         )}
@@ -758,7 +758,7 @@ export default function JourneyView() {
                           “{noteText}”
                         </p>
                       ) : (
-                        <p className="text-[11px] text-[#789389] dark:text-[#A1A1AA] font-normal">
+                        <p className="text-[11px] text-[#789389] dark:text-[#9DB9B0] font-normal">
                           Daily mood check-in recorded.
                         </p>
                       )}
@@ -767,8 +767,8 @@ export default function JourneyView() {
 
                   {/* Score Ring / Pill */}
                   {score !== null && (
-                    <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-1 shrink-0 pt-1 sm:pt-0 border-t sm:border-t-0 border-[#E2ECE6] dark:border-[#27272a]">
-                      <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#EAF6F0] dark:bg-white/5 text-[#006C56] dark:text-zinc-200 border border-transparent dark:border-[#27272a]">
+                    <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-1 shrink-0 pt-1 sm:pt-0 border-t sm:border-t-0 border-[#E2ECE6] dark:border-[#1E2824]">
+                      <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#EAF6F0] dark:bg-white/5 text-[#006C56] dark:text-[#D5E6E0] border border-transparent dark:border-[#1E2824]">
                         <span className="text-[10px] font-extrabold">Score</span>
                         <span className="text-sm font-heading font-black">{score}%</span>
                       </div>
@@ -781,10 +781,10 @@ export default function JourneyView() {
             <div className="py-12 text-center space-y-3">
               <span className="text-3xl">🌱</span>
               <div className="space-y-1">
-                <h4 className="text-xs font-bold text-[#19332A] dark:text-white">
+                <h4 className="text-xs font-bold text-[#19332A] dark:text-[#F4FAF7]">
                   No check-ins match the selected filters
                 </h4>
-                <p className="text-[11px] text-[#789389] dark:text-[#A1A1AA]">
+                <p className="text-[11px] text-[#789389] dark:text-[#9DB9B0]">
                   Complete your daily check-in from the dashboard to see entries here.
                 </p>
               </div>
@@ -803,17 +803,17 @@ export default function JourneyView() {
       {/* 5. Past Wellness Activity Modal */}
       {isPastModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-xs animate-in fade-in duration-200">
-          <div className="bg-white dark:bg-[#121214] border border-[#E2ECE6] dark:border-[#27272a] rounded-3xl p-6 sm:p-7 max-w-lg w-full shadow-2xl space-y-4 max-h-[85vh] flex flex-col">
-            <div className="flex items-center justify-between pb-3 border-b border-[#E2ECE6] dark:border-[#27272a]">
+          <div className="bg-white dark:bg-[#131916] border border-[#E2ECE6] dark:border-[#1E2824] rounded-3xl p-6 sm:p-7 max-w-lg w-full shadow-2xl space-y-4 max-h-[85vh] flex flex-col">
+            <div className="flex items-center justify-between pb-3 border-b border-[#E2ECE6] dark:border-[#1E2824]">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-[#EAF6F0] dark:bg-white/5 text-[#006C56] dark:text-zinc-200 flex items-center justify-center text-sm">
+                <div className="w-8 h-8 rounded-xl bg-[#EAF6F0] dark:bg-white/5 text-[#006C56] dark:text-[#D5E6E0] flex items-center justify-center text-sm">
                   🕒
                 </div>
                 <div>
-                  <h3 className="text-base font-heading font-black text-[#19332A] dark:text-white">
+                  <h3 className="text-base font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
                     Past Wellness Activity
                   </h3>
-                  <p className="text-[10.5px] text-[#789389] dark:text-[#A1A1AA] font-medium">
+                  <p className="text-[10.5px] text-[#789389] dark:text-[#9DB9B0] font-medium">
                     Categories and assessments you have previously opened
                   </p>
                 </div>
@@ -821,7 +821,7 @@ export default function JourneyView() {
               <button
                 type="button"
                 onClick={() => setIsPastModalOpen(false)}
-                className="w-7 h-7 rounded-full bg-[#F4FAF7] dark:bg-[#18181b] text-[#4F685F] dark:text-[#A1A1AA] flex items-center justify-center hover:bg-[#E2ECE6] dark:hover:bg-[#27272a] dark:hover:text-[#F4FAF7] transition-colors cursor-pointer text-xs"
+                className="w-7 h-7 rounded-full bg-[#F4FAF7] dark:bg-[#131916] text-[#4F685F] dark:text-[#9DB9B0] flex items-center justify-center hover:bg-[#E2ECE6] dark:hover:bg-[#22302A] dark:hover:text-[#F4FAF7] transition-colors cursor-pointer text-xs"
               >
                 ✕
               </button>
@@ -833,13 +833,13 @@ export default function JourneyView() {
                 pastActivityList.map((item) => (
                   <div
                     key={item.id}
-                    className="p-4 rounded-2xl bg-[#F8FCFA] dark:bg-[#18181b] border border-[#E2ECE6] dark:border-[#27272a] flex items-center justify-between gap-3"
+                    className="p-4 rounded-2xl bg-[#F8FCFA] dark:bg-[#131916] border border-[#E2ECE6] dark:border-[#1E2824] flex items-center justify-between gap-3"
                   >
                     <div className="flex items-center gap-3">
                       <span className="text-2xl">{item.icon}</span>
                       <div>
                         <div className="flex items-center gap-2">
-                          <h4 className="text-xs font-black text-[#19332A] dark:text-white">
+                          <h4 className="text-xs font-black text-[#19332A] dark:text-[#F4FAF7]">
                             {item.name}
                           </h4>
                           {item.id === currentCategory && (
@@ -848,7 +848,7 @@ export default function JourneyView() {
                             </span>
                           )}
                         </div>
-                        <p className="text-[10px] text-[#789389] dark:text-[#A1A1AA] font-medium mt-0.5">
+                        <p className="text-[10px] text-[#789389] dark:text-[#9DB9B0] font-medium mt-0.5">
                           Last active: {item.date}
                         </p>
                       </div>
@@ -857,12 +857,12 @@ export default function JourneyView() {
                     <div className="text-right">
                       <span
                         className={`text-xs font-heading font-black ${
-                          item.score !== null ? "text-[#006C56] dark:text-zinc-200" : "text-[#789389] dark:text-[#A1A1AA]"
+                          item.score !== null ? "text-[#006C56] dark:text-[#D5E6E0]" : "text-[#789389] dark:text-[#9DB9B0]"
                         }`}
                       >
                         {item.score !== null ? `${item.score}%` : "--"}
                       </span>
-                      <p className="text-[9.5px] font-bold text-[#527065] dark:text-[#A1A1AA]">
+                      <p className="text-[9.5px] font-bold text-[#527065] dark:text-[#9DB9B0]">
                         {item.status}
                       </p>
                     </div>
@@ -871,21 +871,21 @@ export default function JourneyView() {
               ) : (
                 <div className="py-10 text-center space-y-2">
                   <span className="text-3xl">🌱</span>
-                  <p className="text-xs font-bold text-[#19332A] dark:text-white">
+                  <p className="text-xs font-bold text-[#19332A] dark:text-[#F4FAF7]">
                     No past wellness activity yet.
                   </p>
-                  <p className="text-[11px] text-[#789389] dark:text-[#A1A1AA] max-w-xs mx-auto">
+                  <p className="text-[11px] text-[#789389] dark:text-[#9DB9B0] max-w-xs mx-auto">
                     Your previous category activity and check-in records will appear here as you engage.
                   </p>
                 </div>
               )}
             </div>
 
-            <div className="pt-2 border-t border-[#E2ECE6] dark:border-[#27272a] flex justify-end">
+            <div className="pt-2 border-t border-[#E2ECE6] dark:border-[#1E2824] flex justify-end">
               <button
                 type="button"
                 onClick={() => setIsPastModalOpen(false)}
-                className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-[#18181b] dark:hover:bg-[#27272a] text-[#19332A] dark:text-white text-xs font-bold transition-all cursor-pointer"
+                className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-[#131916] dark:hover:bg-[#22302A] text-[#19332A] dark:text-[#F4FAF7] text-xs font-bold transition-all cursor-pointer"
               >
                 Close
               </button>

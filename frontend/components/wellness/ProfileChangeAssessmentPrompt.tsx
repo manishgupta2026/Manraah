@@ -37,32 +37,32 @@ export default function ProfileChangeAssessmentPrompt() {
         initial={{ opacity: 0, scale: 0.95, y: 15 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 15 }}
-        className="bg-white dark:bg-[#121214] border border-[#E2ECE6] dark:border-[#27272a] rounded-3xl w-full max-w-md p-6 sm:p-7 shadow-2xl relative overflow-hidden text-center space-y-4.5"
+        className="bg-white dark:bg-[#131916] border border-[#E2ECE6] dark:border-[#1E2824] rounded-3xl w-full max-w-md p-6 sm:p-7 shadow-2xl relative overflow-hidden text-center space-y-4.5"
       >
         {/* Top Floating Badge */}
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10.5px] font-heading font-black tracking-wider uppercase bg-[#EAF6F0] dark:bg-[#18181b] text-[#006C56] dark:text-zinc-200 border border-[#D2EAE0] dark:border-[#27272a]">
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10.5px] font-heading font-black tracking-wider uppercase bg-[#EAF6F0] dark:bg-[#131916] text-[#006C56] dark:text-[#D5E6E0] border border-[#D2EAE0] dark:border-[#1E2824]">
           <span>{isReminder ? "⏰ REMINDER" : "✨ PROFILE UPDATED"}</span>
           <span>•</span>
           <span>{meta.name}</span>
         </div>
 
         {/* Center Icon */}
-        <div className="w-16 h-16 rounded-2xl bg-[#EAF6F0] dark:bg-[#18181b] text-[#006C56] dark:text-zinc-200 flex items-center justify-center text-3xl mx-auto shadow-xs border border-[#D2EAE0] dark:border-[#27272a]">
+        <div className="w-16 h-16 rounded-2xl bg-[#EAF6F0] dark:bg-[#131916] text-[#006C56] dark:text-[#D5E6E0] flex items-center justify-center text-3xl mx-auto shadow-xs border border-[#D2EAE0] dark:border-[#1E2824]">
           {meta.emoji}
         </div>
 
         {/* Title & Copy */}
         <div className="space-y-2">
-          <h2 className="text-xl sm:text-2xl font-heading font-black text-[#19332A] dark:text-white leading-snug">
+          <h2 className="text-xl sm:text-2xl font-heading font-black text-[#19332A] dark:text-[#F4FAF7] leading-snug">
             {isReminder
               ? "Complete Assessment to Know Your Wellness Score"
               : "Start Assessment to Know Your Wellness Score"}
           </h2>
-          <p className="text-xs text-[#5A756C] dark:text-[#A1A1AA] font-medium leading-relaxed max-w-sm mx-auto">
+          <p className="text-xs text-[#5A756C] dark:text-[#9DB9B0] font-medium leading-relaxed max-w-sm mx-auto">
             {isReminder ? (
               <>
                 You haven&apos;t completed your wellness assessment for{" "}
-                <strong className="text-[#19332A] dark:text-white font-bold">
+                <strong className="text-[#19332A] dark:text-[#F4FAF7] font-bold">
                   {meta.name}
                 </strong>{" "}
                 yet. Take just 1 minute to complete it and uncover your wellness score.
@@ -70,7 +70,7 @@ export default function ProfileChangeAssessmentPrompt() {
             ) : (
               <>
                 You updated your profile to{" "}
-                <strong className="text-[#19332A] dark:text-white font-bold">
+                <strong className="text-[#19332A] dark:text-[#F4FAF7] font-bold">
                   {meta.name}
                 </strong>
                 ! Start your quick 5-question assessment to calculate your personalized wellness score.
@@ -80,11 +80,11 @@ export default function ProfileChangeAssessmentPrompt() {
         </div>
 
         {/* Benefit Highlight Pills */}
-        <div className="flex items-center justify-center gap-2 flex-wrap pt-1 text-[11px] font-semibold text-[#006C56] dark:text-zinc-200">
-          <span className="px-2.5 py-1 rounded-full bg-[#EAF6F0] dark:bg-[#18181b] border border-[#D2EAE0] dark:border-[#27272a]">
+        <div className="flex items-center justify-center gap-2 flex-wrap pt-1 text-[11px] font-semibold text-[#006C56] dark:text-[#D5E6E0]">
+          <span className="px-2.5 py-1 rounded-full bg-[#EAF6F0] dark:bg-[#131916] border border-[#D2EAE0] dark:border-[#1E2824]">
             ⏱ 5 Questions (~1 min)
           </span>
-          <span className="px-2.5 py-1 rounded-full bg-[#EAF6F0] dark:bg-[#18181b] border border-[#D2EAE0] dark:border-[#27272a]">
+          <span className="px-2.5 py-1 rounded-full bg-[#EAF6F0] dark:bg-[#131916] border border-[#D2EAE0] dark:border-[#1E2824]">
             🔒 100% Confidential
           </span>
         </div>
@@ -94,7 +94,7 @@ export default function ProfileChangeAssessmentPrompt() {
           <button
             type="button"
             onClick={handleStartAssessment}
-            className="w-full sm:w-auto px-5 py-3 rounded-2xl bg-[#006C56] hover:bg-[#005241] dark:bg-white dark:text-black dark:hover:bg-zinc-200 text-white text-xs font-heading font-black shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer"
+            className="w-full sm:w-auto px-5 py-3 rounded-2xl bg-[#006C56] hover:bg-[#005241] dark:bg-[#5FAF8A] dark:text-[#112F28] dark:hover:bg-[#006B56] dark:hover:text-[#F4FAF7] text-white text-xs font-heading font-black shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer"
           >
             <span>{isReminder ? "Complete Assessment" : "Start Assessment"}</span>
             <span className="material-symbols-outlined text-base">arrow_forward</span>
@@ -103,7 +103,7 @@ export default function ProfileChangeAssessmentPrompt() {
           <button
             type="button"
             onClick={dismissProfilePrompt}
-            className="w-full sm:w-auto px-4 py-2.5 rounded-2xl bg-[#F4FAF7] dark:bg-[#18181b] hover:bg-[#E2ECE6] dark:hover:bg-[#27272a] text-[#4F685F] dark:text-[#A1A1AA] border border-transparent dark:border-[#27272a] text-xs font-heading font-bold transition-colors cursor-pointer"
+            className="w-full sm:w-auto px-4 py-2.5 rounded-2xl bg-[#F4FAF7] dark:bg-[#131916] hover:bg-[#E2ECE6] dark:hover:bg-[#22302A] text-[#4F685F] dark:text-[#9DB9B0] border border-transparent dark:border-[#1E2824] text-xs font-heading font-bold transition-colors cursor-pointer"
           >
             {isReminder ? "Dismiss" : "Maybe Later"}
           </button>

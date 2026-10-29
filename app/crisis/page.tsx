@@ -47,7 +47,7 @@ export default function CrisisPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FBFDFB] dark:bg-[#09090b] text-[#19332A] dark:text-white py-10 sm:py-16 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#FBFDFB] dark:bg-[#0A0E0D] text-[#19332A] dark:text-[#F4FAF7] py-10 sm:py-16 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto space-y-8">
         {/* Urgent Emergency Callout */}
         <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-red-600 via-rose-600 to-amber-600 text-white shadow-xl space-y-4">
@@ -86,30 +86,30 @@ export default function CrisisPage() {
         {/* Primary Helplines Grid */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg sm:text-xl font-heading font-black text-[#19332A] dark:text-white">
+            <h2 className="text-lg sm:text-xl font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
               Verified 24/7 Helplines in India
             </h2>
-            <span className="text-xs text-[#4F685F] dark:text-[#A1A1AA] font-semibold">
+            <span className="text-xs text-[#4F685F] dark:text-[#9DB9B0] font-semibold">
               Toll-Free &amp; Completely Confidential
             </span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Tele-MANAS */}
-            <div className="p-5 sm:p-6 rounded-3xl bg-white dark:bg-[#121214] border border-[#CBECE2] dark:border-[#27272a] shadow-sm flex flex-col justify-between gap-4">
+            <div className="p-5 sm:p-6 rounded-3xl bg-white dark:bg-[#131916] border border-[#CBECE2] dark:border-[#1E2824] shadow-sm flex flex-col justify-between gap-4">
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-base font-heading font-black text-[#19332A] dark:text-white">
+                  <h3 className="text-base font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
                     Tele-MANAS
                   </h3>
-                  <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#E6F4F0] dark:bg-white/5 text-[#006B56] dark:text-zinc-200">
+                  <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#E6F4F0] dark:bg-white/5 text-[#006B56] dark:text-[#D5E6E0]">
                     Govt. of India • 24/7
                   </span>
                 </div>
-                <p className="text-xs text-[#4F685F] dark:text-[#A1A1AA] leading-relaxed">
+                <p className="text-xs text-[#4F685F] dark:text-[#9DB9B0] leading-relaxed">
                   The National Tele Mental Health Programme of India providing round-the-clock free mental health support in over 20 regional languages.
                 </p>
-                <div className="text-sm font-mono font-black text-[#006B56] dark:text-zinc-200">
+                <div className="text-sm font-mono font-black text-[#006B56] dark:text-[#D5E6E0]">
                   14416 / 1800-891-4416
                 </div>
               </div>
@@ -125,7 +125,7 @@ export default function CrisisPage() {
                 <button
                   type="button"
                   onClick={() => handleCopy("14416")}
-                  className="px-3.5 py-2.5 rounded-xl bg-[#F8FCFA] dark:bg-[#18181b] hover:bg-gray-100 dark:hover:bg-[#27272a] border border-[#CBECE2] dark:border-[#27272a] text-xs font-bold text-[#4F685F] dark:text-[#A1A1AA] transition-colors cursor-pointer flex items-center gap-1.5"
+                  className="px-3.5 py-2.5 rounded-xl bg-[#F8FCFA] dark:bg-[#131916] hover:bg-gray-100 dark:hover:bg-[#22302A] border border-[#CBECE2] dark:border-[#1E2824] text-xs font-bold text-[#4F685F] dark:text-[#9DB9B0] transition-colors cursor-pointer flex items-center gap-1.5"
                 >
                   <span className="material-symbols-outlined text-base">
                     {copiedNumber === "14416" ? "check" : "content_copy"}
@@ -136,17 +136,17 @@ export default function CrisisPage() {
             </div>
 
             {/* National Emergency 112 */}
-            <div className="p-5 sm:p-6 rounded-3xl bg-white dark:bg-[#121214] border border-red-200 dark:border-red-900/40 shadow-sm flex flex-col justify-between gap-4">
+            <div className="p-5 sm:p-6 rounded-3xl bg-white dark:bg-[#131916] border border-red-200 dark:border-red-900/40 shadow-sm flex flex-col justify-between gap-4">
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-base font-heading font-black text-[#19332A] dark:text-white">
+                  <h3 className="text-base font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
                     National Emergency Dispatch
                   </h3>
                   <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-red-100 text-red-700 dark:bg-red-950/60 dark:text-red-300">
                     Emergency 112
                   </span>
                 </div>
-                <p className="text-xs text-[#4F685F] dark:text-[#A1A1AA] leading-relaxed">
+                <p className="text-xs text-[#4F685F] dark:text-[#9DB9B0] leading-relaxed">
                   Single emergency number for police assistance, medical ambulance dispatch, and fire rescue across all states and Union Territories in India.
                 </p>
                 <div className="text-sm font-mono font-black text-red-600 dark:text-red-400">
@@ -165,7 +165,7 @@ export default function CrisisPage() {
                 <button
                   type="button"
                   onClick={() => handleCopy("112")}
-                  className="px-3.5 py-2.5 rounded-xl bg-[#F8FCFA] dark:bg-[#18181b] hover:bg-gray-100 dark:hover:bg-[#27272a] border border-[#CBECE2] dark:border-[#27272a] text-xs font-bold text-[#4F685F] dark:text-[#A1A1AA] transition-colors cursor-pointer flex items-center gap-1.5"
+                  className="px-3.5 py-2.5 rounded-xl bg-[#F8FCFA] dark:bg-[#131916] hover:bg-gray-100 dark:hover:bg-[#22302A] border border-[#CBECE2] dark:border-[#1E2824] text-xs font-bold text-[#4F685F] dark:text-[#9DB9B0] transition-colors cursor-pointer flex items-center gap-1.5"
                 >
                   <span className="material-symbols-outlined text-base">
                     {copiedNumber === "112" ? "check" : "content_copy"}
@@ -176,20 +176,20 @@ export default function CrisisPage() {
             </div>
 
             {/* KIRAN Helpline */}
-            <div className="p-5 sm:p-6 rounded-3xl bg-white dark:bg-[#121214] border border-[#CBECE2] dark:border-[#27272a] shadow-sm flex flex-col justify-between gap-4">
+            <div className="p-5 sm:p-6 rounded-3xl bg-white dark:bg-[#131916] border border-[#CBECE2] dark:border-[#1E2824] shadow-sm flex flex-col justify-between gap-4">
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-base font-heading font-black text-[#19332A] dark:text-white">
+                  <h3 className="text-base font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
                     KIRAN Mental Health Helpline
                   </h3>
                   <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#E6F4F0] dark:bg-[rgba(95,175,138,0.15)] text-[#006B56] dark:text-[#5FAF8A]">
                     24/7 Toll-Free
                   </span>
                 </div>
-                <p className="text-xs text-[#4F685F] dark:text-[#A1A1AA] leading-relaxed">
+                <p className="text-xs text-[#4F685F] dark:text-[#9DB9B0] leading-relaxed">
                   Operated by Ministry of Social Justice and Empowerment for psychological first aid, distress management, and mental health rehabilitation.
                 </p>
-                <div className="text-sm font-mono font-black text-[#006B56] dark:text-zinc-200">
+                <div className="text-sm font-mono font-black text-[#006B56] dark:text-[#D5E6E0]">
                   1800-599-0019
                 </div>
               </div>
@@ -205,7 +205,7 @@ export default function CrisisPage() {
                 <button
                   type="button"
                   onClick={() => handleCopy("18005990019")}
-                  className="px-3.5 py-2.5 rounded-xl bg-[#F8FCFA] dark:bg-[#18181b] hover:bg-gray-100 dark:hover:bg-[#27272a] border border-[#CBECE2] dark:border-[#27272a] text-xs font-bold text-[#4F685F] dark:text-[#A1A1AA] transition-colors cursor-pointer flex items-center gap-1.5"
+                  className="px-3.5 py-2.5 rounded-xl bg-[#F8FCFA] dark:bg-[#131916] hover:bg-gray-100 dark:hover:bg-[#22302A] border border-[#CBECE2] dark:border-[#1E2824] text-xs font-bold text-[#4F685F] dark:text-[#9DB9B0] transition-colors cursor-pointer flex items-center gap-1.5"
                 >
                   <span className="material-symbols-outlined text-base">
                     {copiedNumber === "18005990019" ? "check" : "content_copy"}
@@ -216,20 +216,20 @@ export default function CrisisPage() {
             </div>
 
             {/* Vandrevala Foundation */}
-            <div className="p-5 sm:p-6 rounded-3xl bg-white dark:bg-[#121214] border border-[#CBECE2] dark:border-[#27272a] shadow-sm flex flex-col justify-between gap-4">
+            <div className="p-5 sm:p-6 rounded-3xl bg-white dark:bg-[#131916] border border-[#CBECE2] dark:border-[#1E2824] shadow-sm flex flex-col justify-between gap-4">
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-base font-heading font-black text-[#19332A] dark:text-white">
+                  <h3 className="text-base font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
                     Vandrevala Foundation
                   </h3>
                   <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#EDF6F2] dark:bg-[rgba(95,175,138,0.15)] text-[#006B56] dark:text-[#5FAF8A]">
                     Free Counseling
                   </span>
                 </div>
-                <p className="text-xs text-[#4F685F] dark:text-[#A1A1AA] leading-relaxed">
+                <p className="text-xs text-[#4F685F] dark:text-[#9DB9B0] leading-relaxed">
                   24/7 free mental health counseling by trained clinical psychologists for depression, relationship strain, anxiety, and suicide prevention.
                 </p>
-                <div className="text-sm font-mono font-black text-[#006B56] dark:text-zinc-200">
+                <div className="text-sm font-mono font-black text-[#006B56] dark:text-[#D5E6E0]">
                   +91 9999 666 555
                 </div>
               </div>
@@ -245,7 +245,7 @@ export default function CrisisPage() {
                 <button
                   type="button"
                   onClick={() => handleCopy("+919999666555")}
-                  className="px-3.5 py-2.5 rounded-xl bg-[#F8FCFA] dark:bg-[#18181b] hover:bg-gray-100 dark:hover:bg-[#27272a] border border-[#CBECE2] dark:border-[#27272a] text-xs font-bold text-[#4F685F] dark:text-[#A1A1AA] transition-colors cursor-pointer flex items-center gap-1.5"
+                  className="px-3.5 py-2.5 rounded-xl bg-[#F8FCFA] dark:bg-[#131916] hover:bg-gray-100 dark:hover:bg-[#22302A] border border-[#CBECE2] dark:border-[#1E2824] text-xs font-bold text-[#4F685F] dark:text-[#9DB9B0] transition-colors cursor-pointer flex items-center gap-1.5"
                 >
                   <span className="material-symbols-outlined text-base">
                     {copiedNumber === "+919999666555" ? "check" : "content_copy"}
@@ -258,36 +258,36 @@ export default function CrisisPage() {
         </div>
 
         {/* International Hotlines */}
-        <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#121214] border border-[#CBECE2] dark:border-[#27272a] shadow-sm space-y-4">
-          <h2 className="text-lg font-heading font-black text-[#19332A] dark:text-white">
+        <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#131916] border border-[#CBECE2] dark:border-[#1E2824] shadow-sm space-y-4">
+          <h2 className="text-lg font-heading font-black text-[#19332A] dark:text-[#F4FAF7]">
             International Crisis Resources
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
-            <div className="p-3.5 rounded-2xl bg-[#F8FCFA] dark:bg-[#18181b] border border-[#CBECE2] dark:border-[#27272a] space-y-1">
-              <p className="font-bold text-[#19332A] dark:text-white">🇺🇸 / 🇨🇦 USA &amp; Canada</p>
-              <p className="text-[#4F685F] dark:text-[#A1A1AA]">Dial or text <strong>988</strong></p>
-              <a href="tel:988" className="inline-block pt-1 text-[#006B56] dark:text-zinc-200 font-bold hover:underline">
+            <div className="p-3.5 rounded-2xl bg-[#F8FCFA] dark:bg-[#131916] border border-[#CBECE2] dark:border-[#1E2824] space-y-1">
+              <p className="font-bold text-[#19332A] dark:text-[#F4FAF7]">🇺🇸 / 🇨🇦 USA &amp; Canada</p>
+              <p className="text-[#4F685F] dark:text-[#9DB9B0]">Dial or text <strong>988</strong></p>
+              <a href="tel:988" className="inline-block pt-1 text-[#006B56] dark:text-[#D5E6E0] font-bold hover:underline">
                 Call 988 →
               </a>
             </div>
-            <div className="p-3.5 rounded-2xl bg-[#F8FCFA] dark:bg-[#18181b] border border-[#CBECE2] dark:border-[#27272a] space-y-1">
-              <p className="font-bold text-[#19332A] dark:text-white">🇬🇧 United Kingdom</p>
-              <p className="text-[#4F685F] dark:text-[#A1A1AA]">Dial <strong>111</strong> or Samaritans <strong>116 123</strong></p>
-              <a href="tel:116123" className="inline-block pt-1 text-[#006B56] dark:text-zinc-200 font-bold hover:underline">
+            <div className="p-3.5 rounded-2xl bg-[#F8FCFA] dark:bg-[#131916] border border-[#CBECE2] dark:border-[#1E2824] space-y-1">
+              <p className="font-bold text-[#19332A] dark:text-[#F4FAF7]">🇬🇧 United Kingdom</p>
+              <p className="text-[#4F685F] dark:text-[#9DB9B0]">Dial <strong>111</strong> or Samaritans <strong>116 123</strong></p>
+              <a href="tel:116123" className="inline-block pt-1 text-[#006B56] dark:text-[#D5E6E0] font-bold hover:underline">
                 Call 116 123 →
               </a>
             </div>
-            <div className="p-3.5 rounded-2xl bg-[#F8FCFA] dark:bg-[#18181b] border border-[#CBECE2] dark:border-[#27272a] space-y-1">
-              <p className="font-bold text-[#19332A] dark:text-white">🇦🇺 Australia</p>
-              <p className="text-[#4F685F] dark:text-[#A1A1AA]">Lifeline: <strong>13 11 14</strong></p>
-              <a href="tel:131114" className="inline-block pt-1 text-[#006B56] dark:text-zinc-200 font-bold hover:underline">
+            <div className="p-3.5 rounded-2xl bg-[#F8FCFA] dark:bg-[#131916] border border-[#CBECE2] dark:border-[#1E2824] space-y-1">
+              <p className="font-bold text-[#19332A] dark:text-[#F4FAF7]">🇦🇺 Australia</p>
+              <p className="text-[#4F685F] dark:text-[#9DB9B0]">Lifeline: <strong>13 11 14</strong></p>
+              <a href="tel:131114" className="inline-block pt-1 text-[#006B56] dark:text-[#D5E6E0] font-bold hover:underline">
                 Call 13 11 14 →
               </a>
             </div>
           </div>
-          <p className="text-xs text-[#4F685F] dark:text-[#A1A1AA] pt-1">
+          <p className="text-xs text-[#4F685F] dark:text-[#9DB9B0] pt-1">
             For hotlines in all other countries, visit the global directory at{" "}
-            <a href="https://findahelpline.com" target="_blank" rel="noopener noreferrer" className="underline font-bold text-[#006B56] dark:text-zinc-200">
+            <a href="https://findahelpline.com" target="_blank" rel="noopener noreferrer" className="underline font-bold text-[#006B56] dark:text-[#D5E6E0]">
               findahelpline.com
             </a>.
           </p>
@@ -295,11 +295,11 @@ export default function CrisisPage() {
 
         {/* Back Link */}
         <div className="flex items-center justify-between text-xs pt-4">
-          <Link href="/dashboard" className="text-[#006B56] dark:text-zinc-200 font-bold hover:underline flex items-center gap-1">
+          <Link href="/dashboard" className="text-[#006B56] dark:text-[#D5E6E0] font-bold hover:underline flex items-center gap-1">
             <span>←</span>
             <span>Return to Dashboard</span>
           </Link>
-          <Link href="/" className="text-[#4F685F] dark:text-[#A1A1AA] hover:underline">
+          <Link href="/" className="text-[#4F685F] dark:text-[#9DB9B0] hover:underline">
             Home
           </Link>
         </div>

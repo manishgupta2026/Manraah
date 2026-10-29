@@ -153,8 +153,8 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
 
   const getNavLinkClass = (isActive: boolean) => {
     return isActive
-      ? "text-[#006B56] dark:text-zinc-200 font-bold"
-      : "text-[#4F685F] dark:text-[#A1A1AA] hover:text-[#006B56] dark:hover:text-white";
+      ? "text-[#006B56] dark:text-[#D5E6E0] font-bold"
+      : "text-[#4F685F] dark:text-[#9DB9B0] hover:text-[#006B56] dark:hover:text-[#F4FAF7]";
   };
 
   return (
@@ -162,7 +162,7 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
       className={`sticky top-0 z-50 select-none w-full shrink-0 h-14 sm:h-16 ${
         mobileMenuOpen
           ? "bg-surface-container-lowest shadow-xl"
-          : "bg-surface/95 dark:bg-[#09090b] backdrop-blur-md border-b border-surface-variant/30 dark:border-[#27272a] text-on-surface dark:text-white shadow-2xs"
+          : "bg-surface/95 dark:bg-[#0A0E0D] backdrop-blur-md border-b border-surface-variant/30 dark:border-[#1E2824] text-on-surface dark:text-[#F4FAF7] shadow-2xs"
       }`}
     >
       <div className="h-full w-full px-4 sm:px-6 lg:px-8 xl:px-10 flex items-center justify-between lg:grid lg:grid-cols-[1fr_auto_1fr] items-center relative z-30">
@@ -175,7 +175,7 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
 
         {/* Navigation Links (Center Column - auto, centered independently) */}
         <nav
-          className="hidden lg:flex items-center gap-4 xl:gap-6 text-xs xl:text-sm font-heading font-semibold justify-self-center text-on-surface-variant dark:text-[#A1A1AA]"
+          className="hidden lg:flex items-center gap-4 xl:gap-6 text-xs xl:text-sm font-heading font-semibold justify-self-center text-on-surface-variant dark:text-[#9DB9B0]"
         >
           <Link
             href="/how-it-works"
@@ -214,7 +214,7 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 6, scale: 0.97 }}
                   transition={{ duration: 0.15, ease: "easeOut" }}
-                  className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-80 rounded-2xl p-2.5 z-50 flex flex-col gap-1 shadow-2xl border bg-surface-container-lowest/95 dark:bg-[#121214] backdrop-blur-xl border-surface-variant/40 dark:border-[#27272a] text-on-surface dark:text-white"
+                  className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-80 rounded-2xl p-2.5 z-50 flex flex-col gap-1 shadow-2xl border bg-surface-container-lowest/95 dark:bg-[#131916] backdrop-blur-xl border-surface-variant/40 dark:border-[#1E2824] text-on-surface dark:text-[#F4FAF7]"
                 >
                   {/* Colleges / Higher Ed */}
                   <Link
@@ -229,7 +229,7 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                     </div>
                     <div className="min-w-0 flex-1 space-y-0.5">
                       <div className="flex items-center justify-between gap-1.5 flex-wrap">
-                        <span className="text-xs sm:text-sm font-heading font-bold transition-colors text-on-surface group-hover:text-[#006C56] dark:text-[#F3E9D8] dark:group-hover:text-[#A3A77A] leading-snug">
+                        <span className="text-xs sm:text-sm font-heading font-bold transition-colors text-on-surface group-hover:text-[#006C56] dark:text-[#F4FAF7] dark:group-hover:text-[#5FAF8A] leading-snug">
                           For Students &amp; Colleges
                         </span>
                         <span
@@ -238,7 +238,7 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                           SC 2025
                         </span>
                       </div>
-                      <p className="text-[11px] sm:text-xs text-on-surface-variant dark:text-[#C5B7A4] leading-relaxed font-normal break-words">
+                      <p className="text-[11px] sm:text-xs text-on-surface-variant dark:text-[#9DB9B0] leading-relaxed font-normal break-words">
                         Campus-wide suicide prevention &amp; UGC guidelines
                       </p>
                     </div>
@@ -257,11 +257,11 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                     </div>
                     <div className="min-w-0 flex-1 space-y-0.5">
                       <div className="flex items-center gap-1.5">
-                        <span className="text-xs sm:text-sm font-heading font-bold transition-colors text-on-surface group-hover:text-[#006C56] dark:text-[#F3E9D8] dark:group-hover:text-[#A3A77A] leading-snug">
+                        <span className="text-xs sm:text-sm font-heading font-bold transition-colors text-on-surface group-hover:text-[#006C56] dark:text-[#F4FAF7] dark:group-hover:text-[#5FAF8A] leading-snug">
                           For Employees &amp; Corporates
                         </span>
                       </div>
-                      <p className="text-[11px] sm:text-xs text-on-surface-variant dark:text-[#C5B7A4] leading-relaxed font-normal break-words">
+                      <p className="text-[11px] sm:text-xs text-on-surface-variant dark:text-[#9DB9B0] leading-relaxed font-normal break-words">
                         24/7 confidential EAP, burnout telemetry &amp; ROI
                       </p>
                     </div>
@@ -269,7 +269,7 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
 
                   {/* Dropdown Footer CTA */}
                   <div
-                    className="mt-1 pt-2.5 border-t border-surface-variant/30 dark:border-[#51402E] flex flex-wrap items-center justify-between gap-2 px-2 pb-0.5"
+                    className="mt-1 pt-2.5 border-t border-surface-variant/30 dark:border-[#1E2824] flex flex-wrap items-center justify-between gap-2 px-2 pb-0.5"
                   >
                     <button
                       type="button"
@@ -286,7 +286,7 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                     <Link
                       href="/our-solution/students"
                       onClick={() => setSolutionDropdownOpen(false)}
-                      className="text-[11px] sm:text-xs font-heading font-semibold transition-colors text-on-surface-variant hover:text-[#006C56] dark:text-[#C5B7A4] dark:hover:text-[#F3E9D8] py-1 shrink-0 flex items-center gap-1"
+                      className="text-[11px] sm:text-xs font-heading font-semibold transition-colors text-on-surface-variant hover:text-[#006C56] dark:text-[#9DB9B0] dark:hover:text-[#F4FAF7] py-1 shrink-0 flex items-center gap-1"
                     >
                       <span>Full Overview</span>
                       <span>&rarr;</span>
@@ -353,21 +353,22 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 6, scale: 0.97 }}
                   transition={{ duration: 0.15, ease: "easeOut" }}
-                  className="absolute top-full right-0 mt-1.5 w-60 rounded-2xl shadow-xl p-2 z-50 flex flex-col gap-1 bg-surface-container-lowest/95 dark:bg-[#121214] backdrop-blur-xl border border-surface-variant/40 dark:border-[#27272a] text-on-surface dark:text-white"
+                  className="absolute top-full right-0 mt-1.5 w-60 rounded-2xl shadow-xl p-2 z-50 flex flex-col gap-1 bg-surface-container-lowest/95 dark:bg-[#131916] backdrop-blur-xl border border-surface-variant/40 dark:border-[#1E2824] text-on-surface dark:text-[#F4FAF7]"
                 >
                   <Link
                     href="/about"
                     onClick={() => setAboutDropdownOpen(false)}
                     className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-colors ${
                       pathname === "/about"
-                        ? "bg-[#006C56]/10 text-[#006C56] dark:bg-[#30241A] dark:text-[#A3A77A] font-bold"
-                        : "text-on-surface hover:bg-surface-container/70 hover:text-[#006C56] dark:text-[#C5B7A4] dark:hover:bg-[#3B2C20] dark:hover:text-[#F3E9D8]"
+? "bg-primary/10 text-primary dark:bg-white/15 dark:text-[#F4FAF7] font-bold"
+                        : "text-on-surface hover:bg-surface-container/70 hover:text-primary dark:text-[#F4FAF7]/90 dark:hover:bg-white/10 dark:hover:text-[#F4FAF7]"
+
                     }`}
                   >
                     <span className="material-symbols-outlined text-lg text-[#006C56]/80 dark:text-[#A3A77A]">info</span>
                     <div>
                       <div className="text-xs font-heading font-bold leading-tight">About Us</div>
-                      <div className="text-[10px] font-normal leading-tight text-on-surface-variant dark:text-[#A1A1AA]">
+                      <div className="text-[10px] font-normal leading-tight text-on-surface-variant dark:text-[#9DB9B0]">
                         Our story, pillars &amp; mission
                       </div>
                     </div>
@@ -378,14 +379,15 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                     onClick={() => setAboutDropdownOpen(false)}
                     className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-colors ${
                       pathname === "/faq"
-                        ? "bg-[#006C56]/10 text-[#006C56] dark:bg-[#30241A] dark:text-[#A3A77A] font-bold"
-                        : "text-on-surface hover:bg-surface-container/70 hover:text-[#006C56] dark:text-[#C5B7A4] dark:hover:bg-[#3B2C20] dark:hover:text-[#F3E9D8]"
+? "bg-primary/10 text-primary dark:bg-white/15 dark:text-[#F4FAF7] font-bold"
+                        : "text-on-surface hover:bg-surface-container/70 hover:text-primary dark:text-[#F4FAF7]/90 dark:hover:bg-white/10 dark:hover:text-[#F4FAF7]"
+
                     }`}
                   >
                     <span className="material-symbols-outlined text-lg text-[#00A889] dark:text-[#A7B69A]">quiz</span>
                     <div>
                       <div className="text-xs font-heading font-bold leading-tight">FAQ</div>
-                      <div className="text-[10px] font-normal leading-tight text-on-surface-variant dark:text-[#A1A1AA]">
+                      <div className="text-[10px] font-normal leading-tight text-on-surface-variant dark:text-[#9DB9B0]">
                         Frequently asked questions
                       </div>
                     </div>
@@ -396,14 +398,15 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                     onClick={() => setAboutDropdownOpen(false)}
                     className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-colors ${
                       pathname === "/privacy-and-trust"
-                        ? "bg-[#006C56]/10 text-[#006C56] dark:bg-[#30241A] dark:text-[#A3A77A] font-bold"
-                        : "text-on-surface hover:bg-surface-container/70 hover:text-[#006C56] dark:text-[#C5B7A4] dark:hover:bg-[#3B2C20] dark:hover:text-[#F3E9D8]"
+? "bg-primary/10 text-primary dark:bg-white/15 dark:text-[#F4FAF7] font-bold"
+                        : "text-on-surface hover:bg-surface-container/70 hover:text-primary dark:text-[#F4FAF7]/90 dark:hover:bg-white/10 dark:hover:text-[#F4FAF7]"
+
                     }`}
                   >
                     <span className="material-symbols-outlined text-lg text-rose-400 dark:text-[#D4A59A]">verified_user</span>
                     <div>
                       <div className="text-xs font-heading font-bold leading-tight">Privacy &amp; Trust</div>
-                      <div className="text-[10px] font-normal leading-tight text-on-surface-variant dark:text-[#A1A1AA]">
+                      <div className="text-[10px] font-normal leading-tight text-on-surface-variant dark:text-[#9DB9B0]">
                         Security &amp; confidentiality
                       </div>
                     </div>
@@ -426,7 +429,7 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
               <button
                 type="button"
                 onClick={toggleTheme}
-                className="w-8.5 h-8.5 rounded-full bg-surface-container/70 hover:bg-surface-container border border-surface-variant/40 dark:border-white/10 dark:bg-white/10 dark:hover:bg-white/20 text-on-surface dark:text-white flex items-center justify-center transition-colors cursor-pointer select-none shrink-0"
+                className="w-8.5 h-8.5 rounded-full bg-surface-container/70 hover:bg-surface-container border border-surface-variant/40 dark:border-[#1C463C]/10 dark:bg-white/10 dark:hover:bg-white/20 text-on-surface dark:text-[#F4FAF7] flex items-center justify-center transition-colors cursor-pointer select-none shrink-0"
                 title={isDark ? "Switch to light mode" : "Switch to dark mode"}
                 aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
               >
@@ -440,21 +443,21 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                 <button
                   type="button"
                   onClick={() => setProfileDropdownOpen((prev) => !prev)}
-                  className="flex items-center gap-2 px-2.5 py-1 rounded-full bg-surface-container/70 hover:bg-surface-container border border-surface-variant/40 dark:border-[#51402E] dark:bg-[#30241A] dark:hover:bg-[#3B2C20] focus:outline-none focus:ring-2 focus:ring-[#858A60]/40 cursor-pointer transition-all"
+                  className="flex items-center gap-2 px-2.5 py-1 rounded-full bg-surface-container/70 hover:bg-surface-container border border-surface-variant/40 dark:border-[#1E2824] dark:bg-white/10 dark:hover:bg-white/15 focus:outline-none focus:ring-2 focus:ring-primary/25 cursor-pointer transition-all"
                   aria-label="User profile menu"
                   aria-haspopup="true"
                   aria-expanded={profileDropdownOpen}
                 >
                   <UserAvatar user={user} sizeClass="w-8 h-8 text-xs" />
                   <div className="text-left hidden sm:block pr-1">
-                    <p className="text-xs font-heading font-bold text-on-surface dark:text-white leading-tight" suppressHydrationWarning>
+                    <p className="text-xs font-heading font-bold text-on-surface dark:text-[#F4FAF7] leading-tight" suppressHydrationWarning>
                       Hi, {userName}
                     </p>
-                    <p className="text-[9px] text-on-surface-variant/80 dark:text-[#A1A1AA] font-medium leading-none mt-0.5">
+                    <p className="text-[9px] text-on-surface-variant/80 dark:text-[#9DB9B0] font-medium leading-none mt-0.5">
                       Take care today
                     </p>
                   </div>
-                  <span className="material-symbols-outlined text-base text-on-surface-variant dark:text-[#A1A1AA] pr-1">
+                  <span className="material-symbols-outlined text-base text-on-surface-variant dark:text-[#9DB9B0] pr-1">
                     expand_more
                   </span>
                 </button>
@@ -466,13 +469,13 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: 6, scale: 0.95 }}
                       transition={{ duration: 0.15, ease: "easeOut" }}
-                      className="absolute top-full right-0 mt-2 w-56 rounded-2xl bg-surface-container-lowest/95 backdrop-blur-xl dark:bg-[#121214] border border-surface-variant/40 dark:border-[#27272a] text-on-surface dark:text-white shadow-2xl p-1.5 z-50 flex flex-col gap-1"
+                      className="absolute top-full right-0 mt-2 w-56 rounded-2xl bg-surface-container-lowest/95 backdrop-blur-xl dark:bg-[#131916] border border-surface-variant/40 dark:border-[#1E2824] text-on-surface dark:text-[#F4FAF7] shadow-2xl p-1.5 z-50 flex flex-col gap-1"
                     >
-                      <div className="px-3.5 py-2 border-b border-surface-variant/30 dark:border-white/10">
-                        <p className="font-heading font-bold text-on-surface dark:text-white text-sm truncate" suppressHydrationWarning>
+                      <div className="px-3.5 py-2 border-b border-surface-variant/30 dark:border-[#1C463C]/10">
+                        <p className="font-heading font-bold text-on-surface dark:text-[#F4FAF7] text-sm truncate" suppressHydrationWarning>
                           {userName || "Manraah Member"}
                         </p>
-                        <p className="text-[10px] text-on-surface-variant/80 dark:text-[#A1A1AA] font-medium truncate mt-0.5">
+                        <p className="text-[10px] text-on-surface-variant/80 dark:text-[#9DB9B0] font-medium truncate mt-0.5">
                           Active Profile: {formatCategoryLabel(user?.selectedCategory)}
                         </p>
                       </div>
@@ -483,11 +486,11 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                         onClick={() => setProfileDropdownOpen(false)}
                         className={`flex items-center gap-2.5 px-3.5 py-2 rounded-xl transition-colors text-xs font-heading font-semibold cursor-pointer ${
                           pathname === "/dashboard"
-                            ? "bg-primary/10 text-primary dark:bg-white/15 dark:text-zinc-200 font-bold"
+                            ? "bg-primary/10 text-primary dark:bg-white/15 dark:text-[#D5E6E0] font-bold"
                             : "text-on-surface-variant dark:text-[#E4E4E7] hover:bg-surface-container/70 hover:text-primary dark:hover:bg-white/10"
                         }`}
                       >
-                        <span className="material-symbols-outlined text-lg text-primary dark:text-zinc-200">dashboard</span>
+                        <span className="material-symbols-outlined text-lg text-primary dark:text-[#D5E6E0]">dashboard</span>
                         <span>Dashboard</span>
                       </Link>
 
@@ -497,11 +500,11 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                         onClick={() => setProfileDropdownOpen(false)}
                         className={`flex items-center gap-2.5 px-3.5 py-2 rounded-xl transition-colors text-xs font-heading font-semibold cursor-pointer ${
                           pathname === "/profile"
-                            ? "bg-primary/10 text-primary dark:bg-white/15 dark:text-zinc-200 font-bold"
+                            ? "bg-primary/10 text-primary dark:bg-white/15 dark:text-[#D5E6E0] font-bold"
                             : "text-on-surface-variant dark:text-[#E4E4E7] hover:bg-surface-container/70 hover:text-primary dark:hover:bg-white/10"
                         }`}
                       >
-                        <span className="material-symbols-outlined text-lg text-primary dark:text-zinc-200">person</span>
+                        <span className="material-symbols-outlined text-lg text-primary dark:text-[#D5E6E0]">person</span>
                         <span>My Profile</span>
                       </Link>
 
@@ -511,15 +514,15 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                         onClick={() => setProfileDropdownOpen(false)}
                         className={`flex items-center gap-2.5 px-3.5 py-2 rounded-xl transition-colors text-xs font-heading font-semibold cursor-pointer ${
                           pathname === "/journey"
-                            ? "bg-primary/10 text-primary dark:bg-white/15 dark:text-zinc-200 font-bold"
+                            ? "bg-primary/10 text-primary dark:bg-white/15 dark:text-[#D5E6E0] font-bold"
                             : "text-on-surface-variant dark:text-[#E4E4E7] hover:bg-surface-container/70 hover:text-primary dark:hover:bg-white/10"
                         }`}
                       >
-                        <span className="material-symbols-outlined text-lg text-primary dark:text-zinc-200">timeline</span>
+                        <span className="material-symbols-outlined text-lg text-primary dark:text-[#D5E6E0]">timeline</span>
                         <span>My Journey</span>
                       </Link>
 
-                      <div className="my-0.5 border-t border-surface-variant/30 dark:border-[#51402E]" />
+                      <div className="my-0.5 border-t border-surface-variant/30 dark:border-[#1E2824]" />
 
                       {/* Log Out Button */}
                       <button
@@ -566,7 +569,7 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                 className={`px-4 sm:px-5 py-2 rounded-full text-xs font-heading font-bold border transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-1 ${
                   isLoginPage
                     ? "bg-primary-container/20 text-primary border border-primary/30"
-                    : "bg-surface-container dark:bg-[#18181b] border border-surface-variant/40 dark:border-[#27272a] text-on-surface dark:text-white hover:bg-primary/5 dark:hover:bg-[#27272a]"
+                    : "bg-surface-container dark:bg-[#131916] border border-surface-variant/40 dark:border-[#1E2824] text-on-surface dark:text-[#F4FAF7] hover:bg-primary/5 dark:hover:bg-[#22302A]"
                 }`}
               >
                 Log In
@@ -578,7 +581,7 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                 className={`px-4 sm:px-5 py-2 rounded-full font-heading font-bold text-xs border transition-all duration-200 flex items-center gap-1.5 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 ${
                   isSignupPage || pathname === "/category-selection"
                     ? "bg-primary-purple text-white ring-2 ring-primary/20"
-                    : "bg-primary hover:bg-primary-purple text-white dark:bg-white dark:hover:bg-zinc-200 dark:text-black dark:hover:text-black"
+                    : "bg-primary hover:bg-primary-purple text-white dark:bg-[#5FAF8A] dark:hover:bg-[#006B56] dark:text-[#112F28] dark:hover:text-[#F4FAF7]"
                 }`}
               >
                 <span>Get Started</span>
@@ -624,7 +627,7 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.25, ease: "easeInOut" }}
-              className="relative z-20 lg:hidden w-full bg-surface-container-lowest dark:bg-[#09090b] border-t border-surface-variant/30 dark:border-[#27272a] px-5 sm:px-6 pt-4 pb-8 flex flex-col gap-4 shadow-2xl max-h-[calc(100dvh-4.5rem)] overflow-y-auto no-scrollbar text-on-surface dark:text-white"
+              className="relative z-20 lg:hidden w-full bg-surface-container-lowest dark:bg-[#0A0E0D] border-t border-surface-variant/30 dark:border-[#1E2824] px-5 sm:px-6 pt-4 pb-8 flex flex-col gap-4 shadow-2xl max-h-[calc(100dvh-4.5rem)] overflow-y-auto no-scrollbar text-on-surface dark:text-[#F4FAF7]"
             >
               <nav className="flex flex-col gap-1 font-heading font-semibold text-sm text-on-surface dark:text-[#F3E9D8]">
                 {/* Mobile Quick Crisis Support Access (Authenticated Users Only) */}
@@ -850,7 +853,7 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                     <Link
                       href="/dashboard"
                       onClick={() => setMobileMenuOpen(false)}
-                      className="w-full py-3.5 rounded-full bg-[#006C56] hover:bg-[#005B48] text-white dark:bg-white dark:hover:bg-zinc-200 dark:text-black dark:hover:text-black font-heading font-bold text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
+                      className="w-full py-3.5 rounded-full bg-[#006C56] hover:bg-[#005B48] text-white dark:bg-[#5FAF8A] dark:hover:bg-[#006B56] dark:text-[#112F28] dark:hover:text-[#F4FAF7] font-heading font-bold text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
                     >
                       <span>Go to Dashboard</span>
                       <span className="material-symbols-outlined text-lg">arrow_forward</span>
@@ -872,7 +875,7 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                         setMobileMenuOpen(false);
                         handleGetStarted();
                       }}
-                      className="w-full py-3.5 rounded-full bg-primary hover:bg-primary-purple text-white dark:bg-white dark:hover:bg-zinc-200 dark:text-black dark:hover:text-black font-heading font-bold text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
+                      className="w-full py-3.5 rounded-full bg-primary hover:bg-primary-purple text-white dark:bg-[#5FAF8A] dark:hover:bg-[#006B56] dark:text-[#112F28] dark:hover:text-[#F4FAF7] font-heading font-bold text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
                     >
                       <span>Get Started</span>
                       <span className="material-symbols-outlined text-lg">arrow_forward</span>
@@ -880,7 +883,7 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                     <Link
                       href="/login"
                       onClick={() => setMobileMenuOpen(false)}
-                      className="w-full text-center py-3 rounded-full bg-surface-container dark:bg-[#18181b] hover:bg-surface-variant/50 dark:hover:bg-[#27272a] border border-surface-variant/40 dark:border-[#27272a] font-heading font-semibold text-sm text-on-surface dark:text-white transition-colors"
+                      className="w-full text-center py-3 rounded-full bg-surface-container dark:bg-[#131916] hover:bg-surface-variant/50 dark:hover:bg-[#22302A] border border-surface-variant/40 dark:border-[#1E2824] font-heading font-semibold text-sm text-on-surface dark:text-[#F4FAF7] transition-colors"
                     >
                       Log In to Account
                     </Link>
