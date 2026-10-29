@@ -206,10 +206,10 @@ export default function AboutPage() {
         <motion.div variants={heroItemVariants} className="pt-2">
           <Link
             href="/for-you"
-            className="px-8 py-3.5 rounded-full bg-primary hover:bg-primary-purple text-white dark:bg-[#5FAF8A] dark:hover:bg-[#006B56] dark:text-[#112F28] dark:hover:text-[#F4FAF7] font-heading font-bold text-sm shadow-md hover:shadow-lg transition-all inline-flex items-center gap-2 cursor-pointer"
+            className="group px-8 py-3.5 rounded-full border border-[#B9DFD4] hover:border-[#006F5B] bg-[#D1EAE2] hover:bg-[#006F5B] text-[#00745F] hover:text-white shadow-xs hover:shadow-md font-heading font-bold transition-all duration-200 inline-flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#006F5B]/40 focus-visible:ring-offset-2 dark:bg-[#131916] dark:hover:bg-[#5FAF8A] dark:text-[#D5E6E0] dark:hover:text-[#112F28] dark:border-[#1E2824] dark:hover:border-[#5FAF8A]"
           >
             <span>Explore Life Pathways</span>
-            <span className="material-symbols-outlined text-base">
+            <span className="material-symbols-outlined text-base group-hover:translate-x-1 text-[#00745F] group-hover:text-white dark:text-[#D5E6E0] dark:group-hover:text-[#112F28] transition-all">
               arrow_forward
             </span>
           </Link>

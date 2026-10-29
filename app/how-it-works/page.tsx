@@ -116,10 +116,10 @@ export default function HowItWorksPage() {
           <div className="pt-2 flex items-center justify-center gap-3">
             <Link
               href="/features"
-              className="px-8 py-4 rounded-full bg-primary hover:bg-primary-purple text-white dark:bg-[#5FAF8A] dark:hover:bg-[#006B56] dark:text-[#112F28] dark:hover:text-[#F4FAF7] font-heading font-bold text-sm shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all inline-flex items-center gap-2 cursor-pointer"
+              className="group px-8 py-4 rounded-full bg-[#E3F3EE] hover:bg-[#006F5B] text-[#006F5B] hover:text-white border border-[#B9DFD4] hover:border-[#006F5B] dark:bg-[#131916] dark:hover:bg-[#5FAF8A] dark:text-[#D5E6E0] dark:hover:text-[#112F28] dark:border-[#1E2824] dark:hover:border-[#5FAF8A] font-heading font-bold text-sm shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 inline-flex items-center gap-2 cursor-pointer"
             >
               <span>Explore All Features</span>
-              <span className="material-symbols-outlined text-lg">arrow_forward</span>
+              <span className="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform text-[#006F5B] group-hover:text-white dark:text-[#D5E6E0] dark:group-hover:text-[#112F28]">arrow_forward</span>
             </Link>
           </div>
         </div>
@@ -138,14 +138,16 @@ export default function HowItWorksPage() {
                 <button
                   key={s.step}
                   onClick={() => setActiveStepIdx(idx)}
-                  className={`group px-4 sm:px-6 py-2.5 sm:py-3 rounded-full text-xs sm:text-sm font-heading font-bold transition-all flex items-center gap-2 cursor-pointer ${
+                  className={`group px-4 sm:px-6 py-2.5 sm:py-3 rounded-full text-xs sm:text-sm font-heading font-bold transition-all duration-200 flex items-center gap-2 cursor-pointer border ${
                     isActive
-                      ? "bg-primary text-white shadow-md scale-[1.03] dark:bg-[#5FAF8A] dark:text-[#112F28]"
-                      : "bg-surface-container-lowest dark:bg-[#131916] border border-surface-variant/40 dark:border-[#1E2824] text-on-surface-variant dark:text-[#9DB9B0] hover:bg-surface-container dark:hover:bg-[#22302A] hover:text-on-surface dark:hover:text-[#F4FAF7]"
+                      ? "bg-[#006F5B] text-white border-[#006F5B] shadow-md scale-[1.03] hover:bg-[#005747] hover:border-[#005747] dark:bg-[#5FAF8A] dark:text-[#112F28] dark:border-[#5FAF8A]"
+                      : "bg-[#FFFFFF] dark:bg-[#131916] text-[#4B4B57] dark:text-[#9DB9B0] border-[#E5E7EB] dark:border-[#1E2824] hover:bg-[#E3F3EE] hover:text-[#006F5B] hover:border-[#B9DFD4] dark:hover:bg-[#22302A] dark:hover:text-[#5FAF8A] dark:hover:border-[#325246]"
                   }`}
                 >
-                  <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black ${
-                    isActive ? "bg-white text-primary dark:bg-[#131916] dark:text-[#D5E6E0]" : "bg-primary/10 text-primary dark:bg-white/10 dark:text-[#D5E6E0]"
+                  <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black transition-colors ${
+                    isActive
+                      ? "bg-white text-[#006F5B] dark:bg-[#112F28] dark:text-[#5FAF8A]"
+                      : "bg-[#006F5B]/15 text-[#006F5B] dark:bg-white/10 dark:text-[#D5E6E0]"
                   }`}>
                     {s.step}
                   </span>
@@ -326,7 +328,7 @@ export default function HowItWorksPage() {
             <button
               onClick={handlePrevStep}
               aria-label="Previous step"
-              className="absolute left-2 sm:-left-5 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/90 hover:bg-white text-on-surface dark:bg-[#131916] dark:hover:bg-[#22302A] dark:text-[#F4FAF7] border border-surface-variant/40 dark:border-[#1E2824] shadow-lg backdrop-blur-md flex items-center justify-center transition-transform hover:scale-105 active:scale-95 cursor-pointer z-10"
+              className="absolute left-2 sm:-left-5 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-[#E3F3EE] hover:bg-[#006F5B] text-[#006F5B] hover:text-white border border-[#B9DFD4] hover:border-[#006F5B] dark:bg-[#131916] dark:hover:bg-[#5FAF8A] dark:text-[#9DB9B0] dark:hover:text-[#112F28] dark:border-[#1E2824] dark:hover:border-[#5FAF8A] shadow-lg backdrop-blur-md flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer z-10"
             >
               <span className="material-symbols-outlined text-xl sm:text-2xl">chevron_left</span>
             </button>
@@ -335,7 +337,7 @@ export default function HowItWorksPage() {
             <button
               onClick={handleNextStep}
               aria-label="Next step"
-              className="absolute right-2 sm:-right-5 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/90 hover:bg-white text-on-surface dark:bg-[#131916] dark:hover:bg-[#22302A] dark:text-[#F4FAF7] border border-surface-variant/40 dark:border-[#1E2824] shadow-lg backdrop-blur-md flex items-center justify-center transition-transform hover:scale-105 active:scale-95 cursor-pointer z-10"
+              className="absolute right-2 sm:-right-5 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-[#E3F3EE] hover:bg-[#006F5B] text-[#006F5B] hover:text-white border border-[#B9DFD4] hover:border-[#006F5B] dark:bg-[#131916] dark:hover:bg-[#5FAF8A] dark:text-[#9DB9B0] dark:hover:text-[#112F28] dark:border-[#1E2824] dark:hover:border-[#5FAF8A] shadow-lg backdrop-blur-md flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer z-10"
             >
               <span className="material-symbols-outlined text-xl sm:text-2xl">chevron_right</span>
             </button>
@@ -352,8 +354,8 @@ export default function HowItWorksPage() {
                   aria-label={`Go to step ${idx + 1}`}
                   className={`transition-all duration-300 rounded-full cursor-pointer ${
                     isActive
-                      ? "w-8 h-2.5 bg-primary dark:bg-[#5FAF8A] dark:text-[#112F28] shadow-xs"
-                      : "w-2.5 h-2.5 bg-surface-variant/70 dark:bg-[#22302A] hover:bg-primary/40 dark:hover:bg-[#005B48]/40"
+                      ? "w-8 h-2.5 bg-[#006F5B] dark:bg-[#5FAF8A] shadow-xs"
+                      : "w-2.5 h-2.5 bg-[#B9DFD4] dark:bg-[#22302A] hover:bg-[#006F5B]/50 dark:hover:bg-[#5FAF8A]/50"
                   }`}
                 />
               );
@@ -396,6 +398,7 @@ export default function HowItWorksPage() {
         buttonText="Explore Life Stage Pathways"
         buttonHref="/for-you"
         variant="green"
+        buttonClassName="group px-7 sm:px-8 py-3.5 sm:py-4 rounded-full bg-[#E3F3EE] hover:bg-[#006F5B] text-[#006F5B] hover:text-white border border-[#B9DFD4] hover:border-[#006F5B] dark:bg-[#131916] dark:hover:bg-[#5FAF8A] dark:text-[#D5E6E0] dark:hover:text-[#112F28] dark:border-[#1E2824] dark:hover:border-[#5FAF8A] font-heading font-bold text-xs sm:text-sm transition-all duration-200 inline-flex items-center gap-2 cursor-pointer shadow-md"
       />
     </div>
   );

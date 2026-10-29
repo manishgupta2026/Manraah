@@ -216,10 +216,10 @@ function FeaturesContent() {
           <div className="pt-0.5 flex items-center justify-center gap-3">
             <Link
               href="/how-it-works"
-              className="px-8 py-4 rounded-full bg-primary hover:bg-primary-purple text-white dark:bg-[#5FAF8A] dark:hover:bg-[#006B56] dark:text-[#112F28] dark:hover:text-[#F4FAF7] font-heading font-bold text-sm shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all inline-flex items-center gap-2 cursor-pointer"
+              className="group px-8 py-4 rounded-full bg-[#E3F3EE] hover:bg-[#006F5B] text-[#006F5B] hover:text-white border border-[#B9DFD4] hover:border-[#006F5B] dark:bg-[#131916] dark:hover:bg-[#5FAF8A] dark:text-[#D5E6E0] dark:hover:text-[#112F28] dark:border-[#1E2824] dark:hover:border-[#5FAF8A] font-heading font-bold text-sm shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 inline-flex items-center gap-2 cursor-pointer"
             >
               <span>See How It Works</span>
-              <span className="material-symbols-outlined text-base group-hover:translate-x-1 transition-transform text-primary group-hover:text-white">arrow_forward</span>
+              <span className="material-symbols-outlined text-base group-hover:translate-x-1 transition-transform text-[#006F5B] group-hover:text-white dark:text-[#D5E6E0] dark:group-hover:text-[#112F28]">arrow_forward</span>
             </Link>
           </div>
         </div>
@@ -242,10 +242,10 @@ function FeaturesContent() {
                   <button
                     key={feat.id}
                     onClick={() => setSelectedPillar(idx)}
-                    className={`px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-full text-xs font-heading font-bold whitespace-nowrap transition-all flex items-center gap-1.5 cursor-pointer shrink-0 ${
+                    className={`px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-full text-xs font-heading font-bold whitespace-nowrap transition-all duration-200 flex items-center gap-1.5 cursor-pointer shrink-0 border ${
                       isActive
-                        ? "bg-on-surface text-white shadow-md scale-[1.03] dark:bg-[#5FAF8A] dark:text-[#112F28]"
-                        : "bg-surface-container-lowest dark:bg-[#131916] border border-surface-variant/40 dark:border-[#1E2824] text-on-surface-variant dark:text-[#9DB9B0] hover:bg-surface-container dark:hover:bg-[#22302A] hover:text-on-surface dark:hover:text-[#F4FAF7]"
+                        ? "bg-[#006F5B] text-white border-[#006F5B] shadow-md scale-[1.03] hover:bg-[#005747] hover:border-[#005747] dark:bg-[#5FAF8A] dark:text-[#112F28] dark:border-[#5FAF8A]"
+                        : "bg-[#FFFFFF] dark:bg-[#131916] text-[#4B4B57] dark:text-[#9DB9B0] border-[#E5E7EB] dark:border-[#1E2824] hover:bg-[#E3F3EE] hover:text-[#006F5B] hover:border-[#B9DFD4] dark:hover:bg-[#22302A] dark:hover:text-[#5FAF8A] dark:hover:border-[#325246]"
                     }`}
                   >
                     <span className="material-symbols-outlined text-sm sm:text-base">{feat.icon}</span>
@@ -561,7 +561,7 @@ function FeaturesContent() {
             <button
               onClick={handlePrevFeature}
               aria-label="Previous feature"
-              className="hidden sm:flex absolute -left-4 sm:-left-5 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-[#E6F4F0]/90 hover:bg-primary text-primary hover:text-white border border-[#CBECE2] hover:border-primary shadow-lg backdrop-blur-md items-center justify-center transition-all hover:scale-105 active:scale-95 cursor-pointer z-10"
+              className="hidden sm:flex absolute -left-4 sm:-left-5 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-[#E3F3EE] hover:bg-[#006F5B] text-[#006F5B] hover:text-white border border-[#B9DFD4] hover:border-[#006F5B] dark:bg-[#131916] dark:hover:bg-[#5FAF8A] dark:text-[#9DB9B0] dark:hover:text-[#112F28] dark:border-[#1E2824] dark:hover:border-[#5FAF8A] shadow-lg backdrop-blur-md items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer z-10"
             >
               <span className="material-symbols-outlined text-xl sm:text-2xl">chevron_left</span>
             </button>
@@ -570,7 +570,7 @@ function FeaturesContent() {
             <button
               onClick={handleNextFeature}
               aria-label="Next feature"
-              className="hidden sm:flex absolute -right-4 sm:-right-5 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-[#E6F4F0]/90 hover:bg-primary text-primary hover:text-white border border-[#CBECE2] hover:border-primary shadow-lg backdrop-blur-md items-center justify-center transition-all hover:scale-105 active:scale-95 cursor-pointer z-10"
+              className="hidden sm:flex absolute -right-4 sm:-right-5 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-[#E3F3EE] hover:bg-[#006F5B] text-[#006F5B] hover:text-white border border-[#B9DFD4] hover:border-[#006F5B] dark:bg-[#131916] dark:hover:bg-[#5FAF8A] dark:text-[#9DB9B0] dark:hover:text-[#112F28] dark:border-[#1E2824] dark:hover:border-[#5FAF8A] shadow-lg backdrop-blur-md items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer z-10"
             >
               <span className="material-symbols-outlined text-xl sm:text-2xl">chevron_right</span>
             </button>
@@ -581,7 +581,7 @@ function FeaturesContent() {
             <button
               onClick={handlePrevFeature}
               aria-label="Previous feature"
-              className="sm:hidden w-8 h-8 rounded-full bg-primary/10 hover:bg-primary border border-primary/20 hover:border-primary text-primary hover:text-white flex items-center justify-center active:scale-95 transition-all cursor-pointer"
+              className="sm:hidden w-8 h-8 rounded-full bg-[#E3F3EE] hover:bg-[#006F5B] border border-[#B9DFD4] hover:border-[#006F5B] text-[#006F5B] hover:text-white dark:bg-[#131916] dark:hover:bg-[#5FAF8A] dark:border-[#1E2824] dark:hover:border-[#5FAF8A] dark:text-[#9DB9B0] dark:hover:text-[#112F28] flex items-center justify-center active:scale-95 transition-all duration-200 cursor-pointer"
             >
               <span className="material-symbols-outlined text-base">chevron_left</span>
             </button>
@@ -595,8 +595,8 @@ function FeaturesContent() {
                     aria-label={`Go to feature ${idx + 1}`}
                     className={`transition-all duration-300 rounded-full cursor-pointer ${
                       isActive
-                        ? "w-7 h-2 bg-primary shadow-xs"
-                        : "w-2 h-2 bg-surface-variant/70 hover:bg-primary/40"
+                        ? "w-7 h-2 bg-[#006F5B] dark:bg-[#5FAF8A] shadow-xs"
+                        : "w-2 h-2 bg-[#B9DFD4] dark:bg-[#1E2824] hover:bg-[#006F5B]/60 dark:hover:bg-[#5FAF8A]/60"
                     }`}
                   />
                 );
@@ -605,7 +605,7 @@ function FeaturesContent() {
             <button
               onClick={handleNextFeature}
               aria-label="Next feature"
-              className="sm:hidden w-8 h-8 rounded-full bg-primary/10 hover:bg-primary border border-primary/20 hover:border-primary text-primary hover:text-white flex items-center justify-center active:scale-95 transition-all cursor-pointer"
+              className="sm:hidden w-8 h-8 rounded-full bg-[#E3F3EE] hover:bg-[#006F5B] border border-[#B9DFD4] hover:border-[#006F5B] text-[#006F5B] hover:text-white dark:bg-[#131916] dark:hover:bg-[#5FAF8A] dark:border-[#1E2824] dark:hover:border-[#5FAF8A] dark:text-[#9DB9B0] dark:hover:text-[#112F28] flex items-center justify-center active:scale-95 transition-all duration-200 cursor-pointer"
             >
               <span className="material-symbols-outlined text-base">chevron_right</span>
             </button>
@@ -619,6 +619,7 @@ function FeaturesContent() {
         description="Unlock mood tracking, daily reflections, audio meditations, and your empathetic AI companion today."
         buttonText="Explore How It Works"
         buttonHref="/how-it-works"
+        buttonClassName="group px-7 sm:px-8 py-3.5 sm:py-4 rounded-full bg-[#E3F3EE] hover:bg-[#006F5B] text-[#006F5B] hover:text-white border border-[#B9DFD4] hover:border-[#006F5B] dark:bg-[#131916] dark:hover:bg-[#5FAF8A] dark:text-[#D5E6E0] dark:hover:text-[#112F28] dark:border-[#1E2824] dark:hover:border-[#5FAF8A] font-heading font-bold text-xs sm:text-sm transition-all duration-200 inline-flex items-center gap-2 cursor-pointer shadow-md"
       />
     </div>
   );

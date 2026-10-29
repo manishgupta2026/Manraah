@@ -566,11 +566,7 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
             <div className="hidden sm:flex items-center gap-2.5">
               <Link
                 href="/login"
-                className={`px-4 sm:px-5 py-2 rounded-full text-xs font-heading font-bold border transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-1 ${
-                  isLoginPage
-                    ? "bg-primary-container/20 text-primary border border-primary/30"
-                    : "bg-surface-container dark:bg-[#131916] border border-surface-variant/40 dark:border-[#1E2824] text-on-surface dark:text-[#F4FAF7] hover:bg-primary/5 dark:hover:bg-[#22302A]"
-                }`}
+                className="px-4 sm:px-5 py-2 rounded-full text-xs font-heading font-bold border border-[#B9DFD4] hover:border-[#006F5B] bg-[#E3F3EE] hover:bg-[#006F5B] text-[#006F5B] hover:text-white shadow-xs hover:shadow-md transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#006F5B]/40 focus-visible:ring-offset-1 dark:bg-[#131916] dark:hover:bg-[#5FAF8A] dark:text-[#D5E6E0] dark:hover:text-[#112F28] dark:border-[#1E2824] dark:hover:border-[#5FAF8A]"
               >
                 Log In
               </Link>
@@ -578,11 +574,7 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
               <button
                 type="button"
                 onClick={handleGetStarted}
-                className={`px-4 sm:px-5 py-2 rounded-full font-heading font-bold text-xs border transition-all duration-200 flex items-center gap-1.5 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 ${
-                  isSignupPage || pathname === "/category-selection"
-                    ? "bg-primary-purple text-white ring-2 ring-primary/20"
-                    : "bg-primary hover:bg-primary-purple text-white dark:bg-[#5FAF8A] dark:hover:bg-[#006B56] dark:text-[#112F28] dark:hover:text-[#F4FAF7]"
-                }`}
+                className="px-4 sm:px-5 py-2 rounded-full text-xs font-heading font-bold border border-[#B9DFD4] hover:border-[#006F5B] bg-[#E3F3EE] hover:bg-[#006F5B] text-[#006F5B] hover:text-white shadow-xs hover:shadow-md transition-all duration-200 flex items-center justify-center cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#006F5B]/40 focus-visible:ring-offset-1 dark:bg-[#131916] dark:hover:bg-[#5FAF8A] dark:text-[#D5E6E0] dark:hover:text-[#112F28] dark:border-[#1E2824] dark:hover:border-[#5FAF8A]"
               >
                 <span>Get Started</span>
               </button>
@@ -875,7 +867,7 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                         setMobileMenuOpen(false);
                         handleGetStarted();
                       }}
-                      className="w-full py-3.5 rounded-full bg-primary hover:bg-primary-purple text-white dark:bg-[#5FAF8A] dark:hover:bg-[#006B56] dark:text-[#112F28] dark:hover:text-[#F4FAF7] font-heading font-bold text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
+                      className="w-full text-center py-3 rounded-full font-heading font-semibold text-sm transition-all duration-200 border border-[#B9DFD4] hover:border-[#006F5B] bg-[#E3F3EE] hover:bg-[#006F5B] text-[#006F5B] hover:text-white shadow-xs hover:shadow-md flex items-center justify-center gap-2 cursor-pointer dark:bg-[#131916] dark:hover:bg-[#5FAF8A] dark:text-[#D5E6E0] dark:hover:text-[#112F28] dark:border-[#1E2824] dark:hover:border-[#5FAF8A]"
                     >
                       <span>Get Started</span>
                       <span className="material-symbols-outlined text-lg">arrow_forward</span>
@@ -883,7 +875,7 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
                     <Link
                       href="/login"
                       onClick={() => setMobileMenuOpen(false)}
-                      className="w-full text-center py-3 rounded-full bg-surface-container dark:bg-[#131916] hover:bg-surface-variant/50 dark:hover:bg-[#22302A] border border-surface-variant/40 dark:border-[#1E2824] font-heading font-semibold text-sm text-on-surface dark:text-[#F4FAF7] transition-colors"
+                      className="w-full text-center py-3 rounded-full font-heading font-semibold text-sm transition-all duration-200 border border-[#B9DFD4] hover:border-[#006F5B] bg-[#E3F3EE] hover:bg-[#006F5B] text-[#006F5B] hover:text-white shadow-xs hover:shadow-md dark:bg-[#131916] dark:hover:bg-[#5FAF8A] dark:text-[#D5E6E0] dark:hover:text-[#112F28] dark:border-[#1E2824] dark:hover:border-[#5FAF8A]"
                     >
                       Log In to Account
                     </Link>

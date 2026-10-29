@@ -257,10 +257,10 @@ export default function BlogPage() {
               <button
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
-                className={`px-4 py-2 rounded-full text-xs font-heading font-bold transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/40 focus:ring-offset-2 active:scale-95 ${
+                className={`px-4 py-2 rounded-full text-xs font-heading font-bold transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#006F5B]/40 focus:ring-offset-2 active:scale-95 border ${
                   isActive
-                    ? "bg-primary text-white shadow-sm scale-105 dark:bg-[#5FAF8A] dark:text-[#112F28]"
-                    : "bg-surface-container-lowest dark:bg-[#131916] dark:bg-[#131916] hover:bg-surface-container dark:hover:bg-[#22302A] text-on-surface-variant dark:text-[#9DB9B0] border border-surface-variant/40 dark:border-[#1E2824]"
+                    ? "bg-[#006F5B] text-white border-[#006F5B] shadow-sm scale-105 hover:bg-[#005747] hover:border-[#005747] dark:bg-[#5FAF8A] dark:text-[#112F28] dark:border-[#5FAF8A]"
+                    : "bg-white dark:bg-[#131916] border-surface-variant/40 dark:border-[#1E2824] text-on-surface-variant dark:text-[#9DB9B0] hover:bg-[#E3F3EE] hover:text-[#006F5B] hover:border-[#B9DFD4] dark:hover:bg-[#22302A] dark:hover:text-[#5FAF8A] dark:hover:border-[#325246]"
                 }`}
               >
                 {cat}

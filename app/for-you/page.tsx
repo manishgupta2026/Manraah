@@ -182,10 +182,10 @@ export default function ForYouPage() {
               <button
                 key={p.id}
                 onClick={() => setActivePathwayId(p.id)}
-                className={`px-5 py-2.5 rounded-full text-xs sm:text-sm font-heading font-bold transition-all cursor-pointer flex items-center gap-2 ${
+                className={`px-5 py-2.5 rounded-full text-xs sm:text-sm font-heading font-bold transition-all duration-200 cursor-pointer flex items-center gap-2 border ${
                   isActive
-                    ? "bg-primary text-white shadow-md scale-105 dark:bg-[#5FAF8A] dark:text-[#112F28]"
-                    : "bg-surface-container-lowest dark:bg-[#131916] dark:bg-[#131916] hover:bg-surface-container dark:hover:bg-[#22302A] text-on-surface-variant dark:text-[#9DB9B0] border border-surface-variant/40 dark:border-[#1E2824]"
+                    ? "bg-primary text-white border-primary shadow-md scale-105 dark:bg-[#5FAF8A] dark:text-[#112F28] dark:border-[#5FAF8A]"
+                    : "bg-surface-container-lowest dark:bg-[#131916] hover:bg-[#E3F3EE] hover:text-[#006F5B] hover:border-[#B9DFD4] dark:hover:bg-[#22302A] dark:hover:text-[#5FAF8A] dark:hover:border-[#325246] text-on-surface-variant dark:text-[#9DB9B0] border-surface-variant/40 dark:border-[#1E2824]"
                 }`}
               >
                 <span className="text-base">{p.emoji}</span>

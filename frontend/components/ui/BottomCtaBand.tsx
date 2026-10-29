@@ -8,6 +8,7 @@ interface BottomCtaBandProps {
   buttonHref: string;
   className?: string;
   variant?: "purple" | "green";
+  buttonClassName?: string;
 }
 
 export default function BottomCtaBand({
@@ -17,6 +18,7 @@ export default function BottomCtaBand({
   buttonHref,
   className = "",
   variant = "green",
+  buttonClassName,
 }: BottomCtaBandProps) {
   return (
     <section className={`w-full py-10 sm:py-14 px-4 sm:px-6 bg-surface dark:bg-[#0A0E0D] transition-colors ${className}`}>
@@ -49,7 +51,10 @@ export default function BottomCtaBand({
             <div className="pt-2 flex justify-center">
               <Link
                 href={buttonHref}
-                className="px-7 sm:px-8 py-3.5 sm:py-4 rounded-full bg-white/10 hover:bg-white text-white hover:text-[#004D3D] border border-white/25 hover:border-white font-heading font-bold text-xs sm:text-sm transition-all inline-flex items-center gap-2 group cursor-pointer shadow-md"
+                className={
+                  buttonClassName ||
+                  "px-7 sm:px-8 py-3.5 sm:py-4 rounded-full bg-white/10 hover:bg-white text-white hover:text-[#004D3D] border border-white/25 hover:border-white font-heading font-bold text-xs sm:text-sm transition-all inline-flex items-center gap-2 group cursor-pointer shadow-md"
+                }
               >
                 <span>{buttonText}</span>
                 <span className="material-symbols-outlined text-base sm:text-lg group-hover:translate-x-1 transition-transform">

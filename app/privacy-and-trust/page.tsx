@@ -216,15 +216,15 @@ export default function PrivacyAndTrustPage() {
         <div className="pt-2 flex flex-wrap items-center justify-center gap-4">
           <Link
             href="/contact"
-            className="px-7 py-3.5 rounded-full bg-primary hover:bg-primary-purple text-white dark:bg-[#5FAF8A] dark:hover:bg-[#006B56] dark:text-[#112F28] dark:hover:text-[#F4FAF7] text-xs sm:text-sm font-heading font-bold shadow-md hover:shadow-lg transition-all inline-flex items-center gap-2 cursor-pointer"
+            className="group px-7 py-3.5 rounded-full border border-[#B9DFD4] hover:border-[#006F5B] bg-[#E3F3EE] hover:bg-[#006F5B] text-[#006F5B] hover:text-white shadow-xs hover:shadow-md transition-all duration-200 inline-flex items-center justify-center gap-2 cursor-pointer text-xs sm:text-sm font-heading font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#006F5B]/40 focus-visible:ring-offset-2 dark:bg-[#131916] dark:hover:bg-[#5FAF8A] dark:text-[#D5E6E0] dark:hover:text-[#112F28] dark:border-[#1E2824] dark:hover:border-[#5FAF8A]"
           >
             <span>Contact Privacy Support</span>
-            <span className="material-symbols-outlined text-base">mail</span>
+            <span className="material-symbols-outlined text-base text-[#006F5B] group-hover:text-white transition-colors dark:text-[#D5E6E0] dark:group-hover:text-[#112F28]">mail</span>
           </Link>
 
           <Link
             href="/faq"
-            className="px-7 py-3.5 rounded-full bg-surface-container-lowest dark:bg-[#131916] hover:bg-surface-container text-on-surface border border-surface-variant/50 text-xs sm:text-sm font-heading font-semibold transition-all"
+            className="px-7 py-3.5 rounded-full border border-[#B9DFD4] hover:border-[#006F5B] bg-[#E3F3EE] hover:bg-[#006F5B] text-[#006F5B] hover:text-white shadow-xs hover:shadow-md transition-all duration-200 inline-flex items-center justify-center text-xs sm:text-sm font-heading font-bold cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#006F5B]/40 focus-visible:ring-offset-2 dark:bg-[#131916] dark:hover:bg-[#5FAF8A] dark:text-[#D5E6E0] dark:hover:text-[#112F28] dark:border-[#1E2824] dark:hover:border-[#5FAF8A]"
           >
             Explore FAQ Hub
           </Link>
