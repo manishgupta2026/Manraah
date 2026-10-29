@@ -413,7 +413,7 @@ export default function CorporatesSolutionPage() {
 
       {/* ═══ 6. BOTTOM CTA BAND ═══ */}
       <BottomCtaBand
-        title="Looking for Individual Personal Care?"
+        title="Looking for Individual Care?"
         description="Explore how Manraah also supports individual professionals and entrepreneurs with evening decompression, mood tracking, and AI companions."
         buttonText="Explore Features for Working Pros"
         buttonHref="/features"

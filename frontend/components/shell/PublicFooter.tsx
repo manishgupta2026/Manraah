@@ -142,7 +142,7 @@ export default function PublicFooter() {
         <div className="pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between text-xs text-white/50 gap-4">
           <p>© 2026 Manraah. All rights reserved.</p>
           <p className="flex items-center gap-1.5">
-            <span>Designed &amp; Crafted by</span>
+            <span>Designed and Developed by</span>{" "}
             <a
               href="https://digigrantha.com/"
               target="_blank"
