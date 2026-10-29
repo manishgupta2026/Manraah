@@ -91,7 +91,7 @@ export default function PrivacyPage() {
           <div className="pt-6 border-t border-surface-variant/20 dark:border-[#1E2824] flex flex-col sm:flex-row items-center justify-between gap-4">
             <Link
               href="/"
-              className="px-6 py-3 rounded-full bg-primary hover:bg-primary-purple text-white dark:bg-[#5FAF8A] dark:hover:bg-[#006B56] dark:text-[#112F28] dark:hover:text-[#F4FAF7] font-heading font-bold text-xs shadow-md transition-all flex items-center gap-2 cursor-pointer"
+              className="px-6 py-3 rounded-full bg-[#D1EAE2] hover:bg-[#006F5B] border border-[#B9DFD4] hover:border-[#006F5B] text-[#00745F] hover:text-white font-heading font-bold text-xs shadow-sm hover:shadow-md transition-all duration-300 flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#006F5B]/50"
             >
               <span className="material-symbols-outlined text-sm">arrow_back</span>
               <span>Return to Home</span>

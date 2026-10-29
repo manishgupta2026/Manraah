@@ -219,8 +219,8 @@ export default function RequestCallbackModal({
                     <p className="text-sm text-[#211D2E]/80 dark:text-[#D5E6E0] max-w-md mx-auto leading-relaxed">
                       Thank you, <span className="font-bold text-[#211D2E] dark:text-[#F4FAF7]">{formData.fullName}</span>.
                       Our Institutional Care Director will review your requirements for{" "}
-                      <span className="font-semibold text-[#006F5B] dark:text-[#5FAF8A]">{formData.orgName}</span> and
-                      connect with you at <span className="font-semibold text-[#211D2E] dark:text-[#F4FAF7]">{formData.phone}</span> within 4 business hours.
+                      <span className="font-semibold text-[#006F5B] dark:text-[#5FAF8A]">{formData.orgName}</span> and{" "}
+                      connect with you within 1 to 2 business days.
                     </p>
                   </div>
 

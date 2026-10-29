@@ -348,7 +348,7 @@ export default function CorporatesSolutionPage() {
               onClick={() => triggerCallbackModal("corporates")}
               className="px-6 py-2.5 rounded-full bg-[#E3F3EE] hover:bg-[#006F5B] border border-[#B9DFD4] hover:border-[#006F5B] text-[#006F5B] hover:text-white font-heading font-bold text-xs shadow-xs hover:shadow-md transition-all duration-300 shrink-0 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#006F5B]/50"
             >
-              Request Dashboard Demo
+              Request Callback
             </button>
           </div>
         </div>
@@ -415,7 +415,7 @@ export default function CorporatesSolutionPage() {
       <BottomCtaBand
         title="Looking for Individual Care?"
         description="Explore how Manraah also supports individual professionals and entrepreneurs with evening decompression, mood tracking, and AI companions."
-        buttonText="Explore Features for Working Pros"
+        buttonText="Explore Features for Working Professionals"
         buttonHref="/features"
         variant="green"
       />

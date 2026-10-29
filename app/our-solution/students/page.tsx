@@ -413,9 +413,9 @@ export default function StudentsSolutionPage() {
 
       {/* ═══ 6. BOTTOM CTA BAND ═══ */}
       <BottomCtaBand
-        title="Looking for Individual Student Care?"
+        title="Looking for Individual Care?"
         description="Explore how Manraah also supports individual students with self-paced wellness assessments, AI companions, and exam calm soundscapes."
-        buttonText="Explore Features for Students"
+        buttonText="Explore Features for Individual"
         buttonHref="/features"
         variant="green"
       />
