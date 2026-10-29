@@ -171,21 +171,21 @@ export default function RequestCallbackModal({
             aria-labelledby="callback-modal-title"
             initial={{ opacity: 0, scale: 0.95, y: 16 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.94, y: 16 }}
-            transition={{ type: "spring", stiffness: 320, damping: 28 }}
-            className="relative w-full max-w-xl bg-surface-container-lowest dark:bg-[#131916] text-on-surface dark:text-[#F4FAF7] rounded-2xl sm:rounded-3xl shadow-2xl border border-surface-variant/30 dark:border-[#1E2824] overflow-hidden my-auto max-h-[92vh] flex flex-col"
+            exit={{ opacity: 0, scale: 0.95, y: 16 }}
+            transition={{ type: "spring", stiffness: 340, damping: 28 }}
+            className="relative z-10 w-[min(480px,calc(100vw-32px))] max-w-[480px] max-h-[90vh] bg-white dark:bg-[#131916] text-[#211D2E] dark:text-[#F4FAF7] rounded-2xl sm:rounded-3xl shadow-2xl border border-[#B9DFD4]/60 dark:border-[#1E2824] overflow-hidden my-auto flex flex-col"
           >
             {/* Header */}
-            <div className="px-6 py-5 border-b border-surface-variant/20 dark:border-[#1E2824] flex items-center justify-between bg-surface-container-low/40 dark:bg-[#131916] shrink-0">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-primary/10 dark:bg-white/5 text-primary dark:text-[#D5E6E0] flex items-center justify-center shrink-0">
+            <div className="px-5 py-4 sm:px-6 sm:py-5 border-b border-[#B9DFD4]/50 dark:border-[#1E2824] flex items-center justify-between bg-[#F8FCFA] dark:bg-[#111714] shrink-0">
+              <div className="flex items-center gap-3 min-w-0 pr-2">
+                <div className="w-10 h-10 rounded-xl bg-[#E3F3EE] dark:bg-[rgba(95,175,138,0.15)] text-[#006F5B] dark:text-[#5FAF8A] flex items-center justify-center shrink-0">
                   <span className="material-symbols-outlined text-2xl">support_agent</span>
                 </div>
-                <div>
-                  <h3 className="font-heading font-bold text-lg text-on-surface dark:text-[#F4FAF7] leading-snug">
+                <div className="min-w-0">
+                  <h3 id="callback-modal-title" className="font-heading font-bold text-base sm:text-lg text-[#211D2E] dark:text-[#F4FAF7] leading-snug truncate">
                     Request an Institutional Callback
                   </h3>
-                  <p className="text-xs text-on-surface-variant dark:text-[#9DB9B0] font-medium">
+                  <p className="text-xs text-[#211D2E]/70 dark:text-[#9DB9B0] font-medium truncate">
                     Tailored for Deans, HR Leaders, and Campus Directors
                   </p>
                 </div>
@@ -193,7 +193,7 @@ export default function RequestCallbackModal({
 
               <button
                 onClick={handleResetAndClose}
-                className="w-8 h-8 rounded-full bg-surface-container dark:bg-[#131916] hover:bg-surface-variant/40 dark:hover:bg-[#22302A] flex items-center justify-center text-on-surface-variant dark:text-[#9DB9B0] dark:hover:text-[#F4FAF7] transition-colors cursor-pointer"
+                className="w-8 h-8 rounded-full bg-[#E3F3EE] dark:bg-[#18201C] hover:bg-[#D6EFE7] dark:hover:bg-[#22302A] border border-[#B9DFD4]/60 dark:border-[#1E2824] flex items-center justify-center text-[#211D2E] dark:text-[#9DB9B0] dark:hover:text-[#F4FAF7] transition-colors cursor-pointer shrink-0"
                 aria-label="Close dialog"
               >
                 <span className="material-symbols-outlined text-lg">close</span>
@@ -209,23 +209,23 @@ export default function RequestCallbackModal({
                   animate={{ opacity: 1, scale: 1 }}
                   className="py-8 px-4 text-center space-y-4"
                 >
-                  <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 dark:bg-[#131916] dark:text-[#D5E6E0] mx-auto flex items-center justify-center shadow-inner border border-transparent dark:border-[#1E2824]">
+                  <div className="w-16 h-16 rounded-full bg-[#E3F3EE] text-[#006F5B] dark:bg-[#18201C] dark:text-[#5FAF8A] mx-auto flex items-center justify-center shadow-inner border border-[#B9DFD4] dark:border-[#1E2824]">
                     <span className="material-symbols-outlined text-3xl font-bold">check_circle</span>
                   </div>
                   <div className="space-y-2">
-                    <h4 className="font-heading font-extrabold text-2xl text-on-surface dark:text-[#F4FAF7]">
+                    <h4 className="font-heading font-extrabold text-2xl text-[#211D2E] dark:text-[#F4FAF7]">
                       Callback Scheduled!
                     </h4>
-                    <p className="text-sm text-on-surface-variant dark:text-[#E4E4E7] max-w-md mx-auto leading-relaxed">
-                      Thank you, <span className="font-bold text-on-surface dark:text-[#F4FAF7]">{formData.fullName}</span>.
+                    <p className="text-sm text-[#211D2E]/80 dark:text-[#D5E6E0] max-w-md mx-auto leading-relaxed">
+                      Thank you, <span className="font-bold text-[#211D2E] dark:text-[#F4FAF7]">{formData.fullName}</span>.
                       Our Institutional Care Director will review your requirements for{" "}
-                      <span className="font-semibold text-primary dark:text-[#D5E6E0]">{formData.orgName}</span> and
-                      connect with you at <span className="font-semibold text-on-surface dark:text-[#F4FAF7]">{formData.phone}</span> within 4 business hours.
+                      <span className="font-semibold text-[#006F5B] dark:text-[#5FAF8A]">{formData.orgName}</span> and
+                      connect with you at <span className="font-semibold text-[#211D2E] dark:text-[#F4FAF7]">{formData.phone}</span> within 4 business hours.
                     </p>
                   </div>
 
-                  <div className="p-4 rounded-2xl bg-surface-container-low/70 dark:bg-[#131916] border border-surface-variant/20 dark:border-[#1E2824] text-xs text-on-surface-variant dark:text-[#9DB9B0] text-left space-y-1.5 max-w-md mx-auto">
-                    <div className="flex items-center gap-2 text-primary dark:text-[#D5E6E0] font-bold">
+                  <div className="p-4 rounded-2xl bg-[#E3F3EE]/60 dark:bg-[#131916] border border-[#B9DFD4] dark:border-[#1E2824] text-xs text-[#211D2E]/80 dark:text-[#9DB9B0] text-left space-y-1.5 max-w-md mx-auto">
+                    <div className="flex items-center gap-2 text-[#006F5B] dark:text-[#5FAF8A] font-bold">
                       <span className="material-symbols-outlined text-sm">verified_user</span>
                       <span>Next Steps in Your Demo:</span>
                     </div>
@@ -257,7 +257,7 @@ export default function RequestCallbackModal({
 
                   {/* Segment Selector */}
                   <div>
-                    <label className="block text-xs font-heading font-bold text-on-surface dark:text-[#F4FAF7] mb-1.5">
+                    <label className="block text-xs font-heading font-bold text-[#211D2E] dark:text-[#F4FAF7] mb-1.5">
                       I represent a:
                     </label>
                     <div className="grid grid-cols-3 gap-1.5">
@@ -272,11 +272,13 @@ export default function RequestCallbackModal({
                           onClick={() => setFormData({ ...formData, segment: item.id })}
                           className={`p-2 rounded-xl border text-[11px] font-heading font-bold flex flex-col items-center justify-center gap-1 transition-all cursor-pointer text-center ${
                             formData.segment === item.id
-                              ? "bg-primary/10 dark:bg-white/5 border-primary dark:border-[#1C463C] text-primary dark:text-[#D5E6E0] shadow-xs"
-                              : "bg-surface-container dark:bg-[#131916] border-surface-variant/30 dark:border-[#1E2824] text-on-surface-variant dark:text-[#9DB9B0] hover:bg-surface-variant/30 dark:hover:bg-[#22302A]"
+                              ? "bg-[#C8E7DD] dark:bg-[rgba(95,175,138,0.22)] border-[#006F5B] dark:border-[#1C463C] text-[#005747] dark:text-[#5FAF8A] shadow-xs"
+                              : "bg-[#E3F3EE] dark:bg-[#131916] border-[#B9DFD4] dark:border-[#1E2824] text-[#211D2E] dark:text-[#9DB9B0] hover:bg-[#D6EFE7] dark:hover:bg-[#22302A] hover:border-[#96D1C1] dark:hover:border-[#325246]"
                           }`}
                         >
-                          <span className="material-symbols-outlined text-base shrink-0">{item.icon}</span>
+                          <span className={`material-symbols-outlined text-base shrink-0 ${
+                            formData.segment === item.id ? "text-[#005747] dark:text-[#5FAF8A]" : "text-[#006F5B]/80 dark:text-[#789990]"
+                          }`}>{item.icon}</span>
                           <span className="leading-tight">{item.label}</span>
                         </button>
                       ))}
@@ -286,8 +288,8 @@ export default function RequestCallbackModal({
                   {/* Name & Email */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-xs font-heading font-bold text-on-surface dark:text-[#F4FAF7] mb-1">
-                        Your Full Name <span className="text-primary dark:text-[#D5E6E0]">*</span>
+                      <label className="block text-xs font-heading font-bold text-[#211D2E] dark:text-[#F4FAF7] mb-1">
+                        Your Full Name <span className="text-[#006F5B] dark:text-[#5FAF8A]">*</span>
                       </label>
                       <input
                         type="text"
@@ -295,12 +297,12 @@ export default function RequestCallbackModal({
                         placeholder="Dr. Rajesh / Sunita Mehta"
                         value={formData.fullName}
                         onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container dark:bg-[#131916] border border-surface-variant/40 dark:border-[#1E2824] text-xs font-medium text-on-surface dark:text-[#F4FAF7] placeholder:text-gray-400 dark:placeholder:text-[#76968D] focus:outline-none focus:ring-2 focus:ring-primary/40 dark:focus:ring-[#5FAF8A]/40 focus:border-primary dark:focus:border-[#5FAF8A] transition-all"
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-[#E3F3EE] dark:bg-[#131916] border border-[#B9DFD4] dark:border-[#1E2824] text-xs font-medium text-[#211D2E] dark:text-[#F4FAF7] placeholder:text-[#9296A3] dark:placeholder:text-[#76968D] focus:outline-none focus:ring-2 focus:ring-[#006F5B]/30 dark:focus:ring-[#5FAF8A]/40 focus:border-[#006F5B] dark:focus:border-[#5FAF8A] transition-all"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-heading font-bold text-on-surface dark:text-[#F4FAF7] mb-1">
-                        Official / Work Email <span className="text-primary dark:text-[#D5E6E0]">*</span>
+                      <label className="block text-xs font-heading font-bold text-[#211D2E] dark:text-[#F4FAF7] mb-1">
+                        Official / Work Email <span className="text-[#006F5B] dark:text-[#5FAF8A]">*</span>
                       </label>
                       <input
                         type="email"
@@ -308,7 +310,7 @@ export default function RequestCallbackModal({
                         placeholder="name@institute.edu / name@company.com"
                         value={formData.workEmail}
                         onChange={(e) => setFormData({ ...formData, workEmail: e.target.value })}
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container dark:bg-[#131916] border border-surface-variant/40 dark:border-[#1E2824] text-xs font-medium text-on-surface dark:text-[#F4FAF7] placeholder:text-gray-400 dark:placeholder:text-[#76968D] focus:outline-none focus:ring-2 focus:ring-primary/40 dark:focus:ring-[#5FAF8A]/40 focus:border-primary dark:focus:border-[#5FAF8A] transition-all"
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-[#E3F3EE] dark:bg-[#131916] border border-[#B9DFD4] dark:border-[#1E2824] text-xs font-medium text-[#211D2E] dark:text-[#F4FAF7] placeholder:text-[#9296A3] dark:placeholder:text-[#76968D] focus:outline-none focus:ring-2 focus:ring-[#006F5B]/30 dark:focus:ring-[#5FAF8A]/40 focus:border-[#006F5B] dark:focus:border-[#5FAF8A] transition-all"
                       />
                     </div>
                   </div>
@@ -316,11 +318,11 @@ export default function RequestCallbackModal({
                   {/* Phone & Organization Name */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-xs font-heading font-bold text-on-surface dark:text-[#F4FAF7] mb-1">
-                        Phone Number <span className="text-primary dark:text-[#D5E6E0]">*</span>
+                      <label className="block text-xs font-heading font-bold text-[#211D2E] dark:text-[#F4FAF7] mb-1">
+                        Phone Number <span className="text-[#006F5B] dark:text-[#5FAF8A]">*</span>
                       </label>
                       <div className="relative flex items-center">
-                        <span className="absolute left-3 text-xs font-bold text-on-surface-variant/70 dark:text-[#76968D]">
+                        <span className="absolute left-3 text-xs font-bold text-[#211D2E]/70 dark:text-[#76968D]">
                           +91
                         </span>
                         <input
@@ -335,13 +337,13 @@ export default function RequestCallbackModal({
                               phone: e.target.value.replace(/\D/g, ""),
                             })
                           }
-                          className="w-full pl-11 pr-3.5 py-2.5 rounded-xl bg-surface-container dark:bg-[#131916] border border-surface-variant/40 dark:border-[#1E2824] text-xs font-medium text-on-surface dark:text-[#F4FAF7] placeholder:text-gray-400 dark:placeholder:text-[#76968D] focus:outline-none focus:ring-2 focus:ring-primary/40 dark:focus:ring-[#5FAF8A]/40 focus:border-primary dark:focus:border-[#5FAF8A] transition-all"
+                          className="w-full pl-11 pr-3.5 py-2.5 rounded-xl bg-[#E3F3EE] dark:bg-[#131916] border border-[#B9DFD4] dark:border-[#1E2824] text-xs font-medium text-[#211D2E] dark:text-[#F4FAF7] placeholder:text-[#9296A3] dark:placeholder:text-[#76968D] focus:outline-none focus:ring-2 focus:ring-[#006F5B]/30 dark:focus:ring-[#5FAF8A]/40 focus:border-[#006F5B] dark:focus:border-[#5FAF8A] transition-all"
                         />
                       </div>
                     </div>
                     <div>
-                      <label className="block text-xs font-heading font-bold text-on-surface dark:text-[#F4FAF7] mb-1">
-                        Organization / Campus Name <span className="text-primary dark:text-[#D5E6E0]">*</span>
+                      <label className="block text-xs font-heading font-bold text-[#211D2E] dark:text-[#F4FAF7] mb-1">
+                        Organization / Campus Name <span className="text-[#006F5B] dark:text-[#5FAF8A]">*</span>
                       </label>
                       <input
                         type="text"
@@ -349,14 +351,14 @@ export default function RequestCallbackModal({
                         placeholder="e.g., IIT Bombay / Infosys"
                         value={formData.orgName}
                         onChange={(e) => setFormData({ ...formData, orgName: e.target.value })}
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container dark:bg-[#131916] border border-surface-variant/40 dark:border-[#1E2824] text-xs font-medium text-on-surface dark:text-[#F4FAF7] placeholder:text-gray-400 dark:placeholder:text-[#76968D] focus:outline-none focus:ring-2 focus:ring-primary/40 dark:focus:ring-[#5FAF8A]/40 focus:border-primary dark:focus:border-[#5FAF8A] transition-all"
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-[#E3F3EE] dark:bg-[#131916] border border-[#B9DFD4] dark:border-[#1E2824] text-xs font-medium text-[#211D2E] dark:text-[#F4FAF7] placeholder:text-[#9296A3] dark:placeholder:text-[#76968D] focus:outline-none focus:ring-2 focus:ring-[#006F5B]/30 dark:focus:ring-[#5FAF8A]/40 focus:border-[#006F5B] dark:focus:border-[#5FAF8A] transition-all"
                       />
                     </div>
                   </div>
 
                   {/* Organization Size */}
                   <div>
-                    <label className="block text-xs font-heading font-bold text-on-surface dark:text-[#F4FAF7] mb-1.5">
+                    <label className="block text-xs font-heading font-bold text-[#211D2E] dark:text-[#F4FAF7] mb-1.5">
                       Estimated Students / Employees:
                     </label>
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
@@ -367,8 +369,8 @@ export default function RequestCallbackModal({
                           onClick={() => setFormData({ ...formData, orgSize: size })}
                           className={`py-2 px-1 rounded-xl border text-[11px] font-heading font-bold text-center transition-all cursor-pointer ${
                             formData.orgSize === size
-                              ? "bg-secondary/15 dark:bg-white/5 border-secondary dark:border-[#1C463C] text-secondary dark:text-[#D5E6E0] shadow-xs"
-                              : "bg-surface-container dark:bg-[#131916] border-surface-variant/30 dark:border-[#1E2824] text-on-surface-variant dark:text-[#9DB9B0] hover:bg-surface-variant/30 dark:hover:bg-[#22302A]"
+                              ? "bg-[#C8E7DD] dark:bg-[rgba(95,175,138,0.22)] border-[#006F5B] dark:border-[#1C463C] text-[#005747] dark:text-[#5FAF8A] shadow-xs"
+                              : "bg-[#E3F3EE] dark:bg-[#131916] border-[#B9DFD4] dark:border-[#1E2824] text-[#211D2E] dark:text-[#9DB9B0] hover:bg-[#D6EFE7] dark:hover:bg-[#22302A] hover:border-[#96D1C1] dark:hover:border-[#325246]"
                           }`}
                         >
                           {size}
@@ -379,7 +381,7 @@ export default function RequestCallbackModal({
 
                   {/* Areas of Interest */}
                   <div>
-                    <label className="block text-xs font-heading font-bold text-on-surface dark:text-[#F4FAF7] mb-1.5">
+                    <label className="block text-xs font-heading font-bold text-[#211D2E] dark:text-[#F4FAF7] mb-1.5">
                       Priority Needs (Select all that apply):
                     </label>
                     <div className="flex flex-wrap gap-1.5">
@@ -392,12 +394,12 @@ export default function RequestCallbackModal({
                             onClick={() => handleInterestToggle(opt)}
                             className={`px-3 py-1.5 rounded-full border text-[11px] font-heading font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
                               isSelected
-                                ? "bg-primary dark:bg-[#5FAF8A] dark:text-[#112F28] text-white border-primary dark:border-[#1C463C] shadow-xs"
-                                : "bg-surface-container dark:bg-[#131916] border-surface-variant/30 dark:border-[#1E2824] text-on-surface-variant dark:text-[#9DB9B0] hover:bg-surface-variant/30 dark:hover:bg-[#22302A]"
+                                ? "bg-[#C8E7DD] dark:bg-[rgba(95,175,138,0.22)] border-[#006F5B] dark:border-[#1C463C] text-[#005747] dark:text-[#5FAF8A] shadow-xs"
+                                : "bg-[#E3F3EE] dark:bg-[#131916] border-[#B9DFD4] dark:border-[#1E2824] text-[#211D2E] dark:text-[#9DB9B0] hover:bg-[#D6EFE7] dark:hover:bg-[#22302A] hover:border-[#96D1C1] dark:hover:border-[#325246]"
                             }`}
                           >
                             {isSelected && (
-                              <span className="material-symbols-outlined text-xs">check</span>
+                              <span className="material-symbols-outlined text-xs text-[#005747] dark:text-[#5FAF8A]">check</span>
                             )}
                             <span>{opt}</span>
                           </button>
@@ -408,7 +410,7 @@ export default function RequestCallbackModal({
 
                   {/* Optional Notes */}
                   <div>
-                    <label className="block text-xs font-heading font-bold text-on-surface dark:text-[#F4FAF7] mb-1">
+                    <label className="block text-xs font-heading font-bold text-[#211D2E] dark:text-[#F4FAF7] mb-1">
                       Specific Notes or Timeline (Optional):
                     </label>
                     <textarea
@@ -416,7 +418,7 @@ export default function RequestCallbackModal({
                       placeholder="e.g., Looking to deploy before upcoming semester / quarterly renewal..."
                       value={formData.notes}
                       onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                      className="w-full px-3.5 py-2 rounded-xl bg-surface-container dark:bg-[#131916] border border-surface-variant/40 dark:border-[#1E2824] text-xs font-medium text-on-surface dark:text-[#F4FAF7] placeholder:text-gray-400 dark:placeholder:text-[#76968D] focus:outline-none focus:ring-2 focus:ring-primary/40 dark:focus:ring-[#5FAF8A]/40 focus:border-primary dark:focus:border-[#5FAF8A] transition-all resize-none"
+                      className="w-full px-3.5 py-2 rounded-xl bg-[#E3F3EE] dark:bg-[#131916] border border-[#B9DFD4] dark:border-[#1E2824] text-xs font-medium text-[#211D2E] dark:text-[#F4FAF7] placeholder:text-[#9296A3] dark:placeholder:text-[#76968D] focus:outline-none focus:ring-2 focus:ring-[#006F5B]/30 dark:focus:ring-[#5FAF8A]/40 focus:border-[#006F5B] dark:focus:border-[#5FAF8A] transition-all resize-none"
                     />
                   </div>
 

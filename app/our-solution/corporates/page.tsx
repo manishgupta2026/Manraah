@@ -43,17 +43,17 @@ export default function CorporatesSolutionPage() {
         <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
           <button
             onClick={() => triggerCallbackModal("corporates")}
-            className="px-6 sm:px-8 py-3.5 rounded-full bg-primary text-white font-heading font-bold text-sm shadow-md hover:bg-[#005241] hover:shadow-lg active:scale-98 active:bg-[#004537] transition-all flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+            className="px-6 sm:px-8 py-3.5 rounded-full bg-[#E3F3EE] hover:bg-[#006F5B] border border-[#B9DFD4] hover:border-[#006F5B] text-[#006F5B] hover:text-white font-heading font-bold text-sm shadow-md hover:shadow-lg active:scale-98 transition-all duration-300 flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#006F5B]/50"
           >
-            <span className="material-symbols-outlined text-lg text-white">support_agent</span>
-            <span className="text-white">Request Corporate EAP Pricing</span>
+            <span className="material-symbols-outlined text-lg transition-colors">support_agent</span>
+            <span>Request Callback</span>
           </button>
           <a
             href="#chro-compass"
-            className="px-6 py-3.5 rounded-full bg-primary text-white font-heading font-bold text-sm shadow-md hover:bg-[#005241] hover:shadow-lg active:scale-98 active:bg-[#004537] transition-all flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+            className="px-6 py-3.5 rounded-full bg-[#E3F3EE] hover:bg-[#006F5B] border border-[#B9DFD4] hover:border-[#006F5B] text-[#006F5B] hover:text-white font-heading font-bold text-sm shadow-md hover:shadow-lg active:scale-98 transition-all duration-300 flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#006F5B]/50"
           >
-            <span className="text-white">Explore CHRO Wellbeing Compass</span>
-            <span className="material-symbols-outlined text-base text-white">arrow_downward</span>
+            <span>Explore CHRO Wellbeing Compass</span>
+            <span className="material-symbols-outlined text-base transition-colors">arrow_downward</span>
           </a>
         </div>
       </section>
@@ -176,9 +176,9 @@ export default function CorporatesSolutionPage() {
               </div>
               <button
                 onClick={() => triggerCallbackModal("corporates")}
-                className="px-5 py-2.5 rounded-full bg-secondary text-white font-heading font-bold text-xs shadow-xs hover:bg-[#005242] transition-all shrink-0 cursor-pointer"
+                className="px-5 py-2.5 rounded-full bg-[#E3F3EE] hover:bg-[#006F5B] border border-[#B9DFD4] hover:border-[#006F5B] text-[#006F5B] hover:text-white font-heading font-bold text-xs shadow-xs hover:shadow-md transition-all duration-300 shrink-0 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#006F5B]/50"
               >
-                Request Corporate EAP Pricing
+                Request Callback
               </button>
             </div>
           </div>
@@ -346,7 +346,7 @@ export default function CorporatesSolutionPage() {
             </div>
             <button
               onClick={() => triggerCallbackModal("corporates")}
-              className="px-6 py-2.5 rounded-full bg-secondary text-white font-heading font-bold text-xs shadow-xs hover:bg-[#005242] transition-colors shrink-0 cursor-pointer"
+              className="px-6 py-2.5 rounded-full bg-[#E3F3EE] hover:bg-[#006F5B] border border-[#B9DFD4] hover:border-[#006F5B] text-[#006F5B] hover:text-white font-heading font-bold text-xs shadow-xs hover:shadow-md transition-all duration-300 shrink-0 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#006F5B]/50"
             >
               Request Dashboard Demo
             </button>

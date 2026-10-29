@@ -245,7 +245,7 @@ export default function FAQPage() {
                 className={`px-3 py-1 rounded-full text-xs font-heading font-medium transition-all cursor-pointer ${
                   searchQuery.toLowerCase() === tag.toLowerCase()
                     ? "bg-primary text-white shadow-xs dark:bg-[#5FAF8A] dark:text-[#112F28]"
-                    : "bg-surface-container-lowest dark:bg-[#131916] hover:bg-surface-container dark:hover:bg-[#22302A] text-on-surface-variant dark:text-[#9DB9B0] border border-surface-variant/40 dark:border-[#1E2824]"
+                    : "bg-surface-container-lowest dark:bg-[#131916] hover:bg-[#E3F3EE] dark:hover:bg-[#22302A] text-on-surface-variant hover:text-[#006F5B] dark:text-[#9DB9B0] dark:hover:text-[#5FAF8A] border border-[#B9DFD4]/60 hover:border-[#B9DFD4] dark:border-[#1E2824] dark:hover:border-[#325246]"
                 }`}
               >
                 {tag}
@@ -283,7 +283,7 @@ export default function FAQPage() {
                 className={`px-4 py-2 rounded-full text-xs sm:text-sm font-heading font-bold transition-all cursor-pointer ${
                   isActive
                     ? "bg-primary text-white shadow-md scale-105 dark:bg-[#5FAF8A] dark:text-[#112F28]"
-                    : "bg-surface-container-lowest dark:bg-[#131916] hover:bg-surface-container dark:hover:bg-[#22302A] text-on-surface-variant dark:text-[#9DB9B0] border border-surface-variant/40 dark:border-[#1E2824]"
+                    : "bg-surface-container-lowest dark:bg-[#131916] hover:bg-[#E3F3EE] dark:hover:bg-[#22302A] text-on-surface-variant hover:text-[#006F5B] dark:text-[#9DB9B0] dark:hover:text-[#5FAF8A] border border-[#B9DFD4]/60 hover:border-[#B9DFD4] dark:border-[#1E2824] dark:hover:border-[#325246]"
                 }`}
               >
                 {tab.label}
@@ -321,11 +321,11 @@ export default function FAQPage() {
               return (
                 <div
                   key={item.id}
-                  className="rounded-[24px] bg-surface-container-lowest dark:bg-[#131916] border border-surface-variant/40 dark:border-[#1E2824] shadow-ambient overflow-hidden transition-all hover:border-primary/40 dark:hover:border-white/30"
+                  className="rounded-[24px] bg-surface-container-lowest dark:bg-[#131916] border border-[#B9DFD4]/60 dark:border-[#1E2824] hover:border-[#B9DFD4] dark:hover:border-[#325246] shadow-ambient overflow-hidden transition-all"
                 >
                   <button
                     onClick={() => toggleAccordion(item.id)}
-                    className="w-full p-5 sm:p-6 text-left font-heading font-bold text-base sm:text-lg text-on-surface dark:text-[#F4FAF7] flex items-center justify-between gap-4 cursor-pointer"
+                    className="w-full p-5 sm:p-6 text-left font-heading font-bold text-base sm:text-lg text-on-surface dark:text-[#F4FAF7] hover:bg-[#E3F3EE]/40 dark:hover:bg-[#22302A]/40 flex items-center justify-between gap-4 cursor-pointer transition-colors"
                   >
                     <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 text-left">
                       <span>{item.q}</span>
@@ -347,7 +347,7 @@ export default function FAQPage() {
                         animate={{ opacity: 1, height: "auto" }}
                         exit={{ opacity: 0, height: 0 }}
                         transition={{ duration: 0.2 }}
-                        className="px-5 sm:px-6 pb-6 pt-0 text-sm text-on-surface-variant dark:text-[#9DB9B0] leading-relaxed font-normal border-t border-surface-variant/20 dark:border-[#1E2824] pt-4"
+                        className="px-5 sm:px-6 pb-6 text-sm text-on-surface-variant dark:text-[#9DB9B0] leading-relaxed font-normal border-t border-[#B9DFD4]/30 dark:border-[#1E2824] pt-4"
                       >
                         {item.a}
                       </motion.div>
