@@ -20,7 +20,7 @@ export interface NavbarProps {
 export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
   const pathname = usePathname();
   const router = useRouter();
-  const { theme, toggleTheme } = useTheme();
+  const { theme } = useTheme();
   const isDark = theme === "dark";
 
   const { user, logout, isAuthenticated, loading } = useAuth();
@@ -423,21 +423,8 @@ export default function Navbar({ variant = "auto", onOpenMenu }: NavbarProps) {
             /* Session Loading / Initial Hydration Skeleton Spacer - Prevents Flash of Wrong Navbar */
             <div className="hidden sm:flex items-center gap-2.5 h-9 min-w-[140px] opacity-0 pointer-events-none" aria-hidden="true" />
           ) : showAuthenticatedUI ? (
-            /* Authenticated Header Controls (Theme Toggle, Profile Dropdown, Crisis) */
+            /* Authenticated Header Controls (Profile Dropdown, Crisis) */
             <div className="flex items-center gap-2.5 sm:gap-3.5 lg:gap-4">
-              {/* Theme / Dark Mode Toggle */}
-              <button
-                type="button"
-                onClick={toggleTheme}
-                className="w-8.5 h-8.5 rounded-full bg-surface-container/70 hover:bg-surface-container border border-surface-variant/40 dark:border-[#1C463C]/10 dark:bg-white/10 dark:hover:bg-white/20 text-on-surface dark:text-[#F4FAF7] flex items-center justify-center transition-colors cursor-pointer select-none shrink-0"
-                title={isDark ? "Switch to light mode" : "Switch to dark mode"}
-                aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
-              >
-                <span className="material-symbols-outlined text-lg">
-                  {isDark ? "light_mode" : "dark_mode"}
-                </span>
-              </button>
-
               {/* User Profile Avatar with Clickable Dropdown Menu */}
               <div ref={profileDropdownRef} className="relative shrink-0 flex items-center">
                 <button
