@@ -9,7 +9,7 @@ interface SharedChatBubbleProps {
   accentColor?: "mint" | "peach" | "purple";
 }
 
-export default function SharedChatBubble({ message, isSelf, accentColor = "purple" }: SharedChatBubbleProps) {
+export default function SharedChatBubble({ message, isSelf, accentColor = "mint" }: SharedChatBubbleProps) {
   if (message.sender === "system") {
     return (
       <div className="p-3 rounded-2xl bg-surface-container-low border border-surface-variant/30 text-xs text-on-surface-variant text-center leading-relaxed max-w-md mx-auto my-2">

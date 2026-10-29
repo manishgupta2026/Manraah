@@ -3,9 +3,9 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { signIn, updateClientSession } from "@/backend/auth/client";
+import { updateClientSession } from "@/backend/auth/client";
 import { FormInput } from "@/frontend/components/ui/FormInput";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useAssessment } from "@/frontend/lib/context/AssessmentContext";
 import { useAuth } from "@/frontend/lib/context/AuthContext";
 
@@ -19,7 +19,8 @@ export default function LoginScreen() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { selectedCategory, detailedAnswers, computedScore, assessmentResult } = useAssessment();
-  const { login } = useAuth();
+  const { login, isAuthenticated } = useAuth();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(true);
@@ -34,6 +35,12 @@ export default function LoginScreen() {
   const [ecRelation, setEcRelation] = useState("Parent");
   const [ecSaving, setEcSaving] = useState(false);
   const [ecError, setEcError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push("/dashboard");
+    }
+  }, [isAuthenticated, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -142,146 +149,52 @@ export default function LoginScreen() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-80px)] bg-gradient-to-br from-surface via-[#FAF7FF] to-[#F2FAF7] flex flex-col justify-center py-6 sm:py-10 px-4 sm:px-6 lg:px-12 select-none relative overflow-x-hidden">
-      
-      {/* Ambient background auras */}
-      <div className="absolute top-1/4 left-1/6 -translate-x-1/2 w-[340px] sm:w-[540px] h-[340px] sm:h-[540px] bg-primary/8 rounded-full blur-[100px] sm:blur-[140px] pointer-events-none -z-10" />
-      <div className="absolute bottom-1/4 right-1/6 translate-x-1/2 w-[320px] sm:w-[500px] h-[320px] sm:h-[500px] bg-mint/10 rounded-full blur-[100px] sm:blur-[140px] pointer-events-none -z-10" />
-      <div className="absolute top-3/4 left-1/2 -translate-x-1/2 w-[300px] h-[300px] bg-peach/10 rounded-full blur-[120px] pointer-events-none -z-10" />
+    <div className="min-h-[calc(100vh-80px)] bg-gradient-to-br from-[#FDF7FF] via-[#F8F9FD] to-[#E6F4F0] flex flex-col justify-center py-8 sm:py-12 px-4 sm:px-6 lg:px-12 select-none relative overflow-x-hidden">
+      {/* Calming background auras matching Signup */}
+      <div className="absolute top-1/4 left-1/6 -translate-x-1/2 w-[340px] sm:w-[540px] h-[340px] sm:h-[540px] bg-[#006C56]/8 rounded-full blur-[120px] pointer-events-none -z-10" />
+      <div className="absolute bottom-1/4 right-1/6 translate-x-1/2 w-[320px] sm:w-[500px] h-[320px] sm:h-[500px] bg-[#E6F4F0] rounded-full blur-[120px] pointer-events-none -z-10" />
 
-      <div className="max-w-5xl w-full mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-center">
-        
-        {/* ========================================================= */}
-        {/* DESKTOP LEFT / HERO COLUMN                                */}
-        {/* ========================================================= */}
-        <motion.div
-          initial={{ opacity: 0, x: -25 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5 }}
-          className="hidden lg:flex lg:col-span-5 flex-col space-y-6"
-        >
-          {/* Welcome Badge with pulsing indicator */}
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/80 dark:bg-surface-container-low border border-primary/20 shadow-xs w-fit">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-xs font-heading font-bold text-primary">
-              WELCOME • MANRAAH
-            </span>
+      <div className="max-w-[580px] w-full mx-auto">
+        {/* Top Header Section */}
+        <div className="mb-6 sm:mb-8 text-center max-w-md mx-auto">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-[#006C56] border border-emerald-200/80 text-xs font-heading font-bold mb-3 shadow-xs">
+            <span className="w-2 h-2 rounded-full bg-[#006C56] animate-pulse" />
+            <span>ACCOUNT ACCESS</span>
           </div>
+          <h1 className="text-2xl sm:text-3xl font-heading font-black text-[#211D26] tracking-tight">
+            Welcome Back
+          </h1>
+          <p className="text-sm text-slate-600 mt-1.5 font-medium">
+            Sign in to continue your Manraah wellness journey.
+          </p>
+        </div>
 
-          {/* Heading */}
-          <div className="space-y-3">
-            <h1 className="text-3xl xl:text-4xl font-heading font-black text-on-surface tracking-tight leading-snug">
-              Your Private Space for Inner Calm &amp; Growth
-            </h1>
-            <p className="text-sm text-on-surface-variant leading-relaxed">
-              Step inside to access your personalized wellness tools, active companion conversations, reflective journals, and compassionate community.
-            </p>
-          </div>
-
-          {/* 3 Value Pillars */}
-          <div className="space-y-3 pt-2">
-            <div className="p-4 rounded-2xl bg-white/75 dark:bg-surface-container-low/75 border border-surface-variant/40 shadow-ambient flex items-start gap-3.5 transition-all hover:bg-white hover:shadow-md">
-              <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
-                <span className="material-symbols-outlined text-xl">encrypted</span>
-              </div>
-              <div className="text-left space-y-0.5">
-                <h4 className="text-xs font-heading font-bold text-on-surface">
-                  100% Encrypted &amp; Confidential
-                </h4>
-                <p className="text-[12px] text-on-surface-variant/80 leading-relaxed">
-                  Your identity and reflections are completely private. Zero ads, zero selling of personal data.
-                </p>
-              </div>
-            </div>
-
-            <div className="p-4 rounded-2xl bg-white/75 dark:bg-surface-container-low/75 border border-surface-variant/40 shadow-ambient flex items-start gap-3.5 transition-all hover:bg-white hover:shadow-md">
-              <div className="w-10 h-10 rounded-xl bg-mint/20 text-secondary flex items-center justify-center shrink-0">
-                <span className="material-symbols-outlined text-xl">psychology_alt</span>
-              </div>
-              <div className="text-left space-y-0.5">
-                <h4 className="text-xs font-heading font-bold text-on-surface">
-                  Adaptive AI &amp; Peer Circles
-                </h4>
-                <p className="text-[12px] text-on-surface-variant/80 leading-relaxed">
-                  Compassionate, active listening tailored to your lifestyle, pace, and daily intentions.
-                </p>
-              </div>
-            </div>
-
-            <div className="p-4 rounded-2xl bg-white/75 dark:bg-surface-container-low/75 border border-surface-variant/40 shadow-ambient flex items-start gap-3.5 transition-all hover:bg-white hover:shadow-md">
-              <div className="w-10 h-10 rounded-xl bg-peach/20 text-[#9E5D28] flex items-center justify-center shrink-0">
-                <span className="material-symbols-outlined text-xl">monitoring</span>
-              </div>
-              <div className="text-left space-y-0.5">
-                <h4 className="text-xs font-heading font-bold text-on-surface">
-                  Evidence-Based Wellness Pulse
-                </h4>
-                <p className="text-[12px] text-on-surface-variant/80 leading-relaxed">
-                  Daily mood trends, guided breathing exercises, and emotional wellness celebrations.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Social Proof / Calm Quote */}
-          <div className="p-4 rounded-2xl bg-primary/5 border border-primary/15 flex items-center gap-3 text-left">
-            <div className="flex -space-x-2 shrink-0">
-              <span className="w-7 h-7 rounded-full bg-primary/20 border-2 border-white flex items-center justify-center text-[10px] font-bold text-primary">🌸</span>
-              <span className="w-7 h-7 rounded-full bg-mint/30 border-2 border-white flex items-center justify-center text-[10px] font-bold text-secondary">🌱</span>
-              <span className="w-7 h-7 rounded-full bg-peach/30 border-2 border-white flex items-center justify-center text-[10px] font-bold text-[#9E5D28]">✨</span>
-            </div>
-            <p className="text-[12px] font-heading font-medium text-on-surface-variant">
-              Join thousands finding balance, clarity, and genuine companionship every day.
-            </p>
-          </div>
-        </motion.div>
-
-        {/* ========================================================= */}
-        {/* RIGHT PANEL: LOGIN FORM CARD                              */}
-        {/* ========================================================= */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-          className="lg:col-span-7 w-full max-w-lg mx-auto"
-        >
-          {/* Mobile Header Greeting */}
-          <div className="lg:hidden text-center space-y-2 mb-4">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/90 border border-primary/20 shadow-xs">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-[11px] font-heading font-bold text-primary">
-                WELCOME • MANRAAH
-              </span>
-            </div>
-            <h2 className="text-2xl font-heading font-black text-on-surface tracking-tight">
-              Sign In to Your Space
-            </h2>
-            <p className="text-xs text-on-surface-variant max-w-xs mx-auto">
-              Continue your journey to daily balance and calm.
-            </p>
-          </div>
-
-          {/* Main Card Container */}
-          <div className="p-5 sm:p-8 rounded-[28px] sm:rounded-[36px] bg-white/90 dark:bg-surface-container-lowest/95 backdrop-blur-xl border border-surface-variant/40 shadow-card-lift">
-            
+        {/* Centered Form Card */}
+        <div className="bg-white/90 backdrop-blur-md rounded-3xl border border-slate-200/80 shadow-xl p-6 sm:p-10 transition-all">
+          <AnimatePresence mode="wait">
             {showEmergencyContactStep ? (
-              /* Emergency Contact Intake Step (Safety First) */
-              <div className="space-y-4">
-                <div className="space-y-1.5 pb-4 border-b border-surface-variant/30 text-left">
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 text-red-600 dark:text-red-400 text-[11px] font-heading font-bold">
+              <motion.div
+                key="emergency-contact"
+                initial={{ opacity: 0, scale: 0.98 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.98 }}
+                className="space-y-5"
+              >
+                <div className="space-y-1.5 pb-4 border-b border-slate-200/80 text-left">
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-50 border border-red-200 text-red-600 text-[11px] font-heading font-bold">
                     <span className="material-symbols-outlined text-sm animate-pulse">health_and_safety</span>
                     <span>SAFETY FIRST</span>
                   </div>
-                  <h3 className="text-xl sm:text-2xl font-heading font-extrabold text-on-surface">
+                  <h3 className="text-xl sm:text-2xl font-heading font-extrabold text-[#211D26]">
                     Add an Emergency Contact
                   </h3>
-                  <p className="text-xs text-on-surface-variant leading-relaxed">
+                  <p className="text-xs text-slate-600 leading-relaxed font-medium">
                     In moments of overwhelming distress, who should we help connect you to in a single tap? This is private to you and accessible anytime from your crisis tab.
                   </p>
                 </div>
 
                 {ecError && (
-                  <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-xs font-semibold text-red-600 flex items-start gap-2 text-left">
+                  <div className="p-3.5 rounded-2xl bg-red-50 border border-red-200 text-xs font-semibold text-red-600 flex items-start gap-2 text-left">
                     <span className="material-symbols-outlined text-base shrink-0 mt-0.5">error</span>
                     <span>{ecError}</span>
                   </div>
@@ -309,13 +222,13 @@ export default function LoginScreen() {
                   />
 
                   <div>
-                    <label className="block text-xs font-heading font-semibold text-on-surface mb-1.5">
+                    <label className="block text-xs font-heading font-bold text-[#211D26] mb-1.5">
                       Relationship
                     </label>
                     <select
                       value={ecRelation}
                       onChange={(e) => setEcRelation(e.target.value)}
-                      className="w-full px-4 py-3 rounded-2xl bg-surface border border-surface-variant/50 text-xs font-medium text-on-surface focus:outline-hidden focus:ring-2 focus:ring-primary cursor-pointer"
+                      className="w-full px-4 py-3 rounded-2xl bg-[#E6F4F0] dark:bg-[#30241A] border border-[#CBECE2] dark:border-[#51402E] text-xs font-medium text-[#19332A] dark:text-[#F3E9D8] focus:outline-hidden focus:ring-2 focus:ring-[#006C56]/20 focus:border-[#006C56] cursor-pointer"
                     >
                       <option value="Parent">Parent</option>
                       <option value="Partner / Spouse">Partner / Spouse</option>
@@ -331,7 +244,7 @@ export default function LoginScreen() {
                     <button
                       type="submit"
                       disabled={ecSaving}
-                      className="w-full py-3.5 sm:py-4 rounded-2xl bg-primary hover:bg-primary-purple text-white font-heading font-bold text-sm shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
+                      className="w-full py-3.5 sm:py-4 rounded-2xl bg-[#006C56] hover:bg-[#005241] text-white font-heading font-bold text-sm shadow-lg shadow-[#006C56]/20 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
                     >
                       {ecSaving ? (
                         <>
@@ -349,141 +262,125 @@ export default function LoginScreen() {
                     <button
                       type="button"
                       onClick={handleSkipEmergencyContact}
-                      className="w-full py-2.5 rounded-xl hover:bg-surface-container text-on-surface-variant hover:text-on-surface text-xs font-heading font-semibold transition-colors cursor-pointer text-center"
+                      className="w-full py-2.5 rounded-xl hover:bg-slate-100 text-slate-500 hover:text-slate-800 text-xs font-heading font-semibold transition-colors cursor-pointer text-center"
                     >
                       Skip for now — I&apos;ll set this up later
                     </button>
                   </div>
                 </form>
-              </div>
+              </motion.div>
             ) : (
-              <>
-                {/* Desktop Card Header */}
-                <div className="space-y-1 pb-4 border-b border-surface-variant/30 text-left">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-[11px] font-heading font-bold text-primary uppercase tracking-wider">
-                        Account Access
-                      </p>
-                      <h3 className="text-2xl font-heading font-extrabold text-on-surface">
-                        Sign In
-                      </h3>
-                    </div>
-                  </div>
-                  <p className="text-xs text-on-surface-variant pt-1">
-                    Enter your registered credentials below to access your account.
-                  </p>
-                </div>
-
+              <motion.div
+                key="login-form"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              >
                 {/* Error Callout */}
                 {error && (
                   <motion.div
-                    initial={{ opacity: 0, y: -6 }}
+                    initial={{ opacity: 0, y: -8 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="p-3.5 my-4 rounded-2xl bg-red-500/10 border border-red-500/20 text-xs font-semibold text-red-600 flex items-start gap-2.5 text-left"
+                    className="mb-6 p-4 rounded-2xl bg-red-50 border border-red-200 text-red-700 text-sm flex items-start gap-3"
                   >
-                    <span className="material-symbols-outlined text-lg shrink-0 mt-0.5">error</span>
-                    <span className="leading-relaxed">{error}</span>
+                    <span className="material-symbols-outlined text-red-500 shrink-0 text-xl">error</span>
+                    <p className="flex-1 font-medium">{error}</p>
                   </motion.div>
                 )}
 
-                {/* Login Form */}
-                <form onSubmit={handleSubmit} className="mt-4 space-y-4">
-                  <FormInput
-                    label="Email Address"
-                    type="email"
-                    required
-                    icon="mail"
-                    placeholder="you@example.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
+                {/* Login Form Fields */}
+                <form onSubmit={handleSubmit} className="space-y-5">
+                  <div>
+                    <FormInput
+                      label="Email Address"
+                      name="email"
+                      type="email"
+                      required
+                      placeholder="you@example.com"
+                      value={email}
+                      onChange={(e) => {
+                        setEmail(e.target.value);
+                        if (error) setError(null);
+                      }}
+                      icon="mail"
+                    />
+                  </div>
 
                   <div>
                     <FormInput
                       label="Password"
+                      name="password"
+                      type="password"
                       isPassword={true}
                       required
-                      icon="lock"
-                      placeholder="••••••••"
+                      placeholder="Enter your password"
                       value={password}
-                      onChange={(e) => setPassword(e.target.value)}
+                      onChange={(e) => {
+                        setPassword(e.target.value);
+                        if (error) setError(null);
+                      }}
+                      icon="lock"
                     />
 
                     <div className="flex items-center justify-between pt-2">
-                      <label className="flex items-center gap-2 cursor-pointer select-none">
+                      <label htmlFor="rememberMe" className="flex items-center gap-2 cursor-pointer select-none">
                         <input
                           type="checkbox"
+                          id="rememberMe"
                           checked={rememberMe}
                           onChange={(e) => setRememberMe(e.target.checked)}
-                          className="w-3.5 h-3.5 rounded border-surface-variant text-primary focus:ring-primary/40 accent-primary cursor-pointer"
+                          className="w-4 h-4 rounded border-slate-300 text-[#006C56] focus:ring-[#006C56] accent-[#006C56] cursor-pointer"
                         />
-                        <span className="text-xs text-on-surface-variant">Remember me</span>
+                        <span className="text-xs text-slate-600 font-medium">Remember me</span>
                       </label>
 
                       <Link
                         href="/forgot-password"
-                        className="text-xs font-heading font-bold text-primary hover:underline"
+                        className="text-xs font-heading font-bold text-[#006C56] hover:underline"
                       >
                         Forgot password?
                       </Link>
                     </div>
                   </div>
 
-                  {/* Action Button */}
+                  {/* Primary Action Button (Matching Signup 'Continue to Details' Green Style) */}
                   <div className="pt-2">
                     <button
                       type="submit"
                       disabled={loading}
-                      className="w-full py-3.5 sm:py-4 rounded-2xl bg-primary hover:bg-primary-purple text-white font-heading font-bold text-sm shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed active:scale-[0.99] cursor-pointer"
+                      className="w-full py-3.5 sm:py-4 rounded-2xl bg-[#006C56] hover:bg-[#005241] text-white font-heading font-bold text-sm sm:text-base shadow-lg shadow-[#006C56]/20 hover:shadow-xl hover:shadow-[#006C56]/30 transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer"
                     >
                       {loading ? (
                         <>
-                          <div className="w-4 h-4 rounded-full border-2 border-white border-t-transparent animate-spin" />
+                          <div className="w-5 h-5 rounded-full border-2 border-white border-t-transparent animate-spin" />
                           <span>Signing in...</span>
                         </>
                       ) : (
                         <>
                           <span>Sign In to Manraah</span>
-                          <span className="material-symbols-outlined text-base">arrow_forward</span>
+                          <span className="material-symbols-outlined text-lg">arrow_forward</span>
                         </>
                       )}
                     </button>
                   </div>
                 </form>
 
-                {/* Bottom link to Signup */}
-                <div className="text-center pt-4 mt-4 border-t border-surface-variant/30">
-                  <p className="text-xs text-on-surface-variant font-normal">
+                {/* Bottom Section: Subtle divider + Create Account link */}
+                <div className="pt-6 mt-6 border-t border-slate-200/80 text-center">
+                  <p className="text-xs sm:text-sm text-slate-600 font-medium">
                     Don&apos;t have an account yet?{" "}
                     <Link
                       href="/signup"
-                      className="font-heading font-bold text-primary hover:underline"
+                      className="text-[#006C56] font-heading font-bold hover:underline ml-1"
                     >
                       Create Manraah Account
                     </Link>
                   </p>
                 </div>
-              </>
+              </motion.div>
             )}
-
-          </div>
-
-          {/* Reassurance footer icons for mobile */}
-          <div className="flex sm:hidden items-center justify-center gap-4 text-[11px] text-on-surface-variant/70 font-medium pt-4">
-            <span className="flex items-center gap-1">
-              <span className="material-symbols-outlined text-xs text-emerald-600">lock</span>
-              <span>100% Encrypted</span>
-            </span>
-            <span>•</span>
-            <span className="flex items-center gap-1">
-              <span className="material-symbols-outlined text-xs text-primary">visibility_off</span>
-              <span>Anonymous Identity</span>
-            </span>
-          </div>
-
-        </motion.div>
-
+          </AnimatePresence>
+        </div>
       </div>
     </div>
   );

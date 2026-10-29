@@ -17,7 +17,7 @@ export default function ThemeToggle() {
 
   if (!mounted) {
     return (
-      <div className="w-[62px] h-[32px] rounded-full bg-purple-50/80 dark:bg-purple-900/40 border border-purple-200/60 dark:border-purple-800/30 flex items-center justify-between px-1.5 opacity-50" />
+      <div className="w-[62px] h-[32px] rounded-full bg-[#E6F4F0]/80 dark:bg-[#30241A] border border-[#CBECE2] dark:border-[#51402E] flex items-center justify-between px-1.5 opacity-50" />
     );
   }
 
@@ -26,7 +26,7 @@ export default function ThemeToggle() {
   return (
     <button
       onClick={toggleTheme}
-      className="relative w-[62px] h-[32px] rounded-full bg-[#FAF8FE] dark:bg-[#1E1933]/90 border border-purple-200/60 dark:border-purple-500/20 flex items-center justify-between px-1.5 cursor-pointer shadow-2xs hover:shadow-xs transition-shadow focus:outline-none focus:ring-2 focus:ring-[#6251a8]/40 select-none overflow-hidden shrink-0"
+      className="relative w-[62px] h-[32px] rounded-full bg-[#FAF8FE] dark:bg-[#30241A] border border-[#CBECE2] dark:border-[#51402E] flex items-center justify-between px-1.5 cursor-pointer shadow-2xs hover:shadow-xs transition-shadow focus:outline-none focus:ring-2 focus:ring-[#006C56]/40 dark:focus:ring-[#858A60]/40 select-none overflow-hidden shrink-0"
       aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
     >
       <span className="text-xs relative z-10 select-none">☀️</span>
@@ -40,13 +40,13 @@ export default function ThemeToggle() {
           damping: 30,
         }}
         animate={{ x: isDark ? 28 : 0 }}
-        className="absolute left-[3px] w-[24px] h-[24px] rounded-full bg-gradient-to-br from-[#7C6BC4] to-[#5F4EA5] shadow-sm pointer-events-none flex items-center justify-center"
+        className="absolute left-[3px] w-[24px] h-[24px] rounded-full bg-gradient-to-br from-[#006B56] to-[#004D3D] dark:from-[#858A60] dark:to-[#6E734E] shadow-sm pointer-events-none flex items-center justify-center"
       >
         {/* Subtle micro-rotation indicator */}
         <motion.span
           animate={reducedMotion ? {} : { rotate: isDark ? 180 : 0 }}
           transition={{ duration: 0.4 }}
-          className="text-[10px] text-white font-bold select-none"
+          className="text-[10px] text-white dark:text-[#211A14] font-bold select-none"
         >
           ✦
         </motion.span>

@@ -35,6 +35,25 @@
   --dashboard-amber-wash: #FFF6EB;
   --dashboard-amber-border: #FFE1C2;
   --dashboard-pastel-peach: #F5C99B;
+
+  /* Warm Earth Tokens (Global System Reference) */
+  --warm-bg: #211A14;
+  --warm-navbar: #1B1510;
+  --warm-sidebar: #201811;
+  --warm-card: #30241A;
+  --warm-card-secondary: #3B2C20;
+  --warm-elevated: #443326;
+  --warm-olive: #A3A77A;
+  --warm-sage: #A7B69A;
+  --warm-cream: #F3E9D8;
+  --warm-beige: #C5B7A4;
+  --warm-taupe: #9F907E;
+  --warm-border: #51402E;
+  --warm-button: #858A60;
+  --warm-button-text: #211A14;
+  --warm-success: #91AD87;
+  --warm-amber: #D7AD70;
+  --warm-red: #C95D54;
 }
 
 .dark {
@@ -107,9 +126,9 @@ h1, h2, h3, h4, h5, h6 {
   border: 1px solid rgba(230, 223, 248, 0.5);
 }
 
-/* Ambient Purple & Mint Gradients */
+/* Ambient Brand Green & Mint Gradients */
 .gradient-primary {
-  background: linear-gradient(135deg, #7C6BC4 0%, #5F4EA5 100%);
+  background: linear-gradient(135deg, #006B56 0%, #004D3D 100%);
 }
 
 .gradient-mint {
@@ -126,7 +145,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Soft ambient card shadow */
 .shadow-soft {
-  box-shadow: 0 10px 30px rgba(124, 107, 196, 0.08);
+  box-shadow: 0 10px 30px rgba(0, 107, 86, 0.08);
 }
 
 /* Marquee continuous scroll animations */

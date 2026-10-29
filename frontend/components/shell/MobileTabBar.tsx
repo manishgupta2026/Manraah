@@ -11,7 +11,7 @@ export default function MobileTabBar() {
   const { category } = useCategory();
 
   return (
-    <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-surface-container-lowest/90 backdrop-blur-md border-t border-surface-variant/40 px-3 py-2 shadow-lg">
+    <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-surface-container-lowest/90 dark:bg-[#1B1510]/95 backdrop-blur-md border-t border-surface-variant/40 dark:border-[#51402E] px-3 py-2 shadow-lg">
       <nav className="flex items-center justify-around">
         {MOBILE_TAB_ITEMS.map((tab) => {
           const targetHref = tab.href;

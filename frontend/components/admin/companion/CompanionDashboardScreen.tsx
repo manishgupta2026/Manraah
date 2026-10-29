@@ -457,7 +457,7 @@ export default function CompanionDashboardScreen() {
                       <p className="text-xs text-on-surface-variant font-medium">{room.topic}</p>
                       <button
                         onClick={() => handleAcceptRoom(room)}
-                        className="w-full py-2 rounded-xl bg-primary hover:bg-primary-purple text-white text-xs font-bold transition-all shadow-xs"
+                        className="w-full py-2 rounded-xl bg-primary hover:bg-[#005B48] text-white text-xs font-bold transition-all shadow-xs cursor-pointer"
                       >
                         Accept Conversation →
                       </button>
@@ -563,7 +563,7 @@ export default function CompanionDashboardScreen() {
                   />
                   <button
                     type="submit"
-                    className="px-5 py-3 rounded-2xl bg-primary hover:bg-primary-purple text-white text-xs font-bold shadow-md"
+                    className="px-5 py-3 rounded-2xl bg-primary hover:bg-[#005B48] text-white text-xs font-bold shadow-md cursor-pointer"
                   >
                     Send (WebSocket) →
                   </button>

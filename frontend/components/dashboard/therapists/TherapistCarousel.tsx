@@ -295,7 +295,7 @@ export default function TherapistCarousel({
           onScroll={handleNativeScroll}
           tabIndex={0}
           aria-label="Recommended doctors carousel"
-          className="flex gap-4 sm:gap-5 items-stretch overflow-x-auto py-6 sm:py-7 px-4 sm:px-6 -my-3 sm:-my-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#006C56] rounded-2xl select-none"
+          className="flex gap-4 sm:gap-5 items-stretch overflow-x-auto py-6 sm:py-7 px-4 sm:px-6 -my-3 sm:-my-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#858A60] rounded-2xl select-none"
           style={{
             scrollbarWidth: "none",
             msOverflowStyle: "none",

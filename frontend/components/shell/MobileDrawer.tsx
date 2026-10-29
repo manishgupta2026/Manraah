@@ -41,19 +41,19 @@ export default function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
         animate={{ x: 0 }}
         exit={{ x: "-100%" }}
         transition={{ type: "spring", stiffness: 380, damping: 35 }}
-        className="relative z-50 flex flex-col w-[280px] h-full bg-surface-container-lowest border-r border-surface-variant/40 shadow-2xl p-6 justify-between"
+        className="relative z-50 flex flex-col w-[280px] h-full bg-surface-container-lowest dark:bg-[#201811] border-r border-surface-variant/40 dark:border-[#51402E] shadow-2xl p-6 justify-between text-on-surface dark:text-[#F3E9D8]"
       >
         <div className="space-y-6">
           {/* Header & Brand with Close */}
-          <div className="flex items-center justify-between pb-4 border-b border-surface-variant/30">
+          <div className="flex items-center justify-between pb-4 border-b border-surface-variant/30 dark:border-[#51402E]">
             <Link href="/" onClick={onClose} className="inline-block hover:opacity-90 transition-opacity">
               <Logo size="md" />
             </Link>
             <button
               onClick={onClose}
-              className="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center hover:bg-surface-container-high transition-colors cursor-pointer"
+              className="w-8 h-8 rounded-full bg-surface-container dark:bg-[#30241A] flex items-center justify-center hover:bg-surface-container-high dark:hover:bg-[#3B2C20] transition-colors cursor-pointer"
             >
-              <span className="material-symbols-outlined text-on-surface text-lg">close</span>
+              <span className="material-symbols-outlined text-on-surface dark:text-[#F3E9D8] text-lg">close</span>
             </button>
           </div>
 
@@ -73,7 +73,7 @@ export default function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
                       : "text-[#4F685F] dark:text-[#A1A1AA] hover:bg-[#E6F4F0] hover:text-[#006B56]"
                   }`}
                 >
-                  <span className={`material-symbols-outlined text-xl shrink-0 ${isActive ? "text-white" : "text-[#006B56]"}`}>
+                  <span className={`material-symbols-outlined text-xl shrink-0 ${isActive ? "text-white dark:text-[#A3A77A]" : "text-[#006B56] dark:text-[#A3A77A]"}`}>
                     {item.icon}
                   </span>
                   <span>{item.label}</span>
@@ -84,7 +84,7 @@ export default function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
         </div>
 
         {/* User Profile & Crisis Quick Access */}
-        <div className="space-y-2.5 pt-4 border-t border-surface-variant/30">
+        <div className="space-y-2.5 pt-4 border-t border-surface-variant/30 dark:border-[#51402E]">
           {/* Quick Crisis Help Button (Authenticated Only) */}
           {(isAuthenticated || Boolean(user?.id)) && (
             <button
@@ -104,18 +104,17 @@ export default function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
               <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-red-600 text-white">24/7</span>
             </button>
           )}
-
           <Link
             href="/profile"
             onClick={onClose}
-            className="flex items-center gap-3 p-2 rounded-xl hover:bg-surface-container transition-colors"
+            className="flex items-center gap-3 p-2 rounded-xl hover:bg-surface-container dark:hover:bg-[#30241A] transition-colors"
           >
             <UserAvatar user={user} sizeClass="w-9 h-9 text-xs" />
             <div className="flex-1 min-w-0">
-              <p className="text-xs font-semibold text-on-surface truncate">{displayName}</p>
-              <p className="text-[10px] text-on-surface-variant/70 truncate">View Profile</p>
+              <p className="text-xs font-semibold text-on-surface dark:text-[#F3E9D8] truncate">{displayName}</p>
+              <p className="text-[10px] text-on-surface-variant/70 dark:text-[#9F907E] truncate">View Profile</p>
             </div>
-            <span className="material-symbols-outlined text-lg text-outline">settings</span>
+            <span className="material-symbols-outlined text-lg text-outline dark:text-[#9F907E]">settings</span>
           </Link>
         </div>
       </motion.aside>

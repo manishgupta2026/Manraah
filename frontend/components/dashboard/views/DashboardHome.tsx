@@ -386,7 +386,7 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
           <div className="bg-white dark:bg-[#121214] rounded-2xl p-2.5 px-4 border border-[#CBECE2] dark:border-[#27272a] shadow-2xs flex items-center gap-3 min-w-[145px] transition-colors">
             <span className="text-xl leading-none">🔥</span>
             <div>
-              <p className="text-[11px] font-black text-[#E37A47] dark:text-[#F38A57] leading-tight">
+              <p className="text-[11px] font-black text-[#E37A47] dark:text-[#D7AD70] leading-tight">
                 Day {currentStreak} Streak
               </p>
               <p className="text-[9.5px] text-[#789389] dark:text-[#A1A1AA] font-medium leading-tight mt-0.5">
@@ -438,7 +438,7 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
       <div className="bg-white dark:bg-[#121214] rounded-3xl p-5 border border-[#CBECE2] dark:border-[#27272a] shadow-2xs space-y-3 transition-colors">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-2xl bg-[#FFF8E7] dark:bg-[#1C1814] text-[#F1C40F] dark:text-[#F38A57] flex items-center justify-center">
+            <div className="w-8 h-8 rounded-2xl bg-[#FFF8E7] dark:bg-[#3B2C20] text-[#F1C40F] dark:text-[#D7AD70] flex items-center justify-center">
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
               </svg>
@@ -650,7 +650,7 @@ export default function DashboardHome({ onNavigate }: DashboardHomeProps) {
 
               {/* Error banner if backend update fails */}
               {switchProfileError && (
-                <div className="p-3 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/50 text-rose-700 dark:text-rose-300 text-xs font-semibold flex items-center gap-2">
+                <div className="p-3 rounded-2xl bg-rose-50 dark:bg-[#C95D54]/15 border border-rose-200 dark:border-[#C95D54]/30 text-rose-700 dark:text-[#C95D54] text-xs font-semibold flex items-center gap-2">
                   <span className="material-symbols-outlined text-base shrink-0">error</span>
                   <span>{switchProfileError}</span>
                 </div>

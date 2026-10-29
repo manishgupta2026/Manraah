@@ -27,8 +27,8 @@ const STEPS_CAROUSEL = [
     subtitle: "Establishing your emotional starting point",
     desc: "Take a brief, pressure-free check-in to establish your baseline stress levels, current energy, and immediate wellness goals. No clinical labels, cold questionnaires, or intrusive diagnostic forms.",
     icon: "assignment_turned_in",
-    color: "bg-pink/25 text-[#9E3B54] border-pink/40",
-    badgeBg: "bg-[#9E3B54] text-white",
+    color: "bg-mint/20 dark:bg-[#1B332B] text-[#006B56] dark:text-[#88F7D6] border-mint/40 dark:border-[#2E4E44]",
+    badgeBg: "bg-[#006B56] text-white",
     highlights: [
       "100% anonymous — no real name required",
       "Identifies stress resilience and emotional focus",
@@ -57,8 +57,8 @@ const STEPS_CAROUSEL = [
     subtitle: "Long-term mental resilience and connection",
     desc: "Build sustainable daily habits through mood check-ins, guided CBT & MBSR exercises, anonymous peer community discussions, and direct access to licensed therapists whenever deeper care is needed.",
     icon: "trending_up",
-    color: "bg-peach/30 text-[#9E5D28] border-peach/50",
-    badgeBg: "bg-[#9E5D28] text-white",
+    color: "bg-[#EDF6F2] dark:bg-[#20372F] text-[#005B48] dark:text-[#88F7D6] border-[#BCE2D2] dark:border-[#325246]",
+    badgeBg: "bg-[#005B48] text-white",
     highlights: [
       "Progressive emotional rhythm and trend tracking",
       "Anonymous moderated peer circles",
@@ -138,7 +138,7 @@ export default function HowItWorksPage() {
                 <button
                   key={s.step}
                   onClick={() => setActiveStepIdx(idx)}
-                  className={`px-4 sm:px-6 py-2.5 sm:py-3 rounded-full text-xs sm:text-sm font-heading font-bold transition-all flex items-center gap-2 cursor-pointer ${
+                  className={`group px-4 sm:px-6 py-2.5 sm:py-3 rounded-full text-xs sm:text-sm font-heading font-bold transition-all flex items-center gap-2 cursor-pointer ${
                     isActive
                       ? "bg-primary text-white shadow-md scale-[1.03] dark:bg-white dark:text-black"
                       : "bg-surface-container-lowest dark:bg-[#18181b] border border-surface-variant/40 dark:border-[#27272a] text-on-surface-variant dark:text-[#A1A1AA] hover:bg-surface-container dark:hover:bg-[#27272a] hover:text-on-surface dark:hover:text-[#F4FAF7]"
@@ -229,11 +229,11 @@ export default function HowItWorksPage() {
                             <span>🎓</span>
                             <span>Student Mode</span>
                           </div>
-                          <div className="p-3 rounded-2xl bg-peach/25 text-[#9E5D28] border border-peach/40 flex items-center gap-2">
+                          <div className="p-3 rounded-2xl bg-[#EDF6F2] dark:bg-[#20372F] text-[#006B56] dark:text-[#88F7D6] border border-[#BCE2D2] dark:border-[#325246] flex items-center gap-2">
                             <span>💼</span>
                             <span>Working Pro</span>
                           </div>
-                          <div className="p-3 rounded-2xl bg-pink/20 text-[#874959] border border-pink/30 flex items-center gap-2">
+                          <div className="p-3 rounded-2xl bg-[#E2EFE9] dark:bg-[#1A3129] text-[#006B56] dark:text-[#88F7D6] border border-[#A8DAC7] dark:border-[#2E4E44] flex items-center gap-2">
                             <span>🍼</span>
                             <span>Parent Journey</span>
                           </div>
@@ -256,7 +256,7 @@ export default function HowItWorksPage() {
                         <div className="flex justify-center gap-2 text-xs font-heading font-bold">
                           <span className="px-3 py-1.5 rounded-full bg-mint/20 text-[#006B56] border border-mint/30">🌸 Calm</span>
                           <span className="px-3 py-1.5 rounded-full bg-primary/15 text-primary border border-primary/30">✨ Balanced</span>
-                          <span className="px-3 py-1.5 rounded-full bg-pink/20 text-[#874959] border border-pink/30">🌊 Overwhelmed</span>
+                          <span className="px-3 py-1.5 rounded-full bg-[#EDF6F2] dark:bg-[#20372F] text-[#006B56] dark:text-[#88F7D6] border border-[#BCE2D2] dark:border-[#325246]">🌊 Overwhelmed</span>
                         </div>
                         <div className="space-y-1 pt-1">
                           <div className="flex justify-between text-[10px] text-on-surface-variant font-bold">
@@ -292,7 +292,7 @@ export default function HowItWorksPage() {
                         </div>
                         <div className="flex justify-between text-[11px] font-bold text-emerald-600">
                           <span className="px-2.5 py-1 rounded-lg bg-mint/15">🫁 2-Min Reset</span>
-                          <span className="px-2.5 py-1 rounded-lg bg-peach/20 text-[#9E5D28]">📝 Night Journal</span>
+                          <span className="px-2.5 py-1 rounded-lg bg-[#E6F4F0] dark:bg-[#1B332B] text-[#006B56] dark:text-[#88F7D6]">📝 Night Journal</span>
                         </div>
                       </div>
                     )}
@@ -395,6 +395,7 @@ export default function HowItWorksPage() {
         description="Take your first 1-minute check-in and unlock a personalized space tailored to your life stage."
         buttonText="Explore Life Stage Pathways"
         buttonHref="/for-you"
+        variant="green"
       />
     </div>
   );

@@ -473,7 +473,7 @@ export default function DoctorProfileModal({
               <div className="h-20 bg-slate-200 dark:bg-[#18181b] rounded-2xl" />
             </div>
           ) : profileError ? (
-            <div className="p-4 rounded-2xl bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-900/50 text-rose-700 dark:text-rose-300 flex items-center gap-3">
+            <div className="p-4 rounded-2xl bg-rose-50 dark:bg-[#C95D54]/15 border border-rose-200 dark:border-[#C95D54]/30 text-rose-700 dark:text-[#C95D54] flex items-center gap-3">
               <span className="material-symbols-outlined text-xl shrink-0">error</span>
               <p className="text-xs">{profileError}</p>
             </div>
@@ -578,12 +578,12 @@ export default function DoctorProfileModal({
 
                       <div className="p-4 rounded-2xl bg-white dark:bg-[#121214] border border-[#E2ECE6] dark:border-[#27272a] text-left space-y-2 text-xs">
                         <div className="flex justify-between">
-                          <span className="text-[#789389]">Practitioner:</span>
-                          <span className="font-bold">{therapist.name}</span>
+                          <span className="text-[#789389] dark:text-[#9F907E]">Practitioner:</span>
+                          <span className="font-bold text-[#19332A] dark:text-[#F3E9D8]">{therapist.name}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-[#789389]">Date &amp; Time:</span>
-                          <span className="font-bold">
+                          <span className="text-[#789389] dark:text-[#9F907E]">Date &amp; Time:</span>
+                          <span className="font-bold text-[#19332A] dark:text-[#F3E9D8]">
                             {new Date(bookedAppointment.appointmentDate).toLocaleString("en-US", {
                               weekday: "short",
                               month: "short",
@@ -595,8 +595,8 @@ export default function DoctorProfileModal({
                           </span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-[#789389]">Duration:</span>
-                          <span className="font-bold">45 Minutes (Video Consultation)</span>
+                          <span className="text-[#789389] dark:text-[#9F907E]">Duration:</span>
+                          <span className="font-bold text-[#19332A] dark:text-[#F3E9D8]">45 Minutes (Video Consultation)</span>
                         </div>
                       </div>
 
@@ -648,13 +648,13 @@ export default function DoctorProfileModal({
                                     : "bg-white dark:bg-[#18181b] border-[#CBECE2] dark:border-[#27272a] text-[#19332A] dark:text-white hover:border-[#E37A47]/60"
                                 }`}
                               >
-                                <span className={`text-[10px] font-semibold uppercase ${isSelected ? "text-emerald-100" : "text-[#789389]"}`}>
+                                <span className={`text-[10px] font-semibold uppercase ${isSelected ? "text-emerald-100 dark:text-[#211A14]" : "text-[#789389] dark:text-[#9F907E]"}`}>
                                   {opt.dayName}
                                 </span>
                                 <span className="text-base font-heading font-black my-0.5">
                                   {opt.dayNum}
                                 </span>
-                                <span className={`text-[9px] font-medium ${isSelected ? "text-emerald-100" : "text-[#789389]"}`}>
+                                <span className={`text-[9px] font-medium ${isSelected ? "text-emerald-100 dark:text-[#211A14]" : "text-[#789389] dark:text-[#9F907E]"}`}>
                                   {opt.monthName}
                                 </span>
                               </button>
@@ -685,7 +685,7 @@ export default function DoctorProfileModal({
                             <p className="text-xs font-semibold text-[#5A756C] dark:text-[#A1A1AA]">
                               No slots available on this date.
                             </p>
-                            <p className="text-[11px] text-[#789389] mt-1">
+                            <p className="text-[11px] text-[#789389] dark:text-[#9F907E] mt-1">
                               Please select another date above.
                             </p>
                           </div>
@@ -745,7 +745,7 @@ export default function DoctorProfileModal({
 
                       {/* Error Alert Banner */}
                       {bookingError && (
-                        <div className="p-3.5 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/50 text-rose-700 dark:text-rose-300 text-xs flex items-center gap-2.5 animate-in fade-in">
+                        <div className="p-3.5 rounded-2xl bg-rose-50 dark:bg-[#C95D54]/15 border border-rose-200 dark:border-[#C95D54]/30 text-rose-700 dark:text-[#C95D54] text-xs flex items-center gap-2.5 animate-in fade-in">
                           <span className="material-symbols-outlined text-lg shrink-0">error</span>
                           <span>{bookingError}</span>
                         </div>
@@ -807,8 +807,8 @@ export default function DoctorProfileModal({
                 <div className="space-y-6 animate-in fade-in duration-200">
                   {/* Rating Success Alert */}
                   {ratingSuccessMsg && (
-                    <div className="p-3.5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 text-emerald-700 dark:text-emerald-300 text-xs flex items-center gap-2.5 animate-in fade-in">
-                      <span className="material-symbols-outlined text-lg text-emerald-600 dark:text-emerald-400 shrink-0">
+                    <div className="p-3.5 rounded-2xl bg-emerald-50 dark:bg-[#30241A] border border-emerald-200 dark:border-[#91AD87]/40 text-emerald-700 dark:text-[#91AD87] text-xs flex items-center gap-2.5 animate-in fade-in">
+                      <span className="material-symbols-outlined text-lg text-emerald-600 dark:text-[#91AD87] shrink-0">
                         check_circle
                       </span>
                       <span>{ratingSuccessMsg}</span>
@@ -859,7 +859,7 @@ export default function DoctorProfileModal({
                     </div>
 
                     {/* Compact 5-Star Breakdown */}
-                    <div className="pt-4 border-t border-black/5 dark:border-white/5 space-y-2">
+                    <div className="pt-4 border-t border-black/5 dark:border-[#51402E] space-y-2">
                       {([5, 4, 3, 2, 1] as const).map((stars) => {
                         const count = distribution[stars] || 0;
                         const percent = currentCount > 0 ? (count / currentCount) * 100 : 0;
@@ -899,7 +899,7 @@ export default function DoctorProfileModal({
                           {ratingsData?.userReview ? "Update your experience" : "Rate your experience"}
                         </h3>
                         {ratingsData?.userReview && (
-                          <span className="text-[10px] bg-emerald-100 dark:bg-emerald-900/50 text-emerald-800 dark:text-emerald-200 px-2.5 py-0.5 rounded-full font-bold">
+                          <span className="text-[10px] bg-emerald-100 dark:bg-[#3B2C20] text-emerald-800 dark:text-[#D7AD70] border dark:border-[#51402E] px-2.5 py-0.5 rounded-full font-bold">
                             Editing previous review
                           </span>
                         )}
@@ -922,9 +922,9 @@ export default function DoctorProfileModal({
                                   onMouseEnter={() => setHoverRating(star)}
                                   onMouseLeave={() => setHoverRating(null)}
                                   aria-label={`Rate ${star} star${star > 1 ? "s" : ""}`}
-                                  className="p-1 text-2xl transition-transform hover:scale-115 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#006B56] rounded-md cursor-pointer leading-none"
+                                  className="p-1 text-2xl transition-transform hover:scale-115 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#858A60] rounded-md cursor-pointer leading-none"
                                 >
-                                  <span className={isFilled ? "text-amber-400" : "text-slate-300 dark:text-slate-700"}>
+                                  <span className={isFilled ? "text-amber-400" : "text-slate-300 dark:text-[#51402E]"}>
                                     ★
                                   </span>
                                 </button>
@@ -957,7 +957,7 @@ export default function DoctorProfileModal({
                       </div>
 
                       {ratingError && (
-                        <div className="p-3 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/50 text-rose-700 dark:text-rose-300 text-xs flex items-center gap-2">
+                        <div className="p-3 rounded-xl bg-rose-50 dark:bg-[#30241A] border border-rose-200 dark:border-[#C95D54]/50 text-rose-700 dark:text-[#C95D54] text-xs flex items-center gap-2">
                           <span className="material-symbols-outlined text-base shrink-0">error</span>
                           <span>{ratingError}</span>
                         </div>
@@ -979,7 +979,7 @@ export default function DoctorProfileModal({
                         >
                           {isSubmittingRating ? (
                             <>
-                              <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin shrink-0" />
+                              <span className="w-3.5 h-3.5 border-2 border-white dark:border-[#211A14] border-t-transparent rounded-full animate-spin shrink-0" />
                               <span>Submitting...</span>
                             </>
                           ) : (
@@ -1006,7 +1006,7 @@ export default function DoctorProfileModal({
                         <p className="text-xs font-semibold text-[#5A756C] dark:text-[#A1A1AA]">
                           No patient reviews yet.
                         </p>
-                        <p className="text-xs text-[#789389] dark:text-[#678B81] mt-1">
+                        <p className="text-xs text-[#789389] dark:text-[#9F907E] mt-1">
                           Be the first to share your experience after your session.
                         </p>
                       </div>
@@ -1019,7 +1019,7 @@ export default function DoctorProfileModal({
                           >
                             <div className="flex items-center justify-between gap-2">
                               <div className="flex items-center gap-2">
-                                <span className="text-xs font-bold text-amber-500 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/40 px-2.5 py-0.5 rounded-lg flex items-center gap-1 leading-none">
+                                <span className="text-xs font-bold text-amber-500 bg-amber-50 dark:bg-[#3B2C20] border border-amber-200 dark:border-[#51402E] px-2.5 py-0.5 rounded-lg flex items-center gap-1 leading-none">
                                   <span>★</span>
                                   <span>{rev.rating}.0</span>
                                 </span>
@@ -1045,7 +1045,7 @@ export default function DoctorProfileModal({
                                 &ldquo;{rev.feedback}&rdquo;
                               </p>
                             ) : (
-                              <p className="text-xs text-[#789389] dark:text-[#678B81] italic">
+                              <p className="text-xs text-[#789389] dark:text-[#9F907E] italic">
                                 Rated without written feedback.
                               </p>
                             )}

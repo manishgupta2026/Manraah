@@ -570,7 +570,7 @@ export default function HumanCompanionView() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <button
                 onClick={() => setStep("CHAT")}
-                className="py-3 px-5 rounded-2xl bg-[#006B56] hover:bg-[#005B48] text-white text-xs font-bold shadow-md shadow-[#006B56]/20 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                className="py-3 px-5 rounded-2xl bg-[#006B56] hover:bg-[#005B48] dark:bg-[#858A60] dark:hover:bg-[#6E734E] text-white dark:text-[#211A14] text-xs font-bold shadow-md shadow-[#006B56]/20 dark:shadow-none transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
                 <span>💬</span>
                 <span>Start Text Chat</span>
@@ -635,7 +635,7 @@ export default function HumanCompanionView() {
 
               <button
                 onClick={handleEndSession}
-                className="p-3.5 rounded-full bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold shadow-md shadow-rose-600/30 cursor-pointer"
+                className="p-3.5 rounded-full bg-[#C95D54] hover:bg-[#B34B42] text-white text-xs font-bold shadow-md shadow-[#C95D54]/30 cursor-pointer"
               >
                 End Call
               </button>
@@ -705,7 +705,7 @@ export default function HumanCompanionView() {
 
             <button
               onClick={handleFinishFeedback}
-              className="px-8 py-2.5 rounded-full bg-[#006B56] hover:bg-[#005B48] text-white text-xs font-bold shadow-md shadow-[#006B56]/20 transition-all cursor-pointer"
+              className="px-8 py-2.5 rounded-full bg-[#006B56] hover:bg-[#005B48] dark:bg-[#858A60] dark:hover:bg-[#6E734E] text-white dark:text-[#211A14] text-xs font-bold shadow-md shadow-[#006B56]/20 dark:shadow-none transition-all cursor-pointer"
             >
               Finish &amp; Return to Companion →
             </button>

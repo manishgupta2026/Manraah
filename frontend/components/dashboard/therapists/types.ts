@@ -160,7 +160,7 @@ export const FALLBACK_THERAPISTS: UnifiedTherapist[] = [
     reviewCount: "94+",
     experience: "10+ yrs experience",
     badge: "Highly Rated",
-    badgeClass: "bg-[#E1EDFA] text-[#1A73E8] dark:bg-[rgba(80,150,255,0.15)] dark:text-[#8EBBFF]",
+    badgeClass: "bg-[#D8EDE4] text-[#006B56] dark:bg-[rgba(95,175,138,0.15)] dark:text-[#88F7D6]",
     description:
       "Helps you navigate career transitions, workplace challenges, boundary setting, and achieve sustainable work-life balance.",
     profileImage: "/images/therapists/arjun-mehta.jpg",
@@ -183,7 +183,7 @@ export const FALLBACK_THERAPISTS: UnifiedTherapist[] = [
     reviewCount: "140+",
     experience: "14+ yrs experience",
     badge: "Popular",
-    badgeClass: "bg-[#F5E6F5] text-[#8430CE] dark:bg-[rgba(230,100,180,0.15)] dark:text-[#F2A6D3]",
+    badgeClass: "bg-[#CEEBE1] text-[#005B48] dark:bg-[rgba(95,175,138,0.15)] dark:text-[#88F7D6]",
     description:
       "Supports individuals and couples in building healthier, happier relationships, empathetic communication, and deep emotional trust.",
     profileImage: "/images/therapists/neha-kapoor.jpg",
@@ -206,7 +206,7 @@ export const FALLBACK_THERAPISTS: UnifiedTherapist[] = [
     reviewCount: "112+",
     experience: "15+ yrs experience",
     badge: "Specialist",
-    badgeClass: "bg-[#FFF9F2] text-[#D97706] dark:bg-[rgba(245,160,60,0.15)] dark:text-[#FFC477]",
+    badgeClass: "bg-[#D5EFE5] text-[#005B48] dark:bg-[rgba(95,175,138,0.15)] dark:text-[#88F7D6]",
     description:
       "Assists working professionals, founders, and leaders in conquering chronic stress, fatigue, and imposter feelings through somatic wellness coaching.",
     profileImage: "/images/therapists/vikram-patel.jpg",

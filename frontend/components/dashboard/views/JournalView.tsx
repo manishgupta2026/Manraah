@@ -234,7 +234,7 @@ export default function JournalView() {
               className="w-full py-2 pl-9 pr-4 rounded-full bg-[#F8FCFA] dark:bg-[#18181b] border border-[#CBECE2] dark:border-[#27272a] text-xs text-[#19332A] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#006B56]/40 dark:focus:ring-zinc-400/30 placeholder:text-[#8EAAA1] dark:placeholder:text-[#789990]"
             />
             <svg
-              className="w-4 h-4 absolute left-3 top-2.5 text-[#8EAAA1] dark:text-[#789990]"
+              className="w-4 h-4 absolute left-3 top-2.5 text-[#8EAAA1] dark:text-[#9F907E]"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"

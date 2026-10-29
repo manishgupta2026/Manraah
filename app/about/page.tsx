@@ -341,10 +341,10 @@ export default function AboutPage() {
               className="p-7 sm:p-8 rounded-[24px] bg-surface-container-low/60 border border-surface-variant/30 dark:border-[#27272a] hover:border-[#874959]/30 transition-all flex flex-col justify-start space-y-4 text-left cursor-default relative overflow-hidden"
             >
               <div className="flex items-center justify-between">
-                <span className="px-3.5 py-1.5 rounded-full text-xs font-heading font-bold bg-pink/30 text-[#874959] border border-pink/40 uppercase tracking-wider">
+                <span className="px-3.5 py-1.5 rounded-full text-xs font-heading font-bold bg-[#E6F4F0] text-[#006B56] border border-[#CBECE2] uppercase tracking-wider">
                   Problem Statement
                 </span>
-                <span className="material-symbols-outlined text-[#874959]/40 text-2xl">report_problem</span>
+                <span className="material-symbols-outlined text-[#006B56]/40 text-2xl">report_problem</span>
               </div>
               <div className="space-y-2.5">
                 <h3 className="text-2xl sm:text-3xl font-heading font-extrabold text-on-surface tracking-tight">
@@ -364,10 +364,10 @@ export default function AboutPage() {
               className="p-7 sm:p-8 rounded-[24px] bg-surface-container-low/60 border border-surface-variant/30 dark:border-[#27272a] hover:border-[#9E5D28]/30 transition-all flex flex-col justify-start space-y-4 text-left cursor-default relative overflow-hidden"
             >
               <div className="flex items-center justify-between">
-                <span className="px-3.5 py-1.5 rounded-full text-xs font-heading font-bold bg-[#9E5D28]/15 text-[#9E5D28] border border-[#9E5D28]/30 uppercase tracking-wider">
+                <span className="px-3.5 py-1.5 rounded-full text-xs font-heading font-bold bg-[#EDF6F2] text-[#006B56] border border-[#BCE2D2] uppercase tracking-wider">
                   Goal
                 </span>
-                <span className="material-symbols-outlined text-[#9E5D28]/40 text-2xl">track_changes</span>
+                <span className="material-symbols-outlined text-[#006B56]/40 text-2xl">track_changes</span>
               </div>
               <div className="space-y-2.5">
                 <h3 className="text-2xl sm:text-3xl font-heading font-extrabold text-on-surface tracking-tight">

@@ -398,7 +398,7 @@ export default function AppointmentsView() {
                 : "bg-[#EAF6F2] dark:bg-[#18181b] border-[#CBECE2] dark:border-[#27272a] hover:border-[#006B56]/40 hover:shadow-xs"
             }`}
           >
-            <div className="w-8 h-8 rounded-xl bg-[#006B56] text-white flex items-center justify-center font-bold text-xs shrink-0">
+            <div className="w-8 h-8 rounded-xl bg-[#006B56] dark:bg-[#858A60] text-white dark:text-[#211A14] flex items-center justify-center font-bold text-xs shrink-0">
               {upcomingList.length}
             </div>
             <div className="min-w-0">
@@ -421,7 +421,7 @@ export default function AppointmentsView() {
                 : "bg-[#F1F7FB] dark:bg-[#18181b] border-[#E2ECE6] dark:border-[#27272a] hover:border-[#1C92D2]/40 hover:shadow-xs"
             }`}
           >
-            <div className="w-8 h-8 rounded-xl bg-[#1C92D2] text-white flex items-center justify-center font-bold text-xs shrink-0">
+            <div className="w-8 h-8 rounded-xl bg-[#1C92D2] dark:bg-[#3B2C20] text-white dark:text-[#D7AD70] dark:border dark:border-[#51402E] flex items-center justify-center font-bold text-xs shrink-0">
               {pastList.length}
             </div>
             <div className="min-w-0">
@@ -613,7 +613,7 @@ export default function AppointmentsView() {
             </div>
 
             <div className="flex items-center gap-2">
-              <span className="px-3 py-1 rounded-full bg-[#EAF2F8] dark:bg-[rgba(28,146,210,0.15)] text-[#1C92D2] text-[10px] font-extrabold tracking-wide border border-[#D0E4F3] dark:border-[rgba(28,146,210,0.30)]">
+              <span className="px-3 py-1 rounded-full bg-[#EAF2F8] dark:bg-[#3B2C20] text-[#1C92D2] dark:text-[#D7AD70] text-[10px] font-extrabold tracking-wide border border-[#D0E4F3] dark:border-[#51402E]">
                 {pastList.length > 0 ? `${pastList.length} Sessions` : "0 Sessions"}
               </span>
               <button
@@ -662,7 +662,7 @@ export default function AppointmentsView() {
                             {session.therapistName}
                           </h3>
                           <span
-                            className={`text-[9px] px-2 py-0.5 rounded-full font-bold capitalize ${
+                            className={`text-[9px] px-2 py-0.5 rounded-full font-bold capitalize border dark:border-[#51402E] ${
                               session.status === "cancelled"
                                 ? "bg-rose-100 dark:bg-rose-950/40 text-rose-700 dark:text-rose-400"
                                 : "bg-[#E6F4EA] dark:bg-white/5 text-[#137333] dark:text-zinc-200"
@@ -842,7 +842,7 @@ export default function AppointmentsView() {
                 <button
                   type="button"
                   onClick={() => setSearchQuery("")}
-                  className="px-4 py-2 rounded-xl bg-[#006B56] hover:bg-[#005B48] text-white text-xs font-bold shadow-xs transition-all cursor-pointer"
+                  className="px-4 py-2 rounded-xl bg-[#006B56] hover:bg-[#005B48] text-white dark:bg-[#858A60] dark:hover:bg-[#6E734E] dark:text-[#211A14] text-xs font-bold shadow-xs transition-all cursor-pointer"
                 >
                   Clear Search
                 </button>

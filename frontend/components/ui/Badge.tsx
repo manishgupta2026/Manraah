@@ -10,9 +10,9 @@ export function Badge({ children, variant = "primary", className = "" }: BadgePr
   const variantStyles = {
     primary: "bg-primary-container/20 text-primary",
     secondary: "bg-mint/20 text-secondary",
-    peach: "bg-peach/30 text-tertiary",
-    pink: "bg-pink/30 text-tertiary",
-    yellow: "bg-pale-yellow/40 text-on-surface",
+    peach: "bg-[#EDF6F2] dark:bg-[#20372F] text-[#006B56] dark:text-[#88F7D6] border border-[#BCE2D2] dark:border-[#325246]",
+    pink: "bg-mint/15 dark:bg-[#1B332B] text-[#006B56] dark:text-[#88F7D6] border border-mint/30 dark:border-[#2E4E44]",
+    yellow: "bg-[#E6F4F0] dark:bg-[#1B322A] text-[#005B48] dark:text-[#88F7D6] border border-[#CBECE2] dark:border-[#2E4E44]",
     error: "bg-error-container text-on-error-container",
   };
 

@@ -98,7 +98,7 @@ export default function PostSessionFlag({ sessionId = "sess_demo", onComplete }:
 
           <button
             type="submit"
-            className="w-full py-3.5 rounded-2xl bg-primary hover:bg-primary-purple text-white font-bold text-xs shadow-md transition-all scale-105 active:scale-95"
+            className="w-full py-3.5 rounded-2xl bg-primary hover:bg-[#005B48] text-white font-bold text-xs shadow-md transition-all scale-105 active:scale-95 cursor-pointer"
           >
             Submit Report & Complete →
           </button>

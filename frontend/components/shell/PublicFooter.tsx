@@ -84,7 +84,8 @@ export default function PublicFooter() {
             <h4 className="font-heading font-bold text-white text-xs uppercase tracking-wider">Product</h4>
             <ul className="space-y-2 text-xs text-white/70">
               <li><Link href="/how-it-works" className="hover:text-white transition-colors">How it Works</Link></li>
-              <li><Link href="/our-solution" className="hover:text-white transition-colors flex items-center gap-1.5"><span>Our Solution</span><span className="text-[9px] font-bold px-1.5 py-0.2 rounded-full bg-primary/30 text-white">Soon</span></Link></li>
+              <li><Link href="/our-solution/students" className="hover:text-white transition-colors">For Students &amp; Colleges</Link></li>
+              <li><Link href="/our-solution/corporates" className="hover:text-white transition-colors">For Corporates &amp; EAP</Link></li>
               <li><Link href="/features" className="hover:text-white transition-colors">Features Overview</Link></li>
               <li><Link href="/stories" className="hover:text-white transition-colors">Member Stories</Link></li>
               <li><Link href="/features?tab=ai" className="hover:text-white transition-colors">AI Companion</Link></li>
@@ -140,8 +141,16 @@ export default function PublicFooter() {
         {/* Bottom Copyright Bar */}
         <div className="pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between text-xs text-white/50 gap-4">
           <p>© 2026 Manraah. All rights reserved.</p>
-          <p className="flex items-center gap-1">
-            <span>Crafted with compassion for mind &amp; soul</span>
+          <p className="flex items-center gap-1.5">
+            <span>Designed and Developed by</span>{" "}
+            <a
+              href="https://digigrantha.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-mint hover:text-white font-medium underline decoration-mint/40 hover:decoration-white transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mint/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#262235] rounded-xs"
+            >
+              DigiGrantha
+            </a>
           </p>
         </div>
       </div>

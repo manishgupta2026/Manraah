@@ -94,7 +94,7 @@ export default function ContentManagementTab() {
         </div>
         <button
           onClick={() => setShowAddModal(true)}
-          className="px-5 py-2.5 rounded-2xl bg-primary hover:bg-primary-purple text-white font-bold text-xs shadow-soft transition-all flex items-center gap-2"
+          className="px-5 py-2.5 rounded-2xl bg-primary hover:bg-[#005B48] text-white font-bold text-xs shadow-soft transition-all flex items-center gap-2 cursor-pointer"
         >
           <span className="material-symbols-outlined text-base">add</span>
           Add New Content

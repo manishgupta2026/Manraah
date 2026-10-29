@@ -51,7 +51,7 @@ export default function AdminOverviewTab() {
   return (
     <div className="space-y-6 animate-fadeIn select-none">
       {/* Top Banner */}
-      <div className="p-6 rounded-3xl bg-gradient-to-r from-primary via-primary-purple to-secondary text-white shadow-soft flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div className="p-6 rounded-3xl bg-gradient-to-r from-primary via-[#005B48] to-secondary text-white shadow-soft flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div className="space-y-1">
           <span className="px-3 py-1 rounded-full bg-white/20 text-[10px] font-bold uppercase tracking-wider">
             Live Platform Operations

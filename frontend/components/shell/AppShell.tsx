@@ -29,6 +29,8 @@ const STANDALONE_ROUTES = [
   "/",
   "/how-it-works",
   "/our-solution",
+  "/our-solution/students",
+  "/our-solution/corporates",
   "/features",
   "/stories",
   "/blog",

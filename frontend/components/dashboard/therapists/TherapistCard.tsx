@@ -65,7 +65,7 @@ export default function TherapistCard({
       onClick={handleCardClick}
       onKeyDown={handleKeyDown}
       aria-label={`View profile and book session with ${therapist.name}, ${therapist.role}`}
-      className={`${therapist.bgTint} ${therapist.borderClass} rounded-3xl p-5 flex flex-col justify-between shadow-2xs hover:shadow-[0_18px_45px_rgba(0,77,61,0.16)] dark:hover:shadow-[0_22px_50px_rgba(0,0,0,0.6)] hover:border-[#008968]/70 dark:hover:border-[#00A889]/70 hover:scale-[1.07] focus-visible:scale-[1.07] transition-all duration-300 ease-out origin-center group h-full min-w-0 overflow-hidden select-none relative z-0 hover:z-30 focus-visible:z-30 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-[#006C56] dark:focus-visible:ring-[#00A889] transform-gpu will-change-transform`}
+      className={`${therapist.bgTint} ${therapist.borderClass} rounded-3xl p-5 flex flex-col justify-between shadow-2xs hover:shadow-[0_18px_45px_rgba(0,77,61,0.16)] dark:hover:shadow-[0_22px_50px_rgba(0,0,0,0.6)] hover:border-[#008968]/70 dark:hover:border-[#A3A77A]/70 hover:scale-[1.07] focus-visible:scale-[1.07] transition-all duration-300 ease-out origin-center group h-full min-w-0 overflow-hidden select-none relative z-0 hover:z-30 focus-visible:z-30 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-[#006C56] dark:focus-visible:ring-[#858A60] transform-gpu will-change-transform`}
     >
       {/* Top Row: Avatar + Info Header + Status Badge */}
       <div className="flex items-start justify-between gap-2.5 h-[52px] shrink-0">
@@ -182,7 +182,7 @@ export default function TherapistCard({
         </div>
 
         {therapist.hourlyRate && (
-          <span className="text-[10px] font-bold text-[#006C56] dark:text-[#73D8C4] truncate shrink-0">
+          <span className="text-[10px] font-bold text-[#006C56] dark:text-[#D7AD70] truncate shrink-0">
             {therapist.hourlyRate}
           </span>
         )}

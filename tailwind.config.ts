@@ -27,17 +27,17 @@ const config: Config = {
         "inverse-on-surface": "#f5eeff",
         outline: "#797582",
         "outline-variant": "#cac4d3",
-        "surface-tint": "#6251a8",
+        "surface-tint": "#006B56",
         primary: {
-          DEFAULT: "#5f4ea5",
-          purple: "#7C6BC4",
-          container: "#7867c0",
-          fixed: "#e6deff",
-          "fixed-dim": "#cbbeff",
+          DEFAULT: "#006B56",
+          purple: "#005B48",
+          container: "#006B56",
+          fixed: "#E6F4F0",
+          "fixed-dim": "#CBECE2",
         },
         "on-primary": "#ffffff",
         "on-primary-container": "#fffbff",
-        "inverse-primary": "#cbbeff",
+        "inverse-primary": "#88f7d6",
         secondary: {
           DEFAULT: "#006b56",
           container: "#88f7d6",
@@ -89,6 +89,26 @@ const config: Config = {
         "pale-yellow": "#F5E6A8",
         lavender: "#7C6BC4",
         mint: "#5FCFB0",
+        // Warm Earth Design System Tokens
+        warm: {
+          bg: "#211A14", // Deep espresso (main app bg)
+          navbar: "#1B1510", // Dark coffee
+          sidebar: "#201811", // Dark roasted brown
+          card: "#30241A", // Warm espresso brown (primary card)
+          "card-secondary": "#3B2C20", // Warm brown (secondary card)
+          elevated: "#443326", // Lighter coffee brown (modals, elevated)
+          olive: "#A3A77A", // Muted olive (primary accent)
+          sage: "#A7B69A", // Soft sage (secondary accent)
+          cream: "#F3E9D8", // Warm cream (primary text)
+          beige: "#C5B7A4", // Muted beige (secondary text)
+          taupe: "#9F907E", // Soft taupe (tertiary text)
+          border: "#51402E", // Subtle brown (borders & dividers)
+          button: "#858A60", // Warm olive (primary button bg)
+          "button-text": "#211A14", // Deep espresso (primary button text)
+          success: "#91AD87", // Muted sage green
+          amber: "#D7AD70", // Soft amber (warning)
+          red: "#C95D54", // Accessible muted red (error & crisis)
+        },
       },
       fontFamily: {
         sans: ["var(--font-work-sans)", "Work Sans", "sans-serif"],
@@ -113,9 +133,9 @@ const config: Config = {
         "container-desktop": "64px",
       },
       boxShadow: {
-        ambient: "0 10px 30px rgba(124, 107, 196, 0.08)",
-        "ambient-deep": "0 20px 50px rgba(124, 107, 196, 0.05)",
-        "card-lift": "0 12px 36px rgba(95, 78, 165, 0.12)",
+        ambient: "0 10px 30px rgba(0, 107, 86, 0.08)",
+        "ambient-deep": "0 20px 50px rgba(0, 107, 86, 0.05)",
+        "card-lift": "0 12px 36px rgba(0, 107, 86, 0.12)",
       },
     },
   },

@@ -46,15 +46,15 @@ function getScoreStatusBadge(score: number | null | undefined): { label: string;
     return { label: "Not Assessed", color: "text-slate-500 bg-slate-100 dark:bg-[#18181b] dark:text-[#A1A1AA]" };
   }
   if (score >= 80) {
-    return { label: "Flourishing", color: "text-[#006C56] bg-[#EAF6F0] dark:bg-[rgba(0,168,137,0.15)] dark:text-[#73D8C4]" };
+    return { label: "Flourishing", color: "text-[#006C56] bg-[#EAF6F0] dark:bg-[#30241A] dark:text-[#91AD87] dark:border dark:border-[#51402E]" };
   }
   if (score >= 65) {
     return { label: "Good Progress", color: "text-[#008968] bg-[#EAF6F0] dark:bg-[rgba(0,168,137,0.15)] dark:text-zinc-200" };
   }
   if (score >= 50) {
-    return { label: "Moderate", color: "text-[#D97706] bg-[#FEF3C7] dark:bg-[rgba(245,160,60,0.14)] dark:text-[#FFC477]" };
+    return { label: "Moderate", color: "text-[#D97706] bg-[#FEF3C7] dark:bg-[#30241A] dark:text-[#D7AD70] dark:border dark:border-[#51402E]" };
   }
-  return { label: "Needs Attention", color: "text-rose-600 bg-rose-50 dark:bg-rose-950/40 dark:text-rose-300" };
+  return { label: "Needs Attention", color: "text-rose-600 bg-rose-50 dark:bg-[#30241A] dark:text-[#C95D54] dark:border dark:border-[#51402E]" };
 }
 
 export default function JourneyView() {
@@ -364,7 +364,7 @@ export default function JourneyView() {
             className="p-4 rounded-2xl bg-[#EAF6F2] dark:bg-[#18181b] border border-[#CBECE2] dark:border-[#27272a] flex items-center justify-between cursor-pointer hover:border-[#006B56]/60 dark:hover:border-zinc-400/60 hover:bg-[#E6F4F0] dark:hover:bg-[#163830] transition-all group"
           >
             <div className="flex items-center gap-3.5">
-              <div className="w-11 h-11 rounded-2xl bg-[#006B56] text-white flex items-center justify-center font-black text-sm shadow-xs group-hover:scale-105 transition-transform">
+              <div className="w-11 h-11 rounded-2xl bg-[#006B56] dark:bg-[#858A60] text-white dark:text-[#211A14] flex items-center justify-center font-black text-sm shadow-xs group-hover:scale-105 transition-transform">
                 {isCurrentAssessed && currentScore !== null ? `${currentScore}%` : "--"}
               </div>
               <div>
@@ -525,7 +525,7 @@ export default function JourneyView() {
               </div>
               {scoreDelta && (
                 <span
-                  className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold ${
+                  className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold border dark:border-[#51402E] ${
                     scoreDelta.isPositive
                       ? "bg-[#E6F4EA] dark:bg-white/5 text-[#137333] dark:text-zinc-200"
                       : "bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-300"
@@ -608,7 +608,7 @@ export default function JourneyView() {
         <div className="bg-white dark:bg-[#121214] rounded-3xl p-6 border border-[#E2ECE6] dark:border-[#27272a] shadow-2xs space-y-4 transition-colors flex flex-col justify-between">
           <div>
             <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-xl bg-[#FFF4EB] dark:bg-[#1E1914] text-[#F28C4B] dark:text-[#F38A57] flex items-center justify-center font-bold text-xs">
+              <div className="w-7 h-7 rounded-xl bg-[#FFF4EB] dark:bg-[#3B2C20] text-[#F28C4B] dark:text-[#D7AD70] flex items-center justify-center font-bold text-xs">
                 🔥
               </div>
               <div>
@@ -624,7 +624,7 @@ export default function JourneyView() {
             <div className="grid grid-cols-2 gap-3 mt-4">
               <div className="p-3.5 rounded-2xl bg-[#F8FCFA] dark:bg-[#18181b] border border-[#E2ECE6] dark:border-[#27272a]">
                 <span className="text-lg">🔥</span>
-                <p className="text-xl font-heading font-black text-[#E37A47] dark:text-[#F38A57] mt-1">
+                <p className="text-xl font-heading font-black text-[#E37A47] dark:text-[#D7AD70] mt-1">
                   {consistencyStats.thisMonthCount} {consistencyStats.thisMonthCount === 1 ? "check-in" : "check-ins"}
                 </p>
                 <p className="text-[10.5px] text-[#789389] dark:text-[#A1A1AA] font-semibold">
@@ -791,7 +791,7 @@ export default function JourneyView() {
               <button
                 type="button"
                 onClick={() => openAssessment(currentCategory)}
-                className="px-4 py-2 rounded-xl bg-[#006C56] hover:bg-[#005B48] text-white text-xs font-bold transition-all shadow-xs cursor-pointer"
+                className="px-4 py-2 rounded-xl bg-[#006B56] hover:bg-[#005B48] text-white dark:bg-[#858A60] dark:hover:bg-[#6E734E] dark:text-[#211A14] text-xs font-bold transition-all shadow-xs cursor-pointer"
               >
                 Check In Now
               </button>
@@ -843,7 +843,7 @@ export default function JourneyView() {
                             {item.name}
                           </h4>
                           {item.id === currentCategory && (
-                            <span className="px-1.5 py-0.5 rounded-md bg-[#006C56] text-white text-[8px] font-extrabold">
+                            <span className="px-1.5 py-0.5 rounded-md bg-[#006B56] dark:bg-[#858A60] text-white dark:text-[#211A14] text-[8px] font-extrabold">
                               Active
                             </span>
                           )}

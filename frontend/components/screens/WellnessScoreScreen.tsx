@@ -164,32 +164,32 @@ export default function WellnessScoreScreen() {
     Flourishing: {
       badge: "bg-mint/15 text-[#006B56] border-mint/40",
       text: "text-[#006B56]",
-      bg: "bg-[#e8faf5]",
-      stroke: "#5FCFB0",
+      bg: "bg-[#E6F4F0] dark:bg-[#1B332B]",
+      stroke: "#006B56",
     },
     Stable: {
       badge: "bg-primary/10 text-primary border-primary/20",
       text: "text-primary",
-      bg: "bg-primary/5",
-      stroke: "#7C6BC4",
+      bg: "bg-[#EDF6F2] dark:bg-[#20372F]",
+      stroke: "#006B56",
     },
     "Needs Attention": {
-      badge: "bg-[#fff9e6] text-[#b38600] border-[#ffe080]",
-      text: "text-[#b38600]",
-      bg: "bg-[#fffbf0]",
-      stroke: "#F5C99B",
+      badge: "bg-[#EAF6F2] text-[#006B56] border-[#CBECE2]",
+      text: "text-[#006B56]",
+      bg: "bg-[#EDF6F2] dark:bg-[#20372F]",
+      stroke: "#006B56",
     },
     "High Risk": {
-      badge: "bg-pink/15 text-tertiary border-pink/30",
-      text: "text-tertiary",
-      bg: "bg-pink/5",
-      stroke: "#F4A6B8",
+      badge: "bg-[#E6F4F0] text-[#006B56] border-[#BCE2D2]",
+      text: "text-[#006B56]",
+      bg: "bg-[#E6F4F0] dark:bg-[#1B332B]",
+      stroke: "#006B56",
     },
     Critical: {
-      badge: "bg-error/10 text-error border-error/20",
-      text: "text-error",
-      bg: "bg-error/5",
-      stroke: "#ba1a1a",
+      badge: "bg-[#EBF7F2] text-[#006B56] border-[#BCE2D2]",
+      text: "text-[#006B56]",
+      bg: "bg-[#E6F4F0] dark:bg-[#1B332B]",
+      stroke: "#006B56",
     },
   };
 
@@ -343,14 +343,14 @@ export default function WellnessScoreScreen() {
             <button
               onClick={handleSaveAndGoToDashboard}
               disabled={saving}
-              className="w-full sm:w-auto px-12 py-4 rounded-full bg-primary text-white font-bold text-sm shadow-lg hover:bg-primary-purple hover:scale-[1.02] disabled:opacity-50 transition-all text-center flex items-center justify-center gap-2"
+              className="w-full sm:w-auto px-12 py-4 rounded-full bg-primary text-white font-bold text-sm shadow-lg hover:bg-[#005B48] hover:scale-[1.02] disabled:opacity-50 transition-all text-center flex items-center justify-center gap-2 cursor-pointer"
             >
               {saving ? "Saving..." : "Save & Continue"}
               <span className="material-symbols-outlined text-base">arrow_forward</span>
             </button>
-            <p className="text-xs text-[#5F309E] font-medium text-center bg-[#5F309E]/5 px-4 py-1.5 rounded-full mt-1 border border-[#5F309E]/10 flex items-center gap-1.5">
+            <p className="text-xs text-[#006C56] font-medium text-center bg-[#006C56]/5 px-4 py-1.5 rounded-full mt-1 border border-[#006C56]/15 flex items-center gap-1.5">
               <span>Saving results to: <strong className="font-bold">{session.user.email}</strong></span>
-              <span className="text-[#5F309E]/30">|</span>
+              <span className="text-[#006C56]/30">|</span>
               <button 
                 onClick={async () => {
                   await signOut();
@@ -359,7 +359,7 @@ export default function WellnessScoreScreen() {
                     window.location.href = "/login";
                   }
                 }} 
-                className="underline hover:text-[#7C6BC4] font-bold transition-colors cursor-pointer"
+                className="underline hover:text-[#004D3D] font-bold transition-colors cursor-pointer"
               >
                 Log out
               </button>
@@ -369,14 +369,14 @@ export default function WellnessScoreScreen() {
           <>
             <button
               onClick={() => handleAuthRedirect("/login")}
-              className="w-full sm:w-auto px-12 py-4 rounded-full bg-primary text-white font-bold text-sm shadow-lg hover:bg-primary-purple hover:scale-[1.02] transition-all text-center flex items-center justify-center gap-2"
+              className="w-full sm:w-auto px-12 py-4 rounded-full bg-primary text-white font-bold text-sm shadow-lg hover:bg-[#005B48] hover:scale-[1.02] transition-all text-center flex items-center justify-center gap-2 cursor-pointer"
             >
               Continue to Login
               <span className="material-symbols-outlined text-base">arrow_forward</span>
             </button>
             <button
               onClick={() => handleAuthRedirect("/signup")}
-              className="w-full sm:w-auto px-8 py-4 rounded-full bg-surface-container-low text-on-surface font-semibold text-sm hover:bg-surface-container hover:scale-[1.02] transition-all text-center"
+              className="w-full sm:w-auto px-8 py-4 rounded-full bg-primary/10 text-primary border border-primary/20 font-bold text-sm hover:bg-primary hover:text-white hover:scale-[1.02] transition-all text-center cursor-pointer shadow-xs"
             >
               Create New Account
             </button>

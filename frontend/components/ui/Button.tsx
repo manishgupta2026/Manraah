@@ -22,8 +22,8 @@ export function Button({
   };
 
   const variantStyles = {
-    primary: "bg-primary text-white hover:bg-primary-purple",
-    secondary: "bg-secondary text-white hover:bg-secondary/90",
+    primary: "bg-primary text-white hover:bg-[#005B48]",
+    secondary: "bg-primary/10 text-primary border border-primary/20 hover:bg-primary hover:text-white",
     ghost: "bg-surface-container-low text-on-surface-variant hover:bg-surface-container",
     error: "bg-error text-white hover:bg-error/90",
   };

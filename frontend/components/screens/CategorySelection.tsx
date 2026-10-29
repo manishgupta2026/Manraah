@@ -103,7 +103,7 @@ export default function CategorySelection() {
                 isFifthOnMobile ? "col-span-2 lg:col-span-1" : "col-span-1"
               } ${
                 isSelected
-                  ? "border-primary shadow-[0_12px_36px_rgba(124,107,196,0.3)] ring-4 ring-primary/30 scale-[1.02]"
+                  ? "border-primary shadow-[0_12px_36px_rgba(0,107,86,0.25)] ring-4 ring-primary/30 scale-[1.02]"
                   : "border-white/20 shadow-md hover:shadow-xl"
               }`}
             >

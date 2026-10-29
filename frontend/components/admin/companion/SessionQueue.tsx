@@ -39,7 +39,7 @@ export default function SessionQueue({ queue, onSelectUser }: SessionQueueProps)
             {onSelectUser && (
               <button
                 onClick={() => onSelectUser(item)}
-                className="px-4 py-2 rounded-xl bg-primary hover:bg-primary-purple text-white text-xs font-bold transition-all shrink-0"
+                className="px-4 py-2 rounded-xl bg-primary hover:bg-[#005B48] text-white text-xs font-bold transition-all shrink-0 cursor-pointer"
               >
                 Accept Request →
               </button>

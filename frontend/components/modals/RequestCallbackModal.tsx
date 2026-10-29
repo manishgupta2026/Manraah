@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 
 export interface RequestCallbackModalProps {
@@ -14,6 +15,12 @@ export default function RequestCallbackModal({
   onClose,
   defaultSegment = "colleges",
 }: RequestCallbackModalProps) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const [formData, setFormData] = useState({
     fullName: "",
     workEmail: "",
@@ -29,6 +36,41 @@ export default function RequestCallbackModal({
     interests: [] as string[],
     notes: "",
   });
+
+  // Sync segment if defaultSegment changes or when opened
+  useEffect(() => {
+    if (isOpen) {
+      setFormData((prev) => ({
+        ...prev,
+        segment:
+          defaultSegment === "corporates"
+            ? "Corporate / Workplace"
+            : defaultSegment === "schools"
+            ? "School / Coaching Hub"
+            : "College / University",
+      }));
+    }
+  }, [isOpen, defaultSegment]);
+
+  // Lock body scroll and listen for Escape key when modal is open
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        handleResetAndClose();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isOpen]);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -107,10 +149,10 @@ export default function RequestCallbackModal({
     onClose();
   };
 
-  return (
+  const modalContent = (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-4 md:p-6 overflow-y-auto">
+        <div className="fixed inset-0 z-[100000] flex items-center justify-center p-3 sm:p-4 md:p-6 overflow-y-auto overscroll-contain">
           {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
@@ -118,13 +160,16 @@ export default function RequestCallbackModal({
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
             onClick={handleResetAndClose}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm -z-10"
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-0"
             aria-hidden="true"
           />
 
           {/* Modal Container */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.94, y: 16 }}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="callback-modal-title"
+            initial={{ opacity: 0, scale: 0.95, y: 16 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.94, y: 16 }}
             transition={{ type: "spring", stiffness: 320, damping: 28 }}
@@ -156,7 +201,7 @@ export default function RequestCallbackModal({
             </div>
 
             {/* Body */}
-            <div className="p-6 overflow-y-auto no-scrollbar space-y-5">
+            <div className="p-5 sm:p-6 overflow-y-auto overscroll-contain [scrollbar-width:thin] space-y-4 sm:space-y-4">
               {isSuccess ? (
                 /* Success View */
                 <motion.div
@@ -202,7 +247,7 @@ export default function RequestCallbackModal({
                 </motion.div>
               ) : (
                 /* Form View */
-                <form onSubmit={handleSubmit} className="space-y-4">
+                <form onSubmit={handleSubmit} className="space-y-3.5 pb-2">
                   {errorMessage && (
                     <div className="p-3 rounded-xl bg-error/10 dark:bg-red-950/40 border border-error/30 dark:border-red-900/60 text-error dark:text-red-300 text-xs font-semibold flex items-center gap-2">
                       <span className="material-symbols-outlined text-base shrink-0">error</span>
@@ -215,24 +260,24 @@ export default function RequestCallbackModal({
                     <label className="block text-xs font-heading font-bold text-on-surface dark:text-white mb-1.5">
                       I represent a:
                     </label>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                    <div className="grid grid-cols-3 gap-1.5">
                       {[
-                        { id: "College / University", label: "College / University", icon: "school" },
-                        { id: "Corporate / Workplace", label: "Corporate / Workplace", icon: "corporate_fare" },
+                        { id: "College / University", label: "College / Univ", icon: "school" },
+                        { id: "Corporate / Workplace", label: "Workplace / EAP", icon: "corporate_fare" },
                         { id: "School / Coaching Hub", label: "School / Coaching", icon: "menu_book" },
                       ].map((item) => (
                         <button
                           key={item.id}
                           type="button"
                           onClick={() => setFormData({ ...formData, segment: item.id })}
-                          className={`p-2.5 rounded-xl border text-xs font-heading font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                          className={`p-2 rounded-xl border text-[11px] font-heading font-bold flex flex-col items-center justify-center gap-1 transition-all cursor-pointer text-center ${
                             formData.segment === item.id
                               ? "bg-primary/10 dark:bg-white/5 border-primary dark:border-white/20 text-primary dark:text-zinc-200 shadow-xs"
                               : "bg-surface-container dark:bg-[#18181b] border-surface-variant/30 dark:border-[#27272a] text-on-surface-variant dark:text-[#A1A1AA] hover:bg-surface-variant/30 dark:hover:bg-[#27272a]"
                           }`}
                         >
-                          <span className="material-symbols-outlined text-base">{item.icon}</span>
-                          <span className="truncate">{item.label}</span>
+                          <span className="material-symbols-outlined text-base shrink-0">{item.icon}</span>
+                          <span className="leading-tight">{item.label}</span>
                         </button>
                       ))}
                     </div>
@@ -314,7 +359,7 @@ export default function RequestCallbackModal({
                     <label className="block text-xs font-heading font-bold text-on-surface dark:text-white mb-1.5">
                       Estimated Students / Employees:
                     </label>
-                    <div className="grid grid-cols-4 gap-1.5">
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
                       {["< 500", "500 - 2,000", "2,000 - 10,000", "10,000+"].map((size) => (
                         <button
                           key={size}
@@ -406,4 +451,7 @@ export default function RequestCallbackModal({
       )}
     </AnimatePresence>
   );
+
+  if (!mounted) return null;
+  return createPortal(modalContent, document.body);
 }

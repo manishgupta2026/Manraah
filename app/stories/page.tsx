@@ -57,9 +57,9 @@ const ALL_STORIES: Story[] = [
     category: "couple",
     role: "A Couple using Manraah",
     categoryLabel: "Couples & Harmony",
-    badgeStyle: "bg-pink/20 text-[#A83256] border border-pink/30",
+    badgeStyle: "bg-mint/15 dark:bg-[#1B332B] text-[#006B56] dark:text-[#88F7D6] border border-mint/30 dark:border-[#2E4E44]",
     initial: "C",
-    avatarBg: "bg-pink/30 text-[#A83256]",
+    avatarBg: "bg-mint/25 text-[#006B56] dark:text-[#88F7D6]",
     location: "Delhi NCR",
     timeWithManraah: "4 months",
     quote: "The guided reflection prompts helped us slow down difficult conversations around work stress and finances. It gave us a gentle structure to truly hear each other again.",
@@ -86,9 +86,9 @@ const ALL_STORIES: Story[] = [
     category: "parent",
     role: "A Working Parent",
     categoryLabel: "Parents & Family",
-    badgeStyle: "bg-peach/30 text-[#9E5D28] border border-peach/40",
+    badgeStyle: "bg-[#EDF6F2] dark:bg-[#20372F] text-[#006B56] dark:text-[#88F7D6] border border-[#BCE2D2] dark:border-[#325246]",
     initial: "P",
-    avatarBg: "bg-peach/40 text-[#9E5D28]",
+    avatarBg: "bg-[#E6F4F0] dark:bg-[#1B332B] text-[#006B56] dark:text-[#88F7D6]",
     location: "Hyderabad",
     timeWithManraah: "7 months",
     quote: "Balancing work deadlines and family care often left me depleted by evening. The 5-minute unwinding reflections give me a quiet moment to reset and recharge my patience.",
@@ -100,9 +100,9 @@ const ALL_STORIES: Story[] = [
     category: "transition",
     role: "An Individual in Career Transition",
     categoryLabel: "Life Transitions",
-    badgeStyle: "bg-[#7C6BC4]/15 text-[#5F4EA5] border border-[#7C6BC4]/30",
+    badgeStyle: "bg-primary/10 text-primary border border-primary/20",
     initial: "T",
-    avatarBg: "bg-[#7C6BC4]/20 text-[#5F4EA5]",
+    avatarBg: "bg-primary/15 text-primary",
     location: "Chennai",
     timeWithManraah: "3 months",
     quote: "Navigating a major life transition felt isolating. Having an anonymous, private retreat where I can journal and process uncertainty has been deeply grounding.",
@@ -128,9 +128,9 @@ const ALL_STORIES: Story[] = [
     category: "working_pro",
     role: "A Creative Freelancer",
     categoryLabel: "Career & Balance",
-    badgeStyle: "bg-peach/30 text-[#9E5D28] border border-peach/40",
+    badgeStyle: "bg-[#EDF6F2] dark:bg-[#20372F] text-[#006B56] dark:text-[#88F7D6] border border-[#BCE2D2] dark:border-[#325246]",
     initial: "F",
-    avatarBg: "bg-peach/30 text-[#9E5D28]",
+    avatarBg: "bg-[#E6F4F0] dark:bg-[#1B332B] text-[#006B56] dark:text-[#88F7D6]",
     location: "Goa",
     timeWithManraah: "1 year",
     quote: "Working remotely without a team made it easy to lose perspective. The mood tracking and AI check-ins serve as my daily emotional anchor.",
@@ -142,9 +142,9 @@ const ALL_STORIES: Story[] = [
     category: "couple",
     role: "Newlyweds Navigating Change",
     categoryLabel: "Couples & Harmony",
-    badgeStyle: "bg-pink/20 text-[#A83256] border border-pink/30",
+    badgeStyle: "bg-mint/15 dark:bg-[#1B332B] text-[#006B56] dark:text-[#88F7D6] border border-mint/30 dark:border-[#2E4E44]",
     initial: "N",
-    avatarBg: "bg-pink/25 text-[#A83256]",
+    avatarBg: "bg-mint/25 text-[#006B56] dark:text-[#88F7D6]",
     location: "Chandigarh",
     timeWithManraah: "6 months",
     quote: "Moving to a new city and adjusting to married life was overwhelming at times. The relationship check-in modules gave us shared vocabulary to express our needs kindly.",
@@ -186,7 +186,7 @@ export default function StoriesPage() {
 
         <h1 className="text-4xl sm:text-5xl lg:text-6xl font-heading font-black text-on-surface tracking-tight leading-[1.12]">
           Stories of Calm, Balance &amp;{" "}
-          <span className="text-primary bg-clip-text text-transparent bg-gradient-to-r from-primary via-[#5F4EA5] to-mint">
+          <span className="text-primary bg-clip-text text-transparent bg-gradient-to-r from-primary via-[#005B48] to-mint">
             Inner Strength
           </span>
         </h1>
@@ -317,7 +317,7 @@ export default function StoriesPage() {
           <div className="pt-2">
             <Link
               href="/privacy"
-              className="text-xs font-heading font-bold text-primary hover:text-primary-purple border-b border-primary/30 pb-0.5 inline-flex items-center gap-1"
+              className="text-xs font-heading font-bold text-primary hover:text-[#005B48] border-b border-primary/30 pb-0.5 inline-flex items-center gap-1"
             >
               <span>Learn about our End-to-End Privacy Architecture</span>
               <span className="material-symbols-outlined text-xs">arrow_forward</span>
